@@ -25,6 +25,7 @@ SECRET_KEY = 'b48^-g4x&z8b)6c*j9%#cr^mtlnaaz36y)0xqlr3isqrh1td2t'
 # Application definition
 
 INSTALLED_APPS = [
+    'geofluxus.apps.asmfa',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
