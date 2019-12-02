@@ -10,7 +10,11 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          FlowChain,
                                          Flow,
                                          Classification,
-                                         ExtraDescription)
+                                         ExtraDescription,
+                                         AdminLevel,
+                                         Area,
+                                         Publication,
+                                         PublicationType)
 
 # Register your models here.
 admin.site.register(ActivityGroup)
@@ -25,3 +29,7 @@ admin.site.register(FlowChain)
 admin.site.register(Flow)
 admin.site.register(Classification)
 admin.site.register(ExtraDescription)
+admin.site.register(AdminLevel)
+admin.site.register(Area)
+admin.site.register(Publication)
+admin.site.register(PublicationType)

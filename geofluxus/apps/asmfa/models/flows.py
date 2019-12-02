@@ -4,7 +4,8 @@ from geofluxus.apps.asmfa.models import (Process,
                                          Material,
                                          Product,
                                          Composite,
-                                         Actor)
+                                         Actor,
+                                         Publication)
 
 
 # FlowChain
@@ -26,6 +27,9 @@ class FlowChain(models.Model):
                                       through='ProductInChain')
     composites = models.ManyToManyField(Composite,
                                         through='CompositeInChain')
+    publication = models.ForeignKey(Publication,
+                                    null=True, blank=True,
+                                    on_delete=models.CASCADE)
 
 
 # Flow
