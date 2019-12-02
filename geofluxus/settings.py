@@ -25,6 +25,7 @@ SECRET_KEY = 'b48^-g4x&z8b)6c*j9%#cr^mtlnaaz36y)0xqlr3isqrh1td2t'
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
     'geofluxus.apps.asmfa',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -33,6 +34,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
