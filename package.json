@@ -1,0 +1,19 @@
+{
+  "name": "geofluxus",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/VasileiosBouzas/geoflux.git",
+  "author": "Vasileios Bouzas",
+  "license": "MIT",
+  "dependencies": {
+    "backbone": "^1.4.0",
+    "d3": "^5.14.2",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "jquery": "^3.4.1",
+    "webpack": "^4.41.2",
+    "webpack-bundle-tracker": "^0.4.3"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "^3.9.0"
+  }
+}
