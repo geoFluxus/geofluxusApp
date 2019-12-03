@@ -4,7 +4,7 @@ var BundleTracker = require('webpack-bundle-tracker');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 var entryPoints = {
-
+    Welcome:   './js/welcome'
 };
 
 module.exports = {
@@ -18,5 +18,12 @@ module.exports = {
         filename: '[name]-[hash].js'
     },
 
-    plugins: []
+    plugins: [],
+
+    optimization: {
+        splitChunks: {
+            name: 'commons',
+            minChunks: 1
+        }
+    }
 }

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% load staticfiles %}
+  {% load render_bundle from webpack_loader %}
+
+  <head>
+      <link href="https://fonts.googleapis.com/css?family=Lato|Montserrat|Open+Sans|Roboto" rel="stylesheet">
+      <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css" />
+      {% render_bundle 'commons' %}
+
+      <title>{% block title %}geoFluxus{% endblock %}</title>
+  </head>
+
+  <body>
+      {% block content %}{% endblock %}
+  </body>
+</html>

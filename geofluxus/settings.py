@@ -13,7 +13,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+PUBLIC_ROOT = os.path.abspath(os.path.join(PROJECT_DIR, 'public'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -25,6 +26,7 @@ SECRET_KEY = 'b48^-g4x&z8b)6c*j9%#cr^mtlnaaz36y)0xqlr3isqrh1td2t'
 # Application definition
 
 INSTALLED_APPS = [
+    'webpack_loader',
     'rest_framework',
     'geofluxus.apps.asmfa',
     'django.contrib.admin',
@@ -58,7 +60,7 @@ ROOT_URLCONF = 'geofluxus.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(PROJECT_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -109,4 +111,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
+STATIC_ROOT = os.path.join(PUBLIC_ROOT, 'static')
+MEDIA_ROOT = os.path.join(PUBLIC_ROOT, 'media')
+
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+
+STATICFILES_DIRS = [
+    os.path.join(PROJECT_DIR, "static"),
+]
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder'
+)
