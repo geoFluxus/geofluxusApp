@@ -1,0 +1,95 @@
+<html>
+<head>
+  <meta charset=utf-8 />
+  <title>Dynamic min/max zoom</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+  <!-- Load Leaflet from CDN-->
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+  <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+
+  <!-- Load Esri Leaflet from source-->
+    <script src="../src/EsriLeaflet.js"></script>
+    <script src="../src/Request.js"></script>
+    <script src="../src/Util.js"></script>
+    <script src="../src/Controls/Logo.js"></script>
+
+    <script src="../src/Services/Service.js"></script>
+    <script src="../src/Services/FeatureLayer.js"></script>
+    <script src="../src/Services/ImageService.js"></script>
+    <script src="../src/Services/MapService.js"></script>
+
+    <script src="../src/Layers/FeatureLayer/FeatureGrid.js"></script>
+    <script src="../src/Layers/FeatureLayer/FeatureManager.js"></script>
+    <script src="../src/Layers/FeatureLayer/FeatureLayer.js"></script>
+
+    <script src="../src/Layers/RasterLayer.js"></script>
+    <script src="../src/Layers/ImageMapLayer.js"></script>
+    <script src="../src/Layers/TiledMapLayer.js"></script>
+    <script src="../src/Layers/BasemapLayer.js"></script>
+    <script src="../src/Layers/DynamicMapLayer.js"></script>
+
+    <script src="../src/Tasks/Task.js"></script>
+    <script src="../src/Tasks/Find.js"></script>
+    <script src="../src/Tasks/Identify.js"></script>
+    <script src="../src/Tasks/IdentifyFeatures.js"></script>
+    <script src="../src/Tasks/IdentifyImage.js"></script>
+    <script src="../src/Tasks/Query.js"></script>
+
+  <style>
+    body {margin:0;padding:0;}
+    #map {position: absolute;top:0;bottom:0;right:0;left:0;}
+    #info {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10;
+        background: white;
+        padding: 1em;
+    }
+  </style>
+</head>
+<body>
+
+<div id="map"></div>
+<div id="info" class="leaflet-bar">
+    <label>
+        census block minimum zoom level:<br>
+        <span id="fl-zoom">?</span><br>
+        current zoom is:<br>
+        <span id="map-zoom">12</span>
+    </label>
+</div>
+<script>
+    var map = L.map('map').setView([37.75, -122.23], 12);
+    L.esri.basemapLayer('Topographic').addTo(map);
+
+    //  set static values and load layer immediately
+
+     var counties = new L.esri.Layers.FeatureLayer('http://sampleserver5.arcgisonline.com/arcgis/rest/services/Census/MapServer/2', {
+        minZoom: 0,
+        maxZoom: 0
+      });
+    counties.addTo(map);
+
+    // create the layer and add it to the map, then update zoom values based on service metadata
+
+    var blockGroups = new L.esri.Layers.FeatureLayer('http://sampleserver5.arcgisonline.com/arcgis/rest/services/Census/MapServer/1').addTo(map);
+    blockGroups.metadata(function(error, response) {
+
+      dynMin = L.esri.Util.scaleToLevel(response.minScale);
+      blockGroups.options.minZoom = dynMin;
+      document.getElementById('fl-zoom').innerText = dynMin.toPrecision(3);
+
+      dynMax = L.esri.Util.scaleToLevel(response.maxScale);
+
+      blockGroups.options.maxZoom = dynMax;
+    });
+
+    map.on('zoomend', function(e){
+      document.getElementById('map-zoom').innerText = map.getZoom();
+    });
+</script>
+
+</body>
+</html>

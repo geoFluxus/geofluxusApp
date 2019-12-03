@@ -1,0 +1,64 @@
+<html>
+<head>
+  <meta charset=utf-8 />
+  <title>Non-mercator projection</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+  <!-- Load Leaflet from CDN-->
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+  <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+
+  <!-- Load Esri Leaflet from CDN -->
+  <script src="http://cdn-geoweb.s3.amazonaws.com/esri-leaflet/1.0.0-rc.4/esri-leaflet.js"></script>
+
+  <style>
+    body {margin:0;padding:0;}
+    #map {position: absolute;top:0;bottom:0;right:0;left:0;}
+  </style>
+</head>
+<body>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/proj4js/2.0.0/proj4.js"></script>
+<script src="https://cdn.rawgit.com/kartena/Proj4Leaflet/0.7.0/src/proj4leaflet.js"></script>
+
+<div id="map"></div>
+
+<script>
+  // create new Proj4Leaflet CRS
+  var crs = new L.Proj.CRS('EPSG:26912', '+proj=utm +zone=12 +ellps=GRS80 +datum=NAD83 +units=m +no_defs', {
+    //transformation: new L.Transformation(1, 5120900, -1, 9998100),
+    origin: [-5120900, 9998100],
+    resolutions: [
+      4891.96999883583,
+      2445.98499994708,
+      1222.99250010583,
+      611.496250052917,
+      305.748124894166,
+      152.8740625,
+      76.4370312632292,
+      38.2185156316146,
+      19.1092578131615,
+      9.55462890525781,
+      4.77731445262891,
+      2.38865722657904,
+      1.19432861315723,
+      0.597164306578613,
+      0.298582153289307
+    ]
+  });
+
+  // pass crs into map constructor
+  var map = new L.Map('map', {
+    crs: crs
+  }).setView([40.381, -111.859], 5);
+
+  L.esri.tiledMapLayer('http://mapserv.utah.gov/arcgis/rest/services/BaseMaps/Terrain/MapServer', {
+    maxZoom: 14,
+    minZoom: 0,
+    continuousWorld: true,
+    attribution: 'State of Utah'
+  }).addTo(map);
+</script>
+
+</body>
+</html>

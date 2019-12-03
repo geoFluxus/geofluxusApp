@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset=utf-8 />
+    <title>Esri Leaflet Debugging Sample</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <!-- Load Leaflet -->
+    <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css" />
+    <script src="../node_modules/leaflet/dist/leaflet-src.js"></script>
+
+    <!-- Load Esri Leaflet from source-->
+    <script src="../dist/esri-leaflet-debug.js"></script>
+
+    <style>
+      body {
+        margin:0;
+        padding:0;
+      }
+
+      #map {
+        position: absolute;
+        top:0;
+        bottom:0;
+        right:0;left:0;
+      }
+
+      #info-pane {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        z-index: 1000;
+        padding: 1em;
+        background: white;
+      }
+    </style>
+  </head>
+  <body>
+
+  <div id="map"></div>
+  <div id="info-pane" class="leaflet-bar">
+    <label>
+    <span>Zoom Level: </span><div id="zoomLevel">14</div>
+    </label>
+  </div>
+
+  <script>
+var map = L.map('map').setView([32.3697585, -85.820615], 14);
+
+var arcGisWorldStreetMap = L.esri.tiledMapLayer({url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer",}).addTo(map);
+
+var usaTopoEsri = L.esri.tiledMapLayer({
+url: 'https://services.arcgisonline.com/ArcGIS/rest/services/USA_Topo_Maps/MapServer',
+maxZoom: 17,
+maxNativeZoom: 15
+}).addTo(map);
+
+var usaTopoLeaflet = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/USA_Topo_Maps/MapServer/tile/{z}/{y}/{x}', {
+maxZoom:17,
+maxNativeZoom:15,
+});
+
+var baseLayers = {
+  "ArcGIS World Street Map": arcGisWorldStreetMap
+};
+var overlays = {
+"USA TOPO ESRI TILE": usaTopoEsri,
+"USA TOPO Leaflet TILE": usaTopoLeaflet
+};
+
+L.control.layers(baseLayers, overlays).addTo(map);
+
+map.on('zoomend', function(e) {
+document.getElementById("zoomLevel").innerHTML = map.getZoom();
+});
+  </script>
+
+  </body>
+  </html>

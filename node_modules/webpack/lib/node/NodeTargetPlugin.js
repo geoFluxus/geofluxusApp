@@ -6,9 +6,7 @@
 
 const ExternalsPlugin = require("../ExternalsPlugin");
 
-const builtins =
-	// eslint-disable-next-line node/no-unsupported-features/node-builtins,node/no-deprecated-api
-	require("module").builtinModules || Object.keys(process.binding("natives"));
+const builtins = require("module").builtinModules || Object.keys(process.binding("natives"));
 
 class NodeTargetPlugin {
 	apply(compiler) {

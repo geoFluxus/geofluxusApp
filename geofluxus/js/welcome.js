@@ -1,4 +1,4 @@
-require(['d3', 'underscore', 'openlayers', 'base'],
+require(['d3', 'underscore', 'openlayers', 'openlayers/css/ol.css', 'base'],
 function (d3, _, ol, config) {
     var map = new ol.Map({
         layers: [

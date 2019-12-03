@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset=utf-8 />
+    <title>Esri Leaflet Debugging Sample</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <!-- Load Leaflet from CDN-->
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/dojo/1.4/dijit/themes/tundra/tundra.css">
+
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+
+    <!-- Load Esri Leaflet from source-->
+    <script src="http://cdn-geoweb.s3.amazonaws.com/esri-leaflet/1.0.0-rc.4/esri-leaflet.js"></script>
+
+    <!--load dojo-->
+    <script src="//ajax.googleapis.com/ajax/libs/dojo/1.10.1/dojo/dojo.js"></script>
+
+    <style>
+      body {
+        margin:0;
+        padding:0;
+      }
+
+      #map {
+        position: absolute;
+        top:0;
+        bottom:0;
+        right:0;left:0;
+      }
+
+      #progButtonNode {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10;
+        padding: 1em;
+        background: white;
+      }
+
+      #result1 {
+        position: absolute;
+        top: 80px;
+        right: 10px;
+        z-index: 10;
+        padding: 1em;
+        background: white;
+        display: none;
+      }
+
+    </style>
+  </head>
+  <body class="tundra">
+    <div id="map"></div>
+    <button id="progButtonNode" type="button"></button>
+    <div id="result1"></div>
+  <script>
+    var map = L.map('map').setView([40, -100], 4);
+    L.esri.basemapLayer('Topographic').addTo(map);
+
+    var fl = L.esri.featureLayer('http://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/3').addTo(map);
+
+    require(["dijit/form/Button", "dojo/dom", "dojo/domReady!"], function(Button, dom) {
+      // Create a button programmatically:
+      var myButton = new Button({
+        label: "Click me!",
+        onClick: function() {
+          // Do something:
+          dom.byId("result1").style.display = "block";
+          dom.byId("result1").innerHTML += "Thank you! ";
+        }
+      }, "progButtonNode").startup();
+    });
+
+  </script>
+
+  </body>
+  </html>
