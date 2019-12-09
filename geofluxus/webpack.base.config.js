@@ -4,7 +4,8 @@ var BundleTracker = require('webpack-bundle-tracker');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 var entryPoints = {
-    Welcome:   './js/welcome'
+    Welcome: './js/welcome',
+    Base:    './js/base',
 };
 
 module.exports = {
@@ -35,17 +36,50 @@ module.exports = {
         new ExtractTextPlugin('[name]-[hash].css', {
             allChunks: true
         }),
+        new webpack.ProvidePlugin({
+            _: 'loadash',
+            d3: 'd3',
+            $: "jquery",
+            jQuery: "jquery"
+        }),
+        new webpack.IgnorePlugin(/^codemirror$/)
     ],
+
+    node: { fs: 'empty', net: 'empty', tls: 'empty', child_process: 'empty', __filename: true, __dirname: true },
+
+    externals: [ 'ws' ],
 
     module: {
         rules: [
+            {
+                test: require.resolve("jquery"),
+                loader: 'expose-loader?jQuery!expose-loader?$'
+            },
             {
                 test: /\.css$/,
                 use: ExtractTextPlugin.extract({
                     fallback: "style-loader",
                     use: "css-loader"
                 })
+            },
+            {
+                test: /\.(png|woff|woff2|eot|ttf|svg|gif)$/,
+                loader: 'url-loader?limit=100000'
+            },
+            {
+                test: /\.less$/,
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: ['css-loader', 'less-loader']
+                })
             }
-        ]
+        ],
+    },
+
+    resolve: {
+        modules : ['js', 'node_modules', 'bower_components'],
+        alias: {
+            'static': path.resolve('./geofluxus/static')
+        }
     },
 }

@@ -1,0 +1,12 @@
+a {
+    color: #FFFFFF;
+}
+
+a:hover {
+    color: white;
+    text-shadow: 0px 0px 5px yellow;
+}
+
+body {
+    font-family: Montserrat, sans serif;
+}

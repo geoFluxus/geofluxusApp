@@ -1,0 +1,16 @@
+.navbar {
+    position: fixed;
+    height: 100px;
+    width: 100%;
+    background-color: #000000;
+}
+
+.navbar-brand {
+    color: white;
+    font-size: 40px;
+}
+
+.nav-link {
+    color: white;
+    font-size: 20px;
+}
