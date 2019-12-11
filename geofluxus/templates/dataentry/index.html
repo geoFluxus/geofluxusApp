@@ -3,11 +3,16 @@
 
 {% block title %}geoFluxus | Data Entry{% endblock %}
 
+{% block sidebar %}
+    <ul class="nav nav-pills nav-stacked" id="sidebar">
+      <li ><a href="#" data-toggle="pill">Bulk Upload <span class="sub-icon fas fa-save"></span></a></li>
+    </ul>
+{% endblock %}
+
 {% block content %}
     <div class="tab-content">
       <!-- Bulk upload -->
-      <div id="bulk-upload">
-      </div>
+      <div id="bulk-upload"></div>
     </div>
     {% include "dataentry/bulkupload.html" %}
     {% render_bundle 'DataEntry' %}

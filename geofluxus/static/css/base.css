@@ -2,11 +2,29 @@ a {
     color: #FFFFFF;
 }
 
-a:hover {
-    color: white;
-    text-shadow: 0px 0px 5px white;
+h1 {
+    color: #FFFFFF;
 }
 
 body {
     font-family: Montserrat, sans serif;
+    background-color: black;
+    z-index: 0;
+}
+
+.sub-icon {
+    padding-left: 20px;
+    font-size: 30px;
+}
+
+#wrapper {
+    padding-top: 80px;
+    z-index: 800;
+}
+
+#page-content-wrapper {
+    background-color: black;
+    padding-left: 280px;
+    padding-top: 40px;
+    z-index: 400;
 }

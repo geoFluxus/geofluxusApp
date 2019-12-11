@@ -1,17 +1,31 @@
 .navbar {
     position: fixed;
-    height: 100px;
+    height: 80px;
     width: 100%;
     background-color: #000000;
-    box-shadow: 0px 10px 10px rgba(0,0,0,0.3);
+    box-shadow: 0px 10px 10px rgba(255,255,255,0.3);
+    z-index: 1000;
 }
 
 .navbar-brand {
+    position: relative;
+    overflow: hidden;
     color: white;
     font-size: 40px;
 }
 
 .nav-link {
+    position: relative;
     color: white;
     font-size: 20px;
+}
+
+a.navbar-brand:hover {
+    color: white;
+    text-shadow: 0px 0px 5px white;
+}
+
+a.nav-link:hover {
+    color: white;
+    text-shadow: 0px 0px 5px white;
 }

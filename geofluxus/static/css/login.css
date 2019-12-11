@@ -4,13 +4,19 @@
 }
 
 body {
-  background: white;
+  background: black;
+}
+
+h5 {
+  color: white;
 }
 
 .card-signin {
+  background-color: black;
   border: 0;
   border-radius: 1rem;
-  box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  box-shadow: 0px 0px 10px 10px rgba(255, 255, 255, 0.3);
 }
 
 .card-signin .card-title {
@@ -28,7 +34,7 @@ body {
 }
 
 .form-signin .btn {
-  background: black;
+  background: blue;
   font-size: 80%;
   border-radius: 5rem;
   letter-spacing: .1rem;

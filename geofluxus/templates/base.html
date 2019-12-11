@@ -13,6 +13,7 @@
     </head>
 
     <body>
+        <!--Navbar-->
         <nav class="navbar navbar-expand-lg">
           <a class="navbar-brand" href="/">geoFluxus</a>
           <ul class="navbar-nav mr-auto">
@@ -33,8 +34,27 @@
               </li>
           </ul>
         </nav>
-        <div style="padding-top: 100px">
-            {% block content %}{% endblock %}
-        </div>
+
+        <!--Welcome / Login-->
+        {% if request.path == "/"  or request.path == "/login/login" %}
+            <div id="wrapper">
+                {% block main %}{% endblock %}
+            </div>
+        <!--Other pages-->
+        {% else %}
+            <div id="wrapper">
+                <!--Sidebar-->
+                <div id="sidebar-wrapper">
+                    <br><br>
+                    {% block sidebar %}
+                    {% endblock %}
+                </div>
+
+                <!--Main content-->
+                <div id="page-content-wrapper">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        {% endif %}
     </body>
 </html>
