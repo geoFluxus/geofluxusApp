@@ -23,6 +23,12 @@
                 <label for="id_password">Password</label>
               </div>
 
+              {% if form.errors %}
+                <div class="alert alert-danger">
+                  Username and password didn't match. Please try again.
+                </div>
+              {% endif %}
+
               <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Submit</button>
             </form>
           </div>

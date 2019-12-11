@@ -4,6 +4,7 @@ var BundleTracker = require('webpack-bundle-tracker');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 var entryPoints = {
+    DataEntry: './js/data-entry',
     Login:   './js/login',
     Welcome: './js/welcome',
     Base:    './js/base',

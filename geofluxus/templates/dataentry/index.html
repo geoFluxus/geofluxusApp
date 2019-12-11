@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 {% load render_bundle from webpack_loader %}
 
+{% block title %}geoFluxus | Data Entry{% endblock %}
+
 {% block content %}
-    <h1>Data Entry</h1>
+    <div class="tab-content">
+      <!-- Bulk upload -->
+      <div id="bulk-upload">
+      </div>
+    </div>
+    {% include "dataentry/bulkupload.html" %}
+    {% render_bundle 'DataEntry' %}
 {% endblock %}
