@@ -5,15 +5,24 @@
 
 {% block sidebar %}
     <ul class="nav nav-pills nav-stacked" id="sidebar">
-      <li ><a href="#" data-toggle="pill">Bulk Upload <span class="sub-icon fas fa-save"></span></a></li>
+      <li ><a href="#bulk-upload" data-toggle="pill">Upload <span class="sub-icon fas fa-save"></span></a></li>
+      <li ><a href="#update" data-toggle="pill">Update<span class="sub-icon fas fa-recycle"></span></a></li>
+      <li ><a href="#delete" data-toggle="pill">Delete <span class="sub-icon fas fa-exclamation-triangle"></span></a></li>
     </ul>
 {% endblock %}
 
 {% block content %}
+    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/data-entry.css" />
     <div class="tab-content">
       <!-- Bulk upload -->
       <div id="bulk-upload"></div>
+      <!-- Update -->
+      <div id="update"></div>
+      <!-- Delete -->
+      <div id="delete"></div>
     </div>
     {% include "dataentry/bulkupload.html" %}
+    {% include "dataentry/update.html" %}
+    {% include "dataentry/delete.html" %}
     {% render_bundle 'DataEntry' %}
 {% endblock %}

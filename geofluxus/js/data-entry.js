@@ -1,7 +1,8 @@
 // Data Entry
-define(['views/data-entry/bulk-upload', 'static/css/data-entry.css'],
-function (BulkUploadView) {
-    var bulkUploadView;
+define(['views/data-entry/bulk-upload', 'views/data-entry/update'],
+function (BulkUploadView, UpdateView) {
+    var bulkUploadView,
+        updateView;
 
     function renderBulkUpload() {
         bulkUploadView = new BulkUploadView({
@@ -10,8 +11,16 @@ function (BulkUploadView) {
         })
     }
 
+    function renderUpdate() {
+        updateView = new UpdateView({
+            el: document.getElementById('update'),
+            template: 'update-template'
+        })
+    }
+
     function render() {
         renderBulkUpload();
+        renderUpdate();
     }
 
     render();

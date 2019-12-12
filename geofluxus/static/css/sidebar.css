@@ -1,7 +1,7 @@
 #sidebar-wrapper {
     position: fixed;
     left: 250px;
-    width: 250px;
+    width: 220px;
     height: 100%;
     margin-left: -250px;
     background: black;
@@ -10,7 +10,11 @@
 }
 
 #sidebar.nav {
-    padding-left: 30px;
+    padding-left: 20px;
+}
+
+#sidebar li {
+    padding-bottom: 50px;
 }
 
 #sidebar li a {
@@ -19,6 +23,11 @@
 
 #sidebar li a:hover {
     color: white;
+    font-size: 30px;
     text-shadow: 0px 0px 5px white;
     text-decoration: none;
+}
+
+.sub-icon {
+    padding-left: 30px;
 }
