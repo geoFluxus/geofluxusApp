@@ -1,20 +1,14 @@
 #sidebar-wrapper {
     position: fixed;
-    left: 250px;
     width: 220px;
     height: 100%;
-    margin-left: -250px;
     background: black;
     z-index: 600;
     box-shadow: 10px 0px 10px rgba(255,255,255,0.3);
 }
 
-#sidebar.nav {
-    padding-left: 20px;
-}
-
 #sidebar li {
-    padding-bottom: 50px;
+    padding: 20px;
 }
 
 #sidebar li a {

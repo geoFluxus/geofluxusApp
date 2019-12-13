@@ -1,22 +1,24 @@
 <!--Bulk upload-->
-<div id="bulk-upload-template">
-</div>
+<script type="text/template" id="bulk-upload-template">
+  <div class='col-md-5' id="uploads">
+  </div>
+</script>
 
 <!-- a row for a single model api route to bulk upload data to -->
 <script type="text/template" id="upload-row-template">
   <div class="upload row bordered">
-    <div class="container">
-      <div class="row">
-        <label><%= label %></label>
+      <div class="container">
+          <div class="row">
+            <label><%= label %></label>
+          </div>
+          <div class="row">
+            <input type="file" accept=".xlsx, .tsv, .csv, .ods">
+            <button class="btn btn-primary upload" title="Upload File">
+              Upload
+              <span class="fas fa-arrow-circle-up" style="margin-left: 5px;"></span>
+            </button>
+          </div>
       </div>
-      <div class="row">
-        <input type="file" accept=".xlsx, .tsv, .csv, .ods">
-        <button class="btn btn-primary upload" title="Upload File">
-          Upload
-          <span class="fas fa-arrow-circle-up" style="margin-left: 5px;"></span>
-        </button>
-      </div>
-    </div>
   </div>
   <br><br>
 </script>

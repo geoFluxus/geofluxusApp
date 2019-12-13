@@ -10,11 +10,16 @@ var BulkUploadView = BaseView.extend({
     },
 
     events: {
-        "click button.upload": "upload",
+
     },
 
     render: function(){
-        main = document.getElementById(this.template);
+        var html = document.getElementById(this.template).innerHTML,
+            template = _.template(html),
+            _this = this;
+        this.el.innerHTML = template();
+
+        var upCol = this.el.querySelector('#uploads');
 
         var ups = [
             'Activity groups',
@@ -29,26 +34,18 @@ var BulkUploadView = BaseView.extend({
             'Extra Descriptions'
         ]
 
-        function renderRow(up){
+        function renderRow(up, col){
             var html = document.getElementById('upload-row-template').innerHTML,
                 template = _.template(html),
                 div = document.createElement('div');
             div.innerHTML = template({label: up});
-            main.appendChild(div);
+            col.appendChild(div);
         }
 
         ups.forEach(function(up) {
-            renderRow(up);
+            renderRow(up, upCol);
         })
     },
-
-    upload: function(evt){
-        var _this = this,
-            btn = evt.target,
-            tag = btn.dataset['tag'];
-
-        console.log(btn);
-    }
 
 });
 return BulkUploadView;
