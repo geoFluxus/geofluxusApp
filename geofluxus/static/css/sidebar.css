@@ -1,6 +1,7 @@
 #sidebar-wrapper {
+    overflow:hidden;
     position: fixed;
-    width: 220px;
+    width: 70px;
     height: 100%;
     background: black;
     z-index: 600;
@@ -8,18 +9,28 @@
 }
 
 #sidebar li {
-    padding: 20px;
+    width: 220px;
+    margin-top: 50px;
+    font-size: 0px;
+}
+
+#sidebar-wrapper:hover {
+    width: 220px;
+    overflow:visible;
+}
+
+#sidebar-wrapper:hover #sidebar li {
     font-size: 20px;
 }
 
-#sidebar li a:hover {
+#sidebar-wrapper:hover #sidebar li a:hover {
     color: white;
     font-size: 30px;
     text-shadow: 0px 0px 5px white;
     text-decoration: none;
 }
 
-#sidebar li.active a {
+#sidebar-wrapper:hover #sidebar li.active a {
     color: white;
     font-size: 30px;
     text-shadow: 0px 0px 5px white;
@@ -27,5 +38,6 @@
 }
 
 .sub-icon {
-    padding-left: 30px;
+    padding-right: 30px;
+    padding-left: 20px;
 }

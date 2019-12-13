@@ -24,9 +24,9 @@ body {
 
 #page-content-wrapper {
     background-color: black;
-    padding-left: 260px;
+    padding-left: 100px;
     margin-right: 20px;
-    padding-top: 40px;
+    padding-top: 10px;
     z-index: 400;
 }
 
