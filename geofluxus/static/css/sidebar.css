@@ -9,13 +9,17 @@
 
 #sidebar li {
     padding: 20px;
-}
-
-#sidebar li a {
     font-size: 20px;
 }
 
 #sidebar li a:hover {
+    color: white;
+    font-size: 30px;
+    text-shadow: 0px 0px 5px white;
+    text-decoration: none;
+}
+
+#sidebar li.active a {
     color: white;
     font-size: 30px;
     text-shadow: 0px 0px 5px white;

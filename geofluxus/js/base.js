@@ -1,5 +1,6 @@
 // Base
 require(['document-ready',
+         'bootstrap',
          'static/css/base.css',
          'static/css/main-navbar.css',
          'static/css/sidebar.css',

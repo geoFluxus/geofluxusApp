@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 {% load render_bundle from webpack_loader %}
 
+{% block title %}geoFluxus | Status Quo{% endblock %}
+
+{% block sidebar %}
+    <script>
+      document.getElementById("status-quo-link").classList.add('active');
+    </script>
+{% endblock %}
+
 {% block content %}
     <h1>Status Quo</h1>
 {% endblock %}
