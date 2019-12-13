@@ -1,8 +1,27 @@
 <!--Bulk upload-->
 <script type="text/template" id="bulk-upload-template">
-  <div class='col-md-5' id="uploads">
-      <h2>Bulk Upload</h2>
-      <br>
+  <div class="row">
+      <div class='col-md-5' id="uploads">
+          <div class="row">
+              <div class="col-md-6">
+                  <h2>Data Models</h2>
+              </div>
+              <div class="col-md-6">
+                  <select title="File encoding" id="encoding-select" class="form-control" style="float: right; width: 110px;">
+                    <option value="cp1252">CP 1252</option>
+                    <option value="utf-8">UTF 8</option>
+                  </select>
+              </div>
+          </div>
+      </div>
+      <div class='col-md-6' id="logs" style="margin-left: 40px;">
+          <div class="row">
+              <h2>Log</h2>
+          </div>
+          <div id="upload-log" class="bordered sunken">
+              <br>
+          </div>
+      </div>
   </div>
 </script>
 
@@ -12,6 +31,7 @@
       <div class="container">
           <div class="row">
             <label><%= label %></label>
+            <a href="/" class="template" style="margin-left: 30px;"><span class="far fa-file-alt" style="margin-right: 2px;"></span>Template</a>
           </div>
           <div class="row">
             <input type="file" accept=".xlsx, .tsv, .csv, .ods">

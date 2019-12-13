@@ -29,3 +29,16 @@ body {
     padding-top: 40px;
     z-index: 400;
 }
+
+::-webkit-scrollbar {
+    z-index: 800;
+    width: 10px;
+    background: black;
+    -webkit-box-shadow: inset 10px 0 10px rgba(255,255,255,0.3);
+}
+
+::-webkit-scrollbar-thumb {
+    background: white;
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}

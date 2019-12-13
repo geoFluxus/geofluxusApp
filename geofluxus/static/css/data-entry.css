@@ -7,6 +7,7 @@ div.upload.row.bordered {
 }
 
 label {
+    margin-bottom: 0px;
     font-weight: bold;
     font-size: 20px;
     color: white;
@@ -29,4 +30,21 @@ input {
     border-color: white;
     color: black;
     box-shadow: none;
+}
+
+a.template {
+    padding-top: 5px;
+    font-size: 15px;
+    color: blue;
+}
+
+a.template:hover {
+    color: red;
+    text-decoration: none;
+}
+
+#upload-log {
+    width: 100%;
+    height: 600px;
+    background: white;
 }

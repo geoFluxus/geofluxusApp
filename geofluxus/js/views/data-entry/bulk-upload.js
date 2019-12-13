@@ -9,10 +9,12 @@ var BulkUploadView = BaseView.extend({
         this.render();
     },
 
+    // DOM Events
     events: {
-
+        "click button.upload": "upload",
     },
 
+    // Rendering
     render: function(){
         var html = document.getElementById(this.template).innerHTML,
             template = _.template(html),
@@ -46,6 +48,11 @@ var BulkUploadView = BaseView.extend({
             renderRow(up, upCol);
         })
     },
+
+    // Upload data from template
+    upload: function() {
+        console.log("Uploading...");
+    }
 
 });
 return BulkUploadView;
