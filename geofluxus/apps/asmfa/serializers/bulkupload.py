@@ -13,7 +13,9 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          FlowChain,
                                          Flow,
                                          Classification,
-                                         ExtraDescription)
+                                         ExtraDescription,
+                                         AdminLevel,
+                                         Area)
 from geofluxus.apps.asmfa.serializers import (ActivityGroupSerializer,
                                               ActivitySerializer,
                                               CompanySerializer,
@@ -28,7 +30,9 @@ from geofluxus.apps.asmfa.serializers import (ActivityGroupSerializer,
                                               FlowChainSerializer,
                                               FlowSerializer,
                                               ClassificationSerializer,
-                                              ExtraDescriptionSerializer)
+                                              ExtraDescriptionSerializer,
+                                              AdminLevelSerializer,
+                                              AreaSerializer)
 
 
 class ActivityGroupCreateSerializer(BulkSerializerMixin,
@@ -237,3 +241,32 @@ class ExtraDescriptionCreateSerializer(BulkSerializerMixin,
 
     def get_queryset(self):
         return ExtraDescription.objects.all()
+
+
+class AdminLevelCreateSerializer(BulkSerializerMixin,
+                                 AdminLevelSerializer):
+    field_map = {
+        'name': 'name',
+        'level': 'level'
+    }
+    index_columns = ['name']
+
+    def get_queryset(self):
+        return AdminLevel.objects.all()
+
+
+class AreaCreateSerializer(BulkSerializerMixin,
+                           AreaSerializer):
+    field_map = {
+        'adminlevel': 'adminlevel',
+        'name': 'name',
+        'code': 'code',
+        'geom': 'geom',
+        'parent_area': 'parent_area',
+        'inhabitants': 'inhabitants',
+        'publication': 'publication'
+    }
+    index_columns = ['name']
+
+    def get_queryset(self):
+        return Area.objects.all()

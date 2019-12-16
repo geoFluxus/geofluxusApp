@@ -11,7 +11,7 @@ function(Session) {
         base:              '/api',
         publicationtypes:  '/api/publicationtypes',
         publications:      '/api/publications',
-        adminLevels:       '/api/adminLevels',
+        adminlevels:       '/api/adminlevels',
         areas:             '/api/areas',
         activitygroups:    '/api/activitygroups',
         activities:        '/api/activities',
@@ -25,7 +25,7 @@ function(Session) {
         flowchains:        '/api/flowchains',
         flows:             '/api/flows',
         classifications:   '/api/classifications',
-        extradescriptions: '/api/extradescriptions'
+        extradescriptions: '/api/extradescriptions',
     }
 
     return config;

@@ -14,6 +14,13 @@ class AdminLevelSerializer(HyperlinkedModelSerializer):
                   'level')
 
 
+class AdminLevelListSerializer(AdminLevelSerializer):
+    class Meta(AdminLevelSerializer.Meta):
+        fields = ('id',
+                  'name',
+                  'level')
+
+
 # Area
 class AreaSerializer(HyperlinkedModelSerializer):
     adminlevel = PrimaryKeyRelatedField(read_only=True)
@@ -30,5 +37,16 @@ class AreaSerializer(HyperlinkedModelSerializer):
                  'geom',
                  'parent_area',
                  'inhabitants',
-                 'publication'
-                 )
+                 'publication')
+
+
+class AreaListSerializer(AreaSerializer):
+    class Meta(AreaSerializer.Meta):
+        fields = ('id',
+                  'adminlevel',
+                  'name',
+                  'code',
+                  'geom',
+                  'parent_area',
+                  'inhabitants',
+                  'publication')

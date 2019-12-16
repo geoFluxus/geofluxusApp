@@ -38,7 +38,9 @@ var BulkUploadView = BaseView.extend({
             ['flowchains', 'Flow Chains'],
             ['flows', 'Flows'],
             ['classifications', 'Classifications'],
-            ['extradescriptions', 'Extra Descriptions']
+            ['extradescriptions', 'Extra Descriptions'],
+            ['adminlevels', 'Admin levels'],
+            ['areas', 'Areas']
         ]
 
         function renderRow(up, col){
