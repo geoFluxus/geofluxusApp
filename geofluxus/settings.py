@@ -121,6 +121,9 @@ MEDIA_ROOT = os.path.join(PUBLIC_ROOT, 'media')
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
+# dir to store temporary media files
+TEMP_MEDIA_ROOT = os.path.join(MEDIA_ROOT, 'tmp')
+
 STATICFILES_DIRS = [
     os.path.join(PROJECT_DIR, "static"),
 ]

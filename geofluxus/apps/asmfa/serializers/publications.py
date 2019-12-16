@@ -13,9 +13,15 @@ class PublicationTypeSerializer(HyperlinkedModelSerializer):
                   'name')
 
 
+class PublicationTypeListSerializer(PublicationTypeSerializer):
+    class Meta(PublicationTypeSerializer.Meta):
+        fields = ('id',
+                  'name')
+
+
 # Publication
 class PublicationSerializer(HyperlinkedModelSerializer):
-    type = PrimaryKeyRelatedField(read_only=True)
+    publicationtype = PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Publication
@@ -25,6 +31,18 @@ class PublicationSerializer(HyperlinkedModelSerializer):
                   'author',
                   'note',
                   'title',
-                  'type',
+                  'publicationtype',
+                  'url',
+                  'file_url')
+
+
+class PublicationListSerializer(PublicationSerializer):
+    class Meta(PublicationSerializer.Meta):
+        fields = ('id',
+                  'citekey',
+                  'author',
+                  'note',
+                  'title',
+                  'publicationtype',
                   'url',
                   'file_url')

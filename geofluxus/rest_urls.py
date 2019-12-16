@@ -12,7 +12,7 @@ from geofluxus.apps.asmfa.views import (ActivityGroupViewSet,
                                         FlowChainViewSet,
                                         FlowViewSet,
                                         ClassificationViewSet,
-                                        ExtraDescriptionViewset,
+                                        ExtraDescriptionViewSet,
                                         AdminLevelViewSet,
                                         AreaViewSet,
                                         PublicationTypeViewSet,
@@ -46,7 +46,7 @@ router.register(r'composites', CompositeViewSet)
 router.register(r'flowchains', FlowChainViewSet)
 router.register(r'flows', FlowViewSet)
 router.register(r'classifications', ClassificationViewSet)
-router.register(r'extradescriptions', ExtraDescriptionViewset)
+router.register(r'extradescriptions', ExtraDescriptionViewSet)
 
 urlpatterns = [
     url(r'^', include(router.urls)),

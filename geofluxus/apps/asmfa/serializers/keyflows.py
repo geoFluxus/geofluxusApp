@@ -17,12 +17,27 @@ class ProcessSerializer(HyperlinkedModelSerializer):
                   'code')
 
 
+class ProcessListSerializer(ProcessSerializer):
+    class Meta(ProcessSerializer.Meta):
+        fields = ('id',
+                  'name',
+                  'code')
+
+
 # Waste
 class WasteSerializer(HyperlinkedModelSerializer):
     class Meta:
         model = Waste
         fields = ('url',
                   'id',
+                  'ewc_name',
+                  'ewc_code',
+                  'hazardous')
+
+
+class WasteListSerializer(WasteSerializer):
+    class Meta(WasteSerializer.Meta):
+        fields = ('id',
                   'ewc_name',
                   'ewc_code',
                   'hazardous')
@@ -37,6 +52,12 @@ class MaterialSerializer(HyperlinkedModelSerializer):
                   'name')
 
 
+class MaterialListSerializer(MaterialSerializer):
+    class Meta(MaterialSerializer):
+        fields = ('id',
+                  'name')
+
+
 # Product
 class ProductSerializer(HyperlinkedModelSerializer):
     class Meta:
@@ -46,10 +67,22 @@ class ProductSerializer(HyperlinkedModelSerializer):
                   'name')
 
 
+class ProductListSerializer(ProductSerializer):
+    class Meta(ProductSerializer.Meta):
+        fields = ('id',
+                  'name')
+
+
 # Composite
 class CompositeSerializer(HyperlinkedModelSerializer):
     class Meta:
         model = Composite
         fields = ('url',
                   'id',
+                  'name')
+
+
+class CompositeListSerializer(CompositeSerializer):
+    class Meta(CompositeSerializer):
+        fields = ('id',
                   'name')

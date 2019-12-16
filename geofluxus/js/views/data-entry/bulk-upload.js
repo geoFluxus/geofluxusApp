@@ -1,6 +1,6 @@
 // Bulk Upload
-define(['views/common/baseview', 'underscore'],
-function (BaseView, _) {
+define(['views/common/baseview', 'underscore', 'app-config'],
+function (BaseView, _, config) {
 
 var BulkUploadView = BaseView.extend({
 
@@ -24,23 +24,34 @@ var BulkUploadView = BaseView.extend({
         var upCol = this.el.querySelector('#uploads');
 
         var ups = [
-            'Activity groups',
-            'Activities',
-            'Actors',
-            'Materials',
-            'Products',
-            'Composites',
-            'Flows',
-            'Flow Chains',
-            'Classifications',
-            'Extra Descriptions'
+            ['activitygroups', 'Activity groups'],
+            ['activities', 'Activities'],
+            ['companies', 'Companies'],
+            ['publicationtypes', 'Publication types'],
+            ['publications', 'Publications'],
+            ['actors', 'Actors'],
+            ['processes', 'Processes'],
+            ['wastes', 'Wastes'],
+            ['materials', 'Materials'],
+            ['products', 'Products'],
+            ['composites', 'Composites'],
+            ['flowchains', 'Flow Chains'],
+            ['flows', 'Flows'],
+            ['classifications', 'Classifications'],
+            ['extradescriptions', 'Extra Descriptions']
         ]
 
         function renderRow(up, col){
             var html = document.getElementById('upload-row-template').innerHTML,
                 template = _.template(html),
-                div = document.createElement('div');
-            div.innerHTML = template({label: up});
+                div = document.createElement('div'),
+                tag = up[0],
+                label = up[1],
+                apiUrl = config.api[tag],
+                url = apiUrl;
+            console.log(url);
+            div.innerHTML = template({label: label,
+                                      templateUrl: url + '?request=template'});
             col.appendChild(div);
         }
 
