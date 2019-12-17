@@ -63,9 +63,20 @@ var BulkUploadView = BaseView.extend({
     },
 
     // Write to log
-    log: function(text, color){
+    log: function(text, time, color){
         var color = color || 'black';
-        this.logArea.innerHTML += "<span style='color:" + color + ";'>" + text + "</span><br>";
+        var time = (time == 'no') ? false : true;
+
+        displayDate = '';
+        if (time) {
+            var d = new Date(),
+            h = `${d.getHours()}`.padStart(2,'0'),
+            m = `${d.getMinutes()}`.padStart(2,'0'),
+            s = `${d.getSeconds()}`.padStart(2,'0'),
+            displayDate = h + ":" + m + ":" + s + ": ";
+        }
+
+        this.logArea.innerHTML += "<span style='color:" + color + ";'>" + displayDate + text + "</span><br>";
         this.logArea.scrollTop = this.logArea.scrollHeight;
     },
 
@@ -73,7 +84,8 @@ var BulkUploadView = BaseView.extend({
     upload: function(evt) {
         var _this = this,
             btn = evt.target,
-            tag = btn.dataset['tag'];
+            tag = btn.dataset['tag'],
+            label = btn.id.toLowerCase();
 
         if (!tag) return;
 
@@ -88,8 +100,6 @@ var BulkUploadView = BaseView.extend({
             return;
         }
 
-        this.log("Uploading (" + file.name + ")...");
-
         var data = {
             'bulk_upload': file,
             'encoding': encoding
@@ -100,6 +110,34 @@ var BulkUploadView = BaseView.extend({
         });
 
         _this.loader.activate();
+        var u_msg = "Uploading " + label + " (" + file.name + ")...";
+        _this.log(u_msg);
+        model.save(data, {
+            success: function (res) {
+                var res = res.toJSON(),
+                    updated = res.updated,
+                    created = res.created;
+                _this.log('Created models:');
+                if (created.length == 0) _this.log('-');
+                created.forEach(function(m){
+                    _this.log(JSON.stringify(m));
+                })
+                _this.log('Updated models:');
+                if (updated.length == 0) _this.log('-');
+                updated.forEach(function(m){
+                    _this.log(JSON.stringify(m));
+                })
+                msg = res.created.length + ' entries created, ' + res.updated.length + ' entries updated';
+                _this.log(msg, 'yes', 'green');
+                _this.log('-'.repeat(u_msg.length*1.5), 'no');
+            },
+            error: function (res) {
+                msg = res.responseJSON['detail'];
+                _this.log(msg, 'yes', 'red');
+                _this.log('-'.repeat(u_msg.length*1.5), 'no');
+            },
+        });
+        _this.loader.deactivate();
     }
 
 });

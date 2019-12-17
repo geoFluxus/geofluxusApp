@@ -29,6 +29,37 @@ module.exports = {
                 console.log(err.message)
             }
         }
-    }
+    },
+
+    // success: function (data, textStatus, jqXHR)
+    // error: function(response)
+    uploadForm: function(data, url, options){
+        var options = options || {},
+            method = options.method || 'POST',
+            success = options.success || function(){},
+            error = options.error || function(){};
+        var formData = new FormData();
+        for (var key in data){
+            if (data[key] instanceof Array){
+                data[key].forEach(function(d){
+                    formData.append(key, d);
+                })
+            }
+            else
+                formData.append(key, data[key]);
+        }
+        $.ajax({
+            type: method,
+            timeout: 3600000,
+            url: url,
+            data: formData,
+            cache: false,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            success: success,
+            error: error
+        });
+    },
 
 }
