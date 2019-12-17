@@ -1,6 +1,6 @@
 // Bulk Upload
-define(['views/common/baseview', 'underscore', 'app-config'],
-function (BaseView, _, config) {
+define(['views/common/baseview', 'underscore', 'models/model', 'app-config'],
+function (BaseView, _, Model, config) {
 
 var BulkUploadView = BaseView.extend({
 
@@ -20,9 +20,10 @@ var BulkUploadView = BaseView.extend({
             template = _.template(html),
             _this = this;
         this.el.innerHTML = template();
+        this.logArea = this.el.querySelector('#upload-log');
 
+        // Render all models for uploading
         var upCol = this.el.querySelector('#uploads');
-
         var ups = [
             ['activitygroups', 'Activity groups'],
             ['activities', 'Activities'],
@@ -51,8 +52,7 @@ var BulkUploadView = BaseView.extend({
                 label = up[1],
                 apiUrl = config.api[tag],
                 url = apiUrl;
-            console.log(url);
-            div.innerHTML = template({label: label,
+            div.innerHTML = template({label: label, apiTag: tag,
                                       templateUrl: url + '?request=template'});
             col.appendChild(div);
         }
@@ -62,9 +62,43 @@ var BulkUploadView = BaseView.extend({
         })
     },
 
+    // Write to log
+    log: function(text, color){
+        var color = color || 'black';
+        this.logArea.innerHTML += "<span style='color:" + color + ";'>" + text + "</span><br>";
+        this.logArea.scrollTop = this.logArea.scrollHeight;
+        console.log(this.logArea.scrollHeight);
+    },
+
     // Upload data from template
-    upload: function() {
-        console.log("Uploading...");
+    upload: function(evt) {
+        var _this = this,
+            btn = evt.target,
+            tag = btn.dataset['tag'];
+
+        if (!tag) return;
+
+        var row = this.el.querySelector('.row[data-tag="' + tag +  '"]'),
+            input = row.querySelector('input[type="file"]'),
+            file = input.files[0],
+            encoding = this.el.querySelector('#encoding-select').value;
+
+        // Check if there are files
+        if (!file){
+            this.alert('No file selected to upload!');
+            return;
+        }
+
+        this.log("Uploading (" + file.name + ")...", 'red');
+
+        var data = {
+            'bulk_upload': file,
+            'encoding': encoding
+        };
+
+        var model = new Model({}, {
+            apiTag: tag
+        });
     }
 
 });

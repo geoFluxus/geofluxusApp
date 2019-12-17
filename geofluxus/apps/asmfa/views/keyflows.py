@@ -1,3 +1,4 @@
+from geofluxus.apps.utils.views import (UnlimitedResultsSetPagination)
 from geofluxus.apps.utils.views import (PostGetViewMixin,
                                         ViewSetMixin,
                                         ModelPermissionViewSet)
@@ -28,6 +29,7 @@ class ProcessViewSet(PostGetViewMixin,
                      ViewSetMixin,
                      ModelPermissionViewSet):
     queryset = Process.objects.order_by('id')
+    pagination_class = UnlimitedResultsSetPagination
     serializer_class = ProcessSerializer
     serializers = {
         'list': ProcessListSerializer,
@@ -44,6 +46,7 @@ class WasteViewSet(PostGetViewMixin,
                    ViewSetMixin,
                    ModelPermissionViewSet):
     queryset = Waste.objects.order_by('id')
+    pagination_class = UnlimitedResultsSetPagination
     serializer_class = WasteSerializer
     serializers = {
         'list': WasteListSerializer,
@@ -60,6 +63,7 @@ class MaterialViewSet(PostGetViewMixin,
                       ViewSetMixin,
                       ModelPermissionViewSet):
     queryset = Material.objects.order_by('id')
+    pagination_class = UnlimitedResultsSetPagination
     serializer_class = MaterialSerializer
     serializers = {
         'list': MaterialListSerializer,
@@ -76,6 +80,7 @@ class ProductViewSet(PostGetViewMixin,
                      ViewSetMixin,
                      ModelPermissionViewSet):
     queryset = Product.objects.order_by('id')
+    pagination_class = UnlimitedResultsSetPagination
     serializer_class = ProductSerializer
     serializers = {
         'list': ProductListSerializer,
@@ -92,6 +97,7 @@ class CompositeViewSet(PostGetViewMixin,
                        ViewSetMixin,
                        ModelPermissionViewSet):
     queryset = Composite.objects.order_by('id')
+    pagination_class = UnlimitedResultsSetPagination
     serializer_class = CompositeSerializer
     serializers = {
         'list': CompositeListSerializer,

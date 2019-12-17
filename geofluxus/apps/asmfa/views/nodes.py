@@ -1,3 +1,4 @@
+from geofluxus.apps.utils.views import (UnlimitedResultsSetPagination)
 from geofluxus.apps.utils.views import (PostGetViewMixin,
                                         ViewSetMixin,
                                         ModelPermissionViewSet)
@@ -24,6 +25,7 @@ class ActivityGroupViewSet(PostGetViewMixin,
                            ViewSetMixin,
                            ModelPermissionViewSet):
     queryset = ActivityGroup.objects.order_by('id')
+    pagination_class = UnlimitedResultsSetPagination
     serializer_class = ActivityGroupSerializer
     serializers = {
         'list': ActivityGroupListSerializer,
@@ -40,6 +42,7 @@ class ActivityViewSet(PostGetViewMixin,
                       ViewSetMixin,
                       ModelPermissionViewSet):
     queryset = ActivityGroup.objects.order_by('id')
+    pagination_class = UnlimitedResultsSetPagination
     serializer_class = ActivitySerializer
     serializers = {
         'list': ActivityListSerializer,
@@ -56,6 +59,7 @@ class CompanyViewSet(PostGetViewMixin,
                      ViewSetMixin,
                      ModelPermissionViewSet):
     queryset = Company.objects.order_by('id')
+    pagination_class = UnlimitedResultsSetPagination
     serializer_class = CompanySerializer
     serializers = {
         'list': CompanyListSerializer,
@@ -72,6 +76,7 @@ class ActorViewSet(PostGetViewMixin,
                    ViewSetMixin,
                    ModelPermissionViewSet):
     queryset = Actor.objects.order_by('id')
+    pagination_class = UnlimitedResultsSetPagination
     serializer_class = ActorSerializer
     serializers = {
         'list': ActorListSerializer,

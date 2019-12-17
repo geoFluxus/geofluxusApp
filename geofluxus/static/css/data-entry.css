@@ -46,5 +46,10 @@ a.template:hover {
 #upload-log {
     width: 100%;
     height: 600px;
-    background: white;
+    background-color: white;
+    box-shadow: inset 0 0 10px 10px grey;
+    padding: 20px;
+    resize: both;
+    overflow: auto;
+    white-space: nowrap;
 }

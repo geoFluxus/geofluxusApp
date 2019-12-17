@@ -1,10 +1,7 @@
-from rest_framework import viewsets, exceptions, mixins , status
-from django.views import View
-from django.http import (HttpResponseBadRequest,
-                         HttpResponse,
+from rest_framework import viewsets, exceptions, mixins
+from django.http import (HttpResponse,
                          HttpResponseForbidden,
-                         JsonResponse,
-                         )
+                         JsonResponse)
 from django.db.models import ProtectedError
 from django.utils.translation import ugettext as _
 from abc import ABC
@@ -13,6 +10,12 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework.response import Response
 from rest_framework.utils.serializer_helpers import ReturnDict
+from rest_framework_datatables import pagination
+
+
+class UnlimitedResultsSetPagination(pagination.DatatablesPageNumberPagination):
+    page_size = 100
+    page_size_query_param = 'page_size'
 
 
 class PostGetViewMixin:

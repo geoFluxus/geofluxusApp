@@ -35,7 +35,7 @@ class BulkValidationError(Exception):
 
 
 class FileFormatError(BulkValidationError):
-    """File Encoding is broken"""
+    """file encoding is broken"""
 
 
 class MalformedFileError(BulkValidationError):

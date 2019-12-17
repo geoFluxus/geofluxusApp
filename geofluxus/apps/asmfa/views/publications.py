@@ -1,3 +1,4 @@
+from geofluxus.apps.utils.views import (UnlimitedResultsSetPagination)
 from geofluxus.apps.utils.views import (PostGetViewMixin,
                                         ViewSetMixin,
                                         ModelPermissionViewSet)
@@ -16,6 +17,7 @@ class PublicationTypeViewSet(PostGetViewMixin,
                              ViewSetMixin,
                              ModelPermissionViewSet):
     queryset = PublicationType.objects.order_by('id')
+    pagination_class = UnlimitedResultsSetPagination
     serializer_class = PublicationTypeSerializer
     serializers = {
         'list': PublicationTypeListSerializer,
@@ -32,6 +34,7 @@ class PublicationViewSet(PostGetViewMixin,
                          ViewSetMixin,
                          ModelPermissionViewSet):
     queryset = Publication.objects.order_by('id')
+    pagination_class = UnlimitedResultsSetPagination
     serializer_class = PublicationSerializer
     serializers = {
         'list': PublicationListSerializer,

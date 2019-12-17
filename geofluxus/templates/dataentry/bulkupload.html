@@ -8,8 +8,8 @@
               </div>
               <div class="col-md-6">
                   <select title="File encoding" id="encoding-select" class="form-control" style="float: right; width: 110px;">
-                    <option value="cp1252">CP 1252</option>
                     <option value="utf-8">UTF 8</option>
+                    <option value="cp1252">CP 1252</option>
                   </select>
               </div>
           </div>
@@ -19,7 +19,6 @@
               <h2>Log</h2>
           </div>
           <div id="upload-log" class="bordered sunken">
-              <br>
           </div>
       </div>
   </div>
@@ -27,15 +26,15 @@
 
 <!-- a row for a single model api route to bulk upload data to -->
 <script type="text/template" id="upload-row-template">
-  <div class="upload row bordered">
+  <div class="upload row bordered" data-tag="<%= apiTag %>">
       <div class="container">
           <div class="row">
             <label><%= label %></label>
             <a href="<%= templateUrl %>" class="template" style="margin-left: 30px;"><span class="far fa-file-alt" style="margin-right: 2px;"></span>Template</a>
           </div>
           <div class="row">
-            <input type="file" accept=".xlsx, .tsv, .csv, .ods">
-            <button class="btn btn-primary upload" title="Upload File">
+            <input type="file" accept=".xlsx, .tsv, .csv">
+            <button class="btn btn-primary upload"  data-tag="<%= apiTag %>" title="Upload File">
               Upload
               <span class="fas fa-arrow-circle-up" style="margin-left: 5px;"></span>
             </button>

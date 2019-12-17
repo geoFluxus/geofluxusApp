@@ -1,3 +1,4 @@
+from geofluxus.apps.utils.views import (UnlimitedResultsSetPagination)
 from geofluxus.apps.utils.views import (PostGetViewMixin,
                                         ViewSetMixin,
                                         ModelPermissionViewSet)
@@ -15,7 +16,8 @@ from geofluxus.apps.asmfa.serializers import (AdminLevelCreateSerializer,
 class AdminLevelViewSet(PostGetViewMixin,
                         ViewSetMixin,
                         ModelPermissionViewSet):
-    queryset = AdminLevel.objects.all()
+    queryset = AdminLevel.objects.order_by('id')
+    pagination_class = UnlimitedResultsSetPagination
     serializer_class = AdminLevelSerializer
     serializers = {
         'list': AdminLevelListSerializer,
@@ -23,7 +25,7 @@ class AdminLevelViewSet(PostGetViewMixin,
     }
 
     def get_queryset(self):
-        queryset = AdminLevel.objects.all()
+        queryset = AdminLevel.objects.order_by('id')
         return queryset
 
 
@@ -31,7 +33,8 @@ class AdminLevelViewSet(PostGetViewMixin,
 class AreaViewSet(PostGetViewMixin,
                   ViewSetMixin,
                   ModelPermissionViewSet):
-    queryset = Area.objects.all()
+    queryset = Area.objects.order_by('id')
+    pagination_class = UnlimitedResultsSetPagination
     serializer_class = AreaSerializer
     serializers = {
         'list': AreaListSerializer,
@@ -39,5 +42,5 @@ class AreaViewSet(PostGetViewMixin,
     }
 
     def get_queryset(self):
-        queryset = Area.objects.all()
+        queryset = Area.objects.order_by('id')
         return queryset
