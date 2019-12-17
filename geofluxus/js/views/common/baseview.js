@@ -1,5 +1,5 @@
-define(['backbone', 'underscore'],
-function(Backbone, _){
+define(['backbone', 'underscore', 'utils/utils'],
+function(Backbone, _, utils){
 
 var BaseView = Backbone.View.extend({
 
@@ -8,6 +8,7 @@ var BaseView = Backbone.View.extend({
         _.bindAll(this, 'alert');
         var _this = this;
         this.template = options.template;
+        this.loader = new utils.Loader(options.el, {disable: true});
     },
 
     events: {

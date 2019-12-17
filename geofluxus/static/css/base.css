@@ -60,3 +60,28 @@ body {
 .modal-backdrop {
     background-color: rgba(0,0,0,.3);
 }
+
+.loader {
+    position: fixed;
+    top: 50%;
+    left: 45%;
+    z-index: 50000000;
+    width: 150px;
+    height: 150px;
+    border: 16px solid black;
+    border-radius: 50%;
+    border-top: 16px solid white;
+    box-shadow: 0 0 20px white, inset 0 0 20px white;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

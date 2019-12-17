@@ -67,7 +67,6 @@ var BulkUploadView = BaseView.extend({
         var color = color || 'black';
         this.logArea.innerHTML += "<span style='color:" + color + ";'>" + text + "</span><br>";
         this.logArea.scrollTop = this.logArea.scrollHeight;
-        console.log(this.logArea.scrollHeight);
     },
 
     // Upload data from template
@@ -89,7 +88,7 @@ var BulkUploadView = BaseView.extend({
             return;
         }
 
-        this.log("Uploading (" + file.name + ")...", 'red');
+        this.log("Uploading (" + file.name + ")...");
 
         var data = {
             'bulk_upload': file,
@@ -99,6 +98,8 @@ var BulkUploadView = BaseView.extend({
         var model = new Model({}, {
             apiTag: tag
         });
+
+        _this.loader.activate();
     }
 
 });
