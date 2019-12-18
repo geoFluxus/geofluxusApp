@@ -13,6 +13,8 @@
                   </select>
               </div>
           </div>
+          <div id="upload-column" class="bordered sunken">
+          </div>
       </div>
       <div class='col-md-6' id="logs" style="margin-left: 40px;">
           <div class="row">
@@ -34,7 +36,7 @@
 
 <!-- a row for a single model api route to bulk upload data to -->
 <script type="text/template" id="upload-row-template">
-  <div class="upload row bordered" data-tag="<%= apiTag %>">
+  <div class="row-bordered" data-tag="<%= apiTag %>">
       <div class="container">
           <div class="row">
             <label><%= label %></label>
@@ -49,5 +51,4 @@
           </div>
       </div>
   </div>
-  <br><br>
 </script>

@@ -41,7 +41,7 @@ class ActivityGroupViewSet(PostGetViewMixin,
 class ActivityViewSet(PostGetViewMixin,
                       ViewSetMixin,
                       ModelPermissionViewSet):
-    queryset = ActivityGroup.objects.order_by('id')
+    queryset = Activity.objects.order_by('id')
     pagination_class = UnlimitedResultsSetPagination
     serializer_class = ActivitySerializer
     serializers = {

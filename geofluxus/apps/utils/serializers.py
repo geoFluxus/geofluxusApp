@@ -390,12 +390,12 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
                                         dtype=object, keep_default_na=False,
                                         na_values=self.nan_values)
             else:
-                raise MalformedFileError(_('unsupported filetype'))
+                raise MalformedFileError(_('Unsupported filetype {}'.format(ext)))
         except pd.errors.ParserError as e:
             raise MalformedFileError(str(e))
         except UnicodeDecodeError:
             raise MalformedFileError(
-                _('wrong file-encoding ({} used)'.format(encoding)))
+                _('Wrong file-encoding ({} used)'.format(encoding)))
 
         # pandas might set index automatically (esp. for excel files)
         dataframe.reset_index(inplace=True)
@@ -425,7 +425,6 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
         ret = super().to_internal_value(data)  # would throw exc. else
         ret['dataframe'] = dataframe
 
-        # ToDo: put this into validate()
         missing_ind = [i for i in self.index_columns if i not in
                        dataframe.columns]
         if missing_ind:
@@ -468,7 +467,8 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
                 self.error_mask.messages, url
             )
 
-        df_done = self._add_pk_relations(df_parsed)
+        df_done = df_parsed
+        # df_done = self._add_pk_relations(df_parsed)
 
         rename = {}
         for k, v in self.field_map.items():
@@ -632,25 +632,25 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
                     self.error_mask.add_message(msg)
         return data
 
-    def _add_pk_relations(self, dataframe):
-        '''
-        add pk related fields to dataframe
-        '''
-        request = self.context['request']
-        url_pks = request.session.get('url_pks', {})
-        for pk, rel in self.parent_lookup_kwargs.items():
-            split = rel.split('__')
-            # ignore chained attributes
-            if len(split) > 2:
-                continue
-            pk = url_pks[pk]
-            name = split[0]
-            # get the related class of the attribute
-            attr = getattr(self.Meta.model, name)
-            related_model = attr.field.related_model
-            obj = related_model.objects.get(id=pk)
-            dataframe[name] = obj
-        return dataframe
+    # def _add_pk_relations(self, dataframe):
+    #     '''
+    #     add pk related fields to dataframe
+    #     '''
+    #     request = self.context['request']
+    #     url_pks = request.session.get('url_pks', {})
+    #     for pk, rel in self.parent_lookup_kwargs.items():
+    #         split = rel.split('__')
+    #         # ignore chained attributes
+    #         if len(split) > 2:
+    #             continue
+    #         pk = url_pks[pk]
+    #         name = split[0]
+    #         # get the related class of the attribute
+    #         attr = getattr(self.Meta.model, name)
+    #         related_model = attr.field.related_model
+    #         obj = related_model.objects.get(id=pk)
+    #         dataframe[name] = obj
+    #     return dataframe
 
     def save_data(self, dataframe):
         """

@@ -12,10 +12,20 @@ from rest_framework.response import Response
 from rest_framework.utils.serializer_helpers import ReturnDict
 from rest_framework_datatables import pagination
 
+from django.utils.deprecation import MiddlewareMixin
 
+
+# Custom Pagination Class
 class UnlimitedResultsSetPagination(pagination.DatatablesPageNumberPagination):
     page_size = 100
     page_size_query_param = 'page_size'
+
+
+# Exception Handler Middleware Mixin
+class StackOverflowMiddleware(MiddlewareMixin):
+    def process_exception(self, request, exception):
+        msg = exception.message
+        return HttpResponse(msg)
 
 
 class PostGetViewMixin:
@@ -160,12 +170,8 @@ class ViewSetMixin(ReadOnlyViewSetMixin):
     This Mixin provides general list and create methods filtering by
     lookup arguments and query-parameters matching fields of the requested objects
     class-variables
-    --------------
-       casestudy_only - if True, get only items of the current casestudy
-       additional_filters - dict, keyword arguments for additional filters
     """
     def create(self, request, **kwargs):
-        """check permission for casestudy"""
         return super().create(request, **kwargs)
 
     def error_response(self, message, file_url=None):
@@ -175,17 +181,17 @@ class ViewSetMixin(ReadOnlyViewSetMixin):
         response = JsonResponse(res, status=400)
         return response
 
-    def perform_create(self, serializer):
-        url_pks = serializer.context['request'].session['url_pks']
-        new_kwargs = {}
-        for k, v in url_pks.items():
-            if k not in self.serializer_class.parent_lookup_kwargs:
-                continue
-            key = self.serializer_class.parent_lookup_kwargs[k].replace('__id', '_id')
-            if '__' in key:
-                continue
-            new_kwargs[key] = v
-        serializer.save(**new_kwargs)
+    # def perform_create(self, serializer):
+    #     url_pks = serializer.context['request'].session['url_pks']
+    #     new_kwargs = {}
+    #     for k, v in url_pks.items():
+    #         if k not in self.serializer_class.parent_lookup_kwargs:
+    #             continue
+    #         key = self.serializer_class.parent_lookup_kwargs[k].replace('__id', '_id')
+    #         if '__' in key:
+    #             continue
+    #         new_kwargs[key] = v
+    #     serializer.save(**new_kwargs)
 
     def list(self, request, **kwargs):
         if request.query_params.get('request', None) == 'template':

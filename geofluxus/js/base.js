@@ -1,6 +1,8 @@
 // Base
-require(['jquery', 'document-ready',
+require(['jquery',
+         'document-ready',
          'bootstrap',
+         'utils/overrides',
          'static/css/base.css',
          'static/css/main-navbar.css',
          'static/css/sidebar.css',

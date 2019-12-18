@@ -23,7 +23,7 @@ var BulkUploadView = BaseView.extend({
         this.logArea = this.el.querySelector('#upload-log');
 
         // Render all models for uploading
-        var upCol = this.el.querySelector('#uploads');
+        var upCol = this.el.querySelector('#upload-column');
         var ups = [
             ['activitygroups', 'Activity groups'],
             ['activities', 'Activities'],
@@ -89,7 +89,7 @@ var BulkUploadView = BaseView.extend({
 
         if (!tag) return;
 
-        var row = this.el.querySelector('.row[data-tag="' + tag +  '"]'),
+        var row = this.el.querySelector('.row-bordered[data-tag="' + tag +  '"]'),
             input = row.querySelector('input[type="file"]'),
             file = input.files[0],
             encoding = this.el.querySelector('#encoding-select').value;
@@ -117,22 +117,26 @@ var BulkUploadView = BaseView.extend({
                 var res = res.toJSON(),
                     updated = res.updated,
                     created = res.created;
-                _this.log('Created models:');
-                if (created.length == 0) _this.log('-');
+                _this.log('Created:');
+                if (created.length == 0) _this.log('-', 'no');
                 created.forEach(function(m){
-                    _this.log(JSON.stringify(m));
+                    _this.log(JSON.stringify(m), 'no');
                 })
-                _this.log('Updated models:');
-                if (updated.length == 0) _this.log('-');
+                _this.log('Updated:');
+                if (updated.length == 0) _this.log('-', 'no');
                 updated.forEach(function(m){
-                    _this.log(JSON.stringify(m));
+                    _this.log(JSON.stringify(m), 'no');
                 })
                 msg = res.created.length + ' entries created, ' + res.updated.length + ' entries updated';
                 _this.log(msg, 'yes', 'green');
                 _this.log('-'.repeat(u_msg.length*1.5), 'no');
             },
             error: function (res) {
-                msg = res.responseJSON['detail'];
+                if (res.responseJSON) {
+                    msg = res.responseJSON['detail'];
+                } else {
+                    msg = res.responseText;
+                }
                 _this.log(msg, 'yes', 'red');
                 _this.log('-'.repeat(u_msg.length*1.5), 'no');
             },
