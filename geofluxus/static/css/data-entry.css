@@ -17,12 +17,17 @@
     white-space: nowrap;
 }
 
-.row-bordered {
+.upload-row {
     box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.3);
 }
 
 .row {
     padding: 20px;
+}
+
+div.col-md-6 {
+    padding-right: 0px;
+    padding-left: 0px;
 }
 
 label {
@@ -33,7 +38,6 @@ label {
 }
 
 input {
-    width: 80%;
     color: white;
 }
 
@@ -60,4 +64,11 @@ a.template {
 a.template:hover {
     color: red;
     text-decoration: none;
+}
+
+#count {
+    float: right;
+    padding-top: 5px;
+    font-size: 15px;
+    color: blue;
 }

@@ -36,18 +36,27 @@
 
 <!-- a row for a single model api route to bulk upload data to -->
 <script type="text/template" id="upload-row-template">
-  <div class="row-bordered" data-tag="<%= apiTag %>">
+  <div class="upload-row" data-tag="<%= apiTag %>">
       <div class="container">
           <div class="row">
-            <label><%= label %></label>
-            <a href="<%= templateUrl %>" class="template" style="margin-left: 30px;"><span class="far fa-file-alt" style="margin-right: 2px;"></span>Template</a>
+              <div class="col-md-6">
+                 <label><%= label %></label>
+                 <a href="<%= templateUrl %>" class="template" style="margin-left: 30px;"><span class="far fa-file-alt" style="margin-right: 2px;"></span>Template</a>
+              </div>
+              <div class="col-md-6">
+                <div id="count"></div>
+              </div>
           </div>
           <div class="row">
-            <input type="file" accept=".xlsx, .tsv, .csv">
-            <button class="btn btn-primary upload"  data-tag="<%= apiTag %>" id="<%= label %>" Upload File">
-              Upload
-              <span class="fas fa-arrow-circle-up" style="margin-left: 5px;"></span>
-            </button>
+              <div class="col-md-6">
+                <input type="file" accept=".xlsx, .tsv, .csv">
+              </div>
+              <div class="col-md-6">
+                <button class="btn btn-primary upload"  data-tag="<%= apiTag %>" id="<%= label %>" title="Upload File" style="float: right;">
+                  Upload
+                  <span class="fas fa-arrow-circle-up" style="margin-left: 5px;"></span>
+                </button>
+              </div>
           </div>
       </div>
   </div>

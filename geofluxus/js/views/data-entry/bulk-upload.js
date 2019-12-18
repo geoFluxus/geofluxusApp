@@ -1,6 +1,10 @@
 // Bulk Upload
-define(['views/common/baseview', 'underscore', 'models/model', 'app-config'],
-function (BaseView, _, Model, config) {
+define(['views/common/baseview',
+        'underscore',
+        'models/model',
+        'collections/collection',
+        'app-config'],
+function (BaseView, _, Model, Collection, config) {
 
 var BulkUploadView = BaseView.extend({
 
@@ -49,8 +53,8 @@ var BulkUploadView = BaseView.extend({
                 template = _.template(html),
                 div = document.createElement('div'),
                 tag = up[0],
-                label = up[1],
-                apiUrl = config.api[tag],
+                label = up[1];
+                apiUrl = config.api[tag];
                 url = apiUrl;
             div.innerHTML = template({label: label, apiTag: tag,
                                       templateUrl: url + '?request=template'});
@@ -60,6 +64,8 @@ var BulkUploadView = BaseView.extend({
         ups.forEach(function(up) {
             renderRow(up, upCol);
         })
+
+        this.refreshStatus();
     },
 
     // Write to log
@@ -89,7 +95,7 @@ var BulkUploadView = BaseView.extend({
 
         if (!tag) return;
 
-        var row = this.el.querySelector('.row-bordered[data-tag="' + tag +  '"]'),
+        var row = this.el.querySelector('.upload-row[data-tag="' + tag +  '"]'),
             input = row.querySelector('input[type="file"]'),
             file = input.files[0],
             encoding = this.el.querySelector('#encoding-select').value;
@@ -142,6 +148,47 @@ var BulkUploadView = BaseView.extend({
             },
         });
         _this.loader.deactivate();
+    },
+
+    refreshStatus: function(tag){
+        var _this = this,
+            rows;
+
+        if (tag && typeof tag === 'string')
+            rows = [this.el.querySelector('.upload-row[data-tag="' + tag + '"]')];
+        else
+            rows = Array.prototype.slice.call(this.el.querySelectorAll('.upload-row'));
+
+        rows.forEach(function(row){
+            console.log(row);
+            var countDiv = row.querySelector('#count'),
+                tag = row.dataset['tag'],
+                data = {};
+
+            if (!tag) return;
+            console.log(tag);
+
+            var collection = new Collection({}, {
+                apiTag: tag
+            });
+
+            // reduce the amount of data returned by paginated collections
+            collection.state.pageSize = 1;
+
+            var count = '?';
+            countDiv.innerHTML = 'count' + ': ' + count;
+
+            collection.fetch({
+                data: data,
+                success: function(){
+                    // paginated collections return the count
+                    // else get the length of the response
+                    var count = collection.count || collection.length;
+                    countDiv.innerHTML = 'count';
+                    countDiv.innerHTML += ': ' + count;
+                }
+            });
+        })
     }
 
 });
