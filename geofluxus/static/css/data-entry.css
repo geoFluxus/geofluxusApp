@@ -55,6 +55,12 @@ input {
     box-shadow: none;
 }
 
+.btn:focus {
+    background-color: white;
+    border-color: white;
+    color: black;
+}
+
 a.template {
     padding-top: 5px;
     font-size: 15px;

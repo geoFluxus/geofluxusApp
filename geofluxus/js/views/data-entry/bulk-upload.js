@@ -16,6 +16,7 @@ var BulkUploadView = BaseView.extend({
     // DOM Events
     events: {
         "click button.upload": "upload",
+        "click #refresh-status": "refreshStatus",
     },
 
     // Rendering
@@ -136,6 +137,7 @@ var BulkUploadView = BaseView.extend({
                 msg = res.created.length + ' entries created, ' + res.updated.length + ' entries updated';
                 _this.log(msg, 'yes', 'green');
                 _this.log('-'.repeat(u_msg.length*1.5), 'no');
+                _this.refreshStatus();
             },
             error: function (res) {
                 if (res.responseJSON) {
@@ -160,13 +162,11 @@ var BulkUploadView = BaseView.extend({
             rows = Array.prototype.slice.call(this.el.querySelectorAll('.upload-row'));
 
         rows.forEach(function(row){
-            console.log(row);
             var countDiv = row.querySelector('#count'),
                 tag = row.dataset['tag'],
                 data = {};
 
             if (!tag) return;
-            console.log(tag);
 
             var collection = new Collection({}, {
                 apiTag: tag
