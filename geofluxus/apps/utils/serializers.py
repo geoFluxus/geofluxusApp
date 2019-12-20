@@ -3,7 +3,6 @@ import pandas as pd
 from django_pandas.io import read_frame
 from django.db.utils import Error
 from django.contrib.gis.geos.error import GEOSException
-from django.contrib.gis.db.models.functions import GeoFunc
 from django.db.models.fields import NOT_PROVIDED
 import numpy as np
 import os
@@ -21,10 +20,6 @@ from django.contrib.gis.geos import GEOSGeometry, WKTWriter
 from django.conf import settings
 from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
-
-
-class MakeValid(GeoFunc):
-    function='ST_MakeValid'
 
 
 class BulkValidationError(Exception):
@@ -545,7 +540,7 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
                 types = dataframe['wkt'].apply(type)
                 str_idx = types == str
                 error_idx = dataframe.index[str_idx]
-                error_msg = _('invalid geometry')
+                error_msg = _('Invalid geometry')
                 self.error_mask.set_error(error_idx, 'wkt', error_msg)
                 if len(error_idx) > 0:
                     error_occured = _('Invalid geometries')

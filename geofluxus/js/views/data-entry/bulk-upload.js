@@ -137,7 +137,7 @@ var BulkUploadView = BaseView.extend({
                 msg = res.created.length + ' entries created, ' + res.updated.length + ' entries updated';
                 _this.log(msg, 'yes', 'green');
                 _this.log('-'.repeat(u_msg.length*1.5), 'no');
-                _this.refreshStatus();
+                _this.refreshStatus(tag);
             },
             error: function (res) {
                 if (res.responseJSON) {

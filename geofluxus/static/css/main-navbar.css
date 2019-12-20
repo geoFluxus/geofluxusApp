@@ -17,7 +17,7 @@
 
 .navbar-brand:hover {
     color: white;
-    text-shadow: 0px 0px 5px white;
+    text-shadow: 0px 0px 10px white;
 }
 
 .nav-item {
@@ -33,11 +33,11 @@
 .nav-link:hover {
     color: white;
     font-size: 30px;
-    text-shadow: 0px 0px 5px white;
+    text-shadow: 0px 0px 10px white;
 }
 
 .nav-item.active > .nav-link {
     color: white;
     font-size: 30px;
-    text-shadow: 0px 0px 5px white;
+    text-shadow: 0px 0px 10px white;
 }

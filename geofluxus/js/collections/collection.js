@@ -2,22 +2,8 @@ define(["backbone-pageable", "underscore", "models/model", "app-config"],
 
 function(PageableCollection, _, Model, config) {
 
-    /**
-    *
-    * @author Christoph Franke
-    * @name module:collections/GDSECollection
-    * @augments Backbone.PageableCollection
-    *
-    * @see https://github.com/backbone-paginator/backbone.paginator
-    */
-    var Collection = PageableCollection.extend(
-        /** @lends module:collections/GDSECollection.prototype */
-        {
-        /**
-        * generates the url based on the passed options when initializing
-        *
-        * @returns {string} the url string
-        */
+    var Collection = PageableCollection.extend({
+
         url: function(){
             // if concrete url was passed: take this and ignore the rest
             if (this.baseurl) return this.baseurl;
