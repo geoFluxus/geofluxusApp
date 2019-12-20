@@ -40,7 +40,7 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAdminUser',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
@@ -68,7 +68,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # Exception Handler Middleware Mixin
-    'geofluxus.apps.utils.views.StackOverflowMiddleware'
+    'geofluxus.apps.utils.views.ExceptionHandlerMiddleware'
 ]
 
 ROOT_URLCONF = 'geofluxus.urls'

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}geoFluxus | Access denied{% endblock %}
+
+{% block content %}
+    <div class="container" style="margin-top: 10%; margin-left: 35%;">
+          <div class="row">
+               <div class="col-md-2 text-center">
+                    <p><i class="fa fa-exclamation-triangle fa-5x" style="color: white; padding: 10px;"></i><br/>Status Code: 403</p>
+               </div>
+               <div class="col-md-10">
+                    <h3>ACCESS DENIED!</h3>
+                    <p>You are not authorized to access this page.</p>
+                    <a class="btn btn-danger" href="/">Go Back</a>
+               </div>
+          </div>
+          <br><br>
+          <img src="{{STATIC_URL}}img/exit.jpg" height="300" width="500" style="text-align: center;">
+     </div>
+{% endblock %}

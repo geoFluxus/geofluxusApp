@@ -15,9 +15,9 @@ function($, ready){
            document.getElementById('page-content-wrapper').style.paddingLeft = '0px';
            document.getElementById('page-content-wrapper').style.paddingTop = '0px';
          }
-         else
+         else {
            document.getElementById('sidebar-wrapper').style.display = 'inline';
          }
-    )
+    });
 
 })

@@ -22,7 +22,7 @@ class UnlimitedResultsSetPagination(pagination.DatatablesPageNumberPagination):
 
 
 # Exception Handler Middleware Mixin
-class StackOverflowMiddleware(MiddlewareMixin):
+class ExceptionHandlerMiddleware(MiddlewareMixin):
     def process_exception(self, request, exception):
         msg = exception.message
         return HttpResponse(msg)

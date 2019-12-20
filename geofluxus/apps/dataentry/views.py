@@ -8,4 +8,7 @@ class DataEntryView(LoginRequiredMixin, TemplateView):
     title = "Data Entry"
 
     def get(self, request):
-        return render(request, self.template_name)
+        if request.user.is_superuser:
+            return render(request, self.template_name)
+        else:
+            return render(request, "access_denied.html")
