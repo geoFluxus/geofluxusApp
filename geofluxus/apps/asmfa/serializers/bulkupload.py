@@ -1,4 +1,5 @@
-from geofluxus.apps.utils.serializers import (BulkSerializerMixin)
+from geofluxus.apps.utils.serializers import (BulkSerializerMixin,
+                                              Reference)
 from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Activity,
                                          Company,
@@ -52,7 +53,9 @@ class ActivityCreateSerializer(BulkSerializerMixin,
     field_map = {
         'name': 'name',
         'nace': 'nace',
-        'activitygroup': 'activitygroup'
+        'activitygroup': Reference(name='activitygroup',
+                                   referenced_field='code',
+                                   referenced_model=ActivityGroup)
     }
     index_columns = ['name']
 
@@ -77,9 +80,13 @@ class ActorCreateSerializer(BulkSerializerMixin,
     field_map = {
         'name': 'name',
         'geom': 'geom',
-        'activity': 'activity',
+        'activity': Reference(name='activity',
+                              referenced_field='nace',
+                              referenced_model=Activity),
         'identifier': 'identifier',
-        'company': 'company',
+        'company': Reference(name='company',
+                             referenced_field='identifier',
+                             referenced_model=Company),
         'postcode': 'postcode',
         'address': 'address',
         'city': 'city',
@@ -110,7 +117,9 @@ class PublicationCreateSerializer(BulkSerializerMixin,
         'author': 'author',
         'note': 'note',
         'title': 'title',
-        'publicationtype': 'publicationtype',
+        'publicationtype': Reference(name='publicationtype',
+                                     referenced_field='name',
+                                     referenced_model=PublicationType),
         'url': 'url',
         'file_url': 'file_url'
     }
@@ -188,12 +197,24 @@ class FlowChainCreateSerializer(BulkSerializerMixin,
         'amount': 'amount',
         'trips': 'trips',
         'year': 'year',
-        'process': 'process',
-        'waste': 'waste',
-        'materials': 'materials',
-        'products': 'products',
-        'composites': 'composites',
-        'publication': 'publication'
+        'process': Reference(name='process',
+                             referenced_field='name',
+                             referenced_model=Process),
+        'waste': Reference(name='waste',
+                           referenced_field='ewc_name',
+                           referenced_model=Waste),
+        'materials': Reference(name='materials',
+                               referenced_field='name',
+                               referenced_model=Material),
+        'products': Reference(name='products',
+                              referenced_field='name',
+                              referenced_model=Product),
+        'composites': Reference(name='composites',
+                                referenced_field='name',
+                                referenced_model=Composite),
+        'publication': Reference(name='publication',
+                                 referenced_field='citekey',
+                                 referenced_model=Publication)
     }
     index_columns = ['identifier']
 
@@ -205,8 +226,12 @@ class FlowCreateSerializer(BulkSerializerMixin,
                            FlowSerializer):
     field_map = {
         'flowchain': 'flowchain',
-        'origin': 'origin',
-        'destination': 'destination',
+        'origin': Reference(name='origin',
+                            referenced_field='identifier',
+                            referenced_model=Actor),
+        'destination': Reference(name='destination',
+                                 referenced_field='identifier',
+                                 referenced_model=Actor),
         'origin_role': 'origin_role',
         'destination_role': 'destination_role'
     }
@@ -219,7 +244,9 @@ class FlowCreateSerializer(BulkSerializerMixin,
 class ClassificationCreateSerializer(BulkSerializerMixin,
                                      ClassificationSerializer):
     field_map = {
-        'flowchain': 'flowchain',
+        'flowchain': Reference(name='flowchain',
+                               referenced_field='identifier',
+                               referenced_model=FlowChain),
         'clean': 'clean',
         'mixed': 'mixed',
         'direct_use': 'direct_use'
@@ -233,7 +260,9 @@ class ClassificationCreateSerializer(BulkSerializerMixin,
 class ExtraDescriptionCreateSerializer(BulkSerializerMixin,
                                        ExtraDescriptionSerializer):
     field_map = {
-        'flowchain': 'flowchain',
+        'flowchain': Reference(name='flowchain',
+                               referenced_field='identifier',
+                               referenced_model=FlowChain),
         'type': 'type',
         'description': 'description'
     }
@@ -258,13 +287,19 @@ class AdminLevelCreateSerializer(BulkSerializerMixin,
 class AreaCreateSerializer(BulkSerializerMixin,
                            AreaSerializer):
     field_map = {
-        'adminlevel': 'adminlevel',
+        'adminlevel': Reference(name='adminlevel',
+                                referenced_field='level',
+                                referenced_model=AdminLevel),
         'name': 'name',
         'code': 'code',
         'geom': 'geom',
-        'parent_area': 'parent_area',
+        'parent_area': Reference(name='parent_area',
+                                 referenced_field='code',
+                                 referenced_model=Area),
         'inhabitants': 'inhabitants',
-        'publication': 'publication'
+        'publication': Reference(name='publication',
+                                 referenced_field='citekey',
+                                 referenced_model=Publication)
     }
     index_columns = ['name']
 
