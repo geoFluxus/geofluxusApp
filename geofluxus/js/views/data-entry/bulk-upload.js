@@ -138,8 +138,10 @@ var BulkUploadView = BaseView.extend({
                 _this.log(msg, 'yes', 'green');
                 _this.log('-'.repeat(u_msg.length*1.5), 'no');
                 _this.refreshStatus(tag);
+                _this.loader.deactivate();
             },
             error: function (res) {
+                console.log(res);
                 if (res.responseJSON) {
                     msg = res.responseJSON['detail'];
                 } else {
@@ -147,9 +149,9 @@ var BulkUploadView = BaseView.extend({
                 }
                 _this.log(msg, 'yes', 'red');
                 _this.log('-'.repeat(u_msg.length*1.5), 'no');
+                _this.loader.deactivate();
             },
         });
-        _this.loader.deactivate();
     },
 
     refreshStatus: function(tag){

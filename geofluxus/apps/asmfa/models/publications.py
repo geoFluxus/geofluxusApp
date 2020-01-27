@@ -14,5 +14,9 @@ class Publication(models.Model):
     note = models.TextField()
     publicationtype = models.ForeignKey(PublicationType,
                                         on_delete=models.CASCADE)
-    url = models.URLField(max_length=200)
-    file_url = models.URLField(max_length=200)
+    url = models.URLField(max_length=200,
+                          blank=True,
+                          null=True)
+    file_url = models.URLField(max_length=200,
+                               blank=True,
+                               null=True)

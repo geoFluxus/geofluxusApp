@@ -69,7 +69,7 @@ class CompanyCreateSerializer(BulkSerializerMixin,
         'name': 'name',
         'identifier': 'identifier'
     }
-    index_columns = ['name']
+    index_columns = ['identifier']
 
     def get_queryset(self):
         return Company.objects.all()
@@ -78,8 +78,7 @@ class CompanyCreateSerializer(BulkSerializerMixin,
 class ActorCreateSerializer(BulkSerializerMixin,
                             ActorSerializer):
     field_map = {
-        'name': 'name',
-        'geom': 'geom',
+        'wkt': 'geom',
         'activity': Reference(name='activity',
                               referenced_field='nace',
                               referenced_model=Activity),
@@ -91,9 +90,11 @@ class ActorCreateSerializer(BulkSerializerMixin,
         'address': 'address',
         'city': 'city',
         'country': 'country',
-        'publication': 'publication'
+        'publication': Reference(name='publication',
+                                 referenced_field='citekey',
+                                 referenced_model=Publication)
     }
-    index_columns = ['name']
+    index_columns = ['identifier']
 
     def get_queryset(self):
         return Actor.objects.all()
@@ -135,7 +136,7 @@ class ProcessCreateSerializer(BulkSerializerMixin,
         'name': 'name',
         'code': 'code'
     }
-    index_columns = ['name']
+    index_columns = ['code']
 
     def get_queryset(self):
         return Process.objects.all()
@@ -148,7 +149,7 @@ class WasteCreateSerializer(BulkSerializerMixin,
         'ewc_code': 'ewc_code',
         'hazardous': 'hazardous'
     }
-    index_columns = ['name']
+    index_columns = ['ewc_code']
 
     def get_queryset(self):
         return Waste.objects.all()
@@ -198,10 +199,10 @@ class FlowChainCreateSerializer(BulkSerializerMixin,
         'trips': 'trips',
         'year': 'year',
         'process': Reference(name='process',
-                             referenced_field='name',
+                             referenced_field='code',
                              referenced_model=Process),
         'waste': Reference(name='waste',
-                           referenced_field='ewc_name',
+                           referenced_field='ewc_code',
                            referenced_model=Waste),
         'materials': Reference(name='materials',
                                referenced_field='name',

@@ -204,8 +204,10 @@ class ViewSetMixin(ReadOnlyViewSetMixin):
                         'spreadsheetml.sheet'
                     )
                 )
+                model = self.serializer_class.Meta.model
+                filename = model._meta.object_name.lower()
                 response['Content-Disposition'] = \
-                    'attachment; filename=template.xlsx'
+                    'attachment; filename={}.xlsx'.format(filename)
                 response.write(content)
                 return response
         return super().list(request, **kwargs)

@@ -25,8 +25,8 @@ class Company(models.Model):
 
 # Actor
 class Actor(models.Model):
-    name = models.CharField(max_length=255)
-    geom = gis.PointField(blank=True, null=True)
+    geom = gis.PointField(blank=True,
+                          null=True)
     activity = models.ForeignKey(Activity,
                                  on_delete=models.CASCADE)
     identifier = models.CharField(max_length=255)

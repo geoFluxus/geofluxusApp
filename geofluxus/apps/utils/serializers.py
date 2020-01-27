@@ -498,6 +498,17 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
     def _parse_bool(self, x):
         if isinstance(x, bool):
             return x
+
+        # Numeric values
+        if isinstance(x, int):
+            if x == 0:
+                return False
+            elif x == 1:
+                return True
+            else:
+                return np.NaN
+
+        # String values
         x = x.lower()
         if x == 'true':
             return True
@@ -615,7 +626,7 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
                     self.self_refs.append(column)
                     continue
                 data, missing = field.merge(
-                    data, keyflow=self.keyflow, referencing_column=column,
+                    data, referencing_column=column,
                     rel=self)
 
                 if len(missing) > 0:

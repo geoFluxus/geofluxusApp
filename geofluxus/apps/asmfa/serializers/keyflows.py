@@ -53,7 +53,7 @@ class MaterialSerializer(HyperlinkedModelSerializer):
 
 
 class MaterialListSerializer(MaterialSerializer):
-    class Meta(MaterialSerializer):
+    class Meta(MaterialSerializer.Meta):
         fields = ('id',
                   'name')
 
@@ -83,6 +83,6 @@ class CompositeSerializer(HyperlinkedModelSerializer):
 
 
 class CompositeListSerializer(CompositeSerializer):
-    class Meta(CompositeSerializer):
+    class Meta(CompositeSerializer.Meta):
         fields = ('id',
                   'name')

@@ -15,11 +15,13 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Area,
                                          Publication,
                                          PublicationType)
+from django.contrib.gis.admin import GeoModelAdmin
+
 
 # Register your models here.
 admin.site.register(ActivityGroup)
 admin.site.register(Activity)
-admin.site.register(Actor)
+admin.site.register(Actor, GeoModelAdmin)
 admin.site.register(Process)
 admin.site.register(Waste)
 admin.site.register(Material)

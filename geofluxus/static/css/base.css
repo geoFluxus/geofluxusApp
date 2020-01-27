@@ -47,7 +47,7 @@ body {
 .btn:focus {
     background-color: primary;
     border-color: primary;
-    color: white;
+    color: black;
 }
 
 .dropdown-button {
