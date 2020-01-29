@@ -38,7 +38,7 @@ class FlowChainSerializer(HyperlinkedModelSerializer):
 
 
 class FlowChainListSerializer(FlowChainSerializer):
-    class Meta:
+    class Meta(FlowChainSerializer.Meta):
         fields = ('id',
                   'identifier',
                   'route',

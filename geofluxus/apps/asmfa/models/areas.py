@@ -8,6 +8,9 @@ class AdminLevel(models.Model):
     name = models.CharField(max_length=255)
     level = models.IntegerField()
 
+    def __str__(self):
+        return self.name
+
     def create_area(self, **kwargs):
         """Create an area of the according level"""
         area = Area.objects.create(adminlevel=self, **kwargs)
@@ -27,3 +30,6 @@ class Area(models.Model):
     publication = models.ForeignKey(Publication,
                                     null=True, blank=True,
                                     on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name

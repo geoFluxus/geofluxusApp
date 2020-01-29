@@ -141,9 +141,14 @@ var BulkUploadView = BaseView.extend({
                 _this.loader.deactivate();
             },
             error: function (res) {
-                console.log(res);
                 if (res.responseJSON) {
-                    msg = res.responseJSON['detail'];
+                    msg = res.responseJSON.message;
+                    var url = res.responseJSON.file_url;
+                    if (url){
+                        msg += '<br><a href='+url+' style="color: rgb(255,0,0)">' +
+                               '<span class="far fa-file-alt" style="margin-right: 2px;">' +
+                               '</span><strong>Download here</strong></a>';
+                    }
                 } else {
                     msg = res.responseText;
                 }

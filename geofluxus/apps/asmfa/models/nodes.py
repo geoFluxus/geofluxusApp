@@ -8,6 +8,9 @@ class ActivityGroup(models.Model):
     name = models.CharField(max_length=255)
     code = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.name
+
 
 # Activity
 class Activity(models.Model):
@@ -16,11 +19,17 @@ class Activity(models.Model):
     activitygroup = models.ForeignKey(ActivityGroup,
                                       on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.name
+
 
 # Company
 class Company(models.Model):
     name = models.CharField(max_length=255)
     identifier = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
 
 
 # Actor
@@ -39,3 +48,6 @@ class Actor(models.Model):
     publication = models.ForeignKey(Publication,
                                     null=True, blank=True,
                                     on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.identifier

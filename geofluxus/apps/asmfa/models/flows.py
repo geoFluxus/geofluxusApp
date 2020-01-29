@@ -31,6 +31,9 @@ class FlowChain(models.Model):
                                     null=True, blank=True,
                                     on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.identifier
+
 
 # Flow
 class Flow(models.Model):
@@ -44,6 +47,10 @@ class Flow(models.Model):
                                     related_name='inputs')
     origin_role = models.CharField(max_length=255)
     destination_role = models.CharField(max_length=255)
+
+    def __str__(self):
+        return "{}->{}".format(self.origin,
+                               self.destination)
 
 
 # MaterialInChain
@@ -78,6 +85,9 @@ class Classification(models.Model):
     mixed = models.BooleanField(null=True)
     direct_use = models.BooleanField(null=True)
 
+    def __str__(self):
+        return self.flowchain
+
 
 # ExtraDescription
 class ExtraDescription(models.Model):
@@ -97,3 +107,6 @@ class ExtraDescription(models.Model):
                                )
     type = models.CharField(max_length=255, choices=description_type_choices)
     description = models.TextField(null=True)
+
+    def __str__(self):
+        return self.flowchain

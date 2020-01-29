@@ -6,6 +6,9 @@ class Process(models.Model):
     name = models.CharField(max_length=255)
     code = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.name
+
 
 # Waste
 class Waste(models.Model):
@@ -14,19 +17,29 @@ class Waste(models.Model):
     hazardous = models.BooleanField()
 
     def __str__(self):
-        return self.ewc_code
+        return "{} - {}".format(self.ewc_code,
+                                self.ewc_name)
 
 
 # Material
 class Material(models.Model):
     name = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.name
+
 
 # Product
 class Product(models.Model):
     name = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.name
+
 
 # Composite
 class Composite(models.Model):
     name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name

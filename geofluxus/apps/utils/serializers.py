@@ -90,12 +90,13 @@ class Reference:
     """
     def __init__(self, name: str, referenced_field: str,
                  referenced_model: Type[Model], filter_args: dict={},
-                 allow_null=False, regex=None):
+                 allow_null=False, many=False, regex=None):
         self.name = name
         self.referenced_column = referenced_field
         self.referenced_model = referenced_model
         self.filter_args = filter_args.copy()
         self.allow_null = allow_null
+        self.many = many
         self.regex = regex
 
 
@@ -342,8 +343,8 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
     def __init_subclass__(cls, **kwargs):
         """add bulk_upload to the cls.Meta if it does not exist there"""
         fields = cls.Meta.fields
-        if fields and 'bulk_upload' not in fields:
-            cls.Meta.fields = tuple(list(fields) + ['bulk_upload'])
+        # if fields and 'bulk_upload' not in fields:
+        #     cls.Meta.fields = tuple(list(fields) + ['bulk_upload'])
         lower_map = {}
         # cast all keys to lower case
         for key in cls.field_map.keys():
@@ -395,8 +396,9 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
         # pandas might set index automatically (esp. for excel files)
         dataframe.reset_index(inplace=True)
         del dataframe['index']
+
         dataframe = dataframe.\
-            rename(columns={c: c.lower().rstrip('*')
+            rename(columns={c: c.lower().rstrip('*').rstrip('&')
                             for c in dataframe.columns})
         return dataframe
 
@@ -615,7 +617,7 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
         for column, field in self.field_map.items():
             if column not in columns:
                 continue
-            if isinstance(field, Reference):
+            if isinstance(field, Reference) and not(field.many):
                 # self reference detected, handled later
                 if (skip_self_references and
                 (field.referenced_model == self.Meta.model)):
@@ -778,7 +780,7 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
                     continue
                 if type(v) in [int, float] and np.isnan(v):
                     v = None
-                setattr(model, c, v)
+            setattr(model, c, v)
             model.save()
             updated.append(model)
         updated = queryset.filter(id__in=[m.id for m in updated])
@@ -870,8 +872,51 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
         dataframe = validated_data['dataframe']
         dataframe = self.parse_dataframe(dataframe)
         new, updated = self.save_data(dataframe)
+        self.save_m2mdata(dataframe)
         result = BulkResult(created=new, updated=updated)
         return result
+
+    def save_m2mdata(self, df):
+        m2m_fields = []
+        for field in self.field_map.values():
+            # Check for m2m references
+            if isinstance(field, Reference) and \
+                    field.many:
+                m2m_fields.append(field)
+
+        # Retrieve model entries
+        queryset = self.Meta.model.objects
+
+        for field in m2m_fields:
+            name, model = field.name, field.referenced_model # check the column name
+            ids = df[df.columns.intersection(self.index_columns)]
+            data = df[name]
+
+            # Update each entry
+            for id, row in zip(ids.itertuples(index=False), data):
+                for k, v in id._asdict().items():
+                    entry = queryset.filter(**{k : v})[0] # has to be unique!
+                    # First clear all previous data
+                    attr = getattr(entry, name)
+                    attr.clear()
+                    # Add new values to m2m attribute
+                    if type(row) in [int, float] and \
+                            np.isnan(row): # NaN values
+                        attr.add()
+                    else:
+                        # Retrieve all values
+                        values = row.replace(', ', ',') \
+                                    .replace(' ,', ',') \
+                                    .replace(' , ', ',') \
+                                    .split(',')
+                        for val in values:
+                            try:
+                                m2m_value = model.objects.get(name=val)
+                                attr.add(m2m_value)
+                            except model.DoesNotExist:
+                                msg = _('"{v}" does not exist in "{m}"' \
+                                        .format(v=val, m=model.__name__))
+                                raise ValidationError(msg)
 
     def to_representation(self, instance):
         """

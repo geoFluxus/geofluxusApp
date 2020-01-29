@@ -13,19 +13,13 @@ from rest_framework.utils.serializer_helpers import ReturnDict
 from rest_framework_datatables import pagination
 
 from django.utils.deprecation import MiddlewareMixin
+from geofluxus.apps.utils.serializers import BulkValidationError
 
 
 # Custom Pagination Class
 class UnlimitedResultsSetPagination(pagination.DatatablesPageNumberPagination):
     page_size = 100
     page_size_query_param = 'page_size'
-
-
-# Exception Handler Middleware Mixin
-class ExceptionHandlerMiddleware(MiddlewareMixin):
-    def process_exception(self, request, exception):
-        msg = exception.message
-        return HttpResponse(msg)
 
 
 class PostGetViewMixin:
@@ -172,7 +166,10 @@ class ViewSetMixin(ReadOnlyViewSetMixin):
     class-variables
     """
     def create(self, request, **kwargs):
-        return super().create(request, **kwargs)
+        try:
+            return super().create(request, **kwargs)
+        except BulkValidationError as e:
+            return self.error_response(e.message, file_url=e.path)
 
     def error_response(self, message, file_url=None):
         res = { 'message': message }

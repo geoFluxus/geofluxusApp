@@ -5,8 +5,11 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Process,
                                          Waste,
                                          Material,
+                                         MaterialInChain,
                                          Product,
+                                         ProductInChain,
                                          Composite,
+                                         CompositeInChain,
                                          FlowChain,
                                          Flow,
                                          Classification,
@@ -17,6 +20,19 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          PublicationType)
 from django.contrib.gis.admin import GeoModelAdmin
 
+class MaterialInChainInline(admin.TabularInline):
+    model = MaterialInChain
+
+class ProductInChainInline(admin.TabularInline):
+    model = ProductInChain
+
+class CompositeInChainInline(admin.TabularInline):
+    model = CompositeInChain
+
+class FlowChainAdmin(admin.ModelAdmin):
+    inlines = (MaterialInChainInline,
+               ProductInChainInline,
+               CompositeInChainInline)
 
 # Register your models here.
 admin.site.register(ActivityGroup)
@@ -27,7 +43,7 @@ admin.site.register(Waste)
 admin.site.register(Material)
 admin.site.register(Product)
 admin.site.register(Composite)
-admin.site.register(FlowChain)
+admin.site.register(FlowChain, FlowChainAdmin)
 admin.site.register(Flow)
 admin.site.register(Classification)
 admin.site.register(ExtraDescription)
