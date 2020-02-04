@@ -20,6 +20,7 @@ class AdminLevel(models.Model):
 # Area
 class Area(models.Model):
     adminlevel = models.ForeignKey(AdminLevel,
+                                   null=True, blank=True,
                                    on_delete=models.CASCADE)
     name = models.TextField(null=True, blank=True)
     code = models.TextField()

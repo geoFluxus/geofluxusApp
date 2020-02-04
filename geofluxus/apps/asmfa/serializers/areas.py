@@ -2,6 +2,8 @@ from rest_framework.serializers import (HyperlinkedModelSerializer,
                                         PrimaryKeyRelatedField)
 from geofluxus.apps.asmfa.models import (AdminLevel,
                                          Area)
+from rest_framework_gis.serializers import (GeoFeatureModelSerializer,
+                                            GeometryField)
 
 
 # AdminLevel
@@ -22,13 +24,16 @@ class AdminLevelListSerializer(AdminLevelSerializer):
 
 
 # Area
-class AreaSerializer(HyperlinkedModelSerializer):
+class AreaSerializer(HyperlinkedModelSerializer,
+                     GeoFeatureModelSerializer):
+    geom = GeometryField()
     adminlevel = PrimaryKeyRelatedField(read_only=True)
     parent_area = PrimaryKeyRelatedField(read_only=True)
     publication = PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Area
+        geo_field = 'geom'
         fields = ('url',
                  'id',
                  'adminlevel',

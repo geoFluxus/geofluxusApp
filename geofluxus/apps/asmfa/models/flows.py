@@ -49,8 +49,9 @@ class Flow(models.Model):
     destination_role = models.CharField(max_length=255)
 
     def __str__(self):
-        return "{}->{}".format(self.origin,
-                               self.destination)
+        return "{} : {} -> {}".format(self.flowchain,
+                                      self.origin,
+                                      self.destination)
 
 
 # MaterialInChain
@@ -86,27 +87,29 @@ class Classification(models.Model):
     direct_use = models.BooleanField(null=True)
 
     def __str__(self):
-        return self.flowchain
+        return '{}'.format(self.flowchain)
 
 
 # ExtraDescription
 class ExtraDescription(models.Model):
     flowchain = models.ForeignKey(FlowChain,
                                   on_delete=models.CASCADE)
-    description_type_choices = (("RE", "Reason"),
-                                ("OR", "Origin"),
+    description_type_choices = (("reason", "Reason"),
+                                ("origin", "Origin"),
                                 ("COL", "Colour"),
-                                ("ST", "State"),
+                                ("state", "State"),
                                 ("DIM", "Dimensions"),
                                 ("SH", "Shape"),
-                                ("CON", "Consistency"),
+                                ("consistency", "Consistency"),
                                 ("COD", "Codes"),
-                                ("MAT", "Material type"),
-                                ("PRO", "Product type"),
-                                ("COMP", "Composite type")
+                                ("m-type", "Material type"),
+                                ("p-type", "Product type"),
+                                ("c-type", "Composite type"),
+                                ("other", "Other")
                                )
     type = models.CharField(max_length=255, choices=description_type_choices)
     description = models.TextField(null=True)
 
     def __str__(self):
-        return self.flowchain
+        return '{} : {}'.format(self.flowchain,
+                                self.type)

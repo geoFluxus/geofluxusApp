@@ -12,7 +12,6 @@ from rest_framework.response import Response
 from rest_framework.utils.serializer_helpers import ReturnDict
 from rest_framework_datatables import pagination
 
-from django.utils.deprecation import MiddlewareMixin
 from geofluxus.apps.utils.serializers import BulkValidationError
 
 

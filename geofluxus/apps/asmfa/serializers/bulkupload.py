@@ -232,7 +232,9 @@ class FlowChainCreateSerializer(BulkSerializerMixin,
 class FlowCreateSerializer(BulkSerializerMixin,
                            FlowSerializer):
     field_map = {
-        'flowchain': 'flowchain',
+        'flowchain': Reference(name='flowchain',
+                               referenced_field='identifier',
+                               referenced_model=FlowChain),
         'origin': Reference(name='origin',
                             referenced_field='identifier',
                             referenced_model=Actor),
@@ -242,7 +244,7 @@ class FlowCreateSerializer(BulkSerializerMixin,
         'origin_role': 'origin_role',
         'destination_role': 'destination_role'
     }
-    index_columns = ['origin', 'destination']
+    index_columns = ['flowchain', 'origin', 'destination']
 
     def get_queryset(self):
         return Flow.objects.all()
@@ -273,7 +275,7 @@ class ExtraDescriptionCreateSerializer(BulkSerializerMixin,
         'type': 'type',
         'description': 'description'
     }
-    index_columns = ['flowchain']
+    index_columns = ['flowchain', 'type']
 
     def get_queryset(self):
         return ExtraDescription.objects.all()
@@ -294,19 +296,17 @@ class AdminLevelCreateSerializer(BulkSerializerMixin,
 class AreaCreateSerializer(BulkSerializerMixin,
                            AreaSerializer):
     field_map = {
-        'adminlevel': Reference(name='adminlevel',
-                                referenced_field='level',
-                                referenced_model=AdminLevel),
         'name': 'name',
         'code': 'code',
-        'geom': 'geom',
-        'parent_area': Reference(name='parent_area',
-                                 referenced_field='code',
-                                 referenced_model=Area),
-        'inhabitants': 'inhabitants',
-        'publication': Reference(name='publication',
-                                 referenced_field='citekey',
-                                 referenced_model=Publication)
+        'wkt': 'geom',
+        'level': Reference(name='adminlevel',
+                           referenced_field='level',
+                           referenced_model=AdminLevel),
+        'parent': Reference(name='parent_area',
+                            referenced_field='name',
+                            referenced_model=Area,
+                            allow_null=True),
+        'inhabitants': 'inhabitants'
     }
     index_columns = ['name']
 

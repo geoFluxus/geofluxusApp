@@ -1,5 +1,6 @@
 from rest_framework.serializers import (HyperlinkedModelSerializer,
-                                        PrimaryKeyRelatedField)
+                                        PrimaryKeyRelatedField,
+                                        CharField)
 from geofluxus.apps.asmfa.models import (PublicationType,
                                          Publication)
 
@@ -21,7 +22,8 @@ class PublicationTypeListSerializer(PublicationTypeSerializer):
 
 # Publication
 class PublicationSerializer(HyperlinkedModelSerializer):
-    publicationtype = PrimaryKeyRelatedField(read_only=True)
+    publicationtype = CharField(source='publicationtype.name',
+                                read_only=True)
 
     class Meta:
         model = Publication

@@ -744,6 +744,52 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
 
         return new_models, updated_models
 
+    def save_m2mdata(self, df):
+        m2m_fields = []
+        for field in self.field_map.values():
+            # Check for m2m references
+            if isinstance(field, Reference) and \
+                    field.many:
+                m2m_fields.append(field)
+
+        # Retrieve model entries
+        queryset = self.Meta.model.objects
+
+        for field in m2m_fields:
+            # check the column name, model
+            name, model = field.name, field.referenced_model
+            # recover from dataframe:
+            # unique identifiers to recover each entry from queryset,
+            # m2m field data
+            ids = df[df.columns.intersection(self.index_columns)]
+            data = df[name]
+
+            # Update each entry
+            for id, row in zip(ids.itertuples(index=False), data):
+                for k, v in id._asdict().items():
+                    entry = queryset.filter(**{k : v})[0] # has to be unique!
+                    # First clear all previous data
+                    attr = getattr(entry, name) # Recover the m2m field
+                    attr.clear()
+                    # Add new values to m2m attribute
+                    if type(row) in [int, float] and \
+                            np.isnan(row): # NaN values
+                        attr.add()
+                    else:
+                        # Retrieve all values
+                        values = row.replace(', ', ',') \
+                                    .replace(' ,', ',') \
+                                    .replace(' , ', ',') \
+                                    .split(',')
+                        for val in values:
+                            try:
+                                m2m_value = model.objects.get(name=val)
+                                attr.add(m2m_value)
+                            except model.DoesNotExist:
+                                msg = _('"{v}" does not exist in "{m}"')\
+                                    .format(v=val, m=model.__name__)
+                                raise ValidationError(msg)
+
     @property
     def index_fields(self):
         '''
@@ -875,48 +921,6 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
         self.save_m2mdata(dataframe)
         result = BulkResult(created=new, updated=updated)
         return result
-
-    def save_m2mdata(self, df):
-        m2m_fields = []
-        for field in self.field_map.values():
-            # Check for m2m references
-            if isinstance(field, Reference) and \
-                    field.many:
-                m2m_fields.append(field)
-
-        # Retrieve model entries
-        queryset = self.Meta.model.objects
-
-        for field in m2m_fields:
-            name, model = field.name, field.referenced_model # check the column name
-            ids = df[df.columns.intersection(self.index_columns)]
-            data = df[name]
-
-            # Update each entry
-            for id, row in zip(ids.itertuples(index=False), data):
-                for k, v in id._asdict().items():
-                    entry = queryset.filter(**{k : v})[0] # has to be unique!
-                    # First clear all previous data
-                    attr = getattr(entry, name)
-                    attr.clear()
-                    # Add new values to m2m attribute
-                    if type(row) in [int, float] and \
-                            np.isnan(row): # NaN values
-                        attr.add()
-                    else:
-                        # Retrieve all values
-                        values = row.replace(', ', ',') \
-                                    .replace(' ,', ',') \
-                                    .replace(' , ', ',') \
-                                    .split(',')
-                        for val in values:
-                            try:
-                                m2m_value = model.objects.get(name=val)
-                                attr.add(m2m_value)
-                            except model.DoesNotExist:
-                                msg = _('"{v}" does not exist in "{m}"' \
-                                        .format(v=val, m=model.__name__))
-                                raise ValidationError(msg)
 
     def to_representation(self, instance):
         """
