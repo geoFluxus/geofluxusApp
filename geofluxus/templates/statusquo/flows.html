@@ -1,0 +1,217 @@
+<!--Flows-->
+<script type="text/template" id="flows-template">
+    <!--Filter editing-->
+    <div class="block">
+        <div class="row" style="padding-top: 0px;">
+          <h4 style="margin-right: 30px; margin-top: 0.3rem;">View</h4>
+          <select name="filter" class="form-control" style="max-width: 500px; margin-right: 30px;">
+            <option>First</option>
+            <option>Second</option>
+          </select>
+          <button class="btn btn-primary" title="Edit filter" style="margin-right: 10px; height: 38px;" id="edit-flowfilter-button">Edit</button>
+          <button class="btn btn-primary" title="Create filter" style="margin-right: 10px; height: 38px;" id="new-flowfilter-button">New</button>
+          <button class="btn btn-warning" title="Delete filter" style="background-color: red; color:white; border: red; height: 38px;" id="delete-flowfilter-button">Delete</button>
+        </div>
+        <div class="block">
+          <div id="filter-attributes">
+              <button id='upload-flowfilter-button' title="Save filter" class="btn btn-danger btn-upload">
+                <span class="fas fa-arrow-circle-up" style="margin-right:10px;"></span>Save Changes
+              </button>
+              <div class="row">
+                <h6 style="width: 8%; margin-top: 0.3rem;">Name</h6>
+                <input class="form-control" name="name" style="width: 92%; height: 30px; font-weight: 600; font-size: 1em;">
+                <br><br>
+                <h6 style="width: 8%; margin-top: 0.3rem;">Description</h6>
+                <input class="form-control" name='description' rows="1" style="width: 92%; height: 30px; font-size: 1em;"></input>
+              </div>
+          </div>
+        </div>
+    </div>
+
+    <!--Filters-->
+    <div class="block">
+        <h4>Filter Settings</h4>
+        <div class="block">
+            <h4 style="float: left;">Activities & Areas</h4>
+            <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Activities and Actors Filter" data-html="true" tabindex="0"
+              data-content='Filter the flows between activity groups, activities and actors'>
+            </a>
+            <br><br>
+            <div class="row" style="padding-top: 0px;">
+                <div class="col-md-2">
+                    <label>Filter level</label>
+                    <select class="form-control" name="node-level-select" style="max-width: 200px;">
+                      <option value="activitygroup">Activity Group</option>
+                      <option value="activity">Activity</option>
+                      <option value="actor">Actor</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <label>Activity Group</label>
+                <select name="group" multiple class="form-control" data-live-search="true" data-dropup-auto="false" data-size="6" style="resize: vertical;">
+                </select>
+              </div>
+              <div class="col-md-2">
+                <div style="font-size: 30px; position: absolute; left: -10px; top: 20px;">></div>
+                <label>Activity</label>
+                <select name="activity" multiple class="form-control" data-live-search="true" data-dropup-auto="false" data-size="6" style="resize: vertical;">
+                </select>
+              </div>
+              <div class="col-md-2">
+                <div style="font-size: 30px; position: absolute; left: -10px; top: 20px;">></div>
+                <label>Actor</label>
+                <select name="actor" multiple class="form-control" data-live-search="true" data-dropup-auto="false" data-size="10" style="resize: vertical;">
+                </select>
+              </div>
+              <div class="col-md-2">
+                <label>Role</label>
+                <select name="role" class="form-control">
+                  <option value='production'>Production</option>
+                  <option value='collection'>Collection</option>
+                  <option value='treatment'>Treatment</option>
+                  <option value='all'>All</option>
+                  <option value='any'>Any</option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                  <input name="anonymous" type="checkbox"/>&nbsp;<font color="white">Anonymize actors</font>
+              </div>
+            </div>
+        </div>
+        <div class="block">
+            <h4 style="float: left;">Flows</h4>
+            <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Flow Filters" data-html="true" tabindex="0"
+              data-content='Filter the flows in between activity groups, activities and actors'>
+            </a>
+            <br><br>
+            <div class="row" style="padding-top: 0px;">
+                <div class="col-md-2">
+                    <label>Year</label>
+                    <select name="year" class="form-control">
+                      <option value='all'>All</option>
+                      <option value='2013'>2013</option>
+                      <option value='2014'>2014</option>
+                      <option value='2015'>2015</option>
+                      <option value='2016'>2016</option>
+                      <option value='2017'>2017</option>
+                      <option value='2018'>2018</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <label>Process</label>
+                    <select name="process-select" multiple class="form-control" data-live-search="true" data-size="6" style="resize: vertical;">
+                      <option value="-1">All</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label>Waste</label>
+                    <select name="waste-select" multiple class="form-control" data-live-search="true" data-size="6" style="resize: vertical;">
+                      <option value="-1">All</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <label>Route</label>
+                    <select name="route" class="form-control">
+                      <option value='both'>ignore</option>
+                      <option value='no'>not route</option>
+                      <option value='yes'>route</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label>Collector</label>
+                    <select name="collector" class="form-control">
+                      <option value='both'>ignore</option>
+                      <option value='no'>not collector</option>
+                      <option value='yes'>collector</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                      <label>Hazardous</label>
+                      <select name="hazardous" class="form-control">
+                        <option value='both'>ignore</option>
+                        <option value='no'>not hazardous</option>
+                        <option value='yes'>hazardous</option>
+                      </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <label>Clean</label>
+                    <select name="clean-select" class="form-control" multiple style="resize: vertical;">
+                      <option value='-1'>ignore</option>
+                      <option data-divider="true"></option>
+                      <option value='unknown'>unknown</option>
+                      <option value='no'>not clean</option>
+                      <option value='yes'>clean</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label>Mixed</label>
+                    <select name="mixed-select" class="form-control" multiple style="resize: vertical;">
+                      <option value='-1'>ignore</option>
+                      <option data-divider="true"></option>
+                      <option value='unknown'>unknown</option>
+                      <option value='no'>not mixed</option>
+                      <option value='yes'>mixed</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label>Direct use</label>
+                    <select name="direct-select" class="form-control" multiple style="resize: vertical;">
+                      <option value='-1'>ignore</option>
+                      <option data-divider="true"></option>
+                      <option value='unknown'>unknown</option>
+                      <option value='no'>not direct</option>
+                      <option value='yes'>direct</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label>Composite</label>
+                    <select name="compo-select" class="form-control" multiple style="resize: vertical;">
+                      <option value='-1'>ignore</option>
+                      <option data-divider="true"></option>
+                      <option value='unknown'>unknown</option>
+                      <option value='no'>product</option>
+                      <option value='yes'>composite</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <label>Material</label>
+                    <div id='material-filter'></div>
+                </div>
+                <div class="col-md-4">
+                    <label>Product</label>
+                    <div id='product-filter'></div>
+                </div>
+                <div class="col-md-4">
+                    <label>Composition</label>
+                    <div id='comp-filter'></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+          <label class="input-label" style="margin-top: .5rem; margin-right: 10px;">Display Level</label>
+          <select class="form-control" name="display-level-select" style="max-width: 200px; float: left;">
+            <option value="activitygroup">Activity Group</option>
+            <option value="activity">Activity</option>
+            <option value="actor">Actor</option>
+          </select>
+          <button id='apply-filters' class="btn btn-primary" title="Apply the filters to activities and actors and flows and render the sankey diagram." style="margin-left: 20px; float: left;">Apply Filters and Render</button>
+          <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Render Filter Settings" style="float: left;" data-html="true" tabindex="0"
+            data-content="
+              Rerender the sankey diagram with data filtered by the selections made in the <b>Filters</b> section above
+              (click the Filters row to expand/collapse it).<br><br>
+              All data is based on flows between actors. The data will be aggregated to the selected <b>Display Level</b>.
+            ">
+          </a>
+        </div>
+    </div>
+</script>

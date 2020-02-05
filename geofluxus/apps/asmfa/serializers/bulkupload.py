@@ -306,7 +306,10 @@ class AreaCreateSerializer(BulkSerializerMixin,
                             referenced_field='name',
                             referenced_model=Area,
                             allow_null=True),
-        'inhabitants': 'inhabitants'
+        'inhabitants': 'inhabitants',
+        'publication': Reference(name='publication',
+                                 referenced_field='citekey',
+                                 referenced_model=Publication)
     }
     index_columns = ['name']
 

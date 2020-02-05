@@ -1,5 +1,5 @@
 a {
-    color: #FFFFFF;
+    color: white;
 }
 
 p {
@@ -7,8 +7,12 @@ p {
 }
 
 
-h1, h2, h3 {
-    color: #FFFFFF;
+h1, h2, h3, h4, h5, h6 {
+    color: white;
+}
+
+label {
+    color: white;
 }
 
 body {
@@ -48,6 +52,23 @@ body {
     background-color: primary;
     border-color: primary;
     color: black;
+}
+
+.help-icon.fa-question-circle {
+    margin-left: 10px;
+    font-size: 25px;
+    color: grey;
+}
+
+.help-icon.fa-question-circle:hover {
+    margin-left: 10px;
+    font-size: 25px;
+    color: white;
+    cursor: pointer;
+}
+
+.help-icon.fa-question-circle:focus{
+    outline: none;
 }
 
 .dropdown-button {

@@ -8,7 +8,6 @@ require(['jquery',
          'static/css/sidebar.css',
          '@fortawesome/fontawesome-free/css/all.css'],
 function($, ready){
-
     ready(function(){
          // hide sidebar if there is no content in it
          if (document.getElementById('sidebar-content').childElementCount == 0){
@@ -19,5 +18,4 @@ function($, ready){
            document.getElementById('sidebar-wrapper').style.display = 'inline';
          }
     });
-
 })
