@@ -38,6 +38,7 @@ var FilterFlowsView = BaseView.extend({
             apiTag: 'adminlevels'
         });
 
+        this.loader.activate();
         var promises = [
             this.activitygroups.fetch(),
             this.activities.fetch(),
@@ -50,6 +51,7 @@ var FilterFlowsView = BaseView.extend({
             this.adminlevels.fetch()
         ];
         Promise.all(promises).then(function(){
+            _this.loader.deactivate();
             _this.render();
         })
     },
@@ -65,11 +67,33 @@ var FilterFlowsView = BaseView.extend({
             template = _.template(html),
             _this = this;
         // Add to template context !!!
-        this.el.innerHTML = template({processes: this.processes});
+        this.el.innerHTML = template({ processes: this.processes,
+                                       wastes: this.wastes,
+                                       materials: this.materials,
+                                       products: this.products,
+                                       composites: this.composites
+                                     });
 
         // Select filters
         this.processSelect = this.el.querySelector('select[name="process-select"]');
+        this.wasteSelect = this.el.querySelector('select[name="waste-select"]');
+        this.materialSelect = this.el.querySelector('select[name="material-select"]');
+        this.productSelect = this.el.querySelector('select[name="product-select"]');
+        this.compositeSelect = this.el.querySelector('select[name="composite-select"]');
+        this.cleanSelect = this.el.querySelector('select[name="clean-select"]');
+        this.mixedSelect = this.el.querySelector('select[name="mixed-select"]');
+        this.directSelect = this.el.querySelector('select[name="direct-select"]');
+        this.compoSelect = this.el.querySelector('select[name="compo-select"]');
+
         $(this.processSelect).selectpicker();
+        $(this.wasteSelect).selectpicker();
+        $(this.materialSelect).selectpicker();
+        $(this.productSelect).selectpicker();
+        $(this.compositeSelect).selectpicker();
+        $(this.cleanSelect).selectpicker();
+        $(this.mixedSelect).selectpicker();
+        $(this.directSelect).selectpicker();
+        $(this.compoSelect).selectpicker();
 
         this.addEventListeners();
     },
@@ -77,28 +101,36 @@ var FilterFlowsView = BaseView.extend({
     addEventListeners: function(){
         var _this = this;
 
-//        function multiCheck(evt, clickedIndex, checked){
-//            var select = evt.target;
-//            if (checked) {
-//                // 'All clicked -> deselect other options
-//                if (clickedIndex == 0){
-//                    $(select).selectpicker('deselectAll');
-//                    select.value = -1;
-//                }
-//                // other option clicked -> deselect 'All'
-//                else {
-//                    select.option[0].selected = false;
-//                }
-//            }
-//            // nothing selected anymore -> select 'All'
-//            if (select.value == null || select.value == ''){
-//                select.value = -1;
-//            }
-//            $(select).selectpicker('refresh');
-//            console.log(select.value);
-//        }
-//
-//        $(this.processSelect).on('changed.bs.select', multiCheck);
+        function multiCheck(evt, clickedIndex, checked){
+            var select = evt.target;
+            if (checked) {
+                // 'All clicked -> deselect other options
+                if (clickedIndex == 0){
+                    $(select).selectpicker('deselectAll');
+                    select.value = -1;
+                }
+                // other option clicked -> deselect 'All'
+                else {
+                    select.options[0].selected = false;
+                }
+            }
+            // nothing selected anymore -> select 'All'
+            if (select.value == null || select.value == ''){
+                select.value = -1;
+            }
+            $(select).selectpicker('refresh');
+            console.log(select.value);
+        }
+
+        $(this.processSelect).on('changed.bs.select', multiCheck);
+        $(this.wasteSelect).on('changed.bs.select', multiCheck);
+        $(this.materialSelect).on('changed.bs.select', multiCheck);
+        $(this.productSelect).on('changed.bs.select', multiCheck);
+        $(this.compositeSelect).on('changed.bs.select', multiCheck);
+        $(this.cleanSelect).on('changed.bs.select', multiCheck);
+        $(this.mixedSelect).on('changed.bs.select', multiCheck);
+        $(this.directSelect).on('changed.bs.select', multiCheck);
+        $(this.compoSelect).on('changed.bs.select', multiCheck);
     },
 
 });

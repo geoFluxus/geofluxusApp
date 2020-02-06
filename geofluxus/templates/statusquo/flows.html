@@ -119,7 +119,7 @@
                 <div class="col-md-2">
                     <label>Process</label>
                     <select name="process-select" multiple class="form-control" data-live-search="true" data-size="6" style="resize: vertical;">
-                      <option value="-1">All</option>
+                      <option selected value="-1">All</option>
                       <option data-divider="true"></option>
                       <% processes.forEach(function(process){ %>
                         <option value="<%= process.id %>"> <%= process.get('name') %> </option>
@@ -129,7 +129,43 @@
                 <div class="col-md-2">
                     <label>Waste</label>
                     <select name="waste-select" multiple class="form-control" data-live-search="true" data-size="6" style="resize: vertical;">
-                      <option value="-1">All</option>
+                      <option selected value="-1">All</option>
+                      <option data-divider="true"></option>
+                      <% wastes.forEach(function(waste){ %>
+                        <option value="<%= waste.id %>"> <%= waste.get('ewc_code') %> </option>
+                      <% }); %>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <label>Material</label>
+                    <select name="material-select" multiple class="form-control" data-live-search="true" data-size="6" style="resize: vertical;">
+                      <option selected value="-1">All</option>
+                      <option data-divider="true"></option>
+                      <% materials.forEach(function(material){ %>
+                        <option value="<%= material.id %>"> <%= material.get('name') %> </option>
+                      <% }); %>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label>Product</label>
+                    <select name="product-select" multiple class="form-control" data-live-search="true" data-size="6" style="resize: vertical;">
+                      <option selected value="-1">All</option>
+                      <option data-divider="true"></option>
+                      <% products.forEach(function(product){ %>
+                        <option value="<%= product.id %>"> <%= product.get('name') %> </option>
+                      <% }); %>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label>Composite</label>
+                    <select name="composite-select" multiple class="form-control" data-live-search="true" data-size="6" style="resize: vertical;">
+                      <option selected value="-1">All</option>
+                      <option data-divider="true"></option>
+                      <% composites.forEach(function(composite){ %>
+                        <option value="<%= composite.id %>"> <%= composite.get('name') %> </option>
+                      <% }); %>
                     </select>
                 </div>
             </div>
@@ -163,7 +199,7 @@
                 <div class="col-md-2">
                     <label>Clean</label>
                     <select name="clean-select" class="form-control" multiple style="resize: vertical;">
-                      <option value='-1'>ignore</option>
+                      <option selected value='-1'>ignore</option>
                       <option data-divider="true"></option>
                       <option value='unknown'>unknown</option>
                       <option value='no'>not clean</option>
@@ -173,7 +209,7 @@
                 <div class="col-md-2">
                     <label>Mixed</label>
                     <select name="mixed-select" class="form-control" multiple style="resize: vertical;">
-                      <option value='-1'>ignore</option>
+                      <option selected value='-1'>ignore</option>
                       <option data-divider="true"></option>
                       <option value='unknown'>unknown</option>
                       <option value='no'>not mixed</option>
@@ -183,7 +219,7 @@
                 <div class="col-md-2">
                     <label>Direct use</label>
                     <select name="direct-select" class="form-control" multiple style="resize: vertical;">
-                      <option value='-1'>ignore</option>
+                      <option selected value='-1'>ignore</option>
                       <option data-divider="true"></option>
                       <option value='unknown'>unknown</option>
                       <option value='no'>not direct</option>
@@ -193,26 +229,12 @@
                 <div class="col-md-2">
                     <label>Composite</label>
                     <select name="compo-select" class="form-control" multiple style="resize: vertical;">
-                      <option value='-1'>ignore</option>
+                      <option selected value='-1'>ignore</option>
                       <option data-divider="true"></option>
                       <option value='unknown'>unknown</option>
                       <option value='no'>product</option>
                       <option value='yes'>composite</option>
                     </select>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <label>Material</label>
-                    <div id='material-filter'></div>
-                </div>
-                <div class="col-md-4">
-                    <label>Product</label>
-                    <div id='product-filter'></div>
-                </div>
-                <div class="col-md-4">
-                    <label>Composition</label>
-                    <div id='comp-filter'></div>
                 </div>
             </div>
         </div>
