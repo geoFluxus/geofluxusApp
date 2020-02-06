@@ -116,7 +116,6 @@ function(PageableCollection, _, Model, config) {
         },
 
         initialize: function (models, options) {
-            //_.bindAll(this, 'model');
             var options = options || {};
             this.baseurl = options.url;
             this.apiTag = options.apiTag;

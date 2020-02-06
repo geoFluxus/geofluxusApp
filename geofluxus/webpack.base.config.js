@@ -43,7 +43,7 @@ module.exports = {
             _: 'loadash',
             d3: 'd3',
             $: "jquery",
-            jQuery: "jquery"
+            jQuery: "jquery",
         }),
         new webpack.IgnorePlugin(/^codemirror$/)
     ],

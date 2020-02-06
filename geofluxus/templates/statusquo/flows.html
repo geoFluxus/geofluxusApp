@@ -1,6 +1,7 @@
 <!--Flows-->
+
+<!--Filter editing-->
 <script type="text/template" id="flows-template">
-    <!--Filter editing-->
     <div class="block">
         <div class="row" style="padding-top: 0px;">
           <h4 style="margin-right: 30px; margin-top: 0.3rem;">View</h4>
@@ -27,8 +28,12 @@
           </div>
         </div>
     </div>
+    <div id="flows-content">
+    </div>
+</script>
 
-    <!--Filters-->
+<!--Filters-->
+<script type="text/template" id="filter-flows-template">
     <div class="block">
         <h4>Filter Settings</h4>
         <div class="block">
@@ -46,6 +51,18 @@
                       <option value="actor">Actor</option>
                     </select>
                 </div>
+                <div class="col-md-4">
+                    <label>Filter by Areas</label>
+                    <br>
+                    <button id="area-select-button" class="btn" style="float: left;">Select Areas</button>
+                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Filter by Areas" data-html="true" tabindex="0"
+                       data-content="
+                        Clicking the <b>Select Areas</b> button opens a dialog where areas may be selected and confirmed.<br>
+                        On confirmation the selected areas are used to limit the Actors to those located inside these areas.<br><br>
+                        This filter is complementary to the other activities and actors filters.
+                    ">
+                    </a>
+                </div>
             </div>
             <div class="row">
               <div class="col-md-2">
@@ -54,7 +71,7 @@
                 </select>
               </div>
               <div class="col-md-2">
-                <div style="font-size: 30px; position: absolute; left: -10px; top: 20px;">></div>
+                <div style="font-size: 30px; position: absolute; left: -10px; top: 20px;"></div>
                 <label>Activity</label>
                 <select name="activity" multiple class="form-control" data-live-search="true" data-dropup-auto="false" data-size="6" style="resize: vertical;">
                 </select>
@@ -99,12 +116,14 @@
                       <option value='2018'>2018</option>
                     </select>
                 </div>
-            </div>
-            <div class="row">
                 <div class="col-md-2">
                     <label>Process</label>
                     <select name="process-select" multiple class="form-control" data-live-search="true" data-size="6" style="resize: vertical;">
                       <option value="-1">All</option>
+                      <option data-divider="true"></option>
+                      <% processes.forEach(function(process){ %>
+                        <option value="<%= process.id %>"> <%= process.get('name') %> </option>
+                      <% }); %>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -197,8 +216,9 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-          <label class="input-label" style="margin-top: .5rem; margin-right: 10px;">Display Level</label>
+    </div>
+    <div class="row">
+        <label class="input-label" style="margin-top: .5rem; margin-right: 10px;">Display Level</label>
           <select class="form-control" name="display-level-select" style="max-width: 200px; float: left;">
             <option value="activitygroup">Activity Group</option>
             <option value="activity">Activity</option>
@@ -212,6 +232,5 @@
               All data is based on flows between actors. The data will be aggregated to the selected <b>Display Level</b>.
             ">
           </a>
-        </div>
     </div>
 </script>

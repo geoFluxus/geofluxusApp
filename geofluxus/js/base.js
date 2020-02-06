@@ -2,6 +2,8 @@
 require(['jquery',
          'document-ready',
          'bootstrap',
+         'bootstrap-select',
+         'bootstrap-select/dist/css/bootstrap-select.css',
          'utils/overrides',
          'static/css/base.css',
          'static/css/main-navbar.css',
