@@ -127,8 +127,15 @@ body {
 }
 
 .modal {
-    top: 200px;
+    top: 10%;
     overflow: auto;
+}
+
+.modal-header,
+.modal-body,
+.modal-footer,
+.modal .row {
+    padding: 10px;
 }
 
 .modal-content {

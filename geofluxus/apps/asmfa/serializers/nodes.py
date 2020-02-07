@@ -67,8 +67,7 @@ class CompanyListSerializer(CompanySerializer):
 
 
 # Actor
-class ActorSerializer(HyperlinkedModelSerializer,
-                      GeoFeatureModelSerializer):
+class ActorSerializer(HyperlinkedModelSerializer):
     geom = GeometryField()
     activity = CharField(source='activity.name',
                          read_only=True)

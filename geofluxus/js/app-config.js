@@ -11,7 +11,7 @@ function(Session) {
         base:              '/api',
         publicationtypes:  '/api/publicationtypes',
         publications:      '/api/publications',
-        adminlevels:       '/api/adminlevels',
+        adminlevels:       '/api/levels',
         areas:             '/api/areas',
         activitygroups:    '/api/activitygroups',
         activities:        '/api/activities',

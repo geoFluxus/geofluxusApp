@@ -1,4 +1,5 @@
-from rest_framework import routers
+from rest_framework_nested.routers import (DefaultRouter,
+                                           NestedSimpleRouter)
 from django.conf.urls import url, include
 from geofluxus.apps.asmfa.views import (ActivityGroupViewSet,
                                         ActivityViewSet,
@@ -19,14 +20,14 @@ from geofluxus.apps.asmfa.views import (ActivityGroupViewSet,
                                         PublicationViewSet)
 
 
-router = routers.DefaultRouter()
+router = DefaultRouter()
 
 # Publications
 router.register(r'publicationtypes', PublicationTypeViewSet)
 router.register(r'publications', PublicationViewSet)
 
 # Areas
-router.register(r'adminlevels', AdminLevelViewSet)
+router.register(r'levels', AdminLevelViewSet)
 router.register(r'areas', AreaViewSet)
 
 # Nodes
@@ -48,6 +49,7 @@ router.register(r'flows', FlowViewSet)
 router.register(r'classifications', ClassificationViewSet)
 router.register(r'extradescriptions', ExtraDescriptionViewSet)
 
+# Areas in Level
 urlpatterns = [
     url(r'^', include(router.urls)),
 ]

@@ -24,8 +24,7 @@ class AdminLevelListSerializer(AdminLevelSerializer):
 
 
 # Area
-class AreaSerializer(HyperlinkedModelSerializer,
-                     GeoFeatureModelSerializer):
+class AreaSerializer(HyperlinkedModelSerializer):
     geom = GeometryField()
     adminlevel = PrimaryKeyRelatedField(read_only=True)
     parent_area = PrimaryKeyRelatedField(read_only=True)

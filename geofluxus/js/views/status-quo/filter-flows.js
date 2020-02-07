@@ -9,9 +9,10 @@ var FilterFlowsView = BaseView.extend({
     initialize: function(options){
         var _this = this;
         FilterFlowsView.__super__.initialize.apply(this, [options]);
+        _.bindAll(this, 'prepareAreas');
 
         this.template = options.template;
-        this.activitygroups = new Collection([], {
+        this.activityGroups = new Collection([], {
             apiTag: 'activitygroups'
         });
         this.activities = new Collection([], {
@@ -35,13 +36,14 @@ var FilterFlowsView = BaseView.extend({
         this.composites = new Collection([], {
             apiTag: 'composites'
         });
-        this.adminlevels = new Collection([], {
-            apiTag: 'adminlevels'
+        this.areaLevels = new Collection([], {
+            apiTag: 'levels'
         });
+        this.areas = {};
 
         this.loader.activate();
         var promises = [
-            this.activitygroups.fetch(),
+            this.activityGroups.fetch(),
             this.activities.fetch(),
             this.actors.fetch(),
             this.processes.fetch(),
@@ -49,7 +51,7 @@ var FilterFlowsView = BaseView.extend({
             this.materials.fetch(),
             this.products.fetch(),
             this.composites.fetch(),
-            this.adminlevels.fetch()
+            this.areaLevels.fetch(),
         ];
         Promise.all(promises).then(function(){
             _this.loader.deactivate();
@@ -59,7 +61,7 @@ var FilterFlowsView = BaseView.extend({
 
     // DOM events
     events: {
-
+        'click #area-select-button': 'showAreaSelection',
     },
 
     // Rendering
@@ -83,10 +85,37 @@ var FilterFlowsView = BaseView.extend({
         this.areaModal = this.el.querySelector('.area-filter.modal');
         html = document.getElementById('area-select-modal-template').innerHTML;
         template = _.template(html);
-        this.areaModal.innerHTML = template({ levels: this.adminlevels });
+        this.areaModal.innerHTML = template({ levels: this.areaLevels });
         this.areaMap = new Map({
             el: this.areaModal.querySelector('.map'),
         });
+       // this.areaLevelSelect = this.el.querySelector('select[name="area-level-select"]');
+//        this.areaMap.addLayer(
+//            'areas',
+//            {
+//                stroke: 'rgb(100, 150, 250)',
+//                fill: 'rgba(100, 150, 250, 0.5)',
+//                select: {
+//                    selectable: true,
+//                    stroke: 'rgb(230, 230, 0)',
+//                    fill: 'rgba(230, 230, 0, 0.5)',
+//                    onChange: function(areaFeats){
+//                        var modalSelDiv = _this.el.querySelector('.selections'),
+//                            levelId = _this.areaLevelSelect.value
+//                            labels = [],
+//                            areas = _this.areas[levelId];
+//                        _this.selectedAreas = [];
+//                        areaFeats.forEach(function(areaFeat){
+//                            labels.push(areaFeat.label);
+//                            _this.selectedAreas.push(areas.get(areaFeat.id))
+//                        });
+//                        modalSelDiv.innerHTML = labels.join(', ');
+//                    }
+//                }
+//        });
+//        this.areaMap.updateSize();
+//        if (this.areaLevels.length > 0)
+//            this.changeAdminLevel();
 
         // Select filters
         this.processSelect = this.el.querySelector('select[name="process-select"]');
@@ -145,6 +174,59 @@ var FilterFlowsView = BaseView.extend({
         $(this.mixedSelect).on('changed.bs.select', multiCheck);
         $(this.directSelect).on('changed.bs.select', multiCheck);
         $(this.compoSelect).on('changed.bs.select', multiCheck);
+    },
+
+    changeAdminLevel: function(){
+        var levelId = this.areaLevelSelect.value;
+        this.selectedAreas = [];
+        this.el.querySelector('.selections').innerHTML = this.el.querySelector('#area-selections').innerHTML= '';
+        this.prepareAreas(levelId);
+    },
+
+    prepareAreas: function(levelId, onSuccess){
+        var _this = this;
+        var areas = this.areas[levelId];
+        if (areas && areas.size() > 0){
+            this.drawAreas(areas)
+            if (onSuccess) onSuccess();
+        }
+        else {
+            areas = new Collection([], {
+                apiTag: 'areas'
+            });
+            this.areas[levelId] = areas;
+//            this.loader.activate();
+//            areas.fetch({
+//                success: function(){
+//                    _this.loader.deactivate();
+//                    _this.drawAreas(areas);
+//                    if (onSuccess) onSuccess();
+//                },
+//                error: function(res) {
+//                    _this.loader.deactivate();
+//                    _this.onError(res);
+//                }
+//            });
+        }
+    },
+
+    drawAreas: function(areas){
+        var _this = this;
+        this.areaMap.clearLayer('areas');
+        areas.forEach(function(area){
+            var coords = area.get('geom').coordinates,
+                name = area.get('name');
+            _this.areaMap.addPolygon(coords, {
+                projection: 'EPSG:4326', layername: 'areas',
+                type: 'MultiPolygon', tooltip: name,
+                label: name, id: area.id, renderOSM: false
+            });
+        })
+        this.areaMap.centerOnLayer('areas');
+    },
+
+    showAreaSelection: function(){
+        $(this.areaModal).modal('show');
     },
 
     close: function(){

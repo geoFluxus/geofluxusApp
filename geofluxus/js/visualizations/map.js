@@ -99,12 +99,12 @@ function(ol, turf)
                     overlay.setPosition(evt.coordinate);
                     tooltip.innerHTML = feature.get('tooltip');
                     tooltip.style.display = '';
+                    tooltip.style.color = 'black';
                 }
                 else tooltip.style.display = 'none';
             };
 
             this.map.on('pointermove', displayTooltip);
-
         }
 
         toMapProjection(coordinate, projection) {
