@@ -109,6 +109,10 @@ body {
     display: block;
 }
 
+.popover-header {
+    color: black;
+}
+
 ::-webkit-scrollbar {
     z-index: 800;
     width: 10px;

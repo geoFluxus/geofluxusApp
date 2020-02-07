@@ -1,8 +1,9 @@
 define(['views/common/baseview',
         'underscore',
-        'collections/collection',],
+        'collections/collection',
+        'visualizations/map'],
 
-function(BaseView, _, Collection){
+function(BaseView, _, Collection, Map){
 
 var FilterFlowsView = BaseView.extend({
     initialize: function(options){
@@ -74,6 +75,19 @@ var FilterFlowsView = BaseView.extend({
                                        composites: this.composites
                                      });
 
+        // Activate help icons
+        var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
+        $(popovers).popover({ trigger: "focus" });
+
+        // Area selection modal
+        this.areaModal = this.el.querySelector('.area-filter.modal');
+        html = document.getElementById('area-select-modal-template').innerHTML;
+        template = _.template(html);
+        this.areaModal.innerHTML = template({ levels: this.adminlevels });
+        this.areaMap = new Map({
+            el: this.areaModal.querySelector('.map'),
+        });
+
         // Select filters
         this.processSelect = this.el.querySelector('select[name="process-select"]');
         this.wasteSelect = this.el.querySelector('select[name="waste-select"]');
@@ -132,6 +146,11 @@ var FilterFlowsView = BaseView.extend({
         $(this.directSelect).on('changed.bs.select', multiCheck);
         $(this.compoSelect).on('changed.bs.select', multiCheck);
     },
+
+    close: function(){
+//        if (this.flowsView) this.flowsView.close();
+        FilterFlowsView.__super__.close.call(this);
+    }
 
 });
 
