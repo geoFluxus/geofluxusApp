@@ -13,6 +13,10 @@ var UpdateView = Backbone.View.extend({
     },
 
     render: function(){
+        var html = document.getElementById(this.template).innerHTML,
+            template = _.template(html),
+            _this = this;
+        this.el.innerHTML = template();
     }
 });
 return UpdateView;

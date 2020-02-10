@@ -37,7 +37,7 @@ var FilterFlowsView = BaseView.extend({
             apiTag: 'composites'
         });
         this.areaLevels = new Collection([], {
-            apiTag: 'levels'
+            apiTag: 'arealevels'
         });
         this.areas = {};
 
@@ -89,33 +89,32 @@ var FilterFlowsView = BaseView.extend({
         this.areaMap = new Map({
             el: this.areaModal.querySelector('.map'),
         });
-       // this.areaLevelSelect = this.el.querySelector('select[name="area-level-select"]');
-//        this.areaMap.addLayer(
-//            'areas',
-//            {
-//                stroke: 'rgb(100, 150, 250)',
-//                fill: 'rgba(100, 150, 250, 0.5)',
-//                select: {
-//                    selectable: true,
-//                    stroke: 'rgb(230, 230, 0)',
-//                    fill: 'rgba(230, 230, 0, 0.5)',
-//                    onChange: function(areaFeats){
-//                        var modalSelDiv = _this.el.querySelector('.selections'),
-//                            levelId = _this.areaLevelSelect.value
-//                            labels = [],
-//                            areas = _this.areas[levelId];
-//                        _this.selectedAreas = [];
-//                        areaFeats.forEach(function(areaFeat){
-//                            labels.push(areaFeat.label);
-//                            _this.selectedAreas.push(areas.get(areaFeat.id))
-//                        });
-//                        modalSelDiv.innerHTML = labels.join(', ');
-//                    }
-//                }
-//        });
-//        this.areaMap.updateSize();
-//        if (this.areaLevels.length > 0)
-//            this.changeAdminLevel();
+        this.areaLevelSelect = this.el.querySelector('select[name="area-level-select"]');
+        this.areaMap.addLayer(
+            'areas',
+            {
+                stroke: 'rgb(100, 150, 250)',
+                fill: 'rgba(100, 150, 250, 0.5)',
+                select: {
+                    selectable: true,
+                    stroke: 'rgb(230, 230, 0)',
+                    fill: 'rgba(230, 230, 0, 0.5)',
+                    onChange: function(areaFeats){
+                        var modalSelDiv = _this.el.querySelector('.selections'),
+                            levelId = _this.areaLevelSelect.value
+                            labels = [],
+                            areas = _this.areas[levelId];
+                        _this.selectedAreas = [];
+                        areaFeats.forEach(function(areaFeat){
+                            labels.push(areaFeat.label);
+                            _this.selectedAreas.push(areas.get(areaFeat.id))
+                        });
+                        modalSelDiv.innerHTML = labels.join(', ');
+                    }
+                }
+        });
+        if (this.areaLevels.length > 0)
+            this.changeAdminLevel();
 
         // Select filters
         this.processSelect = this.el.querySelector('select[name="process-select"]');
@@ -162,7 +161,6 @@ var FilterFlowsView = BaseView.extend({
                 select.value = -1;
             }
             $(select).selectpicker('refresh');
-            console.log(select.value);
         }
 
         $(this.processSelect).on('changed.bs.select', multiCheck);
@@ -195,18 +193,18 @@ var FilterFlowsView = BaseView.extend({
                 apiTag: 'areas'
             });
             this.areas[levelId] = areas;
-//            this.loader.activate();
-//            areas.fetch({
-//                success: function(){
-//                    _this.loader.deactivate();
-//                    _this.drawAreas(areas);
-//                    if (onSuccess) onSuccess();
-//                },
-//                error: function(res) {
-//                    _this.loader.deactivate();
-//                    _this.onError(res);
-//                }
-//            });
+            this.loader.activate();
+            areas.fetch({
+                success: function(){
+                    _this.loader.deactivate();
+                    _this.drawAreas(areas);
+                    if (onSuccess) onSuccess();
+                },
+                error: function(res) {
+                    _this.loader.deactivate();
+                    _this.onError(res);
+                }
+            });
         }
     },
 

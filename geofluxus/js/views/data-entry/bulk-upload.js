@@ -45,7 +45,7 @@ var BulkUploadView = BaseView.extend({
             ['flows', 'Flows'],
             ['classifications', 'Classifications'],
             ['extradescriptions', 'Extra Descriptions'],
-            ['adminlevels', 'Admin levels'],
+            ['arealevels', 'Admin levels'],
             ['areas', 'Areas']
         ]
 
