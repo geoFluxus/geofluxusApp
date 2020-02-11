@@ -4,6 +4,7 @@ django-webpack-loader==0.6.0
 djangorestframework==3.10.3
 djangorestframework-datatables==0.5.0
 djangorestframework-gis==0.15
+drf-nested-routers==0.91
 et-xmlfile==1.0.1
 jdcal==1.4.1
 Jinja2==2.10.3
@@ -11,7 +12,6 @@ MarkupSafe==1.1.1
 numpy==1.17.4
 openpyxl==3.0.2
 pandas==0.25.3
-pkg-resources==0.0.0
 psycopg2==2.8.4
 python-dateutil==2.8.1
 pytz==2019.3
