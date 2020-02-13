@@ -224,7 +224,14 @@ var FilterFlowsView = BaseView.extend({
     },
 
     showAreaSelection: function(){
+        var _this = this;
+
         $(this.areaModal).modal('show');
+
+        setTimeout(function(){
+            // After the modal has fully opened, call updateSize to render the map with the correct dimensions:
+            _this.areaMap.map.updateSize();
+        }, 200);
     },
 
     close: function(){
