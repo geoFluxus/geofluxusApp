@@ -82,7 +82,7 @@
                     <label>Activity Group</label>
                     <select name="activitygroup-select" multiple class="form-control" data-live-search="true"
                             data-dropup-auto="false" data-size="6" style="resize: vertical;">
-                        <option selected value="-1">All</option>
+                        <option selected value="-1">All (<%= activityGroups.count %>)</option>
                         <option data-divider="true"></option>
                         <% activityGroups.forEach(function(activitygroup){ %>
                         <option value="<%= activitygroup.id %>"> <%= activitygroup.get('name') %></option>
@@ -93,7 +93,7 @@
                     <label>Activity</label>
                     <select name="activity-select" multiple class="form-control" data-live-search="true"
                             data-dropup-auto="false" data-size="6" style="resize: vertical;">
-                        <option selected value="-1">All (<% activities.length %>)</option>
+                        <option selected value="-1">All (<%= activities.count %>)</option>
                         <option data-divider="true"></option>
                         <% activities.forEach(function(activity){ %>
                         <option value="<%= activity.id %>"> <%= activity.get('name') %></option>
@@ -137,7 +137,7 @@
             </a>
             <br><br>
             <div class="row" style="padding-top: 0px;">
-                <div class="col-md-2">
+                <div class="col-md-4">
                     <label>Year</label>
                     <select name="year" class="form-control">
                         <option value='all'>All</option>

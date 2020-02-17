@@ -187,29 +187,23 @@ var FilterFlowsView = BaseView.extend({
 
             // Get the array with ID's of the selected activityGroup(s) from the .selectpicker:
             selectedActivityGroupIDs = $(_this.activityGroupsSelect).val()
-            console.log("selectedActivityGroupIDs", selectedActivityGroupIDs);
 
             // If no activity groups are selected, reset the activity filter to again show all activities:
             if (selectedActivityGroupIDs.length == 0) {
-                allActivitiesOptionsHTML = '<option selected value="-1">All</option><option data-divider="true"></option>';
+                allActivitiesOptionsHTML = '<option selected value="-1">All (' + _this.activities.length + ')</option><option data-divider="true"></option>';
                 _this.activities.models.forEach(activity => allActivitiesOptionsHTML += "<option>" + activity.attributes.name + "</option>");
                 $(_this.activitySelect).html(allActivitiesOptionsHTML);
                 $(_this.activitySelect).selectpicker("refresh");
             } else {
-
                 // Filter all activities by the selected Activity Groups:
                 filteredActivities = _this.activities.models.filter(function (activity) {
                     return selectedActivityGroupIDs.includes(activity.attributes.activitygroup.toString())
                 });
-                console.log("filteredActivities: ", filteredActivities);
 
-                // Fill selectPicker with filtered activities:
+                // Fill selectPicker with filtered activities, add to DOM, and refresh:
                 newActivityOptionsHTML = '<option selected value="-1">All (' + filteredActivities.length + ')</option><option data-divider="true"></option>';
                 filteredActivities.forEach(activity => newActivityOptionsHTML += "<option>" + activity.attributes.name + "</option>");
-
                 $(_this.activitySelect).html(newActivityOptionsHTML);
-
-
                 $(_this.activitySelect).selectpicker("refresh");
             }
         }
