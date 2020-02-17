@@ -24,7 +24,7 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '5432',
         'OPTIONS': {
-            'sslmode': 'require',
+            'sslmode': 'allow',
             },
     },
 }

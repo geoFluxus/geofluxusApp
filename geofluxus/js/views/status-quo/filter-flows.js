@@ -74,7 +74,9 @@ var FilterFlowsView = BaseView.extend({
                                        wastes: this.wastes,
                                        materials: this.materials,
                                        products: this.products,
-                                       composites: this.composites
+                                       composites: this.composites,
+                                       activities: this.activities,
+                                       activityGroups: this.activityGroups,
                                      });
 
         // Activate help icons
@@ -117,6 +119,9 @@ var FilterFlowsView = BaseView.extend({
             this.changeAdminLevel();
 
         // Select filters
+        this.filterLevelSelect = this.el.querySelector('select[name="filter-level-select"]');
+        this.activitySelect = this.el.querySelector('select[name="activity-select"]');
+        this.activityGroupsSelect = this.el.querySelector('select[name="activitygroup-select"]');
         this.processSelect = this.el.querySelector('select[name="process-select"]');
         this.wasteSelect = this.el.querySelector('select[name="waste-select"]');
         this.materialSelect = this.el.querySelector('select[name="material-select"]');
@@ -126,7 +131,12 @@ var FilterFlowsView = BaseView.extend({
         this.mixedSelect = this.el.querySelector('select[name="mixed-select"]');
         this.directSelect = this.el.querySelector('select[name="direct-select"]');
         this.compoSelect = this.el.querySelector('select[name="compo-select"]');
+        this.roleSelect = this.el.querySelector('select[name="role"]');
 
+        $(this.filterLevelSelect).selectpicker();
+        $(this.roleSelect).selectpicker();
+        $(this.activityGroupsSelect).selectpicker();
+        $(this.activitySelect).selectpicker();
         $(this.processSelect).selectpicker();
         $(this.wasteSelect).selectpicker();
         $(this.materialSelect).selectpicker();
@@ -137,8 +147,14 @@ var FilterFlowsView = BaseView.extend({
         $(this.directSelect).selectpicker();
         $(this.compoSelect).selectpicker();
 
+        // Select all three options in Role-select by default, and refresh:
+//        $('select[name="role"] option').attr("selected","selected");
+//        $(this.roleSelect).selectpicker('refresh');
+
+
         this.addEventListeners();
     },
+
 
     addEventListeners: function(){
         var _this = this;
@@ -163,6 +179,71 @@ var FilterFlowsView = BaseView.extend({
             $(select).selectpicker('refresh');
         }
 
+        function filterActivities(evt, clickedIndex, checked){
+            let selectedActivityGroupIDs = [];
+            let selectedActivityGroups = [];
+            let selectedNaceCodes = [];
+            let filteredActivities = [];
+            let allActivitiesOptionsHTML = "";
+            let newActivityOptionsHTML = "";
+
+            // Get the array with ID's of the selected activityGroup(s) from the .selectpicker:
+            selectedActivityGroupIDs = $(_this.activityGroupsSelect).val()
+            console.log("selectedActivityGroupIDs", selectedActivityGroupIDs);
+
+            // If no activity groups are selected, reset the activity filter to again show all activities:
+            if (selectedActivityGroupIDs.length == 0) {
+                allActivitiesOptionsHTML = '<option selected value="-1">All</option><option data-divider="true"></option>';
+                _this.activities.models.forEach(activity => allActivitiesOptionsHTML += "<option>" + activity.attributes.name + "</option>");
+                $(_this.activitySelect).html(allActivitiesOptionsHTML);
+                $(_this.activitySelect).selectpicker("refresh");
+            } else {
+                // Filter all activityGroups based on the selected ID's, and store these in the array selectedActivityGroups of actual activityGroup objects:
+                selectedActivityGroups = _this.activityGroups.models.filter(function (activityGroup) {
+                    console.log("selectedActivityGroupIDs.includes(activityGroup.id)", selectedActivityGroupIDs.includes(activityGroup.id));
+                    return selectedActivityGroupIDs.includes(activityGroup.id.toString())
+                });
+
+                // Store the Nace-codes of the selected activityGroups in an array:
+                selectedActivityGroups.forEach(activityGroup => selectedNaceCodes.push(activityGroup.attributes.code));
+                console.log("activityGroupsNaceCodes", selectedNaceCodes);
+
+
+                // Filter all activities by the selected Nace-codes:
+                filteredActivities = _this.activities.models.filter(function (activity) {
+                    return selectedNaceCodes.includes(activity.attributes.nace.charAt(0))
+                });
+                console.log("filteredActivities: ", filteredActivities);
+
+
+                // Fill selectPicker with filtered activities:
+                newActivityOptionsHTML = '<option selected value="-1">All (' + filteredActivities.length + ')</option><option data-divider="true"></option>';
+                filteredActivities.forEach(activity => newActivityOptionsHTML += "<option>" + activity.attributes.name + "</option>");
+
+                $(_this.activitySelect).html(newActivityOptionsHTML);
+
+
+                $(_this.activitySelect).selectpicker("refresh");
+            }
+        }
+
+        function changeFilterLevel(evt, clickedIndex, checked) {
+            console.log("changeFilterLevel clickedIndex: ", clickedIndex);
+            if (clickedIndex == 1 ) {
+                // User selected filter level "Activity":
+                 $(".activitySelectContainer").css({'display':'block'});;
+            } else {
+                // User selected  filter level "Activity Group":
+                $(".activitySelectContainer").css({'display':'none'});;
+            }
+        }
+
+        $(this.filterLevelSelect).on('changed.bs.select', changeFilterLevel);
+        $(this.activityGroupsSelect).on('changed.bs.select', filterActivities);
+
+        // Multicheck:
+        $(this.activityGroupsSelect).on('changed.bs.select', multiCheck);
+        $(this.activitySelect).on('changed.bs.select', multiCheck);
         $(this.processSelect).on('changed.bs.select', multiCheck);
         $(this.wasteSelect).on('changed.bs.select', multiCheck);
         $(this.materialSelect).on('changed.bs.select', multiCheck);
@@ -224,7 +305,14 @@ var FilterFlowsView = BaseView.extend({
     },
 
     showAreaSelection: function(){
+        var _this = this;
+
         $(this.areaModal).modal('show');
+
+        setTimeout(function(){
+            // After the modal has fully opened, call updateSize to render the map with the correct dimensions:
+            _this.areaMap.map.updateSize();
+        }, 200);
     },
 
     close: function(){
