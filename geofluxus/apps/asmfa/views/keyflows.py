@@ -22,6 +22,7 @@ from geofluxus.apps.asmfa.serializers import (ProcessCreateSerializer,
                                               MaterialCreateSerializer,
                                               ProductCreateSerializer,
                                               CompositeCreateSerializer)
+from django.db.models import Count
 
 
 # Process
@@ -37,8 +38,11 @@ class ProcessViewSet(PostGetViewMixin,
     }
 
     def get_queryset(self):
-        queryset = Process.objects.order_by('id')
-        return queryset
+        queryset = Process.objects
+        queryset = queryset.annotate(
+            flow_count=Count('flowchain__flow')
+        )
+        return queryset.order_by('id')
 
 
 # Waste
@@ -54,8 +58,11 @@ class WasteViewSet(PostGetViewMixin,
     }
 
     def get_queryset(self):
-        queryset = Waste.objects.order_by('id')
-        return queryset
+        queryset = Waste.objects
+        queryset = queryset.annotate(
+            flow_count=Count('flowchain__flow')
+        )
+        return queryset.order_by('id')
 
 
 # Material
@@ -71,8 +78,11 @@ class MaterialViewSet(PostGetViewMixin,
     }
 
     def get_queryset(self):
-        queryset = Material.objects.order_by('id')
-        return queryset
+        queryset = Material.objects
+        queryset = queryset.annotate(
+            flow_count=Count('flowchain__flow')
+        )
+        return queryset.order_by('id')
 
 
 # Product
@@ -88,8 +98,11 @@ class ProductViewSet(PostGetViewMixin,
     }
 
     def get_queryset(self):
-        queryset = Product.objects.order_by('id')
-        return queryset
+        queryset = Product.objects
+        queryset = queryset.annotate(
+            flow_count=Count('flowchain__flow')
+        )
+        return queryset.order_by('id')
 
 
 # Composite
@@ -105,5 +118,8 @@ class CompositeViewSet(PostGetViewMixin,
     }
 
     def get_queryset(self):
-        queryset = Composite.objects.order_by('id')
-        return queryset
+        queryset = Composite.objects
+        queryset = queryset.annotate(
+            flow_count=Count('flowchain__flow')
+        )
+        return queryset.order_by('id')

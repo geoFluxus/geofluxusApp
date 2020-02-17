@@ -1,5 +1,5 @@
 from rest_framework.serializers import (HyperlinkedModelSerializer,
-                                        PrimaryKeyRelatedField)
+                                        IntegerField)
 from geofluxus.apps.asmfa.models import (Process,
                                          Waste,
                                          Material,
@@ -9,30 +9,37 @@ from geofluxus.apps.asmfa.models import (Process,
 
 # Process
 class ProcessSerializer(HyperlinkedModelSerializer):
+    flow_count = IntegerField(read_only=True)
+
     class Meta:
         model = Process
         fields = ('url',
                   'id',
                   'name',
-                  'code')
+                  'code',
+                  'flow_count')
 
 
 class ProcessListSerializer(ProcessSerializer):
     class Meta(ProcessSerializer.Meta):
         fields = ('id',
                   'name',
-                  'code')
+                  'code',
+                  'flow_count')
 
 
 # Waste
 class WasteSerializer(HyperlinkedModelSerializer):
+    flow_count = IntegerField(read_only=True)
+
     class Meta:
         model = Waste
         fields = ('url',
                   'id',
                   'ewc_name',
                   'ewc_code',
-                  'hazardous')
+                  'hazardous',
+                  'flow_count')
 
 
 class WasteListSerializer(WasteSerializer):
@@ -40,49 +47,62 @@ class WasteListSerializer(WasteSerializer):
         fields = ('id',
                   'ewc_name',
                   'ewc_code',
-                  'hazardous')
+                  'hazardous',
+                  'flow_count')
 
 
 # Material
 class MaterialSerializer(HyperlinkedModelSerializer):
+    flow_count = IntegerField(read_only=True)
+
     class Meta:
         model = Material
         fields = ('url',
                   'id',
-                  'name')
+                  'name',
+                  'flow_count')
 
 
 class MaterialListSerializer(MaterialSerializer):
     class Meta(MaterialSerializer.Meta):
         fields = ('id',
-                  'name')
+                  'name',
+                  'flow_count')
 
 
 # Product
 class ProductSerializer(HyperlinkedModelSerializer):
+    flow_count = IntegerField(read_only=True)
+
     class Meta:
         model = Product
         fields = ('url',
                   'id',
-                  'name')
+                  'name',
+                  'flow_count')
 
 
 class ProductListSerializer(ProductSerializer):
     class Meta(ProductSerializer.Meta):
         fields = ('id',
-                  'name')
+                  'name',
+                  'flow_count')
 
 
 # Composite
 class CompositeSerializer(HyperlinkedModelSerializer):
+    flow_count = IntegerField(read_only=True)
+
     class Meta:
         model = Composite
         fields = ('url',
                   'id',
-                  'name')
+                  'name',
+                  'flow_count')
 
 
 class CompositeListSerializer(CompositeSerializer):
     class Meta(CompositeSerializer.Meta):
         fields = ('id',
-                  'name')
+                  'name',
+                  'flow_count')

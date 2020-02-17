@@ -1,8 +1,7 @@
 from rest_framework.serializers import (HyperlinkedModelSerializer,
                                         PrimaryKeyRelatedField,
-                                        CharField)
-from rest_framework_gis.serializers import (GeoFeatureModelSerializer,
-                                            GeometryField)
+                                        IntegerField)
+from rest_framework_gis.serializers import (GeometryField)
 from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Activity,
                                          Company,
@@ -11,23 +10,28 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
 
 # Activity group
 class ActivityGroupSerializer(HyperlinkedModelSerializer):
+    flow_count = IntegerField(read_only=True)
+
     class Meta:
         model = ActivityGroup
         fields = ('url',
                   'id',
                   'name',
-                  'code')
+                  'code',
+                  'flow_count')
 
 
 class ActivityGroupListSerializer(ActivityGroupSerializer):
     class Meta(ActivityGroupSerializer.Meta):
         fields = ('id',
                   'name',
-                  'code')
+                  'code',
+                  'flow_count')
 
 
 # Activity
 class ActivitySerializer(HyperlinkedModelSerializer):
+    flow_count = IntegerField(read_only=True)
     activitygroup = PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
@@ -36,7 +40,8 @@ class ActivitySerializer(HyperlinkedModelSerializer):
                   'id',
                   'name',
                   'nace',
-                  'activitygroup')
+                  'activitygroup',
+                  'flow_count')
 
 
 class ActivityListSerializer(ActivitySerializer):
@@ -44,7 +49,8 @@ class ActivityListSerializer(ActivitySerializer):
         fields = ('id',
                   'name',
                   'nace',
-                  'activitygroup')
+                  'activitygroup',
+                  'flow_count')
 
 
 # Company
@@ -71,6 +77,8 @@ class ActorSerializer(HyperlinkedModelSerializer):
     activity = PrimaryKeyRelatedField(read_only=True)
     company = PrimaryKeyRelatedField(read_only=True)
     publication = PrimaryKeyRelatedField(read_only=True)
+    flow_count = IntegerField(read_only=True)
+
     class Meta:
         model = Actor
         geo_field = 'geom'
@@ -84,7 +92,8 @@ class ActorSerializer(HyperlinkedModelSerializer):
                   'address',
                   'city',
                   'country',
-                  'publication')
+                  'publication',
+                  'flow_count')
 
 
 class ActorListSerializer(ActorSerializer):
@@ -98,4 +107,5 @@ class ActorListSerializer(ActorSerializer):
                   'address',
                   'city',
                   'country',
-                  'publication')
+                  'publication',
+                  'flow_count')

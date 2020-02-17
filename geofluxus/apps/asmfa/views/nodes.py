@@ -5,7 +5,8 @@ from geofluxus.apps.utils.views import (PostGetViewMixin,
 from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Activity,
                                          Company,
-                                         Actor,)
+                                         Actor,
+                                         Flow)
 from geofluxus.apps.asmfa.serializers import (ActivityGroupSerializer,
                                               ActivitySerializer,
                                               CompanySerializer,
@@ -18,6 +19,7 @@ from geofluxus.apps.asmfa.serializers import (ActivityGroupCreateSerializer,
                                               ActivityCreateSerializer,
                                               CompanyCreateSerializer,
                                               ActorCreateSerializer)
+from django.db.models import Count
 
 
 # Activity group
@@ -33,8 +35,11 @@ class ActivityGroupViewSet(PostGetViewMixin,
     }
 
     def get_queryset(self):
-        queryset = ActivityGroup.objects.order_by('id')
-        return queryset
+        queryset = ActivityGroup.objects
+        queryset = queryset.annotate(
+            flow_count=Count('activity__actor__outputs', distinct=True) +
+                       Count('activity__actor__inputs', distinct=True))
+        return queryset.order_by('id')
 
 
 # Activity
@@ -51,6 +56,9 @@ class ActivityViewSet(PostGetViewMixin,
 
     def get_queryset(self):
         queryset = Activity.objects.order_by('id')
+        queryset = queryset.annotate(
+            flow_count=Count('actor__outputs', distinct=True) +
+                       Count('actor__inputs', distinct=True))
         return queryset
 
 
@@ -84,5 +92,8 @@ class ActorViewSet(PostGetViewMixin,
     }
 
     def get_queryset(self):
-        queryset = Actor.objects.order_by('id')
-        return queryset
+        queryset = Actor.objects
+        queryset = queryset.annotate(
+            flow_count=Count('outputs', distinct=True) +
+                       Count('inputs', distinct=True))
+        return queryset.order_by('id')
