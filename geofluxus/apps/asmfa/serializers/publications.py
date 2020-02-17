@@ -22,8 +22,7 @@ class PublicationTypeListSerializer(PublicationTypeSerializer):
 
 # Publication
 class PublicationSerializer(HyperlinkedModelSerializer):
-    publicationtype = CharField(source='publicationtype.name',
-                                read_only=True)
+    publicationtype = PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Publication

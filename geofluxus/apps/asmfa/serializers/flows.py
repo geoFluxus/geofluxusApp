@@ -14,21 +14,12 @@ from geofluxus.apps.asmfa.serializers import (MaterialSerializer,
 
 # FlowChain
 class FlowChainSerializer(HyperlinkedModelSerializer):
-    process = CharField(source='process.name',
-                        read_only=True)
-    waste = CharField(source='waste.ewc_code',
-                      read_only=True)
-    materials = SlugRelatedField(slug_field='name',
-                                 read_only=True,
-                                 many=True)
-    products = SlugRelatedField(slug_field='name',
-                                read_only=True,
-                                many=True)
-    composites = SlugRelatedField(slug_field='name',
-                                  read_only=True,
-                                  many=True)
-    publication = CharField(source='publication.citekey',
-                            read_only=True)
+    process = PrimaryKeyRelatedField(read_only=True)
+    waste = PrimaryKeyRelatedField(read_only=True)
+    materials = MaterialSerializer(read_only=True, many=True)
+    products = ProductSerializer(read_only=True, many=True)
+    composites = CompositeSerializer(read_only=True, many=True)
+    publication = PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = FlowChain
@@ -69,12 +60,9 @@ class FlowChainListSerializer(FlowChainSerializer):
 
 # Flow
 class FlowSerializer(HyperlinkedModelSerializer):
-    flowchain = CharField(source='flowchain.identifier',
-                          read_only=True)
-    origin = CharField(source='origin.identifier',
-                       read_only=True)
-    destination = CharField(source='destination.identifier',
-                            read_only=True)
+    flowchain = PrimaryKeyRelatedField(read_only=True)
+    origin = PrimaryKeyRelatedField(read_only=True)
+    destination = PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Flow
