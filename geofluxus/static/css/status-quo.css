@@ -7,3 +7,8 @@
     padding: 20px;
     box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.3);
 }
+
+.dropdown-menu .show {
+    max-width: 55vw;
+}
+
