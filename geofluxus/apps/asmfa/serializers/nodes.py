@@ -28,8 +28,7 @@ class ActivityGroupListSerializer(ActivityGroupSerializer):
 
 # Activity
 class ActivitySerializer(HyperlinkedModelSerializer):
-    activitygroup = CharField(source='activitygroup.name',
-                              read_only=True)
+    activitygroup = PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Activity
@@ -69,13 +68,9 @@ class CompanyListSerializer(CompanySerializer):
 # Actor
 class ActorSerializer(HyperlinkedModelSerializer):
     geom = GeometryField()
-    activity = CharField(source='activity.name',
-                         read_only=True)
-    company = CharField(source='company.name',
-                        read_only=True)
-    publication = CharField(source='publication.citekey',
-                            read_only=True)
-
+    activity = PrimaryKeyRelatedField(read_only=True)
+    company = PrimaryKeyRelatedField(read_only=True)
+    publication = PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Actor
         geo_field = 'geom'

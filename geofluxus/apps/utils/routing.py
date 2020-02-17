@@ -21,10 +21,10 @@ def open_connection():
                                 database=DATABASE)
         cursor = connection.cursor()
         print('Connection established...')
+
+        return connection, cursor
     except (Exception, pg.Error) as error:
         print ('Connection failed...', error)
-
-    return connection, cursor
 
 
 # Close connection
