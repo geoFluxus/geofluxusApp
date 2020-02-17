@@ -181,8 +181,6 @@ var FilterFlowsView = BaseView.extend({
 
         function filterActivities(evt, clickedIndex, checked){
             let selectedActivityGroupIDs = [];
-            let selectedActivityGroups = [];
-            let selectedNaceCodes = [];
             let filteredActivities = [];
             let allActivitiesOptionsHTML = "";
             let newActivityOptionsHTML = "";
@@ -198,23 +196,12 @@ var FilterFlowsView = BaseView.extend({
                 $(_this.activitySelect).html(allActivitiesOptionsHTML);
                 $(_this.activitySelect).selectpicker("refresh");
             } else {
-                // Filter all activityGroups based on the selected ID's, and store these in the array selectedActivityGroups of actual activityGroup objects:
-                selectedActivityGroups = _this.activityGroups.models.filter(function (activityGroup) {
-                    console.log("selectedActivityGroupIDs.includes(activityGroup.id)", selectedActivityGroupIDs.includes(activityGroup.id));
-                    return selectedActivityGroupIDs.includes(activityGroup.id.toString())
-                });
 
-                // Store the Nace-codes of the selected activityGroups in an array:
-                selectedActivityGroups.forEach(activityGroup => selectedNaceCodes.push(activityGroup.attributes.code));
-                console.log("activityGroupsNaceCodes", selectedNaceCodes);
-
-
-                // Filter all activities by the selected Nace-codes:
+                // Filter all activities by the selected Activity Groups:
                 filteredActivities = _this.activities.models.filter(function (activity) {
-                    return selectedNaceCodes.includes(activity.attributes.nace.charAt(0))
+                    return selectedActivityGroupIDs.includes(activity.attributes.activitygroup.toString())
                 });
                 console.log("filteredActivities: ", filteredActivities);
-
 
                 // Fill selectPicker with filtered activities:
                 newActivityOptionsHTML = '<option selected value="-1">All (' + filteredActivities.length + ')</option><option data-divider="true"></option>';
