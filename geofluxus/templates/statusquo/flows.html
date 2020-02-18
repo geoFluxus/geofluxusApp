@@ -130,13 +130,14 @@
             </div>
         </div>
         <div class="block">
-            <h4 style="float: left;">Flows</h4>
-            <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Flow Filters" data-html="true"
-               tabindex="0"
-               data-content='Filter the flows in between activity groups, activities and actors'>
-            </a>
-            <br><br>
-            <div class="row" style="padding-top: 0px;">
+            <div class="row">
+                <h4 style="float: left;">Flows</h4>
+                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Flow Filters" data-html="true"
+                   tabindex="0"
+                   data-content='Filter the flows in between activity groups, activities and actors'>
+                </a>
+            </div>
+            <div class="row">
                 <div class="col-md-4">
                     <label>Year</label>
                     <select name="year" class="form-control">
@@ -149,57 +150,59 @@
                         <option value='2018'>2018</option>
                     </select>
                 </div>
-                <div class="col-md-2">
+            </div>
+            <div class="row">
+                <div class="col-md-4">
                     <label>Process</label>
                     <select name="process-select" multiple class="form-control" data-live-search="true" data-size="6"
                             style="resize: vertical;">
-                        <option selected value="-1">All</option>
+                        <option selected value="-1">All (<%= processes.count %>)</option>
                         <option data-divider="true"></option>
                         <% processes.forEach(function(process){ %>
                         <option value="<%= process.id %>"> <%= process.get('name') %></option>
                         <% }); %>
                     </select>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-4">
                     <label>Waste</label>
                     <select name="waste-select" multiple class="form-control" data-live-search="true" data-size="6"
                             style="resize: vertical;">
-                        <option selected value="-1">All</option>
+                        <option selected value="-1">All (<%= wastes.count %>)</option>
                         <option data-divider="true"></option>
                         <% wastes.forEach(function(waste){ %>
-                        <option value="<%= waste.id %>"> <%= waste.get('ewc_code') %></option>
+                        <option value="<%= waste.id %>"><%= waste.get('ewc_code') %> <%= waste.get('ewc_name')[0].toUpperCase() + waste.get('ewc_name').slice(1) %></option>
                         <% }); %>
                     </select>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-2">
-                    <label>Material</label>
+                <div class="col-md-3">
+                    <label>Materials</label>
                     <select name="material-select" multiple class="form-control" data-live-search="true" data-size="6"
                             style="resize: vertical;">
-                        <option selected value="-1">All</option>
+                        <option selected value="-1">All (<%= materials.count %>)</option>
                         <option data-divider="true"></option>
                         <% materials.forEach(function(material){ %>
-                        <option value="<%= material.id %>"> <%= material.get('name') %></option>
+                        <option value="<%= material.id %>"> <%= material.get('name')[0].toUpperCase() + material.get('name').slice(1) %></option>
                         <% }); %>
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <label>Product</label>
+                <div class="col-md-3">
+                    <label>Products</label>
                     <select name="product-select" multiple class="form-control" data-live-search="true" data-size="6"
                             style="resize: vertical;">
-                        <option selected value="-1">All</option>
+                        <option selected value="-1">All (<%= products.count %>)</option>
                         <option data-divider="true"></option>
                         <% products.forEach(function(product){ %>
                         <option value="<%= product.id %>"> <%= product.get('name') %></option>
                         <% }); %>
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <label>Composite</label>
-                    <select name="composite-select" multiple class="form-control" data-live-search="true" data-size="6"
+                <div class="col-md-3">
+                    <label>Composites</label>
+                    <select name="composites-select" multiple class="form-control" data-live-search="true" data-size="6"
                             style="resize: vertical;">
-                        <option selected value="-1">All</option>
+                        <option selected value="-1">All (<%= composites.count %>)</option>
                         <option data-divider="true"></option>
                         <% composites.forEach(function(composite){ %>
                         <option value="<%= composite.id %>"> <%= composite.get('name') %></option>
@@ -208,25 +211,25 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label>Route</label>
-                    <select name="route" class="form-control">
+                    <select name="route-select" class="form-control">
                         <option value='both'>ignore</option>
                         <option value='no'>not route</option>
                         <option value='yes'>route</option>
                     </select>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label>Collector</label>
-                    <select name="collector" class="form-control">
+                    <select name="collector-select" class="form-control">
                         <option value='both'>ignore</option>
                         <option value='no'>not collector</option>
                         <option value='yes'>collector</option>
                     </select>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label>Hazardous</label>
-                    <select name="hazardous" class="form-control">
+                    <select name="hazardous-select" class="form-control">
                         <option value='both'>ignore</option>
                         <option value='no'>not hazardous</option>
                         <option value='yes'>hazardous</option>
@@ -234,7 +237,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label>Clean</label>
                     <select name="clean-select" class="form-control" multiple style="resize: vertical;">
                         <option selected value='-1'>ignore</option>
@@ -244,7 +247,7 @@
                         <option value='yes'>clean</option>
                     </select>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label>Mixed</label>
                     <select name="mixed-select" class="form-control" multiple style="resize: vertical;">
                         <option selected value='-1'>ignore</option>
@@ -254,7 +257,7 @@
                         <option value='yes'>mixed</option>
                     </select>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label>Direct use</label>
                     <select name="direct-select" class="form-control" multiple style="resize: vertical;">
                         <option selected value='-1'>ignore</option>
@@ -264,9 +267,9 @@
                         <option value='yes'>direct</option>
                     </select>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label>Composite</label>
-                    <select name="compo-select" class="form-control" multiple style="resize: vertical;">
+                    <select name="iscomposite-select" class="form-control" multiple style="resize: vertical;">
                         <option selected value='-1'>ignore</option>
                         <option data-divider="true"></option>
                         <option value='unknown'>unknown</option>

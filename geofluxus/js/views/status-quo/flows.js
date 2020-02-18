@@ -15,7 +15,7 @@ var FlowsView = BaseView.extend({
 
     // DOM events
     events: {
-
+        'click #apply-filters': 'fetchFlows'
     },
 
     // Rendering
@@ -39,7 +39,75 @@ var FlowsView = BaseView.extend({
         });
     },
 
-});
+    // Returns parameters for filtered post-fetching based on assigned filter
+    getFlowFilterParams: function(){
+        let filterLevel = $('select[name="filter-level-select"]').val();
+        let filterParams = {
+            areas: this.filterFlowsView.selectedAreas,
+            activityGroups: [],
+            activities: [],
+            role: $(this.filterFlowsView.roleSelect).val(),
+            year: $(this.filterFlowsView.yearSelect).val(),
+            processes: $(this.filterFlowsView.processSelect).val(),
+            wastes: $(this.filterFlowsView.wasteSelect).val(),
+            materials: $(this.filterFlowsView.materialSelect).val(),
+            products: $(this.filterFlowsView.productSelect).val(),
+            composites: $(this.filterFlowsView.compositesSelect).val(),
+            isRoute: $(this.filterFlowsView.routeSelect).val(),
+            isCollector: $(this.filterFlowsView.collectorSelect).val(),
+            isHazardous: $(this.filterFlowsView.hazardousSelect).val(),
+            isClean: $(this.filterFlowsView.cleanSelect).val(),
+            isMixed: $(this.filterFlowsView.mixedSelect).val(),
+            isDirectUse: $(this.filterFlowsView.directSelect).val(),
+            isComposite: $(this.filterFlowsView.isCompositeSelect).val(),
+        };
 
+        // Filter level of activityGroup or activity:
+        if (filterLevel == 'activitygroup') {
+            filterParams.activityGroups = $(this.filterFlowsView.activityGroupsSelect).val();
+        } else if (filterLevel == 'activity'){
+            filterParams.activityGroups = $(this.filterFlowsView.activityGroupsSelect).val();
+            filterParams.activities = $(this.filterFlowsView.activitySelect).val();
+        }
+
+        return filterParams;
+    },
+
+    // Fetch flows and calls options.success(flows) on success
+    fetchFlows: function(options){
+        let _this = this;
+        let filterParams = this.getFlowFilterParams();
+
+        console.log("filterParams: ", filterParams);
+
+        var flows = new Collection([], {
+            apiTag: 'flows',
+            apiIds: [ this.caseStudy.id, this.keyflowId]
+        });
+
+        this.loader.activate();
+        var data = {};
+//        if (options.strategy)
+//            data['strategy'] = this.strategy.id;
+
+        flows.postfetch({
+            data: data,
+            body: filterParams,
+            success: function(response){
+                //_this.postprocess(flows);
+                _this.loader.deactivate();
+                if (options.success) {
+                    // options.success(flows);
+                    console.log("Success!");
+                }
+            },
+            error: function(error){
+                _this.loader.deactivate();
+                _this.onError(error);
+            }
+        });
+    },
+
+    });
 return FlowsView;
 });

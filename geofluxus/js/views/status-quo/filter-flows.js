@@ -120,36 +120,55 @@ var FilterFlowsView = BaseView.extend({
 
         // Select filters
         this.filterLevelSelect = this.el.querySelector('select[name="filter-level-select"]');
-        this.activitySelect = this.el.querySelector('select[name="activity-select"]');
-        this.activityGroupsSelect = this.el.querySelector('select[name="activitygroup-select"]');
-        this.processSelect = this.el.querySelector('select[name="process-select"]');
-        this.wasteSelect = this.el.querySelector('select[name="waste-select"]');
-        this.materialSelect = this.el.querySelector('select[name="material-select"]');
-        this.productSelect = this.el.querySelector('select[name="product-select"]');
-        this.compositeSelect = this.el.querySelector('select[name="composite-select"]');
-        this.cleanSelect = this.el.querySelector('select[name="clean-select"]');
-        this.mixedSelect = this.el.querySelector('select[name="mixed-select"]');
-        this.directSelect = this.el.querySelector('select[name="direct-select"]');
-        this.compoSelect = this.el.querySelector('select[name="compo-select"]');
-        this.roleSelect = this.el.querySelector('select[name="role"]');
-
         $(this.filterLevelSelect).selectpicker();
-        $(this.roleSelect).selectpicker();
-        $(this.activityGroupsSelect).selectpicker();
-        $(this.activitySelect).selectpicker();
-        $(this.processSelect).selectpicker();
-        $(this.wasteSelect).selectpicker();
-        $(this.materialSelect).selectpicker();
-        $(this.productSelect).selectpicker();
-        $(this.compositeSelect).selectpicker();
-        $(this.cleanSelect).selectpicker();
-        $(this.mixedSelect).selectpicker();
-        $(this.directSelect).selectpicker();
-        $(this.compoSelect).selectpicker();
 
-        // Select all three options in Role-select by default, and refresh:
-//        $('select[name="role"] option').attr("selected","selected");
-//        $(this.roleSelect).selectpicker('refresh');
+        this.activityGroupsSelect = this.el.querySelector('select[name="activitygroup-select"]');
+        $(this.activityGroupsSelect).selectpicker();
+
+        this.activitySelect = this.el.querySelector('select[name="activity-select"]');
+        $(this.activitySelect).selectpicker();
+
+        this.roleSelect = this.el.querySelector('select[name="role"]');
+        $(this.roleSelect).selectpicker();
+
+        this.yearSelect = this.el.querySelector('select[name="year"]');
+        $(this.yearSelect).selectpicker();
+
+        this.processSelect = this.el.querySelector('select[name="process-select"]');
+        $(this.processSelect).selectpicker();
+
+        this.wasteSelect = this.el.querySelector('select[name="waste-select"]');
+        $(this.wasteSelect).selectpicker();
+
+        this.materialSelect = this.el.querySelector('select[name="material-select"]');
+        $(this.materialSelect).selectpicker();
+
+        this.productSelect = this.el.querySelector('select[name="product-select"]');
+        $(this.productSelect).selectpicker();
+
+        this.compositesSelect = this.el.querySelector('select[name="composites-select"]');
+        $(this.compositesSelect).selectpicker();
+
+        this.routeSelect = this.el.querySelector('select[name="route-select"]');
+        $(this.routeSelect).selectpicker();
+
+        this.collectorSelect = this.el.querySelector('select[name="collector-select"]');
+        $(this.collectorSelect).selectpicker();
+
+        this.hazardousSelect = this.el.querySelector('select[name="hazardous-select"]');
+        $(this.hazardousSelect).selectpicker();
+
+        this.cleanSelect = this.el.querySelector('select[name="clean-select"]');
+        $(this.cleanSelect).selectpicker();
+
+        this.mixedSelect = this.el.querySelector('select[name="mixed-select"]');
+        $(this.mixedSelect).selectpicker();
+
+        this.directSelect = this.el.querySelector('select[name="direct-select"]');
+        $(this.directSelect).selectpicker();
+
+        this.isCompositeSelect = this.el.querySelector('select[name="iscomposite-select"]');
+        $(this.isCompositeSelect).selectpicker();
 
 
         this.addEventListeners();
@@ -209,13 +228,12 @@ var FilterFlowsView = BaseView.extend({
         }
 
         function changeFilterLevel(evt, clickedIndex, checked) {
-            console.log("changeFilterLevel clickedIndex: ", clickedIndex);
-            if (clickedIndex == 1 ) {
+            if (clickedIndex == 1) {
                 // User selected filter level "Activity":
                  $(".activitySelectContainer").css({'display':'block'});;
             } else {
                 // User selected  filter level "Activity Group":
-                $(".activitySelectContainer").css({'display':'none'});;
+                $(".activitySelectContainer").css({'display':'none'});
             }
         }
 
@@ -233,7 +251,7 @@ var FilterFlowsView = BaseView.extend({
         $(this.cleanSelect).on('changed.bs.select', multiCheck);
         $(this.mixedSelect).on('changed.bs.select', multiCheck);
         $(this.directSelect).on('changed.bs.select', multiCheck);
-        $(this.compoSelect).on('changed.bs.select', multiCheck);
+        $(this.isCompositeSelect).on('changed.bs.select', multiCheck);
     },
 
     changeAdminLevel: function(){
