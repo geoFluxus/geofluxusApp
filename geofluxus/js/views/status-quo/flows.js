@@ -1,8 +1,9 @@
 // Flows
 define(['views/common/baseview',
         'underscore',
-        'views/status-quo/filter-flows'],
-function (BaseView, _, FilterFlowsView) {
+        'views/status-quo/filter-flows',
+        'collections/collection'],
+function (BaseView, _, FilterFlowsView, Collection) {
 
 var FlowsView = BaseView.extend({
 
@@ -42,9 +43,10 @@ var FlowsView = BaseView.extend({
     // Returns parameters for filtered post-fetching based on assigned filter
     getFlowFilterParams: function(){
         let filterLevel = $('select[name="filter-level-select"]').val();
+
         let filterParams = {
             areas: this.filterFlowsView.selectedAreas,
-            activityGroups: [],
+            activityGroups: $(this.filterFlowsView.activityGroupsSelect).val(),
             activities: [],
             role: $(this.filterFlowsView.roleSelect).val(),
             year: $(this.filterFlowsView.yearSelect).val(),
@@ -64,9 +66,8 @@ var FlowsView = BaseView.extend({
 
         // Filter level of activityGroup or activity:
         if (filterLevel == 'activitygroup') {
-            filterParams.activityGroups = $(this.filterFlowsView.activityGroupsSelect).val();
+            filterParams.activities = [];
         } else if (filterLevel == 'activity'){
-            filterParams.activityGroups = $(this.filterFlowsView.activityGroupsSelect).val();
             filterParams.activities = $(this.filterFlowsView.activitySelect).val();
         }
 
@@ -78,12 +79,13 @@ var FlowsView = BaseView.extend({
         let _this = this;
         let filterParams = this.getFlowFilterParams();
 
-        console.log("filterParams: ", filterParams);
+        //console.log("filterParams: ", filterParams);
 
         var flows = new Collection([], {
             apiTag: 'flows',
-            apiIds: [ this.caseStudy.id, this.keyflowId]
         });
+
+        console.log("flows: ", flows);
 
         this.loader.activate();
         var data = {};
@@ -103,7 +105,8 @@ var FlowsView = BaseView.extend({
             },
             error: function(error){
                 _this.loader.deactivate();
-                _this.onError(error);
+                console.log(error);
+                //_this.onError(error);
             }
         });
     },
