@@ -85,6 +85,7 @@ class Classification(models.Model):
     clean = models.BooleanField(null=True)
     mixed = models.BooleanField(null=True)
     direct_use = models.BooleanField(null=True)
+    composite = models.BooleanField(null=True)
 
     def __str__(self):
         return '{}'.format(self.flowchain)

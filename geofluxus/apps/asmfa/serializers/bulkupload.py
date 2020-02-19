@@ -258,7 +258,8 @@ class ClassificationCreateSerializer(BulkSerializerMixin,
                                referenced_model=FlowChain),
         'clean': 'clean',
         'mixed': 'mixed',
-        'direct_use': 'direct_use'
+        'direct_use': 'direct_use',
+        'is_composite': 'composite'
     }
     index_columns = ['flowchain']
 

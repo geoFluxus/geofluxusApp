@@ -96,7 +96,8 @@ class ClassificationSerializer(HyperlinkedModelSerializer):
                   'flowchain',
                   'clean',
                   'mixed',
-                  'direct_use')
+                  'direct_use',
+                  'composite')
 
 
 class ClassificationListSerializer(ClassificationSerializer):
@@ -105,7 +106,8 @@ class ClassificationListSerializer(ClassificationSerializer):
                   'flowchain',
                   'clean',
                   'mixed',
-                  'direct_use')
+                  'direct_use',
+                  'composite')
 
 
 # ExtraDescription
