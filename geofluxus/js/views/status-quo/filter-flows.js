@@ -170,6 +170,7 @@ var FilterFlowsView = BaseView.extend({
         this.isCompositeSelect = this.el.querySelector('select[name="iscomposite-select"]');
         $(this.isCompositeSelect).selectpicker();
 
+        this.displayLevelSelect = this.el.querySelector('select[name="display-level-select"]');
 
         this.addEventListeners();
     },

@@ -12,6 +12,7 @@ from geofluxus.apps.asmfa.views import (ActivityGroupViewSet,
                                         CompositeViewSet,
                                         FlowChainViewSet,
                                         FlowViewSet,
+                                        FilterFlowViewSet,
                                         ClassificationViewSet,
                                         ExtraDescriptionViewSet,
                                         AdminLevelViewSet,
@@ -45,7 +46,7 @@ router.register(r'composites', CompositeViewSet)
 
 # Flows
 router.register(r'flowchains', FlowChainViewSet)
-router.register(r'flows', FlowViewSet)
+router.register(r'flows', FilterFlowViewSet)
 router.register(r'classifications', ClassificationViewSet)
 router.register(r'extradescriptions', ExtraDescriptionViewSet)
 
