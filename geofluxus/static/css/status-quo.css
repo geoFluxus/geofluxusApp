@@ -1,14 +1,52 @@
 .row {
     padding: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .block {
-    margin-top: 20px;
+    margin-top: 15px;
     padding: 20px;
     box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.3);
+}
+
+.card {
+    background-color: black !important;
+    box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.3);
+}
+
+.card-body {
+    padding-top: 0em !important;
+}
+
+#btn-actor-areas-activities-roles {
+    background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+	box-shadow: none;
+	text-decoration: none !important;
+}
+
+#btn-flows {
+    background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+	box-shadow: none;
+	text-decoration: none !important;
 }
 
 .dropdown-menu .show {
     max-width: 55vw;
 }
 
+.flowFilterSubtitle {
+    margin-top: 2em;
+}
