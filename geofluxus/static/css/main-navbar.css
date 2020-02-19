@@ -34,6 +34,7 @@
     color: white;
     font-size: 30px;
     text-shadow: 0px 0px 10px white;
+    transition: font-size 0.1s, text-shadow 0.1s;
 }
 
 .nav-item.active > .nav-link {
