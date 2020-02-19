@@ -8,17 +8,18 @@ USER = os.environ['USER']
 PASSWORD = os.environ['PASSWORD']
 HOST = os.environ['HOST']
 PORT = os.environ['PORT']
-DATABASE = os.environ['DATABASE']
+MAIN = os.environ['MAIN']
+ROUTING = os.environ['ROUTING']
 
 
 # Establish connection
-def open_connection():
+def open_connection(database):
     try:
         connection = pg.connect(user=USER,
                                 password=PASSWORD,
                                 host=HOST,
                                 port=PORT,
-                                database=DATABASE)
+                                database=database)
         cursor = connection.cursor()
         print('Connection established...')
 
@@ -62,8 +63,8 @@ def validate(x):
 
 
 if __name__ == "__main__":
-    # Establish connection
-    con, cur = open_connection()
+    # Establish connection to main database
+    con, cur = open_connection(MAIN)
 
     # Fetch flows (distinct pairs!)
     query = \
@@ -73,6 +74,9 @@ if __name__ == "__main__":
         FROM asmfa_flow
         '''
     flows = fetch(cur, query)
+
+    # Establish connection to routing
+    rcon, rcur = open_connection(ROUTING)
 
     base = \
         '''
@@ -102,8 +106,8 @@ if __name__ == "__main__":
             ),
     
             route AS (
-                SELECT ways.the_geom as lines FROM pgr_dijkstra('
-                    SELECT gid AS id,
+                SELECT ways.the_geom as lines FROM pgr_dijkstra(
+                    'SELECT gid AS id,
                            source,
                            target,
                            cost_s AS cost,
@@ -120,7 +124,8 @@ if __name__ == "__main__":
                        geom,
                        ST_GeomFromText('{dest_wkt}'),
                        true
-                     ) ASC LIMIT 1)
+                     ) ASC LIMIT 1),
+                     false
                 ) AS dijkstra
                 LEFT JOIN ways
                 ON (dijkstra.edge = ways.gid)
@@ -130,9 +135,12 @@ if __name__ == "__main__":
             SELECT ST_AsText(ST_LineMerge(ST_Union(lines))) as geom
             FROM route
             '''.format(orig_wkt=orig_wkt, dest_wkt=dest_wkt)
-        routing = fetch(cur, query)[0][0]
+        routing = fetch(rcur, query)[0][0]
         # Validate & convert to geometry
         route = validate(routing)
+        if route is None and orig_wkt != dest_wkt:
+            print(orig_wkt, dest_wkt)
 
-    # Close connection
+    # Close connections
     close_connection(con, cur)
+    close_connection(rcon, rcur)
