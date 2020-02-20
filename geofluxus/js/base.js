@@ -19,5 +19,17 @@ function($, ready){
          else {
            document.getElementById('sidebar-wrapper').style.display = 'inline';
          }
+
+        // Hide navbar on scroll down, show navbar on scroll up:
+        var prevScrollpos = window.pageYOffset;
+        window.onscroll = function() {
+          var currentScrollPos = window.pageYOffset;
+          if (prevScrollpos > currentScrollPos) {
+            document.getElementById("navbarID").style.top = "0";
+          } else {
+            document.getElementById("navbarID").style.top = "-90px";
+          }
+          prevScrollpos = currentScrollPos;
+        }
     });
 })

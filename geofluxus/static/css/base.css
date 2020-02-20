@@ -28,7 +28,7 @@ body {
 
 #page-content-wrapper {
     background-color: black;
-    padding-left: 100px;
+    padding-left: 80px;
     margin-right: 20px;
     padding-top: 10px;
     z-index: 400;
@@ -169,6 +169,10 @@ body {
     box-shadow: 0 0 20px white, inset 0 0 20px white;
     -webkit-animation: spin 2s linear infinite;
     animation: spin 2s linear infinite;
+}
+
+#navbarID {
+    transition: top 0.3s; /* Transition effect when sliding down (and up) */
 }
 
 @-webkit-keyframes spin {
