@@ -116,6 +116,14 @@
                     <div class="row">
                         <div class="col-md-4">
                             <label>Filter level</label>
+                            <div class="checkbox" id="toggleContainer">
+                                    <input id="toggleFilterLevel" type="checkbox" data-toggle="toggle" data-on="Activity Group" data-off="Activity">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>Filter level</label>
                             <select class="form-control form-control-sm" name="filter-level-select">
                                 <option value="activitygroup" selected>Activity Group</option>
                                 <option value="activity">Activity</option>
@@ -166,7 +174,7 @@
                                     data-size="6">
                                 <option value='any' selected>Ignore</option>
                                 <option data-divider="true"></option>
-                                <option value='all'>All roles of flow must be within the selected area</option>
+                                <option value='all'>All roles within selected area</option>
                                 <option value='production'>Production</option>
                                 <option value='collection'>Collection</option>
                                 <option value='treatment'>Treatment</option>

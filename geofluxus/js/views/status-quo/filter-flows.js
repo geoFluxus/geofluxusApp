@@ -1,7 +1,9 @@
 define(['views/common/baseview',
         'underscore',
         'collections/collection',
-        'visualizations/map'],
+        'visualizations/map',
+        'bootstrap-toggle',
+        'bootstrap-toggle/css/bootstrap-toggle.min.css'],
 
 function(BaseView, _, Collection, Map){
 
@@ -119,6 +121,12 @@ var FilterFlowsView = BaseView.extend({
             this.changeAdminLevel();
 
         // Select filters
+
+        $(function() {
+            $('#toggleFilterLevel').bootstrapToggle();
+        })
+
+
         this.filterLevelSelect = this.el.querySelector('select[name="filter-level-select"]');
         $(this.filterLevelSelect).selectpicker();
 
