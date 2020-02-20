@@ -109,7 +109,7 @@ var FilterFlowsView = BaseView.extend({
                         _this.selectedAreas = [];
                         areaFeats.forEach(function(areaFeat){
                             labels.push(areaFeat.label);
-                            _this.selectedAreas.push(areas.get(areaFeat.id))
+                            _this.selectedAreas.push(areaFeat.id);
                         });
                         modalSelDiv.innerHTML = labels.join(', ');
                     }

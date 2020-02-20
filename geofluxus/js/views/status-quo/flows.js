@@ -46,65 +46,97 @@ var FlowsView = BaseView.extend({
         let filter = this.filterFlowsView,
             filterParams = {};
 
-        // Display level
+        // DISPLAY LEVEL //
         let displayLevel = $(filter.displayLevelSelect).val();
-        filterParams['displayLevel'] = displayLevel;
+
+
+        // AREA FILTERS //
+        let areaFilters = {};
+
+        // Selected areas
+        let areas = filter.selectedAreas;
+        areaFilters['areas'] = areas;
+
+        // Activity & Activity Groups
+        let filterLevel = $(filter.filterLevelSelect).val(),
+            activityGroups = $(filter.activityGroupsSelect).val(),
+            activities = $(filter.activitySelect).val();
+
+        if (filterLevel === 'activitygroup') {
+            if (activityGroups[0] !== "-1") {
+                areaFilters['__activity__activitygroup'] = activityGroups;
+            }
+        }
+        else {
+            if (activities[0] !== "-1") {
+                areaFilters['__activity'] = activities;
+            }
+        }
+
+        // Role
+        let role = $(filter.roleSelect).val();
+        areaFilters ['role'] = role;
+        // AREA FILTERS //
+
+
+        // GENERIC FILTERS //
+        let genFilters = {};
 
         // Year
         let year = $(filter.yearSelect).val();
         if (year !== "all") {
-            filterParams['year'] = year;
+            genFilters['year'] = year;
         }
 
         // Wastes
         let wastes = $(filter.wasteSelect).val();
         if (wastes[0] !== "-1") {
-            filterParams['waste__in'] = wastes;
+            genFilters['waste__in'] = wastes;
         }
 
         // Processes
         let processes = $(filter.processSelect).val();
         if (processes[0] !== "-1") {
-            filterParams['process__in'] = processes;
+            genFilters['process__in'] = processes;
         }
 
         // Materials
         let materials = $(filter.materialSelect).val();
         if (materials[0] !== "-1") {
-            filterParams['materials__in'] = materials;
+            genFilters['materials__in'] = materials;
         }
 
         // Products
         let products = $(filter.productSelect).val();
         if (products[0] !== "-1") {
-            filterParams['products__in'] = products;
+            genFilters['products__in'] = products;
         }
 
         // Composites
         let composites = $(filter.compositesSelect).val();
         if (composites[0] !== "-1") {
-            filterParams['composites__in'] = composites;
+            genFilters['composites__in'] = composites;
         }
 
         // isRoute
         let route = $(filter.routeSelect).val();
         if (route != 'both') {
             let is_route = (route == 'yes') ? true : false;
-            filterParams['route'] = is_route;
+            genFilters['route'] = is_route;
         }
 
         // isCollector
         let collector = $(filter.collectorSelect).val();
         if (collector != 'both') {
             let is_collector = (collector == 'yes') ? true : false;
-            filterParams['collector'] = is_collector;
+            genFilters['collector'] = is_collector;
         }
 
         // isHazardous
         let hazardous = $(filter.hazardousSelect).val();
         if (hazardous != 'both') {
             let is_hazardous = (hazardous == 'yes') ? true : false;
-            filterParams['hazardous'] = is_hazardous;
+            genFilters['hazardous'] = is_hazardous;
         }
 
         // isClean
@@ -119,7 +151,7 @@ var FlowsView = BaseView.extend({
                     options.push(is_clean);
                 }
             })
-            filterParams['clean'] = options;
+            genFilters['clean'] = options;
         }
 
         // isMixed
@@ -134,7 +166,7 @@ var FlowsView = BaseView.extend({
                     options.push(is_mixed);
                 }
             })
-            filterParams['mixed'] = options;
+            genFilters['mixed'] = options;
         }
 
         // isDirectUse
@@ -149,7 +181,7 @@ var FlowsView = BaseView.extend({
                     options.push(is_direct);
                 }
             })
-            filterParams['direct'] = options;
+            genFilters['direct'] = options;
         }
 
         // isComposite
@@ -164,35 +196,14 @@ var FlowsView = BaseView.extend({
                     options.push(is_composite);
                 }
             })
-            filterParams['composite'] = options;
+            genFilters['composite'] = options;
         }
+        // GENERIC FILTERS //
 
-//        let filterParams = {
-//            areas: this.filterFlowsView.selectedAreas,
-//            activityGroups: $(this.filterFlowsView.activityGroupsSelect).val(),
-//            activities: [],
-//            role: $(this.filterFlowsView.roleSelect).val(),
-//            year: $(this.filterFlowsView.yearSelect).val(),
-//            processes: $(this.filterFlowsView.processSelect).val(),
-//            wastes: $(this.filterFlowsView.wasteSelect).val(),
-//            materials: $(this.filterFlowsView.materialSelect).val(),
-//            products: $(this.filterFlowsView.productSelect).val(),
-//            composites: $(this.filterFlowsView.compositesSelect).val(),
-//            isRoute: $(this.filterFlowsView.routeSelect).val(),
-//            isCollector: $(this.filterFlowsView.collectorSelect).val(),
-//            isHazardous: $(this.filterFlowsView.hazardousSelect).val(),
-//            isClean: $(this.filterFlowsView.cleanSelect).val(),
-//            isMixed: $(this.filterFlowsView.mixedSelect).val(),
-//            isDirectUse: $(this.filterFlowsView.directSelect).val(),
-//            isComposite: $(this.filterFlowsView.isCompositeSelect).val(),
-//        };
-
-//        // Filter level of activityGroup or activity:
-//        if (filterLevel == 'activitygroup') {
-//            filterParams.activities = [];
-//        } else if (filterLevel == 'activity'){
-//            filterParams.activities = $(this.filterFlowsView.activitySelect).val();
-//        }
+        // Append all separate filters into params
+        filterParams['displayLevel'] = displayLevel;
+        filterParams['genFilters'] = genFilters;
+        filterParams['areaFilters'] = areaFilters;
 
         return filterParams;
     },
