@@ -5,7 +5,7 @@
     height: 110%;
     background: black;
     z-index: 600;
-    box-shadow: 10px 0px 10px rgba(255,255,255,0.3);
+    box-shadow: 1px 0px 10px rgba(255,255,255,0.3);
     -webkit-transition: width 0.3s;
     transition: width 0.3s;
 

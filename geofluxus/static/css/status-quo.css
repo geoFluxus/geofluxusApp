@@ -5,18 +5,31 @@
 }
 
 .block {
-    margin-top: 15px;
+    /*margin-top: 15px;
     padding: 20px;
-    box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.3);
+    box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.3);*/
 }
 
 .card {
     background-color: black !important;
     box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
 }
 
 .card-body {
     padding-top: 0em !important;
+}
+
+#btn-filterViews {
+   background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+	box-shadow: none;
+	text-decoration: none !important;
 }
 
 #btn-actor-areas-activities-roles {
@@ -50,3 +63,27 @@
 .flowFilterSubtitle {
     margin-top: 2em;
 }
+
+#activitySelectContainer {
+    transition: display 1s;
+}
+
+.collapsingHeaderButton {
+    width: 95% !important;
+    text-align: left;
+}
+
+.card-header .fa {
+    transition: .3s transform ease-in-out;
+}
+
+.card-header .collapsed .fa {
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+   transform: rotate(-90deg);
+   transition: .3s transform ease-in-out;
+}
+
+
