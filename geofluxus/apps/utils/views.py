@@ -177,18 +177,6 @@ class ViewSetMixin(ReadOnlyViewSetMixin):
         response = JsonResponse(res, status=400)
         return response
 
-    # def perform_create(self, serializer):
-    #     url_pks = serializer.context['request'].session['url_pks']
-    #     new_kwargs = {}
-    #     for k, v in url_pks.items():
-    #         if k not in self.serializer_class.parent_lookup_kwargs:
-    #             continue
-    #         key = self.serializer_class.parent_lookup_kwargs[k].replace('__id', '_id')
-    #         if '__' in key:
-    #             continue
-    #         new_kwargs[key] = v
-    #     serializer.save(**new_kwargs)
-
     def list(self, request, **kwargs):
         if request.query_params.get('request', None) == 'template':
             serializer = self.serializers.get('create', None)

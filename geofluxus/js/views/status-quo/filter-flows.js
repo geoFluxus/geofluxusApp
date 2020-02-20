@@ -111,7 +111,7 @@ var FilterFlowsView = BaseView.extend({
                         _this.selectedAreas = [];
                         areaFeats.forEach(function(areaFeat){
                             labels.push(areaFeat.label);
-                            _this.selectedAreas.push(areas.get(areaFeat.id))
+                            _this.selectedAreas.push(areaFeat.id);
                         });
                         modalSelDiv.innerHTML = labels.join(', ');
                     }
@@ -178,6 +178,7 @@ var FilterFlowsView = BaseView.extend({
         this.isCompositeSelect = this.el.querySelector('select[name="iscomposite-select"]');
         $(this.isCompositeSelect).selectpicker();
 
+        this.displayLevelSelect = this.el.querySelector('select[name="display-level-select"]');
 
         this.addEventListeners();
     },
