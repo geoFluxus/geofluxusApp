@@ -85,7 +85,3 @@
    transform: rotate(-90deg);
    transition: .3s transform ease-in-out;
 }
-
-#toggleContainer {
-    width: 10em !important;
-}

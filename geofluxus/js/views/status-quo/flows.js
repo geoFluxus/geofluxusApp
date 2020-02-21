@@ -49,7 +49,6 @@ var FlowsView = BaseView.extend({
         // DISPLAY LEVEL //
         let displayLevel = $(filter.displayLevelSelect).val();
 
-
         // AREA FILTERS //
         let areaFilters = {};
 
@@ -58,11 +57,12 @@ var FlowsView = BaseView.extend({
         areaFilters['areas'] = areas;
 
         // Activity & Activity Groups
-        let filterLevel = $(filter.filterLevelSelect).val(),
+        let filterLevel = $(filter.filterLevelSelect).prop("checked"),
             activityGroups = $(filter.activityGroupsSelect).val(),
             activities = $(filter.activitySelect).val();
 
-        if (filterLevel === 'activitygroup') {
+        // If filterLevel is not checked, this means level is 'activitygroup':
+        if (!filterLevel) {
             if (activityGroups[0] !== "-1") {
                 areaFilters['__activity__activitygroup'] = activityGroups;
             }
