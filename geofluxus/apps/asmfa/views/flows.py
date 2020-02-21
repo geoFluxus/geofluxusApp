@@ -20,7 +20,8 @@ from geofluxus.apps.asmfa.serializers import (FlowChainListSerializer,
 from geofluxus.apps.asmfa.serializers import (FlowChainCreateSerializer,
                                               FlowCreateSerializer,
                                               ClassificationCreateSerializer,
-                                              ExtraDescriptionCreateSerializer)
+                                              ExtraDescriptionCreateSerializer,
+                                              RoutingCreateSerializer)
 
 
 # FlowChain
@@ -99,7 +100,8 @@ class RoutingViewSet(PostGetViewMixin,
     pagination_class =  UnlimitedResultsSetPagination
     serializer_class = RoutingSerializer
     serializers = {
-        'list': RoutingListSerializer
+        'list': RoutingListSerializer,
+        'create': RoutingCreateSerializer
     }
 
     def get_queryset(self):

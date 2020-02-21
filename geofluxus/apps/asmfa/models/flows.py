@@ -125,5 +125,5 @@ class Routing(models.Model):
     destination = models.ForeignKey(Actor,
                                     on_delete=models.CASCADE,
                                     related_name='end')
-    geom = gis.MultiLineStringField(null=True,
-                                    blank=True)
+    geom = gis.GeometryField(null=True,
+                             blank=True)

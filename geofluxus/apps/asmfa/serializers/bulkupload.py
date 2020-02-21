@@ -15,6 +15,7 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Flow,
                                          Classification,
                                          ExtraDescription,
+                                         Routing,
                                          AdminLevel,
                                          Area)
 from geofluxus.apps.asmfa.serializers import (ActivityGroupSerializer,
@@ -32,6 +33,7 @@ from geofluxus.apps.asmfa.serializers import (ActivityGroupSerializer,
                                               FlowSerializer,
                                               ClassificationSerializer,
                                               ExtraDescriptionSerializer,
+                                              RoutingSerializer,
                                               AdminLevelSerializer,
                                               AreaSerializer)
 
@@ -280,6 +282,23 @@ class ExtraDescriptionCreateSerializer(BulkSerializerMixin,
 
     def get_queryset(self):
         return ExtraDescription.objects.all()
+
+
+class RoutingCreateSerializer(BulkSerializerMixin,
+                              RoutingSerializer):
+    field_map = {
+        'origin': Reference(name='origin',
+                            referenced_field='identifier',
+                            referenced_model=Actor),
+        'destination': Reference(name='destination',
+                                 referenced_field='identifier',
+                                 referenced_model=Actor),
+        'wkt': 'geom'
+    }
+    index_columns = ['origin', 'destination']
+
+    def get_queryset(self):
+        return Routing.objects.all()
 
 
 class AdminLevelCreateSerializer(BulkSerializerMixin,

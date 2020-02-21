@@ -46,7 +46,8 @@ var BulkUploadView = BaseView.extend({
             ['classifications', 'Classifications'],
             ['extradescriptions', 'Extra Descriptions'],
             ['arealevels', 'Admin levels'],
-            ['allareas', 'Areas']
+            ['allareas', 'Areas'],
+            ['routings', 'Routings']
         ]
 
         function renderRow(up, col){

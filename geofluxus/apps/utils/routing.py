@@ -1,6 +1,6 @@
 import psycopg2 as pg
 import os
-from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.geos import GEOSGeometry, LineString, MultiLineString
 from django.contrib.gis.geos.error import GEOSException
 
 # Database credentials
@@ -10,6 +10,7 @@ HOST = os.environ['HOST']
 PORT = os.environ['PORT']
 MAIN = os.environ['MAIN']
 ROUTING = os.environ['ROUTING']
+FILENAME = os.environ['FILENAME']
 
 
 # Establish connection
@@ -78,21 +79,26 @@ if __name__ == "__main__":
     # Establish connection to routing
     rcon, rcur = open_connection(ROUTING)
 
-    f = open("/home/geofluxus/Desktop/routing.csv", "w")
+    f = open(FILENAME, 'w')
+    f.write('origin;destination;wkt\n')
 
     base = \
         '''
-        SELECT ST_AsText(geom)
+        SELECT identifier, ST_AsText(geom)
         FROM asmfa_actor
         WHERE id = {id}
         '''
     for flow in flows:
         # Fetch orig / dest geometry
         orig, dest = flow[0], flow[1]
+
         query = base.format(id=orig)
-        orig_wkt = fetch(cur, query)[0][0]
+        actors = fetch(cur, query)[0]
+        orig_name, orig_wkt = actors[0], actors[1]
+
         query = base.format(id=dest)
-        dest_wkt = fetch(cur, query)[0][0]
+        actors = fetch(cur, query)[0]
+        dest_name, dest_wkt = actors[0], actors[1]
 
         # Fetch routing
         query = \
@@ -141,9 +147,10 @@ if __name__ == "__main__":
         # Validate & convert to geometry
         route = validate(routing)
         if route is None:
-            f.write('\n')
+            line = '{};{};\n'.format(orig_name, dest_name)
         else:
-            f.write(routing + '\n')
+            line = '{};{};{}\n'.format(orig_name, dest_name, routing)
+        f.write(line)
 
     # Close connections
     f.close()
