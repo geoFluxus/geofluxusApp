@@ -2,8 +2,8 @@ from rest_framework.serializers import (HyperlinkedModelSerializer,
                                         PrimaryKeyRelatedField)
 from geofluxus.apps.asmfa.models import (AdminLevel,
                                          Area)
-from rest_framework_gis.serializers import (GeoFeatureModelSerializer,
-                                            GeometryField)
+from rest_framework_gis.serializers import (GeometryField)
+from rest_framework.relations import  HyperlinkedIdentityField
 
 
 # AdminLevel
@@ -13,14 +13,21 @@ class AdminLevelSerializer(HyperlinkedModelSerializer):
         fields = ('url',
                   'id',
                   'name',
-                  'level')
+                  'level',
+                  'area_set')
+
+    area_set = HyperlinkedIdentityField(
+        view_name='area-list',
+        lookup_url_kwarg='level_pk'
+    )
 
 
 class AdminLevelListSerializer(AdminLevelSerializer):
     class Meta(AdminLevelSerializer.Meta):
         fields = ('id',
                   'name',
-                  'level')
+                  'level',
+                  'area_set')
 
 
 # Area
