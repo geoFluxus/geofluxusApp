@@ -2,7 +2,8 @@
 define(['views/common/baseview',
         'underscore',
         'views/status-quo/filter-flows',
-        'collections/collection'],
+        'collections/collection',
+        'views/common/flowsankey'],
 function (BaseView, _, FilterFlowsView, Collection) {
 
 var FlowsView = BaseView.extend({
@@ -208,6 +209,10 @@ var FlowsView = BaseView.extend({
         return filterParams;
     },
 
+    drawSankey: function(flows){
+        console.log("drawSankey");
+    },
+
     // Fetch flows and calls options.success(flows) on success
     fetchFlows: function(options){
         let _this = this;
@@ -228,7 +233,7 @@ var FlowsView = BaseView.extend({
                 _this.loader.deactivate();
                 if (options.success) {
                     // options.success(flows);
-                    console.log("Success!");
+                    drawSankey(flows);
                 }
             },
             error: function(error){

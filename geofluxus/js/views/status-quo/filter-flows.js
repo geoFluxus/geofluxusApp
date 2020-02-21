@@ -2,10 +2,11 @@ define(['views/common/baseview',
         'underscore',
         'collections/collection',
         'visualizations/map',
+        'views/status-quo/flows',
         'bootstrap-toggle',
         'bootstrap-toggle/css/bootstrap-toggle.min.css'],
 
-function(BaseView, _, Collection, Map){
+function(BaseView, _, Collection, Map, FlowsView){
 
 var FilterFlowsView = BaseView.extend({
     initialize: function(options){
@@ -64,6 +65,7 @@ var FilterFlowsView = BaseView.extend({
     // DOM events
     events: {
         'click #area-select-button': 'showAreaSelection',
+        'click #apply-filters': 'drawFlows'
     },
 
     // Rendering
@@ -181,6 +183,27 @@ var FilterFlowsView = BaseView.extend({
         this.addEventListeners();
     },
 
+    drawFlows: function(){
+        if (this.flowsView) this.flowsView.close();
+
+        //var filter = this.getFilter();
+        var filter = "";
+
+        this.flowsView = new FlowsView({
+            el: this.el.querySelector('#flows-render-content'),
+            template: 'flows-render-template',
+            materials: this.materials,
+            actors: this.actors,
+            activityGroups: this.activityGroups,
+            activities: this.activities,
+            caseStudy: this.caseStudy,
+            keyflowId: this.keyflowId,
+            displayWarnings: true,
+            filter: filter
+        });
+        var displayLevel = this.displayLevelSelect.value;
+        this.flowsView.draw(displayLevel);
+    },
 
     addEventListeners: function(){
         var _this = this;
