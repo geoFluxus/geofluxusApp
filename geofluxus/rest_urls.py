@@ -11,12 +11,12 @@ from geofluxus.apps.asmfa.views import (ActivityGroupViewSet,
                                         ProductViewSet,
                                         CompositeViewSet,
                                         FlowChainViewSet,
-                                        FlowViewSet,
                                         FilterFlowViewSet,
                                         ClassificationViewSet,
                                         ExtraDescriptionViewSet,
                                         AdminLevelViewSet,
                                         AreaViewSet,
+                                        AreaInLevelViewSet,
                                         PublicationTypeViewSet,
                                         PublicationViewSet)
 
@@ -29,7 +29,7 @@ router.register(r'publications', PublicationViewSet)
 
 # Areas
 router.register(r'levels', AdminLevelViewSet)
-router.register(r'areas', AreaViewSet)
+router.register(r'allareas', AreaViewSet)
 
 # Nodes
 router.register(r'activitygroups', ActivityGroupViewSet)
@@ -51,6 +51,10 @@ router.register(r'classifications', ClassificationViewSet)
 router.register(r'extradescriptions', ExtraDescriptionViewSet)
 
 # Areas in Level
+level_router = NestedSimpleRouter(router, r'levels', lookup='level')
+level_router.register(r'areas', AreaInLevelViewSet)
+
 urlpatterns = [
     url(r'^', include(router.urls)),
+    url(r'^', include(level_router.urls)),
 ]
