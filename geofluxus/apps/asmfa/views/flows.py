@@ -5,15 +5,18 @@ from geofluxus.apps.utils.views import (PostGetViewMixin,
 from geofluxus.apps.asmfa.models import (FlowChain,
                                          Flow,
                                          Classification,
-                                         ExtraDescription)
+                                         ExtraDescription,
+                                         Routing)
 from geofluxus.apps.asmfa.serializers import (FlowChainSerializer,
                                               FlowSerializer,
                                               ClassificationSerializer,
-                                              ExtraDescriptionSerializer)
+                                              ExtraDescriptionSerializer,
+                                              RoutingSerializer)
 from geofluxus.apps.asmfa.serializers import (FlowChainListSerializer,
                                               FlowListSerializer,
                                               ClassificationListSerializer,
-                                              ExtraDescriptionListSerializer)
+                                              ExtraDescriptionListSerializer,
+                                              RoutingListSerializer)
 from geofluxus.apps.asmfa.serializers import (FlowChainCreateSerializer,
                                               FlowCreateSerializer,
                                               ClassificationCreateSerializer,
@@ -85,4 +88,20 @@ class ExtraDescriptionViewSet(PostGetViewMixin,
 
     def get_queryset(self):
         queryset = ExtraDescription.objects.order_by('id')
+        return queryset
+
+
+# Routing
+class RoutingViewSet(PostGetViewMixin,
+                     ViewSetMixin,
+                     ModelPermissionViewSet):
+    queryset = Routing.objects.order_by('id')
+    pagination_class =  UnlimitedResultsSetPagination
+    serializer_class = RoutingSerializer
+    serializers = {
+        'list': RoutingListSerializer
+    }
+
+    def get_queryset(self):
+        queryset = Routing.objects.order_by('id')
         return queryset

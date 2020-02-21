@@ -27,6 +27,7 @@ function(Session) {
         flows:             '/api/flows/',
         classifications:   '/api/classifications/',
         extradescriptions: '/api/extradescriptions/',
+        routings:          '/api/routings/',
     }
 
     return config;

@@ -18,7 +18,8 @@ from geofluxus.apps.asmfa.views import (ActivityGroupViewSet,
                                         AreaViewSet,
                                         AreaInLevelViewSet,
                                         PublicationTypeViewSet,
-                                        PublicationViewSet)
+                                        PublicationViewSet,
+                                        RoutingViewSet)
 
 
 router = DefaultRouter()
@@ -49,6 +50,7 @@ router.register(r'flowchains', FlowChainViewSet)
 router.register(r'flows', FilterFlowViewSet)
 router.register(r'classifications', ClassificationViewSet)
 router.register(r'extradescriptions', ExtraDescriptionViewSet)
+router.register(r'routings', RoutingViewSet)
 
 # Areas in Level
 level_router = NestedSimpleRouter(router, r'levels', lookup='level')

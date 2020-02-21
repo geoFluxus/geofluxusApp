@@ -78,6 +78,8 @@ if __name__ == "__main__":
     # Establish connection to routing
     rcon, rcur = open_connection(ROUTING)
 
+    f = open("/home/geofluxus/Desktop/routing.csv", "w")
+
     base = \
         '''
         SELECT ST_AsText(geom)
@@ -138,9 +140,12 @@ if __name__ == "__main__":
         routing = fetch(rcur, query)[0][0]
         # Validate & convert to geometry
         route = validate(routing)
-        if route is None and orig_wkt != dest_wkt:
-            print(orig_wkt, dest_wkt)
+        if route is None:
+            f.write('\n')
+        else:
+            f.write(routing + '\n')
 
     # Close connections
+    f.close()
     close_connection(con, cur)
     close_connection(rcon, rcur)
