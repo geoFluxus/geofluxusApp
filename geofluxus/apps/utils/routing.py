@@ -146,11 +146,9 @@ if __name__ == "__main__":
         routing = fetch(rcur, query)[0][0]
         # Validate & convert to geometry
         route = validate(routing)
-        if route is None:
-            line = '{};{};\n'.format(orig_name, dest_name)
-        else:
+        if route is not None:
             line = '{};{};{}\n'.format(orig_name, dest_name, routing)
-        f.write(line)
+            f.write(line)
 
     # Close connections
     f.close()

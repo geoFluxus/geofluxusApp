@@ -127,3 +127,7 @@ class Routing(models.Model):
                                     related_name='end')
     geom = gis.GeometryField(null=True,
                              blank=True)
+
+    def __str__(self):
+        return '{} : {}'.format(self.origin,
+                                self.destination)

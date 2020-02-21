@@ -125,16 +125,16 @@ var BulkUploadView = BaseView.extend({
                 var res = res.toJSON(),
                     updated = res.updated,
                     created = res.created;
-                _this.log('Created:');
-                if (created.length == 0) _this.log('-', 'no');
-                created.forEach(function(m){
-                    _this.log(JSON.stringify(m), 'no');
-                })
-                _this.log('Updated:');
-                if (updated.length == 0) _this.log('-', 'no');
-                updated.forEach(function(m){
-                    _this.log(JSON.stringify(m), 'no');
-                })
+//                _this.log('Created:');
+//                if (created.length == 0) _this.log('-', 'no');
+//                created.forEach(function(m){
+//                    _this.log(JSON.stringify(m), 'no');
+//                })
+//                _this.log('Updated:');
+//                if (updated.length == 0) _this.log('-', 'no');
+//                updated.forEach(function(m){
+//                    _this.log(JSON.stringify(m), 'no');
+//                })
                 msg = res.created.length + ' entries created, ' + res.updated.length + ' entries updated';
                 _this.log(msg, 'yes', 'green');
                 _this.log('-'.repeat(u_msg.length*1.5), 'no');
