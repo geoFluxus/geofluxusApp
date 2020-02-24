@@ -99,3 +99,16 @@ label[for="activity-select"] {
     position: relative;
     left: -1.2em;
 }
+
+.sankey-wrapper {
+    background-color: #a2a2a2;
+    border-radius: 3px;
+}
+
+.sankeyNodeLabel {
+    background-color: green !important;
+}
+
+.sankeyNodeLabel:hover {
+    background: blue;
+}

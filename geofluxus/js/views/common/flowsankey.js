@@ -110,7 +110,7 @@ var FlowSankeyView = BaseView.extend(
             width: width,
             el: div,
             title: '',
-            language: config.session.get('language'),
+            language: 'English',
             selectable: true,
             gradient: false,
             stretchFactor: (this.stretchInput) ? this.stretchInput.value: 1,
@@ -202,7 +202,7 @@ var FlowSankeyView = BaseView.extend(
             if(indices[key] != null)
                 return indices[key];
             idx += 1;
-            var color = node.color //|| utils.colorByName(name);
+            var color = node.color || utils.colorByName(name);
             nodes.push({ id: id, name: name + ' (' + code + ')', color: color, code: code });
             indices[key] = idx;
             return idx;

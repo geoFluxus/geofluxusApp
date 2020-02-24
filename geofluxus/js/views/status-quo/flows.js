@@ -68,15 +68,20 @@ define(['views/common/baseview',
             postprocess: function (flows) {
                 var idx = 0;
                 flows.forEach(function (flow) {
-                    var origin = flow.get('origin'),
-                        destination = flow.get('destination');
-                    // api aggregates flows and doesn't return an id
-                    // generate an internal one to assign interactions
+                    var origin = flow.get('origin');
+                    var destination = flow.get('destination');
+
+                    // API aggregates flows and doesn't return an id. Generate internal ID to assign interactions:
                     flow.set('id', idx);
                     idx++;
 
-                    // remember original amounts to be able to swap amount with delta and back
-                    //flow._amount = flow.get('amount');
+                    // Save original amounts to be able to swap amount with delta and back
+                    flow._amount = flow.get('amount');
+
+                    // Color:
+                    origin.color = utils.colorByName(origin.name);
+                    destination.color = utils.colorByName(destination.name);
+
                     //            flow.description = flow.get('description');
                     //var materials = flow.get('materials');
                     //flow.get('materials').forEach(function(material){
@@ -84,9 +89,7 @@ define(['views/common/baseview',
                     //})
                     //flow.set('materials', materials);
 
-                    //            origin.color = utils.colorByName(origin.name);
                     //            if (!flow.get('stock'))
-                    //                destination.color = utils.colorByName(destination.name);
                 })
 
                 this.flows = flows;
