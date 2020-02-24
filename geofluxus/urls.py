@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^api/', include('geofluxus.rest_urls')),
     url(r'^data-entry/', include('geofluxus.apps.dataentry.urls')),
     url(r'^status-quo/', include('geofluxus.apps.statusquo.urls')),
+    url(r'routing/', include('geofluxus.apps.routing.urls')),
 ]\
 + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
 + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
