@@ -96,8 +96,8 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-4">
-                            <label class="d-block">Select the Areas to analyse</label>
-                            <button id="area-select-button" class="btn btn-sm" style="float: left; width: 13em">Select
+                            <button id="area-select-button" class="btn btn-sm btn-primary" data-width="100%"
+                                    style="float: left; width: 13em">Select
                                 Areas
                             </button>
                             <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Filter by Areas"
@@ -115,43 +115,54 @@
                     </div>
                     <div class="row">
                         <div class="col-md-4">
-                            <label>Filter level</label>
-                            <div class="checkbox" id="toggleContainer">
-                                    <input id="toggleFilterLevel" type="checkbox" data-toggle="toggle" data-on="Activity Group" data-off="Activity">
+                            <label for="toggleFilterLevel">Filter level</label>
+                            <div class="checkbox">
+                                <input name="filter-level-select" id="toggleFilterLevel" type="checkbox"
+                                       data-width="100%" data-height="21" data-toggle="toggle" data-on="Activities"
+                                       data-off="Activity Groups">
                             </div>
                         </div>
                     </div>
+                    <!--                    <div class="row">-->
+                    <!--                        <div class="col-md-4">-->
+                    <!--                            <label>Filter level</label>-->
+                    <!--                            <select class="form-control form-control-sm" name="filter-level-select">-->
+                    <!--                                <option value="activitygroup" selected>Activity Group</option>-->
+                    <!--                                <option value="activity">Activity</option>-->
+                    <!--                            </select>-->
+                    <!--                        </div>-->
+                    <!--                    </div>-->
                     <div class="row">
                         <div class="col-md-4">
-                            <label>Filter level</label>
-                            <select class="form-control form-control-sm" name="filter-level-select">
-                                <option value="activitygroup" selected>Activity Group</option>
-                                <option value="activity">Activity</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label>Activity Group</label>
-                            <select name="activitygroup-select" multiple class="form-control form-control-sm"
+                            <label for="activitygroup-select">Activity Group</label>
+                            <select id="activitygroup-select" name="activitygroup-select" multiple
+                                    class="form-control form-control-sm"
                                     data-live-search="true"
                                     data-dropup-auto="false" data-size="6" style="resize: vertical;">
                                 <option selected value="-1">All (<%= activityGroups.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% activityGroups.forEach(function(activitygroup){ %>
-                                <option value="<%= activitygroup.id %>"> <%= activitygroup.get('name') %></option>
+                                <option value="<%= activitygroup.id %>"><%= activitygroup.get('name') %> (<%=
+                                    activitygroup.get('flow_count') %> <%= (activitygroup.get('flow_count') == 1) ?
+                                    'flow' : 'flows' %>)
+                                </option>
                                 <% }); %>
                             </select>
                         </div>
                         <div class="col-md-4 activitySelectContainer" style="display: none">
-                            <label>Activity</label>
-                            <select name="activity-select" multiple class="form-control form-control-sm"
+                            <label for="activity-select">Activity</label>
+                            <i class="fas fa-angle-double-right" id="activitySelectChevron"></i>
+                            <select id="activity-select" name="activity-select" multiple
+                                    class="form-control form-control-sm"
                                     data-live-search="true"
                                     data-dropup-auto="false" data-size="6" style="resize: vertical;">
                                 <option selected value="-1">All (<%= activities.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% activities.forEach(function(activity){ %>
-                                <option value="<%= activity.id %>"> <%= activity.get('name') %></option>
+                                <option value="<%= activity.id %>"><%= activity.get('name') %> (<%=
+                                    activity.get('flow_count') %> <%= (activity.get('flow_count') == 1) ? 'flow' :
+                                    'flows' %>)
+                                </option>
                                 <% }); %>
                             </select>
                         </div>
@@ -164,13 +175,14 @@
                     </div>
                     <div class="row">
                         <div class="col-md-4">
-                            <label>Actor Role</label>
+                            <label for="role-select">Actor Role</label>
                             <a class="help-icon fas fa-question-circle" data-toggle="popover"
                                title="Role of the Actor"
                                data-html="true" tabindex="0"
                                data-content='This filter allows you to filter the flows based on the role of the actor. '>
                             </a>
-                            <select name="role" class="form-control form-control-sm" data-dropup-auto="false"
+                            <select id="role-select" name="role" class="form-control form-control-sm"
+                                    data-dropup-auto="false"
                                     data-size="6">
                                 <option value='any' selected>Ignore</option>
                                 <option data-divider="true"></option>
@@ -634,7 +646,8 @@
         </a>
     </div>
 
-    <div class="block" id="renderBlock" style="height: 40em">
+    <div class="block" id="flows-render-content" style="height: 40em">
+        <div class="sankey-wrapper" class="noselect" style="width: 100%; min-height: 200px;">
 
     </div>
 
@@ -669,7 +682,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn cancel" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn cancel btn-secondary" data-dismiss="modal">Cancel</button>
                 <button class="btn btn-primary confirm" data-dismiss="modal" aria-hidden="true">OK</button>
             </div>
         </div>

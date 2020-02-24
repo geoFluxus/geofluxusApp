@@ -2,10 +2,11 @@ define(['views/common/baseview',
         'underscore',
         'collections/collection',
         'visualizations/map',
+        'views/status-quo/flows',
         'bootstrap-toggle',
         'bootstrap-toggle/css/bootstrap-toggle.min.css'],
 
-function(BaseView, _, Collection, Map){
+function(BaseView, _, Collection, Map, FlowsView){
 
 var FilterFlowsView = BaseView.extend({
     initialize: function(options){
@@ -121,15 +122,13 @@ var FilterFlowsView = BaseView.extend({
         if (this.areaLevels.length > 0)
             this.changeAreaLevel();
 
+
+        ///////////////////////////////////
         // Select filters
 
-        $(function() {
-            $('#toggleFilterLevel').bootstrapToggle();
-        })
-
-
-        this.filterLevelSelect = this.el.querySelector('select[name="filter-level-select"]');
-        $(this.filterLevelSelect).selectpicker();
+        // Initialize bootstrap-toggle for filter level:
+        this.filterLevelSelect = this.el.querySelector('#toggleFilterLevel');
+        $(this.filterLevelSelect).bootstrapToggle();
 
         this.activityGroupsSelect = this.el.querySelector('select[name="activitygroup-select"]');
         $(this.activityGroupsSelect).selectpicker();
@@ -184,7 +183,6 @@ var FilterFlowsView = BaseView.extend({
         this.addEventListeners();
     },
 
-
     addEventListeners: function(){
         var _this = this;
 
@@ -237,17 +235,11 @@ var FilterFlowsView = BaseView.extend({
             }
         }
 
-        function changeFilterLevel(evt, clickedIndex, checked) {
-            if (clickedIndex == 1) {
-                // User selected filter level "Activity":
-                 $(".activitySelectContainer").css({'display':'block'});;
-            } else {
-                // User selected  filter level "Activity Group":
-                $(".activitySelectContainer").css({'display':'none'});
-            }
-        }
+        // Event handler for changing filter level with bootstrap-toggle:
+        $(this.filterLevelSelect).change(function() {
+            $(".activitySelectContainer").fadeToggle("fast");
+        });
 
-        $(this.filterLevelSelect).on('changed.bs.select', changeFilterLevel);
         $(this.activityGroupsSelect).on('changed.bs.select', filterActivities);
 
         // Multicheck:
