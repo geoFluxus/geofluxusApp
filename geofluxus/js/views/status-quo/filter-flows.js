@@ -65,6 +65,7 @@ var FilterFlowsView = BaseView.extend({
     // DOM events
     events: {
         'click #area-select-button': 'showAreaSelection',
+        'change select[name="area-level-select"]': 'changeAreaLevel',
     },
 
     // Rendering
