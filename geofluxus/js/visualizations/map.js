@@ -320,6 +320,7 @@ function(ol, turf)
             if (!((geometry instanceof ol.geom.MultiPolygon) ||
                   (geometry instanceof ol.geom.Polygon) ||
                   (geometry instanceof ol.geom.LineString) ||
+                  (geometry instanceof ol.geom.MultiLineString) ||
                   (geometry instanceof ol.geom.Point)
                   )){
                 if (type === 'multipolygon') {
@@ -328,6 +329,8 @@ function(ol, turf)
                     geometry = new ol.geom.Point(geometry)
                 } else if (type === 'linestring'){
                     geometry = new ol.geom.LineString(geometry)
+                } else if (type === 'multilinestring'){
+                    geometry = new ol.geom.MultiLineString(geometry)
                 } else if (type === 'polygon'){
                     geometry = new ol.geom.Polygon(geometry)
                 } else {
