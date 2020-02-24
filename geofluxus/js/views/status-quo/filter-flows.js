@@ -65,7 +65,7 @@ var FilterFlowsView = BaseView.extend({
     // DOM events
     events: {
         'click #area-select-button': 'showAreaSelection',
-        'click #apply-filters': 'drawFlows'
+//        'click #apply-filters': 'drawFlows'
     },
 
     // Rendering
@@ -181,28 +181,6 @@ var FilterFlowsView = BaseView.extend({
         this.displayLevelSelect = this.el.querySelector('select[name="display-level-select"]');
 
         this.addEventListeners();
-    },
-
-    drawFlows: function(){
-        if (this.flowsView) this.flowsView.close();
-
-        //var filter = this.getFilter();
-        var filter = "";
-
-        this.flowsView = new FlowsView({
-            el: this.el.querySelector('#flows-render-content'),
-            template: 'flows-render-template',
-            materials: this.materials,
-            actors: this.actors,
-            activityGroups: this.activityGroups,
-            activities: this.activities,
-            caseStudy: this.caseStudy,
-            keyflowId: this.keyflowId,
-            displayWarnings: true,
-            filter: filter
-        });
-        var displayLevel = this.displayLevelSelect.value;
-        this.flowsView.draw(displayLevel);
     },
 
     addEventListeners: function(){

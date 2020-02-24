@@ -202,57 +202,23 @@ var FlowSankeyView = BaseView.extend(
             if(indices[key] != null)
                 return indices[key];
             idx += 1;
-            var color = node.color || utils.colorByName(name);
+            var color = node.color //|| utils.colorByName(name);
             nodes.push({ id: id, name: name + ' (' + code + ')', color: color, code: code });
             indices[key] = idx;
             return idx;
         }
 
-        //function addStock(){
-            //idx += 1;
-            //var color = 'darkgray';
-            //nodes.push({name: 'Stock', color: color, alignToSource: {x: 80, y: 0} });
-            //return idx;
-        //}
 
-        //function compositionRepr(flow){
-            //var text = '',
-                //i = 0,
-                //fractions = flow.get('materials'),
-                //totalAmount = flow.get('amount');
-            //fractions.forEach(function(material){
-                //var amount = (material.value != null) ? material.value: material.amount;
-                //if (amount == 0) return;
-                //if (_this.forceSignum && amount >= 0)
-                    //text += '+';
-                //if (_this.showRelativeComposition){
-                    //fraction = amount / totalAmount,
-                    //value = Math.round(fraction * 100000) / 1000;
-                    //text += _this.format(value) + '%';
-                //} else {
-                    //text += _this.format(amount) + ' ' + gettext('t/year');
-                //}
-                //text += ' ' + material.name
-                //if (material.avoidable) text += ' <i>' + gettext('avoidable') +'</i>';
-               // if (i < fractions.length - 1) text += '<br>';
-                //i++;
-            //})
-           // return text || ('no composition defined');
-        //}
-
-        //function typeRepr(flow){
-            //return flow.get('waste') ? 'Waste': 'Product';
-        //}
-
-        //function processRepr(flow){
-           // return gettext('Process') + ': ' + (flow.get('process') || '-');
-       // }
-
-        var amounts = flows.pluck('amount'),
-            minAmount = Math.min(...amounts),
-            maxAmount = Math.max(...amounts),
-            max = 10000,
-            normFactor = max / maxAmount;
+        //var amounts = flows.pluck('amount');
+        function pluck(array, key) {
+            return array.map(o => o[key]);
+        }
+        var amounts = pluck(flows, 'amount');
+    
+        let minAmount = Math.min(...amounts);
+        let maxAmount = Math.max(...amounts);
+        let max = 10000;
+        let normFactor = max / maxAmount;
 
         flows.forEach(function(flow){
             var value = flow.get('amount');
@@ -282,7 +248,7 @@ var FlowSankeyView = BaseView.extend(
                 id: flow.id,
                 originalData: flow,
                 value: value,
-                units: gettext('t/year'),
+                units: 't/year',
                 source: source,
                 target: target,
                 color: (flow.color) ? flow.color: source.color,
