@@ -10,6 +10,7 @@ from geofluxus.apps.asmfa.serializers import (AdminLevelListSerializer,
                                               AreaListSerializer)
 from geofluxus.apps.asmfa.serializers import (AdminLevelCreateSerializer,
                                               AreaCreateSerializer)
+from rest_framework.response import Response
 
 
 # AdminLevel
@@ -44,3 +45,27 @@ class AreaViewSet(PostGetViewMixin,
     def get_queryset(self):
         queryset = Area.objects.order_by('id')
         return queryset
+
+
+# AreaInLevel
+class AreaInLevelViewSet(PostGetViewMixin,
+                         ViewSetMixin,
+                         ModelPermissionViewSet):
+    queryset = Area.objects.order_by('id')
+    pagination_class = UnlimitedResultsSetPagination
+    serializer_class = AreaSerializer
+
+    def list(self, request, level_pk=None):
+        queryset = Area.objects.filter(adminlevel=level_pk)
+        serializer = AreaSerializer(queryset,
+                                    many=True,
+                                    context={'request': request})
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None, level_pk=None):
+        queryset = Area.objects.filter(pk=pk,
+                                       adminlevel=level_pk)
+        serializer = AreaSerializer(queryset,
+                                    many=True,
+                                    context={'request': request})
+        return Response(serializer.data)

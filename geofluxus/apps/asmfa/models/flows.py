@@ -6,6 +6,7 @@ from geofluxus.apps.asmfa.models import (Process,
                                          Composite,
                                          Actor,
                                          Publication)
+from django.contrib.gis.db import models as gis
 
 
 # FlowChain
@@ -114,3 +115,19 @@ class ExtraDescription(models.Model):
     def __str__(self):
         return '{} : {}'.format(self.flowchain,
                                 self.type)
+
+
+# Routing
+class Routing(models.Model):
+    origin = models.ForeignKey(Actor,
+                               on_delete=models.CASCADE,
+                               related_name='start')
+    destination = models.ForeignKey(Actor,
+                                    on_delete=models.CASCADE,
+                                    related_name='end')
+    geom = gis.GeometryField(null=True,
+                             blank=True)
+
+    def __str__(self):
+        return '{} : {}'.format(self.origin,
+                                self.destination)

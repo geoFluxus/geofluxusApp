@@ -1,15 +1,14 @@
 from rest_framework.serializers import (HyperlinkedModelSerializer,
-                                        PrimaryKeyRelatedField,
-                                        CharField,
-                                        SlugRelatedField)
+                                        PrimaryKeyRelatedField,)
 from geofluxus.apps.asmfa.models import (FlowChain,
                                          Flow,
                                          Classification,
-                                         ExtraDescription)
+                                         ExtraDescription,
+                                         Routing)
 from geofluxus.apps.asmfa.serializers import (MaterialSerializer,
                                               ProductSerializer,
-                                              CompositeSerializer,
-                                              ProcessSerializer)
+                                              CompositeSerializer)
+from rest_framework_gis.serializers import (GeometryField)
 
 
 # FlowChain
@@ -129,3 +128,27 @@ class ExtraDescriptionListSerializer(ExtraDescriptionSerializer):
                   'flowchain',
                   'type',
                   'description')
+
+
+# Routing
+class RoutingSerializer(HyperlinkedModelSerializer):
+    origin = PrimaryKeyRelatedField(read_only=True)
+    destination = PrimaryKeyRelatedField(read_only=True)
+    geom = GeometryField()
+
+    class Meta:
+        model = Routing
+        geo_field = 'geom'
+        fields = ('url',
+                  'id',
+                  'origin',
+                  'destination',
+                  'geom')
+
+
+class RoutingListSerializer(RoutingSerializer):
+    class Meta(RoutingSerializer.Meta):
+        fields = ('id',
+                  'origin',
+                  'destination',
+                  'geom')

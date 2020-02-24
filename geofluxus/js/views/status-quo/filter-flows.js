@@ -65,7 +65,6 @@ var FilterFlowsView = BaseView.extend({
     // DOM events
     events: {
         'click #area-select-button': 'showAreaSelection',
-//        'click #apply-filters': 'drawFlows'
     },
 
     // Rendering
@@ -120,7 +119,7 @@ var FilterFlowsView = BaseView.extend({
                 }
         });
         if (this.areaLevels.length > 0)
-            this.changeAdminLevel();
+            this.changeAreaLevel();
 
 
         ///////////////////////////////////
@@ -256,7 +255,7 @@ var FilterFlowsView = BaseView.extend({
         $(this.isCompositeSelect).on('changed.bs.select', multiCheck);
     },
 
-    changeAdminLevel: function(){
+    changeAreaLevel: function(){
         var levelId = this.areaLevelSelect.value;
         this.selectedAreas = [];
         this.el.querySelector('.selections').innerHTML = this.el.querySelector('#area-selections').innerHTML= '';
@@ -272,7 +271,8 @@ var FilterFlowsView = BaseView.extend({
         }
         else {
             areas = new Collection([], {
-                apiTag: 'areas'
+                apiTag: 'areas',
+                apiIds: [ levelId ]
             });
             this.areas[levelId] = areas;
             this.loader.activate();

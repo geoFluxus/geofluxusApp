@@ -12,7 +12,8 @@ function(Session) {
         publicationtypes:  '/api/publicationtypes/',
         publications:      '/api/publications/',
         arealevels:        '/api/levels/',
-        areas:             '/api/areas/',
+        allareas:          '/api/allareas/',
+        areas:             '/api/levels/{0}/areas/',
         activitygroups:    '/api/activitygroups/',
         activities:        '/api/activities/',
         companies:         '/api/companies/',
@@ -26,6 +27,7 @@ function(Session) {
         flows:             '/api/flows/',
         classifications:   '/api/classifications/',
         extradescriptions: '/api/extradescriptions/',
+        routings:          '/api/routings/',
     }
 
     return config;
