@@ -1,6 +1,7 @@
 define(['d3',
         'd3-tip',
-        'utils/utils'],
+        'utils/utils',
+        'visualizations/cycle-sankey.js'],
 function(d3, d3tip, utils) {
 /**
 *
