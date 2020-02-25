@@ -45,9 +45,9 @@ define(['views/common/baseview',
                  */
                 initialize: function (options) {
                     FlowSankeyView.__super__.initialize.apply(this, [options]);
-                    // _.bindAll(this, 'toggleFullscreen');
-                    // _.bindAll(this, 'exportPNG');
-                    // _.bindAll(this, 'exportCSV');
+                    //_.bindAll(this, 'toggleFullscreen');
+                    //_.bindAll(this, 'exportPNG');
+                    //_.bindAll(this, 'exportCSV');
                     var _this = this;
                     this.caseStudyId = options.caseStudyId;
                     this.keyflowId = options.keyflowId;
@@ -72,15 +72,17 @@ define(['views/common/baseview',
                  */
                 events: {
                     'click a[href="#flow-map-panel"]': 'refreshMap',
+                    
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-img': 'exportPNG',
                     'click .export-csv': 'exportCSV',
-                    'click .select-all': 'selectAll',
-                    'click .deselect-all': 'deselectAll',
-                    'change #sankey-dblclick': 'changeDblClick',
-                    'change #sankey-alignment': 'alignSankey',
-                    'change #sankey-scale': 'scale',
-                    'change #sankey-stretch': 'stretch'
+                    
+                    //'click .select-all': 'selectAll',
+                    //'click .deselect-all': 'deselectAll',
+                    //'change #sankey-dblclick': 'changeDblClick',
+                    //'change #sankey-alignment': 'alignSankey',
+                    //'change #sankey-scale': 'scale',
+                    //'change #sankey-stretch': 'stretch'
                 },
 
                 /*
@@ -140,37 +142,39 @@ define(['views/common/baseview',
                 /*
                  * render sankey-diagram in fullscreen
                  */
-                toggleFullscreen: function () {
+                toggleFullscreen: function (event) {
                     this.el.classList.toggle('fullscreen');
                     this.refresh();
+                    event.stopImmediatePropagation();
                     //this.render(this.transformedData);
                 },
 
-                changeDblClick: function (evt) {
-                    this.deselectAll();
-                    var checked = evt.target.checked;
-                    this.sankey.selectOnDoubleClick = checked;
-                    this.sankey.render(this.transformedData);
-                },
+                // changeDblClick: function (evt) {
+                //     this.deselectAll();
+                //     var checked = evt.target.checked;
+                //     this.sankey.selectOnDoubleClick = checked;
+                //     this.sankey.render(this.transformedData);
+                // },
 
-                alignSankey: function (evt) {
-                    this.deselectAll();
-                    this.sankey.align(evt.target.value);
-                    this.sankey.render(this.transformedData);
-                },
+                // alignSankey: function (evt) {
+                //     this.deselectAll();
+                //     this.sankey.align(evt.target.value);
+                //     this.sankey.render(this.transformedData);
+                // },
 
-                scale: function () {
-                    this.deselectAll();
-                    this.transformedData = this.transformData(this.flows);
-                    this.render(this.transformedData);
-                },
+                // scale: function () {
+                //     this.deselectAll();
+                //     this.transformedData = this.transformData(this.flows);
+                //     this.render(this.transformedData);
+                // },
 
-                stretch: function (evt) {
-                    this.deselectAll();
-                    this.sankey.stretch(evt.target.value)
-                    this.sankey.render(this.transformedData)
-                },
+                // stretch: function (evt) {
+                //     this.deselectAll();
+                //     this.sankey.stretch(evt.target.value)
+                //     this.sankey.render(this.transformedData)
+                // },
 
+                // Refresh Sankey rendering, for example when switching to fullscreen or back:
                 refresh: function (options) {
                     var isFullScreen = this.el.classList.contains('fullscreen'),
                         options = options || {},
@@ -304,16 +308,16 @@ define(['views/common/baseview',
                     this.el.dispatchEvent(new CustomEvent('allDeselected'));
                 },
 
-                exportPNG: function () {
+                exportPNG: function (event) {
                     var svg = this.sankeyDiv.querySelector('svg');
-                    console.log("saveSvgAsPng");
                     saveSvgAsPng.saveSvgAsPng(svg, "sankey-diagram.png", {
                         scale: 2,
                         backgroundColor: "#FFFFFF"
                     });
+                    event.stopImmediatePropagation();
                 },
 
-                exportCSV: function () {
+                exportCSV: function (event) {
                     if (!this.transformedData) return;
 
                     var header = ['Origin', 'Origin Code',
@@ -341,6 +345,8 @@ define(['views/common/baseview',
                         type: "text/plain;charset=utf-8"
                     });
                     FileSaver.saveAs(blob, "data.csv");
+
+                    event.stopImmediatePropagation();
                 },
 
                 /*
