@@ -165,9 +165,9 @@ define(['d3',
                     nodeTooltipOffset = 130;
 
                 tipLinks.html(function (d) {
-                    var title = d.source.name + " -> " + d.target.name,
+                    var title = d.source.name + ' <i class="fas fa-arrow-right"></i> ' + d.target.name,
                         value = _this.format(d.amount || d.value) + " " + (d.units || "");
-                    return "<h1>" + title + "</h1>" + "<br>" + value + "<br><br>";
+                    return "<span class='sankeyNodeLabelSpan text-ellipsis'>" + title + "</span>" + "<br><br>" + value;
                 });
 
                 tipNodes.html(function (d) {
@@ -184,10 +184,24 @@ define(['d3',
                         outSum += parseInt(link.amount || link.value);
                         if (!outUnits) outUnits = link.units;
                     }
-                    var ins = "in: " + _this.format(inSum) + " " + (inUnits || ""),
-                        out = "out: " + _this.format(outSum) + " " + (outUnits || "");
+
+                    // Only show 'in' value if it is greater than 0:
+                    if (inSum > 0){
+                        var ins = "<br><div style='display: inline-block; font-weight: bold; width: 1.75em'>In:</div> " + _this.format(inSum) + " " + (inUnits || "");
+                    } else {
+                        var ins = "";
+                    }
+
+                    // Only show 'out' value if it is greater than 0:
+                    if (outSum > 0){
+                        var out = "<div style='display: inline-block; font-weight: bold; width: 1.75em'>Out:</div> " + _this.format(outSum) + " " + (outUnits || "");
+                    } else {
+                        var out = "";
+                    }
+
                     var text = (d.text) ? d.text + '<br>' : '';
-                    return "<h1>" + d.name + "</h1>" + text + "<br>" + ins + "<br>" + out;
+
+                    return "<span>" + d.name + "</span>" + text + ins + "<br>" + out;
                 });
 
                 function dragstarted(d) {
@@ -383,7 +397,7 @@ define(['d3',
                         return d3.rgb(d.color).darker(2);
                     });
 
-                // scale the font depending on zoom
+                // Scale the font depending on zoom
                 var fontRange = d3.scale.linear().domain([0, 0.5, 1, 4, 10]).range([50, 20, 16, 3, 2.5]);
                 var rectRange = d3.scale.linear().domain([0, 0.5, 1, 5]).range([nodeWidth * 5, nodeWidth * 2, nodeWidth, nodeWidth]);
 
@@ -405,9 +419,9 @@ define(['d3',
                     .attr("dy", ".35em")
                     .attr("text-anchor", "end")
                     .attr("transform", null)
-                    .attr("class", "sankeyNodeLabel")
                     .text(function (d) {
-                        return d.name;
+                        // Limit the maximum length of the node label:
+                        return d.name.substr(0,20)+(d.name.length>20?'...':'');
                     })
                     .filter(function (d) {
                         return d.x < _this.width / 2;

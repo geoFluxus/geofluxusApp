@@ -97,7 +97,7 @@ var FlowSankeyView = BaseView.extend(
         div.classList.add('sankey', 'bordered');
         this.el.appendChild(div);
         if (data.links.length === 0){
-            div.innerHTML = gettext("No flow data found for applied filters.");
+            div.innerHTML = "No flow data found for applied filters.";
             this.el.classList.add('disabled');
             return;
         }
@@ -197,7 +197,7 @@ var FlowSankeyView = BaseView.extend(
                 code = node.code || node.nace || node.activity__nace;
                 key = level + id;
             if ((_this.anonymize) && (level === 'actor'))
-                name = gettext('Actor');
+                name = 'Actor';
             // we already got this one -> skip it
             if(indices[key] != null)
                 return indices[key];

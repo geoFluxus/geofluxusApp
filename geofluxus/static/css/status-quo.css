@@ -21,39 +21,39 @@
 }
 
 #btn-filterViews {
-   background: none;
-	color: inherit;
-	border: none;
-	padding: 0;
-	font: inherit;
-	cursor: pointer;
-	outline: inherit;
-	box-shadow: none;
-	text-decoration: none !important;
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+    box-shadow: none;
+    text-decoration: none !important;
 }
 
 #btn-actor-areas-activities-roles {
     background: none;
-	color: inherit;
-	border: none;
-	padding: 0;
-	font: inherit;
-	cursor: pointer;
-	outline: inherit;
-	box-shadow: none;
-	text-decoration: none !important;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+    box-shadow: none;
+    text-decoration: none !important;
 }
 
 #btn-flows {
     background: none;
-	color: inherit;
-	border: none;
-	padding: 0;
-	font: inherit;
-	cursor: pointer;
-	outline: inherit;
-	box-shadow: none;
-	text-decoration: none !important;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+    box-shadow: none;
+    text-decoration: none !important;
 }
 
 .dropdown-menu .show {
@@ -78,12 +78,12 @@
 }
 
 .card-header .collapsed .fa {
-  -webkit-transform: rotate(-90deg);
-  -moz-transform: rotate(-90deg);
-  -ms-transform: rotate(-90deg);
-  -o-transform: rotate(-90deg);
-   transform: rotate(-90deg);
-   transition: .3s transform ease-in-out;
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    transition: .3s transform ease-in-out;
 }
 
 #activitySelectChevron {
@@ -103,12 +103,88 @@ label[for="activity-select"] {
 .sankey-wrapper {
     background-color: #a2a2a2;
     border-radius: 3px;
+    width: 100%;
+    min-height: 500px;
+    touch-action: none;
 }
 
-.sankeyNodeLabel {
-    background-color: green !important;
+
+.sankey,
+.tooltip,
+.oltooltip,
+.sankeymaptooltip,
+.d3-tip {
+    font-family: 'Roboto', sans-serif;
 }
 
-.sankeyNodeLabel:hover {
-    background: blue;
+.d3-tip h1 {
+    font-weight: bold;
+    font-size: 14px;
+    padding: 0;
+    margin-top: 3px;
+    margin-bottom: 2px;
+    width: 100%;
+}
+
+.d3-tip h2 {
+    font-weight: bold;
+    font-size: 12px;
+    padding-right: inherit;
+    padding-left: inherit;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin: 0px;
+}
+
+.d3-tip h3 {
+    font-weight: normal;
+    font-size: 8px;
+    margin: 0;
+    padding: 0;
+}
+
+.d3-tip table {
+    font-weight: normal;
+    font-size: 12px;
+    padding: none;
+    margin: 0;
+    width: 100%;
+    border: none;
+    border-collapse: collapse;
+}
+
+.d3-tip td {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.d3-tip .col-left {
+    padding-right: 8px;
+}
+
+.d3-tip .table-wrapper {
+    margin: 0;
+    padding: inherit;
+    border: none;
+}
+
+.d3-tip {
+    background-color: #BEBEBE;
+    color: black;
+    border-radius: 5px;
+    max-width: 20em;
+    line-height: 1;
+    font-weight: normal;
+    padding: 8px;
+    pointer-events: none;
+    box-shadow: 1px 1px 4px grey;
+    z-index: 99999;
+}
+
+.d3-tip-nodes {
+    background-color: darkgrey;
+}
+
+g .node {
+    background-color: yellow;
 }
