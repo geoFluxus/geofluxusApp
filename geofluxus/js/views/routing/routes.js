@@ -2,7 +2,8 @@
 define(['views/common/baseview',
         'underscore',
         'collections/collection',
-        'visualizations/map',],
+        'visualizations/map'
+        ],
 
 function(BaseView, _, Collection, Map) {
 
@@ -16,10 +17,14 @@ function(BaseView, _, Collection, Map) {
             this.routes = new Collection([], {
                 apiTag: 'routings'
             });
+            this.actors = new Collection([], {
+                apiTag: 'actors'
+            })
 
             this.loader.activate();
             var promises = [
                 this.routes.fetch(),
+                this.actors.fetch(),
             ];
             Promise.all(promises).then(function(){
                 _this.loader.deactivate();
@@ -41,10 +46,19 @@ function(BaseView, _, Collection, Map) {
 
             this.routeMap = new Map({
                 el: this.el.querySelector('.map'),
+                source: 'light',
+                opacity: 1.0
             });
-            this.routeMap.addLayer('routes', {stroke: 'rgb(255, 0, 0)',});
+            this.routeMap.addLayer('routes', {
+                stroke: 'rgb(255, 0, 0)',
+            });
+            this.routeMap.addLayer('actors', {
+                radius: 5,
+                fill: 'rgb(255, 200, 0)'
+            });
 
             this.drawRoutes(_this.routes);
+            this.drawActors(_this.actors);
         },
 
         // Draw routes
@@ -60,6 +74,18 @@ function(BaseView, _, Collection, Map) {
             })
             this.routeMap.centerOnLayer('routes');
         },
+
+        // Draw actors
+        drawActors: function(actors){
+            var _this = this;
+            actors.forEach(function(actor){
+                var coords = actor.get('geom').coordinates;
+                _this.routeMap.addGeometry(coords, {
+                        projection: 'EPSG:4326', layername: 'actors',
+                        type: 'Point', renderOSM: false
+                });
+            })
+        }
 
     });
 

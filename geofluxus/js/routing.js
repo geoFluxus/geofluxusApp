@@ -1,6 +1,6 @@
 // Routing
 define(['views/routing/routes'],
-function (RoutesView) {
+function(RoutesView) {
     var routesView;
 
     function renderRoutes() {

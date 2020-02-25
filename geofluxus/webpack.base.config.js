@@ -6,10 +6,10 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var entryPoints = {
     DataEntry: './js/data-entry',
     StatusQuo: './js/status-quo',
-    Routing:   './js/routing',
     Login:   './js/login',
     Welcome: './js/welcome',
     Base:    './js/base',
+    Routing:   './js/routing',
 };
 
 module.exports = {
