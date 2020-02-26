@@ -27,10 +27,10 @@ define(['d3',
             constructor(options) {
                 this.el = options.el;
                 this.margin = {
-                    top: 1,
-                    right: 10,
-                    bottom: 6,
-                    left: 10
+                    top: 5,
+                    right: 0,
+                    bottom: 0,
+                    left: 5,
                 };
                 this.height = options.height - this.margin.top - this.margin.bottom;
                 this.title = options.title;
@@ -75,7 +75,8 @@ define(['d3',
             zoomToFit(duration) {
                 var size = this.sankey.size(),
                     ratio = this.width / size[0],
-                    scale = ratio * 0.8,
+                    //scale = ratio;
+                    scale = ratio * 0.92,
                     duration = duration || 0,
                     g = this.svg.select('g');
                 g.transition().duration(duration).call(this.zoom.translate([50, 10]).scale(scale).event);
@@ -186,14 +187,14 @@ define(['d3',
                     }
 
                     // Only show 'in' value if it is greater than 0:
-                    if (inSum > 0){
+                    if (inSum > 0) {
                         var ins = "<br><div style='display: inline-block; font-weight: bold; width: 1.75em'>In:</div> " + _this.format(inSum) + " " + (inUnits || "");
                     } else {
                         var ins = "";
                     }
 
                     // Only show 'out' value if it is greater than 0:
-                    if (outSum > 0){
+                    if (outSum > 0) {
                         var out = "<div style='display: inline-block; font-weight: bold; width: 1.75em'>Out:</div> " + _this.format(outSum) + " " + (outUnits || "");
                     } else {
                         var out = "";
@@ -230,7 +231,7 @@ define(['d3',
                     .on("zoom", zoomed);
 
                 this.svg = this.div.append("svg")
-                    //.attr( "preserveAspectRatio", "xMinYMid meet" )
+                    .attr("preserveAspectRatio", "xMinYMid meet")
                     .attr("width", this.width * this.stretchFactor)
                     .attr("height", this.height)
                     .call(this.zoom)
@@ -421,7 +422,7 @@ define(['d3',
                     .attr("transform", null)
                     .text(function (d) {
                         // Limit the maximum length of the node label:
-                        return d.name.substr(0,20)+(d.name.length>20?'...':'');
+                        return d.name.substr(0, 20) + (d.name.length > 20 ? '...' : '');
                     })
                     .filter(function (d) {
                         return d.x < _this.width / 2;

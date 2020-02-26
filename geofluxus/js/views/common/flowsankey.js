@@ -45,9 +45,9 @@ define(['views/common/baseview',
                  */
                 initialize: function (options) {
                     FlowSankeyView.__super__.initialize.apply(this, [options]);
-                    //_.bindAll(this, 'toggleFullscreen');
-                    //_.bindAll(this, 'exportPNG');
-                    //_.bindAll(this, 'exportCSV');
+                    _.bindAll(this, 'toggleFullscreen');
+                    _.bindAll(this, 'exportPNG');
+                    _.bindAll(this, 'exportCSV');
                     var _this = this;
                     this.caseStudyId = options.caseStudyId;
                     this.keyflowId = options.keyflowId;
@@ -57,11 +57,11 @@ define(['views/common/baseview',
                     this.originLevel = options.originLevel;
                     this.destinationLevel = options.destinationLevel;
                     this.flows = options.flows;
-                    this.renderStocks = (options.renderStocks == null) ? true : options.renderStocks;
-                    this.showRelativeComposition = (options.showRelativeComposition == null) ? true : options.showRelativeComposition;
-                    this.forceSignum = options.forceSignum || false;
-                    this.stretchInput = this.el.querySelector('#sankey-stretch');
-                    if (this.stretchInput) this.stretchInput.value = 1;
+                    // this.renderStocks = (options.renderStocks == null) ? true : options.renderStocks;
+                    // this.showRelativeComposition = (options.showRelativeComposition == null) ? true : options.showRelativeComposition;
+                    // this.forceSignum = options.forceSignum || false;
+                    // this.stretchInput = this.el.querySelector('#sankey-stretch');
+                    // if (this.stretchInput) this.stretchInput.value = 1;
                     this.anonymize = options.anonymize;
                     this.transformedData = this.transformData(this.flows);
                     this.render(this.transformedData);
@@ -71,12 +71,10 @@ define(['views/common/baseview',
                  * dom events (managed by jquery)
                  */
                 events: {
-                    'click a[href="#flow-map-panel"]': 'refreshMap',
-                    
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-img': 'exportPNG',
                     'click .export-csv': 'exportCSV',
-                    
+                    //'click a[href="#flow-map-panel"]': 'refreshMap',
                     //'click .select-all': 'selectAll',
                     //'click .deselect-all': 'deselectAll',
                     //'change #sankey-dblclick': 'changeDblClick',
@@ -89,11 +87,12 @@ define(['views/common/baseview',
                  * render the view
                  */
                 render: function (data) {
-                    var isFullScreen = this.el.classList.contains('fullscreen'),
-                        width = (isFullScreen) ? this.el.clientWidth : this.width,
-                        height = (isFullScreen) ? this.el.clientHeight : this.height,
-                        div = this.el.querySelector('.sankey'),
-                        _this = this;
+                    var isFullScreen = this.el.classList.contains('fullscreen');
+                    var width = (isFullScreen) ? this.el.clientWidth : this.width
+                    var height = (isFullScreen) ? this.el.clientHeight : this.height;
+                    var div = this.el.querySelector('.sankey');
+                    var _this = this;
+
                     if (div != null)
                         this.el.removeChild(div); // this removes the event listeners as well
                     div = document.createElement('div');
@@ -107,7 +106,7 @@ define(['views/common/baseview',
                     this.el.classList.remove('disabled');
                     this.sankeyDiv = div;
 
-                    var dblclkCheck = this.el.querySelector('#sankey-dblclick');
+                    // var dblclkCheck = this.el.querySelector('#sankey-dblclick');
                     this.sankey = new Sankey({
                         height: height,
                         width: width,
@@ -117,7 +116,7 @@ define(['views/common/baseview',
                         selectable: true,
                         gradient: false,
                         stretchFactor: (this.stretchInput) ? this.stretchInput.value : 1,
-                        selectOnDoubleClick: (dblclkCheck) ? dblclkCheck.checked : false
+                        // selectOnDoubleClick: (dblclkCheck) ? dblclkCheck.checked : false
                     })
 
                     // redirect the event with same properties
@@ -255,7 +254,7 @@ define(['views/common/baseview',
                         //var crepr = compositionRepr(flow),
                         var amount = flow.get('amount'),
                             value = (norm === 'log') ? normalize(amount) : amount;
-                        var description = flow.get('description');
+                        // var description = flow.get('description');
 
                         //if (_this.forceSignum && amount >= 0)
                         // amount = '+' + amount.toLocaleString(this.language);
@@ -280,33 +279,33 @@ define(['views/common/baseview',
                     return transformed;
                 },
 
-                selectAll: function () {
-                    var paths = this.sankeyDiv.querySelectorAll('path'),
-                        _this = this,
-                        data = [];
-                    paths.forEach(function (path) {
-                        path.classList.add('selected');
-                    })
-                    // workaround: trigger deselect all first
-                    this.el.dispatchEvent(new CustomEvent('allDeselected'));
-                    // only flows that are actually displayed in sankey (not original data)
-                    this.transformedData.links.forEach(function (link) {
-                        var flow = _this.flows.get(link.id);
-                        if (flow)
-                            data.push(flow)
-                    })
-                    this.el.dispatchEvent(new CustomEvent('linkSelected', {
-                        detail: data
-                    }));
-                },
+                // selectAll: function () {
+                //     var paths = this.sankeyDiv.querySelectorAll('path'),
+                //         _this = this,
+                //         data = [];
+                //     paths.forEach(function (path) {
+                //         path.classList.add('selected');
+                //     })
+                //     // workaround: trigger deselect all first
+                //     this.el.dispatchEvent(new CustomEvent('allDeselected'));
+                //     // only flows that are actually displayed in sankey (not original data)
+                //     this.transformedData.links.forEach(function (link) {
+                //         var flow = _this.flows.get(link.id);
+                //         if (flow)
+                //             data.push(flow)
+                //     })
+                //     this.el.dispatchEvent(new CustomEvent('linkSelected', {
+                //         detail: data
+                //     }));
+                // },
 
-                deselectAll: function () {
-                    var links = this.sankeyDiv.querySelectorAll('.selected');
-                    links.forEach(function (link) {
-                        link.classList.remove('selected');
-                    })
-                    this.el.dispatchEvent(new CustomEvent('allDeselected'));
-                },
+                // deselectAll: function () {
+                //     var links = this.sankeyDiv.querySelectorAll('.selected');
+                //     links.forEach(function (link) {
+                //         link.classList.remove('selected');
+                //     })
+                //     this.el.dispatchEvent(new CustomEvent('allDeselected'));
+                // },
 
                 exportPNG: function (event) {
                     var svg = this.sankeyDiv.querySelector('svg');

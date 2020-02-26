@@ -128,9 +128,9 @@ define(['views/common/baseview',
                     _this.flows.models.forEach(function (flow) {
                         var amount = flow._amount;
                         var description = flow.description;
-                        //flow.color = (!showDelta) ? null : (amount > 0) ? '#23FE01' : 'red';
                         flow.set('amount', amount);
                         flow.set('description', description);
+                        //flow.color = (!showDelta) ? null : (amount > 0) ? '#23FE01' : 'red';
                         // var materials = flow.get('materials');
                         // materials.forEach(function(material){
                         // material.amount = material._amount;
@@ -139,7 +139,8 @@ define(['views/common/baseview',
                     });
                     _this.flowSankeyView = new FlowSankeyView({
                         el: el,
-                        width: el.clientWidth - 10,
+                        width: el.clientWidth,
+                        //width: el.clientWidth - 10,
                         flows: _this.flows.models,
                         height: 600,
                         originLevel: displayLevel,
@@ -155,21 +156,24 @@ define(['views/common/baseview',
                         displayLevel: displayLevel,
                         success: function (flows) {
                             _this.flows = flows;
-                            if (_this.strategy) {
-                                _this.fetchFlows({
-                                    strategy: _this.strategy,
-                                    displayLevel: displayLevel,
-                                    success: function (strategyFlows) {
-                                        _this.strategyFlows = strategyFlows;
-                                        _this.deltaFlows = _this.calculateDelta(_this.flows, strategyFlows);
-                                        _this.postprocess(_this.deltaFlows);
-                                        drawSankey();
-                                    }
-                                })
-                            } else {
-                                //listFlows();
-                                drawSankey();
-                            }
+
+                            //drawSankey();
+
+                            // if (_this.strategy) {
+                            //     _this.fetchFlows({
+                            //         strategy: _this.strategy,
+                            //         displayLevel: displayLevel,
+                            //         success: function (strategyFlows) {
+                            //             _this.strategyFlows = strategyFlows;
+                            //             _this.deltaFlows = _this.calculateDelta(_this.flows, strategyFlows);
+                            //             _this.postprocess(_this.deltaFlows);
+                            //             drawSankey();
+                            //         }
+                            //     })
+                            // } else {
+                            //     //listFlows();
+                            //     drawSankey();
+                            // }
                         }
                     })
                 } else {
