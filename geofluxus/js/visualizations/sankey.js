@@ -27,10 +27,10 @@ define(['d3',
             constructor(options) {
                 this.el = options.el;
                 this.margin = {
-                    top: 5,
+                    top: 0,
                     right: 0,
                     bottom: 0,
-                    left: 5,
+                    left: 0,
                 };
                 this.height = options.height - this.margin.top - this.margin.bottom;
                 this.title = options.title;
@@ -114,6 +114,8 @@ define(['d3',
                 this.zoom = {};
                 var drag = {};
                 var g = {};
+
+                // Logic for d3-zoom-controls:
                 d3.selectAll("a[data-zoom]").on("click", clicked);
 
                 function clicked() {
@@ -150,7 +152,7 @@ define(['d3',
 
                 var path = this.sankey.link();
 
-                // remove old svg if it was already rendered
+                // Remove old svg if it was already rendered
                 this.div.select("svg").remove();
                 $(".d3-tip").remove();
 
@@ -230,10 +232,16 @@ define(['d3',
                     .center([this.width / 2, this.height / 2])
                     .on("zoom", zoomed);
 
+                // Initialize SVG:
                 this.svg = this.div.append("svg")
-                    .attr("preserveAspectRatio", "xMinYMid meet")
-                    .attr("width", this.width * this.stretchFactor)
-                    .attr("height", this.height)
+                    //.attr("preserveAspectRatio", "none")
+
+                    .attr("preserveAspectRatio", "xMidYMid")
+                    .attr("viewBox", "0 0 " + (this.width + 25) + " " + (this.width))
+                    // Class to make it responsive.
+                    .classed("svg-content-responsive", true)
+                    // .attr("width", this.width * this.stretchFactor)
+                    // .attr("height", this.height)
                     .call(this.zoom)
                     .on("dblclick.zoom", null)
                     .call(tipLinks)
