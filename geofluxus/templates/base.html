@@ -12,40 +12,34 @@
   <title>{% block title %}TUDelft{% endblock %}</title>
 </head>
 
-    <body>
-        <!--Navbar-->
-        <nav class="navbar fixed-top navbar-expand-lg" id="navbarID">
-          <a class="navbar-brand" href="/">TUDelft</a>
-          <div class="collapse navbar-collapse">
-              <ul class="navbar-nav mr-auto">
-                  <li class="nav-item" id="data-entry-link">
-                    <a class="nav-link" href="/data-entry">Data Entry</a>
-                  </li>
-                  <li class="nav-item" id="status-quo-link">
-                    <a class="nav-link" href="/status-quo">Status Quo</a>
-                  </li>
-              </ul>
-              <ul class="navbar-nav ml-auto">
-                  <li class="nav-item">
-                    {% if request.user.is_authenticated %}
-                        <div class="dropdown">
-                          <button class="dropdown-button" type="button">
-                            User Area ({{ request.user.username }})
-                            <span class="caret"></span>
-                          </button>
-                          <div class="dropdown-content">
-                            {% if request.user.is_superuser %}
-                                <a href="/admin">Admin</a>
-                                <a href="/api">API</a>
-                            {% endif %}
-                            <a href="/logout">Logout</a>
-                          </div>
-                        </div>
-                    {% else %}
-                        <a class="nav-link" href="/login/login">Login</a>
-                    {% endif %}
-                  </li>
-              </ul>
+<body>
+  <!--Navbar-->
+  <nav class="navbar navbar-expand-md" id="navbarID">
+    <a class="navbar-brand" href="/">TUDelft</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item" id="data-entry-link">
+          <a class="nav-link" href="/data-entry">Data Entry</a>
+        </li>
+        <li class="nav-item" id="status-quo-link">
+          <a class="nav-link" href="/status-quo">Status Quo</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          {% if request.user.is_authenticated %}
+          <div class="dropdown">
+            <button class="dropdown-button" type="button">
+              User Area ({{ request.user.username }})
+              <span class="caret"></span>
+            </button>
+            <div class="dropdown-content">
+              {% if request.user.is_superuser %}
+              <a href="/admin">Admin</a>
+              <a href="/api">API</a>
+              {% endif %}
+              <a href="/logout">Logout</a>
+            </div>
           </div>
           {% else %}
           <a class="nav-link" href="/login/login">Login</a>
