@@ -9,6 +9,7 @@ var entryPoints = {
     Login:   './js/login',
     Welcome: './js/welcome',
     Base:    './js/base',
+    Routing:   './js/routing',
 };
 
 module.exports = {

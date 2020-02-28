@@ -1,7 +1,6 @@
 define(['openlayers',
         'turf',
-        'openlayers/css/ol.css',
-        'static/css/map.css'],
+        ],
 function(ol, turf)
 {
     class Map {
@@ -24,12 +23,24 @@ function(ol, turf)
 
             // blank map
             if (options.renderOSM != false){
-                initlayers.push(new ol.layer.Tile({
-                    source: new ol.source.OSM({crossOrigin: 'anonymous'}),
-                    crossOrigin: 'anonymous',
-                    opacity: options.opacity || 1,
-                    tileOptions: {crossOriginKeyword: 'anonymous'},
-                }))
+                var source = new ol.source.OSM({crossOrigin: 'anonymous'});
+                if (options.source == 'light') {
+                    source = new ol.source.XYZ({
+                        url: 'https://cartodb-basemaps-{a-d}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'
+                    })
+                }
+                else if (options.source == 'dark') {
+                    source = new ol.source.XYZ({
+                        url: 'https://cartodb-basemaps-{a-d}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png'
+                    })
+                }
+                var background = new ol.layer.Tile({
+                        source: source,
+                        crossOrigin: 'anonymous',
+                        opacity: options.opacity || 1,
+                        tileOptions: {crossOriginKeyword: 'anonymous'},
+                })
+                initlayers.push(background);
             }
 
             var basicLayer = new ol.layer.Vector({ source: new ol.source.Vector() });
@@ -135,7 +146,7 @@ function(ol, turf)
             }
             else {
                 var image = new ol.style.Circle({
-                    radius: 5,
+                    radius: options.radius || 5,
                     fill: new ol.style.Fill({ color: options.fill || 'rgb(100, 150, 250)' }),
                     stroke: new ol.style.Stroke({
                         color: options.stroke || 'rgba(100, 150, 250, 0.1)',
@@ -182,7 +193,7 @@ function(ol, turf)
                 }
                 else {
                     var selectImage = new ol.style.Circle({
-                        radius: 5,
+                        radius: options.radius || 5,
                         fill: new ol.style.Fill({ color: select.fill || 'rgb(230, 230, 0)' }),
                         stroke: new ol.style.Stroke({
                             color: select.stroke || 'rgba(100, 150, 250, 0.1)',
@@ -320,6 +331,7 @@ function(ol, turf)
             if (!((geometry instanceof ol.geom.MultiPolygon) ||
                   (geometry instanceof ol.geom.Polygon) ||
                   (geometry instanceof ol.geom.LineString) ||
+                  (geometry instanceof ol.geom.MultiLineString) ||
                   (geometry instanceof ol.geom.Point)
                   )){
                 if (type === 'multipolygon') {
@@ -328,6 +340,8 @@ function(ol, turf)
                     geometry = new ol.geom.Point(geometry)
                 } else if (type === 'linestring'){
                     geometry = new ol.geom.LineString(geometry)
+                } else if (type === 'multilinestring'){
+                    geometry = new ol.geom.MultiLineString(geometry)
                 } else if (type === 'polygon'){
                     geometry = new ol.geom.Polygon(geometry)
                 } else {
@@ -381,7 +395,7 @@ function(ol, turf)
             });
         }
 
-        addmarker(coordinates, options) {
+        addMarker(coordinates, options) {
             var _this = this;
             var options = options || {};
             var proj = options.projection || this.mapProjection,
@@ -418,7 +432,7 @@ function(ol, turf)
             }
 
             if (options.draggable){
-                // Dr{ag and drop feature
+                // Drag and drop feature
                 var dragInteraction = new ol.interaction.Modify({
                     features: new ol.Collection([feature]),
                     style: dragStyle,
