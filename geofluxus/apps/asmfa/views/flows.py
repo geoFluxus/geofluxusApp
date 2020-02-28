@@ -22,6 +22,11 @@ from geofluxus.apps.asmfa.serializers import (FlowChainCreateSerializer,
                                               ClassificationCreateSerializer,
                                               ExtraDescriptionCreateSerializer,
                                               RoutingCreateSerializer)
+from django.db import connection
+from django.contrib.gis.geos import GEOSGeometry
+import json
+from collections import OrderedDict
+from rest_framework.response import Response
 
 
 # FlowChain
@@ -97,13 +102,34 @@ class RoutingViewSet(PostGetViewMixin,
                      ViewSetMixin,
                      ModelPermissionViewSet):
     queryset = Routing.objects.order_by('id')
-    pagination_class =  UnlimitedResultsSetPagination
-    serializer_class = RoutingSerializer
+    pagination_class = UnlimitedResultsSetPagination
+    serializer_class = ExtraDescriptionSerializer
     serializers = {
         'list': RoutingListSerializer,
         'create': RoutingCreateSerializer
     }
 
-    def get_queryset(self):
-        queryset = Routing.objects.order_by('id')
-        return queryset
+    # def list(self, request, **kwargs):
+    #     cursor = connection.cursor()
+    #     cursor.execute(
+    #         '''
+    #         SELECT DISTINCT(ST_AsText(ST_Intersection(a.geom, b.geom)))
+    #         FROM asmfa_routing a
+    #         LEFT JOIN asmfa_routing b
+    #         ON (ST_Overlaps(a.geom, b.geom))
+    #         WHERE a.id < b.id
+    #         '''
+    #     )
+    #
+    #     lines = cursor.fetchall()
+    #     data = []
+    #     idx = 1
+    #     for line in lines[:-1]:
+    #         geom = GEOSGeometry(line[0])
+    #         item = OrderedDict(
+    #             {'geom': json.loads(geom.geojson)}
+    #         )
+    #         data.append(item)
+    #         idx += 1
+    #
+    #     return Response(data)

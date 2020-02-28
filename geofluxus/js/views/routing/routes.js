@@ -51,6 +51,11 @@ function(BaseView, _, Collection, Map) {
             });
             this.routeMap.addLayer('routes', {
                 stroke: 'rgb(255, 0, 0)',
+                select: {
+                    selectable: true,
+                    strokeWidth: 10,
+                    stroke: 'rgb(0, 255, 0)'
+                }
             });
             this.routeMap.addLayer('actors', {
                 radius: 5,
