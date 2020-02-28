@@ -87,7 +87,7 @@ class FilterFlowViewSet(PostGetViewMixin,
         '''
 
         # retrieve selected areas
-        area_ids = filters.pop('areas')
+        area_ids = filters.pop('areas', None)
         # spatial filtering without areas ?!
         if not area_ids:
             return chains

@@ -100,6 +100,8 @@ define(['views/common/baseview',
                 });
                 this.areaMap = new Map({
                     el: this.areaModal.querySelector('.map'),
+                    center: [-3.65, 37.53], // check centerOnLayer (map.js)
+                    zoom: 2, // check centerOnLayer (map.js)
                     source: 'light',
                     opacity: 1.0
                 });
