@@ -657,7 +657,7 @@ function(ol, turf)
                         }
                         catch (e){
                             console.log(e);
-                            _this.alert(gettext('Self-intersection in polygon. Please try again'));
+                            _this.alert('Self-intersection in polygon. Please try again');
                         }
                         if (intersection) {
                             layer.getSource().addFeature(geojsonFormat.readFeature(intersection));

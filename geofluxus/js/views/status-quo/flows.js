@@ -19,7 +19,7 @@ define(['views/common/baseview',
 
             // DOM events
             events: {
-                'click #apply-filters': 'fetchFlows'
+                'click #apply-filters': 'fetchFlows',
             },
 
             // Rendering
@@ -68,15 +68,20 @@ define(['views/common/baseview',
             postprocess: function (flows) {
                 var idx = 0;
                 flows.forEach(function (flow) {
-                    var origin = flow.get('origin'),
-                        destination = flow.get('destination');
-                    // api aggregates flows and doesn't return an id
-                    // generate an internal one to assign interactions
+                    var origin = flow.get('origin');
+                    var destination = flow.get('destination');
+
+                    // API aggregates flows and doesn't return an id. Generate internal ID to assign interactions:
                     flow.set('id', idx);
                     idx++;
 
-                    // remember original amounts to be able to swap amount with delta and back
-                    //flow._amount = flow.get('amount');
+                    // Save original amounts to be able to swap amount with delta and back
+                    flow._amount = flow.get('amount');
+
+                    // Color:
+                    origin.color = utils.colorByName(origin.name);
+                    destination.color = utils.colorByName(destination.name);
+
                     //            flow.description = flow.get('description');
                     //var materials = flow.get('materials');
                     //flow.get('materials').forEach(function(material){
@@ -84,9 +89,7 @@ define(['views/common/baseview',
                     //})
                     //flow.set('materials', materials);
 
-                    //            origin.color = utils.colorByName(origin.name);
                     //            if (!flow.get('stock'))
-                    //                destination.color = utils.colorByName(destination.name);
                 })
 
                 this.flows = flows;
@@ -125,9 +128,9 @@ define(['views/common/baseview',
                     _this.flows.models.forEach(function (flow) {
                         var amount = flow._amount;
                         var description = flow.description;
-                        //flow.color = (!showDelta) ? null : (amount > 0) ? '#23FE01' : 'red';
                         flow.set('amount', amount);
                         flow.set('description', description);
+                        //flow.color = (!showDelta) ? null : (amount > 0) ? '#23FE01' : 'red';
                         // var materials = flow.get('materials');
                         // materials.forEach(function(material){
                         // material.amount = material._amount;
@@ -136,7 +139,8 @@ define(['views/common/baseview',
                     });
                     _this.flowSankeyView = new FlowSankeyView({
                         el: el,
-                        width: el.clientWidth - 10,
+                        width: el.clientWidth,
+                        //width: el.clientWidth - 10,
                         flows: _this.flows.models,
                         height: 600,
                         originLevel: displayLevel,
@@ -152,21 +156,7 @@ define(['views/common/baseview',
                         displayLevel: displayLevel,
                         success: function (flows) {
                             _this.flows = flows;
-                            if (_this.strategy) {
-                                _this.fetchFlows({
-                                    strategy: _this.strategy,
-                                    displayLevel: displayLevel,
-                                    success: function (strategyFlows) {
-                                        _this.strategyFlows = strategyFlows;
-                                        _this.deltaFlows = _this.calculateDelta(_this.flows, strategyFlows);
-                                        _this.postprocess(_this.deltaFlows);
-                                        drawSankey();
-                                    }
-                                })
-                            } else {
-                                //listFlows();
-                                drawSankey();
-                            }
+                            //drawSankey();
                         }
                     })
                 } else {
@@ -372,6 +362,8 @@ define(['views/common/baseview',
                     }
                 });
             },
+
+            
 
         });
         return FlowsView;

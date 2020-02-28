@@ -10,7 +10,8 @@ require(['jquery',
          'static/css/sidebar.css',
          '@fortawesome/fontawesome-free/css/all.css',
          'openlayers/css/ol.css',
-         'static/css/map.css'],
+         'static/css/map.css',
+         'textarea-autosize'],
 function($, ready){
     ready(function(){
          // hide sidebar if there is no content in it
