@@ -100,6 +100,8 @@ define(['views/common/baseview',
                 });
                 this.areaMap = new Map({
                     el: this.areaModal.querySelector('.map'),
+                    source: 'light',
+                    opacity: 1.0
                 });
                 this.areaLevelSelect = this.el.querySelector('select[name="area-level-select"]');
                 this.areaMap.addLayer(
@@ -134,9 +136,6 @@ define(['views/common/baseview',
                             }
                         }
                     });
-                // if (this.areaLevels.length > 0) {
-                //     this.changeAreaLevel();
-                // }
 
 
                 ///////////////////////////////////
@@ -331,12 +330,12 @@ define(['views/common/baseview',
 
                 $(this.areaModal).modal('show');
 
-                if (_this.areaLevels.length > 0) {
-                    _this.changeAreaLevel();
-                }
                 setTimeout(function () {
                     // After the modal has fully opened, call updateSize to render the map with the correct dimensions:
                     _this.areaMap.map.updateSize();
+                    if (_this.areaLevels.length > 0) {
+                        _this.changeAreaLevel();
+                    }
                 }, 200);
             },
 
