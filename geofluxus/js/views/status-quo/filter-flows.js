@@ -106,8 +106,7 @@ var FilterFlowsView = BaseView.extend({
                     stroke: 'rgb(230, 230, 0)',
                     fill: 'rgba(230, 230, 0, 0.5)',
                     onChange: function(areaFeats){
-                        var modalSelDiv = _this.el.querySelector('.selections'),
-                            levelId = _this.areaLevelSelect.value
+                        var levelId = _this.areaLevelSelect.value
                             labels = [],
                             areas = _this.areas[levelId];
                         _this.selectedAreas = [];
@@ -115,12 +114,24 @@ var FilterFlowsView = BaseView.extend({
                             labels.push(areaFeat.label);
                             _this.selectedAreas.push(areaFeat.id);
                         });
-                        modalSelDiv.innerHTML = labels.join(', ');
+
+                        if (_this.selectedAreas.length > 0){
+                            $("#areaControlContainer").fadeIn();
+                        } else {
+                            $("#areaControlContainer").fadeOut();
+                        }
+
+                        //$(".selections").html(labels.join('; '));
+
+                        $(".selections").textareaAutoSize();
+                        $(".selections").html(labels.join('; '))
+                        $(".selections").trigger('input');
                     }
                 }
         });
-        if (this.areaLevels.length > 0)
+        if (this.areaLevels.length > 0){
             this.changeAreaLevel();
+        }
 
 
         ///////////////////////////////////
@@ -259,7 +270,8 @@ var FilterFlowsView = BaseView.extend({
     changeAreaLevel: function(){
         var levelId = this.areaLevelSelect.value;
         this.selectedAreas = [];
-        this.el.querySelector('.selections').innerHTML = this.el.querySelector('#area-selections').innerHTML= '';
+        //this.el.querySelector('.selections').innerHTML = this.el.querySelector('#area-selections').innerHTML= '';
+        this.el.querySelector('.selections').innerHTML = '';
         this.prepareAreas(levelId);
     },
 

@@ -3629,7 +3629,7 @@ jasmine@^2.9.0:
     glob "^7.0.6"
     jasmine-core "~2.99.0"
 
-jquery@>=1.7, jquery@>=1.9.1, jquery@^3.0.0, jquery@^3.4.1:
+jquery@>=1.7, jquery@>=1.8, jquery@>=1.9.1, jquery@^3.0.0, jquery@^3.4.1:
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.4.1.tgz#714f1f8d9dde4bdfa55764ba37ef214630d80ef2"
   integrity sha512-36+AdBzCL+y6qjw5Tx7HgzeGCzC81MDDgaUP8ld2zhx58HdqXGoBd+tHdrBMiyjGQs0Hxs/MLZTu/eHNJJuWPw==
@@ -6576,6 +6576,13 @@ temp@0.8.3:
   dependencies:
     os-tmpdir "^1.0.0"
     rimraf "~2.2.6"
+
+textarea-autosize@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/textarea-autosize/-/textarea-autosize-0.4.2.tgz#f2fb0263b27fb4e7cf67abfe6e51f3cd712720cf"
+  integrity sha1-8vsCY7J/tOfPZ6v+blHzzXEnIM8=
+  dependencies:
+    jquery ">=1.8"
 
 throttleit@^1.0.0:
   version "1.0.0"

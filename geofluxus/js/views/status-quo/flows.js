@@ -15,10 +15,6 @@ define(['views/common/baseview',
                 var _this = this;
                 FlowsView.__super__.initialize.apply(this, [options]);
                 this.render();
-
-                // Window resize event:
-                // _.bindAll(this, 'rerenderSankey');
-                // $(window).on("resize", this.rerenderSankey);
             },
 
             // DOM events
@@ -168,17 +164,6 @@ define(['views/common/baseview',
                     drawSankey();
                 }
                 this.displayLevel = displayLevel;
-            },
-
-            rerenderSankey: function (event) {
-                let _this = this;
-
-                event.stopImmediatePropagation();
-
-                if (_this.flowSankeyView.sankey) {
-                    console.log("There is a Sankey");
-                    _this.flowSankeyView.refresh();
-                };
             },
 
             // Returns parameters for filtered post-fetching based on assigned filter
@@ -378,10 +363,7 @@ define(['views/common/baseview',
                 });
             },
 
-            remove: function () {
-                $(window).off("resize", this.rerenderSankey);
-                Backbone.View.prototype.remove.apply(this, arguments);
-            }
+            
 
         });
         return FlowsView;

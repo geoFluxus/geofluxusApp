@@ -8,7 +8,8 @@ require(['jquery',
          'static/css/base.css',
          'static/css/main-navbar.css',
          'static/css/sidebar.css',
-         '@fortawesome/fontawesome-free/css/all.css'],
+         '@fortawesome/fontawesome-free/css/all.css',
+         'textarea-autosize'],
 function($, ready){
     ready(function(){
          // hide sidebar if there is no content in it
