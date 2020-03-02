@@ -4,9 +4,11 @@ define(['views/common/baseview',
         'views/status-quo/filter-flows',
         'collections/collection',
         'utils/utils',
-        'views/common/flowsankey'
+        'views/common/flowsankey',
+        'views/common/flowsankeymap',
+
     ],
-    function (BaseView, _, FilterFlowsView, Collection, utils, FlowSankeyView) {
+    function (BaseView, _, FilterFlowsView, Collection, utils, FlowSankeyView, FlowMapView) {
 
         var FlowsView = BaseView.extend({
 
@@ -14,6 +16,13 @@ define(['views/common/baseview',
             initialize: function (options) {
                 var _this = this;
                 FlowsView.__super__.initialize.apply(this, [options]);
+
+                //_.bindAll(this, 'linkSelected');
+                //_.bindAll(this, 'linkDeselected');
+                // _.bindAll(this, 'nodeSelected');
+                // _.bindAll(this, 'nodeDeselected');
+                // _.bindAll(this, 'deselectAll');
+
                 this.render();
             },
 
@@ -24,12 +33,21 @@ define(['views/common/baseview',
 
             // Rendering
             render: function () {
-                var html = document.getElementById(this.template).innerHTML,
-                    template = _.template(html),
-                    _this = this;
+                var html = document.getElementById(this.template).innerHTML;
+                var template = _.template(html)
+
                 this.el.innerHTML = template();
 
-                // render flow filters
+
+                // this.sankeyWrapper = this.el.querySelector('.sankey-wrapper');
+                // this.sankeyWrapper.addEventListener('linkSelected', this.linkSelected);
+                // this.sankeyWrapper.addEventListener('linkDeselected', this.linkDeselected);
+                // this.sankeyWrapper.addEventListener('nodeSelected', this.nodeSelected);
+                // this.sankeyWrapper.addEventListener('nodeDeselected', this.nodeDeselected);
+                // this.sankeyWrapper.addEventListener('allDeselected', this.deselectAll);
+
+
+                // Render flow filters
                 this.renderFilterFlowsView();
             },
 
@@ -39,31 +57,21 @@ define(['views/common/baseview',
 
                 this.filterFlowsView = new FilterFlowsView({
                     el: el,
-                    template: 'filter-flows-template'
+                    template: 'filter-flows-template',
                 });
             },
 
-            //    drawFlows: function(){
-            //        //if (this.flowsView) this.flowsView.close();
-            //        //var filter = this.getFilter();
-            //
-            //        var filter = "";
-            //
-            //        this.flowsView = new FlowsView({
-            //            el: this.el.querySelector('#flows-render-content'),
-            //            template: 'flows-render-template',
-            //            materials: this.materials,
-            //            actors: this.actors,
-            //            activityGroups: this.activityGroups,
-            //            activities: this.activities,
-            //            caseStudy: this.caseStudy,
-            //            keyflowId: this.keyflowId,
-            //            displayWarnings: true,
-            //            filter: filter
-            //        });
-            //        var displayLevel = this.displayLevelSelect.value;
-            //        this.flowsView.draw(displayLevel);
-            //    },
+            // Render the empty Sankey Map
+            renderSankeyMap: function () {
+                this.flowMapView = new FlowMapView({
+                    el: this.el.querySelector('#flow-map'),
+                    //caseStudy: this.caseStudy,
+                    //keyflowId: this.keyflowId,
+                    //materials: this.materials,
+                    //displayWarnings: this.displayWarnings,
+                    //anonymize: this.filter.get('anonymize')
+                });
+            },
 
             postprocess: function (flows) {
                 var idx = 0;
@@ -81,15 +89,6 @@ define(['views/common/baseview',
                     // Color:
                     origin.color = utils.colorByName(origin.name);
                     destination.color = utils.colorByName(destination.name);
-
-                    //            flow.description = flow.get('description');
-                    //var materials = flow.get('materials');
-                    //flow.get('materials').forEach(function(material){
-                    //material._amount =  material.amount;
-                    //})
-                    //flow.set('materials', materials);
-
-                    //            if (!flow.get('stock'))
                 })
 
                 this.flows = flows;
@@ -333,6 +332,62 @@ define(['views/common/baseview',
                 return filterParams;
             },
 
+            linkSelected: function (e) {
+                console.log("Link selected: ", e);
+                // only actors atm
+                var data = e.detail,
+                    _this = this,
+                    showDelta = this.modDisplaySelect.value === 'delta';
+
+                if (showDelta) return;
+
+                if (!Array.isArray(data)) data = [data];
+                var promises = [];
+                this.loader.activate();
+                data.forEach(function (d) {
+
+                    // display level actor
+                    if (_this.nodeLevel === 'actor') {
+                        _this.flowMapView.addFlows(d);
+                    }
+                    // display level activity or group
+                    else {
+                        promises.push(_this.addGroupedActors(d));
+                    }
+                })
+
+                function render() {
+                    _this.flowMapView.rerender(true);
+                    _this.loader.deactivate();
+                }
+                if (promises.length > 0) {
+                    Promise.all(promises).then(render)
+                } else {
+                    render();
+                }
+
+            },
+
+            linkDeselected: function (e) {
+                // only actors atm
+                var flow = e.detail,
+                    flows = [],
+                    nodes = [];
+                if (this.nodeLevel === 'actor') {
+                    nodes = [data.origin, data.destination];
+                    flows = flow;
+                } else {
+                    var mapFlows = this.flowMapView.getFlows();
+                    mapFlows.forEach(function (mapFlow) {
+                        if (mapFlow.parent === flow.id) {
+                            flows.push(mapFlow);
+                        }
+                    })
+                };
+                this.flowMapView.removeFlows(flows);
+                this.flowMapView.rerender();
+            },
+
             // Fetch flows and calls options.success(flows) on success
             fetchFlows: function (options) {
                 let _this = this;
@@ -351,6 +406,7 @@ define(['views/common/baseview',
                     success: function (response) {
                         _this.postprocess(flows);
                         _this.loader.deactivate();
+                        _this.renderSankeyMap();
                         if (options.success) {
                             options.success(flows);
                         }
@@ -362,8 +418,6 @@ define(['views/common/baseview',
                     }
                 });
             },
-
-            
 
         });
         return FlowsView;
