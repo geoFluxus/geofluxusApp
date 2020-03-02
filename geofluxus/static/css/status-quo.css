@@ -148,6 +148,11 @@ textarea.textarea-autosize.form-control-sm {
     min-height: 2rem;
 }
 
+
+.min-width-600px {
+    min-width: 550px;
+}
+
 /* SANKEY WRAPPER */
 
 .sankey-wrapper {

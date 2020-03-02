@@ -17,8 +17,11 @@ define(['views/common/baseview',
                 var _this = this;
                 FlowsView.__super__.initialize.apply(this, [options]);
 
-                // _.bindAll(this, 'linkSelected');
-                // _.bindAll(this, 'linkDeselected');
+                //_.bindAll(this, 'linkSelected');
+                //_.bindAll(this, 'linkDeselected');
+                // _.bindAll(this, 'nodeSelected');
+                // _.bindAll(this, 'nodeDeselected');
+                // _.bindAll(this, 'deselectAll');
 
                 this.render();
             },
@@ -39,6 +42,9 @@ define(['views/common/baseview',
                 // this.sankeyWrapper = this.el.querySelector('.sankey-wrapper');
                 // this.sankeyWrapper.addEventListener('linkSelected', this.linkSelected);
                 // this.sankeyWrapper.addEventListener('linkDeselected', this.linkDeselected);
+                // this.sankeyWrapper.addEventListener('nodeSelected', this.nodeSelected);
+                // this.sankeyWrapper.addEventListener('nodeDeselected', this.nodeDeselected);
+                // this.sankeyWrapper.addEventListener('allDeselected', this.deselectAll);
 
 
                 // Render flow filters
