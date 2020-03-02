@@ -1,13 +1,22 @@
-define(['underscore', 'views/common/baseview', 'collections/gdsecollection',
-        'collections/geolocations', 'collections/flows',
-        'visualizations/flowmap', 'openlayers', 'utils/utils','leaflet',
-        'leaflet-easyprint', 'leaflet-fullscreen',
-        'leaflet.markercluster', 'leaflet.markercluster/dist/MarkerCluster.css',
+define(['underscore',
+        'views/common/baseview',
+        'collections/collection',
+        'collections/geolocation',
+        'collections/flows',
+        'visualizations/flowmap',
+        'openlayers',
+        'utils/utils',
+        'leaflet',
+        'leaflet-easyprint',
+        'leaflet-fullscreen',
+        'leaflet.markercluster',
+        'leaflet.markercluster/dist/MarkerCluster.css',
         'leaflet.markercluster/dist/MarkerCluster.Default.css',
-        'leaflet/dist/leaflet.css', 'static/css/flowmap.css',
+        'leaflet/dist/leaflet.css',
+        'static/css/flowmap.css',
         'leaflet-fullscreen/dist/leaflet.fullscreen.css'],
 
-function(_, BaseView, GDSECollection, GeoLocations, Flows, FlowMap, ol, utils, L){
+function(_, BaseView, Collection, GeoLocation, Flows, FlowMap, ol, utils, L){
 
     /**
     *
@@ -35,15 +44,15 @@ function(_, BaseView, GDSECollection, GeoLocations, Flows, FlowMap, ol, utils, L
         initialize: function(options){
             FlowSankeyMapView.__super__.initialize.apply(this, [options]);
             _.bindAll(this, 'zoomed');
-            this.caseStudy = options.caseStudy;
-            this.caseStudyId = options.caseStudy.id;
-            this.keyflowId = options.keyflowId;
+            //this.caseStudy = options.caseStudy;
+            //this.caseStudyId = options.caseStudy.id;
+            //this.keyflowId = options.keyflowId;
 
-            this.locations = {};
-            this.flows = new Flows();
-            this.showMaterials = {};
-            this.displayWarnings = options.displayWarnings || false;
-            this.anonymize = options.anonymize;
+            // this.locations = {};
+            // this.flows = new Flows();
+            // this.showMaterials = {};
+            // this.displayWarnings = options.displayWarnings || false;
+            // this.anonymize = options.anonymize;
             this.render();
         },
 
@@ -61,14 +70,16 @@ function(_, BaseView, GDSECollection, GeoLocations, Flows, FlowMap, ol, utils, L
             this.backgroundLayer = new L.TileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png',{
                 attribution: '© OpenStreetMap contributors, © CartoDB'
             });
-            var focusarea = this.caseStudy.get('properties').focusarea,
-                center = [52.51, 13.36];
-            if (focusarea){
-                var poly = new ol.geom.MultiPolygon(focusarea.coordinates),
-                    interior = poly.getInteriorPoints(),
-                    centroid = interior.getCoordinates()[0];
-                    center = [centroid[1], centroid[0]];
-            }
+
+            // What is in caseStudy?
+            //var focusarea = this.caseStudy.get('properties').focusarea
+            var center = [52.51, 13.36];
+            // if (focusarea){
+            //     var poly = new ol.geom.MultiPolygon(focusarea.coordinates),
+            //         interior = poly.getInteriorPoints(),
+            //         centroid = interior.getCoordinates()[0];
+            //         center = [centroid[1], centroid[0]];
+            // }
 
             this.leafletMap = new L.Map(this.el, {
                     center: center,

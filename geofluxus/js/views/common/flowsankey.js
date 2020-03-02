@@ -9,7 +9,7 @@ define(['views/common/baseview',
         'utils/utils'
     ],
 
-    function (BaseView, _, Sankey, GDSECollection, d3, config, saveSvgAsPng,
+    function (BaseView, _, Sankey, Collection, d3, config, saveSvgAsPng,
         FileSaver, utils, Slider) {
 
         /**
@@ -38,7 +38,7 @@ define(['views/common/baseview',
                  * @param {boolean=} [options.forceSideBySide=false] if true, the network of flows will be represented with sinks and sources only, nodes in between (meaning nodes with in AND out flows) will be split into a sink and source
                  * @param {Object=} options.flowFilterParams         parameters to filter the flows with (e.g. {material: 1})
                  * @param {Object=} options.stockFilterParams        parameters to filter the stocks with
-                 * @param {module:collections/GDSECollection}        options.collection the nodes to render
+                 * @param {module:collections/Collection}            options.collection the nodes to render
                  *
                  * @constructs
                  * @see http://backbonejs.org/#View
