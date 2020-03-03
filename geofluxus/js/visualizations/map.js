@@ -388,6 +388,7 @@ function(ol, turf)
         selectFeature(layername, id){
             var feature = this.getFeature(layername, id),
                 layer = this.layers[layername];
+
             layer.select.getFeatures().push(feature);
             layer.select.dispatchEvent({
                 type: 'select',
