@@ -73,7 +73,7 @@
 <!--Filters-->
 <script type="text/template" id="filter-flows-template">
     <div class="block accordion" id="filterBlock">
-        <h4 style="padding-bottom: 0.5em; padding-top: 1em">Filter Settings</h4>
+        <h4 style="padding-bottom: 0.5em; padding-top: 1em">Filters</h4>
 
         <!-- ORIGIN CONTROLS -->
         <div class="card bg-dark">
@@ -541,26 +541,183 @@
                 </div>
             </div>
         </div>
+        
     </div>
-    <div class="row">
-        <label class="input-label" style="margin-top: .5rem; margin-right: 10px;">Display Level</label>
-        <select class="form-control" name="display-level-select" style="max-width: 200px; float: left;">
-            <option value="activitygroup">Activity Group</option>
-            <option value="activity">Activity</option>
-            <!--            <option value="actor">Actor</option>-->
-        </select>
-        <button id='apply-filters' class="btn btn-sm btn-primary"
-                title="Apply the filters to activities and actors and flows and render the sankey diagram."
-                style="margin-left: 20px; float: left;">Filter &#38; Render
-        </button>
-        <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Render Filter Settings"
-           style="float: left;" data-html="true" tabindex="0"
-           data-content="
-              Rerender the sankey diagram with data filtered by the selections made in the <b>Filters</b> section above
-              (click the Filters row to expand/collapse it).<br><br>
-              All data is based on flows between actors. The data will be aggregated to the selected <b>Display Level</b>.
+
+    <div class="block accordion" id="dimensionBlock">
+
+        <h4 style="padding-bottom: 0.5em; padding-top: 1em">Dimensions</h4>
+
+        <div class="card bg-dark">
+
+            <!-- IF WE NEED COLLAPSE LATER, UNCOMMENT THIS -->
+            <!-- <div class="card-header" id="card-header-collapse-dimensions">
+                <h4 class="mb-0">
+                    <button class="btn btn-link collapsed collapsingHeaderButton" id="btn-collapse-header-dimensions"
+                            data-toggle="collapse" data-target="#collapseDimensionBlock" aria-expanded="false"
+                            aria-controls="collapseDimensionBlock">
+                        <i class="fa fa-chevron-down pull-right"></i>
+                        Dimensions
+                    </button>
+                </h4>
+
+            </div> -->
+
+            <!-- <div id="collapseDimensionBlock" class="collapse" aria-labelledby="card-header-collapse-dimension"
+                 data-parent="#filterBlock"> -->
+
+                <div class="card-body">
+
+                    <div class="row align-items-end">
+                        <div class="col-md-3">
+                            <label class="dimensionLabel dimensionHeaderLabel">Dimension</label>                          
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <label class="dimensionHeaderLabel">Select or aggregate</label>                          
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <label class="dimensionHeaderLabel">Granularity</label>                          
+                        </div>
+                    </div>
+
+                    <!-- TIME -->
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="dim-toggle-time" class="dimensionLabel">Time</label>                          
+                        </div>
+                        <div class="col-md-3">
+                            <div class="checkbox">
+                                <input name="dim-toggle-time" id="dim-toggle-time" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
+                                    data-off="Aggregate">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="checkbox">
+                                <input name="gran-toggle-time" id="gran-toggle-time" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Month"
+                                    data-off="Year">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Space -->
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <label for="dim-toggle-space" class="dimensionLabel">Space</label>                          
+                        </div>
+                        <div class="col-md-3">
+                            <div class="checkbox">
+                                <input name="dim-toggle-space" id="dim-toggle-space" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
+                                    data-off="Aggregate">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <select name="dim-space-gran-select" id="dim-space-gran-select" class="form-control form-control-sm" data-height="21"> 
+                                <% levels.forEach(function(level) { %>
+                                <option value="<%= level.id %>"> <%= level.get('name') %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Economic Activity -->
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="dim-toggle-economic-activity" class="dimensionLabel">Economic activity</label>                          
+                        </div>
+                        <div class="col-md-3">
+                            <div class="checkbox">
+                                <input name="dim-toggle-economic-activity" id="dim-toggle-economic-activity" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
+                                    data-off="Aggregate">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="checkbox">
+                                <input name="gran-toggle-econ-activity" id="gran-toggle-econ-activity" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Activity"
+                                    data-off="Activity group">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Treatment Method -->
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="dim-toggle-treatment-method" class="dimensionLabel">Treatment method</label>                          
+                        </div>
+                        <div class="col-md-3">
+                            <div class="checkbox">
+                                <input name="dim-toggle-treatment-method" id="dim-toggle-treatment-method" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
+                                    data-off="Aggregate">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                      
+                        </div>
+                    </div>
+                    
+                    <!-- Material -->
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="dim-toggle-material" class="dimensionLabel">Material</label>                          
+                        </div>
+                        <div class="col-md-3">
+                            <div class="checkbox">
+                                <input name="dim-toggle-material" id="dim-toggle-material" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
+                                    data-off="Aggregate">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                      
+                        </div>
+                    </div>
+                    
+                    <!-- Logistics -->
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="dim-toggle-logistics" class="dimensionLabel">Logistics</label>                          
+                        </div>
+                        <div class="col-md-3">
+                            <div class="checkbox">
+                                <input name="dim-toggle-logistics" id="dim-toggle-logistics" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
+                                    data-off="Aggregate">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                      
+                        </div>
+                    </div>
+            
+  
+                </div>
+            <!-- </div> -->
+        </div>
+        
+        <div class="row">
+            <!-- <label class="input-label" style="margin-top: .5rem; margin-right: 10px;">Display Level</label>
+            <select class="form-control" name="display-level-select" style="max-width: 200px; float: left;">
+                <option value="activitygroup">Activity Group</option>
+                <option value="activity">Activity</option>
+            </select> -->
+            <button id='apply-filters' class="btn btn-primary"
+                    title="Apply the filters to activities and actors and flows and render the sankey diagram."
+                    style="margin-left: 20px; float: left;">Filter &#38; Render
+            </button>
+            <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Render Filter Settings"
+            style="float: left;" data-html="true" tabindex="0"
+            data-content="
+            Rerender the sankey diagram with data filtered by the selections made in the <b>Filters</b> section above
+            (click the Filters row to expand/collapse it).<br><br>
+            All data is based on flows between actors. The data will be aggregated to the selected <b>Display Level</b>.
             ">
-        </a>
+            </a>
+         </div>
     </div>
 
 

@@ -19,6 +19,7 @@ define(['views/common/baseview',
                 _this.origin = {};
                 _this.destination = {};
                 _this.flows = {};
+                _this.dimensions = {};
 
                 this.template = options.template;
                 this.activityGroups = new Collection([], {
@@ -88,6 +89,7 @@ define(['views/common/baseview',
                     composites: this.composites,
                     activities: this.activities,
                     activityGroups: this.activityGroups,
+                    levels: this.areaLevels
                 });
 
                 // Activate help icons
@@ -314,6 +316,38 @@ define(['views/common/baseview',
 
                 this.flows.isCompositeSelect = this.el.querySelector('select[name="flows-iscomposite-select"]');
                 $(this.flows.isCompositeSelect).selectpicker();
+
+
+
+                // //////////////////////////////////
+                // Dimension controls:
+
+                // Time
+                this.dimensions.timeToggle = this.el.querySelector('#dim-toggle-time');
+                $(this.dimensions.timeToggle).bootstrapToggle();
+                this.dimensions.timeToggleGran = this.el.querySelector('#gran-toggle-time');
+                $(this.dimensions.timeToggleGran).bootstrapToggle();
+
+                // Space
+                this.dimensions.spaceToggle = this.el.querySelector('#dim-toggle-space');
+                $(this.dimensions.spaceToggle).bootstrapToggle();
+                this.dimensions.spaceLevelGranSelect = this.el.querySelector('#dim-space-gran-select');
+
+                // Economic activity:
+                this.dimensions.economicActivityToggle = this.el.querySelector('#dim-toggle-economic-activity');
+                $(this.dimensions.economicActivityToggle).bootstrapToggle();
+                this.dimensions.economicActivityToggleGran = this.el.querySelector('#gran-toggle-econ-activity');
+                $(this.dimensions.economicActivityToggleGran).bootstrapToggle();
+            
+                // Treatment method:
+                this.dimensions.treatmentMethodToggle = this.el.querySelector('#dim-toggle-treatment-method');
+                $(this.dimensions.treatmentMethodToggle).bootstrapToggle();
+                
+                this.dimensions.materialToggle = this.el.querySelector('#dim-toggle-material');
+                $(this.dimensions.materialToggle).bootstrapToggle();
+
+                this.dimensions.logisticsToggle = this.el.querySelector('#dim-toggle-logistics');
+                $(this.dimensions.logisticsToggle).bootstrapToggle();
 
 
                 // //////////////////////////////////
