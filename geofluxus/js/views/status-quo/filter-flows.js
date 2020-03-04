@@ -16,6 +16,10 @@ define(['views/common/baseview',
                 FilterFlowsView.__super__.initialize.apply(this, [options]);
                 _.bindAll(this, 'prepareAreas');
 
+                _this.origin = {};
+                _this.destination = {};
+                _this.flows = {};
+
                 this.template = options.template;
                 this.activityGroups = new Collection([], {
                     apiTag: 'activitygroups'
@@ -122,21 +126,34 @@ define(['views/common/baseview',
                     $(select).selectpicker('refresh');
                 }
 
-                function filterActivities(evt, clickedIndex, checked) {
+                function filterActivities(event, clickedIndex, checked) {
+                    let eventTargetID = event.target.id;
+
                     let selectedActivityGroupIDs = [];
                     let filteredActivities = [];
                     let allActivitiesOptionsHTML = "";
                     let newActivityOptionsHTML = "";
 
+                    let activityGroupsSelect;
+                    let activitySelect;
+                    if (eventTargetID == "origin-activitygroup-select") {
+                        activityGroupsSelect = _this.origin.activityGroupsSelect;
+                        activitySelect = _this.origin.activitySelect;
+
+                    } else if (eventTargetID == "destination-activitygroup-select") {
+                        activityGroupsSelect = _this.destination.activityGroupsSelect;
+                        activitySelect = _this.destination.activitySelect;
+                    }
+
                     // Get the array with ID's of the selected activityGroup(s) from the .selectpicker:
-                    selectedActivityGroupIDs = $(_this.activityGroupsSelect).val()
+                    selectedActivityGroupIDs = $(activityGroupsSelect).val()
 
                     // If no activity groups are selected, reset the activity filter to again show all activities:
                     if (selectedActivityGroupIDs.length == 0) {
                         allActivitiesOptionsHTML = '<option selected value="-1">All (' + _this.activities.length + ')</option><option data-divider="true"></option>';
                         _this.activities.models.forEach(activity => allActivitiesOptionsHTML += "<option>" + activity.attributes.name + "</option>");
-                        $(_this.activitySelect).html(allActivitiesOptionsHTML);
-                        $(_this.activitySelect).selectpicker("refresh");
+                        $(activitySelect).html(allActivitiesOptionsHTML);
+                        $(activitySelect).selectpicker("refresh");
                     } else {
                         // Filter all activities by the selected Activity Groups:
                         filteredActivities = _this.activities.models.filter(function (activity) {
@@ -146,90 +163,167 @@ define(['views/common/baseview',
                         // Fill selectPicker with filtered activities, add to DOM, and refresh:
                         newActivityOptionsHTML = '<option selected value="-1">All (' + filteredActivities.length + ')</option><option data-divider="true"></option>';
                         filteredActivities.forEach(activity => newActivityOptionsHTML += "<option>" + activity.attributes.name + "</option>");
-                        $(_this.activitySelect).html(newActivityOptionsHTML);
-                        $(_this.activitySelect).selectpicker("refresh");
+                        $(activitySelect).html(newActivityOptionsHTML);
+                        $(activitySelect).selectpicker("refresh");
                     }
                 }
 
-                // Event handler for changing filter level with bootstrap-toggle:
-                $(this.filterLevelSelect).change(function () {
-                    $(".activitySelectContainer").fadeToggle("fast");
+
+                // /////////////////////////////////
+                // Multicheck events:
+
+                // Origin: -------------------------
+                $(this.origin.filterLevelSelect).change(function () {
+                    $(".activitySelectContainerOrigin").fadeToggle("fast");
                 });
+                $(this.origin.filterLevelSelect).on('changed.bs.select', multiCheck);
+                $(this.origin.activityGroupsSelect).on('changed.bs.select', multiCheck);
+                $(this.origin.activityGroupsSelect).on('changed.bs.select', filterActivities);
+                $(this.origin.activitySelect).on('changed.bs.select', multiCheck);
+                $(this.origin.processSelect).on('changed.bs.select', multiCheck);
 
-                $(this.activityGroupsSelect).on('changed.bs.select', filterActivities);
+                // Hide/show Activity Group and Activity or Treatment method:
+                $(this.origin.roleSelect).on('changed.bs.select', function () {
+                    let role = $(_this.origin.roleSelect).val();
+                    if (role == "treatment") {
+                        $(".originContainerActivity").fadeOut();
+                        $(".originContainerTreatmentMethod").fadeIn();
+                    } else if (role == "production"){
+                        $(".originContainerActivity").fadeIn();
+                        $(".originContainerTreatmentMethod").fadeOut();
+                    } else {
+                        $(".originContainerActivity").fadeIn();
+                        $(".originContainerTreatmentMethod").fadeIn();                        
+                    }
+                 });
 
-                // Multicheck:
-                $(this.activityGroupsSelect).on('changed.bs.select', multiCheck);
-                $(this.activitySelect).on('changed.bs.select', multiCheck);
-                $(this.processSelect).on('changed.bs.select', multiCheck);
-                $(this.wasteSelect).on('changed.bs.select', multiCheck);
-                $(this.materialSelect).on('changed.bs.select', multiCheck);
-                $(this.productSelect).on('changed.bs.select', multiCheck);
-                $(this.compositeSelect).on('changed.bs.select', multiCheck);
-                $(this.cleanSelect).on('changed.bs.select', multiCheck);
-                $(this.mixedSelect).on('changed.bs.select', multiCheck);
-                $(this.directSelect).on('changed.bs.select', multiCheck);
-                $(this.isCompositeSelect).on('changed.bs.select', multiCheck);
+
+                // Destination: ---------------------
+
+                $(this.destination.filterLevelSelect).change(function () {
+                    $(".activitySelectContainerDestination").fadeToggle("fast");
+                });
+                $(this.destination.filterLevelSelect).on('changed.bs.select', multiCheck);
+                $(this.destination.activityGroupsSelect).on('changed.bs.select', multiCheck);
+                $(this.destination.activityGroupsSelect).on('changed.bs.select', filterActivities);
+                $(this.destination.activitySelect).on('changed.bs.select', multiCheck);
+                $(this.destination.processSelect).on('changed.bs.select', multiCheck);
+
+                // Hide/show Activity Group and Activity or Treatment method:
+                $(this.destination.roleSelect).on('changed.bs.select', function () {
+                    let role = $(_this.destination.roleSelect).val();
+                    if (role == "treatment") {
+                        $(".originContainerActivity").fadeOut();
+                        $(".originContainerTreatmentMethod").fadeIn();
+                    } else if (role == "production"){
+                        $(".originContainerActivity").fadeIn();
+                        $(".originContainerTreatmentMethod").fadeOut();
+                    } else {
+                        $(".originContainerActivity").fadeIn();
+                        $(".originContainerTreatmentMethod").fadeIn();                        
+                    }
+                 });
+
+
+                // Flows: ---------------------------
+                $(this.flows.wasteSelect).on('changed.bs.select', multiCheck);
+                $(this.flows.materialSelect).on('changed.bs.select', multiCheck);
+                $(this.flows.productSelect).on('changed.bs.select', multiCheck);
+                $(this.flows.compositeSelect).on('changed.bs.select', multiCheck);
+                $(this.flows.cleanSelect).on('changed.bs.select', multiCheck);
+                $(this.flows.mixedSelect).on('changed.bs.select', multiCheck);
+                $(this.flows.directSelect).on('changed.bs.select', multiCheck);
+                $(this.flows.isCompositeSelect).on('changed.bs.select', multiCheck);
             },
 
             initializeControls: function () {
 
-                // Initialize textarea-autoresize components:
-                $(".selections").textareaAutoSize();
+                // ///////////////////////////////////////////////
+                // Origin-controls:
 
                 // Initialize bootstrap-toggle for filter level:
-                this.filterLevelSelect = this.el.querySelector('#toggleFilterLevel');
-                $(this.filterLevelSelect).bootstrapToggle();
+                this.origin.filterLevelSelect = this.el.querySelector('#origin-toggleFilterLevel');
+                $(this.origin.filterLevelSelect).bootstrapToggle();
 
-                this.activityGroupsSelect = this.el.querySelector('select[name="activitygroup-select"]');
-                $(this.activityGroupsSelect).selectpicker();
+                this.origin.roleSelect = this.el.querySelector('select[name="origin-role"]');
+                $(this.origin.roleSelect).selectpicker();
 
-                this.activitySelect = this.el.querySelector('select[name="activity-select"]');
-                $(this.activitySelect).selectpicker();
+                this.origin.activityGroupsSelect = this.el.querySelector('select[name="origin-activitygroup-select"]');
+                $(this.origin.activityGroupsSelect).selectpicker();
 
-                this.roleSelect = this.el.querySelector('select[name="role"]');
-                $(this.roleSelect).selectpicker();
+                this.origin.activitySelect = this.el.querySelector('select[name="origin-activity-select"]');
+                $(this.origin.activitySelect).selectpicker();
 
-                this.yearSelect = this.el.querySelector('select[name="year"]');
-                $(this.yearSelect).selectpicker();
+                this.origin.processSelect = this.el.querySelector('select[name="origin-process-select"]');
+                $(this.origin.processSelect).selectpicker();
 
-                this.processSelect = this.el.querySelector('select[name="process-select"]');
-                $(this.processSelect).selectpicker();
+                // ///////////////////////////////////////////////
+                // Destination-controls:
 
-                this.wasteSelect = this.el.querySelector('select[name="waste-select"]');
-                $(this.wasteSelect).selectpicker();
+                this.destination.filterLevelSelect = this.el.querySelector('#destination-toggleFilterLevel');
+                $(this.destination.filterLevelSelect).bootstrapToggle();
 
-                this.materialSelect = this.el.querySelector('select[name="material-select"]');
-                $(this.materialSelect).selectpicker();
+                this.destination.roleSelect = this.el.querySelector('select[name="destination-role"]');
+                $(this.destination.roleSelect).selectpicker();
 
-                this.productSelect = this.el.querySelector('select[name="product-select"]');
-                $(this.productSelect).selectpicker();
+                this.destination.activityGroupsSelect = this.el.querySelector('select[name="destination-activitygroup-select"]');
+                $(this.destination.activityGroupsSelect).selectpicker();
 
-                this.compositesSelect = this.el.querySelector('select[name="composites-select"]');
-                $(this.compositesSelect).selectpicker();
+                this.destination.activitySelect = this.el.querySelector('select[name="destination-activity-select"]');
+                $(this.destination.activitySelect).selectpicker();
 
-                this.routeSelect = this.el.querySelector('select[name="route-select"]');
-                $(this.routeSelect).selectpicker();
+                this.destination.processSelect = this.el.querySelector('select[name="destination-process-select"]');
+                $(this.destination.processSelect).selectpicker();
 
-                this.collectorSelect = this.el.querySelector('select[name="collector-select"]');
-                $(this.collectorSelect).selectpicker();
 
-                this.hazardousSelect = this.el.querySelector('select[name="hazardous-select"]');
-                $(this.hazardousSelect).selectpicker();
+                // ///////////////////////////////////////////////
+                // Flows-controls:
 
-                this.cleanSelect = this.el.querySelector('select[name="clean-select"]');
-                $(this.cleanSelect).selectpicker();
+                this.flows.yearSelect = this.el.querySelector('select[name="flows-year-select"]');
+                $(this.flows.yearSelect).selectpicker();
 
-                this.mixedSelect = this.el.querySelector('select[name="mixed-select"]');
-                $(this.mixedSelect).selectpicker();
+                this.flows.wasteSelect = this.el.querySelector('select[name="flows-waste-select"]');
+                $(this.flows.wasteSelect).selectpicker();
 
-                this.directSelect = this.el.querySelector('select[name="direct-select"]');
-                $(this.directSelect).selectpicker();
+                this.flows.materialSelect = this.el.querySelector('select[name="flows-material-select"]');
+                $(this.flows.materialSelect).selectpicker();
 
-                this.isCompositeSelect = this.el.querySelector('select[name="iscomposite-select"]');
-                $(this.isCompositeSelect).selectpicker();
+                this.flows.productSelect = this.el.querySelector('select[name="flows-product-select"]');
+                $(this.flows.productSelect).selectpicker();
+
+                this.flows.compositesSelect = this.el.querySelector('select[name="flows-composites-select"]');
+                $(this.flows.compositesSelect).selectpicker();
+
+                this.flows.routeSelect = this.el.querySelector('select[name="flows-route-select"]');
+                $(this.flows.routeSelect).selectpicker();
+
+                this.flows.collectorSelect = this.el.querySelector('select[name="flows-collector-select"]');
+                $(this.flows.collectorSelect).selectpicker();
+
+                this.flows.hazardousSelect = this.el.querySelector('select[name="flows-hazardous-select"]');
+                $(this.flows.hazardousSelect).selectpicker();
+
+                this.flows.cleanSelect = this.el.querySelector('select[name="flows-clean-select"]');
+                $(this.flows.cleanSelect).selectpicker();
+
+                this.flows.mixedSelect = this.el.querySelector('select[name="flows-mixed-select"]');
+                $(this.flows.mixedSelect).selectpicker();
+
+                this.flows.directSelect = this.el.querySelector('select[name="flows-direct-select"]');
+                $(this.flows.directSelect).selectpicker();
+
+                this.flows.isCompositeSelect = this.el.querySelector('select[name="flows-iscomposite-select"]');
+                $(this.flows.isCompositeSelect).selectpicker();
+
+
+                // //////////////////////////////////
+                // Other:
 
                 this.displayLevelSelect = this.el.querySelector('select[name="display-level-select"]');
+
+                // Initialize all textarea-autoresize components:
+                $(".selections").textareaAutoSize();
+
             },
 
             renderAreaSelectModal: function () {
@@ -262,12 +356,11 @@ define(['views/common/baseview',
                                 var labels = [];
                                 var areas = _this.areas[levelId];
                                 _this.selectedAreasOrigin = [];
-
-                                console.log("areaFeats: ", areaFeats);
+                                _this.selectedAreasDestination = [];
+                                _this.selectedAreasFlows = [];
 
                                 if (_this.areaMap.block == "origin") {
                                     // The user has selected an area for the Origin block:
-
                                     areaFeats.forEach(function (areaFeat) {
                                         labels.push(areaFeat.label);
                                         _this.selectedAreasOrigin.push(areas.get(areaFeat.id));
@@ -278,17 +371,36 @@ define(['views/common/baseview',
                                     } else {
                                         $("#areaSelectionsOrigin").fadeOut();
                                     }
-
                                     $("#areaSelectionsOriginTextarea").html(labels.join('; '))
 
-                                } else if (_this.areaMap.block == "flows") {
-
-
                                 } else if (_this.areaMap.block == "destination") {
+                                    // The user has selected an area for the Destination block:
+                                    areaFeats.forEach(function (areaFeat) {
+                                        labels.push(areaFeat.label);
+                                        _this.selectedAreasDestination.push(areas.get(areaFeat.id));
+                                    });
 
+                                    if (_this.selectedAreasDestination.length > 0) {
+                                        $("#areaSelectionsDestination").fadeIn();
+                                    } else {
+                                        $("#areaSelectionsDestination").fadeOut();
+                                    }
+                                    $("#areaSelectionsDestinationTextarea").html(labels.join('; '))
 
+                                } else if (_this.areaMap.block == "flows") {
+                                    // The user has selected an area for the Flows block:
+                                    areaFeats.forEach(function (areaFeat) {
+                                        labels.push(areaFeat.label);
+                                        _this.selectedAreasFlows.push(areas.get(areaFeat.id));
+                                    });
+
+                                    if (_this.selectedAreasFlows.length > 0) {
+                                        $("#areaSelectionsFlows").fadeIn();
+                                    } else {
+                                        $("#areaSelectionsFlows").fadeOut();
+                                    }
+                                    $("#areaSelectionsFlowsTextarea").html(labels.join('; '))
                                 }
-
 
                                 // Show the selected areas in the textarea in the modal:
                                 $("#areaSelectionsModalTextarea").html(labels.join('; '))
@@ -369,10 +481,9 @@ define(['views/common/baseview',
             showAreaSelection: function (event) {
                 var _this = this;
                 var labelStringArray = [];
-                var selectionStyle = new ol.style.Style({
-                    stroke: 'rgb(230, 230, 0)',
-                    fill: 'rgba(230, 230, 0, 0.5)',
-                });
+
+                // Clear all the selected features from the areaMap:
+                _this.areaMap.layers.areas.select.getFeatures().clear();
 
                 // Used to determine which 'Select area'-button the user has pressed, either 'origin', 'flows', or 'destination': 
                 _this.areaMap.block = $(event.currentTarget).data('area-select-block');
@@ -384,18 +495,13 @@ define(['views/common/baseview',
                 // Show the actual modal:
                 $(this.areaModal).modal('show');
 
+                // After the modal has fully opened...
                 setTimeout(function () {
-
-                    // After the modal has fully opened, call updateSize to render the map with the correct dimensions:
+                    // Call updateSize to render the map with the correct dimensions:
                     _this.areaMap.map.updateSize();
                     if (_this.areaLevels.length > 0) {
                         _this.changeAreaLevel(false);
                     }
-
-
-
-                    // Clear all the selected features from the areaMap:
-                    _this.areaMap.layers.areas.select.getFeatures().clear();
 
                     // Add the correct selected features to the areaMap:
                     if (_this.areaMap.block == "origin") {
@@ -408,24 +514,47 @@ define(['views/common/baseview',
 
                             // Loop through all selected areas in selectedAreasOrigin:
                             _this.selectedAreasOrigin.forEach(selectedArea => {
-
                                 // Get the feature object base on the id:
                                 let feature = _this.areaMap.getFeature("areas", selectedArea.id);
 
                                 // Add it to the Features ol.Collection: 
                                 features.push(feature);
-
                             });
-
-
-                            //_this.areaMap.getLayer('areas').redraw();
-
                         }
 
-                    } else if (this.areaMap.block == "flows") {
-                        //this.selectedAreasFlows = [];
-                    } else if (this.areaMap.block == "destination") {
-                        //this.selectedAreasDestination = [];
+                    } else if (_this.areaMap.block == "destination") {
+                        // Add selected destination areas as selections to the map:
+                        if (_this.selectedAreasDestination && _this.selectedAreasDestination.length > 0) {
+
+                            // Create ol.Collection of Features to which we can add Features:
+                            var features = _this.areaMap.layers.areas.select.getFeatures();
+
+                            // Loop through all selected areas in selectedAreasDestination:
+                            _this.selectedAreasDestination.forEach(selectedArea => {
+                                // Get the feature object base on the id:
+                                let feature = _this.areaMap.getFeature("areas", selectedArea.id);
+
+                                // Add it to the Features ol.Collection: 
+                                features.push(feature);
+                            });
+                        }
+
+                    } else if (_this.areaMap.block == "flows") {
+                        // Add selected Flows areas as selections to the map:
+                        if (_this.selectedAreasFlows && _this.selectedAreasFlows.length > 0) {
+
+                            // Create ol.Collection of Features to which we can add Features:
+                            var features = _this.areaMap.layers.areas.select.getFeatures();
+
+                            // Loop through all selected areas in selectedAreasFlows:
+                            _this.selectedAreasFlows.forEach(selectedArea => {
+                                // Get the feature object base on the id:
+                                let feature = _this.areaMap.getFeature("areas", selectedArea.id);
+
+                                // Add it to the Features ol.Collection: 
+                                features.push(feature);
+                            });
+                        }
                     }
 
                     // End of setTimeout
