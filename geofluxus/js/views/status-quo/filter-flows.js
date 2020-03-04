@@ -213,14 +213,14 @@ define(['views/common/baseview',
                 $(this.destination.roleSelect).on('changed.bs.select', function () {
                     let role = $(_this.destination.roleSelect).val();
                     if (role == "treatment") {
-                        $(".originContainerActivity").fadeOut();
-                        $(".originContainerTreatmentMethod").fadeIn();
+                        $(".destinationContainerActivity").fadeOut();
+                        $(".destinationContainerTreatmentMethod").fadeIn();
                     } else if (role == "production"){
-                        $(".originContainerActivity").fadeIn();
-                        $(".originContainerTreatmentMethod").fadeOut();
+                        $(".destinationContainerActivity").fadeIn();
+                        $(".destinationContainerTreatmentMethod").fadeOut();
                     } else {
-                        $(".originContainerActivity").fadeIn();
-                        $(".originContainerTreatmentMethod").fadeIn();                        
+                        $(".destinationContainerActivity").fadeIn();
+                        $(".destinationContainerTreatmentMethod").fadeIn();                        
                     }
                  });
 

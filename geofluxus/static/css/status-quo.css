@@ -73,7 +73,7 @@
 }
 
 .dropdown-menu .show {
-    max-width: 60vw;
+    max-width: 50rem;
     overflow-x: hidden;
     z-index: 1000;
 }
@@ -97,7 +97,7 @@
 }
 
 .collapsingHeaderButton {
-    width: 95% !important;
+    width: 93% !important;
     text-align: left;
 }
 
