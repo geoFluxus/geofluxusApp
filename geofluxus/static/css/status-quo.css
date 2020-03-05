@@ -158,6 +158,11 @@ label[for="activity-select"] {
     font-size: 1.1em;
 }
 
+.dimensionToggle[disabled] + .toggle-group label {
+    color: rgb(63, 62, 62);
+
+}
+
 /* Area Select Modal Styles */
 
 .map {

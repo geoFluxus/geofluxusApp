@@ -167,6 +167,23 @@ define(['views/common/baseview',
 
             // Returns parameters for filtered post-fetching based on assigned filter
             getFlowFilterParams: function () {
+
+                // REQUEST DATA LAYOUT
+                // var data = {
+                //     origin: {},
+                //     destination: {},
+                //     flows: {},
+                //     dimensions: {
+                //         time: 'year',
+                        
+                     
+                        
+                //     }
+                // }
+
+
+
+
                 // Prepare filters for request
                 let filter = this.filterFlowsView,
                     filterParams = {};

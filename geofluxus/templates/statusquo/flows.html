@@ -568,7 +568,14 @@
 
                 <div class="card-body">
 
-                    <div class="row align-items-end">
+                    <!-- Max dimensions -->
+                    <div class="row">
+                        <div class="col-md-6 mt-3">
+                            <label>You can select up to <strong>one</strong> dimension.</label>                          
+                        </div>
+                    </div>
+                    
+                    <div class="row align-items-end border-bottom mb-3 mt-1">
                         <div class="col-md-3">
                             <label class="dimensionLabel dimensionHeaderLabel">Dimension</label>                          
                         </div>
@@ -587,12 +594,12 @@
                         </div>
                         <div class="col-md-3">
                             <div class="checkbox">
-                                <input name="dim-toggle-time" id="dim-toggle-time" type="checkbox"
+                                <input name="dim-toggle-time" class="dimensionToggle" id="dim-toggle-time" type="checkbox"
                                     data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
                                     data-off="Aggregate">
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4" id="gran-toggle-time-col" style="display: none">
                             <div class="checkbox">
                                 <input name="gran-toggle-time" id="gran-toggle-time" type="checkbox"
                                     data-width="100%" data-height="21" data-toggle="toggle" data-on="Month"
@@ -608,12 +615,12 @@
                         </div>
                         <div class="col-md-3">
                             <div class="checkbox">
-                                <input name="dim-toggle-space" id="dim-toggle-space" type="checkbox"
+                                <input name="dim-toggle-space" class="dimensionToggle" id="dim-toggle-space" type="checkbox"
                                     data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
                                     data-off="Aggregate">
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4" id="gran-space-col" style="display: none">
                             <select name="dim-space-gran-select" id="dim-space-gran-select" class="form-control form-control-sm" data-height="21"> 
                                 <% levels.forEach(function(level) { %>
                                 <option value="<%= level.id %>"> <%= level.get('name') %></option>
@@ -629,12 +636,12 @@
                         </div>
                         <div class="col-md-3">
                             <div class="checkbox">
-                                <input name="dim-toggle-economic-activity" id="dim-toggle-economic-activity" type="checkbox"
+                                <input name="dim-toggle-economic-activity" class="dimensionToggle" id="dim-toggle-economic-activity" type="checkbox"
                                     data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
                                     data-off="Aggregate">
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4" id="gran-econ-activity-col" style="display: none">
                             <div class="checkbox">
                                 <input name="gran-toggle-econ-activity" id="gran-toggle-econ-activity" type="checkbox"
                                     data-width="100%" data-height="21" data-toggle="toggle" data-on="Activity"
@@ -650,13 +657,17 @@
                         </div>
                         <div class="col-md-3">
                             <div class="checkbox">
-                                <input name="dim-toggle-treatment-method" id="dim-toggle-treatment-method" type="checkbox"
+                                <input name="dim-toggle-treatment-method" class="dimensionToggle" id="dim-toggle-treatment-method" type="checkbox"
                                     data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
                                     data-off="Aggregate">
                             </div>
                         </div>
-                        <div class="col-md-4">
-                      
+                        <div class="col-md-4" id="gran-treatment-method-col" style="display: none">
+                            <div class="checkbox">
+                                <input name="gran-toggle-treatment-method" id="gran-toggle-treatment-method" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Treatment method"
+                                    data-off="Treatment method group">
+                            </div>
                         </div>
                     </div>
                     
@@ -667,7 +678,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="checkbox">
-                                <input name="dim-toggle-material" id="dim-toggle-material" type="checkbox"
+                                <input name="dim-toggle-material" class="dimensionToggle" id="dim-toggle-material" type="checkbox"
                                     data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
                                     data-off="Aggregate">
                             </div>
@@ -684,7 +695,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="checkbox">
-                                <input name="dim-toggle-logistics" id="dim-toggle-logistics" type="checkbox"
+                                <input name="dim-toggle-logistics" class="dimensionToggle" id="dim-toggle-logistics" type="checkbox"
                                     data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
                                     data-off="Aggregate">
                             </div>

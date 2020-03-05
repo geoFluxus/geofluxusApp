@@ -20,6 +20,7 @@ define(['views/common/baseview',
                 _this.destination = {};
                 _this.flows = {};
                 _this.dimensions = {};
+                _this.maxNumberOfDimensions = 1;
 
                 this.template = options.template;
                 this.activityGroups = new Collection([], {
@@ -190,14 +191,14 @@ define(['views/common/baseview',
                     if (role == "treatment") {
                         $(".originContainerActivity").fadeOut();
                         $(".originContainerTreatmentMethod").fadeIn();
-                    } else if (role == "production"){
+                    } else if (role == "production") {
                         $(".originContainerActivity").fadeIn();
                         $(".originContainerTreatmentMethod").fadeOut();
                     } else {
                         $(".originContainerActivity").fadeIn();
-                        $(".originContainerTreatmentMethod").fadeIn();                        
+                        $(".originContainerTreatmentMethod").fadeIn();
                     }
-                 });
+                });
 
 
                 // Destination: ---------------------
@@ -217,14 +218,14 @@ define(['views/common/baseview',
                     if (role == "treatment") {
                         $(".destinationContainerActivity").fadeOut();
                         $(".destinationContainerTreatmentMethod").fadeIn();
-                    } else if (role == "production"){
+                    } else if (role == "production") {
                         $(".destinationContainerActivity").fadeIn();
                         $(".destinationContainerTreatmentMethod").fadeOut();
                     } else {
                         $(".destinationContainerActivity").fadeIn();
-                        $(".destinationContainerTreatmentMethod").fadeIn();                        
+                        $(".destinationContainerTreatmentMethod").fadeIn();
                     }
-                 });
+                });
 
 
                 // Flows: ---------------------------
@@ -236,6 +237,55 @@ define(['views/common/baseview',
                 $(this.flows.mixedSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.directSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.isCompositeSelect).on('changed.bs.select', multiCheck);
+
+
+
+                // Dimension toggles: ---------------------------
+
+                $(".dimensionToggle").change(function () {
+                    let checkedToggles = [];
+                    let uncheckedToggles = [];
+
+                    // Divide the toggles in arrays of checked and unchecked toggles:
+                    $('.dimensionToggle').each(function (index, value) {
+
+                        let checked = $(this.parentElement.firstChild).prop('checked')
+                        if (!checked) {
+                            uncheckedToggles.push($(this));
+                        } else {
+                            checkedToggles.push($(this));
+                        }
+                    });
+
+                    // If the maximum number of dimensions has been selected:
+                    if (_this.maxNumberOfDimensions == checkedToggles.length) {
+                        // Disable the remaining unchecked toggles:
+                        $(uncheckedToggles).each(function (index, value) {
+                            this.bootstrapToggle('disable');
+                        });
+                    } else {
+                        // (Re)enable the toggles:
+                        $(uncheckedToggles).each(function (index, value) {
+                            this.bootstrapToggle('enable');
+                        });
+                    }
+
+                });
+
+                // Show granularity on toggle change:
+                $("#dim-toggle-time").change(function () {
+                    $("#gran-toggle-time-col").fadeToggle();
+                });
+                $("#dim-toggle-space").change(function () {
+                    $("#gran-space-col").fadeToggle();
+                });
+                $("#dim-toggle-economic-activity").change(function () {
+                    $("#gran-econ-activity-col").fadeToggle();
+                });
+                $("#dim-toggle-treatment-method").change(function () {
+                    $("#gran-treatment-method-col").fadeToggle();
+                });
+
             },
 
             initializeControls: function () {
@@ -338,14 +388,19 @@ define(['views/common/baseview',
                 $(this.dimensions.economicActivityToggle).bootstrapToggle();
                 this.dimensions.economicActivityToggleGran = this.el.querySelector('#gran-toggle-econ-activity');
                 $(this.dimensions.economicActivityToggleGran).bootstrapToggle();
-            
+
                 // Treatment method:
                 this.dimensions.treatmentMethodToggle = this.el.querySelector('#dim-toggle-treatment-method');
                 $(this.dimensions.treatmentMethodToggle).bootstrapToggle();
-                
+
+                this.dimensions.treatmentMethodToggleGran = this.el.querySelector('#gran-toggle-treatment-method');
+                $(this.dimensions.treatmentMethodToggleGran).bootstrapToggle();
+
+                // Materials:
                 this.dimensions.materialToggle = this.el.querySelector('#dim-toggle-material');
                 $(this.dimensions.materialToggle).bootstrapToggle();
 
+                // Logistics:
                 this.dimensions.logisticsToggle = this.el.querySelector('#dim-toggle-logistics');
                 $(this.dimensions.logisticsToggle).bootstrapToggle();
 
