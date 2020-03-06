@@ -21,6 +21,9 @@ define(['views/common/baseview',
                 _this.flows = {};
                 _this.dimensions = {};
                 _this.maxNumberOfDimensions = 1;
+                _this.selectedAreasOrigin = [];
+                _this.selectedAreasDestination = [];
+                _this.selectedAreasFlows = [];
 
                 this.template = options.template;
                 this.activityGroups = new Collection([], {
@@ -194,8 +197,7 @@ define(['views/common/baseview',
                     } else if (role == "production") {
                         $(".originContainerActivity").fadeIn();
                         $(".originContainerTreatmentMethod").fadeOut();
-                    }
-                     else {
+                    } else {
                         $(".originContainerActivity").fadeOut();
                         $(".originContainerTreatmentMethod").fadeOut();
                     }
@@ -444,9 +446,6 @@ define(['views/common/baseview',
                                 var levelId = _this.areaLevelSelect.value;
                                 var labels = [];
                                 var areas = _this.areas[levelId];
-                                _this.selectedAreasOrigin = [];
-                                _this.selectedAreasDestination = [];
-                                _this.selectedAreasFlows = [];
 
                                 if (_this.areaMap.block == "origin") {
                                     // The user has selected an area for the Origin block:
