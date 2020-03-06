@@ -194,9 +194,10 @@ define(['views/common/baseview',
                     } else if (role == "production") {
                         $(".originContainerActivity").fadeIn();
                         $(".originContainerTreatmentMethod").fadeOut();
-                    } else {
-                        $(".originContainerActivity").fadeIn();
-                        $(".originContainerTreatmentMethod").fadeIn();
+                    }
+                     else {
+                        $(".originContainerActivity").fadeOut();
+                        $(".originContainerTreatmentMethod").fadeOut();
                     }
                 });
 
@@ -222,8 +223,8 @@ define(['views/common/baseview',
                         $(".destinationContainerActivity").fadeIn();
                         $(".destinationContainerTreatmentMethod").fadeOut();
                     } else {
-                        $(".destinationContainerActivity").fadeIn();
-                        $(".destinationContainerTreatmentMethod").fadeIn();
+                        $(".destinationContainerActivity").fadeOut();
+                        $(".destinationContainerTreatmentMethod").fadeOut();
                     }
                 });
 
@@ -366,7 +367,6 @@ define(['views/common/baseview',
 
                 this.flows.isCompositeSelect = this.el.querySelector('select[name="flows-iscomposite-select"]');
                 $(this.flows.isCompositeSelect).selectpicker();
-
 
 
                 // //////////////////////////////////
