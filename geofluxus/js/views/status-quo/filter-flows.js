@@ -495,6 +495,10 @@ define(['views/common/baseview',
 
                                 // Trigger input event on textareas in order to autoresize if needed:
                                 $(".selections").trigger('input');
+
+
+                                // Refresh after onChange:
+                                _this.areaMap.map.updateSize()
                             }
                         }
                     });
