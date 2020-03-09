@@ -77,6 +77,7 @@ define(['views/common/baseview',
             events: {
                 'click #area-select-button': 'showAreaSelection',
                 'change select[name="area-level-select"]': 'changeAreaLevel',
+                'click #reset-filters': 'resetFiltersToDefault',
             },
 
             // Rendering
@@ -288,7 +289,6 @@ define(['views/common/baseview',
                 $("#dim-toggle-treatment-method").change(function () {
                     $("#gran-treatment-method-col").fadeToggle();
                 });
-
             },
 
             initializeControls: function () {
@@ -498,7 +498,8 @@ define(['views/common/baseview',
 
 
                                 // Refresh after onChange:
-                                _this.areaMap.map.updateSize()
+                                //_this.areaMap.getLayer('areas').getSource().refresh();
+                                _this.areaMap.map.updateSize();
                             }
                         }
                     });
@@ -580,10 +581,6 @@ define(['views/common/baseview',
                 // Used to determine which 'Select area'-button the user has pressed, either 'origin', 'flows', or 'destination': 
                 _this.areaMap.block = $(event.currentTarget).data('area-select-block');
 
-                // Show the text in the area selection modal Textarea and trigger input:
-                $("#areaSelectionsModalTextarea").html(labelStringArray.join("; "));
-                $(".selections").trigger('input');
-
                 // Show the actual modal:
                 $(this.areaModal).modal('show');
 
@@ -649,9 +646,141 @@ define(['views/common/baseview',
                         }
                     }
 
+                    // Show the text in the area selection modal Textarea and trigger input:
+                    $("#areaSelectionsModalTextarea").html(labelStringArray.join("; "));
+                    $(".selections").trigger('input');
+
                     // End of setTimeout
                 }, 200);
 
+
+
+            },
+
+            resetFiltersToDefault: function () {
+                console.log("resetFiltersToDefault");
+
+                // ///////////////////////////////////////////////
+                // Origin-controls:
+
+                // // Initialize bootstrap-toggle for filter level:
+                // this.origin.filterLevelSelect = this.el.querySelector('#origin-toggleFilterLevel');
+                // $(this.origin.filterLevelSelect).bootstrapToggle();
+
+                // this.origin.roleSelect = this.el.querySelector('select[name="origin-role"]');
+                // $(this.origin.roleSelect).selectpicker();
+
+                // this.origin.activityGroupsSelect = this.el.querySelector('select[name="origin-activitygroup-select"]');
+                // $(this.origin.activityGroupsSelect).selectpicker();
+
+                // this.origin.activitySelect = this.el.querySelector('select[name="origin-activity-select"]');
+                // $(this.origin.activitySelect).selectpicker();
+
+                // this.origin.processSelect = this.el.querySelector('select[name="origin-process-select"]');
+                // $(this.origin.processSelect).selectpicker();
+
+                // // ///////////////////////////////////////////////
+                // // Destination-controls:
+
+                // this.destination.filterLevelSelect = this.el.querySelector('#destination-toggleFilterLevel');
+                // $(this.destination.filterLevelSelect).bootstrapToggle();
+
+                // this.destination.roleSelect = this.el.querySelector('select[name="destination-role"]');
+                // $(this.destination.roleSelect).selectpicker();
+
+                // this.destination.activityGroupsSelect = this.el.querySelector('select[name="destination-activitygroup-select"]');
+                // $(this.destination.activityGroupsSelect).selectpicker();
+
+                // this.destination.activitySelect = this.el.querySelector('select[name="destination-activity-select"]');
+                // $(this.destination.activitySelect).selectpicker();
+
+                // this.destination.processSelect = this.el.querySelector('select[name="destination-process-select"]');
+                // $(this.destination.processSelect).selectpicker();
+
+
+                // // ///////////////////////////////////////////////
+                // // Flows-controls:
+
+                // this.flows.yearSelect = this.el.querySelector('select[name="flows-year-select"]');
+                // $(this.flows.yearSelect).selectpicker();
+
+                // this.flows.wasteSelect = this.el.querySelector('select[name="flows-waste-select"]');
+                // $(this.flows.wasteSelect).selectpicker();
+
+                // this.flows.materialSelect = this.el.querySelector('select[name="flows-material-select"]');
+                // $(this.flows.materialSelect).selectpicker();
+
+                // this.flows.productSelect = this.el.querySelector('select[name="flows-product-select"]');
+                // $(this.flows.productSelect).selectpicker();
+
+                // this.flows.compositesSelect = this.el.querySelector('select[name="flows-composites-select"]');
+                // $(this.flows.compositesSelect).selectpicker();
+
+                // this.flows.routeSelect = this.el.querySelector('select[name="flows-route-select"]');
+                // $(this.flows.routeSelect).selectpicker();
+
+                // this.flows.collectorSelect = this.el.querySelector('select[name="flows-collector-select"]');
+                // $(this.flows.collectorSelect).selectpicker();
+
+                // this.flows.hazardousSelect = this.el.querySelector('select[name="flows-hazardous-select"]');
+                // $(this.flows.hazardousSelect).selectpicker();
+
+                // this.flows.cleanSelect = this.el.querySelector('select[name="flows-clean-select"]');
+                // $(this.flows.cleanSelect).selectpicker();
+
+                // this.flows.mixedSelect = this.el.querySelector('select[name="flows-mixed-select"]');
+                // $(this.flows.mixedSelect).selectpicker();
+
+                // this.flows.directSelect = this.el.querySelector('select[name="flows-direct-select"]');
+                // $(this.flows.directSelect).selectpicker();
+
+                // this.flows.isCompositeSelect = this.el.querySelector('select[name="flows-iscomposite-select"]');
+                // $(this.flows.isCompositeSelect).selectpicker();
+
+
+                // // //////////////////////////////////
+                // // Dimension controls:
+
+                // // Time
+                // this.dimensions.timeToggle = this.el.querySelector('#dim-toggle-time');
+                // $(this.dimensions.timeToggle).bootstrapToggle();
+                // this.dimensions.timeToggleGran = this.el.querySelector('#gran-toggle-time');
+                // $(this.dimensions.timeToggleGran).bootstrapToggle();
+
+                // // Space
+                // this.dimensions.spaceToggle = this.el.querySelector('#dim-toggle-space');
+                // $(this.dimensions.spaceToggle).bootstrapToggle();
+                // this.dimensions.spaceLevelGranSelect = this.el.querySelector('#dim-space-gran-select');
+
+                // // Economic activity:
+                // this.dimensions.economicActivityToggle = this.el.querySelector('#dim-toggle-economic-activity');
+                // $(this.dimensions.economicActivityToggle).bootstrapToggle();
+                // this.dimensions.economicActivityToggleGran = this.el.querySelector('#gran-toggle-econ-activity');
+                // $(this.dimensions.economicActivityToggleGran).bootstrapToggle();
+
+                // // Treatment method:
+                // this.dimensions.treatmentMethodToggle = this.el.querySelector('#dim-toggle-treatment-method');
+                // $(this.dimensions.treatmentMethodToggle).bootstrapToggle();
+
+                // this.dimensions.treatmentMethodToggleGran = this.el.querySelector('#gran-toggle-treatment-method');
+                // $(this.dimensions.treatmentMethodToggleGran).bootstrapToggle();
+
+                // // Materials:
+                // this.dimensions.materialToggle = this.el.querySelector('#dim-toggle-material');
+                // $(this.dimensions.materialToggle).bootstrapToggle();
+
+                // // Logistics:
+                // this.dimensions.logisticsToggle = this.el.querySelector('#dim-toggle-logistics');
+                // $(this.dimensions.logisticsToggle).bootstrapToggle();
+
+
+                // // //////////////////////////////////
+                // // Other:
+
+                // this.displayLevelSelect = this.el.querySelector('select[name="display-level-select"]');
+
+                // // Initialize all textarea-autoresize components:
+                // $(".selections").textareaAutoSize();
 
 
             },
