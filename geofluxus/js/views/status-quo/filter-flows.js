@@ -16,14 +16,14 @@ define(['views/common/baseview',
                 FilterFlowsView.__super__.initialize.apply(this, [options]);
                 _.bindAll(this, 'prepareAreas');
 
-                _this.origin = {};
-                _this.destination = {};
-                _this.flows = {};
-                _this.dimensions = {};
-                _this.maxNumberOfDimensions = 1;
-                _this.selectedAreasOrigin = [];
-                _this.selectedAreasDestination = [];
-                _this.selectedAreasFlows = [];
+                this.origin = {};
+                this.destination = {};
+                this.flows = {};
+                this.dimensions = {};
+                this.maxNumberOfDimensions = 1;
+                this.selectedAreasOrigin = [];
+                this.selectedAreasDestination = [];
+                this.selectedAreasFlows = [];
 
                 this.template = options.template;
                 this.activityGroups = new Collection([], {
@@ -449,6 +449,7 @@ define(['views/common/baseview',
 
                                 if (_this.areaMap.block == "origin") {
                                     // The user has selected an area for the Origin block:
+                                    _this.selectedAreasOrigin = [];
                                     areaFeats.forEach(function (areaFeat) {
                                         labels.push(areaFeat.label);
                                         _this.selectedAreasOrigin.push(areas.get(areaFeat.id));
@@ -463,6 +464,7 @@ define(['views/common/baseview',
 
                                 } else if (_this.areaMap.block == "destination") {
                                     // The user has selected an area for the Destination block:
+                                    _this.selectedAreasDestination = [];
                                     areaFeats.forEach(function (areaFeat) {
                                         labels.push(areaFeat.label);
                                         _this.selectedAreasDestination.push(areas.get(areaFeat.id));
@@ -477,6 +479,7 @@ define(['views/common/baseview',
 
                                 } else if (_this.areaMap.block == "flows") {
                                     // The user has selected an area for the Flows block:
+                                    _this.selectedAreasFlows = [];
                                     areaFeats.forEach(function (areaFeat) {
                                         labels.push(areaFeat.label);
                                         _this.selectedAreasFlows.push(areas.get(areaFeat.id));
@@ -491,15 +494,14 @@ define(['views/common/baseview',
                                 }
 
                                 // Show the selected areas in the textarea in the modal:
-                                $("#areaSelectionsModalTextarea").html(labels.join('; '))
+                                $("#areaSelectionsModalTextarea").html(labels.join('; '));
 
                                 // Trigger input event on textareas in order to autoresize if needed:
                                 $(".selections").trigger('input');
 
 
                                 // Refresh after onChange:
-                                //_this.areaMap.getLayer('areas').getSource().refresh();
-                                _this.areaMap.map.updateSize();
+                                _this.areaMap.map.updateSize()
                             }
                         }
                     });
@@ -576,7 +578,7 @@ define(['views/common/baseview',
                 var labelStringArray = [];
 
                 // Clear all the selected features from the areaMap:
-                _this.areaMap.layers.areas.select.getFeatures().clear();
+                //_this.areaMap.removeSelectedFeatures('areas');
 
                 // Used to determine which 'Select area'-button the user has pressed, either 'origin', 'flows', or 'destination': 
                 _this.areaMap.block = $(event.currentTarget).data('area-select-block');
@@ -597,7 +599,7 @@ define(['views/common/baseview',
 
                         // Add selected origin areas as selections to the map:
                         if (_this.selectedAreasOrigin && _this.selectedAreasOrigin.length > 0) {
-
+                            var labels = [];
                             // Create ol.Collection of Features to which we can add Features:
                             var features = _this.areaMap.layers.areas.select.getFeatures();
 
@@ -605,10 +607,12 @@ define(['views/common/baseview',
                             _this.selectedAreasOrigin.forEach(selectedArea => {
                                 // Get the feature object base on the id:
                                 let feature = _this.areaMap.getFeature("areas", selectedArea.id);
+                                labels.push(selectedArea.label);
 
-                                // Add it to the Features ol.Collection: 
+                                // Add it to the Features ol.Collection:
                                 features.push(feature);
                             });
+                            $("#areaSelectionsModalTextarea").html(labels.join('; '));
                         }
 
                     } else if (_this.areaMap.block == "destination") {
@@ -623,7 +627,7 @@ define(['views/common/baseview',
                                 // Get the feature object base on the id:
                                 let feature = _this.areaMap.getFeature("areas", selectedArea.id);
 
-                                // Add it to the Features ol.Collection: 
+                                // Add it to the Features ol.Collection:
                                 features.push(feature);
                             });
                         }
@@ -640,7 +644,7 @@ define(['views/common/baseview',
                                 // Get the feature object base on the id:
                                 let feature = _this.areaMap.getFeature("areas", selectedArea.id);
 
-                                // Add it to the Features ol.Collection: 
+                                // Add it to the Features ol.Collection:
                                 features.push(feature);
                             });
                         }
