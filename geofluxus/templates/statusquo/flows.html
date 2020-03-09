@@ -125,7 +125,7 @@
                             data-html="true" tabindex="0"
                             data-content='This filter allows you to filter the flows based on the role of the actor. '>
                             </a>
-                            <select id="origin-role-select" name="origin-role" class="form-control form-control-sm"
+                            <select id="origin-role-select" name="origin-role" class="form-control form-control-sm selectpicker"
                                     data-dropup-auto="false"
                                     data-size="6">
                                 <option value='any' selected>Both roles</option>
@@ -151,7 +151,7 @@
                         <div class="col-md-4">
                             <label for="origin-activitygroup-select">Activity group</label>
                             <select id="origin-activitygroup-select" name="origin-activitygroup-select" multiple
-                                    class="form-control form-control-sm"
+                                    class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-dropup-auto="false"
                                     data-size="6"
@@ -170,7 +170,7 @@
                             <label for="origin-activity-select">Activity</label>
                             <i class="fas fa-angle-double-right" id="activitySelectChevron"></i>
                             <select id="origin-activity-select" name="origin-activity-select" multiple
-                                    class="form-control form-control-sm"
+                                    class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-dropup-auto="false" data-size="6" style="resize: vertical;">
                                 <option selected value="-1">All (<%= activities.count %>)</option>
@@ -188,7 +188,8 @@
                     <div class="row originContainerTreatmentMethod" style="display: none;">
                         <div class="col-md-4">
                             <label for="origin-process-select">Treatment method</label>
-                            <select name="origin-process-select" id="origin-process-select" multiple class="form-control form-control-sm"
+                            <select name="origin-process-select" id="origin-process-select" multiple
+                            class="form-control form-control-sm selectpicker"
                             data-live-search="true"
                             data-size="6"
                             style="resize: vertical;">
@@ -258,7 +259,9 @@
                             data-html="true" tabindex="0"
                             data-content='This filter allows you to filter the flows based on the role of the actor. '>
                             </a>
-                            <select id="destination-role-select" name="destination-role" class="form-control form-control-sm"
+                            <select id="destination-role-select"
+                                    name="destination-role"
+                                    class="form-control form-control-sm selectpicker"
                                     data-dropup-auto="false"
                                     >
                                 <option value='any' selected>Both roles</option>
@@ -286,7 +289,7 @@
                         <div class="col-md-4">
                             <label for="destination-activitygroup-select">Activity group</label>
                             <select id="destination-activitygroup-select" name="destination-activitygroup-select" multiple
-                                    class="form-control form-control-sm"
+                                    class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-dropup-auto="false" data-size="6" style="resize: vertical;">
                                 <option selected value="-1">All (<%= activityGroups.count %>)</option>
@@ -303,7 +306,7 @@
                             <label for="destination-activity-select">Activity</label>
                             <i class="fas fa-angle-double-right" id="activitySelectChevron"></i>
                             <select id="destination-activity-select" name="destination-activity-select" multiple
-                                    class="form-control form-control-sm"
+                                    class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-dropup-auto="false" data-size="6" style="resize: vertical;">
                                 <option selected value="-1">All (<%= activities.count %>)</option>
@@ -321,7 +324,7 @@
                     <div class="row destinationContainerTreatmentMethod" style="display: none;">
                         <div class="col-md-4">
                             <label for="destination-process-select">Treatment method</label>
-                            <select name="destination-process-select" id="destination-process-select" multiple class="form-control form-control-sm"
+                            <select name="destination-process-select" id="destination-process-select" multiple class="form-control form-control-sm selectpicker"
                             data-live-search="true"
                             data-size="6"
                             style="resize: vertical;">
@@ -389,7 +392,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             <label>Year</label>
-                            <select name="flows-year-select" class="form-control form-control-sm">
+                            <select name="flows-year-select" class="form-control form-control-sm selectpicker">
                                 <option value='all'>All</option>
                                 <option value='2013'>2013</option>
                                 <option value='2014'>2014</option>
@@ -404,7 +407,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             <label>Waste</label>
-                            <select name="flows-waste-select" multiple class="form-control form-control-sm"
+                            <select name="flows-waste-select" multiple class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-size="6"
                                     style="resize: vertical;">
@@ -423,7 +426,7 @@
                     <div class="row">
                         <div class="col-md-3">
                             <label>Materials</label>
-                            <select name="flows-material-select" multiple class="form-control form-control-sm"
+                            <select name="flows-material-select" multiple class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-size="6"
                                     style="resize: vertical;">
@@ -438,7 +441,7 @@
                         </div>
                         <div class="col-md-3">
                             <label>Products</label>
-                            <select name="flows-product-select" multiple class="form-control form-control-sm"
+                            <select name="flows-product-select" multiple class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-size="6"
                                     style="resize: vertical;">
@@ -451,7 +454,7 @@
                         </div>
                         <div class="col-md-3">
                             <label>Composites</label>
-                            <select name="flows-composites-select" multiple class="form-control form-control-sm"
+                            <select name="flows-composites-select" multiple class="form-control form-control-sm selectpicker"
                                     data-live-search="true" data-size="6"
                                     style="resize: vertical;">
                                 <option selected value="-1">All (<%= composites.count %>)</option>
@@ -467,7 +470,7 @@
                     <div class="row">
                         <div class="col-md-3">
                             <label>Route</label>
-                            <select name="flows-route-select" class="form-control form-control-sm">
+                            <select name="flows-route-select" class="form-control form-control-sm selectpicker">
                                 <option value='both'>ignore</option>
                                 <option value='no'>not route</option>
                                 <option value='yes'>route</option>
@@ -475,7 +478,7 @@
                         </div>
                         <div class="col-md-3">
                             <label>Collector</label>
-                            <select name="flows-collector-select" class="form-control form-control-sm">
+                            <select name="flows-collector-select" class="form-control form-control-sm selectpicker">
                                 <option value='both'>ignore</option>
                                 <option value='no'>not collector</option>
                                 <option value='yes'>collector</option>
@@ -483,7 +486,7 @@
                         </div>
                         <div class="col-md-3">
                             <label>Hazardous</label>
-                            <select name="flows-hazardous-select" class="form-control form-control-sm">
+                            <select name="flows-hazardous-select" class="form-control form-control-sm selectpicker">
                                 <option value='both'>ignore</option>
                                 <option value='no'>not hazardous</option>
                                 <option value='yes'>hazardous</option>
@@ -493,7 +496,7 @@
                     <div class="row">
                         <div class="col-md-3">
                             <label>Clean</label>
-                            <select name="flows-clean-select" class="form-control form-control-sm" multiple
+                            <select name="flows-clean-select" class="form-control form-control-sm selectpicker" multiple
                                     style="resize: vertical;">
                                 <option selected value='-1'>ignore</option>
                                 <option data-divider="true"></option>
@@ -504,7 +507,7 @@
                         </div>
                         <div class="col-md-3">
                             <label>Mixed</label>
-                            <select name="flows-mixed-select" class="form-control form-control-sm" multiple
+                            <select name="flows-mixed-select" class="form-control form-control-sm selectpicker" multiple
                                     style="resize: vertical;">
                                 <option selected value='-1'>ignore</option>
                                 <option data-divider="true"></option>
@@ -515,7 +518,7 @@
                         </div>
                         <div class="col-md-3">
                             <label>Direct use</label>
-                            <select name="flows-direct-select" class="form-control form-control-sm" multiple
+                            <select name="flows-direct-select" class="form-control form-control-sm selectpicker" multiple
                                     style="resize: vertical;">
                                 <option selected value='-1'>ignore</option>
                                 <option data-divider="true"></option>
@@ -526,7 +529,7 @@
                         </div>
                         <div class="col-md-3">
                             <label>Composite</label>
-                            <select name="flows-iscomposite-select" class="form-control form-control-sm" multiple
+                            <select name="flows-iscomposite-select" class="form-control form-control-sm selectpicker" multiple
                                     style="resize: vertical;">
                                 <option selected value='-1'>ignore</option>
                                 <option data-divider="true"></option>
@@ -618,8 +621,8 @@
                                     data-off="Aggregate">
                             </div>
                         </div>
-                        <div class="col-md-4" id="gran-space-col" style="display: none">
-                            <select name="dim-space-gran-select" id="dim-space-gran-select" class="form-control form-control-sm" data-height="21"> 
+                        <div class="col-md-4" id="gran-toggle-space-col" style="display: none">
+                            <select name="dim-space-gran-select" id="dim-space-gran-select" class="form-control form-control-sm selectpicker" data-height="21"> 
                                 <% levels.forEach(function(level) { %>
                                 <option value="<%= level.id %>"> <%= level.get('name') %></option>
                                 <% }) %>

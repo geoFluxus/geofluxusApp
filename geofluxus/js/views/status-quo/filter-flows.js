@@ -281,7 +281,7 @@ define(['views/common/baseview',
                     $("#gran-toggle-time-col").fadeToggle();
                 });
                 $("#dim-toggle-space").change(function () {
-                    $("#gran-space-col").fadeToggle();
+                    $("#gran-toggle-space-col").fadeIn();
                 });
                 $("#dim-toggle-economic-activity").change(function () {
                     $("#gran-econ-activity-col").fadeToggle();
@@ -384,6 +384,7 @@ define(['views/common/baseview',
                 this.dimensions.spaceToggle = this.el.querySelector('#dim-toggle-space');
                 $(this.dimensions.spaceToggle).bootstrapToggle();
                 this.dimensions.spaceLevelGranSelect = this.el.querySelector('#dim-space-gran-select');
+                $(this.dimensions.spaceLevelGranSelect).selectpicker();
 
                 // Economic activity:
                 this.dimensions.economicActivityToggle = this.el.querySelector('#dim-toggle-economic-activity');
@@ -405,12 +406,6 @@ define(['views/common/baseview',
                 // Logistics:
                 this.dimensions.logisticsToggle = this.el.querySelector('#dim-toggle-logistics');
                 $(this.dimensions.logisticsToggle).bootstrapToggle();
-
-
-                // //////////////////////////////////
-                // Other:
-
-                this.displayLevelSelect = this.el.querySelector('select[name="display-level-select"]');
 
                 // Initialize all textarea-autoresize components:
                 $(".selections").textareaAutoSize();
@@ -660,131 +655,86 @@ define(['views/common/baseview',
             },
 
             resetFiltersToDefault: function () {
-                console.log("resetFiltersToDefault");
+                _this = this;
+
+                _this.selectedAreasOrigin = [];
+                _this.selectedAreasDestination = [];
+                _this.selectedAreasFlows = [];
+
+                // HTML string for activity-select:
+                allActivitiesOptionsHTML = '<option selected value="-1">All (' + _this.activities.length + ')</option><option data-divider="true"></option>';
+                _this.activities.models.forEach(activity => allActivitiesOptionsHTML += "<option>" + activity.attributes.name + "</option>");
+
 
                 // ///////////////////////////////////////////////
                 // Origin-controls:
 
-                // // Initialize bootstrap-toggle for filter level:
-                // this.origin.filterLevelSelect = this.el.querySelector('#origin-toggleFilterLevel');
-                // $(this.origin.filterLevelSelect).bootstrapToggle();
-
-                // this.origin.roleSelect = this.el.querySelector('select[name="origin-role"]');
-                // $(this.origin.roleSelect).selectpicker();
-
-                // this.origin.activityGroupsSelect = this.el.querySelector('select[name="origin-activitygroup-select"]');
-                // $(this.origin.activityGroupsSelect).selectpicker();
-
-                // this.origin.activitySelect = this.el.querySelector('select[name="origin-activity-select"]');
-                // $(this.origin.activitySelect).selectpicker();
-
-                // this.origin.processSelect = this.el.querySelector('select[name="origin-process-select"]');
-                // $(this.origin.processSelect).selectpicker();
-
-                // // ///////////////////////////////////////////////
-                // // Destination-controls:
-
-                // this.destination.filterLevelSelect = this.el.querySelector('#destination-toggleFilterLevel');
-                // $(this.destination.filterLevelSelect).bootstrapToggle();
-
-                // this.destination.roleSelect = this.el.querySelector('select[name="destination-role"]');
-                // $(this.destination.roleSelect).selectpicker();
-
-                // this.destination.activityGroupsSelect = this.el.querySelector('select[name="destination-activitygroup-select"]');
-                // $(this.destination.activityGroupsSelect).selectpicker();
-
-                // this.destination.activitySelect = this.el.querySelector('select[name="destination-activity-select"]');
-                // $(this.destination.activitySelect).selectpicker();
-
-                // this.destination.processSelect = this.el.querySelector('select[name="destination-process-select"]');
-                // $(this.destination.processSelect).selectpicker();
+                $("#areaSelectionsOrigin").fadeOut();
+                $("#areaSelectionsOriginTextarea").html("");
+                $(_this.origin.roleSelect).val("any");
+                $(_this.origin.filterLevelSelect).bootstrapToggle('off')
+                $(_this.origin.activityGroupsSelect).val('-1');
+                $(_this.origin.activitySelect).html(allActivitiesOptionsHTML);
+                $(_this.origin.processSelect).val('-1');
+                $(".originContainerActivity").fadeOut();
+                $(".originContainerTreatmentMethod").fadeOut();
 
 
-                // // ///////////////////////////////////////////////
-                // // Flows-controls:
+                // ///////////////////////////////////////////////
+                // Destination-controls:
+                $("#areaSelectionsDestination").fadeOut();
+                $("#areaSelectionsDestinationTextarea").html("");
+                $(_this.destination.roleSelect).val("any");
+                $(_this.destination.filterLevelSelect).bootstrapToggle('off')
+                $(_this.destination.activityGroupsSelect).val('-1');
+                $(_this.destination.activitySelect).html(allActivitiesOptionsHTML);
+                $(_this.destination.processSelect).val('-1');
+                $(".destinationContainerActivity").fadeOut();
+                $(".destinationContainerTreatmentMethod").fadeOut();
 
-                // this.flows.yearSelect = this.el.querySelector('select[name="flows-year-select"]');
-                // $(this.flows.yearSelect).selectpicker();
 
-                // this.flows.wasteSelect = this.el.querySelector('select[name="flows-waste-select"]');
-                // $(this.flows.wasteSelect).selectpicker();
-
-                // this.flows.materialSelect = this.el.querySelector('select[name="flows-material-select"]');
-                // $(this.flows.materialSelect).selectpicker();
-
-                // this.flows.productSelect = this.el.querySelector('select[name="flows-product-select"]');
-                // $(this.flows.productSelect).selectpicker();
-
-                // this.flows.compositesSelect = this.el.querySelector('select[name="flows-composites-select"]');
-                // $(this.flows.compositesSelect).selectpicker();
-
-                // this.flows.routeSelect = this.el.querySelector('select[name="flows-route-select"]');
-                // $(this.flows.routeSelect).selectpicker();
-
-                // this.flows.collectorSelect = this.el.querySelector('select[name="flows-collector-select"]');
-                // $(this.flows.collectorSelect).selectpicker();
-
-                // this.flows.hazardousSelect = this.el.querySelector('select[name="flows-hazardous-select"]');
-                // $(this.flows.hazardousSelect).selectpicker();
-
-                // this.flows.cleanSelect = this.el.querySelector('select[name="flows-clean-select"]');
-                // $(this.flows.cleanSelect).selectpicker();
-
-                // this.flows.mixedSelect = this.el.querySelector('select[name="flows-mixed-select"]');
-                // $(this.flows.mixedSelect).selectpicker();
-
-                // this.flows.directSelect = this.el.querySelector('select[name="flows-direct-select"]');
-                // $(this.flows.directSelect).selectpicker();
-
-                // this.flows.isCompositeSelect = this.el.querySelector('select[name="flows-iscomposite-select"]');
-                // $(this.flows.isCompositeSelect).selectpicker();
+                // ///////////////////////////////////////////////
+                // Flows-controls:
+                $("#areaSelectionsFlows").fadeOut();
+                $("#areaSelectionsFlowsTextarea").html("");
+                $("#areaSelectionsFlows").fadeOut();
+                $(_this.flows.yearSelect).val("all");
+                $(_this.flows.wasteSelect).val("-1");
+                $(_this.flows.materialSelect).val("-1");
+                $(_this.flows.productSelect).val("-1");
+                $(_this.flows.compositesSelect).val("-1");
+                $(_this.flows.routeSelect).val("both");
+                $(_this.flows.collectorSelect).val("both");
+                $(_this.flows.hazardousSelect).val("both");
+                $(_this.flows.cleanSelect).val("-1");
+                $(_this.flows.mixedSelect).val("-1");
+                $(_this.flows.directSelect).val("-1");
+                $(_this.flows.isCompositeSelect).val("-1");
 
 
                 // // //////////////////////////////////
                 // // Dimension controls:
 
-                // // Time
-                // this.dimensions.timeToggle = this.el.querySelector('#dim-toggle-time');
-                // $(this.dimensions.timeToggle).bootstrapToggle();
-                // this.dimensions.timeToggleGran = this.el.querySelector('#gran-toggle-time');
-                // $(this.dimensions.timeToggleGran).bootstrapToggle();
+                $(_this.dimensions.timeToggle).bootstrapToggle('off');
+                $(_this.dimensions.timeToggleGran).bootstrapToggle('Year');
+                $(_this.dimensions.spaceToggle).bootstrapToggle('off');
+                $(_this.dimensions.spaceLevelGranSelect).val('1');
+                $(_this.dimensions.economicActivityToggle).bootstrapToggle('off');
+                $(_this.dimensions.economicActivityToggleGran).bootstrapToggle('Activity group');
+                $(_this.dimensions.treatmentMethodToggle).bootstrapToggle('off');
+                $(_this.dimensions.treatmentMethodToggleGran).bootstrapToggle('Treatment method group');
 
-                // // Space
-                // this.dimensions.spaceToggle = this.el.querySelector('#dim-toggle-space');
-                // $(this.dimensions.spaceToggle).bootstrapToggle();
-                // this.dimensions.spaceLevelGranSelect = this.el.querySelector('#dim-space-gran-select');
+                $("#gran-toggle-time-col").fadeOut();
+                $("#gran-toggle-space-col").fadeOut();
+                $("#gran-econ-activity-col").fadeOut();
+                $("#gran-treatment-method-col").fadeOut();
 
-                // // Economic activity:
-                // this.dimensions.economicActivityToggle = this.el.querySelector('#dim-toggle-economic-activity');
-                // $(this.dimensions.economicActivityToggle).bootstrapToggle();
-                // this.dimensions.economicActivityToggleGran = this.el.querySelector('#gran-toggle-econ-activity');
-                // $(this.dimensions.economicActivityToggleGran).bootstrapToggle();
+                // Empty all textareas:
+                $(".selections").html("");
+                $(".selections").textareaAutoSize();
 
-                // // Treatment method:
-                // this.dimensions.treatmentMethodToggle = this.el.querySelector('#dim-toggle-treatment-method');
-                // $(this.dimensions.treatmentMethodToggle).bootstrapToggle();
-
-                // this.dimensions.treatmentMethodToggleGran = this.el.querySelector('#gran-toggle-treatment-method');
-                // $(this.dimensions.treatmentMethodToggleGran).bootstrapToggle();
-
-                // // Materials:
-                // this.dimensions.materialToggle = this.el.querySelector('#dim-toggle-material');
-                // $(this.dimensions.materialToggle).bootstrapToggle();
-
-                // // Logistics:
-                // this.dimensions.logisticsToggle = this.el.querySelector('#dim-toggle-logistics');
-                // $(this.dimensions.logisticsToggle).bootstrapToggle();
-
-
-                // // //////////////////////////////////
-                // // Other:
-
-                // this.displayLevelSelect = this.el.querySelector('select[name="display-level-select"]');
-
-                // // Initialize all textarea-autoresize components:
-                // $(".selections").textareaAutoSize();
-
-
+                // Refresh all selectpickers:
+                $(".selectpicker").selectpicker('refresh');
             },
 
             close: function () {
