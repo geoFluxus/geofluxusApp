@@ -498,10 +498,6 @@ define(['views/common/baseview',
 
                                 // Trigger input event on textareas in order to autoresize if needed:
                                 $(".selections").trigger('input');
-
-
-                                // Refresh after onChange:
-                                _this.areaMap.map.updateSize()
                             }
                         }
                     });
@@ -593,39 +589,37 @@ define(['views/common/baseview',
                     if (_this.areaLevels.length > 0) {
                         _this.changeAreaLevel(false);
                     }
+                    // Create ol.Collection of Features to which we can add Features:
+                    let features = _this.areaMap.layers.areas.select.getFeatures();
 
                     // Add the correct selected features to the areaMap:
                     if (_this.areaMap.block == "origin") {
-
                         // Add selected origin areas as selections to the map:
                         if (_this.selectedAreasOrigin && _this.selectedAreasOrigin.length > 0) {
-                            var labels = [];
-                            // Create ol.Collection of Features to which we can add Features:
-                            var features = _this.areaMap.layers.areas.select.getFeatures();
 
                             // Loop through all selected areas in selectedAreasOrigin:
                             _this.selectedAreasOrigin.forEach(selectedArea => {
                                 // Get the feature object base on the id:
                                 let feature = _this.areaMap.getFeature("areas", selectedArea.id);
-                                labels.push(selectedArea.label);
+                                labelStringArray.push(selectedArea.attributes.name);
 
                                 // Add it to the Features ol.Collection:
                                 features.push(feature);
                             });
-                            $("#areaSelectionsModalTextarea").html(labels.join('; '));
                         }
 
                     } else if (_this.areaMap.block == "destination") {
                         // Add selected destination areas as selections to the map:
                         if (_this.selectedAreasDestination && _this.selectedAreasDestination.length > 0) {
 
-                            // Create ol.Collection of Features to which we can add Features:
-                            var features = _this.areaMap.layers.areas.select.getFeatures();
+                            // // Create ol.Collection of Features to which we can add Features:
+                            // var features = _this.areaMap.layers.areas.select.getFeatures();
 
                             // Loop through all selected areas in selectedAreasDestination:
                             _this.selectedAreasDestination.forEach(selectedArea => {
                                 // Get the feature object base on the id:
                                 let feature = _this.areaMap.getFeature("areas", selectedArea.id);
+                                labelStringArray.push(selectedArea.attributes.name);
 
                                 // Add it to the Features ol.Collection:
                                 features.push(feature);
@@ -636,19 +630,23 @@ define(['views/common/baseview',
                         // Add selected Flows areas as selections to the map:
                         if (_this.selectedAreasFlows && _this.selectedAreasFlows.length > 0) {
 
-                            // Create ol.Collection of Features to which we can add Features:
-                            var features = _this.areaMap.layers.areas.select.getFeatures();
+                            // // Create ol.Collection of Features to which we can add Features:
+                            // var features = _this.areaMap.layers.areas.select.getFeatures();
 
                             // Loop through all selected areas in selectedAreasFlows:
                             _this.selectedAreasFlows.forEach(selectedArea => {
                                 // Get the feature object base on the id:
                                 let feature = _this.areaMap.getFeature("areas", selectedArea.id);
+                                labelStringArray.push(selectedArea.attributes.name);
 
                                 // Add it to the Features ol.Collection:
                                 features.push(feature);
                             });
                         }
                     }
+
+                    // Display the previousy selected regions in the label on the modal:
+                    $("#areaSelectionsModalTextarea").html(labelStringArray.join('; '));
 
                     // Show the text in the area selection modal Textarea and trigger input:
                     $("#areaSelectionsModalTextarea").html(labelStringArray.join("; "));
