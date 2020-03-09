@@ -4,9 +4,11 @@ define(['views/common/baseview',
         'views/status-quo/filter-flows',
         'collections/collection',
         'utils/utils',
-        'views/common/flowsankey'
+        'views/common/flowsankey',
+        'views/common/flowsankeymap',
+
     ],
-    function (BaseView, _, FilterFlowsView, Collection, utils, FlowSankeyView) {
+    function (BaseView, _, FilterFlowsView, Collection, utils, FlowSankeyView, FlowMapView) {
 
         var FlowsView = BaseView.extend({
 
@@ -14,6 +16,13 @@ define(['views/common/baseview',
             initialize: function (options) {
                 var _this = this;
                 FlowsView.__super__.initialize.apply(this, [options]);
+
+                //_.bindAll(this, 'linkSelected');
+                //_.bindAll(this, 'linkDeselected');
+                // _.bindAll(this, 'nodeSelected');
+                // _.bindAll(this, 'nodeDeselected');
+                // _.bindAll(this, 'deselectAll');
+
                 this.render();
             },
 
@@ -24,12 +33,21 @@ define(['views/common/baseview',
 
             // Rendering
             render: function () {
-                var html = document.getElementById(this.template).innerHTML,
-                    template = _.template(html),
-                    _this = this;
+                var html = document.getElementById(this.template).innerHTML;
+                var template = _.template(html)
+
                 this.el.innerHTML = template();
 
-                // render flow filters
+
+                // this.sankeyWrapper = this.el.querySelector('.sankey-wrapper');
+                // this.sankeyWrapper.addEventListener('linkSelected', this.linkSelected);
+                // this.sankeyWrapper.addEventListener('linkDeselected', this.linkDeselected);
+                // this.sankeyWrapper.addEventListener('nodeSelected', this.nodeSelected);
+                // this.sankeyWrapper.addEventListener('nodeDeselected', this.nodeDeselected);
+                // this.sankeyWrapper.addEventListener('allDeselected', this.deselectAll);
+
+
+                // Render flow filters
                 this.renderFilterFlowsView();
             },
 
@@ -39,31 +57,21 @@ define(['views/common/baseview',
 
                 this.filterFlowsView = new FilterFlowsView({
                     el: el,
-                    template: 'filter-flows-template'
+                    template: 'filter-flows-template',
                 });
             },
 
-            //    drawFlows: function(){
-            //        //if (this.flowsView) this.flowsView.close();
-            //        //var filter = this.getFilter();
-            //
-            //        var filter = "";
-            //
-            //        this.flowsView = new FlowsView({
-            //            el: this.el.querySelector('#flows-render-content'),
-            //            template: 'flows-render-template',
-            //            materials: this.materials,
-            //            actors: this.actors,
-            //            activityGroups: this.activityGroups,
-            //            activities: this.activities,
-            //            caseStudy: this.caseStudy,
-            //            keyflowId: this.keyflowId,
-            //            displayWarnings: true,
-            //            filter: filter
-            //        });
-            //        var displayLevel = this.displayLevelSelect.value;
-            //        this.flowsView.draw(displayLevel);
-            //    },
+            // Render the empty Sankey Map
+            renderSankeyMap: function () {
+                this.flowMapView = new FlowMapView({
+                    el: this.el.querySelector('#flow-map'),
+                    //caseStudy: this.caseStudy,
+                    //keyflowId: this.keyflowId,
+                    //materials: this.materials,
+                    //displayWarnings: this.displayWarnings,
+                    //anonymize: this.filter.get('anonymize')
+                });
+            },
 
             postprocess: function (flows) {
                 var idx = 0;
@@ -81,15 +89,6 @@ define(['views/common/baseview',
                     // Color:
                     origin.color = utils.colorByName(origin.name);
                     destination.color = utils.colorByName(destination.name);
-
-                    //            flow.description = flow.get('description');
-                    //var materials = flow.get('materials');
-                    //flow.get('materials').forEach(function(material){
-                    //material._amount =  material.amount;
-                    //})
-                    //flow.set('materials', materials);
-
-                    //            if (!flow.get('stock'))
                 })
 
                 this.flows = flows;
@@ -168,104 +167,131 @@ define(['views/common/baseview',
 
             // Returns parameters for filtered post-fetching based on assigned filter
             getFlowFilterParams: function () {
+
                 // Prepare filters for request
-                let filter = this.filterFlowsView,
-                    filterParams = {};
+                let filter = this.filterFlowsView;
 
-                // DISPLAY LEVEL //
-                let displayLevel = $(filter.displayLevelSelect).val();
-
-                // AREA FILTERS //
-                let areaFilters = {};
-
-                // Selected areas
-                let areas = filter.selectedAreas;
-                areaFilters['areas'] = areas;
-
-                // Activity & Activity Groups
-                let filterLevel = $(filter.filterLevelSelect).prop("checked"),
-                    activityGroups = $(filter.activityGroupsSelect).val(),
-                    activities = $(filter.activitySelect).val();
-
-                // If filterLevel is not checked, this means level is 'activitygroup':
-                if (!filterLevel) {
-                    if (activityGroups[0] !== "-1") {
-                        areaFilters['__activity__activitygroup'] = activityGroups;
-                    }
-                } else {
-                    if (activities[0] !== "-1") {
-                        areaFilters['__activity'] = activities;
-                    }
+                let filterParams = {
+                    origin: {},
+                    destination: {},
+                    flows: {},
+                    dimensions: {}
                 }
 
-                // Role
-                let role = $(filter.roleSelect).val();
-                areaFilters['role'] = role;
-                // AREA FILTERS //
+                // ///////////////////////////////
+                // ORIGIN
+
+                if (filter.selectedAreasOrigin !== undefined) {
+                    filterParams.origin.selectedAreas = [];
+                    filter.selectedAreasOrigin.forEach(function (area) {
+                        filterParams.origin.selectedAreas.push(area.id);
+                    });
+                }
+                if ($(filter.origin.roleSelect).val() != 'any') {
+                    filterParams.origin.role = $(filter.origin.roleSelect).val();
+                }
+                if (!$(filter.origin.filterLevelSelect).prop("checked")) {
+                    if ($(filter.origin.activityGroupsSelect).val() != '-1') {
+                        filterParams.origin.activityGroups = $(filter.origin.activityGroupsSelect).val();
+                    }
+                } else {
+                    if ($(filter.origin.activities).val() != '-1') {
+                        filterParams.origin.activities = $(filter.origin.activitySelect).val();
+                    }
+                }
+                if ($(filter.origin.processSelect).val() != "-1") {
+                    filterParams.origin.process = $(filter.origin.processSelect).val();
+                }
 
 
-                // GENERIC FILTERS //
-                let genFilters = {};
+                // ///////////////////////////////
+                // DESTINATION
+
+                if (filter.selectedAreasDestination !== undefined) {
+                    filterParams.destination.selectedAreas = [];
+                    filter.selectedAreasDestination.forEach(function (area) {
+                        filterParams.destination.selectedAreas.push(area.id);
+                    });
+                }
+                if ($(filter.destination.roleSelect).val() != 'any') {
+                    filterParams.destination.role = $(filter.destination.roleSelect).val();
+                }
+                if (!$(filter.destination.filterLevelSelect).prop("checked")) {
+                    if ($(filter.destination.activityGroupsSelect).val() != '-1') {
+                        filterParams.destination.activityGroups = $(filter.destination.activityGroupsSelect).val();
+                    }
+                } else {
+                    if ($(filter.destination.activities).val() != '-1') {
+                        filterParams.destination.activities = $(filter.destination.activitySelect).val();
+                    }
+                }
+                if ($(filter.destination.processSelect).val() != "-1") {
+                    filterParams.destination.process = $(filter.destination.processSelect).val();
+                }
+
+
+                // ///////////////////////////////
+                // FLOWS
+                if (filter.selectedAreasFlows !== undefined) {
+                    filterParams.flows.selectedAreas = [];
+                    filter.selectedAreasFlows.forEach(function (area) {
+                        filterParams.flows.selectedAreas.push(area.id);
+                    });
+                }
 
                 // Year
-                let year = $(filter.yearSelect).val();
+                let year = $(filter.flows.yearSelect).val();
                 if (year !== "all") {
-                    genFilters['year'] = year;
+                    filterParams.flows['year'] = year;
                 }
 
                 // Wastes
-                let wastes = $(filter.wasteSelect).val();
+                let wastes = $(filter.flows.wasteSelect).val();
                 if (wastes[0] !== "-1") {
-                    genFilters['waste__in'] = wastes;
-                }
-
-                // Processes
-                let processes = $(filter.processSelect).val();
-                if (processes[0] !== "-1") {
-                    genFilters['process__in'] = processes;
+                    filterParams.flows['waste__in'] = wastes;
                 }
 
                 // Materials
-                let materials = $(filter.materialSelect).val();
+                let materials = $(filter.flows.materialSelect).val();
                 if (materials[0] !== "-1") {
-                    genFilters['materials__in'] = materials;
+                    filterParams.flows['materials__in'] = materials;
                 }
 
                 // Products
-                let products = $(filter.productSelect).val();
+                let products = $(filter.flows.productSelect).val();
                 if (products[0] !== "-1") {
-                    genFilters['products__in'] = products;
+                    filterParams.flows['products__in'] = products;
                 }
 
                 // Composites
-                let composites = $(filter.compositesSelect).val();
+                let composites = $(filter.flows.compositesSelect).val();
                 if (composites[0] !== "-1") {
-                    genFilters['composites__in'] = composites;
+                    filterParams.flows['composites__in'] = composites;
                 }
 
                 // isRoute
-                let route = $(filter.routeSelect).val();
+                let route = $(filter.flows.routeSelect).val();
                 if (route != 'both') {
                     let is_route = (route == 'yes') ? true : false;
-                    genFilters['route'] = is_route;
+                    filterParams.flows['route'] = is_route;
                 }
 
                 // isCollector
-                let collector = $(filter.collectorSelect).val();
+                let collector = $(filter.flows.collectorSelect).val();
                 if (collector != 'both') {
                     let is_collector = (collector == 'yes') ? true : false;
-                    genFilters['collector'] = is_collector;
+                    filterParams.flows['collector'] = is_collector;
                 }
 
                 // isHazardous
-                let hazardous = $(filter.hazardousSelect).val();
+                let hazardous = $(filter.flows.hazardousSelect).val();
                 if (hazardous != 'both') {
                     let is_hazardous = (hazardous == 'yes') ? true : false;
-                    genFilters['hazardous'] = is_hazardous;
+                    filterParams.flows['hazardous'] = is_hazardous;
                 }
 
                 // isClean
-                let clean = $(filter.cleanSelect).val();
+                let clean = $(filter.flows.cleanSelect).val();
                 if (clean[0] !== "-1") {
                     var options = [];
                     clean.forEach(function (option) {
@@ -276,11 +302,11 @@ define(['views/common/baseview',
                             options.push(is_clean);
                         }
                     })
-                    genFilters['clean'] = options;
+                    filterParams.flows['clean'] = options;
                 }
 
                 // isMixed
-                let mixed = $(filter.mixedSelect).val();
+                let mixed = $(filter.flows.mixedSelect).val();
                 if (mixed[0] !== "-1") {
                     var options = [];
                     mixed.forEach(function (option) {
@@ -291,11 +317,11 @@ define(['views/common/baseview',
                             options.push(is_mixed);
                         }
                     })
-                    genFilters['mixed'] = options;
+                    filterParams.flows['mixed'] = options;
                 }
 
                 // isDirectUse
-                let direct = $(filter.directSelect).val();
+                let direct = $(filter.flows.directSelect).val();
                 if (direct[0] !== "-1") {
                     var options = [];
                     direct.forEach(function (option) {
@@ -306,11 +332,11 @@ define(['views/common/baseview',
                             options.push(is_direct);
                         }
                     })
-                    genFilters['direct'] = options;
+                    filterParams.flows['direct'] = options;
                 }
 
                 // isComposite
-                let composite = $(filter.isCompositeSelect).val();
+                let composite = $(filter.flows.isCompositeSelect).val();
                 if (composite[0] !== "-1") {
                     var options = [];
                     composite.forEach(function (option) {
@@ -321,16 +347,97 @@ define(['views/common/baseview',
                             options.push(is_composite);
                         }
                     })
-                    genFilters['composite'] = options;
+                    filterParams.flows['composite'] = options;
                 }
-                // GENERIC FILTERS //
 
-                // Append all separate filters into params
-                filterParams['displayLevel'] = displayLevel;
-                filterParams['genFilters'] = genFilters;
-                filterParams['areaFilters'] = areaFilters;
+                // ///////////////////////////////
+                // DIMENSIONS
+
+                if ($(filter.dimensions.timeToggle).prop("checked")) {
+                    filterParams.dimensions.time = {
+                        selected: true,
+                        granularity: $(filter.dimensions.timeToggleGran).prop("checked") ? 'month' : 'year',
+                    }
+                }
+
+                if ($(filter.dimensions.spaceToggle).prop("checked")) {
+                    filterParams.dimensions.spaceToggle = {
+                        selected: true,
+                        granularity: $('#dim-space-gran-select option:selected').text(),
+                    }
+                }
+
+                if ($(filter.dimensions.economicActivityToggle).prop("checked")) {
+                    filterParams.dimensions.economicActivity = {
+                        selected: true,
+                        granularity: $(filter.dimensions.economicActivityToggle).prop("checked") ? 'Activity' : 'Activity group',
+                    }
+                }
+
+                if ($(filter.dimensions.treatmentMethodToggle).prop("checked")) {
+                    filterParams.dimensions.treatmentMethod = {
+                        selected: true,
+                        granularity: $(filter.dimensions.treatmentMethodToggle).prop("checked") ? 'Treatment method' : 'Treatment method group',
+                    }
+                }
 
                 return filterParams;
+            },
+
+            linkSelected: function (e) {
+                console.log("Link selected: ", e);
+                // only actors atm
+                var data = e.detail,
+                    _this = this,
+                    showDelta = this.modDisplaySelect.value === 'delta';
+
+                if (showDelta) return;
+
+                if (!Array.isArray(data)) data = [data];
+                var promises = [];
+                this.loader.activate();
+                data.forEach(function (d) {
+
+                    // display level actor
+                    if (_this.nodeLevel === 'actor') {
+                        _this.flowMapView.addFlows(d);
+                    }
+                    // display level activity or group
+                    else {
+                        promises.push(_this.addGroupedActors(d));
+                    }
+                })
+
+                function render() {
+                    _this.flowMapView.rerender(true);
+                    _this.loader.deactivate();
+                }
+                if (promises.length > 0) {
+                    Promise.all(promises).then(render)
+                } else {
+                    render();
+                }
+
+            },
+
+            linkDeselected: function (e) {
+                // only actors atm
+                var flow = e.detail,
+                    flows = [],
+                    nodes = [];
+                if (this.nodeLevel === 'actor') {
+                    nodes = [data.origin, data.destination];
+                    flows = flow;
+                } else {
+                    var mapFlows = this.flowMapView.getFlows();
+                    mapFlows.forEach(function (mapFlow) {
+                        if (mapFlow.parent === flow.id) {
+                            flows.push(mapFlow);
+                        }
+                    })
+                };
+                this.flowMapView.removeFlows(flows);
+                this.flowMapView.rerender();
             },
 
             // Fetch flows and calls options.success(flows) on success
@@ -351,6 +458,7 @@ define(['views/common/baseview',
                     success: function (response) {
                         _this.postprocess(flows);
                         _this.loader.deactivate();
+                        _this.renderSankeyMap();
                         if (options.success) {
                             options.success(flows);
                         }
@@ -362,8 +470,6 @@ define(['views/common/baseview',
                     }
                 });
             },
-
-            
 
         });
         return FlowsView;

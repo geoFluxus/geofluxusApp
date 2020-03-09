@@ -32,7 +32,7 @@
     text-decoration: none !important;
 }
 
-#btn-actor-areas-activities-roles {
+#btn-collapse-header-origin {
     background: none;
     color: inherit;
     border: none;
@@ -44,7 +44,7 @@
     text-decoration: none !important;
 }
 
-#btn-flows {
+#btn-collapse-header-destination {
     background: none;
     color: inherit;
     border: none;
@@ -54,10 +54,50 @@
     outline: inherit;
     box-shadow: none;
     text-decoration: none !important;
+}
+
+#btn-collapse-header-flows {
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+    box-shadow: none;
+    text-decoration: none !important;
+}
+
+#btn-collapse-header-dimensions {
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+    box-shadow: none;
+    text-decoration: none !important;
+}
+
+.flowFilterSubtitle {
+    margin-top: 1rem !important;
 }
 
 .dropdown-menu .show {
-    max-width: 55vw;
+    max-width: 50rem;
+    overflow-x: hidden;
+    z-index: 1000;
+}
+
+.card.bg-dark {
+    overflow-y: visible;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.card.bg-dark::-webkit-scrollbar {
+    display: none;
 }
 
 .flowFilterSubtitle {
@@ -69,7 +109,7 @@
 }
 
 .collapsingHeaderButton {
-    width: 95% !important;
+    width: 93% !important;
     text-align: left;
 }
 
@@ -104,6 +144,24 @@ label[for="activity-select"] {
     margin-bottom: 5em;
 }
 
+
+/* DIMENSIONS */
+.dimensionLabel {
+    float: right;
+    text-align: right;
+    margin-top: 0.5rem; 
+}
+
+.dimensionHeaderLabel {
+    margin-top: 0.5rem;
+    font-weight: 900;
+    font-size: 1.1em;
+}
+
+.dimensionToggle[disabled] + .toggle-group label {
+    color: rgb(63, 62, 62);
+
+}
 
 /* Area Select Modal Styles */
 
@@ -146,6 +204,11 @@ textarea.textarea-autosize {
 textarea.textarea-autosize.form-control-sm {
     height: 2rem;
     min-height: 2rem;
+}
+
+
+.min-width-600px {
+    min-width: 550px;
 }
 
 /* SANKEY WRAPPER */
