@@ -6,9 +6,10 @@ define(['views/common/baseview',
         'utils/utils',
         'views/common/flowsankey',
         'views/common/flowsankeymap',
+        'views/common/PieChartView',
 
     ],
-    function (BaseView, _, FilterFlowsView, Collection, utils, FlowSankeyView, FlowMapView) {
+    function (BaseView, _, FilterFlowsView, Collection, utils, FlowSankeyView, FlowMapView, PieChartView) {
 
         var FlowsView = BaseView.extend({
 
@@ -440,6 +441,20 @@ define(['views/common/baseview',
                 this.flowMapView.rerender();
             },
 
+            renderPieChart: function(){
+                var _this = this;
+                
+                if (this.pieChartView != null) this.pieChartView.close();
+
+
+                var el = ".piechart-wrapper" //this.el.querySelector('.piechart-wrapper');;
+
+
+                this.pieChartView = new PieChartView({
+                    el: el,
+                });
+            },
+
             // Fetch flows and calls options.success(flows) on success
             fetchFlows: function (options) {
                 let _this = this;
@@ -452,6 +467,12 @@ define(['views/common/baseview',
                 this.loader.activate();
                 var data = {};
 
+
+                // PIE CHART TEST
+                _this.renderPieChart();
+
+
+
                 flows.postfetch({
                     data: data,
                     body: filterParams,
@@ -459,6 +480,9 @@ define(['views/common/baseview',
                         _this.postprocess(flows);
                         _this.loader.deactivate();
                         _this.renderSankeyMap();
+
+
+
                         if (options.success) {
                             options.success(flows);
                         }

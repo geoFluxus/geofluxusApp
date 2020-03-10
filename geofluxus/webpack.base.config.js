@@ -6,10 +6,10 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var entryPoints = {
     DataEntry: './js/data-entry',
     StatusQuo: './js/status-quo',
-    Login:   './js/login',
+    Login: './js/login',
     Welcome: './js/welcome',
-    Base:    './js/base',
-    Routing:   './js/routing',
+    Base: './js/base',
+    Routing: './js/routing',
 };
 
 module.exports = {
@@ -30,7 +30,7 @@ module.exports = {
                 // workaround: webpack has problems bundling css files shared between entry points,
                 // it is always missing  at one entry point then (which one seems random)
                 // -> bundle all required css files into commons.css
-                if(module.resource && (/^.*\.(css|scss|less)$/).test(module.resource)) {
+                if (module.resource && (/^.*\.(css|scss|less)$/).test(module.resource)) {
                     return true;
                 }
                 // bundle node modules that are shared at least in between two different entry points
@@ -49,13 +49,19 @@ module.exports = {
         new webpack.IgnorePlugin(/^codemirror$/)
     ],
 
-    node: { fs: 'empty', net: 'empty', tls: 'empty', child_process: 'empty', __filename: true, __dirname: true },
+    node: {
+        fs: 'empty',
+        net: 'empty',
+        tls: 'empty',
+        child_process: 'empty',
+        __filename: true,
+        __dirname: true
+    },
 
-    externals: [ 'ws' ],
+    externals: ['ws'],
 
     module: {
-        rules: [
-            {
+        rules: [{
                 test: require.resolve("jquery"),
                 loader: 'expose-loader?jQuery!expose-loader?$'
             },
@@ -76,12 +82,16 @@ module.exports = {
                     fallback: 'style-loader',
                     use: ['css-loader', 'less-loader']
                 })
+            },
+            {
+                test: /\.coffee$/,
+                use: ['coffee-loader']
             }
         ],
     },
 
     resolve: {
-        modules : ['js', 'node_modules', 'bower_components'],
+        modules: ['js', 'node_modules', 'bower_components'],
         alias: {
             'static': path.resolve('./geofluxus/static')
         }

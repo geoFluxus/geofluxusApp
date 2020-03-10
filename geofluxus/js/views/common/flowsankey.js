@@ -192,7 +192,7 @@ define(['views/common/baseview',
                         nodes = [],
                         links = [],
                         indices = {},
-                        colorCat = d3.scale.category20(),
+                        //colorCat = d3.scale.category20(),
                         scaleInput = this.el.querySelector('#sankey-scale'),
                         norm = (scaleInput) ? scaleInput.value : 1;
 
