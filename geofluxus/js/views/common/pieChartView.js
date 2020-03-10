@@ -130,7 +130,7 @@ define(['views/common/baseview',
                 close: function () {
                     this.undelegateEvents(); // remove click events
                     this.unbind(); // Unbind all local event bindings
-                    this.el.querySelector('.sankey').innerHTML = ''; //empty the DOM element
+                    $(this.options.el).html(""); //empty the DOM element
                 },
 
             });

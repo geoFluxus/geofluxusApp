@@ -119,7 +119,7 @@
 
                     <div class="row">
                         <div class="col-md-4">
-                            <label for="origin-role-select">Actor role</label>
+                            <label for="origin-role-select">Origin role</label>
                             <a class="help-icon fas fa-question-circle" data-toggle="popover"
                             title="Role of the Actor"
                             data-html="true" tabindex="0"
@@ -253,7 +253,7 @@
 
                     <div class="row">
                         <div class="col-md-4">
-                            <label for="destination-role-select">Actor role</label>
+                            <label for="destination-role-select">Destination role</label>
                             <a class="help-icon fas fa-question-circle" data-toggle="popover"
                             title="Role of the Actor"
                             data-html="true" tabindex="0"
@@ -711,28 +711,30 @@
             <!-- </div> -->
         </div>
         
-        <div class="row">
+        <div class="row mt-3 mb-2">
             <!-- <label class="input-label" style="margin-top: .5rem; margin-right: 10px;">Display Level</label>
             <select class="form-control" name="display-level-select" style="max-width: 200px; float: left;">
                 <option value="activitygroup">Activity Group</option>
                 <option value="activity">Activity</option>
             </select> -->
             <button id='reset-filters' class="btn btn-warning"
-                title="Reset all the filters>"
-                style="margin-left: 20px; float: left;">Reset filters
+                title="Reset all the filters"
+                style="margin-left: 20px; float: left; width: 10em">Reset filters
             </button>
             <button id='apply-filters' class="btn btn-primary"
                     title="Apply the filters to activities and actors and flows and render the sankey diagram."
-                    style="margin-left: 20px; float: left;">Visualize
+                    style="margin-left: 10px; float: left; width: 10em">Visualize
             </button>
-            <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Render Filter Settings"
-            style="float: left;" data-html="true" tabindex="0"
-            data-content="
-            Rerender the sankey diagram with data filtered by the selections made in the <b>Filters</b> section above
-            (click the Filters row to expand/collapse it).<br><br>
-            All data is based on flows between actors. The data will be aggregated to the selected <b>Display Level</b>.
-            ">
-            </a>
+            <div class="helpIconContainer d-inline-flex align-items-center">
+                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Render Filter Settings"
+                style="float: left;" data-html="true" tabindex="0"
+                data-content="
+                Rerender the sankey diagram with data filtered by the selections made in the <b>Filters</b> section above
+                (click the Filters row to expand/collapse it).<br><br>
+                All data is based on flows between actors. The data will be aggregated to the selected <b>Display Level</b>.
+                ">
+                </a>
+            </div>
          </div>
     </div>
 
@@ -797,13 +799,18 @@
             </div> -->
 
 
+            <div class="row">
+                <div class="col">
+                    <div class="piechart-wrapper" style="width: 600px; height: 600px; background-color: grey"></div>
+                </div>
+            </div>
 
         </div>
-        <div class="row">
-            <div class="col">
-                <div class="piechart-wrapper" style="width: 600px; height: 600px; background-color: grey"></div>
-            </div>
-        </div>
+    </div>
+
+    <!-- temp footer -->
+    <div style="display: block; height: 350px">
+        <span style="color: white; margin: auto">Temporary footer</span>
     </div>
 
     <!--Area selection-->
