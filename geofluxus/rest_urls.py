@@ -5,11 +5,16 @@ from geofluxus.apps.asmfa.views import (ActivityGroupViewSet,
                                         ActivityViewSet,
                                         CompanyViewSet,
                                         ActorViewSet,
+                                        ProcessGroupViewSet,
                                         ProcessViewSet,
-                                        WasteViewSet,
+                                        Waste02ViewSet,
+                                        Waste04ViewSet,
+                                        Waste06ViewSet,
                                         MaterialViewSet,
                                         ProductViewSet,
                                         CompositeViewSet,
+                                        YearViewSet,
+                                        MonthViewSet,
                                         FlowChainViewSet,
                                         FilterFlowViewSet,
                                         ClassificationViewSet,
@@ -39,11 +44,16 @@ router.register(r'companies', CompanyViewSet)
 router.register(r'actors', ActorViewSet)
 
 # Keyflows
+router.register(r'processgroups', ProcessGroupViewSet)
 router.register(r'processes', ProcessViewSet)
-router.register(r'wastes', WasteViewSet)
+router.register(r'wastes02', Waste02ViewSet)
+router.register(r'wastes04', Waste04ViewSet)
+router.register(r'wastes06', Waste06ViewSet)
 router.register(r'materials', MaterialViewSet)
 router.register(r'products', ProductViewSet)
 router.register(r'composites', CompositeViewSet)
+router.register(r'year', YearViewSet)
+router.register(r'month', MonthViewSet)
 
 # Flows
 router.register(r'flowchains', FlowChainViewSet)

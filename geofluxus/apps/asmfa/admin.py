@@ -3,7 +3,12 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Activity,
                                          Actor,
                                          Process,
-                                         Waste,
+                                         ProcessGroup,
+                                         Waste02,
+                                         Waste04,
+                                         Waste06,
+                                         Year,
+                                         Month,
                                          Material,
                                          MaterialInChain,
                                          Product,
@@ -44,8 +49,13 @@ class FlowChainAdmin(admin.ModelAdmin):
 admin.site.register(ActivityGroup)
 admin.site.register(Activity)
 admin.site.register(Actor, GeoModelAdmin)
+admin.site.register(ProcessGroup)
 admin.site.register(Process)
-admin.site.register(Waste)
+admin.site.register(Waste02)
+admin.site.register(Waste04)
+admin.site.register(Waste06)
+admin.site.register(Year)
+admin.site.register(Month)
 admin.site.register(Material)
 admin.site.register(Product)
 admin.site.register(Composite)

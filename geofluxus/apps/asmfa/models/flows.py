@@ -1,6 +1,7 @@
 from django.db import models
 from geofluxus.apps.asmfa.models import (Process,
-                                         Waste,
+                                         Waste06,
+                                         Month,
                                          Material,
                                          Product,
                                          Composite,
@@ -17,10 +18,11 @@ class FlowChain(models.Model):
     description = models.TextField()
     amount = models.DecimalField(max_digits=12, decimal_places=3)
     trips = models.IntegerField()
-    year = models.IntegerField()
+    month = models.ForeignKey(Month,
+                              on_delete=models.CASCADE)
     process = models.ForeignKey(Process,
                                 on_delete=models.CASCADE)
-    waste = models.ForeignKey(Waste,
+    waste = models.ForeignKey(Waste06,
                               on_delete=models.CASCADE)
     materials = models.ManyToManyField(Material,
                                        through='MaterialInChain')
