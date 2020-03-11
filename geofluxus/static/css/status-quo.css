@@ -144,12 +144,24 @@ label[for="activity-select"] {
     margin-bottom: 5em;
 }
 
+.clear-areas-button {
+    display: inline-block;
+    position: absolute;
+    right: -1.4rem;
+    /* margin: 2px; */
+    height: 34px !important;
+    width: 34px !important;
+}
+
+.in-or-out-container .toggle-group  {
+    /* height: 25px; */
+}
 
 /* DIMENSIONS */
 .dimensionLabel {
     float: right;
     text-align: right;
-    margin-top: 0.5rem; 
+    margin-top: 0.5rem;
 }
 
 .dimensionHeaderLabel {
@@ -158,7 +170,7 @@ label[for="activity-select"] {
     font-size: 1.1em;
 }
 
-.dimensionToggle[disabled] + .toggle-group label {
+.dimensionToggle[disabled]+.toggle-group label {
     color: rgb(63, 62, 62);
 
 }
@@ -196,7 +208,7 @@ label[for="activity-select"] {
 textarea.textarea-autosize {
     box-sizing: border-box;
     max-height: 94px;
-    min-height: 31px;
+    min-height: 32px;
     overflow-x: hidden;
     resize: none;
 }

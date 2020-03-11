@@ -75,9 +75,10 @@ define(['views/common/baseview',
 
             // DOM events
             events: {
-                'click #area-select-button': 'showAreaSelection',
+                'click .area-select-button': 'showAreaSelection',
                 'change select[name="area-level-select"]': 'changeAreaLevel',
                 'click #reset-filters': 'resetFiltersToDefault',
+                'click .clear-areas-button': 'clearAreas',
             },
 
             // Rendering
@@ -297,6 +298,10 @@ define(['views/common/baseview',
                 // Origin-controls:
 
                 // Initialize bootstrap-toggle for filter level:
+
+                this.origin.inOrOut = this.el.querySelector('#origin-area-in-or-out');
+                $(this.origin.inOrOut).bootstrapToggle();
+
                 this.origin.filterLevelSelect = this.el.querySelector('#origin-toggleFilterLevel');
                 $(this.origin.filterLevelSelect).bootstrapToggle();
 
@@ -564,6 +569,32 @@ define(['views/common/baseview',
                 this.areaMap.centerOnLayer('areas');
             },
 
+            clearAreas: function (event) {
+                let buttonClicked = $(event.currentTarget).data('area-clear-button');
+                let _this = this;
+
+                if (buttonClicked == "origin" && _this.selectedAreasOrigin.length > 0) {
+                    _this.selectedAreasOrigin = [];
+                    $("#areaSelectionsOriginTextarea").html("");
+                    setTimeout(function () {
+                        $("#areaSelectionsOrigin").fadeOut();
+                    }, 400);
+
+                } else if (buttonClicked == "destination" && _this.selectedAreasDestination.length > 0) {
+                    _this.selectedAreasDestination = [];
+                    $("#areaSelectionsDestinationTextarea").html("");
+                    setTimeout(function () {
+                        $("#areaSelectionsDestination").fadeOut();
+                    }, 400);
+                } else if (buttonClicked == "flows" && _this.selectedAreasFlows.length > 0) {
+                    _this.selectedAreasFlows = [];
+                    $("#areaSelectionsFlowsTextarea").html("");
+                    setTimeout(function () {
+                        $("#areaSelectionsFlows").fadeOut();
+                    }, 400);
+                }
+            },
+
             showAreaSelection: function (event) {
                 var _this = this;
                 var labelStringArray = [];
@@ -649,9 +680,6 @@ define(['views/common/baseview',
 
                     // End of setTimeout
                 }, 200);
-
-
-
             },
 
             resetFiltersToDefault: function () {

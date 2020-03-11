@@ -96,11 +96,27 @@
                  data-parent="#filterBlock">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-4">
-                            <label style="width: 450px" for="area-select-button">Select the area(s) for the origin of the flows:</label>
-                            <button id="area-select-button" class="btn btn-sm btn-primary" data-width="100%"
-                                    style="float: left; width: 13em" data-area-select-block="origin">Select areas
+                        <div class="col-md-10">
+                            <label for="area-select-button-origin">You can limit the origin of the waste flows to geographic areas:</label>
+                            <button id="area-select-button-origin" class="btn btn-sm btn-primary area-select-button mt-2" data-width="100%"
+                                    style="width: 13em" data-area-select-block="origin">Select areas
                             </button>
+                        </div>          
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-10">
+                            <div style="display: block;">
+                                <label for="area-select-button-origin" style="display: inline-block;">The origin of the flows must be</label>
+                                <div class="checkbox in-or-out-container" style="display: inline-block; height: 24px !important; margin-left: 0.5rem; margin-right: 0.5rem;">
+                                    <input name="in-or-out" id="origin-area-in-or-out" type="checkbox"
+                                        data-height="15" data-toggle="toggle" data-on="outside"
+                                        data-off="within"
+                                        class="in-out-toggle">
+                                    <label for="area-select-button-origin" style="display: inline-block;">the selected area(s).</label>    
+                                </div>
+                            </div>
+                            
                             <!-- <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Filter by Areas"
                                data-html="true" tabindex="0"
                                data-content="
@@ -110,14 +126,24 @@
                             </a> -->
                         </div>
                     </div>
+                    
+               
+                    
                     <div class='row' id="areaSelectionsOrigin" style="display: none;">
-                        <div class="col-md-8">
-                            <label for="areaSelectionsOriginTextarea">Selected areas:</label>
-                            <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsOriginTextarea" style="width: 100% !important" type="text" readonly></textarea>
-                        </div>
+                        <div class="col-md-4">
+                            <!-- <label for="areaSelectionsOriginTextarea">Selected areas:</label> -->
+                            <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsOriginTextarea" style="width: 100% !important; display: inline-block" type="text" readonly></textarea>
+                            <button
+                                id="clear-origin-areas-button"
+                                class="btn btn-sm btn-primary clear-areas-button"
+                                data-area-clear-button="origin"
+                                >
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>                        
                     </div>
 
-                    <div class="row">
+                    <div class="row mt-4">
                         <div class="col-md-4">
                             <label for="origin-role-select">Origin role</label>
                             <a class="help-icon fas fa-question-circle" data-toggle="popover"
@@ -144,6 +170,9 @@
                                     data-width="100%" data-height="21" data-toggle="toggle" data-on="Activities"
                                     data-off="Activity groups">
                             </div>
+                        </div>
+                        <div class="col-md-4">
+                            
                         </div>
                     </div>
 
@@ -231,8 +260,8 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-4">
-                            <label style="width: 450px" for="area-select-button">Select the area(s) for the destination of the flows:</label>
-                            <button id="area-select-button" class="btn btn-sm btn-primary" data-width="100%"
+                            <label style="width: 450px" for="area-select-button-destination">Select the area(s) for the destination of the flows:</label>
+                            <button id="area-select-button-destination" class="btn btn-sm btn-primary area-select-button" data-width="100%"
                                     style="float: left; width: 13em" data-area-select-block="destination">Select areas
                             </button>
                             <!-- <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Filter by Areas"
@@ -245,9 +274,16 @@
                         </div>
                     </div>
                     <div class='row' id="areaSelectionsDestination" style="display: none;">
-                        <div class="col-md-8">
-                            <label for="areaSelectionsDestinationTextarea">Selected areas:</label>
-                            <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsDestinationTextarea" style="width: 100% !important" type="text" readonly></textarea>
+                        <div class="col-md-4">
+                            <!-- <label for="areaSelectionsDestinationTextarea">Selected areas:</label> -->
+                            <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsDestinationTextarea" style="width: 100% !important; display: inline-block" type="text" readonly></textarea>
+                            <button
+                            id="clear-destination-areas-button"
+                            class="btn btn-sm btn-primary clear-areas-button"
+                            data-area-clear-button="destination"
+                            >
+                            <i class="fas fa-times"></i>
+                        </button>
                         </div>
                     </div>
 
@@ -369,8 +405,8 @@
                     <h5 class="flowFilterSubtitle">General</h5>
                     <div class="row">
                         <div class="col-md-4">
-                            <label style="width: 450px" for="area-select-button">Select the area(s) through which the flows must pass:</label>
-                            <button id="area-select-button" class="btn btn-sm btn-primary" data-width="100%"
+                            <label style="width: 450px" for="area-select-button-flows">Select the area(s) through which the flows must pass:</label>
+                            <button id="area-select-button-flows" class="btn btn-sm btn-primary area-select-button" data-width="100%"
                                     style="float: left; width: 13em" data-area-select-block="flows">Select areas
                             </button>
                             <!-- <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Filter by Areas"
@@ -383,9 +419,16 @@
                         </div>
                     </div>
                     <div class='row' id="areaSelectionsFlows" style="display: none;">
-                        <div class="col-md-8">
-                            <label for="areaSelectionsFlowsTextarea">Selected areas:</label>
-                            <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsFlowsTextarea" style="width: 100% !important" type="text" readonly></textarea>
+                        <div class="col-md-4">
+                            <!-- <label for="areaSelectionsFlowsTextarea">Selected areas:</label> -->
+                            <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsFlowsTextarea" style="width: 100% !important; display: inline-block" type="text" readonly></textarea>
+                            <button
+                            id="clear-flows-areas-button"
+                            class="btn btn-sm btn-primary clear-areas-button"
+                            data-area-clear-button="flows"
+                            >
+                            <i class="fas fa-times"></i>
+                        </button>
                         </div>
                     </div>
 
