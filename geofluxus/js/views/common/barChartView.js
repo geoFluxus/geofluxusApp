@@ -1,7 +1,7 @@
 define(['views/common/baseview',
         'underscore',
         'd3',
-        'visualizations/piechart',
+        'visualizations/barchart',
         'collections/collection',
         'app-config',
         'save-svg-as-png',
@@ -13,7 +13,7 @@ define(['views/common/baseview',
         BaseView,
         _,
         d3,
-        PieChart,
+        BarChart,
         Collection,
         config,
         saveSvgAsPng,
@@ -24,11 +24,11 @@ define(['views/common/baseview',
         /**
          *
          * @author Evert Van Hirtum
-         * @name module:views/PieChartView
+         * @name module:views/BarChartView
          * @augments module:views/BaseView
          */
-        var PieChartView = BaseView.extend(
-            /** @lends module:views/PieChartView.prototype */
+        var BarChartView = BaseView.extend(
+            /** @lends module:views/BarChartView.prototype */
             {
 
                 /**
@@ -39,7 +39,7 @@ define(['views/common/baseview',
                  * @see http://backbonejs.org/#View
                  */
                 initialize: function (options) {
-                    PieChartView.__super__.initialize.apply(this, [options]);
+                    BarChartView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportPNG');
                     _.bindAll(this, 'exportCSV');
@@ -63,8 +63,8 @@ define(['views/common/baseview',
                  * render the view
                  */
                 render: function (data) {
-                    // Create a new D3Plus PieChart object which will be rendered in this.options.el:
-                    this.pieChart = new PieChart({
+                    // Create a new D3Plus BarChart object which will be rendered in this.options.el:
+                    this.barChart = new BarChart({
                         el: this.options.el,
                     }); 
                 },
@@ -135,6 +135,6 @@ define(['views/common/baseview',
                 },
 
             });
-        return PieChartView;
+        return BarChartView;
     }
 );
