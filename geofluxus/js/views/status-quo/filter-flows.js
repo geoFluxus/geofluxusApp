@@ -39,7 +39,7 @@ define(['views/common/baseview',
                     apiTag: 'processes'
                 });
                 this.wastes = new Collection([], {
-                    apiTag: 'wastes'
+                    apiTag: 'wastes06'
                 });
                 this.materials = new Collection([], {
                     apiTag: 'materials'
