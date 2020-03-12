@@ -26,27 +26,9 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          PublicationType,
                                          Routing)
 from django.contrib.admin import ModelAdmin, TabularInline
-from django.contrib.auth.admin import UserAdmin
 from django.contrib.gis.admin import GeoModelAdmin
 from django.db.models.functions import Lower
 
-
-class MaterialInChainInline(TabularInline):
-    model = MaterialInChain
-
-
-class ProductInChainInline(TabularInline):
-    model = ProductInChain
-
-
-class CompositeInChainInline(TabularInline):
-    model = CompositeInChain
-
-
-class FlowChainAdmin(ModelAdmin):
-    inlines = (MaterialInChainInline,
-               ProductInChainInline,
-               CompositeInChainInline)
 
 # Register your models here.
 # Activity Group
@@ -157,12 +139,61 @@ class MonthAdmin(ModelAdmin):
         return ['year__code', 'code']
 admin.site.register(Month, MonthAdmin)
 
+# Flowchain
+class MaterialInChainInline(TabularInline):
+    model = MaterialInChain
+
+class ProductInChainInline(TabularInline):
+    model = ProductInChain
+
+class CompositeInChainInline(TabularInline):
+    model = CompositeInChain
+
+class FlowChainAdmin(ModelAdmin):
+    inlines = (MaterialInChainInline,
+               ProductInChainInline,
+               CompositeInChainInline)
+    search_fields = ['identifier']
+
+    def get_ordering(self, request):
+        return [Lower('identifier')]
 admin.site.register(FlowChain, FlowChainAdmin)
+
+# Flow
 admin.site.register(Flow)
-admin.site.register(Classification)
-admin.site.register(ExtraDescription)
-admin.site.register(AdminLevel)
-admin.site.register(Area, GeoModelAdmin)
+
+# Classification
+class ClassificationAdmin(ModelAdmin):
+    search_fields = ['flowchain__identifier']
+
+    def get_ordering(self, request):
+        return [Lower('flowchain__identifier')]
+admin.site.register(Classification, ClassificationAdmin)
+
+# ExtraDescription
+class ExtraDescriptionAdmin(ModelAdmin):
+    search_fields = ['flowchain__identifier']
+
+    def get_ordering(self, request):
+        return [Lower('flowchain__identifier')]
+admin.site.register(ExtraDescription, ExtraDescriptionAdmin)
+
+# AdminLevel
+class AdminLevelAdmin(ModelAdmin):
+    search_fields = ['name']
+
+    def get_ordering(self, request):
+        return [Lower('name')]
+admin.site.register(AdminLevel, AdminLevelAdmin)
+
+# Area
+class AreaAdmin(GeoModelAdmin):
+    search_fields = ['name']
+
+    def get_ordering(self, request):
+        return[Lower('name')]
+admin.site.register(Area, AreaAdmin)
+
 admin.site.register(Publication)
 admin.site.register(PublicationType)
 admin.site.register(Routing, GeoModelAdmin)
