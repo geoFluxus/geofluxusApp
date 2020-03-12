@@ -96,10 +96,10 @@
                  data-parent="#filterBlock">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-4">
-                            <label style="width: 450px" for="area-select-button">Select the area(s) for the origin of the flows:</label>
-                            <button id="area-select-button" class="btn btn-sm btn-primary" data-width="100%"
-                                    style="float: left; width: 13em" data-area-select-block="origin">Select areas
+                        <div class="col-md-10">
+                            <label for="area-select-button-origin">Limit the origin of the waste flows to geographic areas:</label>
+                            <button id="area-select-button-origin" class="btn btn-sm btn-primary area-select-button mt-2 d-block" data-width="100%"
+                                    style="width: 13em" data-area-select-block="origin">Select areas
                             </button>
                             <!-- <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Filter by Areas"
                                data-html="true" tabindex="0"
@@ -108,24 +108,47 @@
                                 On confirmation the selected areas are used to limit the Actors to those located inside these areas.<br><br>
                                 This filter is complementary to the other activities and actors filters.">
                             </a> -->
-                        </div>
-                    </div>
-                    <div class='row' id="areaSelectionsOrigin" style="display: none;">
-                        <div class="col-md-8">
-                            <label for="areaSelectionsOriginTextarea">Selected areas:</label>
-                            <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsOriginTextarea" style="width: 100% !important" type="text" readonly></textarea>
-                        </div>
+                        </div>          
                     </div>
 
-                    <div class="row">
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            <div style="display: block;">
+                                <label style="display: inline-block;">The origin of the flows must be</label>
+                                <div class="checkbox in-or-out-container">
+                                    <input name="in-or-out-origin" id="origin-area-in-or-out" type="checkbox"
+                                        data-height="24" data-toggle="toggle" data-on="outside of"
+                                        data-off="within"
+                                        class="in-out-toggle">
+                                    <label style="display: inline-block;">the selected area(s).</label>    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class='row' id="areaSelectionsOrigin" style="display: none;">
                         <div class="col-md-4">
-                            <label for="origin-role-select">Actor role</label>
+                            <!-- <label for="areaSelectionsOriginTextarea">Selected areas:</label> -->
+                            <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsOriginTextarea" style="width: 100% !important; display: inline-block" type="text" readonly></textarea>
+                            <button
+                                id="clear-origin-areas-button"
+                                class="btn btn-sm btn-primary clear-areas-button"
+                                data-area-clear-button="origin"
+                                >
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>                        
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-4">
+                            <label for="origin-role-select">Origin role</label>
                             <a class="help-icon fas fa-question-circle" data-toggle="popover"
                             title="Role of the Actor"
                             data-html="true" tabindex="0"
                             data-content='This filter allows you to filter the flows based on the role of the actor. '>
                             </a>
-                            <select id="origin-role-select" name="origin-role" class="form-control form-control-sm"
+                            <select id="origin-role-select" name="origin-role" class="form-control form-control-sm selectpicker"
                                     data-dropup-auto="false"
                                     data-size="6">
                                 <option value='any' selected>Both roles</option>
@@ -145,13 +168,16 @@
                                     data-off="Activity groups">
                             </div>
                         </div>
+                        <div class="col-md-4">
+                            
+                        </div>
                     </div>
 
                     <div class="row originContainerActivity" style="display: none;">
                         <div class="col-md-4">
                             <label for="origin-activitygroup-select">Activity group</label>
                             <select id="origin-activitygroup-select" name="origin-activitygroup-select" multiple
-                                    class="form-control form-control-sm"
+                                    class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-dropup-auto="false"
                                     data-size="6"
@@ -170,7 +196,7 @@
                             <label for="origin-activity-select">Activity</label>
                             <i class="fas fa-angle-double-right" id="activitySelectChevron"></i>
                             <select id="origin-activity-select" name="origin-activity-select" multiple
-                                    class="form-control form-control-sm"
+                                    class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-dropup-auto="false" data-size="6" style="resize: vertical;">
                                 <option selected value="-1">All (<%= activities.count %>)</option>
@@ -188,7 +214,8 @@
                     <div class="row originContainerTreatmentMethod" style="display: none;">
                         <div class="col-md-4">
                             <label for="origin-process-select">Treatment method</label>
-                            <select name="origin-process-select" id="origin-process-select" multiple class="form-control form-control-sm"
+                            <select name="origin-process-select" id="origin-process-select" multiple
+                            class="form-control form-control-sm selectpicker"
                             data-live-search="true"
                             data-size="6"
                             style="resize: vertical;">
@@ -229,10 +256,10 @@
                  data-parent="#filterBlock">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-4">
-                            <label style="width: 450px" for="area-select-button">Select the area(s) for the destination of the flows:</label>
-                            <button id="area-select-button" class="btn btn-sm btn-primary" data-width="100%"
-                                    style="float: left; width: 13em" data-area-select-block="destination">Select areas
+                        <div class="col-md-10">
+                            <label for="area-select-button-destination">Limit the destination of the waste flows to geographic areas:</label>
+                            <button id="area-select-button-destination" class="btn btn-sm btn-primary area-select-button mt-2 d-block" data-width="100%"
+                                    style="width: 13em" data-area-select-block="destination">Select areas
                             </button>
                             <!-- <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Filter by Areas"
                                data-html="true" tabindex="0"
@@ -243,22 +270,47 @@
                             </a> -->
                         </div>
                     </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            <div style="display: block;">
+                                <label style="display: inline-block;">The destination of the flows must be</label>
+                                <div class="checkbox in-or-out-container">
+                                    <input name="in-or-out-destination" id="destination-area-in-or-out" type="checkbox"
+                                        data-height="24" data-toggle="toggle" data-on="outside of"
+                                        data-off="within"
+                                        class="in-out-toggle">
+                                    <label style="display: inline-block;">the selected area(s).</label>    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class='row' id="areaSelectionsDestination" style="display: none;">
-                        <div class="col-md-8">
-                            <label for="areaSelectionsDestinationTextarea">Selected areas:</label>
-                            <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsDestinationTextarea" style="width: 100% !important" type="text" readonly></textarea>
+                        <div class="col-md-4">
+                            <!-- <label for="areaSelectionsDestinationTextarea">Selected areas:</label> -->
+                            <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsDestinationTextarea" style="width: 100% !important; display: inline-block" type="text" readonly></textarea>
+                            <button
+                            id="clear-destination-areas-button"
+                            class="btn btn-sm btn-primary clear-areas-button"
+                            data-area-clear-button="destination"
+                            >
+                            <i class="fas fa-times"></i>
+                        </button>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-4">
-                            <label for="destination-role-select">Actor role</label>
+                            <label for="destination-role-select">Destination role</label>
                             <a class="help-icon fas fa-question-circle" data-toggle="popover"
                             title="Role of the Actor"
                             data-html="true" tabindex="0"
                             data-content='This filter allows you to filter the flows based on the role of the actor. '>
                             </a>
-                            <select id="destination-role-select" name="destination-role" class="form-control form-control-sm"
+                            <select id="destination-role-select"
+                                    name="destination-role"
+                                    class="form-control form-control-sm selectpicker"
                                     data-dropup-auto="false"
                                     >
                                 <option value='any' selected>Both roles</option>
@@ -286,7 +338,7 @@
                         <div class="col-md-4">
                             <label for="destination-activitygroup-select">Activity group</label>
                             <select id="destination-activitygroup-select" name="destination-activitygroup-select" multiple
-                                    class="form-control form-control-sm"
+                                    class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-dropup-auto="false" data-size="6" style="resize: vertical;">
                                 <option selected value="-1">All (<%= activityGroups.count %>)</option>
@@ -303,7 +355,7 @@
                             <label for="destination-activity-select">Activity</label>
                             <i class="fas fa-angle-double-right" id="activitySelectChevron"></i>
                             <select id="destination-activity-select" name="destination-activity-select" multiple
-                                    class="form-control form-control-sm"
+                                    class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-dropup-auto="false" data-size="6" style="resize: vertical;">
                                 <option selected value="-1">All (<%= activities.count %>)</option>
@@ -321,7 +373,7 @@
                     <div class="row destinationContainerTreatmentMethod" style="display: none;">
                         <div class="col-md-4">
                             <label for="destination-process-select">Treatment method</label>
-                            <select name="destination-process-select" id="destination-process-select" multiple class="form-control form-control-sm"
+                            <select name="destination-process-select" id="destination-process-select" multiple class="form-control form-control-sm selectpicker"
                             data-live-search="true"
                             data-size="6"
                             style="resize: vertical;">
@@ -366,8 +418,8 @@
                     <h5 class="flowFilterSubtitle">General</h5>
                     <div class="row">
                         <div class="col-md-4">
-                            <label style="width: 450px" for="area-select-button">Select the area(s) through which the flows must pass:</label>
-                            <button id="area-select-button" class="btn btn-sm btn-primary" data-width="100%"
+                            <label style="width: 450px" for="area-select-button-flows">Select the area(s) through which the flows must pass:</label>
+                            <button id="area-select-button-flows" class="btn btn-sm btn-primary area-select-button" data-width="100%"
                                     style="float: left; width: 13em" data-area-select-block="flows">Select areas
                             </button>
                             <!-- <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Filter by Areas"
@@ -380,16 +432,23 @@
                         </div>
                     </div>
                     <div class='row' id="areaSelectionsFlows" style="display: none;">
-                        <div class="col-md-8">
-                            <label for="areaSelectionsFlowsTextarea">Selected areas:</label>
-                            <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsFlowsTextarea" style="width: 100% !important" type="text" readonly></textarea>
+                        <div class="col-md-4">
+                            <!-- <label for="areaSelectionsFlowsTextarea">Selected areas:</label> -->
+                            <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsFlowsTextarea" style="width: 100% !important; display: inline-block" type="text" readonly></textarea>
+                            <button
+                            id="clear-flows-areas-button"
+                            class="btn btn-sm btn-primary clear-areas-button"
+                            data-area-clear-button="flows"
+                            >
+                            <i class="fas fa-times"></i>
+                        </button>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-4">
                             <label>Year</label>
-                            <select name="flows-year-select" class="form-control form-control-sm">
+                            <select name="flows-year-select" class="form-control form-control-sm selectpicker">
                                 <option value='all'>All</option>
                                 <option value='2013'>2013</option>
                                 <option value='2014'>2014</option>
@@ -404,7 +463,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             <label>Waste</label>
-                            <select name="flows-waste-select" multiple class="form-control form-control-sm"
+                            <select name="flows-waste-select" multiple class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-size="6"
                                     style="resize: vertical;">
@@ -423,7 +482,7 @@
                     <div class="row">
                         <div class="col-md-3">
                             <label>Materials</label>
-                            <select name="flows-material-select" multiple class="form-control form-control-sm"
+                            <select name="flows-material-select" multiple class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-size="6"
                                     style="resize: vertical;">
@@ -438,7 +497,7 @@
                         </div>
                         <div class="col-md-3">
                             <label>Products</label>
-                            <select name="flows-product-select" multiple class="form-control form-control-sm"
+                            <select name="flows-product-select" multiple class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-size="6"
                                     style="resize: vertical;">
@@ -451,7 +510,7 @@
                         </div>
                         <div class="col-md-3">
                             <label>Composites</label>
-                            <select name="flows-composites-select" multiple class="form-control form-control-sm"
+                            <select name="flows-composites-select" multiple class="form-control form-control-sm selectpicker"
                                     data-live-search="true" data-size="6"
                                     style="resize: vertical;">
                                 <option selected value="-1">All (<%= composites.count %>)</option>
@@ -467,7 +526,7 @@
                     <div class="row">
                         <div class="col-md-3">
                             <label>Route</label>
-                            <select name="flows-route-select" class="form-control form-control-sm">
+                            <select name="flows-route-select" class="form-control form-control-sm selectpicker">
                                 <option value='both'>ignore</option>
                                 <option value='no'>not route</option>
                                 <option value='yes'>route</option>
@@ -475,7 +534,7 @@
                         </div>
                         <div class="col-md-3">
                             <label>Collector</label>
-                            <select name="flows-collector-select" class="form-control form-control-sm">
+                            <select name="flows-collector-select" class="form-control form-control-sm selectpicker">
                                 <option value='both'>ignore</option>
                                 <option value='no'>not collector</option>
                                 <option value='yes'>collector</option>
@@ -483,7 +542,7 @@
                         </div>
                         <div class="col-md-3">
                             <label>Hazardous</label>
-                            <select name="flows-hazardous-select" class="form-control form-control-sm">
+                            <select name="flows-hazardous-select" class="form-control form-control-sm selectpicker">
                                 <option value='both'>ignore</option>
                                 <option value='no'>not hazardous</option>
                                 <option value='yes'>hazardous</option>
@@ -493,7 +552,7 @@
                     <div class="row">
                         <div class="col-md-3">
                             <label>Clean</label>
-                            <select name="flows-clean-select" class="form-control form-control-sm" multiple
+                            <select name="flows-clean-select" class="form-control form-control-sm selectpicker" multiple
                                     style="resize: vertical;">
                                 <option selected value='-1'>ignore</option>
                                 <option data-divider="true"></option>
@@ -504,7 +563,7 @@
                         </div>
                         <div class="col-md-3">
                             <label>Mixed</label>
-                            <select name="flows-mixed-select" class="form-control form-control-sm" multiple
+                            <select name="flows-mixed-select" class="form-control form-control-sm selectpicker" multiple
                                     style="resize: vertical;">
                                 <option selected value='-1'>ignore</option>
                                 <option data-divider="true"></option>
@@ -515,7 +574,7 @@
                         </div>
                         <div class="col-md-3">
                             <label>Direct use</label>
-                            <select name="flows-direct-select" class="form-control form-control-sm" multiple
+                            <select name="flows-direct-select" class="form-control form-control-sm selectpicker" multiple
                                     style="resize: vertical;">
                                 <option selected value='-1'>ignore</option>
                                 <option data-divider="true"></option>
@@ -526,7 +585,7 @@
                         </div>
                         <div class="col-md-3">
                             <label>Composite</label>
-                            <select name="flows-iscomposite-select" class="form-control form-control-sm" multiple
+                            <select name="flows-iscomposite-select" class="form-control form-control-sm selectpicker" multiple
                                     style="resize: vertical;">
                                 <option selected value='-1'>ignore</option>
                                 <option data-divider="true"></option>
@@ -618,8 +677,8 @@
                                     data-off="Aggregate">
                             </div>
                         </div>
-                        <div class="col-md-4" id="gran-space-col" style="display: none">
-                            <select name="dim-space-gran-select" id="dim-space-gran-select" class="form-control form-control-sm" data-height="21"> 
+                        <div class="col-md-4" id="gran-toggle-space-col" style="display: none">
+                            <select name="dim-space-gran-select" id="dim-space-gran-select" class="form-control form-control-sm selectpicker" data-height="21"> 
                                 <% levels.forEach(function(level) { %>
                                 <option value="<%= level.id %>"> <%= level.get('name') %></option>
                                 <% }) %>
@@ -708,37 +767,40 @@
             <!-- </div> -->
         </div>
         
-        <div class="row">
+        <div class="row mt-3 mb-2">
             <!-- <label class="input-label" style="margin-top: .5rem; margin-right: 10px;">Display Level</label>
             <select class="form-control" name="display-level-select" style="max-width: 200px; float: left;">
                 <option value="activitygroup">Activity Group</option>
                 <option value="activity">Activity</option>
             </select> -->
             <button id='reset-filters' class="btn btn-warning"
-                title="Reset all the filters>"
-                style="margin-left: 20px; float: left;">Reset filters
+                title="Reset all the filters"
+                style="margin-left: 20px; float: left; width: 10em">Reset filters
             </button>
             <button id='apply-filters' class="btn btn-primary"
                     title="Apply the filters to activities and actors and flows and render the sankey diagram."
-                    style="margin-left: 20px; float: left;">Visualize
+                    style="margin-left: 10px; float: left; width: 10em">Visualize
             </button>
-            <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Render Filter Settings"
-            style="float: left;" data-html="true" tabindex="0"
-            data-content="
-            Rerender the sankey diagram with data filtered by the selections made in the <b>Filters</b> section above
-            (click the Filters row to expand/collapse it).<br><br>
-            All data is based on flows between actors. The data will be aggregated to the selected <b>Display Level</b>.
-            ">
-            </a>
+            <div class="helpIconContainer d-inline-flex align-items-center">
+                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Render Filter Settings"
+                style="float: left;" data-html="true" tabindex="0"
+                data-content="
+                Rerender the sankey diagram with data filtered by the selections made in the <b>Filters</b> section above
+                (click the Filters row to expand/collapse it).<br><br>
+                All data is based on flows between actors. The data will be aggregated to the selected <b>Display Level</b>.
+                ">
+                </a>
+            </div>
          </div>
     </div>
 
 
     <!-- template for viewing flows as sankey or map  -->
     <div id="flows-render-template">
-        <div class="row" style="margin-top: 20px;">
+
+        
+        <!-- <div class="row" style="margin-top: 20px;">
             <div class="col-md-6 min-width-600px">
-            <!-- <div class="col-md-12"> -->
                 <div class="row" style="padding: 0px;">
                     <span class="fa-stack sankey-help-icon-container">
                         <i class="sankey-help-icon-bg fa fa-circle fa-stack-1x"></i>
@@ -769,16 +831,19 @@
                             <button class="export-img fas fa-camera btn btn-primary d3-overlay inverted"></button>
                             <button class="export-csv fas fa-file btn btn-primary d3-overlay inverted"></button>
                             <button class="fullscreen-toggle fas fa-expand btn btn-primary d3-overlay inverted"></button>
-                        </div>
+                        </div> -->
                         <!-- <div style="position: absolute; bottom: 15px; left: 10px;">
                             <button class="select-all fas fa-vector-square btn btn-primary d3-overlay inverted" style="position: relative; float: left; margin-right: 10px; height: 30px;">&nbsp;All</button>
                             <button class="deselect-all fas fa-ban btn btn-primary d3-overlay inverted" style="position: relative; height: 30px;">&nbsp;None</button>
                         </div> -->
-                        <div class="sankey" style="text-align: center;"></div>
+                        <!-- <div class="sankey" style="text-align: center;"></div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-6 bordered min-width-600px">
+            </div> -->
+
+
+
+            <!-- <div class="col-md-6 bordered min-width-600px">
                 <a class="help-icon glyphicon glyphicon-question-sign" data-toggle="popover" title="Sankey Map" style="margin: 15px; position: absolute; z-index:1000;" data-html="true" tabindex="0"
                     data-content="This map displays the selected flows of the sankey diagram to the left on a spatial actor level.
                         The color coding of the basic flows and activities and actors matches the sankey diagram.
@@ -787,8 +852,24 @@
                         To visualize the flow direction the <i>Animate Flows</i> checkbox has to be activated.">
                 </a>
                 <div id="flow-map" style="width: 100%; height: 600px;"></div>
+            </div> -->
+
+
+            <div class="row">
+                <div class="col">
+                    <div class="piechart-wrapper" style="width: 600px; height: 600px; background-color: #1c1c1c; border-radius: 4px;"></div>
+                </div>
+                <div class="col">
+                    <div class="barchart-wrapper" style="width: 600px; height: 600px; background-color: #1c1c1c; border-radius: 4px;"></div>
+                </div>
             </div>
+
         </div>
+    </div>
+
+    <!-- temp footer -->
+    <div style="display: block; height: 350px">
+        <span style="color: white; margin: auto">Temporary footer</span>
     </div>
 
     <!--Area selection-->

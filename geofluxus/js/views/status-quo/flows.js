@@ -6,9 +6,20 @@ define(['views/common/baseview',
         'utils/utils',
         'views/common/flowsankey',
         'views/common/flowsankeymap',
-
+        'views/common/pieChartView',
+        'views/common/barChartView',
     ],
-    function (BaseView, _, FilterFlowsView, Collection, utils, FlowSankeyView, FlowMapView) {
+    function (
+        BaseView,
+        _,
+        FilterFlowsView,
+        Collection,
+        utils,
+        FlowSankeyView,
+        FlowMapView,
+        PieChartView,
+        BarChartView
+    ) {
 
         var FlowsView = BaseView.extend({
 
@@ -186,6 +197,9 @@ define(['views/common/baseview',
                     filter.selectedAreasOrigin.forEach(function (area) {
                         filterParams.origin.selectedAreas.push(area.id);
                     });
+                }                
+                if ($(filter.origin.inOrOut).prop('checked')){
+                    filterParams.origin.inOrOut = 'outside';
                 }
                 if ($(filter.origin.roleSelect).val() != 'any') {
                     filterParams.origin.role = $(filter.origin.roleSelect).val();
@@ -212,6 +226,9 @@ define(['views/common/baseview',
                     filter.selectedAreasDestination.forEach(function (area) {
                         filterParams.destination.selectedAreas.push(area.id);
                     });
+                }
+                if ($(filter.destination.inOrOut).prop('checked')){
+                    filterParams.destination.inOrOut = 'outside';
                 }
                 if ($(filter.destination.roleSelect).val() != 'any') {
                     filterParams.destination.role = $(filter.destination.roleSelect).val();
@@ -440,6 +457,34 @@ define(['views/common/baseview',
                 this.flowMapView.rerender();
             },
 
+            renderPieChart1D: function () {
+                var _this = this;
+
+                if (this.pieChartView != null) this.pieChartView.close();
+
+
+                var el = ".piechart-wrapper";
+
+
+                this.pieChartView = new PieChartView({
+                    el: el,
+                });
+            },
+
+            renderBarChart1D: function () {
+                var _this = this;
+
+                if (this.barChartView != null) this.barChartView.close();
+
+
+                var el = ".barchart-wrapper";
+
+
+                this.barChartView = new BarChartView({
+                    el: el,
+                });
+            },
+
             // Fetch flows and calls options.success(flows) on success
             fetchFlows: function (options) {
                 let _this = this;
@@ -452,6 +497,12 @@ define(['views/common/baseview',
                 this.loader.activate();
                 var data = {};
 
+
+                // PIE CHART TEST
+                _this.renderPieChart1D();
+                _this.renderBarChart1D();
+
+
                 flows.postfetch({
                     data: data,
                     body: filterParams,
@@ -459,6 +510,9 @@ define(['views/common/baseview',
                         _this.postprocess(flows);
                         _this.loader.deactivate();
                         _this.renderSankeyMap();
+
+
+
                         if (options.success) {
                             options.success(flows);
                         }
