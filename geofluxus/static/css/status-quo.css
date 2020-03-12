@@ -148,13 +148,28 @@ label[for="activity-select"] {
     display: inline-block;
     position: absolute;
     right: -1.4rem;
-    /* margin: 2px; */
     height: 34px !important;
     width: 34px !important;
 }
 
-.in-or-out-container .toggle-group  {
-    /* height: 25px; */
+/* WITHIN/OUTSIDE TOGGLE */
+
+.in-or-out-container {
+    display: inline-block;
+}
+
+.in-or-out-container .toggle {
+    min-height: 24px;
+    top: -0.5rem;
+}
+
+.in-or-out-container .toggle.btn {
+    position: relative;
+    top: -0.15rem;
+}
+
+.in-or-out-container .toggle-group span {
+    top: -0.15rem;
 }
 
 /* DIMENSIONS */

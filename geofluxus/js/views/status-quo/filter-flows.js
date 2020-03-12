@@ -320,6 +320,9 @@ define(['views/common/baseview',
                 // ///////////////////////////////////////////////
                 // Destination-controls:
 
+                this.destination.inOrOut = this.el.querySelector('#destination-area-in-or-out');
+                $(this.destination.inOrOut).bootstrapToggle();
+
                 this.destination.filterLevelSelect = this.el.querySelector('#destination-toggleFilterLevel');
                 $(this.destination.filterLevelSelect).bootstrapToggle();
 

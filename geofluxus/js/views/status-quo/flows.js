@@ -197,6 +197,9 @@ define(['views/common/baseview',
                     filter.selectedAreasOrigin.forEach(function (area) {
                         filterParams.origin.selectedAreas.push(area.id);
                     });
+                }                
+                if ($(filter.origin.inOrOut).prop('checked')){
+                    filterParams.origin.inOrOut = 'outside';
                 }
                 if ($(filter.origin.roleSelect).val() != 'any') {
                     filterParams.origin.role = $(filter.origin.roleSelect).val();
@@ -223,6 +226,9 @@ define(['views/common/baseview',
                     filter.selectedAreasDestination.forEach(function (area) {
                         filterParams.destination.selectedAreas.push(area.id);
                     });
+                }
+                if ($(filter.destination.inOrOut).prop('checked')){
+                    filterParams.destination.inOrOut = 'outside';
                 }
                 if ($(filter.destination.roleSelect).val() != 'any') {
                     filterParams.destination.role = $(filter.destination.roleSelect).val();

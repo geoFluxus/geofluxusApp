@@ -97,26 +97,10 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-10">
-                            <label for="area-select-button-origin">You can limit the origin of the waste flows to geographic areas:</label>
-                            <button id="area-select-button-origin" class="btn btn-sm btn-primary area-select-button mt-2" data-width="100%"
+                            <label for="area-select-button-origin">Limit the origin of the waste flows to geographic areas:</label>
+                            <button id="area-select-button-origin" class="btn btn-sm btn-primary area-select-button mt-2 d-block" data-width="100%"
                                     style="width: 13em" data-area-select-block="origin">Select areas
                             </button>
-                        </div>          
-                    </div>
-
-                    <div class="row mt-2">
-                        <div class="col-md-10">
-                            <div style="display: block;">
-                                <label for="area-select-button-origin" style="display: inline-block;">The origin of the flows must be</label>
-                                <div class="checkbox in-or-out-container" style="display: inline-block; height: 24px !important; margin-left: 0.5rem; margin-right: 0.5rem;">
-                                    <input name="in-or-out" id="origin-area-in-or-out" type="checkbox"
-                                        data-height="15" data-toggle="toggle" data-on="outside"
-                                        data-off="within"
-                                        class="in-out-toggle">
-                                    <label for="area-select-button-origin" style="display: inline-block;">the selected area(s).</label>    
-                                </div>
-                            </div>
-                            
                             <!-- <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Filter by Areas"
                                data-html="true" tabindex="0"
                                data-content="
@@ -124,10 +108,23 @@
                                 On confirmation the selected areas are used to limit the Actors to those located inside these areas.<br><br>
                                 This filter is complementary to the other activities and actors filters.">
                             </a> -->
+                        </div>          
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            <div style="display: block;">
+                                <label style="display: inline-block;">The origin of the flows must be</label>
+                                <div class="checkbox in-or-out-container">
+                                    <input name="in-or-out-origin" id="origin-area-in-or-out" type="checkbox"
+                                        data-height="24" data-toggle="toggle" data-on="outside of"
+                                        data-off="within"
+                                        class="in-out-toggle">
+                                    <label style="display: inline-block;">the selected area(s).</label>    
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    
-               
                     
                     <div class='row' id="areaSelectionsOrigin" style="display: none;">
                         <div class="col-md-4">
@@ -259,10 +256,10 @@
                  data-parent="#filterBlock">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-4">
-                            <label style="width: 450px" for="area-select-button-destination">Select the area(s) for the destination of the flows:</label>
-                            <button id="area-select-button-destination" class="btn btn-sm btn-primary area-select-button" data-width="100%"
-                                    style="float: left; width: 13em" data-area-select-block="destination">Select areas
+                        <div class="col-md-10">
+                            <label for="area-select-button-destination">Limit the destination of the waste flows to geographic areas:</label>
+                            <button id="area-select-button-destination" class="btn btn-sm btn-primary area-select-button mt-2 d-block" data-width="100%"
+                                    style="width: 13em" data-area-select-block="destination">Select areas
                             </button>
                             <!-- <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Filter by Areas"
                                data-html="true" tabindex="0"
@@ -273,6 +270,22 @@
                             </a> -->
                         </div>
                     </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            <div style="display: block;">
+                                <label style="display: inline-block;">The destination of the flows must be</label>
+                                <div class="checkbox in-or-out-container">
+                                    <input name="in-or-out-destination" id="destination-area-in-or-out" type="checkbox"
+                                        data-height="24" data-toggle="toggle" data-on="outside of"
+                                        data-off="within"
+                                        class="in-out-toggle">
+                                    <label style="display: inline-block;">the selected area(s).</label>    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class='row' id="areaSelectionsDestination" style="display: none;">
                         <div class="col-md-4">
                             <!-- <label for="areaSelectionsDestinationTextarea">Selected areas:</label> -->
