@@ -1,19 +1,52 @@
 from django.db import models
 
 
-# Process
-class Process(models.Model):
+# Process group
+class ProcessGroup(models.Model):
     name = models.CharField(max_length=255)
     code = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.name
+        return '{} - {}'.format(self.code, self.name)
 
 
-# Waste
-class Waste(models.Model):
+# Process
+class Process(models.Model):
+    name = models.CharField(max_length=255)
+    code = models.CharField(max_length=255)
+    processgroup = models.ForeignKey(ProcessGroup,
+                                     on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{} - {}'.format(self.code, self.name)
+
+
+# Waste02 (2-digit EWC code)
+class Waste02(models.Model):
     ewc_name = models.CharField(max_length=255)
     ewc_code = models.CharField(max_length=255)
+
+    def __str__(self):
+        return "{} - {}".format(self.ewc_code,
+                                self.ewc_name)
+
+# Waste04 (4-digit EWC code)
+class Waste04(models.Model):
+    ewc_name = models.CharField(max_length=255)
+    ewc_code = models.CharField(max_length=255)
+    waste02 = models.ForeignKey(Waste02,
+                                on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "{} - {}".format(self.ewc_code,
+                                self.ewc_name)
+
+# Waste06 (6-digit EWC code)
+class Waste06(models.Model):
+    ewc_name = models.CharField(max_length=255)
+    ewc_code = models.CharField(max_length=255)
+    waste04 = models.ForeignKey(Waste04,
+                                on_delete=models.CASCADE)
     hazardous = models.BooleanField()
 
     def __str__(self):
@@ -43,3 +76,20 @@ class Composite(models.Model):
 
     def __str__(self):
         return self.name
+
+
+# Year
+class Year(models.Model):
+    code = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.code
+
+# Month
+class Month(models.Model):
+    code = models.CharField(max_length=255)
+    year = models.ForeignKey(Year,
+                             on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{}-{}'.format(self.code[:2], self.code[2:])

@@ -6,11 +6,16 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Actor,
                                          PublicationType,
                                          Publication,
+                                         ProcessGroup,
                                          Process,
-                                         Waste,
+                                         Waste02,
+                                         Waste04,
+                                         Waste06,
                                          Material,
                                          Product,
                                          Composite,
+                                         Year,
+                                         Month,
                                          FlowChain,
                                          Flow,
                                          Classification,
@@ -24,11 +29,16 @@ from geofluxus.apps.asmfa.serializers import (ActivityGroupSerializer,
                                               ActorSerializer,
                                               PublicationTypeSerializer,
                                               PublicationSerializer,
+                                              ProcessGroupSerializer,
                                               ProcessSerializer,
-                                              WasteSerializer,
+                                              Waste02Serializer,
+                                              Waste04Serializer,
+                                              Waste06Serializer,
                                               MaterialSerializer,
                                               ProductSerializer,
                                               CompositeSerializer,
+                                              YearSerializer,
+                                              MonthSerializer,
                                               FlowChainSerializer,
                                               FlowSerializer,
                                               ClassificationSerializer,
@@ -59,7 +69,7 @@ class ActivityCreateSerializer(BulkSerializerMixin,
                                    referenced_field='code',
                                    referenced_model=ActivityGroup)
     }
-    index_columns = ['name']
+    index_columns = ['nace']
 
     def get_queryset(self):
         return Activity.objects.all()
@@ -132,8 +142,8 @@ class PublicationCreateSerializer(BulkSerializerMixin,
         return Publication.objects.all()
 
 
-class ProcessCreateSerializer(BulkSerializerMixin,
-                              ProcessSerializer):
+class ProcessGroupCreateSerializer(BulkSerializerMixin,
+                                   ProcessGroupSerializer):
     field_map = {
         'name': 'name',
         'code': 'code'
@@ -141,20 +151,65 @@ class ProcessCreateSerializer(BulkSerializerMixin,
     index_columns = ['code']
 
     def get_queryset(self):
+        return ProcessGroup.objects.all()
+
+
+class ProcessCreateSerializer(BulkSerializerMixin,
+                              ProcessSerializer):
+    field_map = {
+        'name': 'name',
+        'code': 'code',
+        'processgroup': Reference(name='processgroup',
+                                  referenced_field='code',
+                                  referenced_model=ProcessGroup)
+    }
+    index_columns = ['code']
+
+    def get_queryset(self):
         return Process.objects.all()
 
 
-class WasteCreateSerializer(BulkSerializerMixin,
-                            WasteSerializer):
+class Waste02CreateSerializer(BulkSerializerMixin,
+                              Waste02Serializer):
     field_map = {
         'ewc_name': 'ewc_name',
-        'ewc_code': 'ewc_code',
-        'hazardous': 'hazardous'
+        'ewc_code': 'ewc_code'
     }
     index_columns = ['ewc_code']
 
     def get_queryset(self):
-        return Waste.objects.all()
+        return Waste02.objects.all()
+
+
+class Waste04CreateSerializer(BulkSerializerMixin,
+                             Waste04Serializer):
+    field_map = {
+        'ewc_name': 'ewc_name',
+        'ewc_code': 'ewc_code',
+        'waste02': Reference(name='waste02',
+                             referenced_field='ewc_code',
+                             referenced_model=Waste02),
+    }
+    index_columns = ['ewc_code']
+
+    def get_queryset(self):
+        return Waste04.objects.all()
+
+
+class Waste06CreateSerializer(BulkSerializerMixin,
+                              Waste06Serializer):
+    field_map = {
+        'ewc_name': 'ewc_name',
+        'ewc_code': 'ewc_code',
+        'hazardous': 'hazardous',
+        'waste04': Reference(name='waste04',
+                             referenced_field='ewc_code',
+                             referenced_model=Waste04),
+    }
+    index_columns = ['ewc_code']
+
+    def get_queryset(self):
+        return Waste06.objects.all()
 
 
 class MaterialCreateSerializer(BulkSerializerMixin,
@@ -190,6 +245,31 @@ class CompositeCreateSerializer(BulkSerializerMixin,
         return Composite.objects.all()
 
 
+class YearCreateSerializer(BulkSerializerMixin,
+                           YearSerializer):
+    field_map = {
+        'code': 'code'
+    }
+    index_columns = ['code']
+
+    def get_queryset(self):
+        return Year.objects.all()
+
+
+class MonthCreateSerializer(BulkSerializerMixin,
+                            MonthSerializer):
+    field_map = {
+        'code': 'code',
+        'year': Reference(name='year',
+                          referenced_field='code',
+                          referenced_model=Year),
+    }
+    index_columns = ['code', 'year']
+
+    def get_queryset(self):
+        return Month.objects.all()
+
+
 class FlowChainCreateSerializer(BulkSerializerMixin,
                                 FlowChainSerializer):
     field_map = {
@@ -199,13 +279,15 @@ class FlowChainCreateSerializer(BulkSerializerMixin,
         'description': 'description',
         'amount': 'amount',
         'trips': 'trips',
-        'year': 'year',
+        'month': Reference(name='month',
+                           referenced_field='code',
+                           referenced_model=Month),
         'process': Reference(name='process',
                              referenced_field='code',
                              referenced_model=Process),
         'waste': Reference(name='waste',
                            referenced_field='ewc_code',
-                           referenced_model=Waste),
+                           referenced_model=Waste06),
         'materials': Reference(name='materials',
                                referenced_field='name',
                                referenced_model=Material,

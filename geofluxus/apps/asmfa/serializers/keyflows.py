@@ -1,14 +1,41 @@
 from rest_framework.serializers import (HyperlinkedModelSerializer,
-                                        IntegerField)
+                                        IntegerField,
+                                        PrimaryKeyRelatedField,)
 from geofluxus.apps.asmfa.models import (Process,
-                                         Waste,
+                                         ProcessGroup,
+                                         Waste02,
+                                         Waste04,
+                                         Waste06,
                                          Material,
                                          Product,
-                                         Composite)
+                                         Composite,
+                                         Year,
+                                         Month)
+
+
+# Process group
+class ProcessGroupSerializer(HyperlinkedModelSerializer):
+    flow_count = IntegerField(read_only=True)
+
+    class Meta:
+        model = ProcessGroup
+        fields = ('url',
+                  'id',
+                  'name',
+                  'code',
+                  'flow_count')
+
+class ProcessGroupListSerializer(ProcessGroupSerializer):
+    class Meta(ProcessGroupSerializer.Meta):
+        fields = ('id',
+                  'name',
+                  'code',
+                  'flow_count')
 
 
 # Process
 class ProcessSerializer(HyperlinkedModelSerializer):
+    processgroup = PrimaryKeyRelatedField(read_only=True)
     flow_count = IntegerField(read_only=True)
 
     class Meta:
@@ -17,6 +44,7 @@ class ProcessSerializer(HyperlinkedModelSerializer):
                   'id',
                   'name',
                   'code',
+                  'processgroup',
                   'flow_count')
 
 
@@ -25,29 +53,74 @@ class ProcessListSerializer(ProcessSerializer):
         fields = ('id',
                   'name',
                   'code',
+                  'processgroup',
                   'flow_count')
 
 
-# Waste
-class WasteSerializer(HyperlinkedModelSerializer):
+# Waste02
+class Waste02Serializer(HyperlinkedModelSerializer):
     flow_count = IntegerField(read_only=True)
 
     class Meta:
-        model = Waste
+        model = Waste02
+        fields = ('url',
+                  'id',
+                  'ewc_name',
+                  'ewc_code',
+                  'flow_count')
+
+
+class Waste02ListSerializer(Waste02Serializer):
+    class Meta(Waste02Serializer.Meta):
+        fields = ('id',
+                  'ewc_name',
+                  'ewc_code',
+                  'flow_count')
+
+# Waste04
+class Waste04Serializer(HyperlinkedModelSerializer):
+    waste02 = PrimaryKeyRelatedField(read_only=True)
+    flow_count = IntegerField(read_only=True)
+
+    class Meta:
+        model = Waste04
+        fields = ('url',
+                  'id',
+                  'ewc_name',
+                  'ewc_code',
+                  'waste02',
+                  'flow_count')
+
+class Waste04ListSerializer(Waste04Serializer):
+    class Meta(Waste04Serializer.Meta):
+        fields = ('id',
+                  'ewc_name',
+                  'ewc_code',
+                  'waste02',
+                  'flow_count')
+
+# Waste06
+class Waste06Serializer(HyperlinkedModelSerializer):
+    waste04 = PrimaryKeyRelatedField(read_only=True)
+    flow_count = IntegerField(read_only=True)
+
+    class Meta:
+        model =  Waste06
         fields = ('url',
                   'id',
                   'ewc_name',
                   'ewc_code',
                   'hazardous',
+                  'waste04',
                   'flow_count')
 
-
-class WasteListSerializer(WasteSerializer):
-    class Meta(WasteSerializer.Meta):
+class Waste06ListSerializer(Waste06Serializer):
+    class Meta(Waste06Serializer.Meta):
         fields = ('id',
                   'ewc_name',
                   'ewc_code',
                   'hazardous',
+                  'waste04',
                   'flow_count')
 
 
@@ -105,4 +178,43 @@ class CompositeListSerializer(CompositeSerializer):
     class Meta(CompositeSerializer.Meta):
         fields = ('id',
                   'name',
+                  'flow_count')
+
+
+# Year
+class YearSerializer(HyperlinkedModelSerializer):
+    flow_count = IntegerField(read_only=True)
+
+    class Meta:
+        model = Year
+        fields = ('url',
+                  'id',
+                  'code',
+                  'flow_count')
+
+class YearListSerializer(YearSerializer):
+    class Meta(YearSerializer.Meta):
+        fields = ('id',
+                  'code',
+                  'flow_count')
+
+
+# Month
+class MonthSerializer(HyperlinkedModelSerializer):
+    year = PrimaryKeyRelatedField(read_only=True)
+    flow_count = IntegerField(read_only=True)
+
+    class Meta:
+        model = Month
+        fields = ('url',
+                  'id',
+                  'code',
+                  'year',
+                  'flow_count')
+
+class MonthListSerializer(MonthSerializer):
+    class Meta(MonthSerializer.Meta):
+        fields = ('id',
+                  'code',
+                  'year',
                   'flow_count')
