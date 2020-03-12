@@ -9,7 +9,7 @@ class ActivityGroup(models.Model):
     code = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.name
+        return '{} - {}'.format(self.code, self.name)
 
 
 # Activity
@@ -20,7 +20,7 @@ class Activity(models.Model):
                                       on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return '{} - {}'.format(self.nace, self.name)
 
 
 # Company

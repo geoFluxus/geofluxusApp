@@ -69,7 +69,7 @@ class ActivityCreateSerializer(BulkSerializerMixin,
                                    referenced_field='code',
                                    referenced_model=ActivityGroup)
     }
-    index_columns = ['name']
+    index_columns = ['nace']
 
     def get_queryset(self):
         return Activity.objects.all()
@@ -146,10 +146,7 @@ class ProcessGroupCreateSerializer(BulkSerializerMixin,
                                    ProcessGroupSerializer):
     field_map = {
         'name': 'name',
-        'code': 'code',
-        'processgroup': Reference(name='processgroup',
-                                  referenced_field='code',
-                                  referenced_model=ProcessGroup)
+        'code': 'code'
     }
     index_columns = ['code']
 
@@ -161,7 +158,10 @@ class ProcessCreateSerializer(BulkSerializerMixin,
                               ProcessSerializer):
     field_map = {
         'name': 'name',
-        'code': 'code'
+        'code': 'code',
+        'processgroup': Reference(name='processgroup',
+                                  referenced_field='code',
+                                  referenced_model=ProcessGroup)
     }
     index_columns = ['code']
 
@@ -204,7 +204,7 @@ class Waste06CreateSerializer(BulkSerializerMixin,
         'hazardous': 'hazardous',
         'waste04': Reference(name='waste04',
                              referenced_field='ewc_code',
-                             referenced_model=Waste02),
+                             referenced_model=Waste04),
     }
     index_columns = ['ewc_code']
 
@@ -279,7 +279,9 @@ class FlowChainCreateSerializer(BulkSerializerMixin,
         'description': 'description',
         'amount': 'amount',
         'trips': 'trips',
-        'year': 'year',
+        'month': Reference(name='month',
+                           referenced_field='code',
+                           referenced_model=Month),
         'process': Reference(name='process',
                              referenced_field='code',
                              referenced_model=Process),

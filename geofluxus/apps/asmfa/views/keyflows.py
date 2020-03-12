@@ -147,7 +147,7 @@ class Waste06ViewSet(PostGetViewMixin,
 class MaterialViewSet(PostGetViewMixin,
                       ViewSetMixin,
                       ModelPermissionViewSet):
-    queryset = Material.objects.order_by('id')
+    queryset = Material.objects.order_by('name')
     pagination_class = UnlimitedResultsSetPagination
     serializer_class = MaterialSerializer
     serializers = {
@@ -160,14 +160,14 @@ class MaterialViewSet(PostGetViewMixin,
         queryset = queryset.annotate(
             flow_count=Count('flowchain__flow')
         )
-        return queryset.order_by('id')
+        return queryset.order_by('name')
 
 
 # Product
 class ProductViewSet(PostGetViewMixin,
                      ViewSetMixin,
                      ModelPermissionViewSet):
-    queryset = Product.objects.order_by('id')
+    queryset = Product.objects.order_by('name')
     pagination_class = UnlimitedResultsSetPagination
     serializer_class = ProductSerializer
     serializers = {
@@ -180,14 +180,14 @@ class ProductViewSet(PostGetViewMixin,
         queryset = queryset.annotate(
             flow_count=Count('flowchain__flow')
         )
-        return queryset.order_by('id')
+        return queryset.order_by('name')
 
 
 # Composite
 class CompositeViewSet(PostGetViewMixin,
                        ViewSetMixin,
                        ModelPermissionViewSet):
-    queryset = Composite.objects.order_by('id')
+    queryset = Composite.objects.order_by('name')
     pagination_class = UnlimitedResultsSetPagination
     serializer_class = CompositeSerializer
     serializers = {
@@ -200,13 +200,13 @@ class CompositeViewSet(PostGetViewMixin,
         queryset = queryset.annotate(
             flow_count=Count('flowchain__flow')
         )
-        return queryset.order_by('id')
+        return queryset.order_by('name')
 
 # Year
 class YearViewSet(PostGetViewMixin,
                   ViewSetMixin,
                   ModelPermissionViewSet):
-    queryset = Year.objects.order_by('id')
+    queryset = Year.objects.order_by('code')
     pagination_class = UnlimitedResultsSetPagination
     serializer_class = YearSerializer
     serializers = {
@@ -219,14 +219,14 @@ class YearViewSet(PostGetViewMixin,
         queryset = queryset.annotate(
             flow_count=Count('month__flowchain__flow')
         )
-        return queryset.order_by('id')
+        return queryset.order_by('code')
 
 
 # Month
 class MonthViewSet(PostGetViewMixin,
                    ViewSetMixin,
                    ModelPermissionViewSet):
-    queryset = Month.objects.order_by('id')
+    queryset = Month.objects.order_by('year__code', 'code')
     pagination_class = UnlimitedResultsSetPagination
     serializer_class = MonthSerializer
     serializers = {
@@ -239,4 +239,4 @@ class MonthViewSet(PostGetViewMixin,
         queryset = queryset.annotate(
             flow_count=Count('flowchain__flow')
         )
-        return queryset.order_by('id')
+        return queryset.order_by('year__code', 'code')

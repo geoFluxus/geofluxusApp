@@ -91,7 +91,7 @@ class Waste04Serializer(HyperlinkedModelSerializer):
                   'waste02',
                   'flow_count')
 
-class Waste04ListSerializer(HyperlinkedModelSerializer):
+class Waste04ListSerializer(Waste04Serializer):
     class Meta(Waste04Serializer.Meta):
         fields = ('id',
                   'ewc_name',
@@ -114,7 +114,7 @@ class Waste06Serializer(HyperlinkedModelSerializer):
                   'waste04',
                   'flow_count')
 
-class Waste06ListSerializer(HyperlinkedModelSerializer):
+class Waste06ListSerializer(Waste06Serializer):
     class Meta(Waste06Serializer.Meta):
         fields = ('id',
                   'ewc_name',
@@ -192,8 +192,8 @@ class YearSerializer(HyperlinkedModelSerializer):
                   'code',
                   'flow_count')
 
-class YearListSerializer(HyperlinkedModelSerializer):
-    class Meta(YearSerializer):
+class YearListSerializer(YearSerializer):
+    class Meta(YearSerializer.Meta):
         fields = ('id',
                   'code',
                   'flow_count')
@@ -212,7 +212,7 @@ class MonthSerializer(HyperlinkedModelSerializer):
                   'year',
                   'flow_count')
 
-class MonthListSerializer(HyperlinkedModelSerializer):
+class MonthListSerializer(MonthSerializer):
     class Meta(MonthSerializer.Meta):
         fields = ('id',
                   'code',

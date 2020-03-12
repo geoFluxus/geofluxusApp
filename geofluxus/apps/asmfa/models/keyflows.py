@@ -7,7 +7,7 @@ class ProcessGroup(models.Model):
     code = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.name
+        return '{} - {}'.format(self.code, self.name)
 
 
 # Process
@@ -18,7 +18,7 @@ class Process(models.Model):
                                      on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return '{} - {}'.format(self.code, self.name)
 
 
 # Waste02 (2-digit EWC code)
@@ -80,10 +80,16 @@ class Composite(models.Model):
 
 # Year
 class Year(models.Model):
-    code = models.IntegerField(default=2013)
+    code = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.code
 
 # Month
 class Month(models.Model):
-    code = models.IntegerField(default=1)
+    code = models.CharField(max_length=255)
     year = models.ForeignKey(Year,
                              on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{}-{}'.format(self.code[:2], self.code[2:])
