@@ -197,24 +197,28 @@ define(['views/common/baseview',
                     filter.selectedAreasOrigin.forEach(function (area) {
                         filterParams.origin.selectedAreas.push(area.id);
                     });
-                }                
-                if ($(filter.origin.inOrOut).prop('checked')){
+                }
+                if ($(filter.origin.inOrOut).prop('checked')) {
                     filterParams.origin.inOrOut = 'outside';
                 }
                 if ($(filter.origin.roleSelect).val() != 'any') {
                     filterParams.origin.role = $(filter.origin.roleSelect).val();
                 }
-                if (!$(filter.origin.filterLevelSelect).prop("checked")) {
+
+                if ($(filter.origin.activitySelect).val() == '-1') {
                     if ($(filter.origin.activityGroupsSelect).val() != '-1') {
                         filterParams.origin.activityGroups = $(filter.origin.activityGroupsSelect).val();
                     }
                 } else {
-                    if ($(filter.origin.activities).val() != '-1') {
-                        filterParams.origin.activities = $(filter.origin.activitySelect).val();
-                    }
+                    filterParams.origin.activities = $(filter.origin.activitySelect).val();
                 }
-                if ($(filter.origin.processSelect).val() != "-1") {
-                    filterParams.origin.process = $(filter.origin.processSelect).val();
+
+                if ($(filter.origin.processSelect).val() == '-1') {
+                    if ($(filter.origin.processGroupSelect).val() != '-1') {
+                        filterParams.origin.processGroups = $(filter.origin.processGroupSelect).val();
+                    }
+                } else {
+                    filterParams.origin.processes = $(filter.origin.processSelect).val();
                 }
 
 
@@ -227,25 +231,28 @@ define(['views/common/baseview',
                         filterParams.destination.selectedAreas.push(area.id);
                     });
                 }
-                if ($(filter.destination.inOrOut).prop('checked')){
+                if ($(filter.destination.inOrOut).prop('checked')) {
                     filterParams.destination.inOrOut = 'outside';
                 }
                 if ($(filter.destination.roleSelect).val() != 'any') {
                     filterParams.destination.role = $(filter.destination.roleSelect).val();
                 }
-                if (!$(filter.destination.filterLevelSelect).prop("checked")) {
+                
+                if ($(filter.destination.activitySelect).val() == '-1') {
                     if ($(filter.destination.activityGroupsSelect).val() != '-1') {
                         filterParams.destination.activityGroups = $(filter.destination.activityGroupsSelect).val();
                     }
                 } else {
-                    if ($(filter.destination.activities).val() != '-1') {
-                        filterParams.destination.activities = $(filter.destination.activitySelect).val();
-                    }
-                }
-                if ($(filter.destination.processSelect).val() != "-1") {
-                    filterParams.destination.process = $(filter.destination.processSelect).val();
+                    filterParams.destination.activities = $(filter.destination.activitySelect).val();
                 }
 
+                if ($(filter.destination.processSelect).val() == '-1') {
+                    if ($(filter.destination.processGroupSelect).val() != '-1') {
+                        filterParams.destination.processGroups = $(filter.destination.processGroupSelect).val();
+                    }
+                } else {
+                    filterParams.destination.processes = $(filter.destination.processSelect).val();
+                }
 
                 // ///////////////////////////////
                 // FLOWS
@@ -258,14 +265,35 @@ define(['views/common/baseview',
 
                 // Year
                 let year = $(filter.flows.yearSelect).val();
-                if (year !== "all") {
-                    filterParams.flows['year'] = year;
+                let month = $(filter.flows.monthSelect).val();
+
+                if (year[0] !== "-1") {
+                    if (month == "-1") {
+                        filterParams.flows['year'] = year;
+                    } else {
+                        filterParams.flows['month'] = month;
+                    }
                 }
 
                 // Wastes
-                let wastes = $(filter.flows.wasteSelect).val();
-                if (wastes[0] !== "-1") {
-                    filterParams.flows['waste__in'] = wastes;
+                let wastes02 = $(filter.flows.waste02Select).val();
+                let wastes04 = $(filter.flows.waste04Select).val();
+                let wastes06 = $(filter.flows.waste06Select).val();
+
+                // Waste02 is not All:
+                if (wastes02[0] !== "-1") {
+                    // Waste04 is All, so send Waste02:
+                    if (wastes04[0] == "-1") {
+                        filterParams.flows['waste02__in'] = wastes02;
+                    } else {
+                        // Waste06 is All, so send Waste04
+                        if (wastes06[0] == "-1") {
+                            filterParams.flows['waste04__in'] = wastes04;
+                        } else {
+                            // Send Waste06:
+                            filterParams.flows['waste06__in'] = wastes06;
+                        }
+                    }
                 }
 
                 // Materials
@@ -397,6 +425,8 @@ define(['views/common/baseview',
                         granularity: $(filter.dimensions.treatmentMethodToggle).prop("checked") ? 'Treatment method' : 'Treatment method group',
                     }
                 }
+
+                console.log(filterParams);
 
                 return filterParams;
             },
