@@ -159,13 +159,18 @@ label[for="activity-select"] {
 }
 
 .in-or-out-container .toggle {
-    min-height: 24px;
-    top: -0.5rem;
+    min-height: 24px !important;
+    /* top: -0.5rem !important; */
+    width: 8rem !important;
 }
 
 .in-or-out-container .toggle.btn {
     position: relative;
     top: -0.15rem;
+}
+
+.in-or-out-container .toggle-group label {
+    top: -0.4rem;
 }
 
 .in-or-out-container .toggle-group span {
