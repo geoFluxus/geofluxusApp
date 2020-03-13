@@ -131,7 +131,7 @@
                                 <label style="display: inline-block;">The origin of the flows must be</label>
                                 <div class="checkbox in-or-out-container">
                                     <input name="in-or-out-origin" id="origin-area-in-or-out" type="checkbox"
-                                        data-height="24" data-toggle="toggle" data-on="outside of"
+                                        data-height="24" data-toggle="toggle" data-on="outside"
                                         data-off="within"
                                         class="in-out-toggle">
                                     <label style="display: inline-block;">the selected area(s).</label>    
@@ -188,8 +188,7 @@
                                 <option data-divider="true"></option>
                                 <% activityGroups.forEach(function(activitygroup){ %>
                                 <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%> <%= activitygroup.get('name') %> (<%=
-                                    activitygroup.get('flow_count') %> <%= (activitygroup.get('flow_count') == 1) ?
-                                    'flow' : 'flows' %>)
+                                    activitygroup.get('flow_count') %> <%= (activitygroup.get('flow_count') == 1) ? 'flow' : 'flows' %>)
                                 </option>
                                 <% }); %>
                             </select>
@@ -224,7 +223,7 @@
                             <option selected value="-1">All (<%= processgroups.count %>)</option>
                             <option data-divider="true"></option>
                             <% processgroups.forEach(function(process){ %>
-                                <option value="<%= process.id %>"> <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %></option>
+                                <option value="<%= process.id %>"><%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %></option>
                                 <% }); %>
                             </select>
                         </div>
@@ -240,7 +239,7 @@
                             <option selected value="-1">All (<%= processes.count %>)</option>
                             <option data-divider="true"></option>
                             <% processes.forEach(function(process){ %>
-                                <option value="<%= process.id %>"> <%= process.get('name') %></option>
+                                <option value="<%= process.id %>"><%= process.get('name') %></option>
                                 <% }); %>
                             </select>
                         </div>
@@ -310,7 +309,7 @@
                                 <label style="display: inline-block;">The destination of the flows must be</label>
                                 <div class="checkbox in-or-out-container">
                                     <input name="in-or-out-destination" id="destination-area-in-or-out" type="checkbox"
-                                        data-height="24" data-toggle="toggle" data-on="outside of"
+                                        data-height="24" data-toggle="toggle" data-on="outside"
                                         data-off="within"
                                         class="in-out-toggle">
                                     <label style="display: inline-block;">the selected area(s).</label>    
@@ -484,7 +483,6 @@
                     <div class="row">
                         <div class="col-md-2">
                             <label>Year</label>
-                            
                             <select name="flows-year-select" multiple class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-size="6"
@@ -495,16 +493,6 @@
                                 <option value="<%= year.id %>"><%= year.get('code') %></option>
                                 <% }); %>
                             </select>
-
-                            <!-- <select name="flows-year-select" class="form-control form-control-sm selectpicker">
-                                <option value='all'>All</option>
-                                <option value='2013'>2013</option>
-                                <option value='2014'>2014</option>
-                                <option value='2015'>2015</option>
-                                <option value='2016'>2016</option>
-                                <option value='2017'>2017</option>
-                                <option value='2018'>2018</option>
-                            </select> -->
                         </div>
                         <div class="col-md-2">
                             <label>Month</label>
@@ -537,7 +525,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-3" id="wastes04col" style="display: none;">
                             <label>Sub-chapter</label>
                             <select name="flows-waste04-select" multiple class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
@@ -553,7 +541,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-3" id="wastes06col" style="display: none;">
                             <label>Individual entries</label>
                             <select name="flows-waste06-select" multiple class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
@@ -596,7 +584,7 @@
                                 <option selected value="-1">All (<%= products.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% products.forEach(function(product){ %>
-                                <option value="<%= product.id %>"> <%= product.get('name') %></option>
+                                <option value="<%= product.id %>"><%= product.get('name') %></option>
                                 <% }); %>
                             </select>
                         </div>
@@ -608,7 +596,7 @@
                                 <option selected value="-1">All (<%= composites.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% composites.forEach(function(composite){ %>
-                                <option value="<%= composite.id %>"> <%= composite.get('name') %></option>
+                                <option value="<%= composite.id %>"><%= composite.get('name') %></option>
                                 <% }); %>
                             </select>
                         </div>
@@ -772,7 +760,7 @@
                         <div class="col-md-4" id="gran-toggle-space-col" style="display: none">
                             <select name="dim-space-gran-select" id="dim-space-gran-select" class="form-control form-control-sm selectpicker" data-height="21"> 
                                 <% levels.forEach(function(level) { %>
-                                <option value="<%= level.id %>"> <%= level.get('name') %></option>
+                                <option value="<%= level.id %>"><%= level.get('name') %></option>
                                 <% }) %>
                             </select>
                         </div>
@@ -983,7 +971,7 @@
                         <label for="area-level-select" class="input-label" style="margin-top: .5rem; margin-right: 10px;">Geographic level:</label>
                         <select name="area-level-select" id="area-level-select" class="form-control form-control-sm" style="max-width: 350px;">
                             <% levels.forEach(function(level) { %>
-                            <option value="<%= level.id %>"> <%= level.get('name') %></option>
+                            <option value="<%= level.id %>"><%= level.get('name') %></option>
                             <% }) %>
                         </select>
                     </div>

@@ -259,39 +259,74 @@ define(['views/common/baseview',
                     }
                 }
 
-                function filterEWC02to04(event, clickedIndex, checked){
-                    // console.log("filterEWC02to04");
+                function filterEWC02to04(event, clickedIndex, checked) {
+                    let selectedEWC02IDs = [];
+                    let filteredWastes04 = [];
+                    let allWastes04OptionsHTML = "";
+                    let newWastes04OptionsHTML = "";
 
+                    // Get the array with ID's of the selected treatment method group(s) from the .selectpicker:
+                    selectedEWC02IDs = $(_this.flows.waste02Select).val()
 
-                    //  // Get the array with ID's of the selected treatment method group(s) from the .selectpicker:
-                    //  selectedEWCIDs = $(waste02Select).val()
+                    // If no process groups are selected, reset filter:
+                    if (selectedEWC02IDs.length == 0 || selectedEWC02IDs[0] == "-1") {
 
-                    //  // If no process groups are selected, reset filter:
-                    //  if (selectedEWCIDs.length == 0 || selectedEWCIDs[0] == "-1") {
-                    //      processSelectContainer.fadeOut("fast");
- 
-                    //      allProcessOptionsHTML = '<option selected value="-1">All (' + _this.processes.length + ')</option><option data-divider="true"></option>';
-                    //      _this.processes.models.forEach(process => allProcessOptionsHTML += "<option>" + process.attributes.name + "</option>");
-                    //      $(processSelect).html(allProcessOptionsHTML);
-                    //      $(processSelect).selectpicker("refresh");
-                    //  } else {
-                    //      // Filter all activities by the selected Process Groups:
-                    //      filteredProcesses = _this.processes.models.filter(function (process) {
-                    //          return selectedProcessGroupIDs.includes(process.attributes.processgroup.toString())
-                    //      });
- 
-                    //      // Fill selectPicker with filtered items, add to DOM, and refresh:
-                    //      newProcessOptionsHTML = '<option selected value="-1">All (' + filteredProcesses.length + ')</option><option data-divider="true"></option>';
-                    //      filteredProcesses.forEach(process => newProcessOptionsHTML += "<option>" + process.attributes.name + "</option>");
-                    //      $(processSelect).html(newProcessOptionsHTML);
-                    //      $(processSelect).selectpicker("refresh");
- 
-                    //      processSelectContainer.fadeIn("fast");
-                    //  }
+                        $("#wastes04col").fadeOut("fast");
 
+                        allWastes04OptionsHTML = '<option selected value="-1">All (' + _this.wastes04.length + ')</option><option data-divider="true"></option>';
+                        _this.wastes04.models.forEach(waste04 => allWastes04OptionsHTML += "<option value='" + waste04.attributes.id + "'>" + waste04.attributes.ewc_name + "</option>");
 
+                        $(_this.flows.waste04Select).html(allWastes04OptionsHTML);
+                        $(_this.flows.waste04Select).selectpicker("refresh");
+                    } else {
+                        // Filter all activities by the selected Process Groups:
+                        filteredWastes04 = _this.wastes04.models.filter(function (waste04) {
+                            return selectedEWC02IDs.includes(waste04.attributes.waste02.toString())
+                        });
 
+                        // Fill selectPicker with filtered items, add to DOM, and refresh:
+                        newWastes04OptionsHTML = '<option selected value="-1">All (' + filteredWastes04.length + ')</option><option data-divider="true"></option>';
+                        filteredWastes04.forEach(waste04 => newWastes04OptionsHTML += "<option value='" + waste04.attributes.id + "'>" + waste04.attributes.ewc_name + "</option>");
+                        $(_this.flows.waste04Select).html(newWastes04OptionsHTML);
+                        $(_this.flows.waste04Select).selectpicker("refresh");
 
+                        $("#wastes04col").fadeIn("fast");
+                    }
+                }
+
+                function filterEWC04to06() {
+                    let selectedEWC04IDs = [];
+                    let filteredWastes06 = [];
+                    let allWastes06OptionsHTML = "";
+                    let newWastes06OptionsHTML = "";
+
+                    // Get the array with ID's of the selected treatment method group(s) from the .selectpicker:
+                    selectedEWC04IDs = $(_this.flows.waste04Select).val()
+
+                    // If no process groups are selected, reset filter:
+                    if (selectedEWC04IDs.length == 0 || selectedEWC04IDs[0] == "-1") {
+
+                        $("#wastes06col").fadeOut("fast");
+
+                        allWastes06OptionsHTML = '<option selected value="-1">All (' + _this.wastes06.length + ')</option><option data-divider="true"></option>';
+                        _this.wastes06.models.forEach(waste06 => allWastes06OptionsHTML += "<option value='" + waste06.attributes.id + "'>" + waste06.attributes.ewc_name + "</option>");
+
+                        $(_this.flows.waste06Select).html(allWastes06OptionsHTML);
+                        $(_this.flows.waste06Select).selectpicker("refresh");
+                    } else {
+                        // Filter all activities by the selected Process Groups:
+                        filteredWastes06 = _this.wastes06.models.filter(function (waste06) {
+                            return selectedEWC04IDs.includes(waste06.attributes.waste04.toString())
+                        });
+
+                        // Fill selectPicker with filtered items, add to DOM, and refresh:
+                        newWastes06OptionsHTML = '<option selected value="-1">All (' + filteredWastes06.length + ')</option><option data-divider="true"></option>';
+                        filteredWastes06.forEach(waste06 => newWastes06OptionsHTML += "<option value='" + waste06.attributes.id + "'>" + waste06.attributes.ewc_name + "</option>");
+                        $(_this.flows.waste06Select).html(newWastes06OptionsHTML);
+                        $(_this.flows.waste06Select).selectpicker("refresh");
+
+                        $("#wastes06col").fadeIn("fast");
+                    }
                 }
 
                 // /////////////////////////////////
@@ -346,13 +381,13 @@ define(['views/common/baseview',
 
 
                 // Flows: ---------------------------
-                
+
                 $(this.flows.yearSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.monthSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.waste02Select).on('changed.bs.select', multiCheck);
                 $(this.flows.waste02Select).on('changed.bs.select', filterEWC02to04);
-                
                 $(this.flows.waste04Select).on('changed.bs.select', multiCheck);
+                $(this.flows.waste04Select).on('changed.bs.select', filterEWC04to06);
                 $(this.flows.waste06Select).on('changed.bs.select', multiCheck);
                 $(this.flows.materialSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.productSelect).on('changed.bs.select', multiCheck);
@@ -416,13 +451,8 @@ define(['views/common/baseview',
                 // ///////////////////////////////////////////////
                 // Origin-controls:
 
-                // Initialize bootstrap-toggle for filter level:
-
                 this.origin.inOrOut = this.el.querySelector('#origin-area-in-or-out');
                 $(this.origin.inOrOut).bootstrapToggle();
-
-                // this.origin.filterLevelSelect = this.el.querySelector('#origin-toggleFilterLevel');
-                // $(this.origin.filterLevelSelect).bootstrapToggle();
 
                 this.origin.roleSelect = this.el.querySelector('select[name="origin-role"]');
                 $(this.origin.roleSelect).selectpicker();
@@ -444,9 +474,6 @@ define(['views/common/baseview',
 
                 this.destination.inOrOut = this.el.querySelector('#destination-area-in-or-out');
                 $(this.destination.inOrOut).bootstrapToggle();
-
-                // this.destination.filterLevelSelect = this.el.querySelector('#destination-toggleFilterLevel');
-                // $(this.destination.filterLevelSelect).bootstrapToggle();
 
                 this.destination.roleSelect = this.el.querySelector('select[name="destination-role"]');
                 $(this.destination.roleSelect).selectpicker();
@@ -837,7 +864,6 @@ define(['views/common/baseview',
                 $(".areaSelectionsOrigin").fadeOut();
                 $("#areaSelectionsOriginTextarea").html("");
                 $(_this.origin.roleSelect).val("any");
-                // $(_this.origin.filterLevelSelect).bootstrapToggle('off')
                 $(_this.origin.activityGroupsSelect).val('-1');
                 $(_this.origin.activitySelect).html(allActivitiesOptionsHTML);
                 $(_this.origin.processGroupSelect).val('-1');
@@ -851,7 +877,6 @@ define(['views/common/baseview',
                 $(".areaSelectionsDestination").fadeOut();
                 $("#areaSelectionsDestinationTextarea").html("");
                 $(_this.destination.roleSelect).val("any");
-                // $(_this.destination.filterLevelSelect).bootstrapToggle('off')
                 $(_this.destination.activityGroupsSelect).val('-1');
                 $(_this.destination.activitySelect).html(allActivitiesOptionsHTML);
                 $(_this.destination.processGroupSelect).val('-1');
