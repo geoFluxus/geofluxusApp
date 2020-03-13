@@ -35,10 +35,19 @@ define(['views/common/baseview',
                 this.actors = new Collection([], {
                     apiTag: 'actors'
                 });
+                this.processgroups = new Collection([], {
+                    apiTag: 'processgroups'
+                });
                 this.processes = new Collection([], {
                     apiTag: 'processes'
                 });
-                this.wastes = new Collection([], {
+                this.wastes02 = new Collection([], {
+                    apiTag: 'wastes02'
+                });
+                this.wastes04 = new Collection([], {
+                    apiTag: 'wastes04'
+                });
+                this.wastes06 = new Collection([], {
                     apiTag: 'wastes06'
                 });
                 this.materials = new Collection([], {
@@ -53,6 +62,14 @@ define(['views/common/baseview',
                 this.areaLevels = new Collection([], {
                     apiTag: 'arealevels'
                 });
+
+                this.years = new Collection([], {
+                    apiTag: 'years'
+                });
+                this.months = new Collection([], {
+                    apiTag: 'months'
+                });
+
                 this.areas = {};
 
                 this.loader.activate();
@@ -61,11 +78,16 @@ define(['views/common/baseview',
                     this.activities.fetch(),
                     this.actors.fetch(),
                     this.processes.fetch(),
-                    this.wastes.fetch(),
+                    this.processgroups.fetch(),
+                    this.wastes02.fetch(),
+                    this.wastes04.fetch(),
+                    this.wastes06.fetch(),
                     this.materials.fetch(),
                     this.products.fetch(),
                     this.composites.fetch(),
                     this.areaLevels.fetch(),
+                    this.years.fetch(),
+                    this.months.fetch(),
                 ];
                 Promise.all(promises).then(function () {
                     _this.loader.deactivate();
@@ -89,13 +111,18 @@ define(['views/common/baseview',
                 // Add to template context !!!
                 this.el.innerHTML = template({
                     processes: this.processes,
-                    wastes: this.wastes,
+                    processgroups: this.processgroups,
+                    wastes02: this.wastes02,
+                    wastes04: this.wastes04,
+                    wastes06: this.wastes06,
                     materials: this.materials,
                     products: this.products,
                     composites: this.composites,
                     activities: this.activities,
                     activityGroups: this.activityGroups,
-                    levels: this.areaLevels
+                    levels: this.areaLevels,
+                    years: this.years,
+                    months: this.months,
                 });
 
                 // Activate help icons
@@ -117,7 +144,7 @@ define(['views/common/baseview',
                 function multiCheck(evt, clickedIndex, checked) {
                     var select = evt.target;
                     if (checked) {
-                        // 'All clicked -> deselect other options
+                        // User clicks 'All'' -> deselect all other options:
                         if (clickedIndex == 0) {
                             $(select).selectpicker('deselectAll');
                             select.value = -1;
@@ -144,22 +171,27 @@ define(['views/common/baseview',
 
                     let activityGroupsSelect;
                     let activitySelect;
+                    let activitySelectContainer;
+
                     if (eventTargetID == "origin-activitygroup-select") {
                         activityGroupsSelect = _this.origin.activityGroupsSelect;
                         activitySelect = _this.origin.activitySelect;
-
+                        activitySelectContainer = $(".activitySelectContainerOrigin");
                     } else if (eventTargetID == "destination-activitygroup-select") {
                         activityGroupsSelect = _this.destination.activityGroupsSelect;
                         activitySelect = _this.destination.activitySelect;
+                        activitySelectContainer = $(".activitySelectContainerDestination");
                     }
 
                     // Get the array with ID's of the selected activityGroup(s) from the .selectpicker:
                     selectedActivityGroupIDs = $(activityGroupsSelect).val()
 
                     // If no activity groups are selected, reset the activity filter to again show all activities:
-                    if (selectedActivityGroupIDs.length == 0) {
+                    if (selectedActivityGroupIDs.length == 0 || selectedActivityGroupIDs[0] == "-1") {
+                        activitySelectContainer.fadeOut("fast");
+
                         allActivitiesOptionsHTML = '<option selected value="-1">All (' + _this.activities.length + ')</option><option data-divider="true"></option>';
-                        _this.activities.models.forEach(activity => allActivitiesOptionsHTML += "<option>" + activity.attributes.name + "</option>");
+                        _this.activities.models.forEach(activity => allActivitiesOptionsHTML += "<option value='" + activity.attributes.id + "'>" + activity.attributes.name + "</option>");
                         $(activitySelect).html(allActivitiesOptionsHTML);
                         $(activitySelect).selectpicker("refresh");
                     } else {
@@ -170,24 +202,107 @@ define(['views/common/baseview',
 
                         // Fill selectPicker with filtered activities, add to DOM, and refresh:
                         newActivityOptionsHTML = '<option selected value="-1">All (' + filteredActivities.length + ')</option><option data-divider="true"></option>';
-                        filteredActivities.forEach(activity => newActivityOptionsHTML += "<option>" + activity.attributes.name + "</option>");
+                        filteredActivities.forEach(activity => newActivityOptionsHTML += "<option value='" + activity.attributes.id + "'>" + activity.attributes.name + "</option>");
                         $(activitySelect).html(newActivityOptionsHTML);
                         $(activitySelect).selectpicker("refresh");
+
+                        activitySelectContainer.fadeIn("fast");
                     }
                 }
 
+                function filterTreatmentMethods(event, clickedIndex, checked) {
+                    let eventTargetID = event.target.id;
+
+                    let selectedProcessGroupIDs = [];
+                    let filteredProcesses = [];
+                    let allProcessOptionsHTML = "";
+                    let newProcessOptionsHTML = "";
+
+                    let processGroupSelect;
+                    let processSelect;
+                    let processSelectContainer;
+
+                    if (eventTargetID == "origin-processGroup-select") {
+                        processGroupSelect = _this.origin.processGroupSelect;
+                        processSelect = _this.origin.processSelect;
+                        processSelectContainer = $("#originContainerProcesses");
+                    } else if (eventTargetID == "destination-processGroup-select") {
+                        processGroupSelect = _this.destination.activityGroupsSelect;
+                        processSelect = _this.destination.activitySelect;
+                        processSelectContainer = $("#destinationContainerProcesses");
+                    }
+
+                    // Get the array with ID's of the selected treatment method group(s) from the .selectpicker:
+                    selectedProcessGroupIDs = $(processGroupSelect).val()
+
+                    // If no process groups are selected, reset filter:
+                    if (selectedProcessGroupIDs.length == 0 || selectedProcessGroupIDs[0] == "-1") {
+                        processSelectContainer.fadeOut("fast");
+
+                        allProcessOptionsHTML = '<option selected value="-1">All (' + _this.processes.length + ')</option><option data-divider="true"></option>';
+                        _this.processes.models.forEach(process => allProcessOptionsHTML += "<option value='" + process.attributes.id + "'>" + process.attributes.name + "</option>");
+                        $(processSelect).html(allProcessOptionsHTML);
+                        $(processSelect).selectpicker("refresh");
+                    } else {
+                        // Filter all activities by the selected Process Groups:
+                        filteredProcesses = _this.processes.models.filter(function (process) {
+                            return selectedProcessGroupIDs.includes(process.attributes.processgroup.toString())
+                        });
+
+                        // Fill selectPicker with filtered items, add to DOM, and refresh:
+                        newProcessOptionsHTML = '<option selected value="-1">All (' + filteredProcesses.length + ')</option><option data-divider="true"></option>';
+                        filteredProcesses.forEach(process => newProcessOptionsHTML += "<option value='" + process.attributes.id + "'>" + process.attributes.name + "</option>");
+                        $(processSelect).html(newProcessOptionsHTML);
+                        $(processSelect).selectpicker("refresh");
+
+                        processSelectContainer.fadeIn("fast");
+                    }
+                }
+
+                function filterEWC02to04(event, clickedIndex, checked){
+                    // console.log("filterEWC02to04");
+
+
+                    //  // Get the array with ID's of the selected treatment method group(s) from the .selectpicker:
+                    //  selectedEWCIDs = $(waste02Select).val()
+
+                    //  // If no process groups are selected, reset filter:
+                    //  if (selectedEWCIDs.length == 0 || selectedEWCIDs[0] == "-1") {
+                    //      processSelectContainer.fadeOut("fast");
+ 
+                    //      allProcessOptionsHTML = '<option selected value="-1">All (' + _this.processes.length + ')</option><option data-divider="true"></option>';
+                    //      _this.processes.models.forEach(process => allProcessOptionsHTML += "<option>" + process.attributes.name + "</option>");
+                    //      $(processSelect).html(allProcessOptionsHTML);
+                    //      $(processSelect).selectpicker("refresh");
+                    //  } else {
+                    //      // Filter all activities by the selected Process Groups:
+                    //      filteredProcesses = _this.processes.models.filter(function (process) {
+                    //          return selectedProcessGroupIDs.includes(process.attributes.processgroup.toString())
+                    //      });
+ 
+                    //      // Fill selectPicker with filtered items, add to DOM, and refresh:
+                    //      newProcessOptionsHTML = '<option selected value="-1">All (' + filteredProcesses.length + ')</option><option data-divider="true"></option>';
+                    //      filteredProcesses.forEach(process => newProcessOptionsHTML += "<option>" + process.attributes.name + "</option>");
+                    //      $(processSelect).html(newProcessOptionsHTML);
+                    //      $(processSelect).selectpicker("refresh");
+ 
+                    //      processSelectContainer.fadeIn("fast");
+                    //  }
+
+
+
+
+                }
 
                 // /////////////////////////////////
                 // Multicheck events:
 
                 // Origin: -------------------------
-                $(this.origin.filterLevelSelect).change(function () {
-                    $(".activitySelectContainerOrigin").fadeToggle("fast");
-                });
-                $(this.origin.filterLevelSelect).on('changed.bs.select', multiCheck);
                 $(this.origin.activityGroupsSelect).on('changed.bs.select', multiCheck);
                 $(this.origin.activityGroupsSelect).on('changed.bs.select', filterActivities);
                 $(this.origin.activitySelect).on('changed.bs.select', multiCheck);
+                $(this.origin.processGroupSelect).on('changed.bs.select', multiCheck);
+                $(this.origin.processGroupSelect).on('changed.bs.select', filterTreatmentMethods);
                 $(this.origin.processSelect).on('changed.bs.select', multiCheck);
 
                 // Hide/show Activity Group and Activity or Treatment method:
@@ -207,14 +322,11 @@ define(['views/common/baseview',
 
 
                 // Destination: ---------------------
-
-                $(this.destination.filterLevelSelect).change(function () {
-                    $(".activitySelectContainerDestination").fadeToggle("fast");
-                });
-                $(this.destination.filterLevelSelect).on('changed.bs.select', multiCheck);
                 $(this.destination.activityGroupsSelect).on('changed.bs.select', multiCheck);
                 $(this.destination.activityGroupsSelect).on('changed.bs.select', filterActivities);
                 $(this.destination.activitySelect).on('changed.bs.select', multiCheck);
+                $(this.destination.processGroupSelect).on('changed.bs.select', multiCheck);
+                $(this.destination.processGroupSelect).on('changed.bs.select', filterTreatmentMethods);
                 $(this.destination.processSelect).on('changed.bs.select', multiCheck);
 
                 // Hide/show Activity Group and Activity or Treatment method:
@@ -234,7 +346,14 @@ define(['views/common/baseview',
 
 
                 // Flows: ---------------------------
-                $(this.flows.wasteSelect).on('changed.bs.select', multiCheck);
+                
+                $(this.flows.yearSelect).on('changed.bs.select', multiCheck);
+                $(this.flows.monthSelect).on('changed.bs.select', multiCheck);
+                $(this.flows.waste02Select).on('changed.bs.select', multiCheck);
+                $(this.flows.waste02Select).on('changed.bs.select', filterEWC02to04);
+                
+                $(this.flows.waste04Select).on('changed.bs.select', multiCheck);
+                $(this.flows.waste06Select).on('changed.bs.select', multiCheck);
                 $(this.flows.materialSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.productSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.compositeSelect).on('changed.bs.select', multiCheck);
@@ -302,8 +421,8 @@ define(['views/common/baseview',
                 this.origin.inOrOut = this.el.querySelector('#origin-area-in-or-out');
                 $(this.origin.inOrOut).bootstrapToggle();
 
-                this.origin.filterLevelSelect = this.el.querySelector('#origin-toggleFilterLevel');
-                $(this.origin.filterLevelSelect).bootstrapToggle();
+                // this.origin.filterLevelSelect = this.el.querySelector('#origin-toggleFilterLevel');
+                // $(this.origin.filterLevelSelect).bootstrapToggle();
 
                 this.origin.roleSelect = this.el.querySelector('select[name="origin-role"]');
                 $(this.origin.roleSelect).selectpicker();
@@ -314,6 +433,9 @@ define(['views/common/baseview',
                 this.origin.activitySelect = this.el.querySelector('select[name="origin-activity-select"]');
                 $(this.origin.activitySelect).selectpicker();
 
+                this.origin.processGroupSelect = this.el.querySelector('select[name="origin-processGroup-select"]');
+                $(this.origin.processGroupSelect).selectpicker();
+
                 this.origin.processSelect = this.el.querySelector('select[name="origin-process-select"]');
                 $(this.origin.processSelect).selectpicker();
 
@@ -323,8 +445,8 @@ define(['views/common/baseview',
                 this.destination.inOrOut = this.el.querySelector('#destination-area-in-or-out');
                 $(this.destination.inOrOut).bootstrapToggle();
 
-                this.destination.filterLevelSelect = this.el.querySelector('#destination-toggleFilterLevel');
-                $(this.destination.filterLevelSelect).bootstrapToggle();
+                // this.destination.filterLevelSelect = this.el.querySelector('#destination-toggleFilterLevel');
+                // $(this.destination.filterLevelSelect).bootstrapToggle();
 
                 this.destination.roleSelect = this.el.querySelector('select[name="destination-role"]');
                 $(this.destination.roleSelect).selectpicker();
@@ -334,6 +456,9 @@ define(['views/common/baseview',
 
                 this.destination.activitySelect = this.el.querySelector('select[name="destination-activity-select"]');
                 $(this.destination.activitySelect).selectpicker();
+
+                this.destination.processGroupSelect = this.el.querySelector('select[name="destination-processGroup-select"]');
+                $(this.destination.processGroupSelect).selectpicker();
 
                 this.destination.processSelect = this.el.querySelector('select[name="destination-process-select"]');
                 $(this.destination.processSelect).selectpicker();
@@ -345,8 +470,17 @@ define(['views/common/baseview',
                 this.flows.yearSelect = this.el.querySelector('select[name="flows-year-select"]');
                 $(this.flows.yearSelect).selectpicker();
 
-                this.flows.wasteSelect = this.el.querySelector('select[name="flows-waste-select"]');
-                $(this.flows.wasteSelect).selectpicker();
+                this.flows.monthSelect = this.el.querySelector('select[name="flows-month-select"]');
+                $(this.flows.monthSelect).selectpicker();
+
+                this.flows.waste02Select = this.el.querySelector('select[name="flows-waste02-select"]');
+                $(this.flows.waste02Select).selectpicker();
+
+                this.flows.waste04Select = this.el.querySelector('select[name="flows-waste04-select"]');
+                $(this.flows.waste04Select).selectpicker();
+
+                this.flows.waste06Select = this.el.querySelector('select[name="flows-waste06-select"]');
+                $(this.flows.waste06Select).selectpicker();
 
                 this.flows.materialSelect = this.el.querySelector('select[name="flows-material-select"]');
                 $(this.flows.materialSelect).selectpicker();
@@ -459,9 +593,9 @@ define(['views/common/baseview',
                                     });
 
                                     if (_this.selectedAreasOrigin.length > 0) {
-                                        $("#areaSelectionsOrigin").fadeIn();
+                                        $(".areaSelectionsOrigin").fadeIn();
                                     } else {
-                                        $("#areaSelectionsOrigin").fadeOut();
+                                        $(".areaSelectionsOrigin").fadeOut();
                                     }
                                     $("#areaSelectionsOriginTextarea").html(labels.join('; '))
 
@@ -474,9 +608,9 @@ define(['views/common/baseview',
                                     });
 
                                     if (_this.selectedAreasDestination.length > 0) {
-                                        $("#areaSelectionsDestination").fadeIn();
+                                        $(".areaSelectionsDestination").fadeIn();
                                     } else {
-                                        $("#areaSelectionsDestination").fadeOut();
+                                        $(".areaSelectionsDestination").fadeOut();
                                     }
                                     $("#areaSelectionsDestinationTextarea").html(labels.join('; '))
 
@@ -580,14 +714,14 @@ define(['views/common/baseview',
                     _this.selectedAreasOrigin = [];
                     $("#areaSelectionsOriginTextarea").html("");
                     setTimeout(function () {
-                        $("#areaSelectionsOrigin").fadeOut();
+                        $(".areaSelectionsOrigin").fadeOut();
                     }, 400);
 
                 } else if (buttonClicked == "destination" && _this.selectedAreasDestination.length > 0) {
                     _this.selectedAreasDestination = [];
                     $("#areaSelectionsDestinationTextarea").html("");
                     setTimeout(function () {
-                        $("#areaSelectionsDestination").fadeOut();
+                        $(".areaSelectionsDestination").fadeOut();
                     }, 400);
                 } else if (buttonClicked == "flows" && _this.selectedAreasFlows.length > 0) {
                     _this.selectedAreasFlows = [];
@@ -700,12 +834,13 @@ define(['views/common/baseview',
                 // ///////////////////////////////////////////////
                 // Origin-controls:
 
-                $("#areaSelectionsOrigin").fadeOut();
+                $(".areaSelectionsOrigin").fadeOut();
                 $("#areaSelectionsOriginTextarea").html("");
                 $(_this.origin.roleSelect).val("any");
-                $(_this.origin.filterLevelSelect).bootstrapToggle('off')
+                // $(_this.origin.filterLevelSelect).bootstrapToggle('off')
                 $(_this.origin.activityGroupsSelect).val('-1');
                 $(_this.origin.activitySelect).html(allActivitiesOptionsHTML);
+                $(_this.origin.processGroupSelect).val('-1');
                 $(_this.origin.processSelect).val('-1');
                 $(".originContainerActivity").fadeOut();
                 $(".originContainerTreatmentMethod").fadeOut();
@@ -713,12 +848,13 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////////////////////
                 // Destination-controls:
-                $("#areaSelectionsDestination").fadeOut();
+                $(".areaSelectionsDestination").fadeOut();
                 $("#areaSelectionsDestinationTextarea").html("");
                 $(_this.destination.roleSelect).val("any");
-                $(_this.destination.filterLevelSelect).bootstrapToggle('off')
+                // $(_this.destination.filterLevelSelect).bootstrapToggle('off')
                 $(_this.destination.activityGroupsSelect).val('-1');
                 $(_this.destination.activitySelect).html(allActivitiesOptionsHTML);
+                $(_this.destination.processGroupSelect).val('-1');
                 $(_this.destination.processSelect).val('-1');
                 $(".destinationContainerActivity").fadeOut();
                 $(".destinationContainerTreatmentMethod").fadeOut();
@@ -730,7 +866,9 @@ define(['views/common/baseview',
                 $("#areaSelectionsFlowsTextarea").html("");
                 $("#areaSelectionsFlows").fadeOut();
                 $(_this.flows.yearSelect).val("all");
-                $(_this.flows.wasteSelect).val("-1");
+                $(_this.flows.waste02Select).val("-1");
+                $(_this.flows.waste04Select).val("-1");
+                $(_this.flows.waste06Select).val("-1");
                 $(_this.flows.materialSelect).val("-1");
                 $(_this.flows.productSelect).val("-1");
                 $(_this.flows.compositesSelect).val("-1");

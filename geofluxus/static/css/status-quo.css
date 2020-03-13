@@ -85,7 +85,7 @@
 }
 
 .dropdown-menu .show {
-    max-width: 50rem;
+    max-width: 40rem;
     overflow-x: hidden;
     z-index: 1000;
 }
