@@ -195,7 +195,7 @@
                         </div>
                         <div class="col-md-4 activitySelectContainer activitySelectContainerOrigin" style="display: none">
                             <label for="origin-activity-select">Activity</label>
-                            <i class="fas fa-angle-double-right" id="activitySelectChevron"></i>
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                             <select id="origin-activity-select" name="origin-activity-select" multiple
                                     class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
@@ -230,7 +230,7 @@
 
                         <div class="col-md-4" id="originContainerProcesses" style="display: none;">
                             <label for="origin-process-select">Treatment method</label>
-                            <i class="fas fa-angle-double-right" id="activitySelectChevron"></i>
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                             <select name="origin-process-select" id="origin-process-select" multiple
                             class="form-control form-control-sm selectpicker"
                             data-live-search="true"
@@ -342,17 +342,6 @@
                         </div>
                     </div>
 
-                    <!-- <div class="row destinationContainerActivity" style="display: none;">
-                        <div class="col-md-4">
-                            <label for="destination-toggleFilterLevel">Filter level</label>
-                            <div class="checkbox">
-                                <input name="filter-level-select" id="destination-toggleFilterLevel" type="checkbox"
-                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Activities"
-                                    data-off="Activity groups">
-                            </div>
-                        </div>
-                    </div> -->
-
                     <div class="row destinationContainerActivity" style="display: none;">
                         <div class="col-md-4">
                             <label for="destination-activitygroup-select">Activity group</label>
@@ -372,7 +361,7 @@
                         </div>
                         <div class="col-md-4 activitySelectContainer activitySelectContainerDestination" style="display: none">
                             <label for="destination-activity-select">Activity</label>
-                            <i class="fas fa-angle-double-right" id="activitySelectChevron"></i>
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                             <select id="destination-activity-select" name="destination-activity-select" multiple
                                     class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
@@ -407,7 +396,7 @@
 
                         <div class="col-md-4" id="destinationContainerProcesses" style="display: none;">
                             <label for="destination-process-select">Treatment method</label>
-                            <i class="fas fa-angle-double-right" id="activitySelectChevron"></i>
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                             <select name="destination-process-select" id="destination-process-select" multiple class="form-control form-control-sm selectpicker"
                             data-live-search="true"
                             data-size="6"
@@ -494,8 +483,9 @@
                                 <% }); %>
                             </select>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-2" id="monthCol" style="display: none;">
                             <label>Month</label>
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                             <select name="flows-month-select" multiple class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-size="6"
@@ -527,6 +517,7 @@
 
                         <div class="col-md-3" id="wastes04col" style="display: none;">
                             <label>Sub-chapter</label>
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                             <select name="flows-waste04-select" multiple class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-size="6"
@@ -543,6 +534,7 @@
 
                         <div class="col-md-3" id="wastes06col" style="display: none;">
                             <label>Individual entries</label>
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                             <select name="flows-waste06-select" multiple class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-size="6"

@@ -126,7 +126,7 @@
     transition: .3s transform ease-in-out;
 }
 
-#activitySelectChevron {
+.filterDoubleChevron {
     color: white;
     font-size: 1.5em;
     position: relative;
@@ -161,7 +161,7 @@ label[for="activity-select"] {
 .in-or-out-container .toggle {
     min-height: 24px !important;
     /* top: -0.5rem !important; */
-    width: 8rem !important;
+    width: 7rem !important;
 }
 
 .in-or-out-container .toggle.btn {

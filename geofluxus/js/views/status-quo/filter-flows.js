@@ -227,8 +227,8 @@ define(['views/common/baseview',
                         processSelect = _this.origin.processSelect;
                         processSelectContainer = $("#originContainerProcesses");
                     } else if (eventTargetID == "destination-processGroup-select") {
-                        processGroupSelect = _this.destination.activityGroupsSelect;
-                        processSelect = _this.destination.activitySelect;
+                        processGroupSelect = _this.destination.processGroupSelect;
+                        processSelect = _this.destination.processSelect;
                         processSelectContainer = $("#destinationContainerProcesses");
                     }
 
@@ -265,10 +265,8 @@ define(['views/common/baseview',
                     let allWastes04OptionsHTML = "";
                     let newWastes04OptionsHTML = "";
 
-                    // Get the array with ID's of the selected treatment method group(s) from the .selectpicker:
                     selectedEWC02IDs = $(_this.flows.waste02Select).val()
 
-                    // If no process groups are selected, reset filter:
                     if (selectedEWC02IDs.length == 0 || selectedEWC02IDs[0] == "-1") {
 
                         $("#wastes04col").fadeOut("fast");
@@ -279,12 +277,10 @@ define(['views/common/baseview',
                         $(_this.flows.waste04Select).html(allWastes04OptionsHTML);
                         $(_this.flows.waste04Select).selectpicker("refresh");
                     } else {
-                        // Filter all activities by the selected Process Groups:
                         filteredWastes04 = _this.wastes04.models.filter(function (waste04) {
                             return selectedEWC02IDs.includes(waste04.attributes.waste02.toString())
                         });
 
-                        // Fill selectPicker with filtered items, add to DOM, and refresh:
                         newWastes04OptionsHTML = '<option selected value="-1">All (' + filteredWastes04.length + ')</option><option data-divider="true"></option>';
                         filteredWastes04.forEach(waste04 => newWastes04OptionsHTML += "<option value='" + waste04.attributes.id + "'>" + waste04.attributes.ewc_name + "</option>");
                         $(_this.flows.waste04Select).html(newWastes04OptionsHTML);
@@ -300,10 +296,8 @@ define(['views/common/baseview',
                     let allWastes06OptionsHTML = "";
                     let newWastes06OptionsHTML = "";
 
-                    // Get the array with ID's of the selected treatment method group(s) from the .selectpicker:
                     selectedEWC04IDs = $(_this.flows.waste04Select).val()
 
-                    // If no process groups are selected, reset filter:
                     if (selectedEWC04IDs.length == 0 || selectedEWC04IDs[0] == "-1") {
 
                         $("#wastes06col").fadeOut("fast");
@@ -314,7 +308,6 @@ define(['views/common/baseview',
                         $(_this.flows.waste06Select).html(allWastes06OptionsHTML);
                         $(_this.flows.waste06Select).selectpicker("refresh");
                     } else {
-                        // Filter all activities by the selected Process Groups:
                         filteredWastes06 = _this.wastes06.models.filter(function (waste06) {
                             return selectedEWC04IDs.includes(waste06.attributes.waste04.toString())
                         });
@@ -326,6 +319,36 @@ define(['views/common/baseview',
                         $(_this.flows.waste06Select).selectpicker("refresh");
 
                         $("#wastes06col").fadeIn("fast");
+                    }
+                }
+
+                function filterMonths() {
+                    let selectedYearIDs = [];
+                    let filteredMonths = [];
+                    let allMonthOptionsHTML = "";
+                    let newMonthOptionsHTML = "";
+
+                    selectedYearIDs = $(_this.flows.yearSelect).val()
+
+                    if (selectedYearIDs.length == 0 || selectedYearIDs[0] == "-1") {
+                        $("#monthCol").fadeOut("fast");
+
+                        allMonthOptionsHTML = '<option selected value="-1">All (' + _this.months.length + ')</option><option data-divider="true"></option>';
+                        _this.months.models.forEach(month => allMonthOptionsHTML += "<option value='" + month.attributes.id + "'>" + month.attributes.code.substring(2, 6) + " | " + _this.returnMonthString(month.attributes.code.substring(0, 2)) + "</option>");
+
+                        $(_this.flows.monthSelect).html(allMonthOptionsHTML);
+                        $(_this.flows.monthSelect).selectpicker("refresh");
+                    } else {
+                        filteredMonths = _this.months.models.filter(function (month) {
+                            return selectedYearIDs.includes(month.attributes.year.toString())
+                        });
+
+                        newMonthOptionsHTML = '<option selected value="-1">All (' + filteredMonths.length + ')</option><option data-divider="true"></option>';
+                        filteredMonths.forEach(month => newMonthOptionsHTML += "<option value='" + month.attributes.id + "'>" + month.attributes.code.substring(2, 6) + " | " +  _this.returnMonthString(month.attributes.code.substring(0, 2)) + "</option>");
+                        $(_this.flows.monthSelect).html(newMonthOptionsHTML);
+                        $(_this.flows.monthSelect).selectpicker("refresh");
+
+                        $("#monthCol").fadeIn("fast");
                     }
                 }
 
@@ -383,6 +406,7 @@ define(['views/common/baseview',
                 // Flows: ---------------------------
 
                 $(this.flows.yearSelect).on('changed.bs.select', multiCheck);
+                $(this.flows.yearSelect).on('changed.bs.select', filterMonths);
                 $(this.flows.monthSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.waste02Select).on('changed.bs.select', multiCheck);
                 $(this.flows.waste02Select).on('changed.bs.select', filterEWC02to04);
@@ -929,6 +953,15 @@ define(['views/common/baseview',
 
                 // Refresh all selectpickers:
                 $(".selectpicker").selectpicker('refresh');
+            },
+
+            returnMonthString: function (monthNumber) {
+                monthNumber = parseInt(monthNumber) - 1;
+                const monthNames = ["January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"
+                ];
+
+                return monthNames[monthNumber]
             },
 
             close: function () {
