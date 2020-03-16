@@ -200,7 +200,9 @@ define(['views/common/baseview',
                         });
                 }
                 if ($(filter.origin.inOrOut).prop('checked')) {
-                    filterParams.origin.inOrOut = 'outside';
+                    filterParams.origin.where = 'out';
+                } else {
+                    filterParams.origin.where = 'in';
                 }
                 if ($(filter.origin.roleSelect).val() != 'any') {
                     filterParams.origin.role = $(filter.origin.roleSelect).val();

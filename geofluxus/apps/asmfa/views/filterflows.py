@@ -55,13 +55,13 @@ class FilterFlowViewSet(PostGetViewMixin,
                 params[key] = value
 
         # retrieve non-spatial filters
-        filters = params.pop('flows', None)
+        filters = params.pop('flows', {})
         dimension_filters = params.pop('dimensions', None)
 
         # retrieve spatial filters
-        origin = params.pop('origin', None)
-        destination = params.pop('destination', None)
-        flow_areas = filters.pop('selectedAreas', None)
+        origin = params.pop('origin', {})
+        destination = params.pop('destination', {})
+        flow_areas = filters.pop('selectedAreas', {})
 
         area_filters = {}
         area_filters['origin'] = origin
@@ -71,9 +71,14 @@ class FilterFlowViewSet(PostGetViewMixin,
         # filter flows with non-spatial filters
         queryset = self.filter(queryset, filters)
 
-        # # filter chains with spatial filters
-        # # recover whole chain !!!
-        # chains = self.filter_areas(queryset, chains, area_filters)
+        # filter flows with spatial filters
+        queryset = self.filter_areas(queryset, area_filters)
+
+        # recover chain ids
+        ids = queryset.values_list('flowchain', flat=True).distinct()
+        # recover full chain
+        flows = Flow.objects
+        flows = flows.filter(flowchain__id__in=ids)
 
         # # retrieve flows from filtered chains
         # ids = list(chains.values_list('id', flat=True))
@@ -143,7 +148,7 @@ class FilterFlowViewSet(PostGetViewMixin,
         return queryset
 
     # spatial filtering
-    def filter_areas(self, queryset, chains, filter):
+    def filter_areas(self, queryset, filter):
         '''
         Filter chains with area filters
         (spatial filtering)
@@ -154,101 +159,34 @@ class FilterFlowViewSet(PostGetViewMixin,
         destination = filter['destination']
         flows = filter['flows']
 
-        # filter origins
-        area_ids = origin.pop('selectedAreas', None)
-        area = Area.objects.filter(id__in=area_ids).aggregate(area=Union('geom'))
-        chains = chains.filter(flows__origin__geom__intersects=area)
+        # filter by origin
+        area_ids = origin.pop('selectedAreas', [])
+        if area_ids:
+            area = Area.objects.filter(id__in=area_ids).aggregate(area=Union('geom'))['area']
 
-        # retrieve selected areas
-        area_ids = filters.pop('areas', None)
-        # # spatial filtering without areas ?!
-        # if not area_ids:
-        #     return chains
-        # else:
-        #     areas = Area.objects.filter(id__in=area_ids).aggregate(area=Union('geom'))
-        #
-        # # retrieve role
-        # role = filters.pop('role')
-        #
-        # # retrieve activities or activity groups
-        # acts, ids = [], []
-        # if len(filters) > 0:
-        #     acts, ids = filters.popitem()
-        #
-        # # form queries
-        # intersects, is_ins = [], []
-        # # production nodes (check origin)
-        # if role in ['production', 'all', 'any']:
-        #     subq = queryset.filter(flowchain_id=OuterRef('pk'),
-        #                            origin_role='Ontdoener')
-        #
-        #     # retrieve production location for chains
-        #     chains = chains.annotate(pro_geom=
-        #                              Subquery(subq.values('origin__geom')))
-        #     intersects.append('pro_geom__intersects')
-        #
-        #     # add production activity or activitygroup
-        #     if acts:
-        #         chains = chains.annotate(pro_act=
-        #                                  Subquery(subq.values('origin' + acts)))
-        #         is_ins.append('pro_act__in')
-        #
-        # # collection nodes (check either origin or destination)
-        # # check only origin to avoid duplicates
-        # if role in ['collection', 'all', 'any']:
-        #     subq = queryset.filter(flowchain_id=OuterRef('pk'),
-        #                            origin_role='Ontvanger')
-        #
-        #     # retrieve collection location for chains
-        #     chains = chains.annotate(col_geom=
-        #                              Subquery(subq.values('origin__geom')))
-        #     intersects.append('col_geom__intersects')
-        #
-        #     # add collection activity or activitygroup
-        #     if acts:
-        #         chains = chains.annotate(col_act=
-        #                                  Subquery(subq.values('origin' + acts)))
-        #         is_ins.append('col_act__in')
-        #
-        # # treatment nodes (check destination)
-        # if role in ['treatment', 'all', 'any']:
-        #     subq = queryset.filter(flowchain_id=OuterRef('pk'),
-        #                            destination_role='Verwerker')
-        #
-        #     # retrieve collection location for chains
-        #     chains = chains.annotate(treat_geom=
-        #                              Subquery(subq.values('destination__geom')))
-        #     intersects.append('treat_geom__intersects')
-        #
-        #     # add treatment activity or activitygroup
-        #     if acts:
-        #         chains = chains.annotate(treat_act=
-        #                                  Subquery(subq.values('destination' + acts)))
-        #         is_ins.append('treat_act__in')
-        #
-        # # collect queries
-        # filter_functions = []
-        # # not activity/group check
-        # if not is_ins:
-        #     for intersect in intersects:
-        #         filter_functions.append(Q(**{intersect: areas['area']}))
-        # else:
-        #     for intersect, is_in in zip(intersects, is_ins):
-        #         filter_functions.append(Q(**{intersect: areas['area'],
-        #                                      is_in: ids}))
-        #
-        # # apply queries to chains
-        # if role == 'all':
-        #     # ALL nodes should satisfy the criteria
-        #     chains = chains.filter(np.bitwise_and.reduce(filter_functions))
-        # elif role == 'any':
-        #     # ANY node should satisfy the criteria
-        #     chains = chains.filter(np.bitwise_or.reduce(filter_functions))
-        # else:
-        #     # REQUESTED node should satisfy the criteria
-        #     chains = chains.filter(filter_functions[0])
+            # check where with respect to the area
+            where = origin.pop('where', 'in')
+            if where == 'in':
+                queryset = queryset.filter(origin__geom__within=area)
+            else:
+                queryset = queryset.exclude(origin__geom__within=area)
 
-        return chains
+        # filter by destination
+        area_ids = destination.pop('selectedAreas', None)
+        if area_ids:
+            area = Area.objects.filter(id__in=area_ids).aggregate(area=Union('geom'))['area']
+            queryset = queryset.filter(destination__geom__intersects=area)
+
+            # check where with respect to the area
+            where = destination.pop('where', 'in')
+            if where == 'in':
+                queryset = queryset.filter(destination__geom__within=area)
+            else:
+                queryset = queryset.exclude(destination__geom__within=area)
+
+        # filter by flows
+
+        return queryset
 
     def serialize_nodes(self, nodes, add_fields=[]):
         '''
