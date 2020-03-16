@@ -134,11 +134,9 @@ class ExtraDescriptionListSerializer(ExtraDescriptionSerializer):
 class RoutingSerializer(HyperlinkedModelSerializer):
     origin = PrimaryKeyRelatedField(read_only=True)
     destination = PrimaryKeyRelatedField(read_only=True)
-    geom = GeometryField()
 
     class Meta:
         model = Routing
-        geo_field = 'geom'
         fields = ('url',
                   'id',
                   'origin',

@@ -6,7 +6,8 @@ from geofluxus.apps.asmfa.models import (Flow,
                                          Classification,
                                          Activity,
                                          ActivityGroup,
-                                         Area)
+                                         Area,
+                                         Routing)
 from geofluxus.apps.asmfa.serializers import (FlowSerializer)
 import json
 import numpy as np
@@ -157,7 +158,7 @@ class FilterFlowViewSet(PostGetViewMixin,
         # retrieve selected areas
         origin = filter['origin']
         destination = filter['destination']
-        flows = filter['flows']
+        flow_areas = filter['flows']
 
         # filter by origin
         area_ids = origin.pop('selectedAreas', [])
@@ -172,10 +173,10 @@ class FilterFlowViewSet(PostGetViewMixin,
                 queryset = queryset.exclude(origin__geom__within=area)
 
         # filter by destination
-        area_ids = destination.pop('selectedAreas', None)
+        area_ids = destination.pop('selectedAreas', [])
         if area_ids:
             area = Area.objects.filter(id__in=area_ids).aggregate(area=Union('geom'))['area']
-            queryset = queryset.filter(destination__geom__intersects=area)
+            queryset = queryset.filNoneter(destination__geom__intersects=area)
 
             # check where with respect to the area
             where = destination.pop('where', 'in')
@@ -185,6 +186,10 @@ class FilterFlowViewSet(PostGetViewMixin,
                 queryset = queryset.exclude(destination__geom__within=area)
 
         # filter by flows
+        area_ids = flow_areas
+        if area_ids:
+            # retrieve routings
+            routings = Routing.objects
 
         return queryset
 
