@@ -6,7 +6,9 @@ from geofluxus.apps.asmfa.models import (Flow,
                                          Area,
                                          Routing,
                                          Month,
-                                         Year)
+                                         Year,
+                                         Activity,
+                                         ActivityGroup)
 from geofluxus.apps.asmfa.serializers import (FlowSerializer)
 import json
 import numpy as np
@@ -17,8 +19,11 @@ from django.contrib.gis.db.models import Union
 
 
 MODEL = {
-    'month': Month,
-    'year': Year
+    # TIME DIMENSION
+    'month': Month, 'year': Year,
+
+    # ECO DIMENSION
+    'activity': Activity, 'activitygroup': ActivityGroup,
 }
 
 
@@ -198,34 +203,47 @@ class FilterFlowViewSet(PostGetViewMixin,
     def serialize(self, queryset, dimensions):
         data = []
 
-        # recover dimensions
-        time = dimensions.pop('time', None)
-
         # annotate info from chains to flows
         queryset = queryset.annotate(amount=F('flowchain__amount'))
 
-        # group flow origins / destinations
-        time_level = time.split('__')[-1]
-        time_model = MODEL[time_level]
-        time_values = time_model.objects.filter(
-            id__in=list(queryset.values_list(time, flat=True))).values_list('id', 'code')
-        time_dict = dict(time_values)
+        # recover dimensions
+        time = dimensions.pop('time', None)
+        eco = dimensions.pop('economicActivity', None)
+
+        # TIME DIMENSION
+        fields, levels = [], []
+        if time:
+            fields.append(time)
+            levels.append(time.split('__')[-1])
+
+        # ECO DIMENSION
+        if eco:
+            eco_orig = 'origin__' + eco
+            eco_dest = 'destination__' + eco
+            fields.extend([eco_orig, eco_dest])
+            levels.extend([eco_orig, eco_dest])
+
         # workaround Django ORM bug
         queryset = queryset.order_by()
 
         # aggregate flows into groups
-        groups = queryset.values(time).distinct()
+        groups = queryset.values(*fields).distinct()
 
         # serialize aggregated flow groups
         for group in groups:
+            # retrieve group
             grouped = queryset.filter(**group)
+            # and EXCLUDE it from further search...
             queryset = queryset.exclude(**group)
 
+            # aggregate amount
             group_amount = sum(grouped.values_list('amount', flat=True))
 
-            flow_item = OrderedDict((
-                (time_level, time_dict[group[time]]),
-                ('amount', group_amount),
-            ))
-            data.append(flow_item)
+            # for the dimensions, return the id
+            # to recover any info in the frontend
+            flow_item = [('amount', group_amount)]
+            for field, level in zip(fields, levels):
+                flow_item.append((field, group[level]))
+
+            data.append(OrderedDict(flow_item))
         return data
