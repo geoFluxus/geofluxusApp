@@ -219,7 +219,13 @@ label[for="activity-select"] {
     color: black;
 }
 
+
 textarea.textarea-autosize {
+    padding: 0.5rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    border: none;
+    border-radius: 18px !important;
     box-sizing: border-box;
     max-height: 94px;
     min-height: 32px;

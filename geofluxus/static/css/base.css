@@ -7,7 +7,12 @@ p {
 }
 
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     color: white;
 }
 
@@ -34,12 +39,43 @@ body {
     z-index: 400;
 }
 
+/* BORDER RADIUS */
+
 .btn {
-    "background-color: white;"
-    "border-color: white;"
-    "color: black;"
-    box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.3);
+    border-radius: 18px;
 }
+
+.dropdown {
+    border-radius: 18px;
+}
+
+.dropdown-menu.show {
+    border-radius: 18px;
+}
+
+.dropdown-menu.show .bs-searchbox input {
+    border-radius: 18px !important;
+}
+
+.dropdown-content {
+    border-radius: 18px;    
+}
+
+input {
+    border-radius: 18px;
+}
+
+.alert {
+    border-radius: 18px;
+}
+
+.filter-option {
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+}
+
+
+/* BUTTON STYLES */
 
 .btn-default {
     border-color: white;
@@ -72,7 +108,7 @@ body {
     cursor: pointer;
 }
 
-.help-icon.fa-question-circle:focus{
+.help-icon.fa-question-circle:focus {
     outline: none;
 }
 
@@ -94,7 +130,7 @@ body {
     position: absolute;
     background-color: black;
     min-width: 160px;
-    box-shadow: 0px 0px 10px 10px rgba(255, 255, 255,0.3);
+    box-shadow: 0px 0px 10px 10px rgba(255, 255, 255, 0.3);
 }
 
 .dropdown-content a {
@@ -122,13 +158,13 @@ body {
     z-index: 800;
     width: 10px;
     background: black;
-    -webkit-box-shadow: inset 10px 0 10px rgba(255,255,255,0.3);
+    -webkit-box-shadow: inset 10px 0 10px rgba(255, 255, 255, 0.3);
 }
 
 ::-webkit-scrollbar-thumb {
     background: white;
     border-radius: 10px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
 }
 
 .modal {
@@ -158,7 +194,7 @@ body {
 }
 
 .modal-backdrop {
-    background-color: rgba(0,0,0,.3);
+    background-color: rgba(0, 0, 0, .3);
 }
 
 .loader {
@@ -177,15 +213,26 @@ body {
 }
 
 #navbarID {
-    transition: top 0.3s; /* Transition effect when sliding down (and up) */
+    transition: top 0.3s;
+    /* Transition effect when sliding down (and up) */
 }
 
 @-webkit-keyframes spin {
-    0% { -webkit-transform: rotate(0deg); }
-    100% { -webkit-transform: rotate(360deg); }
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }

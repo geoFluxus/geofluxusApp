@@ -602,6 +602,11 @@ define(['views/common/baseview',
                 this.dimensions.logisticsToggle = this.el.querySelector('#dim-toggle-logistics');
                 $(this.dimensions.logisticsToggle).bootstrapToggle();
 
+                //Area select modal
+
+                this.areaLevelSelect = this.el.querySelector('#area-level-select');
+                $(this.areaLevelSelect).selectpicker();
+
                 // Initialize all textarea-autoresize components:
                 $(".selections").textareaAutoSize();
             },
