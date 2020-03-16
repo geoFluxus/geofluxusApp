@@ -691,12 +691,12 @@
                     </div>
                     
                     <div class="row align-items-end border-bottom mb-3 mt-1">
-                        <div class="col-md-3">
-                            <label class="dimensionLabel dimensionHeaderLabel">Dimension</label>                          
-                        </div>
                         <div class="col-md-3 text-center">
-                            <label class="dimensionHeaderLabel">Select or aggregate</label>                          
+                            <label class="dimensionHeaderLabel">Dimension</label>                          
                         </div>
+                        <!-- <div class="col-md-3 text-center">
+                            <label class="dimensionHeaderLabel">Select or aggregate</label>                          
+                        </div> -->
                         <div class="col-md-4 text-center">
                             <label class="dimensionHeaderLabel">Granularity</label>                          
                         </div>
@@ -705,13 +705,10 @@
                     <!-- TIME -->
                     <div class="row">
                         <div class="col-md-3">
-                            <label for="dim-toggle-time" class="dimensionLabel">Time</label>                          
-                        </div>
-                        <div class="col-md-3">
                             <div class="checkbox">
                                 <input name="dim-toggle-time" class="dimensionToggle" id="dim-toggle-time" type="checkbox"
-                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
-                                    data-off="Aggregate">
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Time"
+                                    data-off="Time">
                             </div>
                         </div>
                         <div class="col-md-4" id="gran-toggle-time-col" style="display: none">
@@ -726,13 +723,10 @@
                     <!-- Space -->
                     <div class="row align-items-center">
                         <div class="col-md-3">
-                            <label for="dim-toggle-space" class="dimensionLabel">Space</label>                          
-                        </div>
-                        <div class="col-md-3">
                             <div class="checkbox">
                                 <input name="dim-toggle-space" class="dimensionToggle" id="dim-toggle-space" type="checkbox"
-                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
-                                    data-off="Aggregate">
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Space"
+                                    data-off="Space">
                             </div>
                         </div>
                         <div class="col-md-4" id="gran-toggle-space-col" style="display: none">
@@ -747,13 +741,10 @@
                     <!-- Economic Activity -->
                     <div class="row">
                         <div class="col-md-3">
-                            <label for="dim-toggle-economic-activity" class="dimensionLabel">Economic activity</label>                          
-                        </div>
-                        <div class="col-md-3">
                             <div class="checkbox">
                                 <input name="dim-toggle-economic-activity" class="dimensionToggle" id="dim-toggle-economic-activity" type="checkbox"
-                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
-                                    data-off="Aggregate">
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Economic activity"
+                                    data-off="Economic activity">
                             </div>
                         </div>
                         <div class="col-md-4" id="gran-econ-activity-col" style="display: none">
@@ -768,13 +759,10 @@
                     <!-- Treatment Method -->
                     <div class="row">
                         <div class="col-md-3">
-                            <label for="dim-toggle-treatment-method" class="dimensionLabel">Treatment method</label>                          
-                        </div>
-                        <div class="col-md-3">
                             <div class="checkbox">
                                 <input name="dim-toggle-treatment-method" class="dimensionToggle" id="dim-toggle-treatment-method" type="checkbox"
-                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
-                                    data-off="Aggregate">
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Treatment method"
+                                    data-off="Treatment method">
                             </div>
                         </div>
                         <div class="col-md-4" id="gran-treatment-method-col" style="display: none">
@@ -826,11 +814,6 @@
         </div>
         
         <div class="row mt-3 mb-2">
-            <!-- <label class="input-label" style="margin-top: .5rem; margin-right: 10px;">Display Level</label>
-            <select class="form-control" name="display-level-select" style="max-width: 200px; float: left;">
-                <option value="activitygroup">Activity Group</option>
-                <option value="activity">Activity</option>
-            </select> -->
             <button id='reset-filters' class="btn btn-warning"
                 title="Reset all the filters"
                 style="margin-left: 20px; float: left; width: 10em">Reset filters

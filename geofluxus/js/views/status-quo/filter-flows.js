@@ -467,7 +467,7 @@ define(['views/common/baseview',
                     $("#gran-toggle-time-col").fadeToggle();
                 });
                 $("#dim-toggle-space").change(function () {
-                    $("#gran-toggle-space-col").fadeIn();
+                    $("#gran-toggle-space-col").fadeToggle();
                 });
                 $("#dim-toggle-economic-activity").change(function () {
                     $("#gran-econ-activity-col").fadeToggle();
@@ -950,20 +950,19 @@ define(['views/common/baseview',
 
                 // //////////////////////////////////
                 // Dimension controls:
-
                 $(_this.dimensions.timeToggle).bootstrapToggle('off');
                 $(_this.dimensions.timeToggleGran).bootstrapToggle('Year');
                 $(_this.dimensions.spaceToggle).bootstrapToggle('off');
-                $(_this.dimensions.spaceLevelGranSelect).val('1');
+                $(_this.dimensions.spaceLevelGranSelect).val($('#dim-space-gran-select:first-child')[0].value);
                 $(_this.dimensions.economicActivityToggle).bootstrapToggle('off');
-                $(_this.dimensions.economicActivityToggleGran).bootstrapToggle('Activity group');
+                $(_this.dimensions.economicActivityToggleGran).bootstrapToggle('off');
                 $(_this.dimensions.treatmentMethodToggle).bootstrapToggle('off');
-                $(_this.dimensions.treatmentMethodToggleGran).bootstrapToggle('Treatment method group');
+                $(_this.dimensions.treatmentMethodToggleGran).bootstrapToggle('off');
 
-                $("#gran-toggle-time-col").fadeOut();
-                $("#gran-toggle-space-col").fadeOut();
-                $("#gran-econ-activity-col").fadeOut();
-                $("#gran-treatment-method-col").fadeOut();
+                $("#gran-toggle-time-col").hide();
+                $("#gran-toggle-space-col").hide();
+                $("#gran-econ-activity-col").hide();
+                $("#gran-treatment-method-col").hide();
 
                 // Empty all textareas:
                 $(".selections").html("");

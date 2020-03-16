@@ -178,12 +178,6 @@ label[for="activity-select"] {
 }
 
 /* DIMENSIONS */
-.dimensionLabel {
-    float: right;
-    text-align: right;
-    margin-top: 0.5rem;
-}
-
 .dimensionHeaderLabel {
     margin-top: 0.5rem;
     font-weight: 900;
