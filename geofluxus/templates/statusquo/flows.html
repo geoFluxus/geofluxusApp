@@ -663,7 +663,7 @@
 
         <h4 style="padding-bottom: 0.5em; padding-top: 1em">Dimensions</h4>
 
-        <div class="card bg-dark">
+        <div class="card bg-dark" id="dimensionsCard">
 
             <!-- IF WE NEED COLLAPSE LATER, UNCOMMENT THIS -->
             <!-- <div class="card-header" id="card-header-collapse-dimensions">
@@ -681,22 +681,11 @@
             <!-- <div id="collapseDimensionBlock" class="collapse" aria-labelledby="card-header-collapse-dimension"
                  data-parent="#filterBlock"> -->
 
-                <div class="card-body">
-
-                    <!-- Max dimensions -->
-                    <div class="row">
-                        <div class="col-md-6 mt-3">
-                            <label>You can select up to <strong>one</strong> dimension.</label>                          
-                        </div>
-                    </div>
-                    
+                <div class="card-body">                    
                     <div class="row align-items-end border-bottom mb-3 mt-1">
                         <div class="col-md-3 text-center">
                             <label class="dimensionHeaderLabel">Dimension</label>                          
                         </div>
-                        <!-- <div class="col-md-3 text-center">
-                            <label class="dimensionHeaderLabel">Select or aggregate</label>                          
-                        </div> -->
                         <div class="col-md-4 text-center">
                             <label class="dimensionHeaderLabel">Granularity</label>                          
                         </div>
@@ -808,7 +797,16 @@
                         </div>
                     </div> -->
             
-  
+                     <!-- Max dimensions -->
+                     <div class="row" id="alertMaxDimensionsRow" style="display: none;">
+                        <div class="col mt-3 text-center">
+                            <div class="alert alert-warning fade show" id="alertMaxDimensions" role="alert">
+                                You can select up to <strong><%= maxNumberOfDimensions %> dimensions</strong> at the same time.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
                 </div>
             <!-- </div> -->
         </div>

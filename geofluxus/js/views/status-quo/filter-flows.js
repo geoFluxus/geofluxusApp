@@ -123,6 +123,7 @@ define(['views/common/baseview',
                     levels: this.areaLevels,
                     years: this.years,
                     months: this.months,
+                    maxNumberOfDimensions: this.maxNumberOfDimensions,
                 });
 
                 // Activate help icons
@@ -409,9 +410,7 @@ define(['views/common/baseview',
                     $(".destinationContainerTreatmentMethod").fadeIn();
                 });
 
-
                 // Flows: ---------------------------
-
                 $(this.flows.yearSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.yearSelect).on('changed.bs.select', filterMonths);
                 $(this.flows.monthSelect).on('changed.bs.select', multiCheck);
@@ -429,16 +428,30 @@ define(['views/common/baseview',
                 $(this.flows.isCompositeSelect).on('changed.bs.select', multiCheck);
 
 
-
                 // Dimension toggles: ---------------------------
 
-                $(".dimensionToggle").change(function () {
+                // Show alert if user clicks on disabled dimension toggle:
+                $("#dimensionsCard .toggle.btn").on("click", function (event) {
+
+                    if ($($(event.currentTarget)[0]).is('[disabled=disabled]')) {
+                        console.log("A disabled toggle has been clicked");
+
+                        $("#alertMaxDimensionsRow").fadeIn("fast");
+                        $("#alertMaxDimensions").alert();
+
+                        setTimeout(function () {
+                            $("#alertMaxDimensionsRow").fadeOut("fast");
+                        }, 6000);
+                    }
+                });
+
+                // Disable dimension toggles for max number of dimensions:
+                $(".dimensionToggle").change(function (event) {
                     let checkedToggles = [];
                     let uncheckedToggles = [];
 
                     // Divide the toggles in arrays of checked and unchecked toggles:
                     $('.dimensionToggle').each(function (index, value) {
-
                         let checked = $(this.parentElement.firstChild).prop('checked')
                         if (!checked) {
                             uncheckedToggles.push($(this));
@@ -459,7 +472,6 @@ define(['views/common/baseview',
                             this.bootstrapToggle('enable');
                         });
                     }
-
                 });
 
                 // Show granularity on toggle change:
@@ -481,12 +493,8 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////////////////////
                 // Origin-controls:
-
                 this.origin.inOrOut = this.el.querySelector('#origin-area-in-or-out');
                 $(this.origin.inOrOut).bootstrapToggle();
-
-                // this.origin.roleSelect = this.el.querySelector('select[name="origin-role"]');
-                // $(this.origin.roleSelect).selectpicker();
 
                 this.origin.activityGroupsSelect = this.el.querySelector('select[name="origin-activitygroup-select"]');
                 $(this.origin.activityGroupsSelect).selectpicker();
@@ -502,12 +510,8 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////////////////////
                 // Destination-controls:
-
                 this.destination.inOrOut = this.el.querySelector('#destination-area-in-or-out');
                 $(this.destination.inOrOut).bootstrapToggle();
-
-                // this.destination.roleSelect = this.el.querySelector('select[name="destination-role"]');
-                // $(this.destination.roleSelect).selectpicker();
 
                 this.destination.activityGroupsSelect = this.el.querySelector('select[name="destination-activitygroup-select"]');
                 $(this.destination.activityGroupsSelect).selectpicker();
@@ -524,7 +528,6 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////////////////////
                 // Flows-controls:
-
                 this.flows.yearSelect = this.el.querySelector('select[name="flows-year-select"]');
                 $(this.flows.yearSelect).selectpicker();
 
@@ -573,43 +576,34 @@ define(['views/common/baseview',
 
                 // //////////////////////////////////
                 // Dimension controls:
-
-                // Time
                 this.dimensions.timeToggle = this.el.querySelector('#dim-toggle-time');
                 $(this.dimensions.timeToggle).bootstrapToggle();
                 this.dimensions.timeToggleGran = this.el.querySelector('#gran-toggle-time');
                 $(this.dimensions.timeToggleGran).bootstrapToggle();
 
-                // Space
                 this.dimensions.spaceToggle = this.el.querySelector('#dim-toggle-space');
                 $(this.dimensions.spaceToggle).bootstrapToggle();
                 this.dimensions.spaceLevelGranSelect = this.el.querySelector('#dim-space-gran-select');
                 $(this.dimensions.spaceLevelGranSelect).selectpicker();
 
-                // Economic activity:
                 this.dimensions.economicActivityToggle = this.el.querySelector('#dim-toggle-economic-activity');
                 $(this.dimensions.economicActivityToggle).bootstrapToggle();
                 this.dimensions.economicActivityToggleGran = this.el.querySelector('#gran-toggle-econ-activity');
                 $(this.dimensions.economicActivityToggleGran).bootstrapToggle();
 
-                // Treatment method:
                 this.dimensions.treatmentMethodToggle = this.el.querySelector('#dim-toggle-treatment-method');
                 $(this.dimensions.treatmentMethodToggle).bootstrapToggle();
-
                 this.dimensions.treatmentMethodToggleGran = this.el.querySelector('#gran-toggle-treatment-method');
                 $(this.dimensions.treatmentMethodToggleGran).bootstrapToggle();
 
-                // Materials:
                 this.dimensions.materialToggle = this.el.querySelector('#dim-toggle-material');
                 $(this.dimensions.materialToggle).bootstrapToggle();
 
-                // Logistics:
                 this.dimensions.logisticsToggle = this.el.querySelector('#dim-toggle-logistics');
                 $(this.dimensions.logisticsToggle).bootstrapToggle();
 
                 // Initialize all textarea-autoresize components:
                 $(".selections").textareaAutoSize();
-
             },
 
             renderAreaSelectModal: function () {
