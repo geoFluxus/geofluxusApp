@@ -192,11 +192,12 @@ define(['views/common/baseview',
                 // ///////////////////////////////
                 // ORIGIN
 
-                if (filter.selectedAreasOrigin !== undefined) {
-                    filterParams.origin.selectedAreas = [];
-                    filter.selectedAreasOrigin.forEach(function (area) {
-                        filterParams.origin.selectedAreas.push(area.id);
-                    });
+                if (filter.selectedAreasOrigin !== undefined &&
+                    filter.selectedAreasOrigin.length > 0) {
+                        filterParams.origin.selectedAreas = [];
+                        filter.selectedAreasOrigin.forEach(function (area) {
+                            filterParams.origin.selectedAreas.push(area.id);
+                        });
                 }
                 if ($(filter.origin.inOrOut).prop('checked')) {
                     filterParams.origin.inOrOut = 'outside';
@@ -225,7 +226,8 @@ define(['views/common/baseview',
                 // ///////////////////////////////
                 // DESTINATION
 
-                if (filter.selectedAreasDestination !== undefined) {
+                if (filter.selectedAreasDestination !== undefined &&
+                    filter.selectedAreasDestination.length > 0) {
                     filterParams.destination.selectedAreas = [];
                     filter.selectedAreasDestination.forEach(function (area) {
                         filterParams.destination.selectedAreas.push(area.id);
@@ -256,7 +258,8 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////
                 // FLOWS
-                if (filter.selectedAreasFlows !== undefined) {
+                if (filter.selectedAreasFlows !== undefined &&
+                    filter.selectedAreasFlows.length > 0) {
                     filterParams.flows.selectedAreas = [];
                     filter.selectedAreasFlows.forEach(function (area) {
                         filterParams.flows.selectedAreas.push(area.id);

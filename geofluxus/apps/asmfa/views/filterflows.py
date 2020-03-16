@@ -54,23 +54,22 @@ class FilterFlowViewSet(PostGetViewMixin,
             except json.decoder.JSONDecodeError:
                 params[key] = value
 
-        # retrieve display level
-        display_level = params.pop('displayLevel')
-        inv_map = {v: k for k, v in LEVEL_KEYWORD.items()}
-        aggregation_level = inv_map[display_level]
+        # retrieve non-spatial filters
+        chain_filters = params.pop('flows', None)
+        dimension_filters = params.pop('dimensions', None)
 
-        # retrieve area & generic filters
-        area_filters = params.pop('areaFilters')
-        gen_filters = params.pop('genFilters')
+        # retrieve spatial filters
+        origin_areas = params.pop('origin', None)
+        destination_areas = params.pop('destination', None)
+        flow_areas = chain_filters.pop('selectedAreas', None)
 
         # fetch all chains
         chains = FlowChain.objects.all()
 
-        # filter chains with area filters
-        chains = self.filter_areas(queryset, chains, area_filters)
-
-        # filter chains with generic filters
-        chains = self.filter(chains, gen_filters)
+        # filter chains
+        # chains contain all flow info &
+        # always less than flows !!!
+        chains = self.filter(chains, chain_filters)
 
         # retrieve flows from filtered chains
         ids = list(chains.values_list('id', flat=True))
@@ -79,6 +78,64 @@ class FilterFlowViewSet(PostGetViewMixin,
                               aggregation_level)
 
         return Response(data)
+
+    # filter chain classifications
+    def filter_classif(self, chains, filter):
+        '''
+        Filter booleans with multiple selections
+        '''
+        queries = []
+        func, vals = filter
+        for val in vals:
+            queries.append(Q(**{func:vals}))
+        if len(queries) == 1:
+            chains = chains.filter(queries[0])
+        if len(queries) > 1:
+            chains = chains.filter(np.bitwise_or.reduce(queries))
+        return chains
+
+    # chain filtering
+    def filter(self, chains, filters):
+        '''
+        Filter chains with generic filters
+        (non-spatial filtering)
+        '''
+
+        # annotate classifications to chains
+        classifs = Classification.objects
+        subq = classifs.filter(flowchain_id=OuterRef('pk'))
+        chains = chains.annotate(mixed=Subquery(subq.values('mixed')),
+                                 clean=Subquery(subq.values('clean')),
+                                 direct=Subquery(subq.values('direct_use')),
+                                 composite=Subquery(subq.values('composite')),
+                                 )
+
+        # classification lookups
+        # these should be handled separately!
+        lookups = ['clean',
+                   'mixed',
+                   'direct',
+                   'composite']
+
+        # form queries
+        queries = []
+        for func, val in filters.items():
+            # handle classifications (multiple booleans!)
+            if func in lookups:
+                chains = self.filter_classif(chains, (func, val))
+                continue
+
+            # form query & append
+            query = Q(**{func: val})
+            queries.append(query)
+
+        # apply queries
+        if len(queries) == 1:
+            chains = chains.filter(queries[0])
+        if len(queries) > 1:
+            chains = chains.filter(np.bitwise_and.reduce(queries))
+
+        return chains
 
     def filter_areas(self, queryset, chains, filters):
         '''
@@ -176,63 +233,6 @@ class FilterFlowViewSet(PostGetViewMixin,
             chains = chains.filter(filter_functions[0])
 
         return chains
-
-    def filter(self, chains, filters):
-        '''
-        Filter chains with generic filters
-        (non-spatial filtering)
-        '''
-
-        # annotate classifications to chains
-        classifs = Classification.objects
-        subq = classifs.filter(flowchain_id=OuterRef('pk'))
-        chains = chains.annotate(mixed=Subquery(subq.values('mixed')),
-                                 clean=Subquery(subq.values('clean')),
-                                 direct=Subquery(subq.values('direct_use')),
-                                 composite=Subquery(subq.values('composite')),
-                                 )
-
-        # classification lookups
-        # these should be handled separately!
-        lookups = ['clean',
-                   'mixed',
-                   'direct',
-                   'composite']
-
-        # form queries
-        queries = []
-        for func, val in filters.items():
-            # handle multiple booleans
-            if func in lookups:
-                filter = (func, val)
-                chains = self.filter_classif(chains, filter)
-                continue
-
-            # form query & append
-            query = Q(**{func: val})
-            queries.append(query)
-
-        # apply queries
-        if len(queries) == 1:
-            chains = chains.filter(queries[0])
-        if len(queries) > 1:
-            chains = chains.filter(np.bitwise_and.reduce(queries))
-
-        return chains
-
-    def filter_classif(self, queryset, filter):
-        '''
-        Filter booleans with multiple selections
-        '''
-        funcs = []
-        lookup, options = filter
-        for option in options:
-            funcs.append(Q(**{lookup: option}))
-        if len(funcs) == 1:
-            queryset = queryset.filter(funcs[0])
-        if len(funcs) > 1:
-            queryset = queryset.filter(np.bitwise_or.reduce(funcs))
-        return queryset
 
     def serialize_nodes(self, nodes, add_fields=[]):
         '''
