@@ -434,8 +434,6 @@ define(['views/common/baseview',
                 $("#dimensionsCard .toggle.btn").on("click", function (event) {
 
                     if ($($(event.currentTarget)[0]).is('[disabled=disabled]')) {
-                        console.log("A disabled toggle has been clicked");
-
                         $("#alertMaxDimensionsRow").fadeIn("fast");
                         $("#alertMaxDimensions").alert();
 
