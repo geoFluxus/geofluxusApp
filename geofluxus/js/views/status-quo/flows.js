@@ -272,9 +272,9 @@ define(['views/common/baseview',
 
                 if (year[0] !== "-1") {
                     if (month == "-1") {
-                        filterParams.flows['year'] = year;
+                        filterParams.flows['month__year__in'] = year;
                     } else {
-                        filterParams.flows['month'] = month;
+                        filterParams.flows['month__in'] = month;
                     }
                 }
 
@@ -287,11 +287,11 @@ define(['views/common/baseview',
                 if (wastes02[0] !== "-1") {
                     // Waste04 is All, so send Waste02:
                     if (wastes04[0] == "-1") {
-                        filterParams.flows['waste02__in'] = wastes02;
+                        filterParams.flows['waste06__waste04__waste02__in'] = wastes02;
                     } else {
                         // Waste06 is All, so send Waste04
                         if (wastes06[0] == "-1") {
-                            filterParams.flows['waste04__in'] = wastes04;
+                            filterParams.flows['waste06__waste04__in'] = wastes04;
                         } else {
                             // Send Waste06:
                             filterParams.flows['waste06__in'] = wastes06;

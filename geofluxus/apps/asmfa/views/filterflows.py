@@ -66,10 +66,12 @@ class FilterFlowViewSet(PostGetViewMixin,
         # fetch all chains
         chains = FlowChain.objects.all()
 
-        # filter chains
+        # filter chains with non-spatial filters
         # chains contain all flow info &
         # always less than flows !!!
         chains = self.filter(chains, chain_filters)
+
+
 
         # retrieve flows from filtered chains
         ids = list(chains.values_list('id', flat=True))

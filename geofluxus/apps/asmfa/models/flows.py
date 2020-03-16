@@ -22,8 +22,8 @@ class FlowChain(models.Model):
                               on_delete=models.CASCADE)
     process = models.ForeignKey(Process,
                                 on_delete=models.CASCADE)
-    waste = models.ForeignKey(Waste06,
-                              on_delete=models.CASCADE)
+    waste06 = models.ForeignKey(Waste06,
+                                on_delete=models.CASCADE)
     materials = models.ManyToManyField(Material,
                                        through='MaterialInChain')
     products = models.ManyToManyField(Product,
