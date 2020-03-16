@@ -2,12 +2,11 @@ from geofluxus.apps.utils.views import (PostGetViewMixin,
                                         ViewSetMixin,
                                         ModelPermissionViewSet)
 from geofluxus.apps.asmfa.models import (Flow,
-                                         FlowChain,
                                          Classification,
-                                         Activity,
-                                         ActivityGroup,
                                          Area,
-                                         Routing)
+                                         Routing,
+                                         Month,
+                                         Year)
 from geofluxus.apps.asmfa.serializers import (FlowSerializer)
 import json
 import numpy as np
@@ -17,14 +16,9 @@ from django.db.models import (Q, OuterRef, Subquery, F)
 from django.contrib.gis.db.models import Union
 
 
-FILTER_SUFFIX = {
-    Activity: '__activity',
-    ActivityGroup: '__activity__activitygroup'
-}
-
-LEVEL_KEYWORD = {
-    Activity: 'activity',
-    ActivityGroup: 'activitygroup'
+MODEL = {
+    'month': Month,
+    'year': Year
 }
 
 
@@ -57,7 +51,6 @@ class FilterFlowViewSet(PostGetViewMixin,
 
         # retrieve non-spatial filters
         filters = params.pop('flows', {})
-        dimension_filters = params.pop('dimensions', None)
 
         # retrieve spatial filters
         origin = params.pop('origin', {})
@@ -81,13 +74,10 @@ class FilterFlowViewSet(PostGetViewMixin,
         flows = Flow.objects
         flows = flows.filter(flowchain__id__in=ids)
 
-        # # retrieve flows from filtered chains
-        # ids = list(chains.values_list('id', flat=True))
-        # queryset = queryset.filter(flowchain_id__in=ids)
-        # data = self.serialize(queryset,
-        #                       aggregation_level)
-        #
-        # return Response(data)
+        # serialize data according to dimension
+        dimensions = params.pop('dimensions', {})
+        data = self.serialize(queryset, dimensions)
+        return Response(data)
 
     # filter chain classifications
     def filter_classif(self, queryset, filter):
@@ -176,7 +166,6 @@ class FilterFlowViewSet(PostGetViewMixin,
         area_ids = destination.pop('selectedAreas', [])
         if area_ids:
             area = Area.objects.filter(id__in=area_ids).aggregate(area=Union('geom'))['area']
-            queryset = queryset.filNoneter(destination__geom__intersects=area)
 
             # check where with respect to the area
             where = destination.pop('where', 'in')
@@ -185,85 +174,58 @@ class FilterFlowViewSet(PostGetViewMixin,
             else:
                 queryset = queryset.exclude(destination__geom__within=area)
 
-        # filter by flows
-        area_ids = flow_areas
-        if area_ids:
-            # retrieve routings
-            routings = Routing.objects
+        # # filter by flows
+        # area_ids = flow_areas
+        # if area_ids:
+        #     # retrieve routings
+        #     routings = Routing.objects
+        #
+        #     subq = routings.filter(flowchain__id=OuterRef('flowchain__id'))
 
         return queryset
 
-    def serialize_nodes(self, nodes, add_fields=[]):
-        '''
-        serialize actors, activities or groups in the same way
-        add_locations works, only for actors
-        '''
-        args = ['id', 'name'] + add_fields
-        values = nodes.values(*args)
-        node_dict = {v['id']: v for v in values}
-        node_dict[None] = None
-        return node_dict
+    # def serialize_nodes(self, nodes, add_fields=[]):
+    #     '''
+    #     serialize actors, activities or groups in the same way
+    #     add_locations works, only for actors
+    #     '''
+    #     args = ['id', 'name'] + add_fields
+    #     values = nodes.values(*args)
+    #     node_dict = {v['id']: v for v in values}
+    #     node_dict[None] = None
+    #     return node_dict
 
-    def serialize(self, queryset, aggregation_level):
-        '''
-        serialize given queryset of flows to JSON,
-        aggregates flows between nodes on actor level to the levels determined
-        by origin_model and destination_model
-        '''
+    def serialize(self, queryset, dimensions):
         data = []
+
+        # recover dimensions
+        time = dimensions.pop('time', None)
 
         # annotate info from chains to flows
         queryset = queryset.annotate(amount=F('flowchain__amount'))
 
-        # collect flow origins / destinations
-        # according to aggregation_level
-        origin_filter = 'origin' + FILTER_SUFFIX[aggregation_level] + '__id'
-        destination_filter = 'destination' + FILTER_SUFFIX[aggregation_level] + '__id'
-        origin_level = LEVEL_KEYWORD[aggregation_level]
-        destination_level = LEVEL_KEYWORD[aggregation_level]
-        origins = aggregation_level.objects.filter(
-            id__in=list(queryset.values_list(origin_filter, flat=True)))
-        destinations = aggregation_level.objects.filter(
-            id__in=list(queryset.values_list(destination_filter, flat=True)))
+        # group flow origins / destinations
+        time_level = time.split('__')[-1]
+        time_model = MODEL[time_level]
+        time_values = time_model.objects.filter(
+            id__in=list(queryset.values_list(time, flat=True))).values_list('id', 'code')
+        time_dict = dict(time_values)
         # workaround Django ORM bug
         queryset = queryset.order_by()
 
         # aggregate flows into groups
-        groups = queryset.values(origin_filter,
-                                 destination_filter,
-                                 ).distinct()
-
-        def get_code_field(model):
-            if model == Activity:
-                return 'nace'
-            return 'code'
-
-        # serialize origins / destinations
-        origin_dict = self.serialize_nodes(
-            origins,
-            add_fields=[get_code_field(aggregation_level)]
-        )
-        destination_dict = self.serialize_nodes(
-            destinations,
-            add_fields=[get_code_field(aggregation_level)]
-        )
+        groups = queryset.values(time).distinct()
 
         # serialize aggregated flow groups
         for group in groups:
             grouped = queryset.filter(**group)
             queryset = queryset.exclude(**group)
 
-            origin_item = origin_dict[group[origin_filter]]
-            origin_item['level'] = origin_level
-            dest_item = destination_dict[group[destination_filter]]
-            dest_item['level'] = destination_level
-
-            total_amount = sum(grouped.values_list('amount', flat=True))
+            group_amount = sum(grouped.values_list('amount', flat=True))
 
             flow_item = OrderedDict((
-                ('origin', origin_item),
-                ('destination', dest_item),
-                ('amount', total_amount),
+                (time_level, time_dict[group[time]]),
+                ('amount', group_amount),
             ))
             data.append(flow_item)
         return data

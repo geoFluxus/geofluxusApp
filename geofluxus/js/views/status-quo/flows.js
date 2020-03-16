@@ -404,31 +404,26 @@ define(['views/common/baseview',
                 // DIMENSIONS
 
                 if ($(filter.dimensions.timeToggle).prop("checked")) {
-                    filterParams.dimensions.time = {
-                        selected: true,
-                        granularity: $(filter.dimensions.timeToggleGran).prop("checked") ? 'month' : 'year',
-                    }
+                     var gran = $(filter.dimensions.timeToggleGran).prop("checked") ? 'month' : 'year';
+                     var timeFilter;
+                     if (gran == 'month') {
+                        timeFilter = 'flowchain__month'
+                     } else {
+                        timeFilter = 'flowchain__month__year'
+                     }
+                     filterParams.dimensions.time = timeFilter;
                 }
 
                 if ($(filter.dimensions.spaceToggle).prop("checked")) {
-                    filterParams.dimensions.spaceToggle = {
-                        selected: true,
-                        granularity: $('#dim-space-gran-select option:selected').text(),
-                    }
+                    filterParams.dimensions.spaceToggle = $('#dim-space-gran-select option:selected').text();
                 }
 
                 if ($(filter.dimensions.economicActivityToggle).prop("checked")) {
-                    filterParams.dimensions.economicActivity = {
-                        selected: true,
-                        granularity: $(filter.dimensions.economicActivityToggle).prop("checked") ? 'Activity' : 'Activity group',
-                    }
+                    filterParams.dimensions.economicActivity = $(filter.dimensions.economicActivityToggle).prop("checked") ? 'Activity' : 'Activity group';
                 }
 
                 if ($(filter.dimensions.treatmentMethodToggle).prop("checked")) {
-                    filterParams.dimensions.treatmentMethod = {
-                        selected: true,
-                        granularity: $(filter.dimensions.treatmentMethodToggle).prop("checked") ? 'Treatment method' : 'Treatment method group',
-                    }
+                    filterParams.dimensions.treatmentMethod = $(filter.dimensions.treatmentMethodToggle).prop("checked") ? 'Treatment method' : 'Treatment method group';
                 }
 
                 console.log(filterParams);
