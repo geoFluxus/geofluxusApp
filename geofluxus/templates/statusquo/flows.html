@@ -138,42 +138,29 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                
+                    </div>      
 
                     <div class="row mt-4">
                         <div class="col-md-4">
-                            <label for="origin-role-select">Origin role</label>
+                            <label for="origin-role-radio">Origin role</label>
                             <a class="help-icon fas fa-question-circle" data-toggle="popover"
                             title="Role of the Actor"
                             data-html="true" tabindex="0"
                             data-content='This filter allows you to filter the flows based on the role of the actor. '>
                             </a>
-                            <select id="origin-role-select" name="origin-role" class="form-control form-control-sm selectpicker"
-                                    data-dropup-auto="false"
-                                    data-size="6">
-                                <option value='any' selected>Both roles</option>
-                                <option data-divider="true"></option>
-                                <option value='production'>Waste production</option>
-                                <option value='treatment'>Waste treatment</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- <div class="row originContainerActivity" style="display: none;">
-                        <div class="col-md-4">
-                            <label for="origin-toggleFilterLevel">Filter level</label>
-                            <div class="checkbox">
-                                <input name="filter-level-select" id="origin-toggleFilterLevel" type="checkbox"
-                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Activities"
-                                    data-off="Activity groups">
+                            <div class="btn-group btn-group-toggle" id="origin-role-radio" data-toggle="buttons" style="width: 100%;">
+                                <label class="btn btn-sm btn-primary" style="width: 40%;">
+                                    <input type="radio" name="options" id="origin-role-radio-production" checked>Production
+                                </label>
+                                <label class="btn btn-sm btn-primary active" style="width: 20%;">
+                                    <input type="radio" name="options" id="origin-role-radio-both">Both
+                                </label>
+                                <label class="btn btn-sm btn-primary" style="width: 40%;">
+                                    <input type="radio" name="options" id="origin-role-radio-treatment">Treatment
+                                </label>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            
-                        </div>
-                    </div> -->
+                    </div>
 
                     <div class="row originContainerActivity" style="display: none;">
                         <div class="col-md-4">
@@ -187,7 +174,7 @@
                                 <option selected value="-1">All (<%= activityGroups.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% activityGroups.forEach(function(activitygroup){ %>
-                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%> <%= activitygroup.get('name') %> (<%=
+                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%> <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %> (<%=
                                     activitygroup.get('flow_count') %> <%= (activitygroup.get('flow_count') == 1) ? 'flow' : 'flows' %>)
                                 </option>
                                 <% }); %>
@@ -203,7 +190,7 @@
                                 <option selected value="-1">All (<%= activities.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% activities.forEach(function(activity){ %>
-                                <option value="<%= activity.id %>"><%= activity.get('name') %> (<%=
+                                <option value="<%= activity.id %>"><%= activity.get('nace') %> <%= activity.get('name') %> (<%=
                                     activity.get('flow_count') %> <%= (activity.get('flow_count') == 1) ? 'flow' :
                                     'flows' %>)
                                 </option>
@@ -223,7 +210,7 @@
                             <option selected value="-1">All (<%= processgroups.count %>)</option>
                             <option data-divider="true"></option>
                             <% processgroups.forEach(function(process){ %>
-                                <option value="<%= process.id %>"><%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %></option>
+                                <option value="<%= process.id %>"><%= process.get('code') %> <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %></option>
                                 <% }); %>
                             </select>
                         </div>
@@ -321,24 +308,23 @@
 
                     <div class="row mt-4">
                         <div class="col-md-4">
-                            <label for="destination-role-select">Destination role</label>
+                            <label for="destination-role-radio">Destination role</label>
                             <a class="help-icon fas fa-question-circle" data-toggle="popover"
                             title="Role of the Actor"
                             data-html="true" tabindex="0"
                             data-content='This filter allows you to filter the flows based on the role of the actor. '>
                             </a>
-                            <select id="destination-role-select"
-                                    name="destination-role"
-                                    class="form-control form-control-sm selectpicker"
-                                    data-dropup-auto="false"
-                                    >
-                                <option value='any' selected>Both roles</option>
-                                <option data-divider="true"></option>
-                                <!-- <option value='all'>All roles within selected area</option> -->
-                                <option value='production'>Waste production</option>
-                                <!-- <option value='collection'>Collection</option> -->
-                                <option value='treatment'>Waste treatment</option>
-                            </select>
+                            <div class="btn-group btn-group-toggle" id="destination-role-radio" data-toggle="buttons" style="width: 100%;">
+                                <label class="btn btn-sm btn-primary" style="width: 40%;">
+                                    <input type="radio" name="options" id="destination-role-radio-production" checked>Production
+                                </label>
+                                <label class="btn btn-sm btn-primary active" style="width: 20%;">
+                                    <input type="radio" name="options" id="destination-role-radio-both">Both
+                                </label>
+                                <label class="btn btn-sm btn-primary" style="width: 40%;">
+                                    <input type="radio" name="options" id="destination-role-radio-treatment">Treatment
+                                </label>
+                            </div>
                         </div>
                     </div>
 
@@ -352,7 +338,7 @@
                                 <option selected value="-1">All (<%= activityGroups.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% activityGroups.forEach(function(activitygroup){ %>
-                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%> <%= activitygroup.get('name') %> (<%=
+                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%> <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %> (<%=
                                     activitygroup.get('flow_count') %> <%= (activitygroup.get('flow_count') == 1) ?
                                     'flow' : 'flows' %>)
                                 </option>
@@ -369,7 +355,7 @@
                                 <option selected value="-1">All (<%= activities.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% activities.forEach(function(activity){ %>
-                                <option value="<%= activity.id %>"><%= activity.get('name') %> (<%=
+                                <option value="<%= activity.id %>"><%= activity.get('nace') %> <%= activity.get('name') %> (<%=
                                     activity.get('flow_count') %> <%= (activity.get('flow_count') == 1) ? 'flow' :
                                     'flows' %>) | <%=(activity.get('nace'))%>
                                 </option>
@@ -389,7 +375,7 @@
                             <option selected value="-1">All (<%= processgroups.count %>)</option>
                             <option data-divider="true"></option>
                             <% processgroups.forEach(function(process){ %>
-                                <option value="<%= process.id %>"><%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %></option>
+                                <option value="<%= process.id %>"><%= process.get('code') %> <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %></option>
                                 <% }); %>
                             </select>
                         </div>
