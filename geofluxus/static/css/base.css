@@ -33,7 +33,8 @@ body {
 
 #page-content-wrapper {
     background-color: black;
-    padding-left: 80px;
+    /* padding-left: 80px; */
+    padding-left: 20px;
     margin-right: 20px;
     padding-top: 10px;
     z-index: 400;
@@ -49,6 +50,11 @@ body {
     border-radius: 18px;
 }
 
+.card {
+    border-radius: 18px;
+
+}
+
 .dropdown-menu.show {
     border-radius: 18px;
 }
@@ -58,7 +64,7 @@ body {
 }
 
 .dropdown-content {
-    border-radius: 18px;    
+    border-radius: 18px;
 }
 
 input {
@@ -159,10 +165,12 @@ input {
     color: black;
 }
 
+/* SCROLLBAR STYLING */
+
 ::-webkit-scrollbar {
     z-index: 800;
     width: 10px;
-    background: black;
+    background: grey;
     -webkit-box-shadow: inset 10px 0 10px rgba(255, 255, 255, 0.3);
 }
 
