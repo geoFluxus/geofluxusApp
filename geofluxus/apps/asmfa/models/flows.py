@@ -22,8 +22,8 @@ class FlowChain(models.Model):
                               on_delete=models.CASCADE)
     process = models.ForeignKey(Process,
                                 on_delete=models.CASCADE)
-    waste = models.ForeignKey(Waste06,
-                              on_delete=models.CASCADE)
+    waste06 = models.ForeignKey(Waste06,
+                                on_delete=models.CASCADE)
     materials = models.ManyToManyField(Material,
                                        through='MaterialInChain')
     products = models.ManyToManyField(Product,
@@ -127,8 +127,8 @@ class Routing(models.Model):
     destination = models.ForeignKey(Actor,
                                     on_delete=models.CASCADE,
                                     related_name='end')
-    geom = gis.GeometryField(null=True,
-                             blank=True)
+    geom = models.TextField(null=True,
+                            blank=True)
 
     def __str__(self):
         return '{} : {}'.format(self.origin,

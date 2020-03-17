@@ -192,14 +192,17 @@ define(['views/common/baseview',
                 // ///////////////////////////////
                 // ORIGIN
 
-                if (filter.selectedAreasOrigin !== undefined) {
-                    filterParams.origin.selectedAreas = [];
-                    filter.selectedAreasOrigin.forEach(function (area) {
-                        filterParams.origin.selectedAreas.push(area.id);
-                    });
+                if (filter.selectedAreasOrigin !== undefined &&
+                    filter.selectedAreasOrigin.length > 0) {
+                        filterParams.origin.selectedAreas = [];
+                        filter.selectedAreasOrigin.forEach(function (area) {
+                            filterParams.origin.selectedAreas.push(area.id);
+                        });
                 }
                 if ($(filter.origin.inOrOut).prop('checked')) {
-                    filterParams.origin.inOrOut = 'outside';
+                    filterParams.origin.where = 'out';
+                } else {
+                    filterParams.origin.where = 'in';
                 }
                 if (filter.origin.role != 'both') {
                     filterParams.origin.role = filter.origin.role;
@@ -224,7 +227,8 @@ define(['views/common/baseview',
                 // ///////////////////////////////
                 // DESTINATION
 
-                if (filter.selectedAreasDestination !== undefined) {
+                if (filter.selectedAreasDestination !== undefined &&
+                    filter.selectedAreasDestination.length > 0) {
                     filterParams.destination.selectedAreas = [];
                     filter.selectedAreasDestination.forEach(function (area) {
                         filterParams.destination.selectedAreas.push(area.id);
@@ -254,7 +258,8 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////
                 // FLOWS
-                if (filter.selectedAreasFlows !== undefined) {
+                if (filter.selectedAreasFlows !== undefined &&
+                    filter.selectedAreasFlows.length > 0) {
                     filterParams.flows.selectedAreas = [];
                     filter.selectedAreasFlows.forEach(function (area) {
                         filterParams.flows.selectedAreas.push(area.id);
@@ -267,9 +272,9 @@ define(['views/common/baseview',
 
                 if (year[0] !== "-1") {
                     if (month == "-1") {
-                        filterParams.flows['year'] = year;
+                        filterParams.flows['month__year__in'] = year;
                     } else {
-                        filterParams.flows['month'] = month;
+                        filterParams.flows['month__in'] = month;
                     }
                 }
 
@@ -282,11 +287,11 @@ define(['views/common/baseview',
                 if (wastes02[0] !== "-1") {
                     // Waste04 is All, so send Waste02:
                     if (wastes04[0] == "-1") {
-                        filterParams.flows['waste02__in'] = wastes02;
+                        filterParams.flows['waste06__waste04__waste02__in'] = wastes02;
                     } else {
                         // Waste06 is All, so send Waste04
                         if (wastes06[0] == "-1") {
-                            filterParams.flows['waste04__in'] = wastes04;
+                            filterParams.flows['waste06__waste04__in'] = wastes04;
                         } else {
                             // Send Waste06:
                             filterParams.flows['waste06__in'] = wastes06;
@@ -397,31 +402,33 @@ define(['views/common/baseview',
                 // DIMENSIONS
 
                 if ($(filter.dimensions.timeToggle).prop("checked")) {
-                    filterParams.dimensions.time = {
-                        selected: true,
-                        granularity: $(filter.dimensions.timeToggleGran).prop("checked") ? 'month' : 'year',
-                    }
+                     var timeFilter,
+                         gran = $(filter.dimensions.timeToggleGran).prop("checked") ? 'month' : 'year';
+                     if (gran == 'month') {
+                        timeFilter = 'flowchain__month';
+                     } else {
+                        timeFilter = 'flowchain__month__year';
+                     }
+                     filterParams.dimensions.time = timeFilter;
                 }
 
                 if ($(filter.dimensions.spaceToggle).prop("checked")) {
-                    filterParams.dimensions.spaceToggle = {
-                        selected: true,
-                        granularity: $('#dim-space-gran-select option:selected').text(),
-                    }
+                    filterParams.dimensions.spaceToggle = $('#dim-space-gran-select option:selected').text();
                 }
 
                 if ($(filter.dimensions.economicActivityToggle).prop("checked")) {
-                    filterParams.dimensions.economicActivity = {
-                        selected: true,
-                        granularity: $(filter.dimensions.economicActivityToggle).prop("checked") ? 'Activity' : 'Activity group',
+                    var economicActivityFilter,
+                        gran = $(filter.dimensions.economicActivityToggle).prop("checked") ? 'activity' : 'activity group';
+                    if (gran == 'activity') {
+                        economicActivityFilter = 'activity';
+                    } else {
+                        economicActivityFilter = 'activity__activitygroup';
                     }
+                    filterParams.dimensions.economicActivity = economicActivityFilter;
                 }
 
                 if ($(filter.dimensions.treatmentMethodToggle).prop("checked")) {
-                    filterParams.dimensions.treatmentMethod = {
-                        selected: true,
-                        granularity: $(filter.dimensions.treatmentMethodToggle).prop("checked") ? 'Treatment method' : 'Treatment method group',
-                    }
+                    filterParams.dimensions.treatmentMethod = $(filter.dimensions.treatmentMethodToggle).prop("checked") ? 'Treatment method' : 'Treatment method group';
                 }
 
                 console.log(filterParams);

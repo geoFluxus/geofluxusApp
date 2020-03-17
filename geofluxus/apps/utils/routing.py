@@ -114,7 +114,7 @@ if __name__ == "__main__":
             ),
     
             route AS (
-                SELECT ways.the_geom as lines FROM pgr_dijkstra(
+                SELECT edge FROM pgr_dijkstra(
                     'SELECT gid AS id,
                            source,
                            target,
@@ -135,19 +135,17 @@ if __name__ == "__main__":
                      ) ASC LIMIT 1),
                      false
                 ) AS dijkstra
-                LEFT JOIN ways
-                ON (dijkstra.edge = ways.gid)
                 ORDER BY seq
             )
     
-            SELECT ST_AsText(ST_LineMerge(ST_Union(lines))) as geom
+            SELECT *
             FROM route
             '''.format(orig_wkt=orig_wkt, dest_wkt=dest_wkt)
-        routing = fetch(rcur, query)[0][0]
-        # Validate & convert to geometry
-        route = validate(routing)
-        if route is not None:
-            line = '{};{};{}\n'.format(orig_name, dest_name, routing)
+        edge_ids = fetch(rcur, query)
+        routing = [str(id[0]) for id in edge_ids]
+        seq = '@'.join(routing)
+        if routing:
+            line = '{};{};{}\n'.format(orig_name, dest_name, '@'.join(routing))
             f.write(line)
 
     # Close connections
