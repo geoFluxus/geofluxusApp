@@ -418,7 +418,7 @@ define(['views/common/baseview',
 
                 if ($(filter.dimensions.economicActivityToggle).prop("checked")) {
                     var economicActivityFilter,
-                        gran = $(filter.dimensions.economicActivityToggle).prop("checked") ? 'activity' : 'activity group';
+                        gran = $(filter.dimensions.economicActivityToggleGran).prop("checked") ? 'activity' : 'activity group';
                     if (gran == 'activity') {
                         economicActivityFilter = 'activity';
                     } else {
