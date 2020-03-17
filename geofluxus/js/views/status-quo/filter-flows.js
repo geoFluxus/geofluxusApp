@@ -4,11 +4,12 @@ define(['views/common/baseview',
         'visualizations/map',
         'views/status-quo/flows',
         'openlayers',
+        'utils/utils',
         'bootstrap-toggle',
         'bootstrap-toggle/css/bootstrap-toggle.min.css',
     ],
 
-    function (BaseView, _, Collection, Map, FlowsView, ol) {
+    function (BaseView, _, Collection, Map, FlowsView, ol, utils) {
 
         var FilterFlowsView = BaseView.extend({
             initialize: function (options) {
@@ -335,7 +336,7 @@ define(['views/common/baseview',
                         $("#monthCol").fadeOut("fast");
 
                         allMonthOptionsHTML = '<option selected value="-1">All (' + _this.months.length + ')</option><option data-divider="true"></option>';
-                        _this.months.models.forEach(month => allMonthOptionsHTML += "<option value='" + month.attributes.id + "'>" + month.attributes.code.substring(2, 6) + " " + _this.returnMonthString(month.attributes.code.substring(0, 2)) + "</option>");
+                        _this.months.models.forEach(month => allMonthOptionsHTML += "<option value='" + month.attributes.id + "'>" + month.attributes.code.substring(2, 6) + " " + utils.returnMonthString(month.attributes.code.substring(0, 2)) + "</option>");
 
                         $(_this.flows.monthSelect).html(allMonthOptionsHTML);
                         $(_this.flows.monthSelect).selectpicker("refresh");
@@ -345,7 +346,7 @@ define(['views/common/baseview',
                         });
 
                         newMonthOptionsHTML = '<option selected value="-1">All (' + filteredMonths.length + ')</option><option data-divider="true"></option>';
-                        filteredMonths.forEach(month => newMonthOptionsHTML += "<option value='" + month.attributes.id + "'>" + month.attributes.code.substring(2, 6) + " " + _this.returnMonthString(month.attributes.code.substring(0, 2)) + "</option>");
+                        filteredMonths.forEach(month => newMonthOptionsHTML += "<option value='" + month.attributes.id + "'>" + month.attributes.code.substring(2, 6) + " " + utils.returnMonthString(month.attributes.code.substring(0, 2)) + "</option>");
                         $(_this.flows.monthSelect).html(newMonthOptionsHTML);
                         $(_this.flows.monthSelect).selectpicker("refresh");
 
@@ -967,15 +968,6 @@ define(['views/common/baseview',
 
                 // Refresh all selectpickers:
                 $(".selectpicker").selectpicker('refresh');
-            },
-
-            returnMonthString: function (monthNumber) {
-                monthNumber = parseInt(monthNumber) - 1;
-                const monthNames = ["January", "February", "March", "April", "May", "June",
-                    "July", "August", "September", "October", "November", "December"
-                ];
-
-                return monthNames[monthNumber]
             },
 
             close: function () {

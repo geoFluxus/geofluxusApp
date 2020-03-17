@@ -66,5 +66,13 @@ module.exports = {
         name = String(name);
         return color(name.replace(/ .*/, ""));
     },
+    returnMonthString: function (monthNumber) {
+        monthNumber = parseInt(monthNumber) - 1;
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        return monthNames[monthNumber]
+    },
 
 }

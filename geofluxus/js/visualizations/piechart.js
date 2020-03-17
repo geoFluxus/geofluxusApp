@@ -56,18 +56,23 @@ define([
                 }
             ];
 
+            console.log("Piechart constructor");
 
             new d3plus.Pie()
                 .config({
-                    data: myData,
-                    groupBy: ["Group", "Sub-Group"],
+                    //data: myData,
+                    //groupBy: ["Group", "Sub-Group"],
+                    data: options.data,
+                    groupBy: options.groupBy,
                     value: function (d) {
-                        return d["Number of Food Stores"];
+                        //return d["Number of Food Stores"];
+                        return d["amount"];
                     },
                     tooltipConfig: {
                         tbody: [
                             ["Total", function (d) {
-                                return d["Number of Food Stores"]
+                                //return d["Number of Food Stores"]
+                                return d["amount"]
                             }],
                             ["Year", function (d) {
                                 return d.year

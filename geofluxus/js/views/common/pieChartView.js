@@ -56,17 +56,87 @@ define(['views/common/baseview',
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-img': 'exportPNG',
-                    'click .export-csv': 'exportCSV',   
+                    'click .export-csv': 'exportCSV',
                 },
 
                 /*
                  * render the view
                  */
                 render: function (data) {
+                    // Flows-data is in this.options.flows
+                    let flows = this.options.flows.models;
+                    let flowsView = this.options.flowsView;
+                    let filterFlowsView = this.options.flowsView.filterFlowsView;
+                    let groupBy;
+
+                    // /////////////////////////////
+                    // Time dimension
+                    if (this.options.dimensions[0][0] == "time") {
+                        let years = filterFlowsView.years.models;
+                        let months = filterFlowsView.months.models;
+
+                        // Granularity = year
+                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
+                            groupBy = ["year"];
+
+                            // Replace year id's by year:
+                            flows.forEach(function (flow, index) {
+                                let yearObject = years.find(year => year.attributes.id == flow.attributes.year);
+
+                                flow.attributes.year = yearObject.attributes.code;
+
+                                this[index] = flow.attributes;
+                            }, flows);
+
+                            // Granularity = month:
+                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
+                            groupBy = ["year", "month"];
+
+                            // Replace Month id's by Month name:
+                            flows.forEach(function (flow, index) {
+                                let monthObject = months.find(month => month.attributes.id == flow.attributes.month);
+
+                                flow.attributes.month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
+                                flow.attributes.year = monthObject.attributes.code.substring(2, 6);
+
+                                this[index] = flow.attributes;
+                            }, flows);
+                        }
+
+                        // /////////////////////////////
+                        // Economic Activity dimension
+                    } else if (this.options.dimensions[0][0] == "economicActivity") {
+                        console.log("Economic activity")
+
+                        if (this.options.dimensions[0][1] == "activity__activitygroup") {
+                            //groupBy = ["activitygroup"];
+
+                            
+                            flows.forEach(function (flow, index) {
+                                // let monthObject = months.find(month => month.attributes.id == flow.attributes.month);
+                                
+                                // flow.attributes.month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
+                                // flow.attributes.year = monthObject.attributes.code.substring(2, 6);
+                                
+                                this[index] = flow.attributes;
+                            }, flows);
+                            
+                            console.log(flows);
+
+                        } else if (this.options.dimensions[0][1] == "activity") {
+
+                        }
+
+
+                    }
+
+
                     // Create a new D3Plus PieChart object which will be rendered in this.options.el:
                     this.pieChart = new PieChart({
                         el: this.options.el,
-                    }); 
+                        data: flows,
+                        groupBy: groupBy,
+                    });
                 },
 
                 /*

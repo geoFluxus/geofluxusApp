@@ -28,6 +28,8 @@ define(['views/common/baseview',
                 var _this = this;
                 FlowsView.__super__.initialize.apply(this, [options]);
 
+                this.selectedDimensions = [];
+
                 //_.bindAll(this, 'linkSelected');
                 //_.bindAll(this, 'linkDeselected');
                 // _.bindAll(this, 'nodeSelected');
@@ -194,10 +196,10 @@ define(['views/common/baseview',
 
                 if (filter.selectedAreasOrigin !== undefined &&
                     filter.selectedAreasOrigin.length > 0) {
-                        filterParams.origin.selectedAreas = [];
-                        filter.selectedAreasOrigin.forEach(function (area) {
-                            filterParams.origin.selectedAreas.push(area.id);
-                        });
+                    filterParams.origin.selectedAreas = [];
+                    filter.selectedAreasOrigin.forEach(function (area) {
+                        filterParams.origin.selectedAreas.push(area.id);
+                    });
                 }
                 if ($(filter.origin.inOrOut).prop('checked')) {
                     filterParams.origin.where = 'out';
@@ -239,7 +241,7 @@ define(['views/common/baseview',
                 }
                 if (filter.destination.role != 'both') {
                     filterParams.destination.role = filter.destination.role;
-                }                
+                }
                 if ($(filter.destination.activitySelect).val() == '-1') {
                     if ($(filter.destination.activityGroupsSelect).val() != '-1') {
                         filterParams.destination.activityGroups = $(filter.destination.activityGroupsSelect).val();
@@ -402,14 +404,14 @@ define(['views/common/baseview',
                 // DIMENSIONS
 
                 if ($(filter.dimensions.timeToggle).prop("checked")) {
-                     var timeFilter,
-                         gran = $(filter.dimensions.timeToggleGran).prop("checked") ? 'month' : 'year';
-                     if (gran == 'month') {
+                    var timeFilter,
+                        gran = $(filter.dimensions.timeToggleGran).prop("checked") ? 'month' : 'year';
+                    if (gran == 'month') {
                         timeFilter = 'flowchain__month';
-                     } else {
+                    } else {
                         timeFilter = 'flowchain__month__year';
-                     }
-                     filterParams.dimensions.time = timeFilter;
+                    }
+                    filterParams.dimensions.time = timeFilter;
                 }
 
                 if ($(filter.dimensions.spaceToggle).prop("checked")) {
@@ -492,31 +494,35 @@ define(['views/common/baseview',
                 this.flowMapView.rerender();
             },
 
-            renderPieChart1D: function () {
+            render1Dvisualisations: function (dimensions, flows) {
+                this.renderPieChart1D(dimensions, flows);
+                this.renderBarChart1D(dimensions, flows);
+            },
+
+            renderPieChart1D: function (dimensions, flows) {
                 var _this = this;
+                var el = ".piechart-wrapper";
 
                 if (this.pieChartView != null) this.pieChartView.close();
 
-
-                var el = ".piechart-wrapper";
-
-
                 this.pieChartView = new PieChartView({
                     el: el,
+                    dimensions: dimensions,
+                    flows: flows,
+                    flowsView: _this,
                 });
             },
 
-            renderBarChart1D: function () {
+            renderBarChart1D: function (dimensions, flows) {
                 var _this = this;
+                var el = ".barchart-wrapper";
 
                 if (this.barChartView != null) this.barChartView.close();
 
-
-                var el = ".barchart-wrapper";
-
-
                 this.barChartView = new BarChartView({
                     el: el,
+                    dimensions: dimensions,
+                    flows: flows,
                 });
             },
 
@@ -524,40 +530,48 @@ define(['views/common/baseview',
             fetchFlows: function (options) {
                 let _this = this;
                 let filterParams = this.getFlowFilterParams();
+                let data = {};
+
+                this.selectedDimensions = Object.entries(filterParams.dimensions);
 
                 var flows = new Collection([], {
                     apiTag: 'flows',
                 });
 
-                this.loader.activate();
-                var data = {};
+
+                // Only fetch Flows if at least one dimension has been selected:
+                if (_this.selectedDimensions.length > 0) {
+                    this.loader.activate();
+
+                    flows.postfetch({
+                        data: data,
+                        body: filterParams,
+                        success: function (response) {
+                            //_this.postprocess(flows);
+
+                            _this.flows = flows;
+
+                            if (_this.selectedDimensions.length == 1) {
+                                _this.render1Dvisualisations(_this.selectedDimensions, _this.flows);
+                            }
 
 
-                // PIE CHART TEST
-                _this.renderPieChart1D();
-                _this.renderBarChart1D();
-
-
-                flows.postfetch({
-                    data: data,
-                    body: filterParams,
-                    success: function (response) {
-                        _this.postprocess(flows);
-                        _this.loader.deactivate();
-                        _this.renderSankeyMap();
+                            _this.loader.deactivate();
+                            //_this.renderSankeyMap();
 
 
 
-                        if (options.success) {
-                            options.success(flows);
+                            if (options.success) {
+                                options.success(flows);
+                            }
+                        },
+                        error: function (error) {
+                            _this.loader.deactivate();
+                            console.log(error);
+                            //_this.onError(error);
                         }
-                    },
-                    error: function (error) {
-                        _this.loader.deactivate();
-                        console.log(error);
-                        //_this.onError(error);
-                    }
-                });
+                    });
+                }
             },
 
         });
