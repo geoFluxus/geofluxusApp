@@ -204,10 +204,9 @@ define(['views/common/baseview',
                 } else {
                     filterParams.origin.where = 'in';
                 }
-                if ($(filter.origin.roleSelect).val() != 'any') {
-                    filterParams.origin.role = $(filter.origin.roleSelect).val();
+                if (filter.origin.role != 'both') {
+                    filterParams.origin.role = filter.origin.role;
                 }
-
                 if ($(filter.origin.activitySelect).val() == '-1') {
                     if ($(filter.origin.activityGroupsSelect).val() != '-1') {
                         filterParams.origin.activityGroups = $(filter.origin.activityGroupsSelect).val();
@@ -238,10 +237,9 @@ define(['views/common/baseview',
                 if ($(filter.destination.inOrOut).prop('checked')) {
                     filterParams.destination.inOrOut = 'outside';
                 }
-                if ($(filter.destination.roleSelect).val() != 'any') {
-                    filterParams.destination.role = $(filter.destination.roleSelect).val();
-                }
-                
+                if (filter.destination.role != 'both') {
+                    filterParams.destination.role = filter.destination.role;
+                }                
                 if ($(filter.destination.activitySelect).val() == '-1') {
                     if ($(filter.destination.activityGroupsSelect).val() != '-1') {
                         filterParams.destination.activityGroups = $(filter.destination.activityGroupsSelect).val();
@@ -420,7 +418,7 @@ define(['views/common/baseview',
 
                 if ($(filter.dimensions.economicActivityToggle).prop("checked")) {
                     var economicActivityFilter,
-                        gran = $(filter.dimensions.economicActivityToggle).prop("checked") ? 'activity' : 'activity group';
+                        gran = $(filter.dimensions.economicActivityToggleGran).prop("checked") ? 'activity' : 'activity group';
                     if (gran == 'activity') {
                         economicActivityFilter = 'activity';
                     } else {

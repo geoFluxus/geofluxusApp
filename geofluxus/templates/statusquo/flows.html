@@ -3,7 +3,7 @@
 <!--Filter editing-->
 <script type="text/template" id="flows-template">
     <div id="filterViewContainer">
-        <div class="card bg-dark">
+        <!-- <div class="card bg-dark">
             <div class="card-header" id="ch-filterViews">
                 <h4 class="mb-0 panel-title">
                     <button class="btn btn-link collapsingHeaderButton collapsed" id="btn-filterViews"
@@ -65,7 +65,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <div id="flows-content"></div>
 </script>
@@ -78,7 +78,7 @@
         <!-- ORIGIN CONTROLS -->
         <div class="card bg-dark">
             <div class="card-header" id="card-header-collapse-origin">
-                <h4 class="mb-0">
+                <h4 class="mb-1">
                     <button class="btn btn-link collapsingHeaderButton" id="btn-collapse-header-origin"
                             data-toggle="collapse" data-target="#collapseOriginBlock" aria-expanded="true"
                             aria-controls="collapseOriginBlock">
@@ -131,49 +131,36 @@
                                 <label style="display: inline-block;">The origin of the flows must be</label>
                                 <div class="checkbox in-or-out-container">
                                     <input name="in-or-out-origin" id="origin-area-in-or-out" type="checkbox"
-                                        data-height="24" data-toggle="toggle" data-on="outside of"
+                                        data-height="24" data-toggle="toggle" data-on="outside"
                                         data-off="within"
                                         class="in-out-toggle">
                                     <label style="display: inline-block;">the selected area(s).</label>    
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                
+                    </div>      
 
                     <div class="row mt-4">
                         <div class="col-md-4">
-                            <label for="origin-role-select">Origin role</label>
+                            <label for="origin-role-radio">Origin role</label>
                             <a class="help-icon fas fa-question-circle" data-toggle="popover"
                             title="Role of the Actor"
                             data-html="true" tabindex="0"
                             data-content='This filter allows you to filter the flows based on the role of the actor. '>
                             </a>
-                            <select id="origin-role-select" name="origin-role" class="form-control form-control-sm selectpicker"
-                                    data-dropup-auto="false"
-                                    data-size="6">
-                                <option value='any' selected>Both roles</option>
-                                <option data-divider="true"></option>
-                                <option value='production'>Waste production</option>
-                                <option value='treatment'>Waste treatment</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- <div class="row originContainerActivity" style="display: none;">
-                        <div class="col-md-4">
-                            <label for="origin-toggleFilterLevel">Filter level</label>
-                            <div class="checkbox">
-                                <input name="filter-level-select" id="origin-toggleFilterLevel" type="checkbox"
-                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Activities"
-                                    data-off="Activity groups">
+                            <div class="btn-group btn-group-toggle" id="origin-role-radio" data-toggle="buttons" style="width: 100%;">
+                                <label class="btn btn-sm btn-primary" style="width: 40%;">
+                                    <input type="radio" name="options" id="origin-role-radio-production" checked>Production
+                                </label>
+                                <label class="btn btn-sm btn-primary active" style="width: 20%;">
+                                    <input type="radio" name="options" id="origin-role-radio-both">Both
+                                </label>
+                                <label class="btn btn-sm btn-primary" style="width: 40%;">
+                                    <input type="radio" name="options" id="origin-role-radio-treatment">Treatment
+                                </label>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            
-                        </div>
-                    </div> -->
+                    </div>
 
                     <div class="row originContainerActivity" style="display: none;">
                         <div class="col-md-4">
@@ -187,16 +174,15 @@
                                 <option selected value="-1">All (<%= activityGroups.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% activityGroups.forEach(function(activitygroup){ %>
-                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%> <%= activitygroup.get('name') %> (<%=
-                                    activitygroup.get('flow_count') %> <%= (activitygroup.get('flow_count') == 1) ?
-                                    'flow' : 'flows' %>)
+                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%> <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %> (<%=
+                                    activitygroup.get('flow_count') %> <%= (activitygroup.get('flow_count') == 1) ? 'flow' : 'flows' %>)
                                 </option>
                                 <% }); %>
                             </select>
                         </div>
                         <div class="col-md-4 activitySelectContainer activitySelectContainerOrigin" style="display: none">
                             <label for="origin-activity-select">Activity</label>
-                            <i class="fas fa-angle-double-right" id="activitySelectChevron"></i>
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                             <select id="origin-activity-select" name="origin-activity-select" multiple
                                     class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
@@ -204,7 +190,7 @@
                                 <option selected value="-1">All (<%= activities.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% activities.forEach(function(activity){ %>
-                                <option value="<%= activity.id %>"><%= activity.get('name') %> (<%=
+                                <option value="<%= activity.id %>"><%= activity.get('nace') %> <%= activity.get('name') %> (<%=
                                     activity.get('flow_count') %> <%= (activity.get('flow_count') == 1) ? 'flow' :
                                     'flows' %>)
                                 </option>
@@ -224,14 +210,14 @@
                             <option selected value="-1">All (<%= processgroups.count %>)</option>
                             <option data-divider="true"></option>
                             <% processgroups.forEach(function(process){ %>
-                                <option value="<%= process.id %>"> <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %></option>
+                                <option value="<%= process.id %>"><%= process.get('code') %> <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %></option>
                                 <% }); %>
                             </select>
                         </div>
 
                         <div class="col-md-4" id="originContainerProcesses" style="display: none;">
                             <label for="origin-process-select">Treatment method</label>
-                            <i class="fas fa-angle-double-right" id="activitySelectChevron"></i>
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                             <select name="origin-process-select" id="origin-process-select" multiple
                             class="form-control form-control-sm selectpicker"
                             data-live-search="true"
@@ -240,7 +226,7 @@
                             <option selected value="-1">All (<%= processes.count %>)</option>
                             <option data-divider="true"></option>
                             <% processes.forEach(function(process){ %>
-                                <option value="<%= process.id %>"> <%= process.get('name') %></option>
+                                <option value="<%= process.id %>"><%= process.get('name') %></option>
                                 <% }); %>
                             </select>
                         </div>
@@ -258,7 +244,7 @@
         <!-- DESTINATION CONTROLS -->
         <div class="card bg-dark">
             <div class="card-header" id="card-header-collapse-destination">
-                <h4 class="mb-0">
+                <h4 class="mb-1">
                     <button class="btn btn-link collapsed collapsingHeaderButton" id="btn-collapse-header-destination"
                             data-toggle="collapse" data-target="#collapseDestinationBlock" aria-expanded="false"
                             aria-controls="collapseDestinationBlock">
@@ -310,7 +296,7 @@
                                 <label style="display: inline-block;">The destination of the flows must be</label>
                                 <div class="checkbox in-or-out-container">
                                     <input name="in-or-out-destination" id="destination-area-in-or-out" type="checkbox"
-                                        data-height="24" data-toggle="toggle" data-on="outside of"
+                                        data-height="24" data-toggle="toggle" data-on="outside"
                                         data-off="within"
                                         class="in-out-toggle">
                                     <label style="display: inline-block;">the selected area(s).</label>    
@@ -322,37 +308,25 @@
 
                     <div class="row mt-4">
                         <div class="col-md-4">
-                            <label for="destination-role-select">Destination role</label>
+                            <label for="destination-role-radio">Destination role</label>
                             <a class="help-icon fas fa-question-circle" data-toggle="popover"
                             title="Role of the Actor"
                             data-html="true" tabindex="0"
                             data-content='This filter allows you to filter the flows based on the role of the actor. '>
                             </a>
-                            <select id="destination-role-select"
-                                    name="destination-role"
-                                    class="form-control form-control-sm selectpicker"
-                                    data-dropup-auto="false"
-                                    >
-                                <option value='any' selected>Both roles</option>
-                                <option data-divider="true"></option>
-                                <!-- <option value='all'>All roles within selected area</option> -->
-                                <option value='production'>Waste production</option>
-                                <!-- <option value='collection'>Collection</option> -->
-                                <option value='treatment'>Waste treatment</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- <div class="row destinationContainerActivity" style="display: none;">
-                        <div class="col-md-4">
-                            <label for="destination-toggleFilterLevel">Filter level</label>
-                            <div class="checkbox">
-                                <input name="filter-level-select" id="destination-toggleFilterLevel" type="checkbox"
-                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Activities"
-                                    data-off="Activity groups">
+                            <div class="btn-group btn-group-toggle" id="destination-role-radio" data-toggle="buttons" style="width: 100%;">
+                                <label class="btn btn-sm btn-primary" style="width: 40%;">
+                                    <input type="radio" name="options" id="destination-role-radio-production" checked>Production
+                                </label>
+                                <label class="btn btn-sm btn-primary active" style="width: 20%;">
+                                    <input type="radio" name="options" id="destination-role-radio-both">Both
+                                </label>
+                                <label class="btn btn-sm btn-primary" style="width: 40%;">
+                                    <input type="radio" name="options" id="destination-role-radio-treatment">Treatment
+                                </label>
                             </div>
                         </div>
-                    </div> -->
+                    </div>
 
                     <div class="row destinationContainerActivity" style="display: none;">
                         <div class="col-md-4">
@@ -364,7 +338,7 @@
                                 <option selected value="-1">All (<%= activityGroups.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% activityGroups.forEach(function(activitygroup){ %>
-                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%> <%= activitygroup.get('name') %> (<%=
+                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%> <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %> (<%=
                                     activitygroup.get('flow_count') %> <%= (activitygroup.get('flow_count') == 1) ?
                                     'flow' : 'flows' %>)
                                 </option>
@@ -373,7 +347,7 @@
                         </div>
                         <div class="col-md-4 activitySelectContainer activitySelectContainerDestination" style="display: none">
                             <label for="destination-activity-select">Activity</label>
-                            <i class="fas fa-angle-double-right" id="activitySelectChevron"></i>
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                             <select id="destination-activity-select" name="destination-activity-select" multiple
                                     class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
@@ -381,7 +355,7 @@
                                 <option selected value="-1">All (<%= activities.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% activities.forEach(function(activity){ %>
-                                <option value="<%= activity.id %>"><%= activity.get('name') %> (<%=
+                                <option value="<%= activity.id %>"><%= activity.get('nace') %> <%= activity.get('name') %> (<%=
                                     activity.get('flow_count') %> <%= (activity.get('flow_count') == 1) ? 'flow' :
                                     'flows' %>) | <%=(activity.get('nace'))%>
                                 </option>
@@ -401,14 +375,14 @@
                             <option selected value="-1">All (<%= processgroups.count %>)</option>
                             <option data-divider="true"></option>
                             <% processgroups.forEach(function(process){ %>
-                                <option value="<%= process.id %>"><%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %></option>
+                                <option value="<%= process.id %>"><%= process.get('code') %> <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %></option>
                                 <% }); %>
                             </select>
                         </div>
 
                         <div class="col-md-4" id="destinationContainerProcesses" style="display: none;">
                             <label for="destination-process-select">Treatment method</label>
-                            <i class="fas fa-angle-double-right" id="activitySelectChevron"></i>
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                             <select name="destination-process-select" id="destination-process-select" multiple class="form-control form-control-sm selectpicker"
                             data-live-search="true"
                             data-size="6"
@@ -432,7 +406,7 @@
         <!-- FLOWS CONTROLS -->
         <div class="card bg-dark">
             <div class="card-header" id="card-header-collapse-flows">
-                <h4 class="mb-0">
+                <h4 class="mb-1">
                     <button class="btn btn-link collapsed collapsingHeaderButton"
                             id="btn-collapse-header-flows"
                             data-toggle="collapse"
@@ -484,7 +458,6 @@
                     <div class="row">
                         <div class="col-md-2">
                             <label>Year</label>
-                            
                             <select name="flows-year-select" multiple class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-size="6"
@@ -495,19 +468,10 @@
                                 <option value="<%= year.id %>"><%= year.get('code') %></option>
                                 <% }); %>
                             </select>
-
-                            <!-- <select name="flows-year-select" class="form-control form-control-sm selectpicker">
-                                <option value='all'>All</option>
-                                <option value='2013'>2013</option>
-                                <option value='2014'>2014</option>
-                                <option value='2015'>2015</option>
-                                <option value='2016'>2016</option>
-                                <option value='2017'>2017</option>
-                                <option value='2018'>2018</option>
-                            </select> -->
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-2" id="monthCol" style="display: none;">
                             <label>Month</label>
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                             <select name="flows-month-select" multiple class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-size="6"
@@ -537,8 +501,9 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-3" id="wastes04col" style="display: none;">
                             <label>Sub-chapter</label>
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                             <select name="flows-waste04-select" multiple class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-size="6"
@@ -553,8 +518,9 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-3" id="wastes06col" style="display: none;">
                             <label>Individual entries</label>
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                             <select name="flows-waste06-select" multiple class="form-control form-control-sm selectpicker"
                                     data-live-search="true"
                                     data-size="6"
@@ -596,7 +562,7 @@
                                 <option selected value="-1">All (<%= products.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% products.forEach(function(product){ %>
-                                <option value="<%= product.id %>"> <%= product.get('name') %></option>
+                                <option value="<%= product.id %>"><%= product.get('name') %></option>
                                 <% }); %>
                             </select>
                         </div>
@@ -608,7 +574,7 @@
                                 <option selected value="-1">All (<%= composites.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% composites.forEach(function(composite){ %>
-                                <option value="<%= composite.id %>"> <%= composite.get('name') %></option>
+                                <option value="<%= composite.id %>"><%= composite.get('name') %></option>
                                 <% }); %>
                             </select>
                         </div>
@@ -693,15 +659,15 @@
         
     </div>
 
-    <div class="block accordion" id="dimensionBlock">
+    <div class="block" id="dimensionBlock">
 
         <h4 style="padding-bottom: 0.5em; padding-top: 1em">Dimensions</h4>
 
-        <div class="card bg-dark">
+        <div class="card bg-dark" id="dimensionsCard">
 
             <!-- IF WE NEED COLLAPSE LATER, UNCOMMENT THIS -->
             <!-- <div class="card-header" id="card-header-collapse-dimensions">
-                <h4 class="mb-0">
+                <h4 class="mb-1">
                     <button class="btn btn-link collapsed collapsingHeaderButton" id="btn-collapse-header-dimensions"
                             data-toggle="collapse" data-target="#collapseDimensionBlock" aria-expanded="false"
                             aria-controls="collapseDimensionBlock">
@@ -715,21 +681,10 @@
             <!-- <div id="collapseDimensionBlock" class="collapse" aria-labelledby="card-header-collapse-dimension"
                  data-parent="#filterBlock"> -->
 
-                <div class="card-body">
-
-                    <!-- Max dimensions -->
-                    <div class="row">
-                        <div class="col-md-6 mt-3">
-                            <label>You can select up to <strong>one</strong> dimension.</label>                          
-                        </div>
-                    </div>
-                    
+                <div class="card-body">                    
                     <div class="row align-items-end border-bottom mb-3 mt-1">
-                        <div class="col-md-3">
-                            <label class="dimensionLabel dimensionHeaderLabel">Dimension</label>                          
-                        </div>
                         <div class="col-md-3 text-center">
-                            <label class="dimensionHeaderLabel">Select or aggregate</label>                          
+                            <label class="dimensionHeaderLabel">Dimension</label>                          
                         </div>
                         <div class="col-md-4 text-center">
                             <label class="dimensionHeaderLabel">Granularity</label>                          
@@ -739,13 +694,10 @@
                     <!-- TIME -->
                     <div class="row">
                         <div class="col-md-3">
-                            <label for="dim-toggle-time" class="dimensionLabel">Time</label>                          
-                        </div>
-                        <div class="col-md-3">
                             <div class="checkbox">
                                 <input name="dim-toggle-time" class="dimensionToggle" id="dim-toggle-time" type="checkbox"
-                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
-                                    data-off="Aggregate">
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Time"
+                                    data-off="Time">
                             </div>
                         </div>
                         <div class="col-md-4" id="gran-toggle-time-col" style="display: none">
@@ -760,19 +712,16 @@
                     <!-- Space -->
                     <div class="row align-items-center">
                         <div class="col-md-3">
-                            <label for="dim-toggle-space" class="dimensionLabel">Space</label>                          
-                        </div>
-                        <div class="col-md-3">
                             <div class="checkbox">
                                 <input name="dim-toggle-space" class="dimensionToggle" id="dim-toggle-space" type="checkbox"
-                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
-                                    data-off="Aggregate">
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Space"
+                                    data-off="Space">
                             </div>
                         </div>
                         <div class="col-md-4" id="gran-toggle-space-col" style="display: none">
                             <select name="dim-space-gran-select" id="dim-space-gran-select" class="form-control form-control-sm selectpicker" data-height="21"> 
                                 <% levels.forEach(function(level) { %>
-                                <option value="<%= level.id %>"> <%= level.get('name') %></option>
+                                <option value="<%= level.id %>"><%= level.get('name') %></option>
                                 <% }) %>
                             </select>
                         </div>
@@ -781,13 +730,10 @@
                     <!-- Economic Activity -->
                     <div class="row">
                         <div class="col-md-3">
-                            <label for="dim-toggle-economic-activity" class="dimensionLabel">Economic activity</label>                          
-                        </div>
-                        <div class="col-md-3">
                             <div class="checkbox">
                                 <input name="dim-toggle-economic-activity" class="dimensionToggle" id="dim-toggle-economic-activity" type="checkbox"
-                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
-                                    data-off="Aggregate">
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Economic activity"
+                                    data-off="Economic activity">
                             </div>
                         </div>
                         <div class="col-md-4" id="gran-econ-activity-col" style="display: none">
@@ -802,13 +748,10 @@
                     <!-- Treatment Method -->
                     <div class="row">
                         <div class="col-md-3">
-                            <label for="dim-toggle-treatment-method" class="dimensionLabel">Treatment method</label>                          
-                        </div>
-                        <div class="col-md-3">
                             <div class="checkbox">
                                 <input name="dim-toggle-treatment-method" class="dimensionToggle" id="dim-toggle-treatment-method" type="checkbox"
-                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
-                                    data-off="Aggregate">
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Treatment method"
+                                    data-off="Treatment method">
                             </div>
                         </div>
                         <div class="col-md-4" id="gran-treatment-method-col" style="display: none">
@@ -854,17 +797,21 @@
                         </div>
                     </div> -->
             
-  
+                     <!-- Max dimensions -->
+                     <div class="row" id="alertMaxDimensionsRow" style="display: none;">
+                        <div class="col mt-3 text-center">
+                            <div class="alert alert-warning fade show" id="alertMaxDimensions" role="alert">
+                                You can select up to <strong><%= maxNumberOfDimensions %> dimensions</strong> at the same time.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
                 </div>
             <!-- </div> -->
         </div>
         
         <div class="row mt-3 mb-2">
-            <!-- <label class="input-label" style="margin-top: .5rem; margin-right: 10px;">Display Level</label>
-            <select class="form-control" name="display-level-select" style="max-width: 200px; float: left;">
-                <option value="activitygroup">Activity Group</option>
-                <option value="activity">Activity</option>
-            </select> -->
             <button id='reset-filters' class="btn btn-warning"
                 title="Reset all the filters"
                 style="margin-left: 20px; float: left; width: 10em">Reset filters
@@ -983,7 +930,7 @@
                         <label for="area-level-select" class="input-label" style="margin-top: .5rem; margin-right: 10px;">Geographic level:</label>
                         <select name="area-level-select" id="area-level-select" class="form-control form-control-sm" style="max-width: 350px;">
                             <% levels.forEach(function(level) { %>
-                            <option value="<%= level.id %>"> <%= level.get('name') %></option>
+                            <option value="<%= level.id %>"><%= level.get('name') %></option>
                             <% }) %>
                         </select>
                     </div>

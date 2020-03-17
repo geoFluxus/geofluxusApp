@@ -123,6 +123,7 @@ define(['views/common/baseview',
                     levels: this.areaLevels,
                     years: this.years,
                     months: this.months,
+                    maxNumberOfDimensions: this.maxNumberOfDimensions,
                 });
 
                 // Activate help icons
@@ -191,7 +192,7 @@ define(['views/common/baseview',
                         activitySelectContainer.fadeOut("fast");
 
                         allActivitiesOptionsHTML = '<option selected value="-1">All (' + _this.activities.length + ')</option><option data-divider="true"></option>';
-                        _this.activities.models.forEach(activity => allActivitiesOptionsHTML += "<option value='" + activity.attributes.id + "'>" + activity.attributes.name + "</option>");
+                        _this.activities.models.forEach(activity => allActivitiesOptionsHTML += "<option value='" + activity.attributes.id + "'>" + activity.attributes.nace + " " + activity.attributes.name + "</option>");
                         $(activitySelect).html(allActivitiesOptionsHTML);
                         $(activitySelect).selectpicker("refresh");
                     } else {
@@ -202,7 +203,7 @@ define(['views/common/baseview',
 
                         // Fill selectPicker with filtered activities, add to DOM, and refresh:
                         newActivityOptionsHTML = '<option selected value="-1">All (' + filteredActivities.length + ')</option><option data-divider="true"></option>';
-                        filteredActivities.forEach(activity => newActivityOptionsHTML += "<option value='" + activity.attributes.id + "'>" + activity.attributes.name + "</option>");
+                        filteredActivities.forEach(activity => newActivityOptionsHTML += "<option value='" + activity.attributes.id + "'>" + activity.attributes.nace + " " + activity.attributes.name + "</option>");
                         $(activitySelect).html(newActivityOptionsHTML);
                         $(activitySelect).selectpicker("refresh");
 
@@ -227,8 +228,8 @@ define(['views/common/baseview',
                         processSelect = _this.origin.processSelect;
                         processSelectContainer = $("#originContainerProcesses");
                     } else if (eventTargetID == "destination-processGroup-select") {
-                        processGroupSelect = _this.destination.activityGroupsSelect;
-                        processSelect = _this.destination.activitySelect;
+                        processGroupSelect = _this.destination.processGroupSelect;
+                        processSelect = _this.destination.processSelect;
                         processSelectContainer = $("#destinationContainerProcesses");
                     }
 
@@ -240,7 +241,7 @@ define(['views/common/baseview',
                         processSelectContainer.fadeOut("fast");
 
                         allProcessOptionsHTML = '<option selected value="-1">All (' + _this.processes.length + ')</option><option data-divider="true"></option>';
-                        _this.processes.models.forEach(process => allProcessOptionsHTML += "<option value='" + process.attributes.id + "'>" + process.attributes.name + "</option>");
+                        _this.processes.models.forEach(process => allProcessOptionsHTML += "<option value='" + process.attributes.id + "'>" + process.attributes.code + " " + process.attributes.name + "</option>");
                         $(processSelect).html(allProcessOptionsHTML);
                         $(processSelect).selectpicker("refresh");
                     } else {
@@ -251,7 +252,7 @@ define(['views/common/baseview',
 
                         // Fill selectPicker with filtered items, add to DOM, and refresh:
                         newProcessOptionsHTML = '<option selected value="-1">All (' + filteredProcesses.length + ')</option><option data-divider="true"></option>';
-                        filteredProcesses.forEach(process => newProcessOptionsHTML += "<option value='" + process.attributes.id + "'>" + process.attributes.name + "</option>");
+                        filteredProcesses.forEach(process => newProcessOptionsHTML += "<option value='" + process.attributes.id + "'>" + process.attributes.code + " " + process.attributes.name + "</option>");
                         $(processSelect).html(newProcessOptionsHTML);
                         $(processSelect).selectpicker("refresh");
 
@@ -259,39 +260,97 @@ define(['views/common/baseview',
                     }
                 }
 
-                function filterEWC02to04(event, clickedIndex, checked){
-                    // console.log("filterEWC02to04");
+                function filterEWC02to04(event, clickedIndex, checked) {
+                    let selectedEWC02IDs = [];
+                    let filteredWastes04 = [];
+                    let allWastes04OptionsHTML = "";
+                    let newWastes04OptionsHTML = "";
 
+                    selectedEWC02IDs = $(_this.flows.waste02Select).val()
 
-                    //  // Get the array with ID's of the selected treatment method group(s) from the .selectpicker:
-                    //  selectedEWCIDs = $(waste02Select).val()
+                    if (selectedEWC02IDs.length == 0 || selectedEWC02IDs[0] == "-1") {
 
-                    //  // If no process groups are selected, reset filter:
-                    //  if (selectedEWCIDs.length == 0 || selectedEWCIDs[0] == "-1") {
-                    //      processSelectContainer.fadeOut("fast");
- 
-                    //      allProcessOptionsHTML = '<option selected value="-1">All (' + _this.processes.length + ')</option><option data-divider="true"></option>';
-                    //      _this.processes.models.forEach(process => allProcessOptionsHTML += "<option>" + process.attributes.name + "</option>");
-                    //      $(processSelect).html(allProcessOptionsHTML);
-                    //      $(processSelect).selectpicker("refresh");
-                    //  } else {
-                    //      // Filter all activities by the selected Process Groups:
-                    //      filteredProcesses = _this.processes.models.filter(function (process) {
-                    //          return selectedProcessGroupIDs.includes(process.attributes.processgroup.toString())
-                    //      });
- 
-                    //      // Fill selectPicker with filtered items, add to DOM, and refresh:
-                    //      newProcessOptionsHTML = '<option selected value="-1">All (' + filteredProcesses.length + ')</option><option data-divider="true"></option>';
-                    //      filteredProcesses.forEach(process => newProcessOptionsHTML += "<option>" + process.attributes.name + "</option>");
-                    //      $(processSelect).html(newProcessOptionsHTML);
-                    //      $(processSelect).selectpicker("refresh");
- 
-                    //      processSelectContainer.fadeIn("fast");
-                    //  }
+                        $("#wastes04col").fadeOut("fast");
 
+                        allWastes04OptionsHTML = '<option selected value="-1">All (' + _this.wastes04.length + ')</option><option data-divider="true"></option>';
+                        _this.wastes04.models.forEach(waste04 => allWastes04OptionsHTML += "<option value='" + waste04.attributes.id + "'>" + waste04.attributes.ewc_code + " " + waste04.attributes.ewc_name + "</option>");
 
+                        $(_this.flows.waste04Select).html(allWastes04OptionsHTML);
+                        $(_this.flows.waste04Select).selectpicker("refresh");
+                    } else {
+                        filteredWastes04 = _this.wastes04.models.filter(function (waste04) {
+                            return selectedEWC02IDs.includes(waste04.attributes.waste02.toString())
+                        });
 
+                        newWastes04OptionsHTML = '<option selected value="-1">All (' + filteredWastes04.length + ')</option><option data-divider="true"></option>';
+                        filteredWastes04.forEach(waste04 => newWastes04OptionsHTML += "<option value='" + waste04.attributes.id + "'>" + waste04.attributes.ewc_code + " " + waste04.attributes.ewc_name + "</option>");
+                        $(_this.flows.waste04Select).html(newWastes04OptionsHTML);
+                        $(_this.flows.waste04Select).selectpicker("refresh");
 
+                        $("#wastes04col").fadeIn("fast");
+                    }
+                }
+
+                function filterEWC04to06() {
+                    let selectedEWC04IDs = [];
+                    let filteredWastes06 = [];
+                    let allWastes06OptionsHTML = "";
+                    let newWastes06OptionsHTML = "";
+
+                    selectedEWC04IDs = $(_this.flows.waste04Select).val()
+
+                    if (selectedEWC04IDs.length == 0 || selectedEWC04IDs[0] == "-1") {
+
+                        $("#wastes06col").fadeOut("fast");
+
+                        allWastes06OptionsHTML = '<option selected value="-1">All (' + _this.wastes06.length + ')</option><option data-divider="true"></option>';
+                        _this.wastes06.models.forEach(waste06 => allWastes06OptionsHTML += "<option value='" + waste06.attributes.id + "'>" + waste06.attributes.ewc_code + " " + waste06.attributes.ewc_name + "</option>");
+
+                        $(_this.flows.waste06Select).html(allWastes06OptionsHTML);
+                        $(_this.flows.waste06Select).selectpicker("refresh");
+                    } else {
+                        filteredWastes06 = _this.wastes06.models.filter(function (waste06) {
+                            return selectedEWC04IDs.includes(waste06.attributes.waste04.toString())
+                        });
+
+                        // Fill selectPicker with filtered items, add to DOM, and refresh:
+                        newWastes06OptionsHTML = '<option selected value="-1">All (' + filteredWastes06.length + ')</option><option data-divider="true"></option>';
+                        filteredWastes06.forEach(waste06 => newWastes06OptionsHTML += "<option value='" + waste06.attributes.id + "'>" + waste06.attributes.ewc_code + " " + waste06.attributes.ewc_name + "</option>");
+                        $(_this.flows.waste06Select).html(newWastes06OptionsHTML);
+                        $(_this.flows.waste06Select).selectpicker("refresh");
+
+                        $("#wastes06col").fadeIn("fast");
+                    }
+                }
+
+                function filterMonths() {
+                    let selectedYearIDs = [];
+                    let filteredMonths = [];
+                    let allMonthOptionsHTML = "";
+                    let newMonthOptionsHTML = "";
+
+                    selectedYearIDs = $(_this.flows.yearSelect).val()
+
+                    if (selectedYearIDs.length == 0 || selectedYearIDs[0] == "-1") {
+                        $("#monthCol").fadeOut("fast");
+
+                        allMonthOptionsHTML = '<option selected value="-1">All (' + _this.months.length + ')</option><option data-divider="true"></option>';
+                        _this.months.models.forEach(month => allMonthOptionsHTML += "<option value='" + month.attributes.id + "'>" + month.attributes.code.substring(2, 6) + " " + _this.returnMonthString(month.attributes.code.substring(0, 2)) + "</option>");
+
+                        $(_this.flows.monthSelect).html(allMonthOptionsHTML);
+                        $(_this.flows.monthSelect).selectpicker("refresh");
+                    } else {
+                        filteredMonths = _this.months.models.filter(function (month) {
+                            return selectedYearIDs.includes(month.attributes.year.toString())
+                        });
+
+                        newMonthOptionsHTML = '<option selected value="-1">All (' + filteredMonths.length + ')</option><option data-divider="true"></option>';
+                        filteredMonths.forEach(month => newMonthOptionsHTML += "<option value='" + month.attributes.id + "'>" + month.attributes.code.substring(2, 6) + " " + _this.returnMonthString(month.attributes.code.substring(0, 2)) + "</option>");
+                        $(_this.flows.monthSelect).html(newMonthOptionsHTML);
+                        $(_this.flows.monthSelect).selectpicker("refresh");
+
+                        $("#monthCol").fadeIn("fast");
+                    }
                 }
 
                 // /////////////////////////////////
@@ -306,20 +365,23 @@ define(['views/common/baseview',
                 $(this.origin.processSelect).on('changed.bs.select', multiCheck);
 
                 // Hide/show Activity Group and Activity or Treatment method:
-                $(this.origin.roleSelect).on('changed.bs.select', function () {
-                    let role = $(_this.origin.roleSelect).val();
-                    if (role == "treatment") {
-                        $(".originContainerActivity").fadeOut();
-                        $(".originContainerTreatmentMethod").fadeIn();
-                    } else if (role == "production") {
-                        $(".originContainerActivity").fadeIn();
-                        $(".originContainerTreatmentMethod").fadeOut();
-                    } else {
-                        $(".originContainerActivity").fadeOut();
-                        $(".originContainerTreatmentMethod").fadeOut();
-                    }
-                });
+                $("#origin-role-radio-production").on('click', function () {
+                    _this.origin.role = "production";
+                    $(".originContainerActivity").fadeIn();
+                    $(".originContainerTreatmentMethod").fadeOut();
 
+                });
+                $("#origin-role-radio-both").on('click', function () {
+                    _this.origin.role = "both";
+                    $(".originContainerActivity").fadeOut();
+                    $(".originContainerTreatmentMethod").fadeOut();
+
+                });
+                $("#origin-role-radio-treatment").on('click', function () {
+                    _this.origin.role = "treatment";
+                    $(".originContainerActivity").fadeOut();
+                    $(".originContainerTreatmentMethod").fadeIn();
+                });
 
                 // Destination: ---------------------
                 $(this.destination.activityGroupsSelect).on('changed.bs.select', multiCheck);
@@ -330,29 +392,32 @@ define(['views/common/baseview',
                 $(this.destination.processSelect).on('changed.bs.select', multiCheck);
 
                 // Hide/show Activity Group and Activity or Treatment method:
-                $(this.destination.roleSelect).on('changed.bs.select', function () {
-                    let role = $(_this.destination.roleSelect).val();
-                    if (role == "treatment") {
-                        $(".destinationContainerActivity").fadeOut();
-                        $(".destinationContainerTreatmentMethod").fadeIn();
-                    } else if (role == "production") {
-                        $(".destinationContainerActivity").fadeIn();
-                        $(".destinationContainerTreatmentMethod").fadeOut();
-                    } else {
-                        $(".destinationContainerActivity").fadeOut();
-                        $(".destinationContainerTreatmentMethod").fadeOut();
-                    }
+                $("#destination-role-radio-production").on('click', function () {
+                    _this.destination.role = "production";
+                    $(".destinationContainerActivity").fadeIn();
+                    $(".destinationContainerTreatmentMethod").fadeOut();
+
+                });
+                $("#destination-role-radio-both").on('click', function () {
+                    _this.destination.role = "both";
+                    $(".destinationContainerActivity").fadeOut();
+                    $(".destinationContainerTreatmentMethod").fadeOut();
+
+                });
+                $("#destination-role-radio-treatment").on('click', function () {
+                    _this.destination.role = "treatment";
+                    $(".destinationContainerActivity").fadeOut();
+                    $(".destinationContainerTreatmentMethod").fadeIn();
                 });
 
-
                 // Flows: ---------------------------
-                
                 $(this.flows.yearSelect).on('changed.bs.select', multiCheck);
+                $(this.flows.yearSelect).on('changed.bs.select', filterMonths);
                 $(this.flows.monthSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.waste02Select).on('changed.bs.select', multiCheck);
                 $(this.flows.waste02Select).on('changed.bs.select', filterEWC02to04);
-                
                 $(this.flows.waste04Select).on('changed.bs.select', multiCheck);
+                $(this.flows.waste04Select).on('changed.bs.select', filterEWC04to06);
                 $(this.flows.waste06Select).on('changed.bs.select', multiCheck);
                 $(this.flows.materialSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.productSelect).on('changed.bs.select', multiCheck);
@@ -363,16 +428,28 @@ define(['views/common/baseview',
                 $(this.flows.isCompositeSelect).on('changed.bs.select', multiCheck);
 
 
-
                 // Dimension toggles: ---------------------------
 
-                $(".dimensionToggle").change(function () {
+                // Show alert if user clicks on disabled dimension toggle:
+                $("#dimensionsCard .toggle.btn").on("click", function (event) {
+
+                    if ($($(event.currentTarget)[0]).is('[disabled=disabled]')) {
+                        $("#alertMaxDimensionsRow").fadeIn("fast");
+                        $("#alertMaxDimensions").alert();
+
+                        setTimeout(function () {
+                            $("#alertMaxDimensionsRow").fadeOut("fast");
+                        }, 6000);
+                    }
+                });
+
+                // Disable dimension toggles for max number of dimensions:
+                $(".dimensionToggle").change(function (event) {
                     let checkedToggles = [];
                     let uncheckedToggles = [];
 
                     // Divide the toggles in arrays of checked and unchecked toggles:
                     $('.dimensionToggle').each(function (index, value) {
-
                         let checked = $(this.parentElement.firstChild).prop('checked')
                         if (!checked) {
                             uncheckedToggles.push($(this));
@@ -393,7 +470,6 @@ define(['views/common/baseview',
                             this.bootstrapToggle('enable');
                         });
                     }
-
                 });
 
                 // Show granularity on toggle change:
@@ -401,7 +477,7 @@ define(['views/common/baseview',
                     $("#gran-toggle-time-col").fadeToggle();
                 });
                 $("#dim-toggle-space").change(function () {
-                    $("#gran-toggle-space-col").fadeIn();
+                    $("#gran-toggle-space-col").fadeToggle();
                 });
                 $("#dim-toggle-economic-activity").change(function () {
                     $("#gran-econ-activity-col").fadeToggle();
@@ -415,17 +491,8 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////////////////////
                 // Origin-controls:
-
-                // Initialize bootstrap-toggle for filter level:
-
                 this.origin.inOrOut = this.el.querySelector('#origin-area-in-or-out');
                 $(this.origin.inOrOut).bootstrapToggle();
-
-                // this.origin.filterLevelSelect = this.el.querySelector('#origin-toggleFilterLevel');
-                // $(this.origin.filterLevelSelect).bootstrapToggle();
-
-                this.origin.roleSelect = this.el.querySelector('select[name="origin-role"]');
-                $(this.origin.roleSelect).selectpicker();
 
                 this.origin.activityGroupsSelect = this.el.querySelector('select[name="origin-activitygroup-select"]');
                 $(this.origin.activityGroupsSelect).selectpicker();
@@ -441,15 +508,8 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////////////////////
                 // Destination-controls:
-
                 this.destination.inOrOut = this.el.querySelector('#destination-area-in-or-out');
                 $(this.destination.inOrOut).bootstrapToggle();
-
-                // this.destination.filterLevelSelect = this.el.querySelector('#destination-toggleFilterLevel');
-                // $(this.destination.filterLevelSelect).bootstrapToggle();
-
-                this.destination.roleSelect = this.el.querySelector('select[name="destination-role"]');
-                $(this.destination.roleSelect).selectpicker();
 
                 this.destination.activityGroupsSelect = this.el.querySelector('select[name="destination-activitygroup-select"]');
                 $(this.destination.activityGroupsSelect).selectpicker();
@@ -466,7 +526,6 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////////////////////
                 // Flows-controls:
-
                 this.flows.yearSelect = this.el.querySelector('select[name="flows-year-select"]');
                 $(this.flows.yearSelect).selectpicker();
 
@@ -515,43 +574,39 @@ define(['views/common/baseview',
 
                 // //////////////////////////////////
                 // Dimension controls:
-
-                // Time
                 this.dimensions.timeToggle = this.el.querySelector('#dim-toggle-time');
                 $(this.dimensions.timeToggle).bootstrapToggle();
                 this.dimensions.timeToggleGran = this.el.querySelector('#gran-toggle-time');
                 $(this.dimensions.timeToggleGran).bootstrapToggle();
 
-                // Space
                 this.dimensions.spaceToggle = this.el.querySelector('#dim-toggle-space');
                 $(this.dimensions.spaceToggle).bootstrapToggle();
                 this.dimensions.spaceLevelGranSelect = this.el.querySelector('#dim-space-gran-select');
                 $(this.dimensions.spaceLevelGranSelect).selectpicker();
 
-                // Economic activity:
                 this.dimensions.economicActivityToggle = this.el.querySelector('#dim-toggle-economic-activity');
                 $(this.dimensions.economicActivityToggle).bootstrapToggle();
                 this.dimensions.economicActivityToggleGran = this.el.querySelector('#gran-toggle-econ-activity');
                 $(this.dimensions.economicActivityToggleGran).bootstrapToggle();
 
-                // Treatment method:
                 this.dimensions.treatmentMethodToggle = this.el.querySelector('#dim-toggle-treatment-method');
                 $(this.dimensions.treatmentMethodToggle).bootstrapToggle();
-
                 this.dimensions.treatmentMethodToggleGran = this.el.querySelector('#gran-toggle-treatment-method');
                 $(this.dimensions.treatmentMethodToggleGran).bootstrapToggle();
 
-                // Materials:
                 this.dimensions.materialToggle = this.el.querySelector('#dim-toggle-material');
                 $(this.dimensions.materialToggle).bootstrapToggle();
 
-                // Logistics:
                 this.dimensions.logisticsToggle = this.el.querySelector('#dim-toggle-logistics');
                 $(this.dimensions.logisticsToggle).bootstrapToggle();
 
+                //Area select modal
+
+                this.areaLevelSelect = this.el.querySelector('#area-level-select');
+                $(this.areaLevelSelect).selectpicker();
+
                 // Initialize all textarea-autoresize components:
                 $(".selections").textareaAutoSize();
-
             },
 
             renderAreaSelectModal: function () {
@@ -833,11 +888,12 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////////////////////
                 // Origin-controls:
-
                 $(".areaSelectionsOrigin").fadeOut();
                 $("#areaSelectionsOriginTextarea").html("");
-                $(_this.origin.roleSelect).val("any");
-                // $(_this.origin.filterLevelSelect).bootstrapToggle('off')
+                $("#origin-role-radio-production").parent().removeClass("active");
+                $("#origin-role-radio-both").parent().addClass("active")
+                $("#origin-role-radio-treatment").parent().removeClass("active");
+
                 $(_this.origin.activityGroupsSelect).val('-1');
                 $(_this.origin.activitySelect).html(allActivitiesOptionsHTML);
                 $(_this.origin.processGroupSelect).val('-1');
@@ -850,8 +906,10 @@ define(['views/common/baseview',
                 // Destination-controls:
                 $(".areaSelectionsDestination").fadeOut();
                 $("#areaSelectionsDestinationTextarea").html("");
-                $(_this.destination.roleSelect).val("any");
-                // $(_this.destination.filterLevelSelect).bootstrapToggle('off')
+                $("#destination-role-radio-production").parent().removeClass("active");
+                $("#destination-role-radio-both").parent().addClass("active")
+                $("#destination-role-radio-treatment").parent().removeClass("active");
+
                 $(_this.destination.activityGroupsSelect).val('-1');
                 $(_this.destination.activitySelect).html(allActivitiesOptionsHTML);
                 $(_this.destination.processGroupSelect).val('-1');
@@ -865,10 +923,16 @@ define(['views/common/baseview',
                 $("#areaSelectionsFlows").fadeOut();
                 $("#areaSelectionsFlowsTextarea").html("");
                 $("#areaSelectionsFlows").fadeOut();
-                $(_this.flows.yearSelect).val("all");
+                $(_this.flows.yearSelect).val("-1");
+                $(_this.flows.monthSelect).val("-1");
+                $("#monthCol").fadeOut("fast");
+
                 $(_this.flows.waste02Select).val("-1");
                 $(_this.flows.waste04Select).val("-1");
+                $("#wastes04col").fadeOut("fast");
                 $(_this.flows.waste06Select).val("-1");
+                $("#wastes06col").fadeOut("fast");
+
                 $(_this.flows.materialSelect).val("-1");
                 $(_this.flows.productSelect).val("-1");
                 $(_this.flows.compositesSelect).val("-1");
@@ -881,22 +945,21 @@ define(['views/common/baseview',
                 $(_this.flows.isCompositeSelect).val("-1");
 
 
-                // // //////////////////////////////////
-                // // Dimension controls:
-
+                // //////////////////////////////////
+                // Dimension controls:
                 $(_this.dimensions.timeToggle).bootstrapToggle('off');
                 $(_this.dimensions.timeToggleGran).bootstrapToggle('Year');
                 $(_this.dimensions.spaceToggle).bootstrapToggle('off');
-                $(_this.dimensions.spaceLevelGranSelect).val('1');
+                $(_this.dimensions.spaceLevelGranSelect).val($('#dim-space-gran-select:first-child')[0].value);
                 $(_this.dimensions.economicActivityToggle).bootstrapToggle('off');
-                $(_this.dimensions.economicActivityToggleGran).bootstrapToggle('Activity group');
+                $(_this.dimensions.economicActivityToggleGran).bootstrapToggle('off');
                 $(_this.dimensions.treatmentMethodToggle).bootstrapToggle('off');
-                $(_this.dimensions.treatmentMethodToggleGran).bootstrapToggle('Treatment method group');
+                $(_this.dimensions.treatmentMethodToggleGran).bootstrapToggle('off');
 
-                $("#gran-toggle-time-col").fadeOut();
-                $("#gran-toggle-space-col").fadeOut();
-                $("#gran-econ-activity-col").fadeOut();
-                $("#gran-treatment-method-col").fadeOut();
+                $("#gran-toggle-time-col").hide();
+                $("#gran-toggle-space-col").hide();
+                $("#gran-econ-activity-col").hide();
+                $("#gran-treatment-method-col").hide();
 
                 // Empty all textareas:
                 $(".selections").html("");
@@ -904,6 +967,15 @@ define(['views/common/baseview',
 
                 // Refresh all selectpickers:
                 $(".selectpicker").selectpicker('refresh');
+            },
+
+            returnMonthString: function (monthNumber) {
+                monthNumber = parseInt(monthNumber) - 1;
+                const monthNames = ["January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"
+                ];
+
+                return monthNames[monthNumber]
             },
 
             close: function () {

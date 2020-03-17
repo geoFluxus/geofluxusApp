@@ -211,17 +211,16 @@ class FilterFlowViewSet(PostGetViewMixin,
         eco = dimensions.pop('economicActivity', None)
 
         # TIME DIMENSION
-        fields, levels = [], []
+        levels, fields = [], []
         if time:
-            fields.append(time)
             levels.append(time.split('__')[-1])
+            fields.append(time)
 
         # ECO DIMENSION
         if eco:
-            eco_orig = 'origin__' + eco
-            eco_dest = 'destination__' + eco
-            fields.extend([eco_orig, eco_dest])
-            levels.extend([eco_orig, eco_dest])
+            level = eco.split('__')[-1]
+            levels.extend(['origin__' + level, 'destination__' + level])
+            fields.extend(['origin__' + eco, 'destination__' + eco])
 
         # workaround Django ORM bug
         queryset = queryset.order_by()
@@ -242,8 +241,8 @@ class FilterFlowViewSet(PostGetViewMixin,
             # for the dimensions, return the id
             # to recover any info in the frontend
             flow_item = [('amount', group_amount)]
-            for field, level in zip(fields, levels):
-                flow_item.append((field, group[level]))
+            for level, field in zip(levels, fields):
+                flow_item.append((level, group[field]))
 
             data.append(OrderedDict(flow_item))
         return data

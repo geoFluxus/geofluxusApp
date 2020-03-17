@@ -13,12 +13,13 @@
 .card {
     background-color: black !important;
     box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.3);
-    border-radius: 2px;
 }
 
 .card-body {
     padding-top: 0em !important;
 }
+
+
 
 #btn-filterViews {
     background: none;
@@ -126,7 +127,7 @@
     transition: .3s transform ease-in-out;
 }
 
-#activitySelectChevron {
+.filterDoubleChevron {
     color: white;
     font-size: 1.5em;
     position: relative;
@@ -159,8 +160,9 @@ label[for="activity-select"] {
 }
 
 .in-or-out-container .toggle {
-    min-height: 24px;
-    top: -0.5rem;
+    min-height: 24px !important;
+    /* top: -0.5rem !important; */
+    width: 7rem !important;
 }
 
 .in-or-out-container .toggle.btn {
@@ -168,17 +170,15 @@ label[for="activity-select"] {
     top: -0.15rem;
 }
 
+.in-or-out-container .toggle-group label {
+    top: -0.4rem;
+}
+
 .in-or-out-container .toggle-group span {
     top: -0.15rem;
 }
 
 /* DIMENSIONS */
-.dimensionLabel {
-    float: right;
-    text-align: right;
-    margin-top: 0.5rem;
-}
-
 .dimensionHeaderLabel {
     margin-top: 0.5rem;
     font-weight: 900;
@@ -220,7 +220,13 @@ label[for="activity-select"] {
     color: black;
 }
 
+
 textarea.textarea-autosize {
+    padding: 0.5rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    border: none;
+    border-radius: 18px !important;
     box-sizing: border-box;
     max-height: 94px;
     min-height: 32px;
