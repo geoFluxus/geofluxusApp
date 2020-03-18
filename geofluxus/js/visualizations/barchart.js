@@ -51,36 +51,17 @@ define([
             ];
 
 
-            new d3plus.BarChart()
-                .config({
-                    data: options.data,
-                    //groupBy: ["Group", "Sub-Group"],
-                    // value: function (d) {
-                    //     return d[y];
-                    // },
-                    x: options.groupBy[0],
-                    y: "amount",
-                    // tooltipConfig: {
-                    //     tbody: [
-                    //         ["Total", function (d) {
-                    //             return d[y]
-                    //         }],
-                    //         // ["Year", function (d) {
-                    //         //     return d.year
-                    //         // }]
-                    //     ]
-                    // }
-                })
-                // The Pie chart will be rendered in this element:
+            new d3plus.Plot()
+                .data(options.data)
+                .groupBy(options.groupBy[0])
+                .x(options.groupBy[0])
+                .y("amount")
+                .baseline(0)
+                .discrete("x")
                 .select(options.el)
+                .shape("Bar")
                 .render();
 
-
-
-        }
-
-
-        templateFunction() {
 
         }
     }

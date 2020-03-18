@@ -77,24 +77,12 @@ define(['views/common/baseview',
                          if (this.options.dimensions[0][1] == "flowchain__month__year") {
                             groupBy = ["year"];
 
-                            // Replace year id's by year:
-                            // flows.forEach(function (flow, index) {
-                            //     let yearObject = years.find(year => year.attributes.id == flow.year);
-
-                            //     this[index].year = yearObject.attributes.code;
-                            // }, flows);
-
+                            
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
-                            groupBy = ["year", "month"];
-
-                            // Replace Month id's by Month name:
-                            // flows.forEach(function (flow, index) {
-                            //     let monthObject = months.find(month => month.attributes.id == flow.month);
-
-                            //     this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
-                            //     this[index].year = monthObject.attributes.code.substring(2, 6);
-                            // }, flows);
+                            //groupBy = ["year", "month"];
+                            groupBy = ["month"];
+                           
                         }
 
                         // /////////////////////////////
