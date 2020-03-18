@@ -64,23 +64,39 @@ define(['views/common/baseview',
                  */
                 render: function (data) {
                     let flows = this.options.flows;
-                    let filterFlowsView = this.options.flowsView.filterFlowsView;
                     let groupBy;
+                    let tooltipConfig = {};
 
                     // /////////////////////////////
                     // Time dimension
                     if (this.options.dimensions[0][0] == "time") {
-                        let years = filterFlowsView.years.models;
-                        let months = filterFlowsView.months.models;
-
                         // Granularity = year
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
                             groupBy = ["year"];
+                            tooltipConfig = {
+                                tbody: [
+                                    ["Total", function (d) {
+                                        return d["amount"]
+                                    }],
+                                    ["Year", function (d) {
+                                        return d.year
+                                    }]
+                                ]
+                            }
 
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
-                            groupBy = ["year", "month"];
-
+                            groupBy = ["month"];
+                            tooltipConfig = {
+                                tbody: [
+                                    ["Total", function (d) {
+                                        return d["amount"]
+                                    }],
+                                    ["Month", function (d) {
+                                        return d.month;
+                                    }],
+                                ]
+                            }
                         }
 
                         // /////////////////////////////
@@ -92,19 +108,11 @@ define(['views/common/baseview',
                         if (this.options.dimensions[0][1] == "activity__activitygroup") {
                             //groupBy = ["activitygroup"];
 
-                            
-                            flows.forEach(function (flow, index) {
-                                
-                            }, flows);
-                            
-                            console.log(flows);
 
                             // Granularity: Activity
                         } else if (this.options.dimensions[0][1] == "activity") {
 
                         }
-
-
                     }
 
 
@@ -113,6 +121,7 @@ define(['views/common/baseview',
                         el: this.options.el,
                         data: flows,
                         groupBy: groupBy,
+                        tooltipConfig: tooltipConfig,
                     });
                 },
 

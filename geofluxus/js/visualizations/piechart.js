@@ -56,6 +56,7 @@ define([
                 }
             ];
 
+
             new d3plus.Pie()
                 .config({
                     //data: myData,
@@ -66,29 +67,21 @@ define([
                         //return d["Number of Food Stores"];
                         return d["amount"];
                     },
-                    tooltipConfig: {
-                        tbody: [
-                            ["Total", function (d) {
-                                //return d["Number of Food Stores"]
-                                return d["amount"]
-                            }],
-                            ["Year", function (d) {
-                                return d.year
-                            }]
-                        ]
-                    }
+                    tooltipConfig: options.tooltipConfig,
+                    // {
+                    //     tbody: [
+                    //         ["Total", function (d) {
+                    //             return d["amount"]
+                    //         }],
+                    //         ["Year", function (d) {
+                    //             return d.year
+                    //         }]
+                    //     ]
+                    // }
                 })
                 // The Pie chart will be rendered in this element:
                 .select(options.el)
                 .render();
-
-
-
-        }
-
-
-        templateFunction() {
-
         }
     }
     return PieChart;

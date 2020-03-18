@@ -64,25 +64,19 @@ define(['views/common/baseview',
                  */
                 render: function (data) {
                     let flows = this.options.flows;
-                    let filterFlowsView = this.options.flowsView.filterFlowsView;
                     let groupBy;
 
                     // /////////////////////////////
                     // Time dimension
                     if (this.options.dimensions[0][0] == "time") {
-                        let years = filterFlowsView.years.models;
-                        let months = filterFlowsView.months.models;
-
-                         // Granularity = year
-                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
+                        // Granularity = year
+                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
                             groupBy = ["year"];
 
-                            
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
                             //groupBy = ["year", "month"];
                             groupBy = ["month"];
-                           
                         }
 
                         // /////////////////////////////
@@ -95,14 +89,10 @@ define(['views/common/baseview',
                             //groupBy = ["activitygroup"];
 
 
-                            
-
                             // Granularity: Activity
                         } else if (this.options.dimensions[0][1] == "activity") {
 
                         }
-
-
                     }
 
 

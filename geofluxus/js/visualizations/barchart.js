@@ -52,9 +52,25 @@ define([
 
 
             new d3plus.Plot()
+                .config({
+                    tooltipConfig: {
+                        tbody: [
+                            ["Total", function (d) {
+                                return d["amount"]
+                            }],
+                            ["Year", function (d) {
+                                return d.year
+                            }]
+                        ]
+                    }
+                })
                 .data(options.data)
                 .groupBy(options.groupBy[0])
-                .x(options.groupBy[0])
+                .x(function () {
+                    // if (options.groupBy.length == 1) {
+                    return options.groupBy[0]
+                    // }
+                })
                 .y("amount")
                 .baseline(0)
                 .discrete("x")

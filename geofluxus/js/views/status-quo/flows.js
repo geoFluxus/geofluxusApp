@@ -512,6 +512,8 @@ define(['views/common/baseview',
                             this[index].year = yearObject.attributes.code;
                         }, flows);
 
+                        flows = _.sortBy(flows, 'year' );
+
                         // Granularity = month:
                     } else if (dimensions[0][1] == "flowchain__month") {
 
@@ -519,10 +521,17 @@ define(['views/common/baseview',
                         flows.forEach(function (flow, index) {
                             let monthObject = months.find(month => month.attributes.id == flow.month);
 
+                            this[index].id = monthObject.attributes.id;
                             this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
                             this[index].year = monthObject.attributes.code.substring(2, 6);
                         }, flows);
+
+                        // Sort by month id:
+                        flows = _.sortBy(flows, 'id' );
                     }
+
+                    this.renderPieChart1D(dimensions, flows);
+                    this.renderBarChart1D(dimensions, flows);
 
                     // /////////////////////////////
                     // Economic Activity dimension
@@ -548,8 +557,8 @@ define(['views/common/baseview',
 
                 }
 
-                this.renderPieChart1D(dimensions, flows);
-                this.renderBarChart1D(dimensions, flows);
+                // this.renderPieChart1D(dimensions, flows);
+                // this.renderBarChart1D(dimensions, flows);
             },
 
             renderPieChart1D: function (dimensions, flows) {
@@ -580,18 +589,24 @@ define(['views/common/baseview',
                 });
             },
 
+            closeAllVizViews: function () {
+                if (this.barChartView != null) this.barChartView.close();
+                if (this.pieChartView != null) this.pieChartView.close();
+            },
+
             // Fetch flows and calls options.success(flows) on success
             fetchFlows: function (options) {
                 let _this = this;
                 let filterParams = this.getFlowFilterParams();
                 let data = {};
-
                 this.selectedDimensions = Object.entries(filterParams.dimensions);
 
                 var flows = new Collection([], {
                     apiTag: 'flows',
                 });
 
+                // Reset all visualisations:
+                this.closeAllVizViews();
 
                 // Only fetch Flows if at least one dimension has been selected:
                 if (_this.selectedDimensions.length > 0) {
