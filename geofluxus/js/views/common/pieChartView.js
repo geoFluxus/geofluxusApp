@@ -63,9 +63,7 @@ define(['views/common/baseview',
                  * render the view
                  */
                 render: function (data) {
-                    // Flows-data is in this.options.flows
-                    let flows = this.options.flows.models;
-                    let flowsView = this.options.flowsView;
+                    let flows = this.options.flows;
                     let filterFlowsView = this.options.flowsView.filterFlowsView;
                     let groupBy;
 
@@ -79,28 +77,24 @@ define(['views/common/baseview',
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
                             groupBy = ["year"];
 
-                            // Replace year id's by year:
-                            flows.forEach(function (flow, index) {
-                                let yearObject = years.find(year => year.attributes.id == flow.attributes.year);
+                            // // Replace year id's by year:
+                            // flows.forEach(function (flow, index) {
+                            //     let yearObject = years.find(year => year.attributes.id == flow.year);
 
-                                flow.attributes.year = yearObject.attributes.code;
-
-                                this[index] = flow.attributes;
-                            }, flows);
+                            //     this[index].year = yearObject.attributes.code;
+                            // }, flows);
 
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
                             groupBy = ["year", "month"];
 
-                            // Replace Month id's by Month name:
-                            flows.forEach(function (flow, index) {
-                                let monthObject = months.find(month => month.attributes.id == flow.attributes.month);
+                            // // Replace Month id's by Month name:
+                            // flows.forEach(function (flow, index) {
+                            //     let monthObject = months.find(month => month.attributes.id == flow.month);
 
-                                flow.attributes.month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
-                                flow.attributes.year = monthObject.attributes.code.substring(2, 6);
-
-                                this[index] = flow.attributes;
-                            }, flows);
+                            //     this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
+                            //     this[index].year = monthObject.attributes.code.substring(2, 6);
+                            // }, flows);
                         }
 
                         // /////////////////////////////
@@ -108,21 +102,18 @@ define(['views/common/baseview',
                     } else if (this.options.dimensions[0][0] == "economicActivity") {
                         console.log("Economic activity")
 
+                        // Granularity = Activity group
                         if (this.options.dimensions[0][1] == "activity__activitygroup") {
                             //groupBy = ["activitygroup"];
 
                             
                             flows.forEach(function (flow, index) {
-                                // let monthObject = months.find(month => month.attributes.id == flow.attributes.month);
                                 
-                                // flow.attributes.month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
-                                // flow.attributes.year = monthObject.attributes.code.substring(2, 6);
-                                
-                                this[index] = flow.attributes;
                             }, flows);
                             
                             console.log(flows);
 
+                            // Granularity: Activity
                         } else if (this.options.dimensions[0][1] == "activity") {
 
                         }

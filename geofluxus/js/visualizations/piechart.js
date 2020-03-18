@@ -56,8 +56,6 @@ define([
                 }
             ];
 
-            console.log("Piechart constructor");
-
             new d3plus.Pie()
                 .config({
                     //data: myData,

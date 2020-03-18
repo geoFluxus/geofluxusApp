@@ -5,7 +5,7 @@ define([
 ], function (d3, d3brush, d3plus) {
     /**
      *
-     * Pie chart to display Flows data
+     * Bar chart to display Flows data
      *
      * @author Evert Van Hirtum
      */
@@ -53,11 +53,13 @@ define([
 
             new d3plus.BarChart()
                 .config({
-                    data: myData,
+                    data: options.data,
                     //groupBy: ["Group", "Sub-Group"],
-                    value: function (d) {
-                        return d[y];
-                    },
+                    // value: function (d) {
+                    //     return d[y];
+                    // },
+                    x: options.groupBy[0],
+                    y: "amount",
                     // tooltipConfig: {
                     //     tbody: [
                     //         ["Total", function (d) {

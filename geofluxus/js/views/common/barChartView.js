@@ -56,17 +56,74 @@ define(['views/common/baseview',
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-img': 'exportPNG',
-                    'click .export-csv': 'exportCSV',   
+                    'click .export-csv': 'exportCSV',
                 },
 
                 /*
                  * render the view
                  */
                 render: function (data) {
+                    let flows = this.options.flows;
+                    let filterFlowsView = this.options.flowsView.filterFlowsView;
+                    let groupBy;
+
+                    // /////////////////////////////
+                    // Time dimension
+                    if (this.options.dimensions[0][0] == "time") {
+                        let years = filterFlowsView.years.models;
+                        let months = filterFlowsView.months.models;
+
+                         // Granularity = year
+                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
+                            groupBy = ["year"];
+
+                            // Replace year id's by year:
+                            // flows.forEach(function (flow, index) {
+                            //     let yearObject = years.find(year => year.attributes.id == flow.year);
+
+                            //     this[index].year = yearObject.attributes.code;
+                            // }, flows);
+
+                            // Granularity = month:
+                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
+                            groupBy = ["year", "month"];
+
+                            // Replace Month id's by Month name:
+                            // flows.forEach(function (flow, index) {
+                            //     let monthObject = months.find(month => month.attributes.id == flow.month);
+
+                            //     this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
+                            //     this[index].year = monthObject.attributes.code.substring(2, 6);
+                            // }, flows);
+                        }
+
+                        // /////////////////////////////
+                        // Economic Activity dimension
+                    } else if (this.options.dimensions[0][0] == "economicActivity") {
+                        console.log("Economic activity")
+
+                        // Granularity = Activity group
+                        if (this.options.dimensions[0][1] == "activity__activitygroup") {
+                            //groupBy = ["activitygroup"];
+
+
+                            
+
+                            // Granularity: Activity
+                        } else if (this.options.dimensions[0][1] == "activity") {
+
+                        }
+
+
+                    }
+
+
                     // Create a new D3Plus BarChart object which will be rendered in this.options.el:
                     this.barChart = new BarChart({
                         el: this.options.el,
-                    }); 
+                        data: flows,
+                        groupBy: groupBy,
+                    });
                 },
 
                 /*
