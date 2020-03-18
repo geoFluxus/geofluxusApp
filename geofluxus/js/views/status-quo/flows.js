@@ -433,6 +433,14 @@ define(['views/common/baseview',
                     filterParams.dimensions.treatmentMethod = $(filter.dimensions.treatmentMethodToggle).prop("checked") ? 'Treatment method' : 'Treatment method group';
                 }
 
+                // ORIGIN OR DESTINATION FILTERS
+                // $(_this.dimensions.spaceOrigDest).prop("checked")
+                // $(_this.dimensions.economicActivityOrigDest).prop("checked")
+                // $(_this.dimensions.treatmentMethodOrigDest).prop("checked")
+
+
+
+
                 console.log(filterParams);
 
                 return filterParams;
@@ -512,7 +520,7 @@ define(['views/common/baseview',
                             this[index].year = yearObject.attributes.code;
                         }, flows);
 
-                        flows = _.sortBy(flows, 'year' );
+                        flows = _.sortBy(flows, 'year');
 
                         // Granularity = month:
                     } else if (dimensions[0][1] == "flowchain__month") {
@@ -527,7 +535,7 @@ define(['views/common/baseview',
                         }, flows);
 
                         // Sort by month id:
-                        flows = _.sortBy(flows, 'id' );
+                        flows = _.sortBy(flows, 'id');
                     }
 
                     this.renderPieChart1D(dimensions, flows);

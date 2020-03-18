@@ -479,12 +479,15 @@ define(['views/common/baseview',
                 });
                 $("#dim-toggle-space").change(function () {
                     $("#gran-toggle-space-col").fadeToggle();
+                    $("#origDest-toggle-space-col").fadeToggle();
                 });
                 $("#dim-toggle-economic-activity").change(function () {
                     $("#gran-econ-activity-col").fadeToggle();
+                    $("#origDest-toggle-econAct-col").fadeToggle();
                 });
                 $("#dim-toggle-treatment-method").change(function () {
                     $("#gran-treatment-method-col").fadeToggle();
+                    $("#origDest-toggle-treatment-col").fadeToggle();
                 });
             },
 
@@ -584,16 +587,22 @@ define(['views/common/baseview',
                 $(this.dimensions.spaceToggle).bootstrapToggle();
                 this.dimensions.spaceLevelGranSelect = this.el.querySelector('#dim-space-gran-select');
                 $(this.dimensions.spaceLevelGranSelect).selectpicker();
+                this.dimensions.spaceOrigDest = this.el.querySelector('#origDest-toggle-space');
+                $(this.dimensions.spaceOrigDest).bootstrapToggle();
 
                 this.dimensions.economicActivityToggle = this.el.querySelector('#dim-toggle-economic-activity');
                 $(this.dimensions.economicActivityToggle).bootstrapToggle();
                 this.dimensions.economicActivityToggleGran = this.el.querySelector('#gran-toggle-econ-activity');
                 $(this.dimensions.economicActivityToggleGran).bootstrapToggle();
+                this.dimensions.economicActivityOrigDest = this.el.querySelector('#origDest-toggle-econAct');
+                $(this.dimensions.economicActivityOrigDest).bootstrapToggle();
 
                 this.dimensions.treatmentMethodToggle = this.el.querySelector('#dim-toggle-treatment-method');
                 $(this.dimensions.treatmentMethodToggle).bootstrapToggle();
                 this.dimensions.treatmentMethodToggleGran = this.el.querySelector('#gran-toggle-treatment-method');
                 $(this.dimensions.treatmentMethodToggleGran).bootstrapToggle();
+                this.dimensions.treatmentMethodOrigDest = this.el.querySelector('#origDest-toggle-treatment');
+                $(this.dimensions.treatmentMethodOrigDest).bootstrapToggle();
 
                 this.dimensions.materialToggle = this.el.querySelector('#dim-toggle-material');
                 $(this.dimensions.materialToggle).bootstrapToggle();
@@ -950,12 +959,18 @@ define(['views/common/baseview',
                 // Dimension controls:
                 $(_this.dimensions.timeToggle).bootstrapToggle('off');
                 $(_this.dimensions.timeToggleGran).bootstrapToggle('Year');
+ 
                 $(_this.dimensions.spaceToggle).bootstrapToggle('off');
                 $(_this.dimensions.spaceLevelGranSelect).val($('#dim-space-gran-select:first-child')[0].value);
+                $(_this.dimensions.spaceOrigDest).bootstrapToggle('off');
+                
                 $(_this.dimensions.economicActivityToggle).bootstrapToggle('off');
                 $(_this.dimensions.economicActivityToggleGran).bootstrapToggle('off');
+                $(_this.dimensions.economicActivityOrigDest).bootstrapToggle('off');
+
                 $(_this.dimensions.treatmentMethodToggle).bootstrapToggle('off');
                 $(_this.dimensions.treatmentMethodToggleGran).bootstrapToggle('off');
+                $(_this.dimensions.treatmentMethodOrigDest).bootstrapToggle('off');
 
                 $("#gran-toggle-time-col").hide();
                 $("#gran-toggle-space-col").hide();
