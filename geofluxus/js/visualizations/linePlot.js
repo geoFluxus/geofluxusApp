@@ -70,29 +70,56 @@ define([
                 }
             ];
 
-            new d3plus.LinePlot()
+            // new d3plus.LinePlot()
+            //     .config({
+            //         data: myData,
+            //         groupBy: "fruit",
+            //         x: "year",
+            //         y: "price",
+            //         shapeConfig: {
+            //             Line: {
+            //                 curve: "catmullRom"
+            //             }
+            //         },
+            //         // tooltipConfig: {
+            //         //     tbody: [
+            //         //         ["Total", function (d) {
+            //         //             return d[y]
+            //         //         }],
+            //         //         // ["Year", function (d) {
+            //         //         //     return d.year
+            //         //         // }]
+            //         //     ]
+            //         // }
+            //     })
+            //     .select(options.el)
+            //     .render();
+
+            new d3plus.Plot()
                 .config({
-                    data: myData,
-                    groupBy: "fruit",
-                    x: "year",
-                    y: "price",
-                    shapeConfig: {
-                        Line: {
-                            curve: "catmullRom"
-                        }
-                    },
-                    // tooltipConfig: {
-                    //     tbody: [
-                    //         ["Total", function (d) {
-                    //             return d[y]
-                    //         }],
-                    //         // ["Year", function (d) {
-                    //         //     return d.year
-                    //         // }]
-                    //     ]
+                    tooltipConfig: {
+                        tbody: [
+                            ["Total", function (d) {
+                                return d["amount"]
+                            }],
+                            ["Year", function (d) {
+                                return d.year
+                            }]
+                        ]
+                    }
+                })
+                .data(options.data)
+                .groupBy(options.groupBy[0])
+                .x(function () {
+                    // if (options.groupBy.length == 1) {
+                    return options.groupBy[0]
                     // }
                 })
+                .y("amount")
+                .baseline(0)
+                .discrete("x")
                 .select(options.el)
+                .shape("Line")
                 .render();
         }
 

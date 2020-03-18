@@ -8,6 +8,7 @@ define(['views/common/baseview',
         'views/common/flowsankeymap',
         'views/common/pieChartView',
         'views/common/barChartView',
+        'views/common/linePlotView',
     ],
     function (
         BaseView,
@@ -18,7 +19,8 @@ define(['views/common/baseview',
         FlowSankeyView,
         FlowMapView,
         PieChartView,
-        BarChartView
+        BarChartView,
+        LinePlotView
     ) {
 
         var FlowsView = BaseView.extend({
@@ -540,7 +542,8 @@ define(['views/common/baseview',
 
                     this.renderPieChart1D(dimensions, flows);
                     this.renderBarChart1D(dimensions, flows);
-
+                    this.renderLinePlot1D(dimensions, flows);
+                    
                     // /////////////////////////////
                     // Economic Activity dimension
                 } else if (dimensions[0][0] == "economicActivity") {
@@ -590,6 +593,20 @@ define(['views/common/baseview',
                 if (this.barChartView != null) this.barChartView.close();
 
                 this.barChartView = new BarChartView({
+                    el: el,
+                    dimensions: dimensions,
+                    flows: flows,
+                    flowsView: _this,
+                });
+            },
+
+            renderLinePlot1D: function (dimensions, flows) {
+                var _this = this;
+                var el = ".lineplot-wrapper";
+
+                if (this.linePlotView != null) this.linePlotView.close();
+
+                this.linePlotView = new LinePlotView({
                     el: el,
                     dimensions: dimensions,
                     flows: flows,
