@@ -66,6 +66,7 @@ define(['views/common/baseview',
                     let x;
                     let tooltipConfig;
                     let hasLegend = true;
+                    let xSort;
 
                     // /////////////////////////////
                     // Time dimension
@@ -104,7 +105,9 @@ define(['views/common/baseview',
                         // /////////////////////////////
                         // Economic Activity dimension
                     } else if (this.options.dimensions[0][0] == "economicActivity") {
-                        console.log("Economic activity")
+                        xSort = function (a, b) {
+                            return b["amount"] - a["amount"];
+                        }
 
                         if (this.options.dimensions[0][1] == "activity__activitygroup") {
                             groupBy = ["activityGroupCode"];
@@ -119,6 +122,7 @@ define(['views/common/baseview',
                                     }],
                                 ]
                             }
+                            
                             // Granularity: Activity
                         } else if (this.options.dimensions[0][1] == "activity") {
                             groupBy = ["activityCode"];
@@ -146,6 +150,7 @@ define(['views/common/baseview',
                         x: x,
                         tooltipConfig: tooltipConfig,
                         hasLegend: hasLegend,
+                        xSort: xSort,
                     });
                 },
 

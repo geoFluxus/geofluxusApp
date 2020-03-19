@@ -654,6 +654,7 @@ define(['views/common/baseview',
             closeAllVizViews: function () {
                 if (this.barChartView != null) this.barChartView.close();
                 if (this.pieChartView != null) this.pieChartView.close();
+                if (this.linePlotView != null) this.linePlotView.close();
             },
 
             // Fetch flows and calls options.success(flows) on success

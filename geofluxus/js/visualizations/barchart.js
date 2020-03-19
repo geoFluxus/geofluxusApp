@@ -18,20 +18,34 @@ define([
             var options = options || {};
             var _this = this;
 
-            new d3plus.Plot()
-                .tooltipConfig(options.tooltipConfig)
-                .data(options.data)
-                .groupBy(options.groupBy[0])
-                .x(options.x)
-                .y("amount")
-                .baseline(0)
-                .discrete("x")
-                .select(options.el)
-                .legend(options.hasLegend)
-                .shape("Bar")
-                .render();
-
-
+            if (options.xSort) {
+                new d3plus.Plot()
+                    .tooltipConfig(options.tooltipConfig)
+                    .data(options.data)
+                    .groupBy(options.groupBy[0])
+                    .x(options.x)
+                    .y("amount")
+                    .baseline(0)
+                    .discrete("x")
+                    .xSort(options.xSort)
+                    .select(options.el)
+                    .legend(options.hasLegend)
+                    .shape("Bar")
+                    .render();
+            } else {
+                new d3plus.Plot()
+                    .tooltipConfig(options.tooltipConfig)
+                    .data(options.data)
+                    .groupBy(options.groupBy[0])
+                    .x(options.x)
+                    .y("amount")
+                    .baseline(0)
+                    .discrete("x")
+                    .select(options.el)
+                    .legend(options.hasLegend)
+                    .shape("Bar")
+                    .render();
+            }
         }
     }
     return BarChart;
