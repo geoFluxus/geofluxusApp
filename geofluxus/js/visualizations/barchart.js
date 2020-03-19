@@ -18,59 +18,11 @@ define([
             var options = options || {};
             var _this = this;
 
-            var myData = [{
-                    id: "alpha",
-                    x: 4,
-                    y: 7
-                },
-                {
-                    id: "alpha",
-                    x: 5,
-                    y: 25
-                },
-                {
-                    id: "alpha",
-                    x: 6,
-                    y: 13
-                },
-                {
-                    id: "beta",
-                    x: 4,
-                    y: 17
-                },
-                {
-                    id: "beta",
-                    x: 5,
-                    y: 8
-                },
-                {
-                    id: "beta",
-                    x: 6,
-                    y: 13
-                }
-            ];
-
-
             new d3plus.Plot()
-                .config({
-                    tooltipConfig: {
-                        tbody: [
-                            ["Total", function (d) {
-                                return d["amount"]
-                            }],
-                            ["Year", function (d) {
-                                return d.year
-                            }]
-                        ]
-                    }
-                })
+                .config(options.tooltipConfig)
                 .data(options.data)
                 .groupBy(options.groupBy[0])
-                .x(function () {
-                    // if (options.groupBy.length == 1) {
-                    return options.groupBy[0]
-                    // }
-                })
+                .x(options.x)
                 .y("amount")
                 .baseline(0)
                 .discrete("x")

@@ -64,19 +64,47 @@ define(['views/common/baseview',
                  */
                 render: function (data) {
                     let flows = this.options.flows;
+                    let tooltipConfig;
                     let groupBy;
+                    let x;
 
                     // /////////////////////////////
                     // Time dimension
                     if (this.options.dimensions[0][0] == "time") {
                         // Granularity = year
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
-                            groupBy = ["year"];
+                            //groupBy = ["year"];
+                            x = ["year"];
+
+                            tooltipConfig = {
+                                title: "Waste totals per year",
+                                tbody: [
+                                    ["Total", function (d) {
+                                        return d["amount"]
+                                    }],
+                                    ["Year", function (d) {
+                                        return d.year
+                                    }]
+                                ]
+                            }
+
 
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
-                            //groupBy = ["year", "month"];
-                            groupBy = ["month"];
+                            groupBy = ["year"];
+                            x = ["yearMonthCode"];
+
+                            tooltipConfig = {
+                                tbody: [
+                                    ["Total", function (d) {
+                                        return d["amount"]
+                                    }],
+                                    ["Month", function (d) {
+                                        return d.month
+                                    }]
+                                ]
+                            }
+
                         }
 
                         // /////////////////////////////
@@ -95,12 +123,16 @@ define(['views/common/baseview',
                         }
                     }
 
+                    console.log(flows);
 
                     // Create a new D3Plus linePlot object which will be rendered in this.options.el:
                     this.linePlot = new LinePlot({
                         el: this.options.el,
                         data: flows,
                         groupBy: groupBy,
+                        x: x,
+                        tooltipConfig: tooltipConfig,
+
                     });
                 },
 

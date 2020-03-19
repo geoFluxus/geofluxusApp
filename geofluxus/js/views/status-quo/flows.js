@@ -519,7 +519,7 @@ define(['views/common/baseview',
                         flows.forEach(function (flow, index) {
                             let yearObject = years.find(year => year.attributes.id == flow.year);
 
-                            this[index].year = yearObject.attributes.code;
+                            this[index].year = parseInt(yearObject.attributes.code);
                         }, flows);
 
                         flows = _.sortBy(flows, 'year');
@@ -533,7 +533,8 @@ define(['views/common/baseview',
 
                             this[index].id = monthObject.attributes.id;
                             this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
-                            this[index].year = monthObject.attributes.code.substring(2, 6);
+                            this[index].yearMonthCode = parseInt(monthObject.attributes.code.substring(2, 6) + monthObject.attributes.code.substring(0,2));  
+                            this[index].year = parseInt(monthObject.attributes.code.substring(2, 6));
                         }, flows);
 
                         // Sort by month id:
