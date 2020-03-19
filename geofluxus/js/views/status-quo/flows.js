@@ -533,7 +533,7 @@ define(['views/common/baseview',
 
                             this[index].id = monthObject.attributes.id;
                             this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
-                            this[index].yearMonthCode = parseInt(monthObject.attributes.code.substring(2, 6) + monthObject.attributes.code.substring(0,2));  
+                            this[index].yearMonthCode = parseInt(monthObject.attributes.code.substring(2, 6) + monthObject.attributes.code.substring(0, 2));
                             this[index].year = parseInt(monthObject.attributes.code.substring(2, 6));
                         }, flows);
 
@@ -544,27 +544,66 @@ define(['views/common/baseview',
                     this.renderPieChart1D(dimensions, flows);
                     this.renderBarChart1D(dimensions, flows);
                     this.renderLinePlot1D(dimensions, flows);
-                    
+
                     // /////////////////////////////
                     // Economic Activity dimension
                 } else if (dimensions[0][0] == "economicActivity") {
                     console.log("Economic activity")
 
+                    let originOrDestination = $(filterFlowsView.dimensions.economicActivityOrigDest).prop("checked") ? "destination" : "origin";
+                    let activityGroups = filterFlowsView.activityGroups.models;
+                    let activities = filterFlowsView.activities.models;
+
                     // Granularity = Activity group
                     if (dimensions[0][1] == "activity__activitygroup") {
-                        //groupBy = ["activitygroup"];
 
+                        if (originOrDestination == "origin") {
+                            flows.forEach(function (flow, index) {
+                                let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.origin__activitygroup);
 
-                        flows.forEach(function (flow, index) {
+                                //this[index].id = activityGroupObject.attributes.id;
+                                this[index].activityGroupCode = activityGroupObject.attributes.code;
+                                this[index].activityGroupName = activityGroupObject.attributes.name[0].toUpperCase() + activityGroupObject.attributes.name.slice(1).toLowerCase();
+                            }, flows);
 
-                        }, flows);
+                        } else if (originOrDestination == "destination") {
+                            flows.forEach(function (flow, index) {
+                                let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.destination__activitygroup);
 
-                        console.log(flows);
+                                //this[index].id = activityGroupObject.attributes.id;
+                                this[index].activityGroupCode = activityGroupObject.attributes.code;
+                                this[index].activityGroupName = activityGroupObject.attributes.name[0].toUpperCase() + activityGroupObject.attributes.name.slice(1).toLowerCase();
+                            }, flows);
+                        }
 
                         // Granularity: Activity
                     } else if (dimensions[0][1] == "activity") {
 
+
+                        if (originOrDestination == "origin") {
+                            flows.forEach(function (flow, index) {
+                                let activityObject = activities.find(activity => activity.attributes.id == flow.origin__activity);
+
+                                this[index].id = activityObject.attributes.id;
+                                this[index].activityGroupCode = activityObject.attributes.code;
+                                this[index].activityGroupName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
+                            }, flows);
+
+                        } else if (originOrDestination == "destination") {
+                            flows.forEach(function (flow, index) {
+                                let activityObject = activities.find(activity => activity.attributes.id == flow.destination__activity);
+
+                                this[index].id = activityObject.attributes.id;
+                                this[index].activityGroupCode = activityObject.attributes.code;
+                                this[index].activityGroupName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
+                            }, flows);
+                        }
+
+
                     }
+
+                    console.log(flows);
+                    this.renderPieChart1D(dimensions, flows, originOrDestination);
 
 
                 }
@@ -573,7 +612,7 @@ define(['views/common/baseview',
                 // this.renderBarChart1D(dimensions, flows);
             },
 
-            renderPieChart1D: function (dimensions, flows) {
+            renderPieChart1D: function (dimensions, flows, originOrDestination) {
                 var _this = this;
                 var el = ".piechart-wrapper";
 
@@ -584,10 +623,11 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: _this,
+                    originOrDestination: originOrDestination,
                 });
             },
 
-            renderBarChart1D: function (dimensions, flows) {
+            renderBarChart1D: function (dimensions, flows, originOrDestination) {
                 var _this = this;
                 var el = ".barchart-wrapper";
 
@@ -598,10 +638,11 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: _this,
+                    originOrDestination: originOrDestination,
                 });
             },
 
-            renderLinePlot1D: function (dimensions, flows) {
+            renderLinePlot1D: function (dimensions, flows, originOrDestination) {
                 var _this = this;
                 var el = ".lineplot-wrapper";
 
@@ -612,6 +653,7 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: _this,
+                    originOrDestination: originOrDestination,
                 });
             },
 

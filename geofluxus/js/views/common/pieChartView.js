@@ -67,6 +67,7 @@ define(['views/common/baseview',
                     let groupBy;
                     let tooltipConfig = {};
                     let hasLegend = true;
+                    let originOrDestination = this.options.originOrDestination;
 
                     // /////////////////////////////
                     // Time dimension
@@ -108,7 +109,19 @@ define(['views/common/baseview',
 
                         // Granularity = Activity group
                         if (this.options.dimensions[0][1] == "activity__activitygroup") {
-                            //groupBy = ["activitygroup"];
+                            
+                            groupBy = ["activityGroupCode"];
+
+                            tooltipConfig = {
+                                tbody: [
+                                    ["Total", function (d) {
+                                        return d["amount"]
+                                    }],
+                                    ["Activity group", function (d) {
+                                        return d.activityGroupCode + " " +  d.activityGroupName;
+                                    }],
+                                ]
+                            }
 
 
                             // Granularity: Activity

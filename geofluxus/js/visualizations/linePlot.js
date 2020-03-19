@@ -55,6 +55,12 @@ define([
                     .discrete("x")
                     .select(options.el)
                     .shape("Line")
+                    .shapeConfig({
+                        Line: {
+                            strokeWidth: 2,
+                            curve: "catmullRom",
+                        }
+                    })
                     .legend(options.hasLegend)
                     .render();
             } else {

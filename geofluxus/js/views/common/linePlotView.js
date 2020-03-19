@@ -121,8 +121,6 @@ define(['views/common/baseview',
                         }
                     }
 
-                    console.log(flows);
-
                     // Create a new D3Plus linePlot object which will be rendered in this.options.el:
                     this.linePlot = new LinePlot({
                         el: this.options.el,
