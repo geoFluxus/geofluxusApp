@@ -357,6 +357,27 @@ class FlowCreateSerializer(BulkSerializerMixin,
     def get_queryset(self):
         return Flow.objects.all()
 
+    def validate(self, attrs):
+        df = attrs['dataframe']
+
+        # allowed role values: 'production' & 'treatment'
+        allowed = ['production', 'treatment']
+        origin = df['origin_role'].isin(allowed)
+        destination = df['destination_role'].isin(allowed)
+        errors = origin & destination == False # one is at least not allowed
+        if errors.sum() > 0:
+            message = _("Actor role should be either 'production' or 'treatment'.")
+            error_mask = ErrorMask(df)
+            error_mask.set_error(df.index[errors], 'origin_role', message)
+            fn, url = error_mask.to_file(
+                file_type=self.input_file_ext.replace('.', ''),
+                encoding=self.encoding
+            )
+            raise ValidationError(
+                message, url
+            )
+        return super().validate(attrs)
+
 
 class ClassificationCreateSerializer(BulkSerializerMixin,
                                      ClassificationSerializer):

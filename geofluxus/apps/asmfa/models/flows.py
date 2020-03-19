@@ -47,8 +47,10 @@ class Flow(models.Model):
                                     related_name='inputs')
     role_choices = [('production', 'production'),
                     ('treatment', 'treatment')]
-    origin_role = models.CharField(max_length=255, choices=role_choices)
-    destination_role = models.CharField(max_length=255, choices=role_choices)
+    origin_role = models.CharField(max_length=255,
+                                   choices=role_choices)
+    destination_role = models.CharField(max_length=255,
+                                        choices=role_choices)
 
     def __str__(self):
         return "{} : {} -> {}".format(self.flowchain,
