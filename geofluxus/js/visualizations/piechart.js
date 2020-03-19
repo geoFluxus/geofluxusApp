@@ -68,17 +68,8 @@ define([
                         return d["amount"];
                     },
                     tooltipConfig: options.tooltipConfig,
-                    // {
-                    //     tbody: [
-                    //         ["Total", function (d) {
-                    //             return d["amount"]
-                    //         }],
-                    //         ["Year", function (d) {
-                    //             return d.year
-                    //         }]
-                    //     ]
-                    // }
                 })
+                .legend(options.hasLegend)
                 // The Pie chart will be rendered in this element:
                 .select(options.el)
                 .render();

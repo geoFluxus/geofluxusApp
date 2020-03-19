@@ -19,7 +19,7 @@ define([
             var _this = this;
 
             new d3plus.Plot()
-                .config(options.tooltipConfig)
+                .tooltipConfig(options.tooltipConfig)
                 .data(options.data)
                 .groupBy(options.groupBy[0])
                 .x(options.x)
@@ -27,6 +27,7 @@ define([
                 .baseline(0)
                 .discrete("x")
                 .select(options.el)
+                .legend(options.hasLegend)
                 .shape("Bar")
                 .render();
 

@@ -66,6 +66,7 @@ define(['views/common/baseview',
                     let flows = this.options.flows;
                     let groupBy;
                     let tooltipConfig = {};
+                    let hasLegend = true;
 
                     // /////////////////////////////
                     // Time dimension
@@ -87,6 +88,7 @@ define(['views/common/baseview',
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
                             groupBy = ["month"];
+                            hasLegend = false;
                             tooltipConfig = {
                                 tbody: [
                                     ["Total", function (d) {
@@ -122,6 +124,7 @@ define(['views/common/baseview',
                         data: flows,
                         groupBy: groupBy,
                         tooltipConfig: tooltipConfig,
+                        hasLegend: hasLegend,
                     });
                 },
 

@@ -46,10 +46,7 @@ define([
             // If there IS a groupBy value:
             if (options.groupBy) {
                 new d3plus.Plot()
-                    .config({
-                        tooltipConfig: options.tooltipConfig,
-                    })
-                    //.tooltipConfig(options.tooltipConfig)
+                    .tooltipConfig(options.tooltipConfig)
                     .data(options.data)
                     .groupBy(options.groupBy[0])
                     .x(options.x)
@@ -58,6 +55,7 @@ define([
                     .discrete("x")
                     .select(options.el)
                     .shape("Line")
+                    .legend(options.hasLegend)
                     .render();
             } else {
                 new d3plus.Plot()
@@ -72,6 +70,7 @@ define([
                     .discrete("x")
                     .select(options.el)
                     .shape("Line")
+                    .legend(options.hasLegend)
                     .shapeConfig({
                         Line: {
                             strokeWidth: 2,

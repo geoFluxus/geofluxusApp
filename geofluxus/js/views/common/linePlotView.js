@@ -75,7 +75,6 @@ define(['views/common/baseview',
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
                             //groupBy = ["year"];
                             x = ["year"];
-
                             tooltipConfig = {
                                 title: "Waste totals per year",
                                 tbody: [
@@ -93,8 +92,8 @@ define(['views/common/baseview',
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
                             groupBy = ["year"];
                             x = ["yearMonthCode"];
-
                             tooltipConfig = {
+                                title: "Waste totals per month",
                                 tbody: [
                                     ["Total", function (d) {
                                         return d["amount"]
@@ -104,7 +103,6 @@ define(['views/common/baseview',
                                     }]
                                 ]
                             }
-
                         }
 
                         // /////////////////////////////

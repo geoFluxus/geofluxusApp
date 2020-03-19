@@ -67,6 +67,7 @@ define(['views/common/baseview',
                     let groupBy;
                     let x;
                     let tooltipConfig;
+                    let hasLegend = true;
 
                     // /////////////////////////////
                     // Time dimension
@@ -77,35 +78,34 @@ define(['views/common/baseview',
                             x = ["year"];
 
                             tooltipConfig = {
-                                tooltipConfig: {
-                                    tbody: [
-                                        ["Total", function (d) {
-                                            return d["amount"]
-                                        }],
-                                        ["Year", function (d) {
-                                            return d.year
-                                        }]
-                                    ]
-                                }
+                                tbody: [
+                                    ["Total", function (d) {
+                                        return d["amount"]
+                                    }],
+                                    ["Year", function (d) {
+                                        return d.year
+                                    }]
+                                ]
                             }
+
 
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
                             groupBy = ["month"];
                             x = ["month"];
+                            hasLegend = false;
 
                             tooltipConfig = {
-                                tooltipConfig: {
-                                    tbody: [
-                                        ["Total", function (d) {
-                                            return d["amount"]
-                                        }],
-                                        ["Month", function (d) {
-                                            return d.month
-                                        }]
-                                    ]
-                                }
+                                tbody: [
+                                    ["Total", function (d) {
+                                        return d["amount"]
+                                    }],
+                                    ["Month", function (d) {
+                                        return d.month
+                                    }]
+                                ]
                             }
+
                         }
 
                         // /////////////////////////////
@@ -132,6 +132,7 @@ define(['views/common/baseview',
                         groupBy: groupBy,
                         x: x,
                         tooltipConfig: tooltipConfig,
+                        hasLegend: hasLegend,
                     });
                 },
 
