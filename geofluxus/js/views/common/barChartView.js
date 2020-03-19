@@ -41,7 +41,6 @@ define(['views/common/baseview',
                 initialize: function (options) {
                     BarChartView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
-                    _.bindAll(this, 'exportPNG');
                     _.bindAll(this, 'exportCSV');
                     var _this = this;
 
@@ -55,7 +54,6 @@ define(['views/common/baseview',
 
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
-                    'click .export-img': 'exportPNG',
                     'click .export-csv': 'exportCSV',
                 },
 
@@ -76,7 +74,6 @@ define(['views/common/baseview',
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
                             groupBy = ["year"];
                             x = ["year"];
-
                             tooltipConfig = {
                                 tbody: [
                                     ["Total", function (d) {
@@ -87,14 +84,11 @@ define(['views/common/baseview',
                                     }]
                                 ]
                             }
-
-
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
                             groupBy = ["month"];
                             x = ["month"];
                             hasLegend = false;
-
                             tooltipConfig = {
                                 tbody: [
                                     ["Total", function (d) {
@@ -105,7 +99,6 @@ define(['views/common/baseview',
                                     }]
                                 ]
                             }
-
                         }
 
                         // /////////////////////////////
@@ -113,14 +106,34 @@ define(['views/common/baseview',
                     } else if (this.options.dimensions[0][0] == "economicActivity") {
                         console.log("Economic activity")
 
-                        // Granularity = Activity group
                         if (this.options.dimensions[0][1] == "activity__activitygroup") {
-                            //groupBy = ["activitygroup"];
-
-
+                            groupBy = ["activityGroupCode"];
+                            x = ["activityGroupCode"];
+                            tooltipConfig = {
+                                tbody: [
+                                    ["Total", function (d) {
+                                        return d["amount"]
+                                    }],
+                                    ["Activity group", function (d) {
+                                        return d.activityGroupCode + " " + d.activityGroupName;
+                                    }],
+                                ]
+                            }
                             // Granularity: Activity
                         } else if (this.options.dimensions[0][1] == "activity") {
-
+                            groupBy = ["activityCode"];
+                            hasLegend = false;
+                            x = ["activityCode"];
+                            tooltipConfig = {
+                                tbody: [
+                                    ["Total", function (d) {
+                                        return d["amount"]
+                                    }],
+                                    ["Activity", function (d) {
+                                        return d.activityCode + " " + d.activityName;
+                                    }],
+                                ]
+                            }
                         }
                     }
 
@@ -148,16 +161,6 @@ define(['views/common/baseview',
 
                 refresh: function (options) {
 
-                },
-
-
-                exportPNG: function (event) {
-                    var svg = this.el.querySelector('svg');
-                    saveSvgAsPng.saveSvgAsPng(svg, "sankey-diagram.png", {
-                        scale: 2,
-                        backgroundColor: "#FFFFFF"
-                    });
-                    event.stopImmediatePropagation();
                 },
 
                 exportCSV: function (event) {

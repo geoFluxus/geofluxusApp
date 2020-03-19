@@ -561,7 +561,6 @@ define(['views/common/baseview',
                             flows.forEach(function (flow, index) {
                                 let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.origin__activitygroup);
 
-                                //this[index].id = activityGroupObject.attributes.id;
                                 this[index].activityGroupCode = activityGroupObject.attributes.code;
                                 this[index].activityGroupName = activityGroupObject.attributes.name[0].toUpperCase() + activityGroupObject.attributes.name.slice(1).toLowerCase();
                             }, flows);
@@ -570,7 +569,6 @@ define(['views/common/baseview',
                             flows.forEach(function (flow, index) {
                                 let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.destination__activitygroup);
 
-                                //this[index].id = activityGroupObject.attributes.id;
                                 this[index].activityGroupCode = activityGroupObject.attributes.code;
                                 this[index].activityGroupName = activityGroupObject.attributes.name[0].toUpperCase() + activityGroupObject.attributes.name.slice(1).toLowerCase();
                             }, flows);
@@ -584,18 +582,16 @@ define(['views/common/baseview',
                             flows.forEach(function (flow, index) {
                                 let activityObject = activities.find(activity => activity.attributes.id == flow.origin__activity);
 
-                                this[index].id = activityObject.attributes.id;
-                                this[index].activityGroupCode = activityObject.attributes.code;
-                                this[index].activityGroupName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
+                                this[index].activityCode = activityObject.attributes.nace;
+                                this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
                             }, flows);
 
                         } else if (originOrDestination == "destination") {
                             flows.forEach(function (flow, index) {
                                 let activityObject = activities.find(activity => activity.attributes.id == flow.destination__activity);
 
-                                this[index].id = activityObject.attributes.id;
-                                this[index].activityGroupCode = activityObject.attributes.code;
-                                this[index].activityGroupName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
+                                this[index].activityCode = activityObject.attributes.nace;
+                                this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
                             }, flows);
                         }
 
@@ -603,7 +599,8 @@ define(['views/common/baseview',
                     }
 
                     console.log(flows);
-                    this.renderPieChart1D(dimensions, flows, originOrDestination);
+                    this.renderPieChart1D(dimensions, flows);
+                    this.renderBarChart1D(dimensions, flows);
 
 
                 }
@@ -612,7 +609,7 @@ define(['views/common/baseview',
                 // this.renderBarChart1D(dimensions, flows);
             },
 
-            renderPieChart1D: function (dimensions, flows, originOrDestination) {
+            renderPieChart1D: function (dimensions, flows) {
                 var _this = this;
                 var el = ".piechart-wrapper";
 
@@ -623,11 +620,10 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: _this,
-                    originOrDestination: originOrDestination,
                 });
             },
 
-            renderBarChart1D: function (dimensions, flows, originOrDestination) {
+            renderBarChart1D: function (dimensions, flows) {
                 var _this = this;
                 var el = ".barchart-wrapper";
 
@@ -638,11 +634,10 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: _this,
-                    originOrDestination: originOrDestination,
                 });
             },
 
-            renderLinePlot1D: function (dimensions, flows, originOrDestination) {
+            renderLinePlot1D: function (dimensions, flows) {
                 var _this = this;
                 var el = ".lineplot-wrapper";
 
@@ -653,7 +648,6 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: _this,
-                    originOrDestination: originOrDestination,
                 });
             },
 

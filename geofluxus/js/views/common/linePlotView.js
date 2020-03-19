@@ -41,7 +41,6 @@ define(['views/common/baseview',
                 initialize: function (options) {
                     LinePlotView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
-                    _.bindAll(this, 'exportPNG');
                     _.bindAll(this, 'exportCSV');
                     var _this = this;
 
@@ -55,7 +54,6 @@ define(['views/common/baseview',
 
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
-                    'click .export-img': 'exportPNG',
                     'click .export-csv': 'exportCSV',
                 },
 
@@ -144,16 +142,6 @@ define(['views/common/baseview',
 
                 refresh: function (options) {
 
-                },
-
-
-                exportPNG: function (event) {
-                    var svg = this.el.querySelector('svg');
-                    saveSvgAsPng.saveSvgAsPng(svg, "sankey-diagram.png", {
-                        scale: 2,
-                        backgroundColor: "#FFFFFF"
-                    });
-                    event.stopImmediatePropagation();
                 },
 
                 exportCSV: function (event) {
