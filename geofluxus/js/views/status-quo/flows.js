@@ -200,19 +200,19 @@ define(['views/common/baseview',
                         });
                 }
                 if ($(filter.origin.inOrOut).prop('checked')) {
-                    filterParams.origin.where = 'out';
+                    filterParams.origin.inOrOut = 'out';
                 } else {
-                    filterParams.origin.where = 'in';
+                    filterParams.origin.inOrOut = 'in';
                 }
                 if (filter.origin.role != 'both') {
-                    filterParams.origin.role = filter.origin.role;
+                    filterParams.flows['origin_role'] = filter.origin.role;
                 }
                 if ($(filter.origin.activitySelect).val() == '-1') {
                     if ($(filter.origin.activityGroupsSelect).val() != '-1') {
-                        filterParams.origin.activityGroups = $(filter.origin.activityGroupsSelect).val();
+                        filterParams.origin['origin__activity__activitygroup__in'] = $(filter.origin.activityGroupsSelect).val();
                     }
                 } else {
-                    filterParams.origin.activities = $(filter.origin.activitySelect).val();
+                    filterParams.origin['origin__activity__in'] = $(filter.origin.activitySelect).val();
                 }
 
                 if ($(filter.origin.processSelect).val() == '-1') {

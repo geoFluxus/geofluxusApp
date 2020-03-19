@@ -103,19 +103,18 @@ if __name__ == "__main__":
         # Fetch routing
         query = \
             '''
-            WITH
-    
+            WITH 
+            
             vertices AS (
-                SELECT source as vid,
-                       ST_SetSRID(ST_MakePoint(lon, lat), 4326) as geom
-                FROM ways
-                LEFT JOIN ways_vertices_pgr
-                ON ways.source = ways_vertices_pgr.id
-            ),
-    
+            SELECT source as vid, 
+                   ST_SetSRID(ST_MakePoint(lon, lat), 4326) as geom
+            FROM ways
+            LEFT JOIN ways_vertices_pgr
+            ON ways.source = ways_vertices_pgr.id),
+            
             route AS (
-                SELECT edge FROM pgr_dijkstra(
-                    'SELECT gid AS id,
+                SELECT ways.the_geom as lines FROM pgr_dijkstra('
+                    SELECT gid AS id,
                            source,
                            target,
                            cost_s AS cost,
@@ -126,26 +125,28 @@ if __name__ == "__main__":
                        geom,
                        ST_GeomFromText('{orig_wkt}'),
                        true
-                     ) ASC LIMIT 1),
+                     ) ASC LIMIT 1), 
                     (SELECT vid FROM vertices
                      ORDER BY ST_Distance(
                        geom,
                        ST_GeomFromText('{dest_wkt}'),
                        true
                      ) ASC LIMIT 1),
-                     false
+                     FALSE
                 ) AS dijkstra
+                LEFT JOIN ways
+                ON (dijkstra.edge = ways.gid)
                 ORDER BY seq
             )
-    
-            SELECT *
+            
+            SELECT ST_AsText(ST_LineMerge(ST_Union(lines))) as geom 
             FROM route
             '''.format(orig_wkt=orig_wkt, dest_wkt=dest_wkt)
-        edge_ids = fetch(rcur, query)
-        routing = [str(id[0]) for id in edge_ids]
-        seq = '@'.join(routing)
-        if routing:
-            line = '{};{};{}\n'.format(orig_name, dest_name, '@'.join(routing))
+        wkt = fetch(rcur, query)[0][0]
+        geom = validate(wkt)
+        if geom:
+            print(geom.geom_type)
+            line = '{};{};{}\n'.format(orig_name, dest_name, wkt)
             f.write(line)
 
     # Close connections

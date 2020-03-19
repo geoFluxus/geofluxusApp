@@ -1,5 +1,7 @@
 from geofluxus.apps.utils.serializers import (BulkSerializerMixin,
-                                              Reference)
+                                              Reference,
+                                              ErrorMask,
+                                              ValidationError)
 from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Activity,
                                          Company,
@@ -46,6 +48,8 @@ from geofluxus.apps.asmfa.serializers import (ActivityGroupSerializer,
                                               RoutingSerializer,
                                               AdminLevelSerializer,
                                               AreaSerializer)
+import pandas as pd
+from django.utils.translation import ugettext as _
 
 
 class ActivityGroupCreateSerializer(BulkSerializerMixin,
@@ -93,7 +97,12 @@ class ActorCreateSerializer(BulkSerializerMixin,
         'wkt': 'geom',
         'activity': Reference(name='activity',
                               referenced_field='nace',
-                              referenced_model=Activity),
+                              referenced_model=Activity,
+                              allow_null=True),
+        'process': Reference(name='process',
+                             referenced_field='code',
+                             referenced_model=Process,
+                             allow_null=True),
         'identifier': 'identifier',
         'company': Reference(name='company',
                              referenced_field='identifier',
@@ -110,6 +119,24 @@ class ActorCreateSerializer(BulkSerializerMixin,
 
     def get_queryset(self):
         return Actor.objects.all()
+
+    def validate(self, attrs):
+        df = attrs['dataframe']
+
+        # activity & process cannot be both nan!
+        both_nan = pd.isnull(df['activity']) == (pd.isnull(df['process']))
+        if both_nan.sum() > 0:
+            message = _("Actor should belong to either activity or process.")
+            error_mask = ErrorMask(df)
+            error_mask.set_error(df.index[both_nan], 'activity', message)
+            fn, url = error_mask.to_file(
+                file_type=self.input_file_ext.replace('.', ''),
+                encoding=self.encoding
+            )
+            raise ValidationError(
+                message, url
+            )
+        return super().validate(attrs)
 
 
 class PublicationTypeCreateSerializer(BulkSerializerMixin,
@@ -282,9 +309,6 @@ class FlowChainCreateSerializer(BulkSerializerMixin,
         'month': Reference(name='month',
                            referenced_field='code',
                            referenced_model=Month),
-        'process': Reference(name='process',
-                             referenced_field='code',
-                             referenced_model=Process),
         'waste': Reference(name='waste06',
                            referenced_field='ewc_code',
                            referenced_model=Waste06),

@@ -13,7 +13,6 @@ from rest_framework_gis.serializers import (GeometryField)
 
 # FlowChain
 class FlowChainSerializer(HyperlinkedModelSerializer):
-    process = PrimaryKeyRelatedField(read_only=True)
     waste = PrimaryKeyRelatedField(read_only=True)
     materials = MaterialSerializer(read_only=True, many=True)
     products = ProductSerializer(read_only=True, many=True)
@@ -31,7 +30,6 @@ class FlowChainSerializer(HyperlinkedModelSerializer):
                   'amount',
                   'trips',
                   'month',
-                  'process',
                   'waste06',
                   'materials',
                   'products',
@@ -49,7 +47,6 @@ class FlowChainListSerializer(FlowChainSerializer):
                   'amount',
                   'trips',
                   'month',
-                  'process',
                   'waste06',
                   'materials',
                   'products',
@@ -134,9 +131,11 @@ class ExtraDescriptionListSerializer(ExtraDescriptionSerializer):
 class RoutingSerializer(HyperlinkedModelSerializer):
     origin = PrimaryKeyRelatedField(read_only=True)
     destination = PrimaryKeyRelatedField(read_only=True)
+    geom = GeometryField()
 
     class Meta:
         model = Routing
+        geo_field = 'geom'
         fields = ('url',
                   'id',
                   'origin',

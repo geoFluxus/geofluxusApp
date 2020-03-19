@@ -42,7 +42,7 @@ from geofluxus.apps.asmfa.serializers import (ProcessGroupCreateSerializer,
                                               CompositeCreateSerializer,
                                               YearCreateSerializer,
                                               MonthCreateSerializer)
-from django.db.models import Count
+from django.db.models import Count, Value, IntegerField
 
 
 # Process group
@@ -60,7 +60,7 @@ class ProcessGroupViewSet(PostGetViewMixin,
     def get_queryset(self):
         queryset = ProcessGroup.objects
         queryset = queryset.annotate(
-            flow_count=Count('process__flowchain__flow')
+            flow_count=Value(0, output_field=IntegerField())
         )
         return queryset.order_by('id')
 
@@ -80,7 +80,7 @@ class ProcessViewSet(PostGetViewMixin,
     def get_queryset(self):
         queryset = Process.objects
         queryset = queryset.annotate(
-            flow_count=Count('flowchain__flow')
+            flow_count=Value(0, output_field=IntegerField())
         )
         return queryset.order_by('id')
 
