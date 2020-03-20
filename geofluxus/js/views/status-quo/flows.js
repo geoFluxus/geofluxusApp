@@ -547,9 +547,6 @@ define(['views/common/baseview',
                     // /////////////////////////////
                     // Economic Activity dimension
                 } else if (dimensions[0][0] == "economicActivity") {
-                    console.log("Economic activity")
-
-                    //let originOrDestination = $(filterFlowsView.dimensions.economicActivityOrigDest).prop("checked") ? "destination" : "origin";
                     let activityGroups = filterFlowsView.activityGroups.models;
                     let activities = filterFlowsView.activities.models;
 
@@ -572,33 +569,42 @@ define(['views/common/baseview',
                             this[index].activityCode = activityObject.attributes.nace;
                             this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
                         }, flows);
-
-                        // if (originOrDestination == "origin") {
-                        //     flows.forEach(function (flow, index) {
-                        //         let activityObject = activities.find(activity => activity.attributes.id == flow.origin__activity);
-
-                        //         this[index].activityCode = activityObject.attributes.nace;
-                        //         this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
-                        //     }, flows);
-
-                        // } else if (originOrDestination == "destination") {
-                        //     flows.forEach(function (flow, index) {
-                        //         let activityObject = activities.find(activity => activity.attributes.id == flow.destination__activity);
-
-                        //         this[index].activityCode = activityObject.attributes.nace;
-                        //         this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
-                        //     }, flows);
-                        // }
                     }
 
-                    console.log(flows);
                     this.renderPieChart1D(dimensions, flows);
                     this.renderBarChart1D(dimensions, flows);
 
+                    // /////////////////////////////
+                    // Treatment Method Dimension
+                } else if (dimensions[0][0] == "treatmentMethod") {
+                    let processGroups = filterFlowsView.processgroups.models;
+                    let processes = filterFlowsView.processes.models;
+                    console.log("Treatment method")
 
+                    // Granularity: Treatment Method Group
+                    if (dimensions[0][1] == "origin__process__processgroup" || dimensions[0][1] == "destination__process__processgroup") {
+
+                        flows.forEach(function (flow, index) {
+                            let processGroupObject = processGroups.find(processGroup => processGroup.attributes.id == flow.processgroup);
+
+                            this[index].processGroupCode = processGroupObject.attributes.code;
+                            this[index].processGroupName = processGroupObject.attributes.name[0].toUpperCase() + processGroupObject.attributes.name.slice(1).toLowerCase();
+                        }, flows);
+
+                        // Granularity: Treatment Method
+                    } else if (dimensions[0][1] == "origin__process" || dimensions[0][1] == "destination__process") {
+                        
+                        flows.forEach(function (flow, index) {
+                            let processObject = processes.find(process => process.attributes.id == flow.process);
+
+                            this[index].processCode = processObject.attributes.code;
+                            this[index].processName = processObject.attributes.name[0].toUpperCase() + processObject.attributes.name.slice(1).toLowerCase();
+                        }, flows);
+                    }
                 }
 
-                // this.renderPieChart1D(dimensions, flows);
+                console.log(flows);
+                this.renderPieChart1D(dimensions, flows);
                 // this.renderBarChart1D(dimensions, flows);
             },
 

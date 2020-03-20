@@ -131,8 +131,42 @@ define(['views/common/baseview',
                                 ]
                             }
                         }
-                    }
+                    } else if (this.options.dimensions[0][0] == "treatmentMethod") {
 
+
+                        if (this.options.dimensions[0][1] == "origin__process__processgroup" || this.options.dimensions[0][1] == "destination__process__processgroup") {
+                            groupBy = ["processGroupCode"];
+                            tooltipConfig = {
+                                tbody: [
+                                    ["Total", function (d) {
+                                        return d["amount"].toFixed(3)
+                                    }],
+                                    ["Activity group", function (d) {
+                                        return d.processGroupCode + " " + d.processGroupName;
+                                    }],
+                                ]
+                            }
+
+                            // Granularity: Activity
+                        } else if (this.options.dimensions[0][1] == "origin__process" || this.options.dimensions[0][1] == "destination__process") {
+                            groupBy = ["processCode"];
+                            hasLegend = false;
+                            tooltipConfig = {
+                                tbody: [
+                                    ["Total", function (d) {
+                                        return d["amount"].toFixed(3)
+                                    }],
+                                    ["Activity", function (d) {
+                                        return d.processCode + " " + d.processName;
+                                    }],
+                                ]
+                            }
+                        }
+
+
+
+
+                    }
 
                     // Create a new D3Plus PieChart object which will be rendered in this.options.el:
                     this.pieChart = new PieChart({
