@@ -898,7 +898,7 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////////////////////
                 // Origin-controls:
-                $(".areaSelectionsOrigin").fadeOut();
+                $(".areaSelectionsOrigin").hide();
                 $("#areaSelectionsOriginTextarea").html("");
                 $("#origin-role-radio-production").parent().removeClass("active");
                 $("#origin-role-radio-both").parent().addClass("active")
@@ -908,13 +908,15 @@ define(['views/common/baseview',
                 $(_this.origin.activitySelect).html(allActivitiesOptionsHTML);
                 $(_this.origin.processGroupSelect).val('-1');
                 $(_this.origin.processSelect).val('-1');
-                $(".originContainerActivity").fadeOut();
-                $(".originContainerTreatmentMethod").fadeOut();
-
+                $(".originContainerActivity").hide();
+                $(".originContainerTreatmentMethod").hide();
+                
+                
+                $(".activitySelectContainer").hide();
 
                 // ///////////////////////////////////////////////
                 // Destination-controls:
-                $(".areaSelectionsDestination").fadeOut();
+                $(".areaSelectionsDestination").hide();
                 $("#areaSelectionsDestinationTextarea").html("");
                 $("#destination-role-radio-production").parent().removeClass("active");
                 $("#destination-role-radio-both").parent().addClass("active")
@@ -924,24 +926,24 @@ define(['views/common/baseview',
                 $(_this.destination.activitySelect).html(allActivitiesOptionsHTML);
                 $(_this.destination.processGroupSelect).val('-1');
                 $(_this.destination.processSelect).val('-1');
-                $(".destinationContainerActivity").fadeOut();
-                $(".destinationContainerTreatmentMethod").fadeOut();
+                $(".destinationContainerActivity").hide();
+                $(".destinationContainerTreatmentMethod").hide();
 
 
                 // ///////////////////////////////////////////////
                 // Flows-controls:
-                $("#areaSelectionsFlows").fadeOut();
+                $("#areaSelectionsFlows").hide();
                 $("#areaSelectionsFlowsTextarea").html("");
-                $("#areaSelectionsFlows").fadeOut();
+                $("#areaSelectionsFlows").hide();
                 $(_this.flows.yearSelect).val("-1");
                 $(_this.flows.monthSelect).val("-1");
-                $("#monthCol").fadeOut("fast");
+                $("#monthCol").hide("fast");
 
                 $(_this.flows.waste02Select).val("-1");
                 $(_this.flows.waste04Select).val("-1");
-                $("#wastes04col").fadeOut("fast");
+                $("#wastes04col").hide("fast");
                 $(_this.flows.waste06Select).val("-1");
-                $("#wastes06col").fadeOut("fast");
+                $("#wastes06col").hide("fast");
 
                 $(_this.flows.materialSelect).val("-1");
                 $(_this.flows.productSelect).val("-1");
