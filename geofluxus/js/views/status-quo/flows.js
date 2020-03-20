@@ -209,18 +209,18 @@ define(['views/common/baseview',
                 }
                 if ($(filter.origin.activitySelect).val() == '-1') {
                     if ($(filter.origin.activityGroupsSelect).val() != '-1') {
-                        filterParams.origin['origin__activity__activitygroup__in'] = $(filter.origin.activityGroupsSelect).val();
+                        filterParams.flows['origin__activity__activitygroup__in'] = $(filter.origin.activityGroupsSelect).val();
                     }
                 } else {
-                    filterParams.origin['origin__activity__in'] = $(filter.origin.activitySelect).val();
+                    filterParams.flows['origin__activity__in'] = $(filter.origin.activitySelect).val();
                 }
 
                 if ($(filter.origin.processSelect).val() == '-1') {
                     if ($(filter.origin.processGroupSelect).val() != '-1') {
-                        filterParams.origin.processGroups = $(filter.origin.processGroupSelect).val();
+                        filterParams.origin['origin__process__processgroup__in'] = $(filter.origin.processGroupSelect).val();
                     }
                 } else {
-                    filterParams.origin.processes = $(filter.origin.processSelect).val();
+                    filterParams.origin['origin__process__in'] = $(filter.origin.processSelect).val();
                 }
 
 
@@ -235,25 +235,27 @@ define(['views/common/baseview',
                     });
                 }
                 if ($(filter.destination.inOrOut).prop('checked')) {
-                    filterParams.destination.inOrOut = 'outside';
+                    filterParams.destination.inOrOut = 'out';
+                } else {
+                    filterParams.destination.inOrOut = 'in';
                 }
                 if (filter.destination.role != 'both') {
-                    filterParams.destination.role = filter.destination.role;
+                    filterParams.flows['destination_role'] = filter.destination.role;
                 }                
                 if ($(filter.destination.activitySelect).val() == '-1') {
                     if ($(filter.destination.activityGroupsSelect).val() != '-1') {
-                        filterParams.destination.activityGroups = $(filter.destination.activityGroupsSelect).val();
+                        filterParams.flows['destination__activity__activitygroup__in'] = $(filter.destination.activityGroupsSelect).val();
                     }
                 } else {
-                    filterParams.destination.activities = $(filter.destination.activitySelect).val();
+                    filterParams.flows['destination__activity__in'] = $(filter.destination.activitySelect).val();
                 }
 
                 if ($(filter.destination.processSelect).val() == '-1') {
                     if ($(filter.destination.processGroupSelect).val() != '-1') {
-                        filterParams.destination.processGroups = $(filter.destination.processGroupSelect).val();
+                        filterParams.flows['destination__process__processgroup__in'] = $(filter.destination.processGroupSelect).val();
                     }
                 } else {
-                    filterParams.destination.processes = $(filter.destination.processSelect).val();
+                    filterParams.flows['destination__process__in'] = $(filter.destination.processSelect).val();
                 }
 
                 // ///////////////////////////////
@@ -272,9 +274,9 @@ define(['views/common/baseview',
 
                 if (year[0] !== "-1") {
                     if (month == "-1") {
-                        filterParams.flows['month__year__in'] = year;
+                        filterParams.flows['flowchain__month__year__in'] = year;
                     } else {
-                        filterParams.flows['month__in'] = month;
+                        filterParams.flows['flowchain__month__in'] = month;
                     }
                 }
 
@@ -287,14 +289,14 @@ define(['views/common/baseview',
                 if (wastes02[0] !== "-1") {
                     // Waste04 is All, so send Waste02:
                     if (wastes04[0] == "-1") {
-                        filterParams.flows['waste06__waste04__waste02__in'] = wastes02;
+                        filterParams.flows['flowchain__waste06__waste04__waste02__in'] = wastes02;
                     } else {
                         // Waste06 is All, so send Waste04
                         if (wastes06[0] == "-1") {
-                            filterParams.flows['waste06__waste04__in'] = wastes04;
+                            filterParams.flows['flowchain__waste06__waste04__in'] = wastes04;
                         } else {
                             // Send Waste06:
-                            filterParams.flows['waste06__in'] = wastes06;
+                            filterParams.flows['flowchain__waste06__in'] = wastes06;
                         }
                     }
                 }
@@ -302,40 +304,40 @@ define(['views/common/baseview',
                 // Materials
                 let materials = $(filter.flows.materialSelect).val();
                 if (materials[0] !== "-1") {
-                    filterParams.flows['materials__in'] = materials;
+                    filterParams.flows['flowchain__materials__in'] = materials;
                 }
 
                 // Products
                 let products = $(filter.flows.productSelect).val();
                 if (products[0] !== "-1") {
-                    filterParams.flows['products__in'] = products;
+                    filterParams.flows['flowchain__products__in'] = products;
                 }
 
                 // Composites
                 let composites = $(filter.flows.compositesSelect).val();
                 if (composites[0] !== "-1") {
-                    filterParams.flows['composites__in'] = composites;
+                    filterParams.flows['flowchain__composites__in'] = composites;
                 }
 
                 // isRoute
                 let route = $(filter.flows.routeSelect).val();
                 if (route != 'both') {
                     let is_route = (route == 'yes') ? true : false;
-                    filterParams.flows['route'] = is_route;
+                    filterParams.flows['flowchain__route'] = is_route;
                 }
 
                 // isCollector
                 let collector = $(filter.flows.collectorSelect).val();
                 if (collector != 'both') {
                     let is_collector = (collector == 'yes') ? true : false;
-                    filterParams.flows['collector'] = is_collector;
+                    filterParams.flows['flowchain__collector'] = is_collector;
                 }
 
                 // isHazardous
                 let hazardous = $(filter.flows.hazardousSelect).val();
                 if (hazardous != 'both') {
                     let is_hazardous = (hazardous == 'yes') ? true : false;
-                    filterParams.flows['hazardous'] = is_hazardous;
+                    filterParams.flows['flowchain__waste06__hazardous'] = is_hazardous;
                 }
 
                 // isClean
@@ -428,7 +430,14 @@ define(['views/common/baseview',
                 }
 
                 if ($(filter.dimensions.treatmentMethodToggle).prop("checked")) {
-                    filterParams.dimensions.treatmentMethod = $(filter.dimensions.treatmentMethodToggle).prop("checked") ? 'Treatment method' : 'Treatment method group';
+                    var treatmentMethodFilter,
+                        gran = $(filter.dimensions.treatmentMethodToggleGran).prop("checked") ? 'process' : 'processgroup';
+                    if (gran == 'process') {
+                        treatmentMethodFilter = 'process';
+                    } else {
+                        treatmentMethodFilter = 'process__processgroup';
+                    }
+                    filterParams.dimensions.treatmentMethod = treatmentMethodFilter;
                 }
 
                 console.log(filterParams);

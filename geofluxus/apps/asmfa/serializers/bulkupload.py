@@ -364,7 +364,7 @@ class FlowCreateSerializer(BulkSerializerMixin,
         allowed = ['production', 'treatment']
         origin = df['origin_role'].isin(allowed)
         destination = df['destination_role'].isin(allowed)
-        errors = origin & destination == False # one is at least not allowed
+        errors = origin & destination == False # at least one is not allowed
         if errors.sum() > 0:
             message = _("Actor role should be either 'production' or 'treatment'.")
             error_mask = ErrorMask(df)

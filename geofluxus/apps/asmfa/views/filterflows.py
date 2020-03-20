@@ -50,13 +50,13 @@ class FilterFlowViewSet(PostGetViewMixin,
         filters = params.pop('flows', {})
 
         # retrieve spatial filters
-        origin = params.pop('origin', {})
-        destination = params.pop('destination', {})
+        origin_areas = params.pop('origin', {})
+        destination_areas = params.pop('destination', {})
         flow_areas = filters.pop('selectedAreas', {})
 
         area_filters = {}
-        area_filters['origin'] = origin
-        area_filters['destination'] = destination
+        area_filters['origin'] = origin_areas
+        area_filters['destination'] = destination_areas
         area_filters['flows'] = flow_areas
 
         # filter flows with non-spatial filters
@@ -117,7 +117,7 @@ class FilterFlowViewSet(PostGetViewMixin,
                 continue
 
             # form query & append
-            func = 'flowchain__' + func # search in chain!!!
+            func = func # search in chain!!!
             query = Q(**{func: val})
             queries.append(query)
 
@@ -139,7 +139,7 @@ class FilterFlowViewSet(PostGetViewMixin,
         # retrieve filters
         origin = filter['origin']
         destination = filter['destination']
-        flow_areas = filter['flows']
+        flows = filter['flows']
 
         # filter by origin
         area_ids = origin.pop('selectedAreas', [])
@@ -149,7 +149,7 @@ class FilterFlowViewSet(PostGetViewMixin,
             # check where with respect to the area
             inOrOut = origin.pop('inOrOut', 'in')
             if inOrOut == 'in':
-                chains = FlowChain.objects.filter(origin__geom__within=area)
+                queryset = queryset.filter(origin__geom__within=area)
             else:
                 queryset = queryset.exclude(origin__geom__within=area)
 
@@ -166,7 +166,7 @@ class FilterFlowViewSet(PostGetViewMixin,
                 queryset = queryset.exclude(destination__geom__within=area)
 
         # filter by flows
-        area_ids = flow_areas
+        area_ids = flows
         if area_ids:
             area = Area.objects.filter(id__in=area_ids).aggregate(area=Union('geom'))['area']
 
@@ -209,6 +209,7 @@ class FilterFlowViewSet(PostGetViewMixin,
         # recover dimensions
         time = dimensions.pop('time', None)
         eco = dimensions.pop('economicActivity', None)
+        treat = dimensions.pop('treatmentMethod', None)
 
         # TIME DIMENSION
         levels, fields = [], []
@@ -221,6 +222,12 @@ class FilterFlowViewSet(PostGetViewMixin,
             level = eco.split('__')[-1]
             levels.extend(['origin__' + level, 'destination__' + level])
             fields.extend(['origin__' + eco, 'destination__' + eco])
+
+        # TREAT DIMENSION
+        if treat:
+            level = treat.split('__')[-1]
+            levels.extend(['origin__' + level, 'destination__' + level])
+            fields.extend(['origin__' + treat, 'destination__' + treat])
 
         # workaround Django ORM bug
         queryset = queryset.order_by()
