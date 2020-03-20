@@ -103,7 +103,7 @@ define(['views/common/baseview',
                         // Economic Activity dimension
                     } else if (this.options.dimensions[0][0] == "economicActivity") {
                         // Granularity = Activity group
-                        if (this.options.dimensions[0][1] == "activity__activitygroup") {
+                        if (this.options.dimensions[0][1] == "origin__activity__activitygroup" || this.options.dimensions[0][1] == "destination__activity__activitygroup") {
                             groupBy = ["activityGroupCode"];
                             tooltipConfig = {
                                 tbody: [
@@ -117,7 +117,7 @@ define(['views/common/baseview',
                             }
 
                             // Granularity: Activity
-                        } else if (this.options.dimensions[0][1] == "activity") {
+                        } else if (this.options.dimensions[0][1] == "origin__activity" || this.options.dimensions[0][1] == "destination__activity") {
                             groupBy = ["activityCode"];
                             hasLegend = false;
                             tooltipConfig = {

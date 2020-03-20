@@ -245,7 +245,7 @@ define(['views/common/baseview',
                 }
                 if (filter.destination.role != 'both') {
                     filterParams.flows['destination_role'] = filter.destination.role;
-                }                
+                }
                 if ($(filter.destination.activitySelect).val() == '-1') {
                     if ($(filter.destination.activityGroupsSelect).val() != '-1') {
                         filterParams.flows['destination__activity__activitygroup__in'] = $(filter.destination.activityGroupsSelect).val();
@@ -424,14 +424,14 @@ define(['views/common/baseview',
 
                 if ($(filter.dimensions.economicActivityToggle).prop("checked")) {
                     let originOrDestination = $(filter.dimensions.economicActivityOrigDest).prop("checked") ? 'destination__' : 'origin__';
-                        gran = $(filter.dimensions.economicActivityToggleGran).prop("checked") ? 'activity' : 'activity__activitygroup',
-                    filterParams.dimensions.economicActivity = originOrDestination + gran;
+                    gran = $(filter.dimensions.economicActivityToggleGran).prop("checked") ? 'activity' : 'activity__activitygroup',
+                        filterParams.dimensions.economicActivity = originOrDestination + gran;
                 }
 
                 if ($(filter.dimensions.treatmentMethodToggle).prop("checked")) {
                     let originOrDestination = $(filter.dimensions.treatmentMethodOrigDest).prop("checked") ? 'destination__' : 'origin__';
-                        gran = $(filter.dimensions.treatmentMethodToggleGran).prop("checked") ? 'process' : 'process__processgroup',
-                    filterParams.dimensions.treatmentMethod = originOrDestination + gran;
+                    gran = $(filter.dimensions.treatmentMethodToggleGran).prop("checked") ? 'process' : 'process__processgroup',
+                        filterParams.dimensions.treatmentMethod = originOrDestination + gran;
                 }
 
                 // ORIGIN OR DESTINATION FILTERS
@@ -549,52 +549,46 @@ define(['views/common/baseview',
                 } else if (dimensions[0][0] == "economicActivity") {
                     console.log("Economic activity")
 
-                    let originOrDestination = $(filterFlowsView.dimensions.economicActivityOrigDest).prop("checked") ? "destination" : "origin";
+                    //let originOrDestination = $(filterFlowsView.dimensions.economicActivityOrigDest).prop("checked") ? "destination" : "origin";
                     let activityGroups = filterFlowsView.activityGroups.models;
                     let activities = filterFlowsView.activities.models;
 
                     // Granularity = Activity group
-                    if (dimensions[0][1] == "activity__activitygroup") {
+                    if (dimensions[0][1] == "origin__activity__activitygroup" || dimensions[0][1] == "destination__activity__activitygroup") {
 
-                        if (originOrDestination == "origin") {
-                            flows.forEach(function (flow, index) {
-                                let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.origin__activitygroup);
+                        flows.forEach(function (flow, index) {
+                            let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.activitygroup);
 
-                                this[index].activityGroupCode = activityGroupObject.attributes.code;
-                                this[index].activityGroupName = activityGroupObject.attributes.name[0].toUpperCase() + activityGroupObject.attributes.name.slice(1).toLowerCase();
-                            }, flows);
-
-                        } else if (originOrDestination == "destination") {
-                            flows.forEach(function (flow, index) {
-                                let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.destination__activitygroup);
-
-                                this[index].activityGroupCode = activityGroupObject.attributes.code;
-                                this[index].activityGroupName = activityGroupObject.attributes.name[0].toUpperCase() + activityGroupObject.attributes.name.slice(1).toLowerCase();
-                            }, flows);
-                        }
+                            this[index].activityGroupCode = activityGroupObject.attributes.code;
+                            this[index].activityGroupName = activityGroupObject.attributes.name[0].toUpperCase() + activityGroupObject.attributes.name.slice(1).toLowerCase();
+                        }, flows);
 
                         // Granularity: Activity
-                    } else if (dimensions[0][1] == "activity") {
+                    } else if (dimensions[0][1] == "origin__activity" || dimensions[0][1] == "destination__activity") {
 
+                        flows.forEach(function (flow, index) {
+                            let activityObject = activities.find(activity => activity.attributes.id == flow.activity);
 
-                        if (originOrDestination == "origin") {
-                            flows.forEach(function (flow, index) {
-                                let activityObject = activities.find(activity => activity.attributes.id == flow.origin__activity);
+                            this[index].activityCode = activityObject.attributes.nace;
+                            this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
+                        }, flows);
 
-                                this[index].activityCode = activityObject.attributes.nace;
-                                this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
-                            }, flows);
+                        // if (originOrDestination == "origin") {
+                        //     flows.forEach(function (flow, index) {
+                        //         let activityObject = activities.find(activity => activity.attributes.id == flow.origin__activity);
 
-                        } else if (originOrDestination == "destination") {
-                            flows.forEach(function (flow, index) {
-                                let activityObject = activities.find(activity => activity.attributes.id == flow.destination__activity);
+                        //         this[index].activityCode = activityObject.attributes.nace;
+                        //         this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
+                        //     }, flows);
 
-                                this[index].activityCode = activityObject.attributes.nace;
-                                this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
-                            }, flows);
-                        }
+                        // } else if (originOrDestination == "destination") {
+                        //     flows.forEach(function (flow, index) {
+                        //         let activityObject = activities.find(activity => activity.attributes.id == flow.destination__activity);
 
-
+                        //         this[index].activityCode = activityObject.attributes.nace;
+                        //         this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
+                        //     }, flows);
+                        // }
                     }
 
                     console.log(flows);

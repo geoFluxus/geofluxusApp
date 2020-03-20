@@ -109,7 +109,7 @@ define(['views/common/baseview',
                             return b["amount"] - a["amount"];
                         }
 
-                        if (this.options.dimensions[0][1] == "activity__activitygroup") {
+                        if (this.options.dimensions[0][1] == "origin__activity__activitygroup" || this.options.dimensions[0][1] == "destination__activity__activitygroup") {
                             groupBy = ["activityGroupCode"];
                             x = ["activityGroupCode"];
                             tooltipConfig = {
@@ -122,9 +122,9 @@ define(['views/common/baseview',
                                     }],
                                 ]
                             }
-                            
+
                             // Granularity: Activity
-                        } else if (this.options.dimensions[0][1] == "activity") {
+                        } else if (this.options.dimensions[0][1] == "origin__activity" || this.options.dimensions[0][1] == "destination__activity") {
                             groupBy = ["activityCode"];
                             hasLegend = false;
                             x = ["activityCode"];
