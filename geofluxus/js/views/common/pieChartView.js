@@ -141,7 +141,7 @@ define(['views/common/baseview',
                                     ["Total", function (d) {
                                         return d["amount"].toFixed(3)
                                     }],
-                                    ["Activity group", function (d) {
+                                    ["Treatment method group", function (d) {
                                         return d.processGroupCode + " " + d.processGroupName;
                                     }],
                                 ]
@@ -156,7 +156,7 @@ define(['views/common/baseview',
                                     ["Total", function (d) {
                                         return d["amount"].toFixed(3)
                                     }],
-                                    ["Activity", function (d) {
+                                    ["Treatment method", function (d) {
                                         return d.processCode + " " + d.processName;
                                     }],
                                 ]

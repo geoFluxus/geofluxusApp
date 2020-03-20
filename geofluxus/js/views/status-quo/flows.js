@@ -605,7 +605,7 @@ define(['views/common/baseview',
 
                 console.log(flows);
                 this.renderPieChart1D(dimensions, flows);
-                // this.renderBarChart1D(dimensions, flows);
+                this.renderBarChart1D(dimensions, flows);
             },
 
             renderPieChart1D: function (dimensions, flows) {
