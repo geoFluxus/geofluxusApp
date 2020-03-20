@@ -4,11 +4,12 @@ define(['views/common/baseview',
         'visualizations/map',
         'views/status-quo/flows',
         'openlayers',
+        'utils/utils',
         'bootstrap-toggle',
         'bootstrap-toggle/css/bootstrap-toggle.min.css',
     ],
 
-    function (BaseView, _, Collection, Map, FlowsView, ol) {
+    function (BaseView, _, Collection, Map, FlowsView, ol, utils) {
 
         var FilterFlowsView = BaseView.extend({
             initialize: function (options) {
@@ -335,7 +336,7 @@ define(['views/common/baseview',
                         $("#monthCol").fadeOut("fast");
 
                         allMonthOptionsHTML = '<option selected value="-1">All (' + _this.months.length + ')</option><option data-divider="true"></option>';
-                        _this.months.models.forEach(month => allMonthOptionsHTML += "<option value='" + month.attributes.id + "'>" + month.attributes.code.substring(2, 6) + " " + _this.returnMonthString(month.attributes.code.substring(0, 2)) + "</option>");
+                        _this.months.models.forEach(month => allMonthOptionsHTML += "<option value='" + month.attributes.id + "'>" + month.attributes.code.substring(2, 6) + " " + utils.returnMonthString(month.attributes.code.substring(0, 2)) + "</option>");
 
                         $(_this.flows.monthSelect).html(allMonthOptionsHTML);
                         $(_this.flows.monthSelect).selectpicker("refresh");
@@ -345,7 +346,7 @@ define(['views/common/baseview',
                         });
 
                         newMonthOptionsHTML = '<option selected value="-1">All (' + filteredMonths.length + ')</option><option data-divider="true"></option>';
-                        filteredMonths.forEach(month => newMonthOptionsHTML += "<option value='" + month.attributes.id + "'>" + month.attributes.code.substring(2, 6) + " " + _this.returnMonthString(month.attributes.code.substring(0, 2)) + "</option>");
+                        filteredMonths.forEach(month => newMonthOptionsHTML += "<option value='" + month.attributes.id + "'>" + month.attributes.code.substring(2, 6) + " " + utils.returnMonthString(month.attributes.code.substring(0, 2)) + "</option>");
                         $(_this.flows.monthSelect).html(newMonthOptionsHTML);
                         $(_this.flows.monthSelect).selectpicker("refresh");
 
@@ -421,7 +422,7 @@ define(['views/common/baseview',
                 $(this.flows.waste06Select).on('changed.bs.select', multiCheck);
                 $(this.flows.materialSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.productSelect).on('changed.bs.select', multiCheck);
-                $(this.flows.compositeSelect).on('changed.bs.select', multiCheck);
+                $(this.flows.compositesSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.cleanSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.mixedSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.directSelect).on('changed.bs.select', multiCheck);
@@ -478,12 +479,15 @@ define(['views/common/baseview',
                 });
                 $("#dim-toggle-space").change(function () {
                     $("#gran-toggle-space-col").fadeToggle();
+                    $("#origDest-toggle-space-col").fadeToggle();
                 });
                 $("#dim-toggle-economic-activity").change(function () {
                     $("#gran-econ-activity-col").fadeToggle();
+                    $("#origDest-toggle-econAct-col").fadeToggle();
                 });
                 $("#dim-toggle-treatment-method").change(function () {
                     $("#gran-treatment-method-col").fadeToggle();
+                    $("#origDest-toggle-treatment-col").fadeToggle();
                 });
             },
 
@@ -583,16 +587,22 @@ define(['views/common/baseview',
                 $(this.dimensions.spaceToggle).bootstrapToggle();
                 this.dimensions.spaceLevelGranSelect = this.el.querySelector('#dim-space-gran-select');
                 $(this.dimensions.spaceLevelGranSelect).selectpicker();
+                this.dimensions.spaceOrigDest = this.el.querySelector('#origDest-toggle-space');
+                $(this.dimensions.spaceOrigDest).bootstrapToggle();
 
                 this.dimensions.economicActivityToggle = this.el.querySelector('#dim-toggle-economic-activity');
                 $(this.dimensions.economicActivityToggle).bootstrapToggle();
                 this.dimensions.economicActivityToggleGran = this.el.querySelector('#gran-toggle-econ-activity');
                 $(this.dimensions.economicActivityToggleGran).bootstrapToggle();
+                this.dimensions.economicActivityOrigDest = this.el.querySelector('#origDest-toggle-econAct');
+                $(this.dimensions.economicActivityOrigDest).bootstrapToggle();
 
                 this.dimensions.treatmentMethodToggle = this.el.querySelector('#dim-toggle-treatment-method');
                 $(this.dimensions.treatmentMethodToggle).bootstrapToggle();
                 this.dimensions.treatmentMethodToggleGran = this.el.querySelector('#gran-toggle-treatment-method');
                 $(this.dimensions.treatmentMethodToggleGran).bootstrapToggle();
+                this.dimensions.treatmentMethodOrigDest = this.el.querySelector('#origDest-toggle-treatment');
+                $(this.dimensions.treatmentMethodOrigDest).bootstrapToggle();
 
                 this.dimensions.materialToggle = this.el.querySelector('#dim-toggle-material');
                 $(this.dimensions.materialToggle).bootstrapToggle();
@@ -949,17 +959,27 @@ define(['views/common/baseview',
                 // Dimension controls:
                 $(_this.dimensions.timeToggle).bootstrapToggle('off');
                 $(_this.dimensions.timeToggleGran).bootstrapToggle('Year');
+ 
                 $(_this.dimensions.spaceToggle).bootstrapToggle('off');
                 $(_this.dimensions.spaceLevelGranSelect).val($('#dim-space-gran-select:first-child')[0].value);
+                $(_this.dimensions.spaceOrigDest).bootstrapToggle('off');
+                
                 $(_this.dimensions.economicActivityToggle).bootstrapToggle('off');
                 $(_this.dimensions.economicActivityToggleGran).bootstrapToggle('off');
+                $(_this.dimensions.economicActivityOrigDest).bootstrapToggle('off');
+
                 $(_this.dimensions.treatmentMethodToggle).bootstrapToggle('off');
                 $(_this.dimensions.treatmentMethodToggleGran).bootstrapToggle('off');
+                $(_this.dimensions.treatmentMethodOrigDest).bootstrapToggle('off');
 
                 $("#gran-toggle-time-col").hide();
                 $("#gran-toggle-space-col").hide();
                 $("#gran-econ-activity-col").hide();
                 $("#gran-treatment-method-col").hide();
+
+                $("#origDest-toggle-space-col").hide();
+                $("#origDest-toggle-econAct-col").hide();
+                $("#origDest-toggle-treatment-col").hide();
 
                 // Empty all textareas:
                 $(".selections").html("");
@@ -967,15 +987,6 @@ define(['views/common/baseview',
 
                 // Refresh all selectpickers:
                 $(".selectpicker").selectpicker('refresh');
-            },
-
-            returnMonthString: function (monthNumber) {
-                monthNumber = parseInt(monthNumber) - 1;
-                const monthNames = ["January", "February", "March", "April", "May", "June",
-                    "July", "August", "September", "October", "November", "December"
-                ];
-
-                return monthNames[monthNumber]
             },
 
             close: function () {

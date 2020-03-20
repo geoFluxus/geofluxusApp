@@ -41,7 +41,6 @@ define(['views/common/baseview',
                 initialize: function (options) {
                     BarChartView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
-                    _.bindAll(this, 'exportPNG');
                     _.bindAll(this, 'exportCSV');
                     var _this = this;
 
@@ -55,18 +54,104 @@ define(['views/common/baseview',
 
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
-                    'click .export-img': 'exportPNG',
-                    'click .export-csv': 'exportCSV',   
+                    'click .export-csv': 'exportCSV',
                 },
 
                 /*
                  * render the view
                  */
                 render: function (data) {
+                    let flows = this.options.flows;
+                    let groupBy;
+                    let x;
+                    let tooltipConfig;
+                    let hasLegend = true;
+                    let xSort;
+
+                    // /////////////////////////////
+                    // Time dimension
+                    if (this.options.dimensions[0][0] == "time") {
+                        // Granularity = year
+                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
+                            groupBy = ["year"];
+                            x = ["year"];
+                            tooltipConfig = {
+                                tbody: [
+                                    ["Total", function (d) {
+                                        return d["amount"].toFixed(3)
+                                    }],
+                                    ["Year", function (d) {
+                                        return d.year
+                                    }]
+                                ]
+                            }
+                            // Granularity = month:
+                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
+                            groupBy = ["month"];
+                            x = ["month"];
+                            hasLegend = false;
+                            tooltipConfig = {
+                                tbody: [
+                                    ["Total", function (d) {
+                                        return d["amount"].toFixed(3)
+                                    }],
+                                    ["Month", function (d) {
+                                        return d.month
+                                    }]
+                                ]
+                            }
+                        }
+
+                        // /////////////////////////////
+                        // Economic Activity dimension
+                    } else if (this.options.dimensions[0][0] == "economicActivity") {
+                        xSort = function (a, b) {
+                            return b["amount"] - a["amount"];
+                        }
+
+                        if (this.options.dimensions[0][1] == "activity__activitygroup") {
+                            groupBy = ["activityGroupCode"];
+                            x = ["activityGroupCode"];
+                            tooltipConfig = {
+                                tbody: [
+                                    ["Total", function (d) {
+                                        return d["amount"].toFixed(3)
+                                    }],
+                                    ["Activity group", function (d) {
+                                        return d.activityGroupCode + " " + d.activityGroupName;
+                                    }],
+                                ]
+                            }
+                            
+                            // Granularity: Activity
+                        } else if (this.options.dimensions[0][1] == "activity") {
+                            groupBy = ["activityCode"];
+                            hasLegend = false;
+                            x = ["activityCode"];
+                            tooltipConfig = {
+                                tbody: [
+                                    ["Total", function (d) {
+                                        return d["amount"].toFixed(3)
+                                    }],
+                                    ["Activity", function (d) {
+                                        return d.activityCode + " " + d.activityName;
+                                    }],
+                                ]
+                            }
+                        }
+                    }
+
+
                     // Create a new D3Plus BarChart object which will be rendered in this.options.el:
                     this.barChart = new BarChart({
                         el: this.options.el,
-                    }); 
+                        data: flows,
+                        groupBy: groupBy,
+                        x: x,
+                        tooltipConfig: tooltipConfig,
+                        hasLegend: hasLegend,
+                        xSort: xSort,
+                    });
                 },
 
                 /*
@@ -81,16 +166,6 @@ define(['views/common/baseview',
 
                 refresh: function (options) {
 
-                },
-
-
-                exportPNG: function (event) {
-                    var svg = this.el.querySelector('svg');
-                    saveSvgAsPng.saveSvgAsPng(svg, "sankey-diagram.png", {
-                        scale: 2,
-                        backgroundColor: "#FFFFFF"
-                    });
-                    event.stopImmediatePropagation();
                 },
 
                 exportCSV: function (event) {

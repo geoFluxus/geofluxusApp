@@ -8,6 +8,7 @@ define(['views/common/baseview',
         'views/common/flowsankeymap',
         'views/common/pieChartView',
         'views/common/barChartView',
+        'views/common/linePlotView',
     ],
     function (
         BaseView,
@@ -18,7 +19,8 @@ define(['views/common/baseview',
         FlowSankeyView,
         FlowMapView,
         PieChartView,
-        BarChartView
+        BarChartView,
+        LinePlotView
     ) {
 
         var FlowsView = BaseView.extend({
@@ -27,6 +29,8 @@ define(['views/common/baseview',
             initialize: function (options) {
                 var _this = this;
                 FlowsView.__super__.initialize.apply(this, [options]);
+
+                this.selectedDimensions = [];
 
                 //_.bindAll(this, 'linkSelected');
                 //_.bindAll(this, 'linkDeselected');
@@ -194,10 +198,10 @@ define(['views/common/baseview',
 
                 if (filter.selectedAreasOrigin !== undefined &&
                     filter.selectedAreasOrigin.length > 0) {
-                        filterParams.origin.selectedAreas = [];
-                        filter.selectedAreasOrigin.forEach(function (area) {
-                            filterParams.origin.selectedAreas.push(area.id);
-                        });
+                    filterParams.origin.selectedAreas = [];
+                    filter.selectedAreasOrigin.forEach(function (area) {
+                        filterParams.origin.selectedAreas.push(area.id);
+                    });
                 }
                 if ($(filter.origin.inOrOut).prop('checked')) {
                     filterParams.origin.inOrOut = 'out';
@@ -404,14 +408,14 @@ define(['views/common/baseview',
                 // DIMENSIONS
 
                 if ($(filter.dimensions.timeToggle).prop("checked")) {
-                     var timeFilter,
-                         gran = $(filter.dimensions.timeToggleGran).prop("checked") ? 'month' : 'year';
-                     if (gran == 'month') {
+                    var timeFilter,
+                        gran = $(filter.dimensions.timeToggleGran).prop("checked") ? 'month' : 'year';
+                    if (gran == 'month') {
                         timeFilter = 'flowchain__month';
-                     } else {
+                    } else {
                         timeFilter = 'flowchain__month__year';
-                     }
-                     filterParams.dimensions.time = timeFilter;
+                    }
+                    filterParams.dimensions.time = timeFilter;
                 }
 
                 if ($(filter.dimensions.spaceToggle).prop("checked")) {
@@ -440,133 +444,281 @@ define(['views/common/baseview',
                     filterParams.dimensions.treatmentMethod = treatmentMethodFilter;
                 }
 
+                // ORIGIN OR DESTINATION FILTERS
+                // $(_this.dimensions.spaceOrigDest).prop("checked")
+                // $(_this.dimensions.economicActivityOrigDest).prop("checked")
+                // $(_this.dimensions.treatmentMethodOrigDest).prop("checked")
+
+
+
+
                 console.log(filterParams);
 
                 return filterParams;
             },
 
-            linkSelected: function (e) {
-                console.log("Link selected: ", e);
-                // only actors atm
-                var data = e.detail,
-                    _this = this,
-                    showDelta = this.modDisplaySelect.value === 'delta';
+            // linkSelected: function (e) {
+            //     console.log("Link selected: ", e);
+            //     // only actors atm
+            //     var data = e.detail,
+            //         _this = this,
+            //         showDelta = this.modDisplaySelect.value === 'delta';
 
-                if (showDelta) return;
+            //     if (showDelta) return;
 
-                if (!Array.isArray(data)) data = [data];
-                var promises = [];
-                this.loader.activate();
-                data.forEach(function (d) {
+            //     if (!Array.isArray(data)) data = [data];
+            //     var promises = [];
+            //     this.loader.activate();
+            //     data.forEach(function (d) {
 
-                    // display level actor
-                    if (_this.nodeLevel === 'actor') {
-                        _this.flowMapView.addFlows(d);
+            //         // display level actor
+            //         if (_this.nodeLevel === 'actor') {
+            //             _this.flowMapView.addFlows(d);
+            //         }
+            //         // display level activity or group
+            //         else {
+            //             promises.push(_this.addGroupedActors(d));
+            //         }
+            //     })
+
+            //     function render() {
+            //         _this.flowMapView.rerender(true);
+            //         _this.loader.deactivate();
+            //     }
+            //     if (promises.length > 0) {
+            //         Promise.all(promises).then(render)
+            //     } else {
+            //         render();
+            //     }
+
+            // },
+
+            // linkDeselected: function (e) {
+            //     // only actors atm
+            //     var flow = e.detail,
+            //         flows = [],
+            //         nodes = [];
+            //     if (this.nodeLevel === 'actor') {
+            //         nodes = [data.origin, data.destination];
+            //         flows = flow;
+            //     } else {
+            //         var mapFlows = this.flowMapView.getFlows();
+            //         mapFlows.forEach(function (mapFlow) {
+            //             if (mapFlow.parent === flow.id) {
+            //                 flows.push(mapFlow);
+            //             }
+            //         })
+            //     };
+            //     this.flowMapView.removeFlows(flows);
+            //     this.flowMapView.rerender();
+            // },
+
+            render1Dvisualisations: function (dimensions, flows) {
+                let filterFlowsView = this.filterFlowsView;
+
+                // Enrich data here
+                if (dimensions[0][0] == "time") {
+                    let years = filterFlowsView.years.models;
+                    let months = filterFlowsView.months.models;
+
+                    // Granularity = year
+                    if (dimensions[0][1] == "flowchain__month__year") {
+
+                        // Replace year id's by year:
+                        flows.forEach(function (flow, index) {
+                            let yearObject = years.find(year => year.attributes.id == flow.year);
+
+                            this[index].year = parseInt(yearObject.attributes.code);
+                        }, flows);
+
+                        flows = _.sortBy(flows, 'year');
+
+                        // Granularity = month:
+                    } else if (dimensions[0][1] == "flowchain__month") {
+
+                        // Replace Month id's by Month name:
+                        flows.forEach(function (flow, index) {
+                            let monthObject = months.find(month => month.attributes.id == flow.month);
+
+                            this[index].id = monthObject.attributes.id;
+                            this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
+                            this[index].yearMonthCode = parseInt(monthObject.attributes.code.substring(2, 6) + monthObject.attributes.code.substring(0, 2));
+                            this[index].year = parseInt(monthObject.attributes.code.substring(2, 6));
+                        }, flows);
+
+                        // Sort by month id:
+                        flows = _.sortBy(flows, 'id');
                     }
-                    // display level activity or group
-                    else {
-                        promises.push(_this.addGroupedActors(d));
-                    }
-                })
 
-                function render() {
-                    _this.flowMapView.rerender(true);
-                    _this.loader.deactivate();
-                }
-                if (promises.length > 0) {
-                    Promise.all(promises).then(render)
-                } else {
-                    render();
-                }
+                    this.renderPieChart1D(dimensions, flows);
+                    this.renderBarChart1D(dimensions, flows);
+                    this.renderLinePlot1D(dimensions, flows);
 
-            },
+                    // /////////////////////////////
+                    // Economic Activity dimension
+                } else if (dimensions[0][0] == "economicActivity") {
+                    console.log("Economic activity")
 
-            linkDeselected: function (e) {
-                // only actors atm
-                var flow = e.detail,
-                    flows = [],
-                    nodes = [];
-                if (this.nodeLevel === 'actor') {
-                    nodes = [data.origin, data.destination];
-                    flows = flow;
-                } else {
-                    var mapFlows = this.flowMapView.getFlows();
-                    mapFlows.forEach(function (mapFlow) {
-                        if (mapFlow.parent === flow.id) {
-                            flows.push(mapFlow);
+                    let originOrDestination = $(filterFlowsView.dimensions.economicActivityOrigDest).prop("checked") ? "destination" : "origin";
+                    let activityGroups = filterFlowsView.activityGroups.models;
+                    let activities = filterFlowsView.activities.models;
+
+                    // Granularity = Activity group
+                    if (dimensions[0][1] == "activity__activitygroup") {
+
+                        if (originOrDestination == "origin") {
+                            flows.forEach(function (flow, index) {
+                                let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.origin__activitygroup);
+
+                                this[index].activityGroupCode = activityGroupObject.attributes.code;
+                                this[index].activityGroupName = activityGroupObject.attributes.name[0].toUpperCase() + activityGroupObject.attributes.name.slice(1).toLowerCase();
+                            }, flows);
+
+                        } else if (originOrDestination == "destination") {
+                            flows.forEach(function (flow, index) {
+                                let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.destination__activitygroup);
+
+                                this[index].activityGroupCode = activityGroupObject.attributes.code;
+                                this[index].activityGroupName = activityGroupObject.attributes.name[0].toUpperCase() + activityGroupObject.attributes.name.slice(1).toLowerCase();
+                            }, flows);
                         }
-                    })
-                };
-                this.flowMapView.removeFlows(flows);
-                this.flowMapView.rerender();
+
+                        // Granularity: Activity
+                    } else if (dimensions[0][1] == "activity") {
+
+
+                        if (originOrDestination == "origin") {
+                            flows.forEach(function (flow, index) {
+                                let activityObject = activities.find(activity => activity.attributes.id == flow.origin__activity);
+
+                                this[index].activityCode = activityObject.attributes.nace;
+                                this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
+                            }, flows);
+
+                        } else if (originOrDestination == "destination") {
+                            flows.forEach(function (flow, index) {
+                                let activityObject = activities.find(activity => activity.attributes.id == flow.destination__activity);
+
+                                this[index].activityCode = activityObject.attributes.nace;
+                                this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
+                            }, flows);
+                        }
+
+
+                    }
+
+                    console.log(flows);
+                    this.renderPieChart1D(dimensions, flows);
+                    this.renderBarChart1D(dimensions, flows);
+
+
+                }
+
+                // this.renderPieChart1D(dimensions, flows);
+                // this.renderBarChart1D(dimensions, flows);
             },
 
-            renderPieChart1D: function () {
+            renderPieChart1D: function (dimensions, flows) {
                 var _this = this;
+                var el = ".piechart-wrapper";
 
                 if (this.pieChartView != null) this.pieChartView.close();
 
-
-                var el = ".piechart-wrapper";
-
-
                 this.pieChartView = new PieChartView({
                     el: el,
+                    dimensions: dimensions,
+                    flows: flows,
+                    flowsView: _this,
                 });
             },
 
-            renderBarChart1D: function () {
+            renderBarChart1D: function (dimensions, flows) {
                 var _this = this;
+                var el = ".barchart-wrapper";
 
                 if (this.barChartView != null) this.barChartView.close();
 
-
-                var el = ".barchart-wrapper";
-
-
                 this.barChartView = new BarChartView({
                     el: el,
+                    dimensions: dimensions,
+                    flows: flows,
+                    flowsView: _this,
                 });
+            },
+
+            renderLinePlot1D: function (dimensions, flows) {
+                var _this = this;
+                var el = ".lineplot-wrapper";
+
+                if (this.linePlotView != null) this.linePlotView.close();
+
+                this.linePlotView = new LinePlotView({
+                    el: el,
+                    dimensions: dimensions,
+                    flows: flows,
+                    flowsView: _this,
+                });
+            },
+
+            closeAllVizViews: function () {
+                if (this.barChartView != null) this.barChartView.close();
+                if (this.pieChartView != null) this.pieChartView.close();
+                if (this.linePlotView != null) this.linePlotView.close();
             },
 
             // Fetch flows and calls options.success(flows) on success
             fetchFlows: function (options) {
                 let _this = this;
                 let filterParams = this.getFlowFilterParams();
+                let data = {};
+                this.selectedDimensions = Object.entries(filterParams.dimensions);
 
                 var flows = new Collection([], {
                     apiTag: 'flows',
                 });
 
-                this.loader.activate();
-                var data = {};
+                // Reset all visualisations:
+                this.closeAllVizViews();
+
+                // Only fetch Flows if at least one dimension has been selected:
+                if (_this.selectedDimensions.length > 0) {
+                    this.loader.activate();
+
+                    flows.postfetch({
+                        data: data,
+                        body: filterParams,
+                        success: function (response) {
+                            //_this.postprocess(flows);
+
+                            _this.flows = flows.models;
+
+                            if (_this.selectedDimensions.length == 1) {
 
 
-                // PIE CHART TEST
-                _this.renderPieChart1D();
-                _this.renderBarChart1D();
+                                _this.flows.forEach(function (flow, index) {
+                                    this[index] = flow.attributes;
+                                }, _this.flows);
+
+                                _this.render1Dvisualisations(_this.selectedDimensions, _this.flows);
+                            }
 
 
-                flows.postfetch({
-                    data: data,
-                    body: filterParams,
-                    success: function (response) {
-                        _this.postprocess(flows);
-                        _this.loader.deactivate();
-                        _this.renderSankeyMap();
+                            _this.loader.deactivate();
+                            //_this.renderSankeyMap();
 
 
 
-                        if (options.success) {
-                            options.success(flows);
+                            if (options.success) {
+                                options.success(flows);
+                            }
+                        },
+                        error: function (error) {
+                            _this.loader.deactivate();
+                            console.log(error);
+                            //_this.onError(error);
                         }
-                    },
-                    error: function (error) {
-                        _this.loader.deactivate();
-                        console.log(error);
-                        //_this.onError(error);
-                    }
-                });
+                    });
+                }
             },
 
         });

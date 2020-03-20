@@ -15,13 +15,13 @@ require(['jquery',
 function($, ready){
     ready(function(){
          // hide sidebar if there is no content in it
-         if (document.getElementById('sidebar-content').childElementCount == 0){
-           document.getElementById('page-content-wrapper').style.paddingLeft = '0px';
-           document.getElementById('page-content-wrapper').style.paddingTop = '0px';
-         }
-         else {
-           document.getElementById('sidebar-wrapper').style.display = 'inline';
-         }
+        //  if (document.getElementById('sidebar-content').childElementCount == 0){
+        //    document.getElementById('page-content-wrapper').style.paddingLeft = '0px';
+        //    document.getElementById('page-content-wrapper').style.paddingTop = '0px';
+        //  }
+        //  else {
+        //    document.getElementById('sidebar-wrapper').style.display = 'inline';
+        //  }
 
         // Hide navbar on scroll down, show navbar on scroll up:
         var prevScrollpos = window.pageYOffset;

@@ -21,7 +21,7 @@ label {
 }
 
 body {
-    font-family: Montserrat, sans serif;
+    font-family: Montserrat, sans-serif;
     background-color: black;
     z-index: 0;
 }
@@ -84,6 +84,10 @@ input {
 .dropdown-item {
     padding-left: 1rem;
     padding-right: 1rem;
+}
+
+.dropdown-item.active {
+    background-color: grey !important;
 }
 
 /* BUTTON STYLES */

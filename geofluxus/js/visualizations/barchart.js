@@ -5,7 +5,7 @@ define([
 ], function (d3, d3brush, d3plus) {
     /**
      *
-     * Pie chart to display Flows data
+     * Bar chart to display Flows data
      *
      * @author Evert Van Hirtum
      */
@@ -18,68 +18,34 @@ define([
             var options = options || {};
             var _this = this;
 
-            var myData = [{
-                    id: "alpha",
-                    x: 4,
-                    y: 7
-                },
-                {
-                    id: "alpha",
-                    x: 5,
-                    y: 25
-                },
-                {
-                    id: "alpha",
-                    x: 6,
-                    y: 13
-                },
-                {
-                    id: "beta",
-                    x: 4,
-                    y: 17
-                },
-                {
-                    id: "beta",
-                    x: 5,
-                    y: 8
-                },
-                {
-                    id: "beta",
-                    x: 6,
-                    y: 13
-                }
-            ];
-
-
-            new d3plus.BarChart()
-                .config({
-                    data: myData,
-                    //groupBy: ["Group", "Sub-Group"],
-                    value: function (d) {
-                        return d[y];
-                    },
-                    // tooltipConfig: {
-                    //     tbody: [
-                    //         ["Total", function (d) {
-                    //             return d[y]
-                    //         }],
-                    //         // ["Year", function (d) {
-                    //         //     return d.year
-                    //         // }]
-                    //     ]
-                    // }
-                })
-                // The Pie chart will be rendered in this element:
-                .select(options.el)
-                .render();
-
-
-
-        }
-
-
-        templateFunction() {
-
+            if (options.xSort) {
+                new d3plus.Plot()
+                    .tooltipConfig(options.tooltipConfig)
+                    .data(options.data)
+                    .groupBy(options.groupBy[0])
+                    .x(options.x)
+                    .y("amount")
+                    .baseline(0)
+                    .discrete("x")
+                    .xSort(options.xSort)
+                    .select(options.el)
+                    .legend(options.hasLegend)
+                    .shape("Bar")
+                    .render();
+            } else {
+                new d3plus.Plot()
+                    .tooltipConfig(options.tooltipConfig)
+                    .data(options.data)
+                    .groupBy(options.groupBy[0])
+                    .x(options.x)
+                    .y("amount")
+                    .baseline(0)
+                    .discrete("x")
+                    .select(options.el)
+                    .legend(options.hasLegend)
+                    .shape("Bar")
+                    .render();
+            }
         }
     }
     return BarChart;

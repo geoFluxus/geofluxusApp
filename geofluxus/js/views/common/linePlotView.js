@@ -1,7 +1,7 @@
 define(['views/common/baseview',
         'underscore',
         'd3',
-        'visualizations/piechart',
+        'visualizations/linePlot',
         'collections/collection',
         'app-config',
         'save-svg-as-png',
@@ -13,7 +13,7 @@ define(['views/common/baseview',
         BaseView,
         _,
         d3,
-        PieChart,
+        LinePlot,
         Collection,
         config,
         saveSvgAsPng,
@@ -24,11 +24,11 @@ define(['views/common/baseview',
         /**
          *
          * @author Evert Van Hirtum
-         * @name module:views/PieChartView
+         * @name module:views/LinePlotView
          * @augments module:views/BaseView
          */
-        var PieChartView = BaseView.extend(
-            /** @lends module:views/PieChartView.prototype */
+        var LinePlotView = BaseView.extend(
+            /** @lends module:views/LinePlotView.prototype */
             {
 
                 /**
@@ -39,7 +39,7 @@ define(['views/common/baseview',
                  * @see http://backbonejs.org/#View
                  */
                 initialize: function (options) {
-                    PieChartView.__super__.initialize.apply(this, [options]);
+                    LinePlotView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
                     var _this = this;
@@ -62,17 +62,19 @@ define(['views/common/baseview',
                  */
                 render: function (data) {
                     let flows = this.options.flows;
+                    let tooltipConfig;
                     let groupBy;
-                    let tooltipConfig = {};
-                    let hasLegend = true;
+                    let x;
 
                     // /////////////////////////////
                     // Time dimension
                     if (this.options.dimensions[0][0] == "time") {
                         // Granularity = year
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
-                            groupBy = ["year"];
+                            //groupBy = ["year"];
+                            x = ["year"];
                             tooltipConfig = {
+                                title: "Waste totals per year",
                                 tbody: [
                                     ["Total", function (d) {
                                         return d["amount"].toFixed(3)
@@ -83,18 +85,20 @@ define(['views/common/baseview',
                                 ]
                             }
 
+
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
-                            groupBy = ["month"];
-                            hasLegend = false;
+                            groupBy = ["year"];
+                            x = ["yearMonthCode"];
                             tooltipConfig = {
+                                title: "Waste totals per month",
                                 tbody: [
                                     ["Total", function (d) {
                                         return d["amount"].toFixed(3)
                                     }],
                                     ["Month", function (d) {
-                                        return d.month;
-                                    }],
+                                        return d.month
+                                    }]
                                 ]
                             }
                         }
@@ -102,45 +106,27 @@ define(['views/common/baseview',
                         // /////////////////////////////
                         // Economic Activity dimension
                     } else if (this.options.dimensions[0][0] == "economicActivity") {
+                        console.log("Economic activity")
+
                         // Granularity = Activity group
                         if (this.options.dimensions[0][1] == "activity__activitygroup") {
-                            groupBy = ["activityGroupCode"];
-                            tooltipConfig = {
-                                tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
-                                    }],
-                                    ["Activity group", function (d) {
-                                        return d.activityGroupCode + " " + d.activityGroupName;
-                                    }],
-                                ]
-                            }
+                            //groupBy = ["activitygroup"];
+
 
                             // Granularity: Activity
                         } else if (this.options.dimensions[0][1] == "activity") {
-                            groupBy = ["activityCode"];
-                            hasLegend = false;
-                            tooltipConfig = {
-                                tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
-                                    }],
-                                    ["Activity", function (d) {
-                                        return d.activityCode + " " + d.activityName;
-                                    }],
-                                ]
-                            }
+
                         }
                     }
 
-
-                    // Create a new D3Plus PieChart object which will be rendered in this.options.el:
-                    this.pieChart = new PieChart({
+                    // Create a new D3Plus linePlot object which will be rendered in this.options.el:
+                    this.linePlot = new LinePlot({
                         el: this.options.el,
                         data: flows,
                         groupBy: groupBy,
+                        x: x,
                         tooltipConfig: tooltipConfig,
-                        hasLegend: hasLegend,
+
                     });
                 },
 
@@ -200,6 +186,6 @@ define(['views/common/baseview',
                 },
 
             });
-        return PieChartView;
+        return LinePlotView;
     }
 );
