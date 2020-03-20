@@ -25,7 +25,7 @@ define([
                     data: options.data,
                     groupBy: options.groupBy,
                     value: function (d) {
-                        return d["amount"];
+                        return d["amount"].toFixed(3);
                     },
                     tooltipConfig: options.tooltipConfig,
                 })
@@ -35,6 +35,12 @@ define([
                 //         return number.toFixed(2);
                 //     }
                 // })
+                .shapeConfig({
+                    labelConfig: {
+                      fontFamily: "Montserrat" ,
+                      fontMax: 100
+                    }
+                  })
                 .downloadButton(true)
                 .select(options.el)
                 .render();

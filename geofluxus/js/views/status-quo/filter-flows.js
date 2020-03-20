@@ -977,6 +977,10 @@ define(['views/common/baseview',
                 $("#gran-econ-activity-col").hide();
                 $("#gran-treatment-method-col").hide();
 
+                $("#origDest-toggle-space-col").hide();
+                $("#origDest-toggle-econAct-col").hide();
+                $("#origDest-toggle-treatment-col").hide();
+
                 // Empty all textareas:
                 $(".selections").html("");
                 $(".selections").textareaAutoSize();

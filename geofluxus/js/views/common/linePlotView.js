@@ -77,7 +77,7 @@ define(['views/common/baseview',
                                 title: "Waste totals per year",
                                 tbody: [
                                     ["Total", function (d) {
-                                        return d["amount"]
+                                        return d["amount"].toFixed(3)
                                     }],
                                     ["Year", function (d) {
                                         return d.year
@@ -94,7 +94,7 @@ define(['views/common/baseview',
                                 title: "Waste totals per month",
                                 tbody: [
                                     ["Total", function (d) {
-                                        return d["amount"]
+                                        return d["amount"].toFixed(3)
                                     }],
                                     ["Month", function (d) {
                                         return d.month

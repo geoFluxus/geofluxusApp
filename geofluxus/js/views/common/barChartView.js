@@ -78,7 +78,7 @@ define(['views/common/baseview',
                             tooltipConfig = {
                                 tbody: [
                                     ["Total", function (d) {
-                                        return d["amount"]
+                                        return d["amount"].toFixed(3)
                                     }],
                                     ["Year", function (d) {
                                         return d.year
@@ -93,7 +93,7 @@ define(['views/common/baseview',
                             tooltipConfig = {
                                 tbody: [
                                     ["Total", function (d) {
-                                        return d["amount"]
+                                        return d["amount"].toFixed(3)
                                     }],
                                     ["Month", function (d) {
                                         return d.month
@@ -115,7 +115,7 @@ define(['views/common/baseview',
                             tooltipConfig = {
                                 tbody: [
                                     ["Total", function (d) {
-                                        return d["amount"]
+                                        return d["amount"].toFixed(3)
                                     }],
                                     ["Activity group", function (d) {
                                         return d.activityGroupCode + " " + d.activityGroupName;
@@ -131,7 +131,7 @@ define(['views/common/baseview',
                             tooltipConfig = {
                                 tbody: [
                                     ["Total", function (d) {
-                                        return d["amount"]
+                                        return d["amount"].toFixed(3)
                                     }],
                                     ["Activity", function (d) {
                                         return d.activityCode + " " + d.activityName;
