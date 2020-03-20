@@ -423,25 +423,15 @@ define(['views/common/baseview',
                 }
 
                 if ($(filter.dimensions.economicActivityToggle).prop("checked")) {
-                    var economicActivityFilter,
-                        gran = $(filter.dimensions.economicActivityToggleGran).prop("checked") ? 'activity' : 'activity group';
-                    if (gran == 'activity') {
-                        economicActivityFilter = 'activity';
-                    } else {
-                        economicActivityFilter = 'activity__activitygroup';
-                    }
-                    filterParams.dimensions.economicActivity = economicActivityFilter;
+                    let originOrDestination = $(filter.dimensions.economicActivityOrigDest).prop("checked") ? 'destination__' : 'origin__';
+                        gran = $(filter.dimensions.economicActivityToggleGran).prop("checked") ? 'activity' : 'activity__activitygroup',
+                    filterParams.dimensions.economicActivity = originOrDestination + gran;
                 }
 
                 if ($(filter.dimensions.treatmentMethodToggle).prop("checked")) {
-                    var treatmentMethodFilter,
-                        gran = $(filter.dimensions.treatmentMethodToggleGran).prop("checked") ? 'process' : 'processgroup';
-                    if (gran == 'process') {
-                        treatmentMethodFilter = 'process';
-                    } else {
-                        treatmentMethodFilter = 'process__processgroup';
-                    }
-                    filterParams.dimensions.treatmentMethod = treatmentMethodFilter;
+                    let originOrDestination = $(filter.dimensions.treatmentMethodOrigDest).prop("checked") ? 'destination__' : 'origin__';
+                        gran = $(filter.dimensions.treatmentMethodToggleGran).prop("checked") ? 'process' : 'process__processgroup',
+                    filterParams.dimensions.treatmentMethod = originOrDestination + gran;
                 }
 
                 // ORIGIN OR DESTINATION FILTERS

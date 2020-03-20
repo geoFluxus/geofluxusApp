@@ -219,15 +219,13 @@ class FilterFlowViewSet(PostGetViewMixin,
 
         # ECO DIMENSION
         if eco:
-            level = eco.split('__')[-1]
-            levels.extend(['origin__' + level, 'destination__' + level])
-            fields.extend(['origin__' + eco, 'destination__' + eco])
+            levels.append(eco.split('__')[-1])
+            fields.append(eco)
 
         # TREAT DIMENSION
         if treat:
-            level = treat.split('__')[-1]
-            levels.extend(['origin__' + level, 'destination__' + level])
-            fields.extend(['origin__' + treat, 'destination__' + treat])
+            levels.append(treat.split('__')[-1])
+            fields.append(treat)
 
         # workaround Django ORM bug
         queryset = queryset.order_by()
@@ -237,6 +235,15 @@ class FilterFlowViewSet(PostGetViewMixin,
 
         # serialize aggregated flow groups
         for group in groups:
+            # check for groups fields with null values!
+            # these groups should be excluded entirely
+            has_null = False
+            for field, value in group.items():
+                if not value:
+                    has_null= True
+                    break
+            if has_null: continue
+
             # retrieve group
             grouped = queryset.filter(**group)
             # and EXCLUDE it from further search...
