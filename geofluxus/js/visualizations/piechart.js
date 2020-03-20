@@ -37,10 +37,10 @@ define([
                 // })
                 .shapeConfig({
                     labelConfig: {
-                      fontFamily: "Montserrat" ,
-                      fontMax: 100
+                        fontFamily: "Montserrat",
+                        fontMax: 100
                     }
-                  })
+                })
                 .downloadButton(true)
                 .select(options.el)
                 .render();
