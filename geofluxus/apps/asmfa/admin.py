@@ -160,7 +160,12 @@ class FlowChainAdmin(ModelAdmin):
 admin.site.register(FlowChain, FlowChainAdmin)
 
 # Flow
-admin.site.register(Flow)
+class FlowAdmin(ModelAdmin):
+    search_fields = ['flowchain__identifier']
+
+    def get_ordering(self, request):
+        return [Lower('flowchain__identifier')]
+admin.site.register(Flow, FlowAdmin)
 
 # Classification
 class ClassificationAdmin(ModelAdmin):

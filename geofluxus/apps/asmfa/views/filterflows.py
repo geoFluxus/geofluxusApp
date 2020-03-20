@@ -2,6 +2,7 @@ from geofluxus.apps.utils.views import (PostGetViewMixin,
                                         ViewSetMixin,
                                         ModelPermissionViewSet)
 from geofluxus.apps.asmfa.models import (Flow,
+                                         FlowChain,
                                          Classification,
                                          Area,
                                          Routing,
@@ -16,15 +17,6 @@ from collections import OrderedDict
 from rest_framework.response import Response
 from django.db.models import (Q, OuterRef, Subquery, F)
 from django.contrib.gis.db.models import Union
-
-
-MODEL = {
-    # TIME DIMENSION
-    'month': Month, 'year': Year,
-
-    # ECO DIMENSION
-    'activity': Activity, 'activitygroup': ActivityGroup,
-}
 
 
 # Filter Flow View
@@ -58,13 +50,13 @@ class FilterFlowViewSet(PostGetViewMixin,
         filters = params.pop('flows', {})
 
         # retrieve spatial filters
-        origin = params.pop('origin', {})
-        destination = params.pop('destination', {})
+        origin_areas = params.pop('origin', {})
+        destination_areas = params.pop('destination', {})
         flow_areas = filters.pop('selectedAreas', {})
 
         area_filters = {}
-        area_filters['origin'] = origin
-        area_filters['destination'] = destination
+        area_filters['origin'] = origin_areas
+        area_filters['destination'] = destination_areas
         area_filters['flows'] = flow_areas
 
         # filter flows with non-spatial filters
@@ -72,12 +64,6 @@ class FilterFlowViewSet(PostGetViewMixin,
 
         # filter flows with spatial filters
         queryset = self.filter_areas(queryset, area_filters)
-
-        # recover chain ids
-        ids = queryset.values_list('flowchain', flat=True).distinct()
-        # recover full chain
-        flows = Flow.objects
-        flows = flows.filter(flowchain__id__in=ids)
 
         # serialize data according to dimension
         dimensions = params.pop('dimensions', {})
@@ -131,7 +117,7 @@ class FilterFlowViewSet(PostGetViewMixin,
                 continue
 
             # form query & append
-            func = 'flowchain__' + func # search in chain!!!
+            func = func # search in chain!!!
             query = Q(**{func: val})
             queries.append(query)
 
@@ -150,10 +136,10 @@ class FilterFlowViewSet(PostGetViewMixin,
         (spatial filtering)
         '''
 
-        # retrieve selected areas
+        # retrieve filters
         origin = filter['origin']
         destination = filter['destination']
-        flow_areas = filter['flows']
+        flows = filter['flows']
 
         # filter by origin
         area_ids = origin.pop('selectedAreas', [])
@@ -161,8 +147,8 @@ class FilterFlowViewSet(PostGetViewMixin,
             area = Area.objects.filter(id__in=area_ids).aggregate(area=Union('geom'))['area']
 
             # check where with respect to the area
-            where = origin.pop('where', 'in')
-            if where == 'in':
+            inOrOut = origin.pop('inOrOut', 'in')
+            if inOrOut == 'in':
                 queryset = queryset.filter(origin__geom__within=area)
             else:
                 queryset = queryset.exclude(origin__geom__within=area)
@@ -173,34 +159,48 @@ class FilterFlowViewSet(PostGetViewMixin,
             area = Area.objects.filter(id__in=area_ids).aggregate(area=Union('geom'))['area']
 
             # check where with respect to the area
-            where = destination.pop('where', 'in')
-            if where == 'in':
+            inOrOut = destination.pop('inOrOut', 'in')
+            if inOrOut == 'in':
                 queryset = queryset.filter(destination__geom__within=area)
             else:
                 queryset = queryset.exclude(destination__geom__within=area)
 
-        # # filter by flows
-        # area_ids = flow_areas
-        # if area_ids:
-        #     # retrieve routings
-        #     routings = Routing.objects
-        #
-        #     subq = routings.filter(flowchain__id=OuterRef('flowchain__id'))
+        # filter by flows
+        area_ids = flows
+        if area_ids:
+            area = Area.objects.filter(id__in=area_ids).aggregate(area=Union('geom'))['area']
+
+            # FIRST TEST
+            # filter flows with origin / destination
+            # within the selected area
+            inside = queryset.filter(Q(origin__geom__within=area) &\
+                                     Q(destination__geom__within=area))
+
+            # SECOND TEST
+            # check routing for rest
+            outside = queryset.exclude(Q(origin__geom__within=area) &\
+                                       Q(destination__geom__within=area))
+
+            # retrieve routings
+            routings = Routing.objects.filter(geom__intersects=area)
+
+            # annotate routings to flows
+            subq = routings.filter(Q(origin=OuterRef('origin')) &\
+                                   Q(destination=OuterRef('destination')))
+            inside = inside.annotate(routing=Subquery(subq.values('geom')))
+            outside = outside.annotate(routing=Subquery(subq.values('geom')))
+            outside = outside.exclude(routing=None)
+
+            # FIRST / SECOND TEST UNION
+            queryset = inside.union(outside)
 
         return queryset
 
-    # def serialize_nodes(self, nodes, add_fields=[]):
-    #     '''
-    #     serialize actors, activities or groups in the same way
-    #     add_locations works, only for actors
-    #     '''
-    #     args = ['id', 'name'] + add_fields
-    #     values = nodes.values(*args)
-    #     node_dict = {v['id']: v for v in values}
-    #     node_dict[None] = None
-    #     return node_dict
-
     def serialize(self, queryset, dimensions):
+        '''
+        Serialize data into groups
+        according to the requested dimensions
+        '''
         data = []
 
         # annotate info from chains to flows
@@ -209,6 +209,7 @@ class FilterFlowViewSet(PostGetViewMixin,
         # recover dimensions
         time = dimensions.pop('time', None)
         eco = dimensions.pop('economicActivity', None)
+        treat = dimensions.pop('treatmentMethod', None)
 
         # TIME DIMENSION
         levels, fields = [], []
@@ -221,6 +222,12 @@ class FilterFlowViewSet(PostGetViewMixin,
             level = eco.split('__')[-1]
             levels.extend(['origin__' + level, 'destination__' + level])
             fields.extend(['origin__' + eco, 'destination__' + eco])
+
+        # TREAT DIMENSION
+        if treat:
+            level = treat.split('__')[-1]
+            levels.extend(['origin__' + level, 'destination__' + level])
+            fields.extend(['origin__' + treat, 'destination__' + treat])
 
         # workaround Django ORM bug
         queryset = queryset.order_by()

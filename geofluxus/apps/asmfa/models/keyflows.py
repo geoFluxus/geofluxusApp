@@ -85,6 +85,24 @@ class Year(models.Model):
     def __str__(self):
         return self.code
 
+    def save(self, **kwargs):
+        super().save(**kwargs)
+
+        months = Month.objects.filter(year=self)
+        months.delete()
+
+        options = ["{:02d}".format(i) for i in range(1, 13)]
+        months = []
+        for option in options:
+            month = Month(
+                code=''.join([option, self.code]),
+                year=self
+            )
+            months.append(month)
+        if months:
+            Month.objects.bulk_create(months)
+
+
 # Month
 class Month(models.Model):
     code = models.CharField(max_length=255)

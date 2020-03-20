@@ -1,6 +1,5 @@
 from django.db import models
-from geofluxus.apps.asmfa.models import (Process,
-                                         Waste06,
+from geofluxus.apps.asmfa.models import (Waste06,
                                          Month,
                                          Material,
                                          Product,
@@ -20,8 +19,6 @@ class FlowChain(models.Model):
     trips = models.IntegerField()
     month = models.ForeignKey(Month,
                               on_delete=models.CASCADE)
-    process = models.ForeignKey(Process,
-                                on_delete=models.CASCADE)
     waste06 = models.ForeignKey(Waste06,
                                 on_delete=models.CASCADE)
     materials = models.ManyToManyField(Material,
@@ -48,8 +45,12 @@ class Flow(models.Model):
     destination = models.ForeignKey(Actor,
                                     on_delete=models.CASCADE,
                                     related_name='inputs')
-    origin_role = models.CharField(max_length=255)
-    destination_role = models.CharField(max_length=255)
+    role_choices = [('production', 'production'),
+                    ('treatment', 'treatment')]
+    origin_role = models.CharField(max_length=255,
+                                   choices=role_choices)
+    destination_role = models.CharField(max_length=255,
+                                        choices=role_choices)
 
     def __str__(self):
         return "{} : {} -> {}".format(self.flowchain,
@@ -127,8 +128,8 @@ class Routing(models.Model):
     destination = models.ForeignKey(Actor,
                                     on_delete=models.CASCADE,
                                     related_name='end')
-    geom = models.TextField(null=True,
-                            blank=True)
+    geom = gis.GeometryField(null=True,
+                             blank=True)
 
     def __str__(self):
         return '{} : {}'.format(self.origin,

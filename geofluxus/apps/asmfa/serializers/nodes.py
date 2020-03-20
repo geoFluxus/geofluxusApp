@@ -75,6 +75,7 @@ class CompanyListSerializer(CompanySerializer):
 class ActorSerializer(HyperlinkedModelSerializer):
     geom = GeometryField()
     activity = PrimaryKeyRelatedField(read_only=True)
+    process = PrimaryKeyRelatedField(read_only=True)
     company = PrimaryKeyRelatedField(read_only=True)
     publication = PrimaryKeyRelatedField(read_only=True)
     flow_count = IntegerField(read_only=True)
@@ -86,6 +87,7 @@ class ActorSerializer(HyperlinkedModelSerializer):
                   'id',
                   'geom',
                   'activity',
+                  'process',
                   'identifier',
                   'company',
                   'postcode',
@@ -101,6 +103,7 @@ class ActorListSerializer(ActorSerializer):
         fields = ('id',
                   'geom',
                   'activity',
+                  'process',
                   'identifier',
                   'company',
                   'postcode',

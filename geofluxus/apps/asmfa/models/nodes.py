@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.gis.db import models as gis
-from geofluxus.apps.asmfa.models import (Publication)
+from geofluxus.apps.asmfa.models import (Publication,
+                                         Process)
 
 
 # Activity group
@@ -37,7 +38,11 @@ class Actor(models.Model):
     geom = gis.PointField(blank=True,
                           null=True)
     activity = models.ForeignKey(Activity,
-                                 on_delete=models.CASCADE)
+                                 on_delete=models.CASCADE,
+                                 blank=True, null=True)
+    process = models.ForeignKey(Process,
+                                on_delete=models.CASCADE,
+                                blank=True, null=True)
     identifier = models.CharField(max_length=255)
     company = models.ForeignKey(Company,
                                 on_delete=models.CASCADE)

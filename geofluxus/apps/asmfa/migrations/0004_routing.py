@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
             name='Routing',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('geom', models.TextField(blank=True, null=True)),
+		('geom',django.contrib.gis.db.models.fields.MultiLineStringField(blank=True, null=True, srid=4326)),
                 ('destination', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='end', to='asmfa.Actor')),
                 ('origin', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='start', to='asmfa.Actor')),
             ],
