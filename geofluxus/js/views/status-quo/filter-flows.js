@@ -422,7 +422,7 @@ define(['views/common/baseview',
                 $(this.flows.waste06Select).on('changed.bs.select', multiCheck);
                 $(this.flows.materialSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.productSelect).on('changed.bs.select', multiCheck);
-                $(this.flows.compositeSelect).on('changed.bs.select', multiCheck);
+                $(this.flows.compositesSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.cleanSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.mixedSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.directSelect).on('changed.bs.select', multiCheck);
