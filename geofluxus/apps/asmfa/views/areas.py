@@ -11,6 +11,7 @@ from geofluxus.apps.asmfa.serializers import (AdminLevelListSerializer,
 from geofluxus.apps.asmfa.serializers import (AdminLevelCreateSerializer,
                                               AreaCreateSerializer)
 from rest_framework.response import Response
+import topojson
 
 
 # AdminLevel
@@ -56,7 +57,7 @@ class AreaInLevelViewSet(PostGetViewMixin,
     serializer_class = AreaSerializer
 
     def list(self, request, level_pk=None):
-        queryset = Area.objects.filter(adminlevel=level_pk)
+        queryset = Area.objects.simplified(level=level_pk)
         serializer = AreaSerializer(queryset,
                                     many=True,
                                     context={'request': request})
