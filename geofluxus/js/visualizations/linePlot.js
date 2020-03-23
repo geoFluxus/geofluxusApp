@@ -62,6 +62,7 @@ define([
                         }
                     })
                     .legend(options.hasLegend)
+                    .downloadPosition("left")
                     .downloadButton(true)
                     .render();
             } else {
@@ -85,6 +86,7 @@ define([
                             stroke: "red",
                         }
                     })
+                    .downloadPosition("left")
                     .downloadButton(true)
                     .render();
             }

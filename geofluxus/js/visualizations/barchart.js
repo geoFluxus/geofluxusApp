@@ -31,6 +31,7 @@ define([
                     .select(options.el)
                     .legend(options.hasLegend)
                     .shape("Bar")
+                    .downloadPosition("left")
                     .downloadButton(true)
                     .render();
             } else {
@@ -45,6 +46,7 @@ define([
                     .select(options.el)
                     .legend(options.hasLegend)
                     .shape("Bar")
+                    .downloadPosition("left")
                     .downloadButton(true)
                     .render();
             }

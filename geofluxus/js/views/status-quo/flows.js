@@ -527,6 +527,7 @@ define(['views/common/baseview',
                         flows.forEach(function (flow, index) {
                             let yearObject = years.find(year => year.attributes.id == flow.year);
 
+                            this[index].id = index + 1;
                             this[index].year = parseInt(yearObject.attributes.code);
                         }, flows);
 
@@ -551,9 +552,9 @@ define(['views/common/baseview',
 
                     this.renderTreeMap1D(dimensions, flows);
 
-                    this.renderPieChart1D(dimensions, flows);
-                    this.renderBarChart1D(dimensions, flows);
-                    this.renderLinePlot1D(dimensions, flows);
+                    // this.renderPieChart1D(dimensions, flows);
+                    // this.renderBarChart1D(dimensions, flows);
+                    // this.renderLinePlot1D(dimensions, flows);
 
 
 

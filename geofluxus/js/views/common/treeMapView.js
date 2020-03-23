@@ -71,27 +71,27 @@ define(['views/common/baseview',
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
                             groupBy = ["year"];
                             tooltipConfig = {
+                                title: function (d) {
+                                    return d.year
+                                },
                                 tbody: [
                                     ["Total", function (d) {
                                         return d["amount"].toFixed(3)
                                     }],
-                                    ["Year", function (d) {
-                                        return d.year
-                                    }]
                                 ]
                             }
 
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
-                            groupBy = ["month"];
+                            groupBy = ["year", "month"];
                             hasLegend = false;
                             tooltipConfig = {
+                                title: function (d) {
+                                    return d.year
+                                },
                                 tbody: [
                                     ["Total", function (d) {
                                         return d["amount"].toFixed(3)
-                                    }],
-                                    ["Month", function (d) {
-                                        return d.month;
                                     }],
                                 ]
                             }

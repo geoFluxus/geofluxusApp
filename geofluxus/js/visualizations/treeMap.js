@@ -20,14 +20,17 @@ define([
 
             new d3plus.Treemap()
                 .config({
-                    data: options.data,
-                    groupBy: options.groupBy,
-                    value: function (d) {
-                        return d["amount"].toFixed(3);
-                    },
-                    tooltipConfig: options.tooltipConfig,
-                    tile: d3.treemapDice
+                    //data: options.data,
+                    //groupBy: options.groupBy,
+                    // value: function (d) {
+                    //     return d["amount"].toFixed(3);
+                    // },
                 })
+                //tile: d3.treemapDice
+                .tooltipConfig(options.tooltipConfig)
+                .data(options.data) 
+                .groupBy(options.groupBy)
+                .sum("amount")
                 .legend(options.hasLegend)
                 .shapeConfig({
                     labelConfig: {
@@ -35,8 +38,8 @@ define([
                         fontMax: 100
                     }
                 })
-                .downloadButton(true)
                 .select(options.el)
+                .downloadPosition("left")
                 .downloadButton(true)
                 .render();
         }
