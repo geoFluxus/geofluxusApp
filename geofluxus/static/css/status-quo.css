@@ -285,13 +285,72 @@ textarea.textarea-autosize.form-control-sm {
 
 /* d3plus buttons */
 
+/* .d3plus-viz-controls-left {
+    position: relative;
+    z-index: 1;
+}
+
 .d3plus-viz-controls-container {
-
+    position: absolute !important;
+    left: 0px;
+    top: 5px;
+    z-index: 3;
 }
 
-.d3plus-Button {
 
+.d3plus-viz-controls-container .d3plus-Form {
+    z-index: 1;
+    position: absolute;
+} */
+
+.d3plus-viz-controls-container .d3plus-Button {
+    /* position: absolute; */
+    position: relative;
+    background-color: #007bff;
+    color: transparent;
+    border: none;
+    font-size: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    top: 5px;
+    z-index: 4;
 }
+
+.d3plus-viz-controls-container:first-child::before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f030 ";
+    position: absolute;
+    color: white;
+    top: 8px;
+    left: 13px;
+    z-index: 5;
+}
+
+.d3plus-Pie {
+    /* position: absolute; */
+    /* z-index: 0; */
+}
+
+/* .d3plus-zoom-controls */
+
+.d3plus-zoom-control .zoom-control {
+    position: relative;
+    height: 32px !important;
+    width: 32px !important;
+    border-radius: 16px !important;
+    font-size: 28px !important;
+    padding-top: 0.3rem !important;
+    color: white !important;
+    background-color: #007bff !important;
+    border: none !important;
+}
+
+.choropleth-wrapper svg {
+    border-radius: 18px !important;
+}
+
 
 /* SVG Container */
 

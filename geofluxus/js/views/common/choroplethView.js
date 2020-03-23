@@ -6,7 +6,8 @@ define(['views/common/baseview',
         'app-config',
         'save-svg-as-png',
         'file-saver',
-        'utils/utils'
+        'utils/utils',
+        'd3plus',
     ],
 
     function (
@@ -19,6 +20,7 @@ define(['views/common/baseview',
         saveSvgAsPng,
         FileSaver,
         utils,
+        d3plus,
         Slider) {
 
         /**

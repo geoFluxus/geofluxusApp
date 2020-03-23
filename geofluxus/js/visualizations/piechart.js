@@ -41,8 +41,9 @@ define([
                         fontMax: 100
                     }
                 })
-                .downloadButton(true)
+                .downloadPosition("left")
                 .select(options.el)
+                .downloadButton(true)
                 .render();
         }
     }
