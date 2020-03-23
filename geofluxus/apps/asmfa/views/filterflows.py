@@ -231,7 +231,7 @@ class FilterFlowViewSet(PostGetViewMixin,
             field = space.pop('field', None)
             if field:
                 subq = areas.filter(geom__contains=OuterRef(field))
-                queryset = queryset.annotate(area=Subquery(subq.values('name')))
+                queryset = queryset.annotate(area=Subquery(subq.values('id')))
 
             # append to other dimensions
             levels.append('area')
@@ -260,7 +260,7 @@ class FilterFlowViewSet(PostGetViewMixin,
             has_null = False
             for field, value in group.items():
                 if not value:
-                    has_null= True
+                    has_null = True
                     break
             if has_null: continue
 

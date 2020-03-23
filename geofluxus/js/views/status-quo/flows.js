@@ -221,10 +221,10 @@ define(['views/common/baseview',
 
                 if ($(filter.origin.processSelect).val() == '-1') {
                     if ($(filter.origin.processGroupSelect).val() != '-1') {
-                        filterParams.origin['origin__process__processgroup__in'] = $(filter.origin.processGroupSelect).val();
+                        filterParams.flows['origin__process__processgroup__in'] = $(filter.origin.processGroupSelect).val();
                     }
                 } else {
-                    filterParams.origin['origin__process__in'] = $(filter.origin.processSelect).val();
+                    filterParams.flows['origin__process__in'] = $(filter.origin.processSelect).val();
                 }
 
 
