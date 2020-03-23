@@ -9,6 +9,8 @@ define(['views/common/baseview',
         'views/common/pieChartView',
         'views/common/barChartView',
         'views/common/linePlotView',
+        'views/common/treeMapView',
+
     ],
     function (
         BaseView,
@@ -20,7 +22,8 @@ define(['views/common/baseview',
         FlowMapView,
         PieChartView,
         BarChartView,
-        LinePlotView
+        LinePlotView,
+        TreeMapView,
     ) {
 
         var FlowsView = BaseView.extend({
@@ -539,10 +542,13 @@ define(['views/common/baseview',
                         // Sort by month id:
                         flows = _.sortBy(flows, 'id');
                     }
+                    
+                    //this.renderTreeMap1D(dimensions, flows);
 
                     this.renderPieChart1D(dimensions, flows);
                     this.renderBarChart1D(dimensions, flows);
                     this.renderLinePlot1D(dimensions, flows);
+
 
                     // /////////////////////////////
                     // Economic Activity dimension
@@ -593,7 +599,7 @@ define(['views/common/baseview',
 
                         // Granularity: Treatment Method
                     } else if (dimensions[0][1] == "origin__process" || dimensions[0][1] == "destination__process") {
-                        
+
                         flows.forEach(function (flow, index) {
                             let processObject = processes.find(process => process.attributes.id == flow.process);
 
@@ -601,11 +607,13 @@ define(['views/common/baseview',
                             this[index].processName = processObject.attributes.name[0].toUpperCase() + processObject.attributes.name.slice(1).toLowerCase();
                         }, flows);
                     }
+
+
+                    this.renderPieChart1D(dimensions, flows);
+                    this.renderBarChart1D(dimensions, flows);
                 }
 
                 console.log(flows);
-                this.renderPieChart1D(dimensions, flows);
-                this.renderBarChart1D(dimensions, flows);
             },
 
             renderPieChart1D: function (dimensions, flows) {
@@ -615,6 +623,20 @@ define(['views/common/baseview',
                 if (this.pieChartView != null) this.pieChartView.close();
 
                 this.pieChartView = new PieChartView({
+                    el: el,
+                    dimensions: dimensions,
+                    flows: flows,
+                    flowsView: _this,
+                });
+            },
+
+            renderTreeMap1D: function (dimensions, flows) {
+                var _this = this;
+                var el = ".treemap-wrapper";
+
+                if (this.treeMapView != null) this.treeMapView.close();
+
+                this.treeMapView = new TreeMapView({
                     el: el,
                     dimensions: dimensions,
                     flows: flows,
