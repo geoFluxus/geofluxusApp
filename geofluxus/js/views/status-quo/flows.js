@@ -422,7 +422,12 @@ define(['views/common/baseview',
                 }
 
                 if ($(filter.dimensions.spaceToggle).prop("checked")) {
-                    filterParams.dimensions.spaceToggle = $('#dim-space-gran-select option:selected').text();
+                    let originOrDestination = $(filter.dimensions.spaceOrigDest).prop("checked") ? 'destination__geom' : 'origin__geom',
+                        gran = $('#dim-space-gran-select option:selected').val();
+                    console.log(gran)
+                    filterParams.dimensions.space = {};
+                    filterParams.dimensions.space.adminlevel = gran;
+                    filterParams.dimensions.space.field = originOrDestination;
                 }
 
                 if ($(filter.dimensions.economicActivityToggle).prop("checked")) {

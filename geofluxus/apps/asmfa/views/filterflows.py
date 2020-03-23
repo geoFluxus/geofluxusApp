@@ -208,6 +208,7 @@ class FilterFlowViewSet(PostGetViewMixin,
 
         # recover dimensions
         time = dimensions.pop('time', None)
+        space = dimensions.pop('space', None)
         eco = dimensions.pop('economicActivity', None)
         treat = dimensions.pop('treatmentMethod', None)
 
@@ -216,6 +217,25 @@ class FilterFlowViewSet(PostGetViewMixin,
         if time:
             levels.append(time.split('__')[-1])
             fields.append(time)
+
+        # SPACE DIMENSION
+        if space:
+            # recover all areas of the selected
+            # administrative level
+            adminlevel = space.pop('adminlevel', None)
+            if adminlevel:
+                areas = Area.objects.filter(adminlevel=adminlevel)
+
+            # attach to flows the area
+            # to which their origin / destination belongs
+            field = space.pop('field', None)
+            if field:
+                subq = areas.filter(geom__contains=OuterRef(field))
+                queryset = queryset.annotate(area=Subquery(subq.values('id')))
+
+            # append to other dimensions
+            levels.append('area')
+            fields.append('area')
 
         # ECO DIMENSION
         if eco:
@@ -240,14 +260,14 @@ class FilterFlowViewSet(PostGetViewMixin,
             has_null = False
             for field, value in group.items():
                 if not value:
-                    has_null= True
+                    has_null = True
                     break
             if has_null: continue
 
             # retrieve group
             grouped = queryset.filter(**group)
             # and EXCLUDE it from further search...
-            queryset = queryset.exclude(**group)
+            #queryset = queryset.exclude(**group)
 
             # aggregate amount
             group_amount = sum(grouped.values_list('amount', flat=True))
