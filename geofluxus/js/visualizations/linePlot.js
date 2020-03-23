@@ -62,6 +62,7 @@ define([
                         }
                     })
                     .legend(options.hasLegend)
+                    .downloadButton(true)
                     .render();
             } else {
                 new d3plus.Plot()
@@ -84,6 +85,7 @@ define([
                             stroke: "red",
                         }
                     })
+                    .downloadButton(true)
                     .render();
             }
         }

@@ -37,6 +37,7 @@ define([
                 })
                 .downloadButton(true)
                 .select(options.el)
+                .downloadButton(true)
                 .render();
         }
     }

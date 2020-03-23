@@ -31,6 +31,7 @@ define([
                     .select(options.el)
                     .legend(options.hasLegend)
                     .shape("Bar")
+                    .downloadButton(true)
                     .render();
             } else {
                 new d3plus.Plot()
@@ -44,6 +45,7 @@ define([
                     .select(options.el)
                     .legend(options.hasLegend)
                     .shape("Bar")
+                    .downloadButton(true)
                     .render();
             }
         }

@@ -549,7 +549,7 @@ define(['views/common/baseview',
                         flows = _.sortBy(flows, 'id');
                     }
 
-                    //this.renderTreeMap1D(dimensions, flows);
+                    this.renderTreeMap1D(dimensions, flows);
 
                     this.renderPieChart1D(dimensions, flows);
                     this.renderBarChart1D(dimensions, flows);
