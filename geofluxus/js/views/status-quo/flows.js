@@ -10,7 +10,7 @@ define(['views/common/baseview',
         'views/common/barChartView',
         'views/common/linePlotView',
         'views/common/treeMapView',
-
+        'views/common/choroplethView',
     ],
     function (
         BaseView,
@@ -24,6 +24,7 @@ define(['views/common/baseview',
         BarChartView,
         LinePlotView,
         TreeMapView,
+        ChoroplethView,
     ) {
 
         var FlowsView = BaseView.extend({
@@ -424,7 +425,6 @@ define(['views/common/baseview',
                 if ($(filter.dimensions.spaceToggle).prop("checked")) {
                     let originOrDestination = $(filter.dimensions.spaceOrigDest).prop("checked") ? 'destination__geom' : 'origin__geom',
                         gran = $('#dim-space-gran-select option:selected').val();
-                    console.log(gran)
                     filterParams.dimensions.space = {};
                     filterParams.dimensions.space.adminlevel = gran;
                     filterParams.dimensions.space.field = originOrDestination;
@@ -512,6 +512,7 @@ define(['views/common/baseview',
             // },
 
             render1Dvisualisations: function (dimensions, flows) {
+                let _this = this;
                 let filterFlowsView = this.filterFlowsView;
 
                 // Enrich data here
@@ -547,12 +548,67 @@ define(['views/common/baseview',
                         // Sort by month id:
                         flows = _.sortBy(flows, 'id');
                     }
-                    
+
                     //this.renderTreeMap1D(dimensions, flows);
 
                     this.renderPieChart1D(dimensions, flows);
                     this.renderBarChart1D(dimensions, flows);
                     this.renderLinePlot1D(dimensions, flows);
+
+
+
+                    // /////////////////////////////
+                    // Space dimension
+                } else if (dimensions[0][0] == "space") {
+                    let dimension = dimensions[0][1];
+
+                    let areas = filterFlowsView.areas.models;
+
+                    if (!areas) {
+                        areas = new Collection([], {
+                            apiTag: 'areas',
+                            apiIds: [dimension.adminlevel]
+                        });
+                        areas.fetch({
+                            success: function () {
+                                //if (onSuccess) onSuccess();
+
+
+                                flows.forEach(function (flow, index) {
+                                    let areaObject = areas.find(area => area.attributes.id == flow.area);
+
+                                    this[index].id = this[index].area.toString();
+                                    this[index].name = areaObject.attributes.name;
+
+                                }, flows);
+
+                                _this.renderChoropleth1D(dimensions, flows);
+
+
+
+                            },
+                            error: function (res) {
+                                console.log(res);
+                            }
+                        });
+                    }
+
+
+                    switch (dimension.adminlevel) {
+                        case "1":
+                            // 
+                            break;
+                        case "2":
+                            console.log("Provinces");
+
+
+
+                            break;
+                        default:
+                            // Default
+                    }
+
+
 
 
                     // /////////////////////////////
@@ -670,6 +726,20 @@ define(['views/common/baseview',
                 if (this.linePlotView != null) this.linePlotView.close();
 
                 this.linePlotView = new LinePlotView({
+                    el: el,
+                    dimensions: dimensions,
+                    flows: flows,
+                    flowsView: _this,
+                });
+            },
+
+            renderChoropleth1D: function (dimensions, flows) {
+                var _this = this;
+                var el = ".choropleth-wrapper";
+
+                if (this.choroplethView != null) this.choroplethView.close();
+
+                this.choroplethView = new ChoroplethView({
                     el: el,
                     dimensions: dimensions,
                     flows: flows,
