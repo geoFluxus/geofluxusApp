@@ -12,7 +12,7 @@ from geofluxus.apps.asmfa.serializers import (AdminLevelListSerializer,
 from geofluxus.apps.asmfa.serializers import (AdminLevelCreateSerializer,
                                               AreaCreateSerializer)
 from rest_framework.response import Response
-import topojson
+from geofluxus.apps.utils.topojson import Topology
 
 
 # AdminLevel
@@ -88,10 +88,10 @@ class TopoJSONViewSet(PostGetViewMixin,
                                     context={'request': request})
         data = serializer.data
         geojson = [dict(area['geom'], **{'id': area['id']}) for area in data]
-        tj = topojson.Topology(geojson,
-                               prequantize=False,
-                               topology=False,
-                               toposimplify=0)
+        tj = Topology(geojson,
+                      prequantize=False,
+                      topology=False,
+                      toposimplify=0)
         data = tj.to_dict()
         return Response(data)
 
