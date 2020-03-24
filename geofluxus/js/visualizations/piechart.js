@@ -20,8 +20,6 @@ define([
 
             new d3plus.Pie()
                 .config({
-                    //data: myData,
-                    //groupBy: ["Group", "Sub-Group"],
                     data: options.data,
                     groupBy: options.groupBy,
                     value: function (d) {

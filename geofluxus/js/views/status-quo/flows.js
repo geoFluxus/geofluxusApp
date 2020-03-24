@@ -546,17 +546,13 @@ define(['views/common/baseview',
                             this[index].year = parseInt(monthObject.attributes.code.substring(2, 6));
                         }, flows);
 
-                        // Sort by month id:
                         flows = _.sortBy(flows, 'id');
                     }
-
                     
-                    //this.renderPieChart1D(dimensions, flows);
-                    //this.renderBarChart1D(dimensions, flows);
+                    this.renderPieChart1D(dimensions, flows);
+                    this.renderBarChart1D(dimensions, flows);
                     this.renderLinePlot1D(dimensions, flows);
-                    
-                    //this.renderTreeMap1D(dimensions, flows);
-
+                    this.renderTreeMap1D(dimensions, flows);
 
                     // /////////////////////////////
                     // Space dimension
@@ -752,6 +748,7 @@ define(['views/common/baseview',
                 if (this.barChartView != null) this.barChartView.close();
                 if (this.pieChartView != null) this.pieChartView.close();
                 if (this.linePlotView != null) this.linePlotView.close();
+                if (this.treeMapView != null) this.treeMapView.close();
             },
 
             // Fetch flows and calls options.success(flows) on success

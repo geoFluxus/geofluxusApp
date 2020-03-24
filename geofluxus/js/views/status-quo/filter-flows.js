@@ -77,7 +77,7 @@ define(['views/common/baseview',
                 var promises = [
                     this.activityGroups.fetch(),
                     this.activities.fetch(),
-                    this.actors.fetch(),
+                    //this.actors.fetch(),
                     this.processes.fetch(),
                     this.processgroups.fetch(),
                     this.wastes02.fetch(),
@@ -444,8 +444,9 @@ define(['views/common/baseview',
                     }
                 });
 
-                // Disable dimension toggles for max number of dimensions:
                 $(".dimensionToggle").change(function (event) {
+                    // //////////////////////////////////////////////////////
+                    // Disable dimension toggles for max number of dimensions:
                     let checkedToggles = [];
                     let uncheckedToggles = [];
 
@@ -471,6 +472,25 @@ define(['views/common/baseview',
                             this.bootstrapToggle('enable');
                         });
                     }
+
+
+                    // //////////////////////////////////////////////////////
+                    // Show available visualisations based on selected dimension(s):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    
                 });
 
                 // Show granularity on toggle change:
@@ -910,8 +930,8 @@ define(['views/common/baseview',
                 $(_this.origin.processSelect).val('-1');
                 $(".originContainerActivity").hide();
                 $(".originContainerTreatmentMethod").hide();
-                
-                
+
+
                 $(".activitySelectContainer").hide();
 
                 // ///////////////////////////////////////////////
@@ -961,11 +981,11 @@ define(['views/common/baseview',
                 // Dimension controls:
                 $(_this.dimensions.timeToggle).bootstrapToggle('off');
                 $(_this.dimensions.timeToggleGran).bootstrapToggle('Year');
- 
+
                 $(_this.dimensions.spaceToggle).bootstrapToggle('off');
                 $(_this.dimensions.spaceLevelGranSelect).val($('#dim-space-gran-select:first-child')[0].value);
                 $(_this.dimensions.spaceOrigDest).bootstrapToggle('off');
-                
+
                 $(_this.dimensions.economicActivityToggle).bootstrapToggle('off');
                 $(_this.dimensions.economicActivityToggleGran).bootstrapToggle('off');
                 $(_this.dimensions.economicActivityOrigDest).bootstrapToggle('off');

@@ -69,6 +69,7 @@ define(['views/common/baseview',
                     if (this.options.dimensions[0][0] == "time") {
                         // Granularity = year
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
+                            hasLegend = false;
                             groupBy = ["year"];
                             tooltipConfig = {
                                 title: function (d) {
