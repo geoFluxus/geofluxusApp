@@ -7,6 +7,7 @@ from geofluxus.apps.asmfa.models import (Publication)
 class AdminLevel(models.Model):
     name = models.CharField(max_length=255)
     level = models.IntegerField()
+    resolution = models.FloatField(default=0)
 
     def __str__(self):
         return self.name
@@ -38,7 +39,10 @@ class AreaManager(models.Manager):
         return AreaQueryset(self.model, using=self._db)
 
     def simplified(self, level=None):
-        return self.get_queryset().simplified(level=level)
+        adminLevel = AdminLevel.objects.filter(id=level)
+        tolerance = adminLevel.values_list('resolution', flat=None)[0][0]
+        return self.get_queryset().simplified(tolerance=tolerance,
+                                              level=level)
 
 # Area
 class Area(models.Model):

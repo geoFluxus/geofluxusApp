@@ -234,7 +234,7 @@ class FilterFlowViewSet(PostGetViewMixin,
                 queryset = queryset.annotate(area=Subquery(subq.values('id')))
 
             # append to other dimensions
-            levels.append('area')
+            levels.append('id')
             fields.append('area')
 
         # ECO DIMENSION

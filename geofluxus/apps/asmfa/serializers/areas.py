@@ -14,6 +14,7 @@ class AdminLevelSerializer(HyperlinkedModelSerializer):
                   'id',
                   'name',
                   'level',
+                  'resolution',
                   'area_set')
 
     area_set = HyperlinkedIdentityField(
@@ -27,6 +28,7 @@ class AdminLevelListSerializer(AdminLevelSerializer):
         fields = ('id',
                   'name',
                   'level',
+                  'resolution',
                   'area_set')
 
 
@@ -40,15 +42,14 @@ class AreaSerializer(HyperlinkedModelSerializer):
     class Meta:
         model = Area
         geo_field = 'geom'
-        fields = ('url',
-                 'id',
-                 'adminlevel',
-                 'name',
-                 'code',
-                 'geom',
-                 'parent_area',
-                 'inhabitants',
-                 'publication')
+        fields = ('id',
+                  'adminlevel',
+                  'name',
+                  'code',
+                  'geom',
+                  'parent_area',
+                  'inhabitants',
+                  'publication')
 
 
 class AreaListSerializer(AreaSerializer):
@@ -61,3 +62,10 @@ class AreaListSerializer(AreaSerializer):
                   'parent_area',
                   'inhabitants',
                   'publication')
+
+
+class TopoJSONSerializer(AreaSerializer):
+    class Meta(AreaSerializer.Meta):
+        fields = ('id',
+                  'name',
+                  'geom')

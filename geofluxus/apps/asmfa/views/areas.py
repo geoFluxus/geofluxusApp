@@ -5,7 +5,8 @@ from geofluxus.apps.utils.views import (PostGetViewMixin,
 from geofluxus.apps.asmfa.models import (AdminLevel,
                                          Area)
 from geofluxus.apps.asmfa.serializers import (AdminLevelSerializer,
-                                              AreaSerializer)
+                                              AreaSerializer,
+                                              TopoJSONSerializer)
 from geofluxus.apps.asmfa.serializers import (AdminLevelListSerializer,
                                               AreaListSerializer)
 from geofluxus.apps.asmfa.serializers import (AdminLevelCreateSerializer,
@@ -62,6 +63,37 @@ class AreaInLevelViewSet(PostGetViewMixin,
                                     many=True,
                                     context={'request': request})
         return Response(serializer.data)
+
+    def retrieve(self, request, pk=None, level_pk=None):
+        queryset = Area.objects.filter(pk=pk,
+                                       adminlevel=level_pk)
+        serializer = AreaSerializer(queryset,
+                                    many=True,
+                                    context={'request': request})
+        return Response(serializer.data)
+
+
+# TopoJSON Area View
+class TopoJSONViewSet(PostGetViewMixin,
+                      ViewSetMixin,
+                      ModelPermissionViewSet):
+    queryset = Area.objects.order_by('id')
+    pagination_class = UnlimitedResultsSetPagination
+    serializer_class = TopoJSONSerializer
+
+    def list(self, request, level_pk=None):
+        queryset = Area.objects.simplified(level=level_pk)
+        serializer = AreaSerializer(queryset,
+                                    many=True,
+                                    context={'request': request})
+        data = serializer.data
+        geojson = [dict(area['geom'], **{'id': area['id']}) for area in data]
+        tj = topojson.Topology(geojson,
+                               prequantize=False,
+                               topology=False,
+                               toposimplify=0)
+        data = tj.to_dict()
+        return Response(data)
 
     def retrieve(self, request, pk=None, level_pk=None):
         queryset = Area.objects.filter(pk=pk,
