@@ -568,8 +568,6 @@ define(['views/common/baseview',
                         });
                         areas.fetch({
                             success: function () {
-                                //if (onSuccess) onSuccess();
-
 
                                 flows.forEach(function (flow, index) {
                                     let areaObject = areas.find(area => area.attributes.id == flow.area);
@@ -580,8 +578,6 @@ define(['views/common/baseview',
                                 }, flows);
 
                                 _this.renderChoropleth1D(dimensions, flows);
-
-
 
                             },
                             error: function (res) {

@@ -449,6 +449,7 @@ define(['views/common/baseview',
                     // Disable dimension toggles for max number of dimensions:
                     let checkedToggles = [];
                     let uncheckedToggles = [];
+                    let selectedDimensionStrings = [];
 
                     // Divide the toggles in arrays of checked and unchecked toggles:
                     $('.dimensionToggle').each(function (index, value) {
@@ -457,6 +458,8 @@ define(['views/common/baseview',
                             uncheckedToggles.push($(this));
                         } else {
                             checkedToggles.push($(this));
+
+                            selectedDimensionStrings.push($(this).attr("data-dim"));
                         }
                     });
 
@@ -477,20 +480,29 @@ define(['views/common/baseview',
                     // //////////////////////////////////////////////////////
                     // Show available visualisations based on selected dimension(s):
 
+                    console.log(selectedDimensionStrings);
+
+                    switch(checkedToggles.length) {
+                        case 0:
+                            console.log("No dimensions");
+
+                            break;  
+                        case 1:
+                          console.log("One dimension");
 
 
 
 
 
+                          break;
+                        case 2:
+                            console.log("Two dimensions");
+                            // code block
+                          break;
+                        default:
+                          // code block
+                      } 
 
-
-
-
-
-
-
-
-                    
                 });
 
                 // Show granularity on toggle change:
