@@ -71,7 +71,6 @@ define(['views/common/baseview',
                     if (this.options.dimensions[0][0] == "time") {
                         // Granularity = year
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
-                            //groupBy = ["year"];
                             x = ["year"];
                             tooltipConfig = {
                                 title: "Waste totals per year",
@@ -101,21 +100,6 @@ define(['views/common/baseview',
                                     }]
                                 ]
                             }
-                        }
-
-                        // /////////////////////////////
-                        // Economic Activity dimension
-                    } else if (this.options.dimensions[0][0] == "economicActivity") {
-                        console.log("Economic activity")
-
-                        // Granularity = Activity group
-                        if (this.options.dimensions[0][1] == "activity__activitygroup") {
-                            //groupBy = ["activitygroup"];
-
-
-                            // Granularity: Activity
-                        } else if (this.options.dimensions[0][1] == "activity") {
-
                         }
                     }
 

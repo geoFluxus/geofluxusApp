@@ -18,78 +18,33 @@ define([
             var options = options || {};
             var _this = this;
 
-            // new d3plus.LinePlot()
-            //     .config({
-            //         data: myData,
-            //         groupBy: "fruit",
-            //         x: "year",
-            //         y: "price",
-            //         shapeConfig: {
-            //             Line: {
-            //                 curve: "catmullRom"
-            //             }
-            //         },
-            //         // tooltipConfig: {
-            //         //     tbody: [
-            //         //         ["Total", function (d) {
-            //         //             return d[y]
-            //         //         }],
-            //         //         // ["Year", function (d) {
-            //         //         //     return d.year
-            //         //         // }]
-            //         //     ]
-            //         // }
-            //     })
-            //     .select(options.el)
-            //     .render();
+            let groupByValue = options.groupBy ? options.groupBy[0] : {}
+            let shapeConfigValue = {
+                Line: {
+                    strokeWidth: 2,
+                    curve: "catmullRom",
+                }
+            };
 
-            // If there IS a groupBy value:
-            if (options.groupBy) {
-                new d3plus.Plot()
-                    .tooltipConfig(options.tooltipConfig)
-                    .data(options.data)
-                    .groupBy(options.groupBy[0])
-                    .x(options.x)
-                    .y("amount")
-                    .baseline(0)
-                    .discrete("x")
-                    .select(options.el)
-                    .shape("Line")
-                    .shapeConfig({
-                        Line: {
-                            strokeWidth: 2,
-                            curve: "catmullRom",
-                        }
-                    })
-                    .legend(options.hasLegend)
-                    .downloadPosition("left")
-                    .downloadButton(true)
-                    .render();
-            } else {
-                new d3plus.Plot()
-                    // .config({
-                    //     tooltipConfig: options.tooltipConfig,
-                    // })
-                    .tooltipConfig(options.tooltipConfig)
-                    .data(options.data)
-                    .x(options.x)
-                    .y("amount")
-                    .baseline(0)
-                    .discrete("x")
-                    .select(options.el)
-                    .shape("Line")
-                    .legend(options.hasLegend)
-                    .shapeConfig({
-                        Line: {
-                            strokeWidth: 2,
-                            curve: "catmullRom",
-                            stroke: "red",
-                        }
-                    })
-                    .downloadPosition("left")
-                    .downloadButton(true)
-                    .render();
+            if (!options.groupBy) {
+                shapeConfigValue.Line.stroke = "red";
             }
+
+            new d3plus.Plot()
+                .data(options.data)
+                .x(options.x)
+                .y("amount")
+                .baseline(0)
+                .discrete("x")
+                .groupBy(groupByValue)
+                .shape("Line")
+                .shapeConfig(shapeConfigValue)
+                .tooltipConfig(options.tooltipConfig)
+                .legend(options.hasLegend)
+                .downloadPosition("left")
+                .downloadButton(true)
+                .select(options.el)
+                .render();
         }
     }
     return LinePlot;

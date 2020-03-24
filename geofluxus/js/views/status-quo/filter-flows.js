@@ -21,7 +21,7 @@ define(['views/common/baseview',
                 this.destination = {};
                 this.flows = {};
                 this.dimensions = {};
-                this.maxNumberOfDimensions = 1;
+                this.maxNumberOfDimensions = 2;
                 this.selectedAreasOrigin = [];
                 this.selectedAreasDestination = [];
                 this.selectedAreasFlows = [];
