@@ -67,5 +67,4 @@ class AreaListSerializer(AreaSerializer):
 class TopoJSONSerializer(AreaSerializer):
     class Meta(AreaSerializer.Meta):
         fields = ('id',
-                  'name',
                   'geom')
