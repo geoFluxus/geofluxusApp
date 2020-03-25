@@ -548,7 +548,7 @@ define(['views/common/baseview',
 
                         flows = _.sortBy(flows, 'id');
                     }
-                    
+
                     this.renderPieChart1D(dimensions, flows);
                     this.renderBarChart1D(dimensions, flows);
                     this.renderLinePlot1D(dimensions, flows);
@@ -689,7 +689,7 @@ define(['views/common/baseview',
                 if (this.pieChartView != null) this.pieChartView.close();
                 if (this.linePlotView != null) this.linePlotView.close();
                 if (this.treeMapView != null) this.treeMapView.close();
-                if (this.choroplethView != null) this.choroplethView    .close();
+                if (this.choroplethView != null) this.choroplethView.close();
             },
 
             // Fetch flows and calls options.success(flows) on success
@@ -697,6 +697,15 @@ define(['views/common/baseview',
                 let _this = this;
                 let filterParams = this.getFlowFilterParams();
                 let data = {};
+                let selectedVisualisationString;
+
+                $('.viz-selector-button').each(function (index, value) {
+                    if ($(this).hasClass("active")) {
+                        selectedVisualisationString = $(this).attr("data-viz");
+                        console.log(selectedVisualisationString);
+                    }
+                });
+
                 this.selectedDimensions = Object.entries(filterParams.dimensions);
 
                 var flows = new Collection([], {
