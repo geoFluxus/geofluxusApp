@@ -26,6 +26,8 @@ define(['views/common/baseview',
                 this.selectedAreasDestination = [];
                 this.selectedAreasFlows = [];
 
+                this.selectedDimensionStrings = [];
+
                 this.template = options.template;
                 this.activityGroups = new Collection([], {
                     apiTag: 'activitygroups'
@@ -449,7 +451,7 @@ define(['views/common/baseview',
                     // Disable dimension toggles for max number of dimensions:
                     let checkedToggles = [];
                     let uncheckedToggles = [];
-                    let selectedDimensionStrings = [];
+                    _this.selectedDimensionStrings = [];
 
                     // Divide the toggles in arrays of checked and unchecked toggles:
                     $('.dimensionToggle').each(function (index, value) {
@@ -459,7 +461,7 @@ define(['views/common/baseview',
                         } else {
                             checkedToggles.push($(this));
 
-                            selectedDimensionStrings.push($(this).attr("data-dim"));
+                            _this.selectedDimensionStrings.push($(this).attr("data-dim"));
                         }
                     });
 
@@ -480,30 +482,102 @@ define(['views/common/baseview',
                     // //////////////////////////////////////////////////////
                     // Show available visualisations based on selected dimension(s):
 
-                    console.log(selectedDimensionStrings);
+                    console.log(_this.selectedDimensionStrings);
 
-                    switch(checkedToggles.length) {
+                    switch (checkedToggles.length) {
                         case 0:
                             console.log("No dimensions");
 
-                            break;  
+                            $(".viz-selector-button").fadeOut();
+
+                            break;
                         case 1:
-                          console.log("One dimension");
+                            console.log("One dimension");
+
+                            if (_this.selectedDimensionStrings.includes("time")) {
+
+                                $("#viz-choroplethmap").parent().hide();
+                                $("#viz-coordinatepointmap").parent().hide();
+
+                                // Pie, Bar, Trend, Tree
+
+                                $("#viz-piechart").parent().show();
+                                $("#viz-barchart").parent().show();
+                                $("#viz-treemap").parent().show();
+                                $("#viz-lineplot").parent().show();
+
+                            } else if (_this.selectedDimensionStrings.includes("space")) {
+
+                                // CHOROPLETH OR COORD POINT ??
+
+                                $("#viz-lineplot").parent().hide();
+
+                                $("#viz-piechart").parent().show();
+                                $("#viz-barchart").parent().show();
+                                $("#viz-treemap").parent().show();
+
+                                let selectedAreaLevel = $(_this.dimensions.spaceLevelGranSelect).val();
+
+                                if (selectedAreaLevel == "6") {
+                                    $("#viz-coordinatepointmap").parent().show();
+                                    $("#viz-choroplethmap").parent().hide();
+                                } else {
+                                    $("#viz-coordinatepointmap").parent().hide();
+                                    $("#viz-choroplethmap").parent().show();
+                                }
+
+                            } else if (_this.selectedDimensionStrings.includes("economicActivity")) {
+
+                                $("#viz-choroplethmap").parent().hide();
+                                $("#viz-coordinatepointmap").parent().hide();
+                                $("#viz-lineplot").parent().hide();
+
+                                $("#viz-piechart").parent().show();
+                                $("#viz-barchart").parent().show();
+                                $("#viz-treemap").parent().show();
 
 
+                            } else if (_this.selectedDimensionStrings.includes("treatmentMethod")) {
 
+                                $("#viz-choroplethmap").parent().hide();
+                                $("#viz-coordinatepointmap").parent().hide();
+                                $("#viz-lineplot").parent().hide();
 
+                                $("#viz-piechart").parent().show();
+                                $("#viz-barchart").parent().show();
+                                $("#viz-treemap").parent().show();
 
-                          break;
+                            }
+
+                            break;
                         case 2:
                             console.log("Two dimensions");
                             // code block
-                          break;
+                            break;
                         default:
-                          // code block
-                      } 
+                            // code block
+                    }
 
                 });
+
+
+                $(_this.dimensions.spaceLevelGranSelect).change(function () {
+                    let selectedAreaLevel = $(_this.dimensions.spaceLevelGranSelect).val();
+
+                    console.log("level changed");
+
+                    if (_this.selectedDimensionStrings.includes("space")) {
+
+                        if (selectedAreaLevel == "6") {
+                            $("#viz-coordinatepointmap").parent().show();
+                            $("#viz-choroplethmap").parent().hide();
+                        } else {
+                            $("#viz-coordinatepointmap").parent().hide();
+                            $("#viz-choroplethmap").parent().show();
+                        }
+                    }
+                });
+
 
                 // Show granularity on toggle change:
                 $("#dim-toggle-time").change(function () {

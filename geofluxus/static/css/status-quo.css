@@ -202,6 +202,58 @@ label[for="activity-select"] {
 
 }
 
+.viz-selector-button {
+    border-radius: 18px !important;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    width: 15rem;
+    display: flex;
+    height: 128px;
+}
+
+#TESTELEMENT::before {
+    position: absolute;
+    display: block;
+    content: ' ';
+    background-image: url('../img/viz-choropleth.svg');
+    background-size: 128px 128px;
+    height: 128px;
+    width: 128px;
+}
+
+#viz-choroplethmap::before {
+    /* content: url("../img/viz-choropleth.svg");
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    color: pink; */
+    position: absolute !important;
+    display: block !important;
+    content: ' ' !important;
+    background-image: url('../img/viz-choropleth.svg') !important;
+    background-size: 128px 128px !important;
+    height: 128px !important;
+    width: 128px !important;
+}
+
+#viz-coordinatepointmap::before {}
+
+#viz-piechart::before {
+    display: block;
+    content: ' ';
+    background-image: url('../img/viz-piechart.svg');
+    background-size: 128px 128px;
+    height: 128px;
+    width: 128px;
+}
+
+#viz-barchart::before {}
+
+#viz-treemap::before {}
+
+#viz-lineplot::before {}
+
+
 /* Area Select Modal Styles */
 
 .map {
