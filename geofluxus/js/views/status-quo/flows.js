@@ -559,49 +559,38 @@ define(['views/common/baseview',
                 } else if (dimensions[0][0] == "space") {
                     let dimension = dimensions[0][1];
 
-                    let areas = filterFlowsView.areas.models;
+                    let topoJsonURL = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.id == parseInt(dimension.adminlevel)).attributes.area_set;
 
-                    if (!areas) {
-                        areas = new Collection([], {
-                            apiTag: 'areas',
-                            apiIds: [dimension.adminlevel]
-                        });
-                        areas.fetch({
-                            success: function () {
+                    
 
-                                flows.forEach(function (flow, index) {
-                                    let areaObject = areas.find(area => area.attributes.id == flow.id);
-
-                                    this[index].name = areaObject.attributes.name;
-
-                                }, flows);
-
-                                _this.renderChoropleth1D(dimensions, flows);
-
-                            },
-                            error: function (res) {
-                                console.log(res);
-                            }
-                        });
-                    }
+                    _this.renderChoropleth1D(dimensions, flows, topoJsonURL);
 
 
-                    switch (dimension.adminlevel) {
-                        case "1":
-                            // 
-                            break;
-                        case "2":
-                            console.log("Provinces");
+                    // if (!areas) {
+                    //     areas = new Collection([], {
+                    //         apiTag: 'areas',
+                    //         apiIds: [dimension.adminlevel]
+                    //     });
+                    //     areas.fetch({
+                    //         success: function () {
 
+                    //             // flows.forEach(function (flow, index) {
+                    //             //     let areaObject = areas.find(area => area.attributes.id == flow.id);
 
+                    //             //     this[index].name = areaObject.attributes.name;
 
-                            break;
-                        default:
-                            // Default
-                    }
+                    //             // }, flows);
 
+                    //             //topoJsonURL = areas.area_set
 
+                    //             _this.renderChoropleth1D(dimensions, flows, areas);
 
+                    //         },
+                    //         error: function (res) {
+                    //             console.log(res);
+                    //         }
+                    //     });
+                    // }
 
                     // /////////////////////////////
                     // Economic Activity dimension
@@ -725,7 +714,7 @@ define(['views/common/baseview',
                 });
             },
 
-            renderChoropleth1D: function (dimensions, flows) {
+            renderChoropleth1D: function (dimensions, flows, topoJsonURL) {
                 var _this = this;
                 var el = ".choropleth-wrapper";
 
@@ -736,6 +725,7 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: _this,
+                    topoJsonURL: topoJsonURL,
                 });
             },
 

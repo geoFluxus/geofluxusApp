@@ -71,7 +71,7 @@ define(['views/common/baseview',
 
                     tooltipConfig = {
                         title: function (d) {
-                            return d.name
+                            return d.areaName
                         },
                         tbody: [
                             ["Total", function (d) {
@@ -90,6 +90,7 @@ define(['views/common/baseview',
                         groupBy: groupBy,
                         tooltipConfig: tooltipConfig,
                         hasLegend: hasLegend,
+                        topoJsonURL: this.options.topoJsonURL,
                     });
                 },
 

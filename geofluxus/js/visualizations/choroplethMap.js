@@ -21,7 +21,7 @@ define([
             new d3plus.Geomap()
                 .data(options.data)
                 .colorScale("amount")
-                .topojson("http://127.0.0.1:8000/static/topojson/provincies.json")
+                .topojson(options.topoJsonURL)
                 .tooltipConfig(options.tooltipConfig)
                 // .fitFilter(function (d) {
                 //     return ["02", "15", "43", "60", "66", "69", "72", "78"].indexOf(d.id) < 0;
