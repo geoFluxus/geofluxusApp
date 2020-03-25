@@ -572,15 +572,21 @@ define(['views/common/baseview',
                     let dimension = dimensions[0][1];
                     let topoJsonURL = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.id == parseInt(dimension.adminlevel)).attributes.area_set;
 
+                    // Temporary fix for Provincies
+                    if (topoJsonURL == "http://127.0.0.1:8000/api/levels/9/topojson/") {
+                        topoJsonURL = "http://127.0.0.1:8000/static/topojson/provincies.json";
+
+                        // flows.forEach(function (flow, index) {
+                        //     this[index].id = this[index].id.toString();
+                        // }, flows);
+                    }
+
                     switch (selectedVisualisationString) {
                         case "piechart":
                             //this.renderPieChart1D(dimensions, flows);
                             break;
                         case "barchart":
                             //this.renderBarChart1D(dimensions, flows);
-                            break;
-                        case "lineplot":
-                            //this.renderLinePlot1D(dimensions, flows);
                             break;
                         case "treemap":
                             //this.renderTreeMap1D(dimensions, flows);
@@ -801,6 +807,8 @@ define(['views/common/baseview',
                                 default:
                                     // Nothing
                             }
+
+                            $(".d3plus-viz-controls-container .d3plus-Button").html("<i class='fas fa-camera' style='color: white'></i>");
 
                             _this.loader.deactivate();
 

@@ -377,33 +377,15 @@ textarea.textarea-autosize.form-control-sm {
 } */
 
 .d3plus-viz-controls-container .d3plus-Button {
-    /* position: absolute; */
-    position: relative;
     background-color: #007bff;
-    color: transparent;
     border: none;
+    position: relative;
     font-size: 0;
     width: 32px;
     height: 32px;
     border-radius: 16px;
     top: 5px;
-    z-index: 4;
-}
-
-.d3plus-viz-controls-container:first-child::before {
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    content: "\f030 ";
-    position: absolute;
-    color: white;
-    top: 8px;
-    left: 13px;
-    z-index: 5;
-}
-
-.d3plus-Pie {
-    /* position: absolute; */
-    /* z-index: 0; */
+    color: transparent;
 }
 
 /* .d3plus-zoom-controls */

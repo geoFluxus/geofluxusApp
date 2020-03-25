@@ -40975,7 +40975,7 @@
                         ]
                     ],
                     "type": "MultiPolygon",
-                    "id": "1",
+                    "id": 120,
                     "properties": {
                         "name": "Groningen"
                     }
@@ -41049,7 +41049,7 @@
                         ]
                     ],
                     "type": "MultiPolygon",
-                    "id": "2",
+                    "id": 121,
                     "properties": {
                         "name": "Friesland"
                     }
@@ -41068,7 +41068,7 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "3",
+                    "id": 122,
                     "properties": {
                         "name": "Drenthe"
                     }
@@ -41110,7 +41110,7 @@
                         ]
                     ],
                     "type": "MultiPolygon",
-                    "id": "4",
+                    "id": 123,
                     "properties": {
                         "name": "Overijssel"
                     }
@@ -41161,7 +41161,7 @@
                         ]
                     ],
                     "type": "MultiPolygon",
-                    "id": "5",
+                    "id": 124,
                     "properties": {
                         "name": "Flevoland"
                     }
@@ -41196,7 +41196,7 @@
                         ]
                     ],
                     "type": "MultiPolygon",
-                    "id": "6",
+                    "id": 125,
                     "properties": {
                         "name": "Gelderland"
                     }
@@ -41222,7 +41222,7 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": "7",
+                    "id": 126,
                     "properties": {
                         "name": "Utrecht"
                     }
@@ -41326,7 +41326,7 @@
                         ]
                     ],
                     "type": "MultiPolygon",
-                    "id": "8",
+                    "id": 127,
                     "properties": {
                         "name": "Noord-Holland"
                     }
@@ -41396,7 +41396,7 @@
                         ]
                     ],
                     "type": "MultiPolygon",
-                    "id": "9",
+                    "id": 128,
                     "properties": {
                         "name": "Zuid-Holland"
                     }
@@ -41489,7 +41489,7 @@
                         ]
                     ],
                     "type": "MultiPolygon",
-                    "id": "10",
+                    "id": 129,
                     "properties": {
                         "name": "Zeeland"
                     }
@@ -41532,7 +41532,7 @@
                         ]
                     ],
                     "type": "MultiPolygon",
-                    "id": "11",
+                    "id": 130,
                     "properties": {
                         "name": "Noord-Brabant"
                     }
@@ -41546,7 +41546,7 @@
                         ]
                     ],
                     "type": "Polygon",
-                    "id": 12,
+                    "id": 131,
                     "properties": {
                         "name": "Limburg"
                     }
