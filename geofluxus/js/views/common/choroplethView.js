@@ -1,34 +1,36 @@
 define(['views/common/baseview',
         'underscore',
         'd3',
-        'visualizations/linePlot',
+        'visualizations/choroplethMap',
         'collections/collection',
         'app-config',
         'save-svg-as-png',
         'file-saver',
-        'utils/utils'
+        'utils/utils',
+        'd3plus',
     ],
 
     function (
         BaseView,
         _,
         d3,
-        LinePlot,
+        ChoroplethMap,
         Collection,
         config,
         saveSvgAsPng,
         FileSaver,
         utils,
+        d3plus,
         Slider) {
 
         /**
          *
          * @author Evert Van Hirtum
-         * @name module:views/LinePlotView
+         * @name module:views/ChoroplethView
          * @augments module:views/BaseView
          */
-        var LinePlotView = BaseView.extend(
-            /** @lends module:views/LinePlotView.prototype */
+        var ChoroplethView = BaseView.extend(
+            /** @lends module:views/ChoroplethView.prototype */
             {
 
                 /**
@@ -39,7 +41,7 @@ define(['views/common/baseview',
                  * @see http://backbonejs.org/#View
                  */
                 initialize: function (options) {
-                    LinePlotView.__super__.initialize.apply(this, [options]);
+                    ChoroplethView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
                     var _this = this;
@@ -62,55 +64,33 @@ define(['views/common/baseview',
                  */
                 render: function (data) {
                     let flows = this.options.flows;
-                    let tooltipConfig;
                     let groupBy;
-                    let x;
-
-                    // /////////////////////////////
-                    // Time dimension
-                    if (this.options.dimensions[0][0] == "time") {
-                        // Granularity = year
-                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
-                            x = ["year"];
-                            tooltipConfig = {
-                                title: "Waste totals per year",
-                                tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
-                                    }],
-                                    ["Year", function (d) {
-                                        return d.year
-                                    }]
-                                ]
-                            }
+                    let tooltipConfig = {};
+                    let hasLegend = true;
 
 
-                            // Granularity = month:
-                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
-                            groupBy = ["year"];
-                            x = ["yearMonthCode"];
-                            tooltipConfig = {
-                                title: "Waste totals per month",
-                                tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
-                                    }],
-                                    ["Month", function (d) {
-                                        return d.month
-                                    }]
-                                ]
-                            }
-                        }
+                    tooltipConfig = {
+                        title: function (d) {
+                            return d.areaName
+                        },
+                        tbody: [
+                            ["Total", function (d) {
+                                return d["amount"].toFixed(3)
+                            }],
+                            // ["Name", function (d) {
+                            //     return d.name
+                            // }]
+                        ]
                     }
 
-                    // Create a new D3Plus linePlot object which will be rendered in this.options.el:
-                    this.linePlot = new LinePlot({
+                    // Create a new D3Plus ChoroplethMap object which will be rendered in this.options.el:
+                    this.choroplethMap = new ChoroplethMap({
                         el: this.options.el,
                         data: flows,
                         groupBy: groupBy,
-                        x: x,
                         tooltipConfig: tooltipConfig,
-
+                        hasLegend: hasLegend,
+                        topoJsonURL: this.options.topoJsonURL,
                     });
                 },
 
@@ -170,6 +150,6 @@ define(['views/common/baseview',
                 },
 
             });
-        return LinePlotView;
+        return ChoroplethView;
     }
 );

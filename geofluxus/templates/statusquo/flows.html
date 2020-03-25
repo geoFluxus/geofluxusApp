@@ -73,7 +73,7 @@
 <!--Filters-->
 <script type="text/template" id="filter-flows-template">
     <div class="block accordion" id="filterBlock">
-        <h4 style="padding-bottom: 0.5em; padding-top: 1em">Filters</h4>
+        <h4 style="padding-bottom: 0.5em; padding-top: 1em">1. Filter the flows</h4>
 
         <!-- ORIGIN CONTROLS -->
         <div class="card bg-dark">
@@ -150,13 +150,13 @@
                             </a>
                             <div class="btn-group btn-group-toggle" id="origin-role-radio" data-toggle="buttons" style="width: 100%;">
                                 <label class="btn btn-sm btn-primary" style="width: 40%;">
-                                    <input type="radio" name="options" id="origin-role-radio-production" checked>Production
+                                    <input type="radio"  id="origin-role-radio-production" checked>Production
                                 </label>
                                 <label class="btn btn-sm btn-primary active" style="width: 20%;">
-                                    <input type="radio" name="options" id="origin-role-radio-both">Both
+                                    <input type="radio"  id="origin-role-radio-both">Both
                                 </label>
                                 <label class="btn btn-sm btn-primary" style="width: 40%;">
-                                    <input type="radio" name="options" id="origin-role-radio-treatment">Treatment
+                                    <input type="radio"  id="origin-role-radio-treatment">Treatment
                                 </label>
                             </div>
                         </div>
@@ -316,13 +316,13 @@
                             </a>
                             <div class="btn-group btn-group-toggle" id="destination-role-radio" data-toggle="buttons" style="width: 100%;">
                                 <label class="btn btn-sm btn-primary" style="width: 40%;">
-                                    <input type="radio" name="options" id="destination-role-radio-production" checked>Production
+                                    <input type="radio"  id="destination-role-radio-production" checked>Production
                                 </label>
                                 <label class="btn btn-sm btn-primary active" style="width: 20%;">
-                                    <input type="radio" name="options" id="destination-role-radio-both">Both
+                                    <input type="radio"  id="destination-role-radio-both">Both
                                 </label>
                                 <label class="btn btn-sm btn-primary" style="width: 40%;">
-                                    <input type="radio" name="options" id="destination-role-radio-treatment">Treatment
+                                    <input type="radio"  id="destination-role-radio-treatment">Treatment
                                 </label>
                             </div>
                         </div>
@@ -655,31 +655,39 @@
                     </div>
                 </div>
             </div>
+            
         </div>
-        
+                
     </div>
 
-    <div class="block" id="dimensionBlock">
+     <div class="row mt-3 mb-2">
+         <button id='reset-filters' class="btn btn-warning"
+         title="Reset all the filters"
+         style="margin-left: 20px; float: left; width: 10em">Reset
+        </button>
+    </div>
+        
+    <div class="block accordion" id="dimensionBlock">
 
-        <h4 style="padding-bottom: 0.5em; padding-top: 1em">Dimensions</h4>
+        <h4 style="padding-bottom: 0.5em; padding-top: 1em">2. Define dimensions & visualization</h4>
 
         <div class="card bg-dark" id="dimensionsCard">
 
             <!-- IF WE NEED COLLAPSE LATER, UNCOMMENT THIS -->
-            <!-- <div class="card-header" id="card-header-collapse-dimensions">
+            <div class="card-header" id="card-header-collapse-dimensions">
                 <h4 class="mb-1">
-                    <button class="btn btn-link collapsed collapsingHeaderButton" id="btn-collapse-header-dimensions"
-                            data-toggle="collapse" data-target="#collapseDimensionBlock" aria-expanded="false"
-                            aria-controls="collapseDimensionBlock">
+                    <button class="btn btn-link collapsingHeaderButton" id="btn-collapse-header-dimensions"
+                        data-toggle="collapse" data-target="#collapseDimensionBlock" aria-expanded="true"
+                        aria-controls="collapseDimensionBlock">
                         <i class="fa fa-chevron-down pull-right"></i>
                         Dimensions
                     </button>
                 </h4>
 
-            </div> -->
+            </div>
 
-            <!-- <div id="collapseDimensionBlock" class="collapse" aria-labelledby="card-header-collapse-dimension"
-                 data-parent="#filterBlock"> -->
+            <div id="collapseDimensionBlock" class="collapse show" aria-labelledby="card-header-collapse-dimension"
+                 data-parent="#dimensionBlock">
 
                 <div class="card-body">                    
                     <div class="row align-items-end border-bottom mb-3 mt-1">
@@ -696,7 +704,7 @@
                         <div class="col-md-3">
                             <div class="checkbox">
                                 <input name="dim-toggle-time" class="dimensionToggle" id="dim-toggle-time" type="checkbox"
-                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Time"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-dim="time" data-on="Time"
                                     data-off="Time">
                             </div>
                         </div>
@@ -714,7 +722,7 @@
                         <div class="col-md-3">
                             <div class="checkbox">
                                 <input name="dim-toggle-space" class="dimensionToggle" id="dim-toggle-space" type="checkbox"
-                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Space"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-dim="space" data-on="Space"
                                     data-off="Space">
                             </div>
                         </div>
@@ -740,7 +748,7 @@
                         <div class="col-md-3">
                             <div class="checkbox">
                                 <input name="dim-toggle-economic-activity" class="dimensionToggle" id="dim-toggle-economic-activity" type="checkbox"
-                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Economic activity"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-dim="economicActivity" data-on="Economic activity"
                                     data-off="Economic activity">
                             </div>
                         </div>
@@ -765,7 +773,7 @@
                         <div class="col-md-3">
                             <div class="checkbox">
                                 <input name="dim-toggle-treatment-method" class="dimensionToggle" id="dim-toggle-treatment-method" type="checkbox"
-                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Treatment method"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-dim="treatmentMethod" data-on="Treatment method"
                                     data-off="Treatment method">
                             </div>
                         </div>
@@ -830,14 +838,74 @@
                     
                     
                 </div>
-            <!-- </div> -->
+            </div>
+        
+        </div>
+
+
+        <div class="card bg-dark">
+
+            <div class="card-header" id="card-header-collapse-visualisations">
+                <h4 class="mb-1">
+                    <button class="btn btn-link collapsed collapsingHeaderButton"
+                            id="btn-collapse-header-visualisations"
+                            data-toggle="collapse"
+                            data-target="#collapseVisualisationBlock"
+                            aria-expanded="false"
+                            aria-controls="collapseVisualisationBlock">
+                        <i class="fa fa-chevron-down pull-right"></i>
+                        Visualisation
+                    </button>
+                </h4>
+
+            </div>
+
+            <div id="collapseVisualisationBlock" class="collapse show" aria-labelledby="card-header-collapse-visualisations"
+                data-parent="#dimensionBlock">
+
+                <div class="card-body">                    
+                
+                    <div class="row">
+                        <div class="col-md-10">
+                            <!-- <span id="TESTELEMENT">TESTELEMENT</span> -->
+
+                            <div class="btn-group btn-group-toggle" id="visualization-type" data-toggle="buttons" style="width: 100%;">
+                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" style="display: none;">
+                                    <input type="radio" id="viz-piechart" checked>Pie chart
+                                </label>
+                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" style="display: none;">
+                                    <input type="radio" id="viz-barchart">Bar chart
+                                </label>
+                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" style="display: none;">
+                                    <input type="radio" id="viz-treemap">Tree map
+                                </label>
+                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" style="display: none;">
+                                    <input type="radio" id="viz-lineplot">Line plot
+                                </label>
+                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" style="display: none;">
+                                    <input type="radio" id="viz-lineplot">Line plot
+                                </label>
+                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" style="display: none;">
+                                    <input type="radio" id="viz-choroplethmap">Choropleth map
+                                </label>
+                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" style="display: none;">
+                                    <input type="radio" id="viz-coordinatepointmap">Coordinate point map
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
         </div>
         
         <div class="row mt-3 mb-2">
-            <button id='reset-filters' class="btn btn-warning"
+            <!-- <button id='reset-filters' class="btn btn-warning"
                 title="Reset all the filters"
-                style="margin-left: 20px; float: left; width: 10em">Reset filters
-            </button>
+                style="margin-left: 20px; float: left; width: 10em">Reset
+            </button> -->
             <button id='apply-filters' class="btn btn-primary"
                     title="Apply the filters to activities and actors and flows and render the sankey diagram."
                     style="margin-left: 10px; float: left; width: 10em">Visualize
@@ -859,6 +927,28 @@
     <!-- template for viewing flows as sankey or map  -->
     <div id="flows-render-template">
 
+         <!-- Original grey color: #1c1c1c -->
+         <div class="row">
+            <div class="col">
+                <div class="piechart-wrapper" style="height: 700px; min-width: 500px; background-color: white; border-radius: 18px;"></div>
+            </div>
+            <div class="col">
+                <div class="barchart-wrapper" style="height: 700px; min-width: 500px; background-color: white; border-radius: 18px;"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="lineplot-wrapper" style="height: 700px; min-width: 500px; background-color: white; border-radius: 18px;"></div>
+            </div>
+            <div class="col">
+                <div class="treemap-wrapper" style="height: 700px; min-width: 500px; background-color: white; border-radius: 18px;"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="choropleth-wrapper" style="height: 700px; min-width: 500px; background-color: white; border-radius: 18px;"></div>
+            </div>
+        </div>
         
         <!-- <div class="row" style="margin-top: 20px;">
             <div class="col-md-6 min-width-600px">
@@ -915,22 +1005,6 @@
                 <div id="flow-map" style="width: 100%; height: 600px;"></div>
             </div> -->
 
-
-            <div class="row">
-                <div class="col">
-                    <!-- Original grey color: #1c1c1c -->
-                    <div class="piechart-wrapper" style="height: 700px; min-width: 500px; background-color: white; border-radius: 18px;"></div>
-                </div>
-                <div class="col">
-                    <div class="barchart-wrapper" style="height: 700px; min-width: 500px; background-color: white; border-radius: 18px;"></div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <div class="lineplot-wrapper" style="height: 700px; min-width: 500px; background-color: white; border-radius: 18px;"></div>
-                </div>
-            </div>
-
         </div>
     </div>
 
@@ -942,6 +1016,7 @@
     <!--Area selection-->
     <div class="area-filter modal fade" role="dialog"></div>
 </script>
+
 
 <!--Area selection-->
 <script type="text/template" id="area-select-modal-template">
@@ -958,7 +1033,8 @@
                         <label for="area-level-select" class="input-label" style="margin-top: .5rem; margin-right: 10px;">Geographic level:</label>
                         <select name="area-level-select" id="area-level-select" class="form-control form-control-sm" style="max-width: 350px;">
                             <% levels.forEach(function(level) { %>
-                            <option value="<%= level.id %>"><%= level.get('name') %></option>
+                                <% if (level.get('level') != "6") %>
+                                    <option value="<%= level.id %>"><%= level.get('name') %></option>
                             <% }) %>
                         </select>
                     </div>

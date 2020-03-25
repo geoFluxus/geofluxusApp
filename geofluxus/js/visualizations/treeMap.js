@@ -5,34 +5,33 @@ define([
 ], function (d3, d3brush, d3plus) {
     /**
      *
-     * Pie chart to display Flows data
+     * TreeMap chart to display Flows data
      *
      * @author Evert Van Hirtum
      */
-    class PieChart {
+    class TreeMap {
         /**
          * @param {Object} options          object containing all option values
-         * @param {string} options.el       CSS Selector of the container element of the Pie Chart
+         * @param {string} options.el       CSS Selector of the container element of the TreeMap
          */
         constructor(options) {
             var options = options || {};
             var _this = this;
 
-            new d3plus.Pie()
+            new d3plus.Treemap()
                 .config({
-                    data: options.data,
-                    groupBy: options.groupBy,
-                    value: function (d) {
-                        return d["amount"].toFixed(3);
-                    },
-                    tooltipConfig: options.tooltipConfig,
+                    //data: options.data,
+                    //groupBy: options.groupBy,
+                    // value: function (d) {
+                    //     return d["amount"].toFixed(3);
+                    // },
                 })
+                //tile: d3.treemapDice
+                .tooltipConfig(options.tooltipConfig)
+                .data(options.data) 
+                .groupBy(options.groupBy)
+                .sum("amount")
                 .legend(options.hasLegend)
-                // .format({
-                //     "number": function(number, params) {
-                //         return number.toFixed(2);
-                //     }
-                // })
                 .shapeConfig({
                     labelConfig: {
                         fontFamily: "Montserrat",
@@ -45,5 +44,5 @@ define([
                 .render();
         }
     }
-    return PieChart;
+    return TreeMap;
 });

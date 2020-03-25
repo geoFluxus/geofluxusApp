@@ -81,6 +81,18 @@
     text-decoration: none !important;
 }
 
+#btn-collapse-header-visualisations {
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+    box-shadow: none;
+    text-decoration: none !important;
+}
+
 .flowFilterSubtitle {
     margin-top: 1rem !important;
 }
@@ -190,6 +202,58 @@ label[for="activity-select"] {
 
 }
 
+.viz-selector-button {
+    border-radius: 18px !important;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    width: 15rem;
+    display: flex;
+    height: 128px;
+}
+
+#TESTELEMENT::before {
+    position: absolute;
+    display: block;
+    content: ' ';
+    background-image: url('../img/viz-choropleth.svg');
+    background-size: 128px 128px;
+    height: 128px;
+    width: 128px;
+}
+
+#viz-choroplethmap::before {
+    /* content: url("../img/viz-choropleth.svg");
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    color: pink; */
+    position: absolute !important;
+    display: block !important;
+    content: ' ' !important;
+    background-image: url('../img/viz-choropleth.svg') !important;
+    background-size: 128px 128px !important;
+    height: 128px !important;
+    width: 128px !important;
+}
+
+#viz-coordinatepointmap::before {}
+
+#viz-piechart::before {
+    display: block;
+    content: ' ';
+    background-image: url('../img/viz-piechart.svg');
+    background-size: 128px 128px;
+    height: 128px;
+    width: 128px;
+}
+
+#viz-barchart::before {}
+
+#viz-treemap::before {}
+
+#viz-lineplot::before {}
+
+
 /* Area Select Modal Styles */
 
 .map {
@@ -285,13 +349,72 @@ textarea.textarea-autosize.form-control-sm {
 
 /* d3plus buttons */
 
+/* .d3plus-viz-controls-left {
+    position: relative;
+    z-index: 1;
+}
+
 .d3plus-viz-controls-container {
-
+    position: absolute !important;
+    left: 0px;
+    top: 5px;
+    z-index: 3;
 }
 
-.d3plus-Button {
 
+.d3plus-viz-controls-container .d3plus-Form {
+    z-index: 1;
+    position: absolute;
+} */
+
+.d3plus-viz-controls-container .d3plus-Button {
+    /* position: absolute; */
+    position: relative;
+    background-color: #007bff;
+    color: transparent;
+    border: none;
+    font-size: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    top: 5px;
+    z-index: 4;
 }
+
+.d3plus-viz-controls-container:first-child::before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f030 ";
+    position: absolute;
+    color: white;
+    top: 8px;
+    left: 13px;
+    z-index: 5;
+}
+
+.d3plus-Pie {
+    /* position: absolute; */
+    /* z-index: 0; */
+}
+
+/* .d3plus-zoom-controls */
+
+.d3plus-zoom-control .zoom-control {
+    position: relative;
+    height: 32px !important;
+    width: 32px !important;
+    border-radius: 16px !important;
+    font-size: 28px !important;
+    padding-top: 0.3rem !important;
+    color: white !important;
+    background-color: #007bff !important;
+    border: none !important;
+}
+
+.choropleth-wrapper svg {
+    border-radius: 18px !important;
+}
+
 
 /* SVG Container */
 

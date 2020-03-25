@@ -1,7 +1,7 @@
 define(['views/common/baseview',
         'underscore',
         'd3',
-        'visualizations/linePlot',
+        'visualizations/treeMap',
         'collections/collection',
         'app-config',
         'save-svg-as-png',
@@ -13,7 +13,7 @@ define(['views/common/baseview',
         BaseView,
         _,
         d3,
-        LinePlot,
+        TreeMap,
         Collection,
         config,
         saveSvgAsPng,
@@ -24,11 +24,11 @@ define(['views/common/baseview',
         /**
          *
          * @author Evert Van Hirtum
-         * @name module:views/LinePlotView
+         * @name module:views/TreeMapView
          * @augments module:views/BaseView
          */
-        var LinePlotView = BaseView.extend(
-            /** @lends module:views/LinePlotView.prototype */
+        var TreeMapView = BaseView.extend(
+            /** @lends module:views/TreeMapView.prototype */
             {
 
                 /**
@@ -39,15 +39,13 @@ define(['views/common/baseview',
                  * @see http://backbonejs.org/#View
                  */
                 initialize: function (options) {
-                    LinePlotView.__super__.initialize.apply(this, [options]);
+                    TreeMapView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
                     var _this = this;
 
                     this.options = options;
 
-                    //this.transformedData = this.transformData(this.flows);
-                    //this.render(this.transformedData);
                     this.render();
                 },
 
@@ -62,55 +60,120 @@ define(['views/common/baseview',
                  */
                 render: function (data) {
                     let flows = this.options.flows;
-                    let tooltipConfig;
                     let groupBy;
-                    let x;
+                    let tooltipConfig = {};
+                    let hasLegend = true;
 
                     // /////////////////////////////
                     // Time dimension
                     if (this.options.dimensions[0][0] == "time") {
                         // Granularity = year
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
-                            x = ["year"];
+                            hasLegend = false;
+                            groupBy = ["year"];
                             tooltipConfig = {
-                                title: "Waste totals per year",
+                                title: function (d) {
+                                    return d.year
+                                },
                                 tbody: [
                                     ["Total", function (d) {
                                         return d["amount"].toFixed(3)
                                     }],
-                                    ["Year", function (d) {
-                                        return d.year
-                                    }]
                                 ]
                             }
-
 
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
-                            groupBy = ["year"];
-                            x = ["yearMonthCode"];
+                            groupBy = ["year", "month"];
+                            hasLegend = false;
                             tooltipConfig = {
-                                title: "Waste totals per month",
+                                title: function (d) {
+                                    return d.year
+                                },
                                 tbody: [
                                     ["Total", function (d) {
                                         return d["amount"].toFixed(3)
                                     }],
-                                    ["Month", function (d) {
-                                        return d.month
-                                    }]
                                 ]
                             }
                         }
+
+                        // /////////////////////////////
+                        // Economic Activity dimension
+                    } else if (this.options.dimensions[0][0] == "economicActivity") {
+                        // Granularity = Activity group
+                        if (this.options.dimensions[0][1] == "origin__activity__activitygroup" || this.options.dimensions[0][1] == "destination__activity__activitygroup") {
+                            groupBy = ["activityGroupCode"];
+                            tooltipConfig = {
+                                tbody: [
+                                    ["Total", function (d) {
+                                        return d["amount"].toFixed(3)
+                                    }],
+                                    ["Activity group", function (d) {
+                                        return d.activityGroupCode + " " + d.activityGroupName;
+                                    }],
+                                ]
+                            }
+
+                            // Granularity: Activity
+                        } else if (this.options.dimensions[0][1] == "origin__activity" || this.options.dimensions[0][1] == "destination__activity") {
+                            groupBy = ["activityCode"];
+                            hasLegend = false;
+                            tooltipConfig = {
+                                tbody: [
+                                    ["Total", function (d) {
+                                        return d["amount"].toFixed(3)
+                                    }],
+                                    ["Activity", function (d) {
+                                        return d.activityCode + " " + d.activityName;
+                                    }],
+                                ]
+                            }
+                        }
+                    } else if (this.options.dimensions[0][0] == "treatmentMethod") {
+
+
+                        if (this.options.dimensions[0][1] == "origin__process__processgroup" || this.options.dimensions[0][1] == "destination__process__processgroup") {
+                            groupBy = ["processGroupCode"];
+                            tooltipConfig = {
+                                tbody: [
+                                    ["Total", function (d) {
+                                        return d["amount"].toFixed(3)
+                                    }],
+                                    ["Treatment method group", function (d) {
+                                        return d.processGroupCode + " " + d.processGroupName;
+                                    }],
+                                ]
+                            }
+
+                            // Granularity: Activity
+                        } else if (this.options.dimensions[0][1] == "origin__process" || this.options.dimensions[0][1] == "destination__process") {
+                            groupBy = ["processCode"];
+                            hasLegend = false;
+                            tooltipConfig = {
+                                tbody: [
+                                    ["Total", function (d) {
+                                        return d["amount"].toFixed(3)
+                                    }],
+                                    ["Treatment method", function (d) {
+                                        return d.processCode + " " + d.processName;
+                                    }],
+                                ]
+                            }
+                        }
+
+
+
+
                     }
 
-                    // Create a new D3Plus linePlot object which will be rendered in this.options.el:
-                    this.linePlot = new LinePlot({
+                    // Create a new D3Plus TreeMap object which will be rendered in this.options.el:
+                    this.TreeMap = new TreeMap({
                         el: this.options.el,
                         data: flows,
                         groupBy: groupBy,
-                        x: x,
                         tooltipConfig: tooltipConfig,
-
+                        hasLegend: hasLegend,
                     });
                 },
 
@@ -121,7 +184,6 @@ define(['views/common/baseview',
                     this.el.classList.toggle('fullscreen');
                     this.refresh();
                     event.stopImmediatePropagation();
-                    //this.render(this.transformedData);
                 },
 
                 refresh: function (options) {
@@ -170,6 +232,6 @@ define(['views/common/baseview',
                 },
 
             });
-        return LinePlotView;
+        return TreeMapView;
     }
 );

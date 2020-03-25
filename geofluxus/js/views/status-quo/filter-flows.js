@@ -21,10 +21,12 @@ define(['views/common/baseview',
                 this.destination = {};
                 this.flows = {};
                 this.dimensions = {};
-                this.maxNumberOfDimensions = 1;
+                this.maxNumberOfDimensions = 2;
                 this.selectedAreasOrigin = [];
                 this.selectedAreasDestination = [];
                 this.selectedAreasFlows = [];
+
+                this.selectedDimensionStrings = [];
 
                 this.template = options.template;
                 this.activityGroups = new Collection([], {
@@ -61,7 +63,8 @@ define(['views/common/baseview',
                     apiTag: 'composites'
                 });
                 this.areaLevels = new Collection([], {
-                    apiTag: 'arealevels'
+                    apiTag: 'arealevels',
+                    comparator: "level",
                 });
 
                 this.years = new Collection([], {
@@ -77,7 +80,7 @@ define(['views/common/baseview',
                 var promises = [
                     this.activityGroups.fetch(),
                     this.activities.fetch(),
-                    this.actors.fetch(),
+                    //this.actors.fetch(),
                     this.processes.fetch(),
                     this.processgroups.fetch(),
                     this.wastes02.fetch(),
@@ -444,10 +447,12 @@ define(['views/common/baseview',
                     }
                 });
 
-                // Disable dimension toggles for max number of dimensions:
                 $(".dimensionToggle").change(function (event) {
+                    // //////////////////////////////////////////////////////
+                    // Disable dimension toggles for max number of dimensions:
                     let checkedToggles = [];
                     let uncheckedToggles = [];
+                    _this.selectedDimensionStrings = [];
 
                     // Divide the toggles in arrays of checked and unchecked toggles:
                     $('.dimensionToggle').each(function (index, value) {
@@ -456,6 +461,8 @@ define(['views/common/baseview',
                             uncheckedToggles.push($(this));
                         } else {
                             checkedToggles.push($(this));
+
+                            _this.selectedDimensionStrings.push($(this).attr("data-dim"));
                         }
                     });
 
@@ -471,7 +478,107 @@ define(['views/common/baseview',
                             this.bootstrapToggle('enable');
                         });
                     }
+
+
+                    // //////////////////////////////////////////////////////
+                    // Show available visualisations based on selected dimension(s):
+
+                    console.log(_this.selectedDimensionStrings);
+
+                    switch (checkedToggles.length) {
+                        case 0:
+                            console.log("No dimensions");
+
+                            $(".viz-selector-button").fadeOut();
+
+                            break;
+                        case 1:
+                            console.log("One dimension");
+
+                            if (_this.selectedDimensionStrings.includes("time")) {
+
+                                $("#viz-choroplethmap").parent().hide();
+                                $("#viz-coordinatepointmap").parent().hide();
+
+                                // Pie, Bar, Trend, Tree
+
+                                $("#viz-piechart").parent().show();
+                                $("#viz-barchart").parent().show();
+                                $("#viz-treemap").parent().show();
+                                $("#viz-lineplot").parent().show();
+
+                            } else if (_this.selectedDimensionStrings.includes("space")) {
+
+                                // CHOROPLETH OR COORD POINT ??
+
+                                $("#viz-lineplot").parent().hide();
+
+                                $("#viz-piechart").parent().show();
+                                $("#viz-barchart").parent().show();
+                                $("#viz-treemap").parent().show();
+
+                                let selectedAreaLevel = $(_this.dimensions.spaceLevelGranSelect).val();
+
+                                if (selectedAreaLevel == "6") {
+                                    $("#viz-coordinatepointmap").parent().show();
+                                    $("#viz-choroplethmap").parent().hide();
+                                } else {
+                                    $("#viz-coordinatepointmap").parent().hide();
+                                    $("#viz-choroplethmap").parent().show();
+                                }
+
+                            } else if (_this.selectedDimensionStrings.includes("economicActivity")) {
+
+                                $("#viz-choroplethmap").parent().hide();
+                                $("#viz-coordinatepointmap").parent().hide();
+                                $("#viz-lineplot").parent().hide();
+
+                                $("#viz-piechart").parent().show();
+                                $("#viz-barchart").parent().show();
+                                $("#viz-treemap").parent().show();
+
+
+                            } else if (_this.selectedDimensionStrings.includes("treatmentMethod")) {
+
+                                $("#viz-choroplethmap").parent().hide();
+                                $("#viz-coordinatepointmap").parent().hide();
+                                $("#viz-lineplot").parent().hide();
+
+                                $("#viz-piechart").parent().show();
+                                $("#viz-barchart").parent().show();
+                                $("#viz-treemap").parent().show();
+
+                            }
+
+                            break;
+                        case 2:
+                            console.log("Two dimensions");
+                            // code block
+                            break;
+                        default:
+                            // code block
+                    }
+
                 });
+
+
+                $(_this.dimensions.spaceLevelGranSelect).change(function () {
+                    let selectedAreaLevel = $(_this.dimensions.spaceLevelGranSelect).val();
+
+                    console.log("level changed");
+
+                    if (_this.selectedDimensionStrings.includes("space")) {
+
+                        if (selectedAreaLevel == "6") {
+                            $("#viz-coordinatepointmap").parent().show();
+                            $("#viz-choroplethmap").parent().hide();
+                        } else {
+                            $("#viz-coordinatepointmap").parent().hide();
+                            $("#viz-choroplethmap").parent().show();
+                        }
+                    }
+                });
+
 
                 // Show granularity on toggle change:
                 $("#dim-toggle-time").change(function () {
@@ -898,7 +1005,7 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////////////////////
                 // Origin-controls:
-                $(".areaSelectionsOrigin").fadeOut();
+                $(".areaSelectionsOrigin").hide();
                 $("#areaSelectionsOriginTextarea").html("");
                 $("#origin-role-radio-production").parent().removeClass("active");
                 $("#origin-role-radio-both").parent().addClass("active")
@@ -908,13 +1015,15 @@ define(['views/common/baseview',
                 $(_this.origin.activitySelect).html(allActivitiesOptionsHTML);
                 $(_this.origin.processGroupSelect).val('-1');
                 $(_this.origin.processSelect).val('-1');
-                $(".originContainerActivity").fadeOut();
-                $(".originContainerTreatmentMethod").fadeOut();
+                $(".originContainerActivity").hide();
+                $(".originContainerTreatmentMethod").hide();
 
+
+                $(".activitySelectContainer").hide();
 
                 // ///////////////////////////////////////////////
                 // Destination-controls:
-                $(".areaSelectionsDestination").fadeOut();
+                $(".areaSelectionsDestination").hide();
                 $("#areaSelectionsDestinationTextarea").html("");
                 $("#destination-role-radio-production").parent().removeClass("active");
                 $("#destination-role-radio-both").parent().addClass("active")
@@ -924,24 +1033,24 @@ define(['views/common/baseview',
                 $(_this.destination.activitySelect).html(allActivitiesOptionsHTML);
                 $(_this.destination.processGroupSelect).val('-1');
                 $(_this.destination.processSelect).val('-1');
-                $(".destinationContainerActivity").fadeOut();
-                $(".destinationContainerTreatmentMethod").fadeOut();
+                $(".destinationContainerActivity").hide();
+                $(".destinationContainerTreatmentMethod").hide();
 
 
                 // ///////////////////////////////////////////////
                 // Flows-controls:
-                $("#areaSelectionsFlows").fadeOut();
+                $("#areaSelectionsFlows").hide();
                 $("#areaSelectionsFlowsTextarea").html("");
-                $("#areaSelectionsFlows").fadeOut();
+                $("#areaSelectionsFlows").hide();
                 $(_this.flows.yearSelect).val("-1");
                 $(_this.flows.monthSelect).val("-1");
-                $("#monthCol").fadeOut("fast");
+                $("#monthCol").hide("fast");
 
                 $(_this.flows.waste02Select).val("-1");
                 $(_this.flows.waste04Select).val("-1");
-                $("#wastes04col").fadeOut("fast");
+                $("#wastes04col").hide("fast");
                 $(_this.flows.waste06Select).val("-1");
-                $("#wastes06col").fadeOut("fast");
+                $("#wastes06col").hide("fast");
 
                 $(_this.flows.materialSelect).val("-1");
                 $(_this.flows.productSelect).val("-1");
@@ -959,11 +1068,11 @@ define(['views/common/baseview',
                 // Dimension controls:
                 $(_this.dimensions.timeToggle).bootstrapToggle('off');
                 $(_this.dimensions.timeToggleGran).bootstrapToggle('Year');
- 
+
                 $(_this.dimensions.spaceToggle).bootstrapToggle('off');
                 $(_this.dimensions.spaceLevelGranSelect).val($('#dim-space-gran-select:first-child')[0].value);
                 $(_this.dimensions.spaceOrigDest).bootstrapToggle('off');
-                
+
                 $(_this.dimensions.economicActivityToggle).bootstrapToggle('off');
                 $(_this.dimensions.economicActivityToggleGran).bootstrapToggle('off');
                 $(_this.dimensions.economicActivityOrigDest).bootstrapToggle('off');

@@ -109,7 +109,8 @@ define(['views/common/baseview',
                             return b["amount"] - a["amount"];
                         }
 
-                        if (this.options.dimensions[0][1] == "activity__activitygroup") {
+                        // Granularity: Activity group
+                        if (this.options.dimensions[0][1] == "origin__activity__activitygroup" || this.options.dimensions[0][1] == "destination__activity__activitygroup") {
                             groupBy = ["activityGroupCode"];
                             x = ["activityGroupCode"];
                             tooltipConfig = {
@@ -122,9 +123,9 @@ define(['views/common/baseview',
                                     }],
                                 ]
                             }
-                            
+
                             // Granularity: Activity
-                        } else if (this.options.dimensions[0][1] == "activity") {
+                        } else if (this.options.dimensions[0][1] == "origin__activity" || this.options.dimensions[0][1] == "destination__activity") {
                             groupBy = ["activityCode"];
                             hasLegend = false;
                             x = ["activityCode"];
@@ -135,6 +136,42 @@ define(['views/common/baseview',
                                     }],
                                     ["Activity", function (d) {
                                         return d.activityCode + " " + d.activityName;
+                                    }],
+                                ]
+                            }
+                        }
+                    } else if (this.options.dimensions[0][0] == "treatmentMethod") {
+                        xSort = function (a, b) {
+                            return b["amount"] - a["amount"];
+                        }
+
+                        // Granularity: Treatment process group
+                        if (this.options.dimensions[0][1] == "origin__process__processgroup" || this.options.dimensions[0][1] == "destination__process__processgroup") {
+                            groupBy = ["processGroupCode"];
+                            x = ["processGroupCode"];
+                            tooltipConfig = {
+                                tbody: [
+                                    ["Total", function (d) {
+                                        return d["amount"].toFixed(3)
+                                    }],
+                                    ["Treatment method group", function (d) {
+                                        return d.processGroupCode + " " + d.processGroupName;
+                                    }],
+                                ]
+                            }
+
+                            // Granularity: Treatment process
+                        } else if (this.options.dimensions[0][1] == "origin__process" || this.options.dimensions[0][1] == "destination__process") {
+                            groupBy = ["processCode"];
+                            x = ["processCode"];
+                            hasLegend = false;
+                            tooltipConfig = {
+                                tbody: [
+                                    ["Total", function (d) {
+                                        return d["amount"].toFixed(3)
+                                    }],
+                                    ["Treatment method", function (d) {
+                                        return d.processCode + " " + d.processName;
                                     }],
                                 ]
                             }
