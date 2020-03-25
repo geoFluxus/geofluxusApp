@@ -1017,9 +1017,6 @@
     <div class="area-filter modal fade" role="dialog"></div>
 </script>
 
-                            <!-- <>% for areaLevel in levels|sort(attribute='level') %>
-                            <option value="<%= areaLevel.id %>"><%= areaLevel.get('name') %></option>
-                            <{>% endfor %> -->
 
 <!--Area selection-->
 <script type="text/template" id="area-select-modal-template">
@@ -1036,7 +1033,8 @@
                         <label for="area-level-select" class="input-label" style="margin-top: .5rem; margin-right: 10px;">Geographic level:</label>
                         <select name="area-level-select" id="area-level-select" class="form-control form-control-sm" style="max-width: 350px;">
                             <% levels.forEach(function(level) { %>
-                            <option value="<%= level.id %>"><%= level.get('name') %></option>
+                                <% if (level.get('level') != "6") %>
+                                    <option value="<%= level.id %>"><%= level.get('name') %></option>
                             <% }) %>
                         </select>
                     </div>

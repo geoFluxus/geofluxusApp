@@ -572,7 +572,6 @@ define(['views/common/baseview',
                                 flows.forEach(function (flow, index) {
                                     let areaObject = areas.find(area => area.attributes.id == flow.id);
 
-                                    // this[index].id = this[index].area.toString();
                                     this[index].name = areaObject.attributes.name;
 
                                 }, flows);
