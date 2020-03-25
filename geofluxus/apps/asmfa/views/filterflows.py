@@ -234,7 +234,7 @@ class FilterFlowViewSet(PostGetViewMixin,
                 queryset = queryset.annotate(area=Subquery(subq.values('id')))
 
             # append to other dimensions
-            levels.append('id')
+            levels.append('area')
             fields.append('area')
 
         # ECO DIMENSION
@@ -276,7 +276,13 @@ class FilterFlowViewSet(PostGetViewMixin,
             # to recover any info in the frontend
             flow_item = [('amount', group_amount)]
             for level, field in zip(levels, fields):
-                flow_item.append((level, group[field]))
+                if field == 'area':
+                    area = Area.objects.filter(id=group[field])
+                    name = area.values_list('name', flat=True)[0]
+                    flow_item.append(('id', group[field]))
+                    flow_item.append(('areaName', name))
+                else:
+                    flow_item.append((level, group[field]))
 
             data.append(OrderedDict(flow_item))
         return data
