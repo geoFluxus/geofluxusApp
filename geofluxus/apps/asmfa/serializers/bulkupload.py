@@ -432,7 +432,8 @@ class AdminLevelCreateSerializer(BulkSerializerMixin,
                                  AdminLevelSerializer):
     field_map = {
         'name': 'name',
-        'level': 'level'
+        'level': 'level',
+        'resolution': 'resolution'
     }
     index_columns = ['name']
 
