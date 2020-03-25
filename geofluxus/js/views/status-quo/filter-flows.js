@@ -63,7 +63,8 @@ define(['views/common/baseview',
                     apiTag: 'composites'
                 });
                 this.areaLevels = new Collection([], {
-                    apiTag: 'arealevels'
+                    apiTag: 'arealevels',
+                    comparator: "level",
                 });
 
                 this.years = new Collection([], {
