@@ -208,50 +208,49 @@ label[for="activity-select"] {
     margin-right: 1rem;
     width: 15rem;
     display: flex;
-    height: 128px;
 }
 
-#TESTELEMENT::before {
-    position: absolute;
+.viz-selector-button.active {
+    background-color: #00b6d6 !important;
+}
+
+.span-viz::before {
     display: block;
+    position: relative;
     content: ' ';
-    background-image: url('../img/viz-choropleth.svg');
-    background-size: 128px 128px;
-    height: 128px;
-    width: 128px;
-}
-
-#viz-choroplethmap::before {
-    /* content: url("../img/viz-choropleth.svg");
-    display: inline-block;
-    width: 100px;
+    background-size: 100px 100px;
     height: 100px;
-    color: pink; */
-    position: absolute !important;
-    display: block !important;
-    content: ' ' !important;
-    background-image: url('../img/viz-choropleth.svg') !important;
-    background-size: 128px 128px !important;
-    height: 128px !important;
-    width: 128px !important;
+    width: 100px;
+    margin: auto;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    align-self: flex-end;
+
 }
 
-#viz-coordinatepointmap::before {}
+#span-viz-choroplethmap::before {
+    background-image: url('../img/viz-choropleth.svg');
+}
 
-#viz-piechart::before {
-    display: block;
-    content: ' ';
+#span-viz-coordinatepointmap::before {
+    background-image: url('../img/viz-coordpoint.svg');
+}
+
+#span-viz-piechart::before {
     background-image: url('../img/viz-piechart.svg');
-    background-size: 128px 128px;
-    height: 128px;
-    width: 128px;
 }
 
-#viz-barchart::before {}
+#span-viz-barchart::before {
+    background-image: url('../img/viz-barchart.svg');
+}
 
-#viz-treemap::before {}
+#span-viz-treemap::before {
+    background-image: url('../img/viz-treemap.svg');
+}
 
-#viz-lineplot::before {}
+#span-viz-lineplot::before {
+    background-image: url('../img/viz-lineplot.svg');
+}
 
 
 /* Area Select Modal Styles */

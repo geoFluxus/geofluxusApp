@@ -558,39 +558,9 @@ define(['views/common/baseview',
                     // Space dimension
                 } else if (dimensions[0][0] == "space") {
                     let dimension = dimensions[0][1];
-
                     let topoJsonURL = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.id == parseInt(dimension.adminlevel)).attributes.area_set;
 
-                    
-
                     _this.renderChoropleth1D(dimensions, flows, topoJsonURL);
-
-
-                    // if (!areas) {
-                    //     areas = new Collection([], {
-                    //         apiTag: 'areas',
-                    //         apiIds: [dimension.adminlevel]
-                    //     });
-                    //     areas.fetch({
-                    //         success: function () {
-
-                    //             // flows.forEach(function (flow, index) {
-                    //             //     let areaObject = areas.find(area => area.attributes.id == flow.id);
-
-                    //             //     this[index].name = areaObject.attributes.name;
-
-                    //             // }, flows);
-
-                    //             //topoJsonURL = areas.area_set
-
-                    //             _this.renderChoropleth1D(dimensions, flows, areas);
-
-                    //         },
-                    //         error: function (res) {
-                    //             console.log(res);
-                    //         }
-                    //     });
-                    // }
 
                     // /////////////////////////////
                     // Economic Activity dimension
@@ -659,72 +629,57 @@ define(['views/common/baseview',
             },
 
             renderPieChart1D: function (dimensions, flows) {
-                var _this = this;
-                var el = ".piechart-wrapper";
-
                 if (this.pieChartView != null) this.pieChartView.close();
 
                 this.pieChartView = new PieChartView({
-                    el: el,
+                    el: ".piechart-wrapper",
                     dimensions: dimensions,
                     flows: flows,
-                    flowsView: _this,
+                    flowsView: this,
                 });
             },
 
             renderTreeMap1D: function (dimensions, flows) {
-                var _this = this;
-                var el = ".treemap-wrapper";
-
                 if (this.treeMapView != null) this.treeMapView.close();
 
                 this.treeMapView = new TreeMapView({
-                    el: el,
+                    el: ".treemap-wrapper",
                     dimensions: dimensions,
                     flows: flows,
-                    flowsView: _this,
+                    flowsView: this,
                 });
             },
 
             renderBarChart1D: function (dimensions, flows) {
-                var _this = this;
-                var el = ".barchart-wrapper";
-
                 if (this.barChartView != null) this.barChartView.close();
 
                 this.barChartView = new BarChartView({
-                    el: el,
+                    el: ".barchart-wrapper",
                     dimensions: dimensions,
                     flows: flows,
-                    flowsView: _this,
+                    flowsView: this,
                 });
             },
 
             renderLinePlot1D: function (dimensions, flows) {
-                var _this = this;
-                var el = ".lineplot-wrapper";
-
                 if (this.linePlotView != null) this.linePlotView.close();
 
                 this.linePlotView = new LinePlotView({
-                    el: el,
+                    el: ".lineplot-wrapper",
                     dimensions: dimensions,
                     flows: flows,
-                    flowsView: _this,
+                    flowsView: this,
                 });
             },
 
             renderChoropleth1D: function (dimensions, flows, topoJsonURL) {
-                var _this = this;
-                var el = ".choropleth-wrapper";
-
                 if (this.choroplethView != null) this.choroplethView.close();
 
                 this.choroplethView = new ChoroplethView({
-                    el: el,
+                    el: ".choropleth-wrapper",
                     dimensions: dimensions,
                     flows: flows,
-                    flowsView: _this,
+                    flowsView: this,
                     topoJsonURL: topoJsonURL,
                 });
             },
@@ -734,6 +689,7 @@ define(['views/common/baseview',
                 if (this.pieChartView != null) this.pieChartView.close();
                 if (this.linePlotView != null) this.linePlotView.close();
                 if (this.treeMapView != null) this.treeMapView.close();
+                if (this.choroplethView != null) this.choroplethView    .close();
             },
 
             // Fetch flows and calls options.success(flows) on success
@@ -775,7 +731,6 @@ define(['views/common/baseview',
 
                             _this.loader.deactivate();
                             //_this.renderSankeyMap();
-
 
 
                             if (options.success) {
