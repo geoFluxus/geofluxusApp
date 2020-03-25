@@ -252,6 +252,16 @@ label[for="activity-select"] {
     background-image: url('../img/viz-lineplot.svg');
 }
 
+/* VISUALISATION STYLES */
+
+.viz-wrapper-div {
+    display: none;
+    height: 700px;
+    min-width: 500px;
+    background-color: rgba(255, 255, 255, 0.712);
+    border-radius: 18px;
+}
+
 
 /* Area Select Modal Styles */
 

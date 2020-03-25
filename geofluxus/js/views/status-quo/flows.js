@@ -511,7 +511,7 @@ define(['views/common/baseview',
             //     this.flowMapView.rerender();
             // },
 
-            render1Dvisualisations: function (dimensions, flows) {
+            render1Dvisualisations: function (dimensions, flows, selectedVisualisationString) {
                 let _this = this;
                 let filterFlowsView = this.filterFlowsView;
 
@@ -549,10 +549,22 @@ define(['views/common/baseview',
                         flows = _.sortBy(flows, 'id');
                     }
 
-                    this.renderPieChart1D(dimensions, flows);
-                    this.renderBarChart1D(dimensions, flows);
-                    this.renderLinePlot1D(dimensions, flows);
-                    this.renderTreeMap1D(dimensions, flows);
+                    switch (selectedVisualisationString) {
+                        case "piechart":
+                            this.renderPieChart1D(dimensions, flows);
+                            break;
+                        case "barchart":
+                            this.renderBarChart1D(dimensions, flows);
+                            break;
+                        case "lineplot":
+                            this.renderLinePlot1D(dimensions, flows);
+                            break;
+                        case "treemap":
+                            this.renderTreeMap1D(dimensions, flows);
+                            break;
+                        default:
+                            // Nothing
+                    }
 
                     // /////////////////////////////
                     // Space dimension
@@ -560,7 +572,25 @@ define(['views/common/baseview',
                     let dimension = dimensions[0][1];
                     let topoJsonURL = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.id == parseInt(dimension.adminlevel)).attributes.area_set;
 
-                    _this.renderChoropleth1D(dimensions, flows, topoJsonURL);
+                    switch (selectedVisualisationString) {
+                        case "piechart":
+                            //this.renderPieChart1D(dimensions, flows);
+                            break;
+                        case "barchart":
+                            //this.renderBarChart1D(dimensions, flows);
+                            break;
+                        case "lineplot":
+                            //this.renderLinePlot1D(dimensions, flows);
+                            break;
+                        case "treemap":
+                            //this.renderTreeMap1D(dimensions, flows);
+                            break;
+                        case "choroplethmap":
+                            _this.renderChoropleth1D(dimensions, flows, topoJsonURL);
+                            break;
+                        default:
+                            // Nothing
+                    }
 
                     // /////////////////////////////
                     // Economic Activity dimension
@@ -589,8 +619,19 @@ define(['views/common/baseview',
                         }, flows);
                     }
 
-                    this.renderPieChart1D(dimensions, flows);
-                    this.renderBarChart1D(dimensions, flows);
+                    switch (selectedVisualisationString) {
+                        case "piechart":
+                            this.renderPieChart1D(dimensions, flows);
+                            break;
+                        case "barchart":
+                            this.renderBarChart1D(dimensions, flows);
+                            break;
+                        case "treemap":
+                            //this.renderTreeMap1D(dimensions, flows);
+                            break;
+                        default:
+                            // Nothing
+                    }
 
                     // /////////////////////////////
                     // Treatment Method Dimension
@@ -620,9 +661,19 @@ define(['views/common/baseview',
                         }, flows);
                     }
 
-
-                    this.renderPieChart1D(dimensions, flows);
-                    this.renderBarChart1D(dimensions, flows);
+                    switch (selectedVisualisationString) {
+                        case "piechart":
+                            this.renderPieChart1D(dimensions, flows);
+                            break;
+                        case "barchart":
+                            this.renderBarChart1D(dimensions, flows);
+                            break;
+                        case "treemap":
+                            //this.renderTreeMap1D(dimensions, flows);
+                            break;
+                        default:
+                            // Nothing
+                    }
                 }
 
                 console.log(flows);
@@ -630,6 +681,8 @@ define(['views/common/baseview',
 
             renderPieChart1D: function (dimensions, flows) {
                 if (this.pieChartView != null) this.pieChartView.close();
+
+                $(".piechart-wrapper").fadeIn();
 
                 this.pieChartView = new PieChartView({
                     el: ".piechart-wrapper",
@@ -642,6 +695,8 @@ define(['views/common/baseview',
             renderTreeMap1D: function (dimensions, flows) {
                 if (this.treeMapView != null) this.treeMapView.close();
 
+                $(".treemap-wrapper").fadeIn();
+
                 this.treeMapView = new TreeMapView({
                     el: ".treemap-wrapper",
                     dimensions: dimensions,
@@ -652,6 +707,8 @@ define(['views/common/baseview',
 
             renderBarChart1D: function (dimensions, flows) {
                 if (this.barChartView != null) this.barChartView.close();
+
+                $(".barchart-wrapper").fadeIn();
 
                 this.barChartView = new BarChartView({
                     el: ".barchart-wrapper",
@@ -664,6 +721,8 @@ define(['views/common/baseview',
             renderLinePlot1D: function (dimensions, flows) {
                 if (this.linePlotView != null) this.linePlotView.close();
 
+                $(".lineplot-wrapper").fadeIn();
+
                 this.linePlotView = new LinePlotView({
                     el: ".lineplot-wrapper",
                     dimensions: dimensions,
@@ -675,6 +734,8 @@ define(['views/common/baseview',
             renderChoropleth1D: function (dimensions, flows, topoJsonURL) {
                 if (this.choroplethView != null) this.choroplethView.close();
 
+                $(".choropleth-wrapper").fadeIn();
+
                 this.choroplethView = new ChoroplethView({
                     el: ".choropleth-wrapper",
                     dimensions: dimensions,
@@ -685,6 +746,8 @@ define(['views/common/baseview',
             },
 
             closeAllVizViews: function () {
+                $(".viz-wrapper-div").fadeOut();
+                $(".viz-wrapper-div").html("")
                 if (this.barChartView != null) this.barChartView.close();
                 if (this.pieChartView != null) this.pieChartView.close();
                 if (this.linePlotView != null) this.linePlotView.close();
@@ -698,17 +761,15 @@ define(['views/common/baseview',
                 let filterParams = this.getFlowFilterParams();
                 let data = {};
                 let selectedVisualisationString;
+                this.selectedDimensions = Object.entries(filterParams.dimensions);
 
                 $('.viz-selector-button').each(function (index, value) {
                     if ($(this).hasClass("active")) {
                         selectedVisualisationString = $(this).attr("data-viz");
-                        console.log(selectedVisualisationString);
                     }
                 });
 
-                this.selectedDimensions = Object.entries(filterParams.dimensions);
-
-                var flows = new Collection([], {
+                let flows = new Collection([], {
                     apiTag: 'flows',
                 });
 
@@ -723,24 +784,28 @@ define(['views/common/baseview',
                         data: data,
                         body: filterParams,
                         success: function (response) {
-                            //_this.postprocess(flows);
 
                             _this.flows = flows.models;
 
-                            if (_this.selectedDimensions.length == 1) {
+                            _this.flows.forEach(function (flow, index) {
+                                this[index] = flow.attributes;
+                            }, _this.flows);
 
-
-                                _this.flows.forEach(function (flow, index) {
-                                    this[index] = flow.attributes;
-                                }, _this.flows);
-
-                                _this.render1Dvisualisations(_this.selectedDimensions, _this.flows);
+                            switch (_this.selectedDimensions.length) {
+                                case 1:
+                                    _this.render1Dvisualisations(_this.selectedDimensions, _this.flows, selectedVisualisationString);
+                                    break;
+                                case 2:
+                                    // code block
+                                    break;
+                                default:
+                                    // Nothing
                             }
 
-
                             _this.loader.deactivate();
-                            //_this.renderSankeyMap();
 
+                            //_this.postprocess(flows);
+                            //_this.renderSankeyMap();
 
                             if (options.success) {
                                 options.success(flows);
