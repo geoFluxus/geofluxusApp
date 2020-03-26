@@ -120,6 +120,7 @@ define(['views/common/baseview',
                         // Granularity = Activity group
                         if (this.options.dimensions[0][1] == "origin__activity__activitygroup" || this.options.dimensions[0][1] == "destination__activity__activitygroup") {
                             groupBy = ["activityGroupCode"];
+                            hasLegend = false;
                             tooltipConfig = {
                                 tbody: [
                                     ["Total", function (d) {

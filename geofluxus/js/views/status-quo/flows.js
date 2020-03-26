@@ -523,7 +523,6 @@ define(['views/common/baseview',
                     // Granularity = year
                     if (dimensions[0][1] == "flowchain__month__year") {
 
-                        // Replace year id's by year:
                         flows.forEach(function (flow, index) {
                             let yearObject = years.find(year => year.attributes.id == flow.year);
 
@@ -536,7 +535,6 @@ define(['views/common/baseview',
                         // Granularity = month:
                     } else if (dimensions[0][1] == "flowchain__month") {
 
-                        // Replace Month id's by Month name:
                         flows.forEach(function (flow, index) {
                             let monthObject = months.find(month => month.attributes.id == flow.month);
 
@@ -629,7 +627,7 @@ define(['views/common/baseview',
                             this.renderBarChart1D(dimensions, flows);
                             break;
                         case "treemap":
-                            //this.renderTreeMap1D(dimensions, flows);
+                            this.renderTreeMap1D(dimensions, flows);
                             break;
                         default:
                             // Nothing
