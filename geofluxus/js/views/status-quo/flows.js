@@ -511,7 +511,7 @@ define(['views/common/baseview',
             //     this.flowMapView.rerender();
             // },
 
-            render1Dvisualisations: function (dimensions, flows) {
+            render1Dvisualizations: function (dimensions, flows, selectedVisualisationString) {
                 let _this = this;
                 let filterFlowsView = this.filterFlowsView;
 
@@ -523,7 +523,6 @@ define(['views/common/baseview',
                     // Granularity = year
                     if (dimensions[0][1] == "flowchain__month__year") {
 
-                        // Replace year id's by year:
                         flows.forEach(function (flow, index) {
                             let yearObject = years.find(year => year.attributes.id == flow.year);
 
@@ -536,7 +535,6 @@ define(['views/common/baseview',
                         // Granularity = month:
                     } else if (dimensions[0][1] == "flowchain__month") {
 
-                        // Replace Month id's by Month name:
                         flows.forEach(function (flow, index) {
                             let monthObject = months.find(month => month.attributes.id == flow.month);
 
@@ -548,47 +546,52 @@ define(['views/common/baseview',
 
                         flows = _.sortBy(flows, 'id');
                     }
-                    
-                    this.renderPieChart1D(dimensions, flows);
-                    this.renderBarChart1D(dimensions, flows);
-                    this.renderLinePlot1D(dimensions, flows);
-                    this.renderTreeMap1D(dimensions, flows);
+
+                    switch (selectedVisualisationString) {
+                        case "piechart":
+                            this.renderPieChart1D(dimensions, flows);
+                            break;
+                        case "barchart":
+                            this.renderBarChart1D(dimensions, flows);
+                            break;
+                        case "lineplot":
+                            this.renderLinePlot1D(dimensions, flows);
+                            break;
+                        case "treemap":
+                            this.renderTreeMap1D(dimensions, flows);
+                            break;
+                        default:
+                            // Nothing
+                    }
 
                     // /////////////////////////////
                     // Space dimension
                 } else if (dimensions[0][0] == "space") {
                     let dimension = dimensions[0][1];
 
-//                    let topoJsonURL = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.id == parseInt(dimension.adminlevel)).attributes.area_set;
-//
-//
-//
-//                    _this.renderChoropleth1D(dimensions, flows, topoJsonURL);
+                    areas = new Collection([], {
+                        apiTag: 'areas',
+                        apiIds: [dimension.adminlevel]
+                    });
+                    areas.fetch({
+                        success: function () {
+                            var geojson = {};
+                            geojson['type'] = 'FeatureCollection';
+                            features = geojson['features'] = [];
+                            areas.forEach(function (area) {
+                                var feature = {};
+                                feature['type'] = 'Feature';
+                                feature['id'] = area.get('id')
+                                feature['geometry'] = area.get('geom')
+                                features.push(feature)
+                            })
 
-
-                         areas = new Collection([], {
-                             apiTag: 'areas',
-                             apiIds: [dimension.adminlevel]
-                         });
-                         areas.fetch({
-                             success: function () {
-                                var geojson = {};
-                                geojson['type'] = 'FeatureCollection';
-                                features = geojson['features'] = [];
-                                areas.forEach(function(area) {
-                                    var feature = {};
-                                    feature['type'] = 'Feature';
-                                    feature['id'] = area.get('id')
-                                    feature['geometry'] = area.get('geom')
-                                    features.push(feature)
-                                })
-
-                                _this.renderChoropleth1D(dimensions, flows, geojson);
-                             },
-                             error: function (res) {
-                                 console.log(res);
-                             }
-                         });
+                            _this.renderChoropleth1D(dimensions, flows, geojson);
+                        },
+                        error: function (res) {
+                            console.log(res);
+                        }
+                    });
 
                     // /////////////////////////////
                     // Economic Activity dimension
@@ -617,8 +620,19 @@ define(['views/common/baseview',
                         }, flows);
                     }
 
-                    this.renderPieChart1D(dimensions, flows);
-                    this.renderBarChart1D(dimensions, flows);
+                    switch (selectedVisualisationString) {
+                        case "piechart":
+                            this.renderPieChart1D(dimensions, flows);
+                            break;
+                        case "barchart":
+                            this.renderBarChart1D(dimensions, flows);
+                            break;
+                        case "treemap":
+                            this.renderTreeMap1D(dimensions, flows);
+                            break;
+                        default:
+                            // Nothing
+                    }
 
                     // /////////////////////////////
                     // Treatment Method Dimension
@@ -648,90 +662,98 @@ define(['views/common/baseview',
                         }, flows);
                     }
 
-
-                    this.renderPieChart1D(dimensions, flows);
-                    this.renderBarChart1D(dimensions, flows);
+                    switch (selectedVisualisationString) {
+                        case "piechart":
+                            this.renderPieChart1D(dimensions, flows);
+                            break;
+                        case "barchart":
+                            this.renderBarChart1D(dimensions, flows);
+                            break;
+                        case "treemap":
+                            this.renderTreeMap1D(dimensions, flows);
+                            break;
+                        default:
+                            // Nothing
+                    }
                 }
 
                 console.log(flows);
             },
 
             renderPieChart1D: function (dimensions, flows) {
-                var _this = this;
-                var el = ".piechart-wrapper";
-
                 if (this.pieChartView != null) this.pieChartView.close();
 
+                $(".piechart-wrapper").fadeIn();
+
                 this.pieChartView = new PieChartView({
-                    el: el,
+                    el: ".piechart-wrapper",
                     dimensions: dimensions,
                     flows: flows,
-                    flowsView: _this,
+                    flowsView: this,
                 });
             },
 
             renderTreeMap1D: function (dimensions, flows) {
-                var _this = this;
-                var el = ".treemap-wrapper";
-
                 if (this.treeMapView != null) this.treeMapView.close();
 
+                $(".treemap-wrapper").fadeIn();
+
                 this.treeMapView = new TreeMapView({
-                    el: el,
+                    el: ".treemap-wrapper",
                     dimensions: dimensions,
                     flows: flows,
-                    flowsView: _this,
+                    flowsView: this,
                 });
             },
 
             renderBarChart1D: function (dimensions, flows) {
-                var _this = this;
-                var el = ".barchart-wrapper";
-
                 if (this.barChartView != null) this.barChartView.close();
 
+                $(".barchart-wrapper").fadeIn();
+
                 this.barChartView = new BarChartView({
-                    el: el,
+                    el: ".barchart-wrapper",
                     dimensions: dimensions,
                     flows: flows,
-                    flowsView: _this,
+                    flowsView: this,
                 });
             },
 
             renderLinePlot1D: function (dimensions, flows) {
-                var _this = this;
-                var el = ".lineplot-wrapper";
-
                 if (this.linePlotView != null) this.linePlotView.close();
 
+                $(".lineplot-wrapper").fadeIn();
+
                 this.linePlotView = new LinePlotView({
-                    el: el,
+                    el: ".lineplot-wrapper",
                     dimensions: dimensions,
                     flows: flows,
-                    flowsView: _this,
+                    flowsView: this,
                 });
             },
 
             renderChoropleth1D: function (dimensions, flows, topoJsonURL) {
-                var _this = this;
-                var el = ".choropleth-wrapper";
-
                 if (this.choroplethView != null) this.choroplethView.close();
 
+                $(".choropleth-wrapper").fadeIn();
+
                 this.choroplethView = new ChoroplethView({
-                    el: el,
+                    el: ".choropleth-wrapper",
                     dimensions: dimensions,
                     flows: flows,
-                    flowsView: _this,
+                    flowsView: this,
                     topoJsonURL: topoJsonURL,
                 });
             },
 
             closeAllVizViews: function () {
+                $(".viz-wrapper-div").fadeOut();
+                $(".viz-wrapper-div").html("")
                 if (this.barChartView != null) this.barChartView.close();
                 if (this.pieChartView != null) this.pieChartView.close();
                 if (this.linePlotView != null) this.linePlotView.close();
                 if (this.treeMapView != null) this.treeMapView.close();
+                if (this.choroplethView != null) this.choroplethView.close();
             },
 
             // Fetch flows and calls options.success(flows) on success
@@ -739,13 +761,20 @@ define(['views/common/baseview',
                 let _this = this;
                 let filterParams = this.getFlowFilterParams();
                 let data = {};
+                let selectedVisualisationString;
                 this.selectedDimensions = Object.entries(filterParams.dimensions);
 
-                var flows = new Collection([], {
+                $('.viz-selector-button').each(function (index, value) {
+                    if ($(this).hasClass("active")) {
+                        selectedVisualisationString = $(this).attr("data-viz");
+                    }
+                });
+
+                let flows = new Collection([], {
                     apiTag: 'flows',
                 });
 
-                // Reset all visualisations:
+                // Reset all visualizations:
                 this.closeAllVizViews();
 
                 // Only fetch Flows if at least one dimension has been selected:
@@ -756,25 +785,30 @@ define(['views/common/baseview',
                         data: data,
                         body: filterParams,
                         success: function (response) {
-                            //_this.postprocess(flows);
 
                             _this.flows = flows.models;
 
-                            if (_this.selectedDimensions.length == 1) {
+                            _this.flows.forEach(function (flow, index) {
+                                this[index] = flow.attributes;
+                            }, _this.flows);
 
-
-                                _this.flows.forEach(function (flow, index) {
-                                    this[index] = flow.attributes;
-                                }, _this.flows);
-
-                                _this.render1Dvisualisations(_this.selectedDimensions, _this.flows);
+                            switch (_this.selectedDimensions.length) {
+                                case 1:
+                                    _this.render1Dvisualizations(_this.selectedDimensions, _this.flows, selectedVisualisationString);
+                                    break;
+                                case 2:
+                                    // code block
+                                    break;
+                                default:
+                                    // Nothing
                             }
 
+                            $(".d3plus-viz-controls-container .d3plus-Button").html("<i class='fas fa-camera' style='color: white'></i>");
 
                             _this.loader.deactivate();
+
+                            //_this.postprocess(flows);
                             //_this.renderSankeyMap();
-
-
 
                             if (options.success) {
                                 options.success(flows);

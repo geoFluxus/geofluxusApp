@@ -661,7 +661,7 @@
     </div>
 
      <div class="row mt-3 mb-2">
-         <button id='reset-filters' class="btn btn-warning"
+         <button id='reset-filters' class="btn btn-secondary"
          title="Reset all the filters"
          style="margin-left: 20px; float: left; width: 10em">Reset
         </button>
@@ -845,13 +845,13 @@
 
         <div class="card bg-dark">
 
-            <div class="card-header" id="card-header-collapse-visualisations">
+            <div class="card-header" id="card-header-collapse-visualizations">
                 <h4 class="mb-1">
-                    <button class="btn btn-link collapsed collapsingHeaderButton"
+                    <button class="btn btn-link collapsingHeaderButton"
                             id="btn-collapse-header-visualisations"
                             data-toggle="collapse"
                             data-target="#collapseVisualisationBlock"
-                            aria-expanded="false"
+                            aria-expanded="true"
                             aria-controls="collapseVisualisationBlock">
                         <i class="fa fa-chevron-down pull-right"></i>
                         Visualisation
@@ -860,36 +860,37 @@
 
             </div>
 
-            <div id="collapseVisualisationBlock" class="collapse show" aria-labelledby="card-header-collapse-visualisations"
+            <div id="collapseVisualisationBlock" class="collapse show" aria-labelledby="card-header-collapse-visualizations"
                 data-parent="#dimensionBlock">
 
-                <div class="card-body">                    
-                
-                    <div class="row">
-                        <div class="col-md-10">
-                            <!-- <span id="TESTELEMENT">TESTELEMENT</span> -->
+                <div class="card-body">
 
+                    <div class="row" id="message-container-row">
+                        <div class="col">
+                            <span style="color: white">Select at least one dimension.</span>
+                        </div>
+                    </div>
+                    
+                    <div class="row" id="viz-container-row" style="display: none; width: 100%;">
+                        <div class="col-md-10" style="width: 100%; margin: auto">
                             <div class="btn-group btn-group-toggle" id="visualization-type" data-toggle="buttons" style="width: 100%;">
-                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" style="display: none;">
-                                    <input type="radio" id="viz-piechart" checked>Pie chart
+                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="piechart" style="display: none;">
+                                    <input type="radio" id="viz-piechart"><span class="span-viz" id="span-viz-piechart">Pie chart</span>
                                 </label>
-                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" style="display: none;">
-                                    <input type="radio" id="viz-barchart">Bar chart
+                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="barchart" style="display: none;">
+                                    <input type="radio" id="viz-barchart"><span class="span-viz" id="span-viz-barchart">Bar chart</span>
                                 </label>
-                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" style="display: none;">
-                                    <input type="radio" id="viz-treemap">Tree map
+                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="treemap" style="display: none;">
+                                    <input type="radio" id="viz-treemap"><span class="span-viz" id="span-viz-treemap">Treemap</span>
                                 </label>
-                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" style="display: none;">
-                                    <input type="radio" id="viz-lineplot">Line plot
+                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="lineplot" style="display: none;">
+                                    <input type="radio" id="viz-lineplot"><span class="span-viz" id="span-viz-lineplot">Line plot</span>
                                 </label>
-                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" style="display: none;">
-                                    <input type="radio" id="viz-lineplot">Line plot
+                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="choroplethmap" style="display: none;">
+                                    <input type="radio" id="viz-choroplethmap"><span class="span-viz" id="span-viz-choroplethmap">Choropleth map</span>
                                 </label>
-                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" style="display: none;">
-                                    <input type="radio" id="viz-choroplethmap">Choropleth map
-                                </label>
-                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" style="display: none;">
-                                    <input type="radio" id="viz-coordinatepointmap">Coordinate point map
+                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="coordinatepointmap" style="display: none;">
+                                    <input type="radio" id="viz-coordinatepointmap"><span class="span-viz" id="span-viz-coordinatepointmap">Coordinate point map</span>
                                 </label>
                             </div>
                         </div>
@@ -901,24 +902,28 @@
 
         </div>
         
-        <div class="row mt-3 mb-2">
-            <!-- <button id='reset-filters' class="btn btn-warning"
-                title="Reset all the filters"
-                style="margin-left: 20px; float: left; width: 10em">Reset
-            </button> -->
-            <button id='apply-filters' class="btn btn-primary"
-                    title="Apply the filters to activities and actors and flows and render the sankey diagram."
-                    style="margin-left: 10px; float: left; width: 10em">Visualize
+        <div class="row mt-3 mb-2 d-flex justify-content-between">
+
+            <button id='reset-dim-viz' class="btn btn-secondary"
+                title="Reset all dimension and visualization settings"
+                style="width: 10em">Reset
             </button>
-            <div class="helpIconContainer d-inline-flex align-items-center">
-                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Render Filter Settings"
-                style="float: left;" data-html="true" tabindex="0"
-                data-content="
-                Rerender the sankey diagram with data filtered by the selections made in the <b>Filters</b> section above
-                (click the Filters row to expand/collapse it).<br><br>
-                All data is based on flows between actors. The data will be aggregated to the selected <b>Display Level</b>.
-                ">
-                </a>
+
+            <div style="margin-right: 1rem;">
+                <div class="helpIconContainer d-inline-flex align-items-center">
+                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Render visualization"
+                    style="float: left;" data-html="true" tabindex="0"
+                    data-content="
+                    Rerender the sankey diagram with data filtered by the selections made in the <b>Filters</b> section above
+                    (click the Filters row to expand/collapse it).<br><br>
+                    All data is based on flows between actors. The data will be aggregated to the selected <b>Display Level</b>.
+                    ">
+                    </a>
+                </div>
+                <button id='apply-filters' class="btn btn-primary"
+                    title="Apply the filters and render the selected visualization."
+                    style="margin-left: 10px; float: right; width: 10em">Visualize
+                </button>
             </div>
          </div>
     </div>
@@ -927,26 +932,13 @@
     <!-- template for viewing flows as sankey or map  -->
     <div id="flows-render-template">
 
-         <!-- Original grey color: #1c1c1c -->
          <div class="row">
             <div class="col">
-                <div class="piechart-wrapper" style="height: 700px; min-width: 500px; background-color: white; border-radius: 18px;"></div>
-            </div>
-            <div class="col">
-                <div class="barchart-wrapper" style="height: 700px; min-width: 500px; background-color: white; border-radius: 18px;"></div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <div class="lineplot-wrapper" style="height: 700px; min-width: 500px; background-color: white; border-radius: 18px;"></div>
-            </div>
-            <div class="col">
-                <div class="treemap-wrapper" style="height: 700px; min-width: 500px; background-color: white; border-radius: 18px;"></div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <div class="choropleth-wrapper" style="height: 700px; min-width: 500px; background-color: white; border-radius: 18px;"></div>
+                <div class="viz-wrapper-div piechart-wrapper"></div>
+                <div class="viz-wrapper-div barchart-wrapper"></div>
+                <div class="viz-wrapper-div lineplot-wrapper"></div>
+                <div class="viz-wrapper-div treemap-wrapper"></div>
+                <div class="viz-wrapper-div choropleth-wrapper"></div>
             </div>
         </div>
         

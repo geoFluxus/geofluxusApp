@@ -68,7 +68,6 @@ define(['views/common/baseview',
                     let tooltipConfig = {};
                     let hasLegend = true;
 
-
                     tooltipConfig = {
                         title: function (d) {
                             return d.areaName

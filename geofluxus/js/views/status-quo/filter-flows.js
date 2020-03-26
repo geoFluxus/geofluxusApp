@@ -104,6 +104,7 @@ define(['views/common/baseview',
                 'click .area-select-button': 'showAreaSelection',
                 'change select[name="area-level-select"]': 'changeAreaLevel',
                 'click #reset-filters': 'resetFiltersToDefault',
+                'click #reset-dim-viz': 'resetDimAndVizToDefault',
                 'click .clear-areas-button': 'clearAreas',
             },
 
@@ -481,26 +482,28 @@ define(['views/common/baseview',
 
 
                     // //////////////////////////////////////////////////////
-                    // Show available visualisations based on selected dimension(s):
+                    // Show available visualizations based on selected dimension(s):
 
                     console.log(_this.selectedDimensionStrings);
 
                     switch (checkedToggles.length) {
-                        case 0:
+                        case 0: // No dimensions
                             console.log("No dimensions");
 
-                            $(".viz-selector-button").fadeOut();
+                            $("#message-container-row").fadeIn();
+                            $("#viz-container-row").hide();
 
                             break;
                         case 1:
+                            $("#message-container-row").hide();
+                            $("#viz-container-row").fadeIn();
+
                             console.log("One dimension");
 
                             if (_this.selectedDimensionStrings.includes("time")) {
 
                                 $("#viz-choroplethmap").parent().hide();
                                 $("#viz-coordinatepointmap").parent().hide();
-
-                                // Pie, Bar, Trend, Tree
 
                                 $("#viz-piechart").parent().show();
                                 $("#viz-barchart").parent().show();
@@ -509,17 +512,15 @@ define(['views/common/baseview',
 
                             } else if (_this.selectedDimensionStrings.includes("space")) {
 
-                                // CHOROPLETH OR COORD POINT ??
-
                                 $("#viz-lineplot").parent().hide();
 
                                 $("#viz-piechart").parent().show();
                                 $("#viz-barchart").parent().show();
                                 $("#viz-treemap").parent().show();
 
-                                let selectedAreaLevel = $(_this.dimensions.spaceLevelGranSelect).val();
+                                let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
 
-                                if (selectedAreaLevel == "6") {
+                                if (selectedAreaLevelId == "6") {
                                     $("#viz-coordinatepointmap").parent().show();
                                     $("#viz-choroplethmap").parent().hide();
                                 } else {
@@ -553,6 +554,10 @@ define(['views/common/baseview',
                             break;
                         case 2:
                             console.log("Two dimensions");
+
+                            $(".viz-selector-button").fadeOut();
+
+
                             // code block
                             break;
                         default:
@@ -563,13 +568,15 @@ define(['views/common/baseview',
 
 
                 $(_this.dimensions.spaceLevelGranSelect).change(function () {
-                    let selectedAreaLevel = $(_this.dimensions.spaceLevelGranSelect).val();
+                    let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
+
+                    let selectedAreaName = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.id == selectedAreaLevelId).attributes.name;
 
                     console.log("level changed");
 
                     if (_this.selectedDimensionStrings.includes("space")) {
 
-                        if (selectedAreaLevel == "6") {
+                        if (selectedAreaName == "Actor") {
                             $("#viz-coordinatepointmap").parent().show();
                             $("#viz-choroplethmap").parent().hide();
                         } else {
@@ -1064,6 +1071,18 @@ define(['views/common/baseview',
                 $(_this.flows.isCompositeSelect).val("-1");
 
 
+
+                // Empty all textareas:
+                $(".selections").html("");
+                $(".selections").textareaAutoSize();
+
+                // Refresh all selectpickers:
+                $(".selectpicker").selectpicker('refresh');
+            },
+
+            resetDimAndVizToDefault: function () {
+                _this = this;
+
                 // //////////////////////////////////
                 // Dimension controls:
                 $(_this.dimensions.timeToggle).bootstrapToggle('off');
@@ -1090,9 +1109,11 @@ define(['views/common/baseview',
                 $("#origDest-toggle-econAct-col").hide();
                 $("#origDest-toggle-treatment-col").hide();
 
-                // Empty all textareas:
-                $(".selections").html("");
-                $(".selections").textareaAutoSize();
+
+                // //////////////////////////////////
+                // Vizualisation controls:
+                $(".viz-selector-button").removeClass("active");
+
 
                 // Refresh all selectpickers:
                 $(".selectpicker").selectpicker('refresh');

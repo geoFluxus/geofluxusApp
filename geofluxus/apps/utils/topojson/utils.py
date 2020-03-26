@@ -237,7 +237,7 @@ def serialize_as_altair(
             .project(type=projection, reflectY=True)
         )
 
-    # creating a chloropleth visualisation
+    # creating a chloropleth visualization
     elif color is not None:
         data = alt.InlineData(
             values=topo_object,

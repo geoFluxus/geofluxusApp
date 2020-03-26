@@ -99,11 +99,28 @@ define(['views/common/baseview',
                         }
 
                         // /////////////////////////////
+                        // Space dimension
+                    } else if (this.options.dimensions[0][0] == "space") {
+                        groupBy = ["areaName"];
+                        hasLegend = false;
+                        tooltipConfig = {
+                            title: function (d) {
+                                return d.areaName
+                            },
+                            tbody: [
+                                ["Total", function (d) {
+                                    return d["amount"].toFixed(3)
+                                }],
+                            ]
+                        }
+
+                        // /////////////////////////////
                         // Economic Activity dimension
                     } else if (this.options.dimensions[0][0] == "economicActivity") {
                         // Granularity = Activity group
                         if (this.options.dimensions[0][1] == "origin__activity__activitygroup" || this.options.dimensions[0][1] == "destination__activity__activitygroup") {
                             groupBy = ["activityGroupCode"];
+                            hasLegend = false;
                             tooltipConfig = {
                                 tbody: [
                                     ["Total", function (d) {
@@ -132,9 +149,9 @@ define(['views/common/baseview',
                         }
                     } else if (this.options.dimensions[0][0] == "treatmentMethod") {
 
-
                         if (this.options.dimensions[0][1] == "origin__process__processgroup" || this.options.dimensions[0][1] == "destination__process__processgroup") {
                             groupBy = ["processGroupCode"];
+                            hasLegend = false;
                             tooltipConfig = {
                                 tbody: [
                                     ["Total", function (d) {

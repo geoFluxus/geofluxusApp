@@ -165,6 +165,13 @@ label[for="activity-select"] {
     width: 34px !important;
 }
 
+
+.helpIconContainer {
+    height: 100%;
+}
+
+
+
 /* WITHIN/OUTSIDE TOGGLE */
 
 .in-or-out-container {
@@ -208,50 +215,59 @@ label[for="activity-select"] {
     margin-right: 1rem;
     width: 15rem;
     display: flex;
-    height: 128px;
 }
 
-#TESTELEMENT::before {
-    position: absolute;
+.viz-selector-button.active {
+    background-color: #00b6d6 !important;
+}
+
+.span-viz::before {
     display: block;
+    position: relative;
     content: ' ';
-    background-image: url('../img/viz-choropleth.svg');
-    background-size: 128px 128px;
-    height: 128px;
-    width: 128px;
-}
-
-#viz-choroplethmap::before {
-    /* content: url("../img/viz-choropleth.svg");
-    display: inline-block;
-    width: 100px;
+    background-size: 100px 100px;
     height: 100px;
-    color: pink; */
-    position: absolute !important;
-    display: block !important;
-    content: ' ' !important;
-    background-image: url('../img/viz-choropleth.svg') !important;
-    background-size: 128px 128px !important;
-    height: 128px !important;
-    width: 128px !important;
+    width: 100px;
+    margin: auto;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    align-self: flex-end;
+
 }
 
-#viz-coordinatepointmap::before {}
+#span-viz-choroplethmap::before {
+    background-image: url('../img/viz-choropleth.svg');
+}
 
-#viz-piechart::before {
-    display: block;
-    content: ' ';
+#span-viz-coordinatepointmap::before {
+    background-image: url('../img/viz-coordpoint.svg');
+}
+
+#span-viz-piechart::before {
     background-image: url('../img/viz-piechart.svg');
-    background-size: 128px 128px;
-    height: 128px;
-    width: 128px;
 }
 
-#viz-barchart::before {}
+#span-viz-barchart::before {
+    background-image: url('../img/viz-barchart.svg');
+}
 
-#viz-treemap::before {}
+#span-viz-treemap::before {
+    background-image: url('../img/viz-treemap.svg');
+}
 
-#viz-lineplot::before {}
+#span-viz-lineplot::before {
+    background-image: url('../img/viz-lineplot.svg');
+}
+
+/* VISUALISATION STYLES */
+
+.viz-wrapper-div {
+    display: none;
+    height: 700px;
+    min-width: 500px;
+    background-color: rgba(255, 255, 255, 0.712);
+    border-radius: 18px;
+}
 
 
 /* Area Select Modal Styles */
@@ -368,33 +384,15 @@ textarea.textarea-autosize.form-control-sm {
 } */
 
 .d3plus-viz-controls-container .d3plus-Button {
-    /* position: absolute; */
-    position: relative;
     background-color: #007bff;
-    color: transparent;
     border: none;
+    position: relative;
     font-size: 0;
     width: 32px;
     height: 32px;
     border-radius: 16px;
     top: 5px;
-    z-index: 4;
-}
-
-.d3plus-viz-controls-container:first-child::before {
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    content: "\f030 ";
-    position: absolute;
-    color: white;
-    top: 8px;
-    left: 13px;
-    z-index: 5;
-}
-
-.d3plus-Pie {
-    /* position: absolute; */
-    /* z-index: 0; */
+    color: transparent;
 }
 
 /* .d3plus-zoom-controls */
