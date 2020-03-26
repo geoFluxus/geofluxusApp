@@ -9,7 +9,8 @@ from geofluxus.apps.asmfa.models import (Flow,
                                          Month,
                                          Year,
                                          Activity,
-                                         ActivityGroup)
+                                         ActivityGroup,
+                                         Actor)
 from geofluxus.apps.asmfa.serializers import (FlowSerializer)
 import json
 import numpy as np
@@ -230,12 +231,27 @@ class FilterFlowViewSet(PostGetViewMixin,
             # to which their origin / destination belongs
             field = space.pop('field', None)
             if field:
-                subq = areas.filter(geom__contains=OuterRef(field))
-                queryset = queryset.annotate(area=Subquery(subq.values('id')))
+                # Actor level is the only one
+                # with no areas!
+                if areas.count() != 0:
+                    # recover the area id to which
+                    # the flow origin / destination belongs
+                    subq = areas.filter(geom__contains=OuterRef(field))
 
-            # append to other dimensions
-            levels.append('area')
-            fields.append('area')
+                    # annotate to area id to flows
+                    queryset = queryset.annotate(area=Subquery(subq.values('id')))
+
+                    # append to other dimensions
+                    levels.append('area')
+                    fields.append('area')
+                else:
+                    # annotate origin / destination id
+                    field = field.split('__')[0] + '__id'
+                    queryset = queryset.annotate(actor=F(field))
+
+                    # append to other dimensions
+                    levels.append('actor')
+                    fields.append('actor')
 
         # ECO DIMENSION
         if eco:
@@ -277,10 +293,21 @@ class FilterFlowViewSet(PostGetViewMixin,
             flow_item = [('amount', group_amount)]
             for level, field in zip(levels, fields):
                 if field == 'area':
-                    area = Area.objects.filter(id=group[field])
-                    name = area.values_list('name', flat=True)[0]
-                    flow_item.append(('id', group[field]))
-                    flow_item.append(('areaName', name))
+                    # recover area info
+                    area = Area.objects.filter(id=group[field])[0]
+
+                    # serialize area
+                    flow_item.append(('id', area.id))
+                    flow_item.append(('areaName', area.name))
+                elif field == 'actor':
+                    # recover
+                    actor = Actor.objects.filter(id=group[field])[0]
+
+                    # serialize actor
+                    flow_item.append(('id', actor.id))
+                    flow_item.append(('actorName', actor.company.identifier))
+                    flow_item.append(('long', actor.geom.x))
+                    flow_item.append(('lat', actor.geom.y))
                 else:
                     flow_item.append((level, group[field]))
 
