@@ -171,9 +171,6 @@ define(['views/common/baseview',
                             }
                         }
 
-
-
-
                     }
 
                     // Create a new D3Plus TreeMap object which will be rendered in this.options.el:
