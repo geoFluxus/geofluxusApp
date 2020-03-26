@@ -569,7 +569,6 @@ define(['views/common/baseview',
                 } else if (dimensions[0][0] == "space") {
                     let dimension = dimensions[0][1];
 
-
                     switch (selectedVizualisationString) {
                         case "piechart":
                             this.renderPieChart1D(dimensions, flows);
@@ -701,6 +700,10 @@ define(['views/common/baseview',
                 console.log(flows);
             },
 
+            render2Dvisualizations: function (dimensions, flows, selectedVizualisationString) {
+                console.log(flows);
+            },
+
             renderPieChart1D: function (dimensions, flows) {
                 if (this.pieChartView != null) this.pieChartView.close();
 
@@ -818,7 +821,8 @@ define(['views/common/baseview',
                                     _this.render1Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
                                     break;
                                 case 2:
-                                    // code block
+                                    _this.render2Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
+
                                     break;
                                 default:
                                     // Nothing

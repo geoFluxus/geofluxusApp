@@ -320,7 +320,7 @@ define(['views/common/baseview',
 
                         // Fill selectPicker with filtered items, add to DOM, and refresh:
                         newWastes06OptionsHTML = '<option selected value="-1">All (' + filteredWastes06.length + ')</option><option data-divider="true"></option>';
-                        filteredWastes06.forEach(waste06 => newWastes06OptionsHTML += "<option value='" + waste06.attributes.id + "'>" + waste06.attributes.ewc_code + " " + waste06.attributes.ewc_name + "</option>");
+                        filteredWastes06.forEach(waste06 => newWastes06OptionsHTML += "<option class='dropdown-item' value='" + waste06.attributes.id + "'>" + waste06.attributes.ewc_code + " " + waste06.attributes.ewc_name + "</option>");
                         $(_this.flows.waste06Select).html(newWastes06OptionsHTML);
                         $(_this.flows.waste06Select).selectpicker("refresh");
 
