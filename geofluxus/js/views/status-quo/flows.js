@@ -585,7 +585,7 @@ define(['views/common/baseview',
                             this.renderBarChart1D(dimensions, flows);
                             break;
                         case "treemap":
-                            //this.renderTreeMap1D(dimensions, flows);
+                            this.renderTreeMap1D(dimensions, flows);
                             break;
                         case "choroplethmap":
                             _this.renderChoropleth1D(dimensions, flows, topoJsonURL);

@@ -99,6 +99,22 @@ define(['views/common/baseview',
                         }
 
                         // /////////////////////////////
+                        // Space dimension
+                    } else if (this.options.dimensions[0][0] == "space") {
+                        groupBy = ["areaName"];
+                        hasLegend = false;
+                        tooltipConfig = {
+                            title: function (d) {
+                                return d.areaName
+                            },
+                            tbody: [
+                                ["Total", function (d) {
+                                    return d["amount"].toFixed(3)
+                                }],
+                            ]
+                        }
+
+                        // /////////////////////////////
                         // Economic Activity dimension
                     } else if (this.options.dimensions[0][0] == "economicActivity") {
                         // Granularity = Activity group
