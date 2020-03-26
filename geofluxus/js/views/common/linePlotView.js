@@ -87,7 +87,7 @@ define(['views/common/baseview',
 
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
-                            groupBy = ["year"];
+                            groupBy = ["yearMonthCode"];
                             x = ["yearMonthCode"];
                             tooltipConfig = {
                                 title: "Waste totals per month",

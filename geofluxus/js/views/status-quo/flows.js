@@ -580,6 +580,9 @@ define(['views/common/baseview',
                         case "lineplot":
                             this.renderLinePlot1D(dimensions, flows);
                             break;
+                        case "treemap":
+                            this.renderTreeMap1D(dimensions, flows);
+                            break;
                         case "choroplethmap":
 
                             areas = new Collection([], {

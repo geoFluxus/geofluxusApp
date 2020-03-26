@@ -19,7 +19,7 @@ define([
             var _this = this;
 
             let hasLegend = $("#display-legend").prop("checked");
-            let xSort = options.xSort ? options.xSort : {};
+            let xSort = options.xSort ? options.xSort : null;
 
             new d3plus.Plot()
                 .tooltipConfig(options.tooltipConfig)
