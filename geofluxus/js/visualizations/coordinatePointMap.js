@@ -18,44 +18,30 @@ define([
             var options = options || {};
             var _this = this;
 
-            // new d3plus.Geomap()
-            //     .data(options.data)
-            //     .colorScale("amount")
-            //     .topojson(options.topoJsonURL)
-            //     .tooltipConfig(options.tooltipConfig)
-            //     // .fitFilter(function (d) {
-            //     //     return ["02", "15", "43", "60", "66", "69", "72", "78"].indexOf(d.id) < 0;
-            //     // })
-            //     .colorScaleConfig({
-            //         // color: ["red", "orange", "yellow", "green", "blue"]
-            //         // color: ["green", "yellow", "red", ]
-            //         // scale: "jenks",
-            //         color: ["red", "orange", "yellow", "green", "blue"].reverse()
-            //     })
-            //     .select(options.el)
-            //     .downloadPosition("left")
-            //     .downloadButton(true)
-            //     .render();
-
-
             new d3plus.Geomap()
-                .config({
-                    data: options.data,
-                    groupBy: "actorName",
-                    colorScale: "amount",
-                    label: function (d) {
-                        return d.actorName;
-                    },
-                    point: function (d) {
-                        return [d.lon, d.lat];
-                    },
-                    pointSize: function (d) {
-                        return d.amount;
-                    },
-                    pointSizeMin: 1,
-                    pointSizeMax: 10
+                .data(options.data)
+                .groupBy("id")
+                .colorScale("amount")
+                .colorScaleConfig({
+                    color: ["red", "orange", "yellow", "green", "blue"].reverse()
                 })
+                .label(function (d) {
+                    return d.actorName;
+                })
+                .point(function (d) {
+                    return [d.lon, d.lat];
+                })
+                .pointSize(function (d) {
+                    return d.amount;
+                })
+                .pointSizeMin(2)
+                .pointSizeMax(50)
+                .tooltipConfig(options.tooltipConfig)
+                .select(options.el)
+                .downloadPosition("left")
+                .downloadButton(true)
                 .render();
+
 
             // new d3plus.Geomap()
             //     .config({

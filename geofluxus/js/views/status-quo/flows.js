@@ -611,33 +611,7 @@ define(['views/common/baseview',
                             });
                             break;
                         case "coordinatepointmap":
-
-                            areas = new Collection([], {
-                                apiTag: 'areas',
-                                apiIds: "9"
-                            });
-
-                            areas.fetch({
-                                success: function () {
-                                    var geoJson = {};
-                                    geoJson['type'] = 'FeatureCollection';
-                                    features = geoJson['features'] = [];
-                                    areas.forEach(function (area) {
-                                        var feature = {};
-                                        feature['type'] = 'Feature';
-                                        feature['id'] = area.get('id')
-                                        feature['geometry'] = area.get('geom')
-                                        features.push(feature)
-                                    })
-
-                                    _this.renderCoordinatePointMap1D(dimensions, flows, geoJson);
-                                },
-                                error: function (res) {
-                                    console.log(res);
-                                }
-                            });
-
-
+                            _this.renderCoordinatePointMap1D(dimensions, flows);
                             break;
                         default:
                             // Nothing
@@ -800,7 +774,7 @@ define(['views/common/baseview',
                 });
             },
 
-            renderCoordinatePointMap1D: function (dimensions, flows, geoJson) {
+            renderCoordinatePointMap1D: function (dimensions, flows) {
                 if (this.coordinatePointMapView != null) this.coordinatePointMapView.close();
 
                 $(".coordinatepointmap-wrapper").fadeIn();
@@ -810,7 +784,6 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
-                    geoJson: geoJson,
                 });
             },
 
