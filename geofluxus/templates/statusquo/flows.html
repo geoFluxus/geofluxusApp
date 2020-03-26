@@ -708,7 +708,7 @@
                                     data-off="Time">
                             </div>
                         </div>
-                        <div class="col-md-4" id="gran-toggle-time-col" style="display: none">
+                        <div class="col-md-3" id="gran-toggle-time-col" style="display: none">
                             <div class="checkbox">
                                 <input name="gran-toggle-time" id="gran-toggle-time" type="checkbox"
                                     data-width="100%" data-height="21" data-toggle="toggle" data-on="Month"
@@ -726,7 +726,7 @@
                                     data-off="Space">
                             </div>
                         </div>
-                        <div class="col-md-4" id="gran-toggle-space-col" style="display: none">
+                        <div class="col-md-3" id="gran-toggle-space-col" style="display: none">
                             <select name="dim-space-gran-select" id="dim-space-gran-select" class="form-control form-control-sm selectpicker" data-height="21"> 
                                 <% levels.forEach(function(level) { %>
                                 <option value="<%= level.id %>"><%= level.get('name') %></option>
@@ -734,7 +734,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-4" id="origDest-toggle-space-col" style="display: none">
+                        <div class="col-md-3" id="origDest-toggle-space-col" style="display: none">
                             <div class="checkbox">
                                 <input name="origDest-toggle-space" id="origDest-toggle-space" type="checkbox"
                                     data-width="100%" data-height="21" data-toggle="toggle" data-on="Destination"
@@ -752,14 +752,14 @@
                                     data-off="Economic activity">
                             </div>
                         </div>
-                        <div class="col-md-4" id="gran-econ-activity-col" style="display: none">
+                        <div class="col-md-3" id="gran-econ-activity-col" style="display: none">
                             <div class="checkbox">
                                 <input name="gran-toggle-econ-activity" id="gran-toggle-econ-activity" type="checkbox"
                                     data-width="100%" data-height="21" data-toggle="toggle" data-on="Activity"
                                     data-off="Activity group">
                             </div>
                         </div>
-                        <div class="col-md-4" id="origDest-toggle-econAct-col" style="display: none">
+                        <div class="col-md-3" id="origDest-toggle-econAct-col" style="display: none">
                             <div class="checkbox">
                                 <input name="origDest-toggle-econAct" id="origDest-toggle-econAct" type="checkbox"
                                     data-width="100%" data-height="21" data-toggle="toggle" data-on="Destination"
@@ -777,14 +777,14 @@
                                     data-off="Treatment method">
                             </div>
                         </div>
-                        <div class="col-md-4" id="gran-treatment-method-col" style="display: none">
+                        <div class="col-md-3" id="gran-treatment-method-col" style="display: none">
                             <div class="checkbox">
                                 <input name="gran-toggle-treatment-method" id="gran-toggle-treatment-method" type="checkbox"
                                     data-width="100%" data-height="21" data-toggle="toggle" data-on="Treatment method"
                                     data-off="Treatment method group">
                             </div>
                         </div>
-                        <div class="col-md-4" id="origDest-toggle-treatment-col" style="display: none">
+                        <div class="col-md-3" id="origDest-toggle-treatment-col" style="display: none">
                             <div class="checkbox">
                                 <input name="origDest-toggle-treatment" id="origDest-toggle-treatment" type="checkbox"
                                     data-width="100%" data-height="21" data-toggle="toggle" data-on="Destination"
@@ -805,7 +805,7 @@
                                     data-off="Aggregate">
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                       
                         </div>
                     </div> -->
@@ -822,7 +822,7 @@
                                     data-off="Aggregate">
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                       
                         </div>
                     </div> -->
@@ -872,8 +872,8 @@
                     </div>
                     
                     <div class="row" id="viz-container-row" style="display: none; width: 100%;">
-                        <div class="col-md-10" style="width: 100%; margin: auto">
-                            <div class="btn-group btn-group-toggle" id="visualization-type" data-toggle="buttons" style="width: 100%;">
+                        <div class="col-md-10 d-flex align-items-center" style="margin: auto">
+                            <div class="btn-group btn-group-toggle" id="visualization-type" data-toggle="buttons" style="margin: auto">
                                 <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="piechart" style="display: none;">
                                     <input type="radio" id="viz-piechart"><span class="span-viz" id="span-viz-piechart">Pie chart</span>
                                 </label>

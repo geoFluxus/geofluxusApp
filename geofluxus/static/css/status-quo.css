@@ -213,7 +213,7 @@ label[for="activity-select"] {
     border-radius: 18px !important;
     margin-left: 1rem;
     margin-right: 1rem;
-    width: 15rem;
+    min-width: 10rem;
     display: flex;
 }
 
