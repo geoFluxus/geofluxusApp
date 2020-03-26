@@ -482,7 +482,7 @@ define(['views/common/baseview',
 
 
                     // //////////////////////////////////////////////////////
-                    // Show available visualisations based on selected dimension(s):
+                    // Show available visualizations based on selected dimension(s):
 
                     console.log(_this.selectedDimensionStrings);
 

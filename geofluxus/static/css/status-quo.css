@@ -81,7 +81,7 @@
     text-decoration: none !important;
 }
 
-#btn-collapse-header-visualisations {
+#btn-collapse-header-visualizations {
     background: none;
     color: inherit;
     border: none;
@@ -164,6 +164,13 @@ label[for="activity-select"] {
     height: 34px !important;
     width: 34px !important;
 }
+
+
+.helpIconContainer {
+    height: 100%;
+}
+
+
 
 /* WITHIN/OUTSIDE TOGGLE */
 

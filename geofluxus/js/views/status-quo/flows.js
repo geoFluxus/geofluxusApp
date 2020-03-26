@@ -511,7 +511,7 @@ define(['views/common/baseview',
             //     this.flowMapView.rerender();
             // },
 
-            render1Dvisualisations: function (dimensions, flows, selectedVisualisationString) {
+            render1Dvisualizations: function (dimensions, flows, selectedVisualisationString) {
                 let _this = this;
                 let filterFlowsView = this.filterFlowsView;
 
@@ -773,7 +773,7 @@ define(['views/common/baseview',
                     apiTag: 'flows',
                 });
 
-                // Reset all visualisations:
+                // Reset all visualizations:
                 this.closeAllVizViews();
 
                 // Only fetch Flows if at least one dimension has been selected:
@@ -793,7 +793,7 @@ define(['views/common/baseview',
 
                             switch (_this.selectedDimensions.length) {
                                 case 1:
-                                    _this.render1Dvisualisations(_this.selectedDimensions, _this.flows, selectedVisualisationString);
+                                    _this.render1Dvisualizations(_this.selectedDimensions, _this.flows, selectedVisualisationString);
                                     break;
                                 case 2:
                                     // code block
