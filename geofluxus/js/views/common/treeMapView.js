@@ -149,9 +149,9 @@ define(['views/common/baseview',
                         }
                     } else if (this.options.dimensions[0][0] == "treatmentMethod") {
 
-
                         if (this.options.dimensions[0][1] == "origin__process__processgroup" || this.options.dimensions[0][1] == "destination__process__processgroup") {
                             groupBy = ["processGroupCode"];
+                            hasLegend = false;
                             tooltipConfig = {
                                 tbody: [
                                     ["Total", function (d) {
