@@ -195,9 +195,6 @@ define(['views/common/baseview',
                     //this.render(this.transformedData);
                 },
 
-                refresh: function (options) {
-
-                },
 
                 exportCSV: function (event) {
                     if (!this.transformedData) return;

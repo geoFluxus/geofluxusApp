@@ -11,6 +11,7 @@ define(['views/common/baseview',
         'views/common/linePlotView',
         'views/common/treeMapView',
         'views/common/choroplethView',
+        'views/common/coordinatePointMapView',
     ],
     function (
         BaseView,
@@ -25,6 +26,7 @@ define(['views/common/baseview',
         LinePlotView,
         TreeMapView,
         ChoroplethView,
+        CoordinatePointMapView,
     ) {
 
         var FlowsView = BaseView.extend({
@@ -583,16 +585,16 @@ define(['views/common/baseview',
                             this.renderTreeMap1D(dimensions, flows);
                             break;
                         case "choroplethmap":
-
                             areas = new Collection([], {
                                 apiTag: 'areas',
                                 apiIds: [dimension.adminlevel]
                             });
+
                             areas.fetch({
                                 success: function () {
-                                    var geojson = {};
-                                    geojson['type'] = 'FeatureCollection';
-                                    features = geojson['features'] = [];
+                                    var geoJson = {};
+                                    geoJson['type'] = 'FeatureCollection';
+                                    features = geoJson['features'] = [];
                                     areas.forEach(function (area) {
                                         var feature = {};
                                         feature['type'] = 'Feature';
@@ -601,12 +603,40 @@ define(['views/common/baseview',
                                         features.push(feature)
                                     })
 
-                                    _this.renderChoropleth1D(dimensions, flows, geojson);
+                                    _this.renderChoropleth1D(dimensions, flows, geoJson);
                                 },
                                 error: function (res) {
                                     console.log(res);
                                 }
                             });
+                            break;
+                        case "coordinatepointmap":
+
+                            areas = new Collection([], {
+                                apiTag: 'areas',
+                                apiIds: "9"
+                            });
+
+                            areas.fetch({
+                                success: function () {
+                                    var geoJson = {};
+                                    geoJson['type'] = 'FeatureCollection';
+                                    features = geoJson['features'] = [];
+                                    areas.forEach(function (area) {
+                                        var feature = {};
+                                        feature['type'] = 'Feature';
+                                        feature['id'] = area.get('id')
+                                        feature['geometry'] = area.get('geom')
+                                        features.push(feature)
+                                    })
+
+                                    _this.renderCoordinatePointMap1D(dimensions, flows, geoJson);
+                                },
+                                error: function (res) {
+                                    console.log(res);
+                                }
+                            });
+
 
                             break;
                         default:
@@ -756,7 +786,7 @@ define(['views/common/baseview',
                 });
             },
 
-            renderChoropleth1D: function (dimensions, flows, topoJsonURL) {
+            renderChoropleth1D: function (dimensions, flows, geoJson) {
                 if (this.choroplethView != null) this.choroplethView.close();
 
                 $(".choropleth-wrapper").fadeIn();
@@ -766,7 +796,21 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
-                    topoJsonURL: topoJsonURL,
+                    geoJson: geoJson,
+                });
+            },
+
+            renderCoordinatePointMap1D: function (dimensions, flows, geoJson) {
+                if (this.coordinatePointMapView != null) this.coordinatePointMapView.close();
+
+                $(".coordinatepointmap-wrapper").fadeIn();
+
+                this.coordinatePointMapView = new CoordinatePointMapView({
+                    el: ".coordinatepointmap-wrapper",
+                    dimensions: dimensions,
+                    flows: flows,
+                    flowsView: this,
+                    geoJson: geoJson,
                 });
             },
 
@@ -778,6 +822,7 @@ define(['views/common/baseview',
                 if (this.linePlotView != null) this.linePlotView.close();
                 if (this.treeMapView != null) this.treeMapView.close();
                 if (this.choroplethView != null) this.choroplethView.close();
+                if (this.coordinatePointMapView != null) this.coordinatePointMapView.close();
             },
 
             // Fetch flows and calls options.success(flows) on success

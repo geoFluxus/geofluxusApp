@@ -64,7 +64,6 @@ define(['views/common/baseview',
                  */
                 render: function (data) {
                     let flows = this.options.flows;
-                    let groupBy;
                     let tooltipConfig = {};
 
                     tooltipConfig = {
@@ -75,9 +74,6 @@ define(['views/common/baseview',
                             ["Total", function (d) {
                                 return d["amount"].toFixed(3)
                             }],
-                            // ["Name", function (d) {
-                            //     return d.name
-                            // }]
                         ]
                     }
 
@@ -85,15 +81,12 @@ define(['views/common/baseview',
                     this.choroplethMap = new ChoroplethMap({
                         el: this.options.el,
                         data: flows,
-                        groupBy: groupBy,
                         tooltipConfig: tooltipConfig,
-                        topoJsonURL: this.options.topoJsonURL,
+                        geoJson: this.options.geoJson,
                     });
                 },
 
-                /*
-                 * render sankey-diagram in fullscreen
-                 */
+
                 toggleFullscreen: function (event) {
                     this.el.classList.toggle('fullscreen');
                     this.refresh();
@@ -101,9 +94,6 @@ define(['views/common/baseview',
                     //this.render(this.transformedData);
                 },
 
-                refresh: function (options) {
-
-                },
 
                 exportCSV: function (event) {
                     if (!this.transformedData) return;

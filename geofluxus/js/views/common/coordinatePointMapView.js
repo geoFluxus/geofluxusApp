@@ -1,34 +1,36 @@
 define(['views/common/baseview',
         'underscore',
         'd3',
-        'visualizations/linePlot',
+        'visualizations/coordinatePointMap',
         'collections/collection',
         'app-config',
         'save-svg-as-png',
         'file-saver',
-        'utils/utils'
+        'utils/utils',
+        'd3plus',
     ],
 
     function (
         BaseView,
         _,
         d3,
-        LinePlot,
+        CoordinatePointMap,
         Collection,
         config,
         saveSvgAsPng,
         FileSaver,
         utils,
+        d3plus,
         Slider) {
 
         /**
          *
          * @author Evert Van Hirtum
-         * @name module:views/LinePlotView
+         * @name module:views/CoordinatePointMapView
          * @augments module:views/BaseView
          */
-        var LinePlotView = BaseView.extend(
-            /** @lends module:views/LinePlotView.prototype */
+        var CoordinatePointMapView = BaseView.extend(
+            /** @lends module:views/CoordinatePointMapView.prototype */
             {
 
                 /**
@@ -39,15 +41,13 @@ define(['views/common/baseview',
                  * @see http://backbonejs.org/#View
                  */
                 initialize: function (options) {
-                    LinePlotView.__super__.initialize.apply(this, [options]);
+                    CoordinatePointMapView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
                     var _this = this;
 
                     this.options = options;
 
-                    //this.transformedData = this.transformData(this.flows);
-                    //this.render(this.transformedData);
                     this.render();
                 },
 
@@ -62,55 +62,24 @@ define(['views/common/baseview',
                  */
                 render: function (data) {
                     let flows = this.options.flows;
-                    let tooltipConfig;
-                    let groupBy;
-                    let x;
+                    let tooltipConfig = {};
 
-                    // /////////////////////////////
-                    // Time dimension
-                    if (this.options.dimensions[0][0] == "time") {
-                        // Granularity = year
-                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
-                            x = ["year"];
-                            tooltipConfig = {
-                                title: "Waste totals per year",
-                                tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
-                                    }],
-                                    ["Year", function (d) {
-                                        return d.year
-                                    }]
-                                ]
-                            }
-
-
-                            // Granularity = month:
-                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
-                            groupBy = ["yearMonthCode"];
-                            x = ["yearMonthCode"];
-                            tooltipConfig = {
-                                title: "Waste totals per month",
-                                tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
-                                    }],
-                                    ["Month", function (d) {
-                                        return d.month
-                                    }]
-                                ]
-                            }
-                        }
+                    tooltipConfig = {
+                        title: function (d) {
+                            return d.actorName
+                        },
+                        tbody: [
+                            ["Total", function (d) {
+                                return d["amount"].toFixed(3)
+                            }],
+                        ]
                     }
 
-                    // Create a new D3Plus linePlot object which will be rendered in this.options.el:
-                    this.linePlot = new LinePlot({
+                    // Create a new D3Plus CoordinatePointMap object which will be rendered in this.options.el:
+                    this.coordinatePointMap = new CoordinatePointMap({
                         el: this.options.el,
                         data: flows,
-                        groupBy: groupBy,
-                        x: x,
                         tooltipConfig: tooltipConfig,
-
                     });
                 },
 
@@ -167,6 +136,6 @@ define(['views/common/baseview',
                 },
 
             });
-        return LinePlotView;
+        return CoordinatePointMapView;
     }
 );

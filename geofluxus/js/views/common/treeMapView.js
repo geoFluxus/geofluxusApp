@@ -191,9 +191,6 @@ define(['views/common/baseview',
                     event.stopImmediatePropagation();
                 },
 
-                refresh: function (options) {
-
-                },
 
                 exportCSV: function (event) {
                     if (!this.transformedData) return;

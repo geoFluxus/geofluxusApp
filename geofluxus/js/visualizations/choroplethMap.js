@@ -21,11 +21,17 @@ define([
             new d3plus.Geomap()
                 .data(options.data)
                 .colorScale("amount")
-                .topojson(options.topoJsonURL)
+                .topojson(options.geoJson)
                 .tooltipConfig(options.tooltipConfig)
                 // .fitFilter(function (d) {
                 //     return ["02", "15", "43", "60", "66", "69", "72", "78"].indexOf(d.id) < 0;
                 // })
+                .colorScaleConfig({
+                    // color: ["red", "orange", "yellow", "green", "blue"]
+                    // color: ["green", "yellow", "red", ]
+                    // scale: "jenks",
+                    color: ["red", "orange", "yellow", "green", "blue"].reverse()
+                })
                 .select(options.el)
                 .downloadPosition("left")
                 .downloadButton(true)
