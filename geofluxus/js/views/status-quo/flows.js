@@ -582,7 +582,7 @@ define(['views/common/baseview',
                             this.renderPieChart1D(dimensions, flows);
                             break;
                         case "barchart":
-                            //this.renderBarChart1D(dimensions, flows);
+                            this.renderBarChart1D(dimensions, flows);
                             break;
                         case "treemap":
                             //this.renderTreeMap1D(dimensions, flows);
