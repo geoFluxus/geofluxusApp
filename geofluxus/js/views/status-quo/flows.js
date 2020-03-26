@@ -569,29 +569,47 @@ define(['views/common/baseview',
                 } else if (dimensions[0][0] == "space") {
                     let dimension = dimensions[0][1];
 
-                    areas = new Collection([], {
-                        apiTag: 'areas',
-                        apiIds: [dimension.adminlevel]
-                    });
-                    areas.fetch({
-                        success: function () {
-                            var geojson = {};
-                            geojson['type'] = 'FeatureCollection';
-                            features = geojson['features'] = [];
-                            areas.forEach(function (area) {
-                                var feature = {};
-                                feature['type'] = 'Feature';
-                                feature['id'] = area.get('id')
-                                feature['geometry'] = area.get('geom')
-                                features.push(feature)
-                            })
 
-                            _this.renderChoropleth1D(dimensions, flows, geojson);
-                        },
-                        error: function (res) {
-                            console.log(res);
-                        }
-                    });
+                    switch (selectedVizualisationString) {
+                        case "piechart":
+                            this.renderPieChart1D(dimensions, flows);
+                            break;
+                        case "barchart":
+                            this.renderBarChart1D(dimensions, flows);
+                            break;
+                        case "lineplot":
+                            this.renderLinePlot1D(dimensions, flows);
+                            break;
+                        case "choroplethmap":
+
+                            areas = new Collection([], {
+                                apiTag: 'areas',
+                                apiIds: [dimension.adminlevel]
+                            });
+                            areas.fetch({
+                                success: function () {
+                                    var geojson = {};
+                                    geojson['type'] = 'FeatureCollection';
+                                    features = geojson['features'] = [];
+                                    areas.forEach(function (area) {
+                                        var feature = {};
+                                        feature['type'] = 'Feature';
+                                        feature['id'] = area.get('id')
+                                        feature['geometry'] = area.get('geom')
+                                        features.push(feature)
+                                    })
+
+                                    _this.renderChoropleth1D(dimensions, flows, geojson);
+                                },
+                                error: function (res) {
+                                    console.log(res);
+                                }
+                            });
+
+                            break;
+                        default:
+                            // Nothing
+                    }
 
                     // /////////////////////////////
                     // Economic Activity dimension
