@@ -18,6 +18,7 @@ define([
             var options = options || {};
             var _this = this;
 
+            let hasLegend = $("#display-legend").prop("checked");
             let groupByValue = options.groupBy ? options.groupBy[0] : {}
             let shapeConfigValue = {
                 Line: {
@@ -40,7 +41,7 @@ define([
                 .shape("Line")
                 .shapeConfig(shapeConfigValue)
                 .tooltipConfig(options.tooltipConfig)
-                .legend(options.hasLegend)
+                .legend(hasLegend)
                 .downloadPosition("left")
                 .downloadButton(true)
                 .select(options.el)

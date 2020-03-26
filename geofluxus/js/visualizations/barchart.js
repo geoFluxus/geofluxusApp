@@ -18,6 +18,8 @@ define([
             var options = options || {};
             var _this = this;
 
+            let hasLegend = $("#display-legend").prop("checked");
+
             if (options.xSort) {
                 new d3plus.Plot()
                     .tooltipConfig(options.tooltipConfig)
@@ -29,7 +31,7 @@ define([
                     .discrete("x")
                     .xSort(options.xSort)
                     .select(options.el)
-                    .legend(options.hasLegend)
+                    .legend(hasLegend)
                     .shape("Bar")
                     .downloadPosition("left")
                     .downloadButton(true)
@@ -44,7 +46,7 @@ define([
                     .baseline(0)
                     .discrete("x")
                     .select(options.el)
-                    .legend(options.hasLegend)
+                    .legend(hasLegend)
                     .shape("Bar")
                     .downloadPosition("left")
                     .downloadButton(true)

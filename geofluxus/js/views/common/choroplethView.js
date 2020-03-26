@@ -66,7 +66,6 @@ define(['views/common/baseview',
                     let flows = this.options.flows;
                     let groupBy;
                     let tooltipConfig = {};
-                    let hasLegend = true;
 
                     tooltipConfig = {
                         title: function (d) {
@@ -88,7 +87,6 @@ define(['views/common/baseview',
                         data: flows,
                         groupBy: groupBy,
                         tooltipConfig: tooltipConfig,
-                        hasLegend: hasLegend,
                         topoJsonURL: this.options.topoJsonURL,
                     });
                 },

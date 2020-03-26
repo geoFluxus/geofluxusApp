@@ -65,7 +65,6 @@ define(['views/common/baseview',
                     let groupBy;
                     let x;
                     let tooltipConfig;
-                    let hasLegend = true;
                     let xSort;
 
                     // /////////////////////////////
@@ -89,7 +88,6 @@ define(['views/common/baseview',
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
                             groupBy = ["month"];
                             x = ["month"];
-                            hasLegend = false;
                             tooltipConfig = {
                                 tbody: [
                                     ["Total", function (d) {
@@ -108,7 +106,6 @@ define(['views/common/baseview',
                     } else if (this.options.dimensions[0][0] == "space") {
                         groupBy = ["areaName"];
                         x = ["areaName"];
-                        hasLegend = false;
                         xSort = function (a, b) {
                             return b["amount"] - a["amount"];
                         }
@@ -148,7 +145,6 @@ define(['views/common/baseview',
                             // Granularity: Activity
                         } else if (this.options.dimensions[0][1] == "origin__activity" || this.options.dimensions[0][1] == "destination__activity") {
                             groupBy = ["activityCode"];
-                            hasLegend = false;
                             x = ["activityCode"];
                             tooltipConfig = {
                                 tbody: [
@@ -185,7 +181,6 @@ define(['views/common/baseview',
                         } else if (this.options.dimensions[0][1] == "origin__process" || this.options.dimensions[0][1] == "destination__process") {
                             groupBy = ["processCode"];
                             x = ["processCode"];
-                            hasLegend = false;
                             tooltipConfig = {
                                 tbody: [
                                     ["Total", function (d) {
@@ -207,7 +202,6 @@ define(['views/common/baseview',
                         groupBy: groupBy,
                         x: x,
                         tooltipConfig: tooltipConfig,
-                        hasLegend: hasLegend,
                         xSort: xSort,
                     });
                 },

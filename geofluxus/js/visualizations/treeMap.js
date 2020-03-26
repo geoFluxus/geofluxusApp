@@ -18,6 +18,8 @@ define([
             var options = options || {};
             var _this = this;
 
+            let hasLegend = $("#display-legend").prop("checked");
+
             new d3plus.Treemap()
                 .config({
                     //data: options.data,
@@ -31,7 +33,7 @@ define([
                 .data(options.data) 
                 .groupBy(options.groupBy)
                 .sum("amount")
-                .legend(options.hasLegend)
+                .legend(hasLegend)
                 .shapeConfig({
                     labelConfig: {
                         fontFamily: "Montserrat",

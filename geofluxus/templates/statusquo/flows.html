@@ -669,7 +669,7 @@
         
     <div class="block accordion" id="dimensionBlock">
 
-        <h4 style="padding-bottom: 0.5em; padding-top: 1em">2. Define dimensions & visualization</h4>
+        <h4 style="padding-bottom: 0.5em; padding-top: 1em">2. Analyse</h4>
 
         <div class="card bg-dark" id="dimensionsCard">
 
@@ -680,7 +680,7 @@
                         data-toggle="collapse" data-target="#collapseDimensionBlock" aria-expanded="true"
                         aria-controls="collapseDimensionBlock">
                         <i class="fa fa-chevron-down pull-right"></i>
-                        Dimensions
+                        Define dimensions & granularity
                     </button>
                 </h4>
 
@@ -690,14 +690,15 @@
                  data-parent="#dimensionBlock">
 
                 <div class="card-body">                    
-                    <div class="row align-items-end border-bottom mb-3 mt-1">
+                    
+                    <!-- <div class="row align-items-end border-bottom mb-3 mt-1">
                         <div class="col-md-3 text-center">
                             <label class="dimensionHeaderLabel">Dimension</label>                          
                         </div>
                         <div class="col-md-4 text-center">
                             <label class="dimensionHeaderLabel">Granularity</label>                          
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- TIME -->
                     <div class="row">
@@ -848,19 +849,19 @@
             <div class="card-header" id="card-header-collapse-visualizations">
                 <h4 class="mb-1">
                     <button class="btn btn-link collapsingHeaderButton"
-                            id="btn-collapse-header-visualisations"
+                            id="btn-collapse-header-vizualisations"
                             data-toggle="collapse"
-                            data-target="#collapseVisualisationBlock"
+                            data-target="#collapseVizualisationBlock"
                             aria-expanded="true"
-                            aria-controls="collapseVisualisationBlock">
+                            aria-controls="collapseVizualisationBlock">
                         <i class="fa fa-chevron-down pull-right"></i>
-                        Visualisation
+                        Choose visualization type
                     </button>
                 </h4>
 
             </div>
 
-            <div id="collapseVisualisationBlock" class="collapse show" aria-labelledby="card-header-collapse-visualizations"
+            <div id="collapseVizualisationBlock" class="collapse show" aria-labelledby="card-header-collapse-visualizations"
                 data-parent="#dimensionBlock">
 
                 <div class="card-body">
@@ -871,30 +872,41 @@
                         </div>
                     </div>
                     
-                    <div class="row" id="viz-container-row" style="display: none; width: 100%;">
-                        <div class="col-md-10 d-flex align-items-center" style="margin: auto">
-                            <div class="btn-group btn-group-toggle" id="visualization-type" data-toggle="buttons" style="margin: auto">
-                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="piechart" style="display: none;">
-                                    <input type="radio" id="viz-piechart"><span class="span-viz" id="span-viz-piechart">Pie chart</span>
-                                </label>
-                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="barchart" style="display: none;">
-                                    <input type="radio" id="viz-barchart"><span class="span-viz" id="span-viz-barchart">Bar chart</span>
-                                </label>
-                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="treemap" style="display: none;">
-                                    <input type="radio" id="viz-treemap"><span class="span-viz" id="span-viz-treemap">Treemap</span>
-                                </label>
-                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="lineplot" style="display: none;">
-                                    <input type="radio" id="viz-lineplot"><span class="span-viz" id="span-viz-lineplot">Line plot</span>
-                                </label>
-                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="choroplethmap" style="display: none;">
-                                    <input type="radio" id="viz-choroplethmap"><span class="span-viz" id="span-viz-choroplethmap">Choropleth map</span>
-                                </label>
-                                <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="coordinatepointmap" style="display: none;">
-                                    <input type="radio" id="viz-coordinatepointmap"><span class="span-viz" id="span-viz-coordinatepointmap">Coordinate point map</span>
-                                </label>
+                    <div class="viz-container" style="display: none;">
+                        <div class="row" style="width: 100%;">
+                            <div class="col-md-10 d-flex align-items-center" style="margin: auto">
+                                <div class="btn-group btn-group-toggle" id="visualization-type" data-toggle="buttons" style="margin: auto">
+                                    <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="piechart" style="display: none;">
+                                        <input type="radio" id="viz-piechart"><span class="span-viz" id="span-viz-piechart">Pie chart</span>
+                                    </label>
+                                    <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="barchart" style="display: none;">
+                                        <input type="radio" id="viz-barchart"><span class="span-viz" id="span-viz-barchart">Bar chart</span>
+                                    </label>
+                                    <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="treemap" style="display: none;">
+                                        <input type="radio" id="viz-treemap"><span class="span-viz" id="span-viz-treemap">Treemap</span>
+                                    </label>
+                                    <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="lineplot" style="display: none;">
+                                        <input type="radio" id="viz-lineplot"><span class="span-viz" id="span-viz-lineplot">Line plot</span>
+                                    </label>
+                                    <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="choroplethmap" style="display: none;">
+                                        <input type="radio" id="viz-choroplethmap"><span class="span-viz" id="span-viz-choroplethmap">Choropleth map</span>
+                                    </label>
+                                    <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="coordinatepointmap" style="display: none;">
+                                        <input type="radio" id="viz-coordinatepointmap"><span class="span-viz" id="span-viz-coordinatepointmap">Coordinate point map</span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
-                    </div>
+
+                        <div class="row mt-3">
+                            <div class="col d-flex">
+                                <div class="custom-control custom-checkbox" style="margin: auto;">
+                                    <input type="checkbox" class="custom-control-input" id="display-legend">
+                                    <label class="custom-control-label" for="display-legend">Display legend</label>
+                                </div>
+                            </div>
+                        </div>     
+                    </div> 
 
                 </div>
             </div>

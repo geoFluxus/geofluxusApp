@@ -64,7 +64,6 @@ define(['views/common/baseview',
                     let flows = this.options.flows;
                     let groupBy;
                     let tooltipConfig = {};
-                    let hasLegend = true;
 
                     // /////////////////////////////
                     // Time dimension
@@ -83,7 +82,6 @@ define(['views/common/baseview',
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
                             groupBy = ["month"];
-                            hasLegend = false;
                             tooltipConfig = {
                                 title: function (d) {
                                     return d.month
@@ -101,7 +99,6 @@ define(['views/common/baseview',
                         // Space dimension
                     } else if (this.options.dimensions[0][0] == "space") {
                         groupBy = ["areaName"];
-                        hasLegend = false;
                         tooltipConfig = {
                             title: function (d) {
                                 return d.areaName
@@ -133,7 +130,6 @@ define(['views/common/baseview',
                             // Granularity: Activity
                         } else if (this.options.dimensions[0][1] == "origin__activity" || this.options.dimensions[0][1] == "destination__activity") {
                             groupBy = ["activityCode"];
-                            hasLegend = false;
                             tooltipConfig = {
                                 tbody: [
                                     ["Total", function (d) {
@@ -163,7 +159,6 @@ define(['views/common/baseview',
                             // Granularity: Activity
                         } else if (this.options.dimensions[0][1] == "origin__process" || this.options.dimensions[0][1] == "destination__process") {
                             groupBy = ["processCode"];
-                            hasLegend = false;
                             tooltipConfig = {
                                 tbody: [
                                     ["Total", function (d) {
@@ -187,7 +182,6 @@ define(['views/common/baseview',
                         data: flows,
                         groupBy: groupBy,
                         tooltipConfig: tooltipConfig,
-                        hasLegend: hasLegend,
                     });
                 },
 

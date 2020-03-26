@@ -18,6 +18,8 @@ define([
             var options = options || {};
             var _this = this;
 
+            let hasLegend = $("#display-legend").prop("checked");
+
             new d3plus.Pie()
                 .config({
                     data: options.data,
@@ -27,7 +29,7 @@ define([
                     },
                     tooltipConfig: options.tooltipConfig,
                 })
-                .legend(options.hasLegend)
+                .legend(hasLegend)
                 // .format({
                 //     "number": function(number, params) {
                 //         return number.toFixed(2);

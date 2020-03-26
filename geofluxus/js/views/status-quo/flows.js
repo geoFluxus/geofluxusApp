@@ -511,7 +511,7 @@ define(['views/common/baseview',
             //     this.flowMapView.rerender();
             // },
 
-            render1Dvisualizations: function (dimensions, flows, selectedVisualisationString) {
+            render1Dvisualizations: function (dimensions, flows, selectedVizualisationString) {
                 let _this = this;
                 let filterFlowsView = this.filterFlowsView;
 
@@ -547,7 +547,7 @@ define(['views/common/baseview',
                         flows = _.sortBy(flows, 'id');
                     }
 
-                    switch (selectedVisualisationString) {
+                    switch (selectedVizualisationString) {
                         case "piechart":
                             this.renderPieChart1D(dimensions, flows);
                             break;
@@ -620,7 +620,7 @@ define(['views/common/baseview',
                         }, flows);
                     }
 
-                    switch (selectedVisualisationString) {
+                    switch (selectedVizualisationString) {
                         case "piechart":
                             this.renderPieChart1D(dimensions, flows);
                             break;
@@ -662,7 +662,7 @@ define(['views/common/baseview',
                         }, flows);
                     }
 
-                    switch (selectedVisualisationString) {
+                    switch (selectedVizualisationString) {
                         case "piechart":
                             this.renderPieChart1D(dimensions, flows);
                             break;
@@ -761,12 +761,12 @@ define(['views/common/baseview',
                 let _this = this;
                 let filterParams = this.getFlowFilterParams();
                 let data = {};
-                let selectedVisualisationString;
+                let selectedVizualisationString;
                 this.selectedDimensions = Object.entries(filterParams.dimensions);
 
                 $('.viz-selector-button').each(function (index, value) {
                     if ($(this).hasClass("active")) {
-                        selectedVisualisationString = $(this).attr("data-viz");
+                        selectedVizualisationString = $(this).attr("data-viz");
                     }
                 });
 
@@ -794,7 +794,7 @@ define(['views/common/baseview',
 
                             switch (_this.selectedDimensions.length) {
                                 case 1:
-                                    _this.render1Dvisualizations(_this.selectedDimensions, _this.flows, selectedVisualisationString);
+                                    _this.render1Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
                                     break;
                                 case 2:
                                     // code block

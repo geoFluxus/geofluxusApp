@@ -26,22 +26,6 @@ define([
                 // .fitFilter(function (d) {
                 //     return ["02", "15", "43", "60", "66", "69", "72", "78"].indexOf(d.id) < 0;
                 // })
-                // .config({
-                //     data: options.data,
-                //     groupBy: options.groupBy,
-                //     value: function (d) {
-                //         return d["amount"].toFixed(3);
-                //     },
-                //     tooltipConfig: options.tooltipConfig,
-                // })
-                // .legend(options.hasLegend)
-                // .shapeConfig({
-                //     labelConfig: {
-                //         fontFamily: "Montserrat",
-                //         fontMax: 100
-                //     }
-                // })
-                // .downloadButton(true)
                 .select(options.el)
                 .downloadPosition("left")
                 .downloadButton(true)

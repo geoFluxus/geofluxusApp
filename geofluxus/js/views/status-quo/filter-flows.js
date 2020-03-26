@@ -491,12 +491,12 @@ define(['views/common/baseview',
                             console.log("No dimensions");
 
                             $("#message-container-row").fadeIn();
-                            $("#viz-container-row").hide();
+                            $(".viz-container").hide();
 
                             break;
                         case 1:
                             $("#message-container-row").hide();
-                            $("#viz-container-row").fadeIn();
+                            $(".viz-container").fadeIn();
 
                             console.log("One dimension");
 
