@@ -77,9 +77,6 @@ define(['views/common/baseview',
                                     ["Total", function (d) {
                                         return d["amount"].toFixed(3)
                                     }],
-                                    ["Year", function (d) {
-                                        return d.year
-                                    }]
                                 ]
                             }
 
@@ -88,15 +85,32 @@ define(['views/common/baseview',
                             groupBy = ["month"];
                             hasLegend = false;
                             tooltipConfig = {
+                                title: function (d) {
+                                    return d.month
+                                },
                                 tbody: [
                                     ["Total", function (d) {
                                         return d["amount"].toFixed(3)
                                     }],
-                                    ["Month", function (d) {
-                                        return d.month;
-                                    }],
                                 ]
                             }
+                        }
+
+
+                        // /////////////////////////////
+                        // Space dimension
+                    } else if (this.options.dimensions[0][0] == "space") {
+                        groupBy = ["areaName"];
+                        hasLegend = false;
+                        tooltipConfig = {
+                            title: function (d) {
+                                return d.areaName
+                            },
+                            tbody: [
+                                ["Total", function (d) {
+                                    return d["amount"].toFixed(3)
+                                }],
+                            ]
                         }
 
                         // /////////////////////////////
@@ -132,7 +146,6 @@ define(['views/common/baseview',
                             }
                         }
                     } else if (this.options.dimensions[0][0] == "treatmentMethod") {
-
 
                         if (this.options.dimensions[0][1] == "origin__process__processgroup" || this.options.dimensions[0][1] == "destination__process__processgroup") {
                             groupBy = ["processGroupCode"];

@@ -575,15 +575,11 @@ define(['views/common/baseview',
                     // Temporary fix for Provincies
                     if (topoJsonURL == "http://127.0.0.1:8000/api/levels/9/topojson/") {
                         topoJsonURL = "http://127.0.0.1:8000/static/topojson/provincies.json";
-
-                        // flows.forEach(function (flow, index) {
-                        //     this[index].id = this[index].id.toString();
-                        // }, flows);
                     }
 
                     switch (selectedVisualisationString) {
                         case "piechart":
-                            //this.renderPieChart1D(dimensions, flows);
+                            this.renderPieChart1D(dimensions, flows);
                             break;
                         case "barchart":
                             //this.renderBarChart1D(dimensions, flows);
