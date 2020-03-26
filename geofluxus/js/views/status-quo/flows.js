@@ -559,38 +559,36 @@ define(['views/common/baseview',
                 } else if (dimensions[0][0] == "space") {
                     let dimension = dimensions[0][1];
 
-                    let topoJsonURL = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.id == parseInt(dimension.adminlevel)).attributes.area_set;
+//                    let topoJsonURL = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.id == parseInt(dimension.adminlevel)).attributes.area_set;
+//
+//
+//
+//                    _this.renderChoropleth1D(dimensions, flows, topoJsonURL);
 
-                    
 
-                    _this.renderChoropleth1D(dimensions, flows, topoJsonURL);
+                         areas = new Collection([], {
+                             apiTag: 'areas',
+                             apiIds: [dimension.adminlevel]
+                         });
+                         areas.fetch({
+                             success: function () {
+                                var geojson = {};
+                                geojson['type'] = 'FeatureCollection';
+                                features = geojson['features'] = [];
+                                areas.forEach(function(area) {
+                                    var feature = {};
+                                    feature['type'] = 'Feature';
+                                    feature['id'] = area.get('id')
+                                    feature['geometry'] = area.get('geom')
+                                    features.push(feature)
+                                })
 
-
-                    // if (!areas) {
-                    //     areas = new Collection([], {
-                    //         apiTag: 'areas',
-                    //         apiIds: [dimension.adminlevel]
-                    //     });
-                    //     areas.fetch({
-                    //         success: function () {
-
-                    //             // flows.forEach(function (flow, index) {
-                    //             //     let areaObject = areas.find(area => area.attributes.id == flow.id);
-
-                    //             //     this[index].name = areaObject.attributes.name;
-
-                    //             // }, flows);
-
-                    //             //topoJsonURL = areas.area_set
-
-                    //             _this.renderChoropleth1D(dimensions, flows, areas);
-
-                    //         },
-                    //         error: function (res) {
-                    //             console.log(res);
-                    //         }
-                    //     });
-                    // }
+                                _this.renderChoropleth1D(dimensions, flows, geojson);
+                             },
+                             error: function (res) {
+                                 console.log(res);
+                             }
+                         });
 
                     // /////////////////////////////
                     // Economic Activity dimension
