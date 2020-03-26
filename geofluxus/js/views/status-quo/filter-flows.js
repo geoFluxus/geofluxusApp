@@ -104,6 +104,7 @@ define(['views/common/baseview',
                 'click .area-select-button': 'showAreaSelection',
                 'change select[name="area-level-select"]': 'changeAreaLevel',
                 'click #reset-filters': 'resetFiltersToDefault',
+                'click #reset-dim-viz': 'resetDimAndVizToDefault',
                 'click .clear-areas-button': 'clearAreas',
             },
 
@@ -1070,6 +1071,18 @@ define(['views/common/baseview',
                 $(_this.flows.isCompositeSelect).val("-1");
 
 
+
+                // Empty all textareas:
+                $(".selections").html("");
+                $(".selections").textareaAutoSize();
+
+                // Refresh all selectpickers:
+                $(".selectpicker").selectpicker('refresh');
+            },
+
+            resetDimAndVizToDefault: function () {
+                _this = this;
+
                 // //////////////////////////////////
                 // Dimension controls:
                 $(_this.dimensions.timeToggle).bootstrapToggle('off');
@@ -1096,9 +1109,11 @@ define(['views/common/baseview',
                 $("#origDest-toggle-econAct-col").hide();
                 $("#origDest-toggle-treatment-col").hide();
 
-                // Empty all textareas:
-                $(".selections").html("");
-                $(".selections").textareaAutoSize();
+
+                // //////////////////////////////////
+                // Vizualisation controls:
+                $(".viz-selector-button").removeClass("active");
+
 
                 // Refresh all selectpickers:
                 $(".selectpicker").selectpicker('refresh');
