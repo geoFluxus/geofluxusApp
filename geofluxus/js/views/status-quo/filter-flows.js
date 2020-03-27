@@ -478,6 +478,7 @@ define(['views/common/baseview',
                         $(uncheckedToggles).each(function (index, value) {
                             this.bootstrapToggle('enable');
                         });
+                        $("#alertMaxDimensionsRow").fadeOut("fast");
                     }
 
 

@@ -637,10 +637,15 @@ define(['views/common/baseview',
                     } else if (dimensions[0][1] == "origin__activity" || dimensions[0][1] == "destination__activity") {
 
                         flows.forEach(function (flow, index) {
+                            let activityGroupName = "";
                             let activityObject = activities.find(activity => activity.attributes.id == flow.activity);
 
                             this[index].activityCode = activityObject.attributes.nace;
                             this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
+
+                            this[index].activityGroupCode = this[index].activityCode.substring(0, this[index].activityCode.indexOf('-'));
+                            activityGroupName = activityGroups.find(activityGroup => activityGroup.attributes.code == this[index].activityGroupCode).attributes.name;
+                            this[index].activityGroupName = activityGroupName[0].toUpperCase() + activityGroupName.slice(1).toLowerCase();
                         }, flows);
                     }
 
@@ -679,10 +684,15 @@ define(['views/common/baseview',
                     } else if (dimensions[0][1] == "origin__process" || dimensions[0][1] == "destination__process") {
 
                         flows.forEach(function (flow, index) {
+                            let processGroupName = "";
                             let processObject = processes.find(process => process.attributes.id == flow.process);
 
                             this[index].processCode = processObject.attributes.code;
                             this[index].processName = processObject.attributes.name[0].toUpperCase() + processObject.attributes.name.slice(1).toLowerCase();
+                            
+                            this[index].processGroupCode = processObject.attributes.code.substring(0, 1);
+                            processGroupName = processGroups.find(processGroup => processGroup.attributes.code == this[index].processGroupCode).attributes.name;
+                            this[index].processGroupName = processGroupName[0].toUpperCase() + processGroupName.slice(1).toLowerCase();
                         }, flows);
                     }
 

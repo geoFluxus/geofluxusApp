@@ -132,6 +132,9 @@ define(['views/common/baseview',
                             groupBy = ["activityGroupCode"];
                             x = ["activityGroupCode"];
                             tooltipConfig = {
+                                title: function (d) {
+                                    return d.activityGroupCode
+                                },
                                 tbody: [
                                     ["Total", function (d) {
                                         return d["amount"].toFixed(3)
@@ -144,15 +147,21 @@ define(['views/common/baseview',
 
                             // Granularity: Activity
                         } else if (this.options.dimensions[0][1] == "origin__activity" || this.options.dimensions[0][1] == "destination__activity") {
-                            groupBy = ["activityCode"];
                             x = ["activityCode"];
+                            groupBy = ["activityGroupCode", "activityCode"];
                             tooltipConfig = {
+                                title: function (d) {
+                                    return d.activityCode
+                                },
                                 tbody: [
                                     ["Total", function (d) {
                                         return d["amount"].toFixed(3)
                                     }],
                                     ["Activity", function (d) {
                                         return d.activityCode + " " + d.activityName;
+                                    }],
+                                    ["Activity group", function (d) {
+                                        return d.activityGroupCode + " " + d.activityGroupName;
                                     }],
                                 ]
                             }

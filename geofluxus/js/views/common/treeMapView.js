@@ -129,7 +129,7 @@ define(['views/common/baseview',
 
                             // Granularity: Activity
                         } else if (this.options.dimensions[0][1] == "origin__activity" || this.options.dimensions[0][1] == "destination__activity") {
-                            groupBy = ["activityCode"];
+                            groupBy = ["activityGroupCode", "activityCode"];
                             tooltipConfig = {
                                 tbody: [
                                     ["Total", function (d) {
@@ -137,6 +137,9 @@ define(['views/common/baseview',
                                     }],
                                     ["Activity", function (d) {
                                         return d.activityCode + " " + d.activityName;
+                                    }],
+                                    ["Activity group", function (d) {
+                                        return d.activityGroupCode + " " + d.activityGroupName;
                                     }],
                                 ]
                             }
@@ -146,6 +149,9 @@ define(['views/common/baseview',
                         if (this.options.dimensions[0][1] == "origin__process__processgroup" || this.options.dimensions[0][1] == "destination__process__processgroup") {
                             groupBy = ["processGroupCode"];
                             tooltipConfig = {
+                                title: function (d) {
+                                    return d.processGroupCode
+                                },
                                 tbody: [
                                     ["Total", function (d) {
                                         return d["amount"].toFixed(3)
@@ -158,14 +164,20 @@ define(['views/common/baseview',
 
                             // Granularity: Activity
                         } else if (this.options.dimensions[0][1] == "origin__process" || this.options.dimensions[0][1] == "destination__process") {
-                            groupBy = ["processCode"];
+                            groupBy = ["processGroupCode", "processCode"];
                             tooltipConfig = {
+                                title: function (d) {
+                                    return d.processCode
+                                },
                                 tbody: [
                                     ["Total", function (d) {
                                         return d["amount"].toFixed(3)
                                     }],
                                     ["Treatment method", function (d) {
                                         return d.processCode + " " + d.processName;
+                                    }],
+                                    ["Treatment method group", function (d) {
+                                        return d.processGroupCode + " " + d.processGroupName;
                                     }],
                                 ]
                             }
