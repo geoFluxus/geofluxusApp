@@ -80,6 +80,7 @@ define(['views/common/baseview',
                         el: this.options.el,
                         data: flows,
                         tooltipConfig: tooltipConfig,
+                        // geoJson: this.options.geoJson,
                     });
                 },
 

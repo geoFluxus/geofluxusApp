@@ -383,6 +383,9 @@ textarea.textarea-autosize.form-control-sm {
     border-radius: 18px !important;
 }
 
+.coordinatepointmap-wrapper svg {
+    border-radius: 18px !important;
+}
 
 /* SVG Container */
 
