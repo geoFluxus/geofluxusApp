@@ -571,8 +571,17 @@ define(['views/common/baseview',
                 } else if (dimensions[0][0] == "space") {
                     let dimension = dimensions[0][1];
 
+                    // If level == actor:
+                    console.log("actorlevel");
+                    let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.name == "Actor").attributes.id;
+                    if (dimension.adminlevel == actorAreaLevelId) {
+                        dimensions.isActorLevel = true;
+                    }
+
                     switch (selectedVizualisationString) {
                         case "piechart":
+
+
                             this.renderPieChart1D(dimensions, flows);
                             break;
                         case "barchart":
@@ -610,7 +619,7 @@ define(['views/common/baseview',
                                 }
                             });
                             break;
-                        case "coordinatepointmap":
+                        case "coordinatepointmap": // Only in case of Actor
                             _this.renderCoordinatePointMap1D(dimensions, flows);
                             break;
                         default:
@@ -689,7 +698,7 @@ define(['views/common/baseview',
 
                             this[index].processCode = processObject.attributes.code;
                             this[index].processName = processObject.attributes.name[0].toUpperCase() + processObject.attributes.name.slice(1).toLowerCase();
-                            
+
                             this[index].processGroupCode = processObject.attributes.code.substring(0, 1);
                             processGroupName = processGroups.find(processGroup => processGroup.attributes.code == this[index].processGroupCode).attributes.name;
                             this[index].processGroupName = processGroupName[0].toUpperCase() + processGroupName.slice(1).toLowerCase();
