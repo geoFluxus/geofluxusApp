@@ -59,14 +59,12 @@ define(['views/common/baseview',
 
                 this.el.innerHTML = template();
 
-
                 // this.sankeyWrapper = this.el.querySelector('.sankey-wrapper');
                 // this.sankeyWrapper.addEventListener('linkSelected', this.linkSelected);
                 // this.sankeyWrapper.addEventListener('linkDeselected', this.linkDeselected);
                 // this.sankeyWrapper.addEventListener('nodeSelected', this.nodeSelected);
                 // this.sankeyWrapper.addEventListener('nodeDeselected', this.nodeDeselected);
                 // this.sankeyWrapper.addEventListener('allDeselected', this.deselectAll);
-
 
                 // Render flow filters
                 this.renderFilterFlowsView();
@@ -572,7 +570,6 @@ define(['views/common/baseview',
                     let dimension = dimensions[0][1];
 
                     // If level == actor:
-                    console.log("actorlevel");
                     let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.name == "Actor").attributes.id;
                     if (dimension.adminlevel == actorAreaLevelId) {
                         dimensions.isActorLevel = true;
@@ -580,8 +577,6 @@ define(['views/common/baseview',
 
                     switch (selectedVizualisationString) {
                         case "piechart":
-
-
                             this.renderPieChart1D(dimensions, flows);
                             break;
                         case "barchart":
@@ -859,13 +854,12 @@ define(['views/common/baseview',
                                     break;
                                 case 2:
                                     _this.render2Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
-
                                     break;
                                 default:
                                     // Nothing
                             }
 
-                            $(".d3plus-viz-controls-container .d3plus-Button").html("<i class='fas fa-camera' style='color: white'></i>");
+                            //$(".d3plus-viz-controls-container .d3plus-Button").html("<i class='fas fa-camera' style='color: white'></i>");
 
                             _this.loader.deactivate();
 

@@ -30,7 +30,7 @@ define([
                 })
                 //tile: d3.treemapDice
                 .tooltipConfig(options.tooltipConfig)
-                .data(options.data) 
+                .data(options.data)
                 .groupBy(options.groupBy)
                 .sum("amount")
                 .legend(hasLegend)
@@ -43,6 +43,9 @@ define([
                 .select(options.el)
                 .downloadPosition("left")
                 .downloadButton(true)
+                .controlConfig({
+                    text: "<i class='fas fa-camera' style='color: white'></i>",
+                })
                 .render();
         }
     }

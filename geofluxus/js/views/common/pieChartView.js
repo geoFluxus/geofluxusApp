@@ -98,7 +98,7 @@ define(['views/common/baseview',
                         // /////////////////////////////
                         // Space dimension
                     } else if (this.options.dimensions[0][0] == "space") {
-                        
+
                         // Areas:
                         if (!this.options.dimensions.isActorLevel) {
                             groupBy = ["areaName"];
@@ -158,6 +158,9 @@ define(['views/common/baseview',
                                 ]
                             }
                         }
+
+                        // /////////////////////////////
+                        // Treatment method dimension
                     } else if (this.options.dimensions[0][0] == "treatmentMethod") {
 
                         if (this.options.dimensions[0][1] == "origin__process__processgroup" || this.options.dimensions[0][1] == "destination__process__processgroup") {
@@ -188,9 +191,6 @@ define(['views/common/baseview',
                             }
                         }
 
-
-
-
                     }
 
                     // Create a new D3Plus PieChart object which will be rendered in this.options.el:
@@ -202,16 +202,11 @@ define(['views/common/baseview',
                     });
                 },
 
-                /*
-                 * render sankey-diagram in fullscreen
-                 */
                 toggleFullscreen: function (event) {
                     this.el.classList.toggle('fullscreen');
                     this.refresh();
                     event.stopImmediatePropagation();
-                    //this.render(this.transformedData);
                 },
-
 
                 exportCSV: function (event) {
                     if (!this.transformedData) return;
@@ -245,9 +240,6 @@ define(['views/common/baseview',
                     event.stopImmediatePropagation();
                 },
 
-                /*
-                 * remove this view from the DOM
-                 */
                 close: function () {
                     this.undelegateEvents(); // remove click events
                     this.unbind(); // Unbind all local event bindings

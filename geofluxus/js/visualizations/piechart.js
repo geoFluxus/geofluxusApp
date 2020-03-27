@@ -44,6 +44,10 @@ define([
                 .select(options.el)
                 .downloadPosition("left")
                 .downloadButton(true)
+                .controlConfig({
+                    text: "<i class='fas fa-camera' style='color: white'></i>",
+                })
+                .controlPadding(0)
                 .render();
         }
     }

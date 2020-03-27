@@ -42,24 +42,16 @@ define(['views/common/baseview',
                     LinePlotView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
-                    var _this = this;
-
                     this.options = options;
 
-                    //this.transformedData = this.transformData(this.flows);
-                    //this.render(this.transformedData);
                     this.render();
                 },
-
 
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
                 },
 
-                /*
-                 * render the view
-                 */
                 render: function (data) {
                     let flows = this.options.flows;
                     let tooltipConfig;
@@ -83,7 +75,6 @@ define(['views/common/baseview',
                                     }]
                                 ]
                             }
-
 
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
@@ -114,16 +105,11 @@ define(['views/common/baseview',
                     });
                 },
 
-                /*
-                 * render sankey-diagram in fullscreen
-                 */
                 toggleFullscreen: function (event) {
                     this.el.classList.toggle('fullscreen');
                     this.refresh();
                     event.stopImmediatePropagation();
-                    //this.render(this.transformedData);
                 },
-
 
                 exportCSV: function (event) {
                     if (!this.transformedData) return;
@@ -157,9 +143,6 @@ define(['views/common/baseview',
                     event.stopImmediatePropagation();
                 },
 
-                /*
-                 * remove this view from the DOM
-                 */
                 close: function () {
                     this.undelegateEvents(); // remove click events
                     this.unbind(); // Unbind all local event bindings

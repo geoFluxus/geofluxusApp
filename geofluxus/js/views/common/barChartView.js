@@ -42,24 +42,16 @@ define(['views/common/baseview',
                     BarChartView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
-                    var _this = this;
-
                     this.options = options;
 
-                    //this.transformedData = this.transformData(this.flows);
-                    //this.render(this.transformedData);
                     this.render();
                 },
-
 
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
                 },
 
-                /*
-                 * render the view
-                 */
                 render: function (data) {
                     let flows = this.options.flows;
                     let groupBy;
@@ -99,7 +91,6 @@ define(['views/common/baseview',
                                 ]
                             }
                         }
-
 
                         // /////////////////////////////
                         // Space dimension
@@ -184,6 +175,9 @@ define(['views/common/baseview',
                                 ]
                             }
                         }
+
+                        // /////////////////////////////
+                        // Treatment method dimension
                     } else if (this.options.dimensions[0][0] == "treatmentMethod") {
                         xSort = function (a, b) {
                             return b["amount"] - a["amount"];
@@ -221,7 +215,6 @@ define(['views/common/baseview',
                         }
                     }
 
-
                     // Create a new D3Plus BarChart object which will be rendered in this.options.el:
                     this.barChart = new BarChart({
                         el: this.options.el,
@@ -233,14 +226,10 @@ define(['views/common/baseview',
                     });
                 },
 
-                /*
-                 * render sankey-diagram in fullscreen
-                 */
                 toggleFullscreen: function (event) {
                     this.el.classList.toggle('fullscreen');
                     this.refresh();
                     event.stopImmediatePropagation();
-                    //this.render(this.transformedData);
                 },
 
                 exportCSV: function (event) {
@@ -275,9 +264,6 @@ define(['views/common/baseview',
                     event.stopImmediatePropagation();
                 },
 
-                /*
-                 * remove this view from the DOM
-                 */
                 close: function () {
                     this.undelegateEvents(); // remove click events
                     this.unbind(); // Unbind all local event bindings

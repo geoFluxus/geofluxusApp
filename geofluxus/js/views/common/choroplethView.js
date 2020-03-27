@@ -32,7 +32,6 @@ define(['views/common/baseview',
         var ChoroplethView = BaseView.extend(
             /** @lends module:views/ChoroplethView.prototype */
             {
-
                 /**
                  * @param {Object} options
                  * @param {HTMLElement} options.el                   element the view will be rendered in
@@ -44,24 +43,15 @@ define(['views/common/baseview',
                     ChoroplethView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
-                    var _this = this;
-
                     this.options = options;
-
-                    //this.transformedData = this.transformData(this.flows);
-                    //this.render(this.transformedData);
                     this.render();
                 },
-
 
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
                 },
 
-                /*
-                 * render the view
-                 */
                 render: function (data) {
                     let flows = this.options.flows;
                     let tooltipConfig = {};
@@ -86,14 +76,11 @@ define(['views/common/baseview',
                     });
                 },
 
-
                 toggleFullscreen: function (event) {
                     this.el.classList.toggle('fullscreen');
                     this.refresh();
                     event.stopImmediatePropagation();
-                    //this.render(this.transformedData);
                 },
-
 
                 exportCSV: function (event) {
                     if (!this.transformedData) return;
@@ -127,9 +114,6 @@ define(['views/common/baseview',
                     event.stopImmediatePropagation();
                 },
 
-                /*
-                 * remove this view from the DOM
-                 */
                 close: function () {
                     this.undelegateEvents(); // remove click events
                     this.unbind(); // Unbind all local event bindings

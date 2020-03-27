@@ -40,29 +40,10 @@ define([
                 .select(options.el)
                 .downloadPosition("left")
                 .downloadButton(true)
+                .controlConfig({
+                    text: "<i class='fas fa-camera' style='color: white'></i>",
+                })
                 .render();
-
-
-            // new d3plus.Geomap()
-            //     .config({
-            //         data: "https://d3plus.org/data/city_coords.json",
-            //         groupBy: "slug",
-            //         colorScale: "dma_code",
-            //         label: function (d) {
-            //             return d.city + ", " + d.region;
-            //         },
-            //         point: function (d) {
-            //             return [d.longitude, d.latitude];
-            //         },
-            //         pointSize: function (d) {
-            //             return d.dma_code;
-            //         },
-            //         pointSizeMin: 1,
-            //         pointSizeMax: 10
-            //     })
-            //     .render();
-
-
         }
     }
     return CoordinatePointMap;
