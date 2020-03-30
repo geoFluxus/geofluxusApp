@@ -320,7 +320,7 @@ define(['views/common/baseview',
 
                         // Fill selectPicker with filtered items, add to DOM, and refresh:
                         newWastes06OptionsHTML = '<option selected value="-1">All (' + filteredWastes06.length + ')</option><option data-divider="true"></option>';
-                        filteredWastes06.forEach(waste06 => newWastes06OptionsHTML += "<option value='" + waste06.attributes.id + "'>" + waste06.attributes.ewc_code + " " + waste06.attributes.ewc_name + "</option>");
+                        filteredWastes06.forEach(waste06 => newWastes06OptionsHTML += "<option class='dropdown-item' value='" + waste06.attributes.id + "'>" + waste06.attributes.ewc_code + " " + waste06.attributes.ewc_name + "</option>");
                         $(_this.flows.waste06Select).html(newWastes06OptionsHTML);
                         $(_this.flows.waste06Select).selectpicker("refresh");
 
@@ -478,6 +478,7 @@ define(['views/common/baseview',
                         $(uncheckedToggles).each(function (index, value) {
                             this.bootstrapToggle('enable');
                         });
+                        $("#alertMaxDimensionsRow").fadeOut("fast");
                     }
 
 
@@ -491,12 +492,12 @@ define(['views/common/baseview',
                             console.log("No dimensions");
 
                             $("#message-container-row").fadeIn();
-                            $("#viz-container-row").hide();
+                            $(".viz-container").hide();
 
                             break;
                         case 1:
                             $("#message-container-row").hide();
-                            $("#viz-container-row").fadeIn();
+                            $(".viz-container").fadeIn();
 
                             console.log("One dimension");
 
@@ -520,7 +521,7 @@ define(['views/common/baseview',
 
                                 let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
 
-                                if (selectedAreaLevelId == "6") {
+                                if (selectedAreaLevelId == "13") {
                                     $("#viz-coordinatepointmap").parent().show();
                                     $("#viz-choroplethmap").parent().hide();
                                 } else {
@@ -566,17 +567,13 @@ define(['views/common/baseview',
 
                 });
 
-
                 $(_this.dimensions.spaceLevelGranSelect).change(function () {
                     let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
-
-                    let selectedAreaName = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.id == selectedAreaLevelId).attributes.name;
-
-                    console.log("level changed");
+                    let selectedAreaLevel = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.id.toString() == selectedAreaLevelId).attributes.level;
 
                     if (_this.selectedDimensionStrings.includes("space")) {
 
-                        if (selectedAreaName == "Actor") {
+                        if (selectedAreaLevel == 1000) {
                             $("#viz-coordinatepointmap").parent().show();
                             $("#viz-choroplethmap").parent().hide();
                         } else {
@@ -585,7 +582,6 @@ define(['views/common/baseview',
                         }
                     }
                 });
-
 
                 // Show granularity on toggle change:
                 $("#dim-toggle-time").change(function () {

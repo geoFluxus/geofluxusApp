@@ -20,7 +20,6 @@
 }
 
 
-
 #btn-filterViews {
     background: none;
     color: inherit;
@@ -33,9 +32,11 @@
     text-decoration: none !important;
 }
 
-#btn-collapse-header-origin {
+.collapsingHeaderButton {
+    width: 93% !important;
+    text-align: left;
     background: none;
-    color: inherit;
+    color: white;
     border: none;
     padding: 0;
     font: inherit;
@@ -45,60 +46,26 @@
     text-decoration: none !important;
 }
 
-#btn-collapse-header-destination {
-    background: none;
-    color: inherit;
-    border: none;
-    padding: 0;
-    font: inherit;
-    cursor: pointer;
-    outline: inherit;
-    box-shadow: none;
-    text-decoration: none !important;
+.collapsingHeaderButton:hover {
+    background-color: inherit;
+    color: white;
 }
 
-#btn-collapse-header-flows {
-    background: none;
-    color: inherit;
-    border: none;
-    padding: 0;
-    font: inherit;
-    cursor: pointer;
-    outline: inherit;
-    box-shadow: none;
-    text-decoration: none !important;
-}
-
-#btn-collapse-header-dimensions {
-    background: none;
-    color: inherit;
-    border: none;
-    padding: 0;
-    font: inherit;
-    cursor: pointer;
-    outline: inherit;
-    box-shadow: none;
-    text-decoration: none !important;
-}
-
-#btn-collapse-header-visualisations {
-    background: none;
-    color: inherit;
-    border: none;
-    padding: 0;
-    font: inherit;
-    cursor: pointer;
-    outline: inherit;
-    box-shadow: none;
-    text-decoration: none !important;
+.collapsingHeaderButton:focus {
+    background-color: inherit;
+    color: white;
 }
 
 .flowFilterSubtitle {
     margin-top: 1rem !important;
 }
 
-.dropdown-menu .show {
-    max-width: 40rem;
+#filterBlock .dropdown-menu {
+    max-width: 60rem;
+}
+
+#filterBlock .dropdown-menu .show {
+    max-width: 60rem;
     overflow-x: hidden;
     z-index: 1000;
 }
@@ -119,11 +86,6 @@
 
 #activitySelectContainer {
     transition: display 1s;
-}
-
-.collapsingHeaderButton {
-    width: 93% !important;
-    text-align: left;
 }
 
 .card-header .fa {
@@ -213,7 +175,7 @@ label[for="activity-select"] {
     border-radius: 18px !important;
     margin-left: 1rem;
     margin-right: 1rem;
-    width: 15rem;
+    min-width: 10rem;
     display: flex;
 }
 
@@ -278,6 +240,14 @@ label[for="activity-select"] {
     width: 100%;
     height: 100%;
     /* max-height: 600px; */
+}
+
+.areaModalMapRow.map .ol-viewport {
+    border-radius: 18px;
+}
+
+.areaModalMapRow.map .ol-viewport canvas {
+    margin-bottom: -1rem;
 }
 
 .map .ol-attribution.ol-unselectable.ol-control.ol-uncollapsible {
@@ -397,6 +367,12 @@ textarea.textarea-autosize.form-control-sm {
 
 /* .d3plus-zoom-controls */
 
+.d3plus-zoom-control {
+    position: absolute !important;
+    top: 50px !important;
+    left: 0 !important;
+}
+
 .d3plus-zoom-control .zoom-control {
     position: relative;
     height: 32px !important;
@@ -411,6 +387,23 @@ textarea.textarea-autosize.form-control-sm {
 
 .choropleth-wrapper svg {
     border-radius: 18px !important;
+}
+
+.coordinatepointmap-wrapper svg {
+    border-radius: 18px !important;
+}
+
+/* CSS Tweaks for map control buttons only for Chrome	 */
+
+@media screen and (-webkit-min-device-pixel-ratio:0) { 
+    .d3plus-zoom-control .zoom-control {
+       
+    }
+
+    .viz-wrapper-div svg foreignObject {
+        width: 42px !important;
+    }
+
 }
 
 

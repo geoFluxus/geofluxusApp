@@ -18,38 +18,28 @@ define([
             var options = options || {};
             var _this = this;
 
-            if (options.xSort) {
-                new d3plus.Plot()
-                    .tooltipConfig(options.tooltipConfig)
-                    .data(options.data)
-                    .groupBy(options.groupBy[0])
-                    .x(options.x)
-                    .y("amount")
-                    .baseline(0)
-                    .discrete("x")
-                    .xSort(options.xSort)
-                    .select(options.el)
-                    .legend(options.hasLegend)
-                    .shape("Bar")
-                    .downloadPosition("left")
-                    .downloadButton(true)
-                    .render();
-            } else {
-                new d3plus.Plot()
-                    .tooltipConfig(options.tooltipConfig)
-                    .data(options.data)
-                    .groupBy(options.groupBy[0])
-                    .x(options.x)
-                    .y("amount")
-                    .baseline(0)
-                    .discrete("x")
-                    .select(options.el)
-                    .legend(options.hasLegend)
-                    .shape("Bar")
-                    .downloadPosition("left")
-                    .downloadButton(true)
-                    .render();
-            }
+            let hasLegend = $("#display-legend").prop("checked");
+            let xSort = options.xSort ? options.xSort : null;
+
+            new d3plus.Plot()
+                .tooltipConfig(options.tooltipConfig)
+                .data(options.data)
+                .groupBy(options.groupBy[0])
+                .x(options.x)
+                .y("amount")
+                .baseline(0)
+                .discrete("x")
+                .xSort(xSort)
+                .select(options.el)
+                .legend(hasLegend)
+                .shape("Bar")
+                .downloadPosition("left")
+                .downloadButton(true)
+                .controlConfig({
+                    text: "<i class='fas fa-camera' style='color: white'></i>",
+                })
+                .controlPadding(0)
+                .render();
         }
     }
     return BarChart;

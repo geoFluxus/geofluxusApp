@@ -16,9 +16,9 @@ define([
          */
         constructor(options) {
             var options = options || {};
-            var _this = this;
 
-            let groupByValue = options.groupBy ? options.groupBy[0] : {}
+            let hasLegend = $("#display-legend").prop("checked");
+            let groupByValue = options.groupBy ? options.groupBy : null;
             let shapeConfigValue = {
                 Line: {
                     strokeWidth: 2,
@@ -40,9 +40,13 @@ define([
                 .shape("Line")
                 .shapeConfig(shapeConfigValue)
                 .tooltipConfig(options.tooltipConfig)
-                .legend(options.hasLegend)
+                .legend(hasLegend)
                 .downloadPosition("left")
                 .downloadButton(true)
+                .controlConfig({
+                    text: "<i class='fas fa-camera' style='color: white'></i>",
+                })
+                .controlPadding(0)
                 .select(options.el)
                 .render();
         }

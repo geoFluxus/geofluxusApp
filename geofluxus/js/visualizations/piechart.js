@@ -18,21 +18,18 @@ define([
             var options = options || {};
             var _this = this;
 
+            let hasLegend = $("#display-legend").prop("checked");
+
             new d3plus.Pie()
                 .config({
                     data: options.data,
                     groupBy: options.groupBy,
                     value: function (d) {
-                        return d["amount"].toFixed(3);
+                        return d["amount"];
                     },
                     tooltipConfig: options.tooltipConfig,
                 })
-                .legend(options.hasLegend)
-                // .format({
-                //     "number": function(number, params) {
-                //         return number.toFixed(2);
-                //     }
-                // })
+                .legend(hasLegend)
                 .shapeConfig({
                     labelConfig: {
                         fontFamily: "Montserrat",
@@ -42,6 +39,10 @@ define([
                 .select(options.el)
                 .downloadPosition("left")
                 .downloadButton(true)
+                .controlConfig({
+                    text: "<i class='fas fa-camera' style='color: white'></i>",
+                })
+                .controlPadding(0)
                 .render();
         }
     }

@@ -1,6 +1,7 @@
 define(['views/common/baseview',
         'underscore',
         'd3',
+        'd3plus',
         'visualizations/treeMap',
         'collections/collection',
         'app-config',
@@ -13,6 +14,7 @@ define(['views/common/baseview',
         BaseView,
         _,
         d3,
+        d3plus,
         TreeMap,
         Collection,
         config,
@@ -42,42 +44,33 @@ define(['views/common/baseview',
                     TreeMapView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
-                    var _this = this;
-
                     this.options = options;
-
                     this.render();
                 },
-
 
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
                 },
 
-                /*
-                 * render the view
-                 */
                 render: function (data) {
                     let flows = this.options.flows;
                     let groupBy;
                     let tooltipConfig = {};
-                    let hasLegend = true;
 
                     // /////////////////////////////
                     // Time dimension
                     if (this.options.dimensions[0][0] == "time") {
                         // Granularity = year
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
-                            hasLegend = false;
                             groupBy = ["year"];
                             tooltipConfig = {
                                 title: function (d) {
                                     return d.year
                                 },
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                 ]
                             }
@@ -85,14 +78,13 @@ define(['views/common/baseview',
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
                             groupBy = ["year", "month"];
-                            hasLegend = false;
                             tooltipConfig = {
                                 title: function (d) {
                                     return d.year
                                 },
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                 ]
                             }
@@ -101,17 +93,33 @@ define(['views/common/baseview',
                         // /////////////////////////////
                         // Space dimension
                     } else if (this.options.dimensions[0][0] == "space") {
-                        groupBy = ["areaName"];
-                        hasLegend = false;
-                        tooltipConfig = {
-                            title: function (d) {
-                                return d.areaName
-                            },
-                            tbody: [
-                                ["Total", function (d) {
-                                    return d["amount"].toFixed(3)
-                                }],
-                            ]
+
+                        // Areas:
+                        if (!this.options.dimensions.isActorLevel) {
+                            groupBy = ["areaName"];
+                            tooltipConfig = {
+                                title: function (d) {
+                                    return d.areaName
+                                },
+                                tbody: [
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                                    }],
+                                ]
+                            }
+                        } else {
+                            // Actor level
+                            groupBy = ["actorName"];
+                            tooltipConfig = {
+                                title: function (d) {
+                                    return d.actorName
+                                },
+                                tbody: [
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                                    }],
+                                ]
+                            }
                         }
 
                         // /////////////////////////////
@@ -120,11 +128,10 @@ define(['views/common/baseview',
                         // Granularity = Activity group
                         if (this.options.dimensions[0][1] == "origin__activity__activitygroup" || this.options.dimensions[0][1] == "destination__activity__activitygroup") {
                             groupBy = ["activityGroupCode"];
-                            hasLegend = false;
                             tooltipConfig = {
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Activity group", function (d) {
                                         return d.activityGroupCode + " " + d.activityGroupName;
@@ -134,28 +141,35 @@ define(['views/common/baseview',
 
                             // Granularity: Activity
                         } else if (this.options.dimensions[0][1] == "origin__activity" || this.options.dimensions[0][1] == "destination__activity") {
-                            groupBy = ["activityCode"];
-                            hasLegend = false;
+                            groupBy = ["activityGroupCode", "activityCode"];
                             tooltipConfig = {
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Activity", function (d) {
                                         return d.activityCode + " " + d.activityName;
                                     }],
+                                    ["Activity group", function (d) {
+                                        return d.activityGroupCode + " " + d.activityGroupName;
+                                    }],
                                 ]
                             }
                         }
+
+                        // /////////////////////////////
+                        // Treatment method dimension
                     } else if (this.options.dimensions[0][0] == "treatmentMethod") {
 
                         if (this.options.dimensions[0][1] == "origin__process__processgroup" || this.options.dimensions[0][1] == "destination__process__processgroup") {
                             groupBy = ["processGroupCode"];
-                            hasLegend = false;
                             tooltipConfig = {
+                                title: function (d) {
+                                    return d.processGroupCode
+                                },
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Treatment method group", function (d) {
                                         return d.processGroupCode + " " + d.processGroupName;
@@ -165,22 +179,24 @@ define(['views/common/baseview',
 
                             // Granularity: Activity
                         } else if (this.options.dimensions[0][1] == "origin__process" || this.options.dimensions[0][1] == "destination__process") {
-                            groupBy = ["processCode"];
-                            hasLegend = false;
+                            groupBy = ["processGroupCode", "processCode"];
                             tooltipConfig = {
+                                title: function (d) {
+                                    return d.processCode
+                                },
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Treatment method", function (d) {
                                         return d.processCode + " " + d.processName;
                                     }],
+                                    ["Treatment method group", function (d) {
+                                        return d.processGroupCode + " " + d.processGroupName;
+                                    }],
                                 ]
                             }
                         }
-
-
-
 
                     }
 
@@ -190,21 +206,13 @@ define(['views/common/baseview',
                         data: flows,
                         groupBy: groupBy,
                         tooltipConfig: tooltipConfig,
-                        hasLegend: hasLegend,
                     });
                 },
 
-                /*
-                 * render sankey-diagram in fullscreen
-                 */
                 toggleFullscreen: function (event) {
                     this.el.classList.toggle('fullscreen');
                     this.refresh();
                     event.stopImmediatePropagation();
-                },
-
-                refresh: function (options) {
-
                 },
 
                 exportCSV: function (event) {
@@ -239,9 +247,6 @@ define(['views/common/baseview',
                     event.stopImmediatePropagation();
                 },
 
-                /*
-                 * remove this view from the DOM
-                 */
                 close: function () {
                     this.undelegateEvents(); // remove click events
                     this.unbind(); // Unbind all local event bindings

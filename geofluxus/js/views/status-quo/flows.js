@@ -11,6 +11,7 @@ define(['views/common/baseview',
         'views/common/linePlotView',
         'views/common/treeMapView',
         'views/common/choroplethView',
+        'views/common/coordinatePointMapView',
     ],
     function (
         BaseView,
@@ -25,6 +26,7 @@ define(['views/common/baseview',
         LinePlotView,
         TreeMapView,
         ChoroplethView,
+        CoordinatePointMapView,
     ) {
 
         var FlowsView = BaseView.extend({
@@ -57,14 +59,12 @@ define(['views/common/baseview',
 
                 this.el.innerHTML = template();
 
-
                 // this.sankeyWrapper = this.el.querySelector('.sankey-wrapper');
                 // this.sankeyWrapper.addEventListener('linkSelected', this.linkSelected);
                 // this.sankeyWrapper.addEventListener('linkDeselected', this.linkDeselected);
                 // this.sankeyWrapper.addEventListener('nodeSelected', this.nodeSelected);
                 // this.sankeyWrapper.addEventListener('nodeDeselected', this.nodeDeselected);
                 // this.sankeyWrapper.addEventListener('allDeselected', this.deselectAll);
-
 
                 // Render flow filters
                 this.renderFilterFlowsView();
@@ -511,7 +511,7 @@ define(['views/common/baseview',
             //     this.flowMapView.rerender();
             // },
 
-            render1Dvisualizations: function (dimensions, flows, selectedVisualisationString) {
+            render1Dvisualizations: function (dimensions, flows, selectedVizualisationString) {
                 let _this = this;
                 let filterFlowsView = this.filterFlowsView;
 
@@ -547,7 +547,7 @@ define(['views/common/baseview',
                         flows = _.sortBy(flows, 'id');
                     }
 
-                    switch (selectedVisualisationString) {
+                    switch (selectedVizualisationString) {
                         case "piechart":
                             this.renderPieChart1D(dimensions, flows);
                             break;
@@ -569,29 +569,57 @@ define(['views/common/baseview',
                 } else if (dimensions[0][0] == "space") {
                     let dimension = dimensions[0][1];
 
-                    areas = new Collection([], {
-                        apiTag: 'areas',
-                        apiIds: [dimension.adminlevel]
-                    });
-                    areas.fetch({
-                        success: function () {
-                            var geojson = {};
-                            geojson['type'] = 'FeatureCollection';
-                            features = geojson['features'] = [];
-                            areas.forEach(function (area) {
-                                var feature = {};
-                                feature['type'] = 'Feature';
-                                feature['id'] = area.get('id')
-                                feature['geometry'] = area.get('geom')
-                                features.push(feature)
-                            })
+                    // If level == actor:
+                    let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
+                    if (dimension.adminlevel == actorAreaLevelId) {
+                        dimensions.isActorLevel = true;
+                    }
 
-                            _this.renderChoropleth1D(dimensions, flows, geojson);
-                        },
-                        error: function (res) {
-                            console.log(res);
-                        }
-                    });
+                    switch (selectedVizualisationString) {
+                        case "piechart":
+                            this.renderPieChart1D(dimensions, flows);
+                            break;
+                        case "barchart":
+                            this.renderBarChart1D(dimensions, flows);
+                            break;
+                        case "lineplot":
+                            this.renderLinePlot1D(dimensions, flows);
+                            break;
+                        case "treemap":
+                            this.renderTreeMap1D(dimensions, flows);
+                            break;
+                        case "choroplethmap":
+                            areas = new Collection([], {
+                                apiTag: 'areas',
+                                apiIds: [dimension.adminlevel]
+                            });
+
+                            areas.fetch({
+                                success: function () {
+                                    var geoJson = {};
+                                    geoJson['type'] = 'FeatureCollection';
+                                    features = geoJson['features'] = [];
+                                    areas.forEach(function (area) {
+                                        var feature = {};
+                                        feature['type'] = 'Feature';
+                                        feature['id'] = area.get('id')
+                                        feature['geometry'] = area.get('geom')
+                                        features.push(feature)
+                                    })
+
+                                    _this.renderChoropleth1D(dimensions, flows, geoJson);
+                                },
+                                error: function (res) {
+                                    console.log(res);
+                                }
+                            });
+                            break;
+                        case "coordinatepointmap": // Only in case of Actor
+                            _this.renderCoordinatePointMap1D(dimensions, flows);
+                            break;
+                        default:
+                            // Nothing
+                    }
 
                     // /////////////////////////////
                     // Economic Activity dimension
@@ -613,14 +641,19 @@ define(['views/common/baseview',
                     } else if (dimensions[0][1] == "origin__activity" || dimensions[0][1] == "destination__activity") {
 
                         flows.forEach(function (flow, index) {
+                            let activityGroupName = "";
                             let activityObject = activities.find(activity => activity.attributes.id == flow.activity);
 
                             this[index].activityCode = activityObject.attributes.nace;
                             this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
+
+                            this[index].activityGroupCode = this[index].activityCode.substring(0, this[index].activityCode.indexOf('-'));
+                            activityGroupName = activityGroups.find(activityGroup => activityGroup.attributes.code == this[index].activityGroupCode).attributes.name;
+                            this[index].activityGroupName = activityGroupName[0].toUpperCase() + activityGroupName.slice(1).toLowerCase();
                         }, flows);
                     }
 
-                    switch (selectedVisualisationString) {
+                    switch (selectedVizualisationString) {
                         case "piechart":
                             this.renderPieChart1D(dimensions, flows);
                             break;
@@ -655,14 +688,19 @@ define(['views/common/baseview',
                     } else if (dimensions[0][1] == "origin__process" || dimensions[0][1] == "destination__process") {
 
                         flows.forEach(function (flow, index) {
+                            let processGroupName = "";
                             let processObject = processes.find(process => process.attributes.id == flow.process);
 
                             this[index].processCode = processObject.attributes.code;
                             this[index].processName = processObject.attributes.name[0].toUpperCase() + processObject.attributes.name.slice(1).toLowerCase();
+
+                            this[index].processGroupCode = processObject.attributes.code.substring(0, 1);
+                            processGroupName = processGroups.find(processGroup => processGroup.attributes.code == this[index].processGroupCode).attributes.name;
+                            this[index].processGroupName = processGroupName[0].toUpperCase() + processGroupName.slice(1).toLowerCase();
                         }, flows);
                     }
 
-                    switch (selectedVisualisationString) {
+                    switch (selectedVizualisationString) {
                         case "piechart":
                             this.renderPieChart1D(dimensions, flows);
                             break;
@@ -677,6 +715,10 @@ define(['views/common/baseview',
                     }
                 }
 
+                console.log(flows);
+            },
+
+            render2Dvisualizations: function (dimensions, flows, selectedVizualisationString) {
                 console.log(flows);
             },
 
@@ -732,7 +774,7 @@ define(['views/common/baseview',
                 });
             },
 
-            renderChoropleth1D: function (dimensions, flows, topoJsonURL) {
+            renderChoropleth1D: function (dimensions, flows, geoJson) {
                 if (this.choroplethView != null) this.choroplethView.close();
 
                 $(".choropleth-wrapper").fadeIn();
@@ -742,7 +784,20 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
-                    topoJsonURL: topoJsonURL,
+                    geoJson: geoJson,
+                });
+            },
+
+            renderCoordinatePointMap1D: function (dimensions, flows) {
+                if (this.coordinatePointMapView != null) this.coordinatePointMapView.close();
+
+                $(".coordinatepointmap-wrapper").fadeIn();
+
+                this.coordinatePointMapView = new CoordinatePointMapView({
+                    el: ".coordinatepointmap-wrapper",
+                    dimensions: dimensions,
+                    flows: flows,
+                    flowsView: this,
                 });
             },
 
@@ -754,6 +809,7 @@ define(['views/common/baseview',
                 if (this.linePlotView != null) this.linePlotView.close();
                 if (this.treeMapView != null) this.treeMapView.close();
                 if (this.choroplethView != null) this.choroplethView.close();
+                if (this.coordinatePointMapView != null) this.coordinatePointMapView.close();
             },
 
             // Fetch flows and calls options.success(flows) on success
@@ -761,12 +817,12 @@ define(['views/common/baseview',
                 let _this = this;
                 let filterParams = this.getFlowFilterParams();
                 let data = {};
-                let selectedVisualisationString;
+                let selectedVizualisationString;
                 this.selectedDimensions = Object.entries(filterParams.dimensions);
 
                 $('.viz-selector-button').each(function (index, value) {
                     if ($(this).hasClass("active")) {
-                        selectedVisualisationString = $(this).attr("data-viz");
+                        selectedVizualisationString = $(this).attr("data-viz");
                     }
                 });
 
@@ -794,16 +850,14 @@ define(['views/common/baseview',
 
                             switch (_this.selectedDimensions.length) {
                                 case 1:
-                                    _this.render1Dvisualizations(_this.selectedDimensions, _this.flows, selectedVisualisationString);
+                                    _this.render1Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
                                     break;
                                 case 2:
-                                    // code block
+                                    _this.render2Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
                                     break;
                                 default:
                                     // Nothing
                             }
-
-                            $(".d3plus-viz-controls-container .d3plus-Button").html("<i class='fas fa-camera' style='color: white'></i>");
 
                             _this.loader.deactivate();
 

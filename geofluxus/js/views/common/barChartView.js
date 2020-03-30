@@ -1,6 +1,7 @@
 define(['views/common/baseview',
         'underscore',
         'd3',
+        'd3plus',
         'visualizations/barchart',
         'collections/collection',
         'app-config',
@@ -13,6 +14,7 @@ define(['views/common/baseview',
         BaseView,
         _,
         d3,
+        d3plus,
         BarChart,
         Collection,
         config,
@@ -42,30 +44,21 @@ define(['views/common/baseview',
                     BarChartView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
-                    var _this = this;
-
                     this.options = options;
 
-                    //this.transformedData = this.transformData(this.flows);
-                    //this.render(this.transformedData);
                     this.render();
                 },
-
 
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
                 },
 
-                /*
-                 * render the view
-                 */
                 render: function (data) {
                     let flows = this.options.flows;
                     let groupBy;
                     let x;
                     let tooltipConfig;
-                    let hasLegend = true;
                     let xSort;
 
                     // /////////////////////////////
@@ -77,8 +70,8 @@ define(['views/common/baseview',
                             x = ["year"];
                             tooltipConfig = {
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Year", function (d) {
                                         return d.year
@@ -89,11 +82,10 @@ define(['views/common/baseview',
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
                             groupBy = ["month"];
                             x = ["month"];
-                            hasLegend = false;
                             tooltipConfig = {
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Month", function (d) {
                                         return d.month
@@ -102,25 +94,41 @@ define(['views/common/baseview',
                             }
                         }
 
-
                         // /////////////////////////////
                         // Space dimension
                     } else if (this.options.dimensions[0][0] == "space") {
-                        groupBy = ["areaName"];
-                        x = ["areaName"];
-                        hasLegend = false;
                         xSort = function (a, b) {
                             return b["amount"] - a["amount"];
                         }
-                        tooltipConfig = {
-                            title: function (d) {
-                                return d.areaName
-                            },
-                            tbody: [
-                                ["Total", function (d) {
-                                    return d["amount"].toFixed(3)
-                                }],
-                            ]
+
+                        // Areas:
+                        if (!this.options.dimensions.isActorLevel) {
+                            groupBy = ["areaName"];
+                            x = ["areaName"];
+                            tooltipConfig = {
+                                title: function (d) {
+                                    return d.areaName
+                                },
+                                tbody: [
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                                    }],
+                                ]
+                            }
+                        } else {
+                            // Actor level
+                            groupBy = ["actorName"];
+                            x = ["actorName"];
+                            tooltipConfig = {
+                                title: function (d) {
+                                    return d.actorName
+                                },
+                                tbody: [
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                                    }],
+                                ]
+                            }
                         }
 
                         // /////////////////////////////
@@ -135,9 +143,12 @@ define(['views/common/baseview',
                             groupBy = ["activityGroupCode"];
                             x = ["activityGroupCode"];
                             tooltipConfig = {
+                                title: function (d) {
+                                    return d.activityGroupCode
+                                },
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Activity group", function (d) {
                                         return d.activityGroupCode + " " + d.activityGroupName;
@@ -147,20 +158,28 @@ define(['views/common/baseview',
 
                             // Granularity: Activity
                         } else if (this.options.dimensions[0][1] == "origin__activity" || this.options.dimensions[0][1] == "destination__activity") {
-                            groupBy = ["activityCode"];
-                            hasLegend = false;
                             x = ["activityCode"];
+                            groupBy = ["activityGroupCode", "activityCode"];
                             tooltipConfig = {
+                                title: function (d) {
+                                    return d.activityCode
+                                },
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Activity", function (d) {
                                         return d.activityCode + " " + d.activityName;
                                     }],
+                                    ["Activity group", function (d) {
+                                        return d.activityGroupCode + " " + d.activityGroupName;
+                                    }],
                                 ]
                             }
                         }
+
+                        // /////////////////////////////
+                        // Treatment method dimension
                     } else if (this.options.dimensions[0][0] == "treatmentMethod") {
                         xSort = function (a, b) {
                             return b["amount"] - a["amount"];
@@ -172,8 +191,8 @@ define(['views/common/baseview',
                             x = ["processGroupCode"];
                             tooltipConfig = {
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Treatment method group", function (d) {
                                         return d.processGroupCode + " " + d.processGroupName;
@@ -185,11 +204,10 @@ define(['views/common/baseview',
                         } else if (this.options.dimensions[0][1] == "origin__process" || this.options.dimensions[0][1] == "destination__process") {
                             groupBy = ["processCode"];
                             x = ["processCode"];
-                            hasLegend = false;
                             tooltipConfig = {
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Treatment method", function (d) {
                                         return d.processCode + " " + d.processName;
@@ -199,7 +217,6 @@ define(['views/common/baseview',
                         }
                     }
 
-
                     // Create a new D3Plus BarChart object which will be rendered in this.options.el:
                     this.barChart = new BarChart({
                         el: this.options.el,
@@ -207,23 +224,14 @@ define(['views/common/baseview',
                         groupBy: groupBy,
                         x: x,
                         tooltipConfig: tooltipConfig,
-                        hasLegend: hasLegend,
                         xSort: xSort,
                     });
                 },
 
-                /*
-                 * render sankey-diagram in fullscreen
-                 */
                 toggleFullscreen: function (event) {
                     this.el.classList.toggle('fullscreen');
                     this.refresh();
                     event.stopImmediatePropagation();
-                    //this.render(this.transformedData);
-                },
-
-                refresh: function (options) {
-
                 },
 
                 exportCSV: function (event) {
@@ -258,9 +266,6 @@ define(['views/common/baseview',
                     event.stopImmediatePropagation();
                 },
 
-                /*
-                 * remove this view from the DOM
-                 */
                 close: function () {
                     this.undelegateEvents(); // remove click events
                     this.unbind(); // Unbind all local event bindings
