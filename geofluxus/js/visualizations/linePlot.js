@@ -48,6 +48,7 @@ define([
                     text: "<i class='fas fa-camera' style='color: white'></i>",
                 })
                 .select(options.el)
+                .controlPadding(0)
                 .render();
         }
     }

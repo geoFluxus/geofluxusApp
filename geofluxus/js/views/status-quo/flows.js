@@ -570,7 +570,7 @@ define(['views/common/baseview',
                     let dimension = dimensions[0][1];
 
                     // If level == actor:
-                    let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.name == "Actor").attributes.id;
+                    let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
                     if (dimension.adminlevel == actorAreaLevelId) {
                         dimensions.isActorLevel = true;
                     }
@@ -858,8 +858,6 @@ define(['views/common/baseview',
                                 default:
                                     // Nothing
                             }
-
-                            //$(".d3plus-viz-controls-container .d3plus-Button").html("<i class='fas fa-camera' style='color: white'></i>");
 
                             _this.loader.deactivate();
 

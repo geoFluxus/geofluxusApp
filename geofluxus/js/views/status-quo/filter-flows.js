@@ -569,13 +569,11 @@ define(['views/common/baseview',
 
                 $(_this.dimensions.spaceLevelGranSelect).change(function () {
                     let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
-                    let selectedAreaName = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.id == selectedAreaLevelId).attributes.name;
-
-                    console.log("Level changed");
+                    let selectedAreaLevel = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.id.toString() == selectedAreaLevelId).attributes.level;
 
                     if (_this.selectedDimensionStrings.includes("space")) {
 
-                        if (selectedAreaName == "Actor") {
+                        if (selectedAreaLevel == 1000) {
                             $("#viz-coordinatepointmap").parent().show();
                             $("#viz-choroplethmap").parent().hide();
                         } else {

@@ -25,7 +25,7 @@ define([
                     data: options.data,
                     groupBy: options.groupBy,
                     value: function (d) {
-                        return d["amount"].toFixed(3);
+                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale());
                     },
                     tooltipConfig: options.tooltipConfig,
                 })

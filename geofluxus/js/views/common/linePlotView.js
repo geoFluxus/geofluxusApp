@@ -1,6 +1,7 @@
 define(['views/common/baseview',
         'underscore',
         'd3',
+        'd3plus',
         'visualizations/linePlot',
         'collections/collection',
         'app-config',
@@ -13,6 +14,7 @@ define(['views/common/baseview',
         BaseView,
         _,
         d3,
+        d3plus,
         LinePlot,
         Collection,
         config,
@@ -67,8 +69,8 @@ define(['views/common/baseview',
                             tooltipConfig = {
                                 title: "Waste totals per year",
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Year", function (d) {
                                         return d.year
@@ -83,8 +85,8 @@ define(['views/common/baseview',
                             tooltipConfig = {
                                 title: "Waste totals per month",
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Month", function (d) {
                                         return d.month

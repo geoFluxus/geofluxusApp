@@ -25,7 +25,7 @@ define([
                     //data: options.data,
                     //groupBy: options.groupBy,
                     // value: function (d) {
-                    //     return d["amount"].toFixed(3);
+                    //     return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale());
                     // },
                 })
                 //tile: d3.treemapDice
@@ -46,6 +46,7 @@ define([
                 .controlConfig({
                     text: "<i class='fas fa-camera' style='color: white'></i>",
                 })
+                .controlPadding(0)
                 .render();
         }
     }

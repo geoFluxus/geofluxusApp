@@ -1,6 +1,7 @@
 define(['views/common/baseview',
         'underscore',
         'd3',
+        'd3plus',
         'visualizations/barchart',
         'collections/collection',
         'app-config',
@@ -13,6 +14,7 @@ define(['views/common/baseview',
         BaseView,
         _,
         d3,
+        d3plus,
         BarChart,
         Collection,
         config,
@@ -68,8 +70,8 @@ define(['views/common/baseview',
                             x = ["year"];
                             tooltipConfig = {
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Year", function (d) {
                                         return d.year
@@ -82,8 +84,8 @@ define(['views/common/baseview',
                             x = ["month"];
                             tooltipConfig = {
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Month", function (d) {
                                         return d.month
@@ -108,8 +110,8 @@ define(['views/common/baseview',
                                     return d.areaName
                                 },
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                 ]
                             }
@@ -122,8 +124,8 @@ define(['views/common/baseview',
                                     return d.actorName
                                 },
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                 ]
                             }
@@ -145,8 +147,8 @@ define(['views/common/baseview',
                                     return d.activityGroupCode
                                 },
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Activity group", function (d) {
                                         return d.activityGroupCode + " " + d.activityGroupName;
@@ -163,8 +165,8 @@ define(['views/common/baseview',
                                     return d.activityCode
                                 },
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Activity", function (d) {
                                         return d.activityCode + " " + d.activityName;
@@ -189,8 +191,8 @@ define(['views/common/baseview',
                             x = ["processGroupCode"];
                             tooltipConfig = {
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Treatment method group", function (d) {
                                         return d.processGroupCode + " " + d.processGroupName;
@@ -204,8 +206,8 @@ define(['views/common/baseview',
                             x = ["processCode"];
                             tooltipConfig = {
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Treatment method", function (d) {
                                         return d.processCode + " " + d.processName;

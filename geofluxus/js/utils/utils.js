@@ -3,13 +3,13 @@ module.exports = {
 
     // loader shown in center of given div as spinning circle when activated
     // options.disable disables given div while loader is active
-    Loader: function(div, options) {
+    Loader: function (div, options) {
         var loaderDiv = document.createElement('div');
         loaderDiv.className = 'loader';
         var backdropDiv = document.createElement('div');
         backdropDiv.className = 'modal-backdrop in';
 
-        this.activate = function(opt){
+        this.activate = function (opt) {
             var opt = opt || {};
             loaderDiv.style.top = null;
             if (options != null && options.disable)
@@ -19,14 +19,13 @@ module.exports = {
             div.appendChild(backdropDiv);
         }
 
-        this.deactivate = function(){
+        this.deactivate = function () {
             if (options != null && options.disable)
                 div.classList.remove('disabled');
-            try{
+            try {
                 div.removeChild(loaderDiv);
                 div.removeChild(backdropDiv);
-            }
-            catch(err){
+            } catch (err) {
                 console.log(err.message)
             }
         }
@@ -34,19 +33,18 @@ module.exports = {
 
     // success: function (data, textStatus, jqXHR)
     // error: function(response)
-    uploadForm: function(data, url, options){
+    uploadForm: function (data, url, options) {
         var options = options || {},
             method = options.method || 'POST',
-            success = options.success || function(){},
-            error = options.error || function(){};
+            success = options.success || function () {},
+            error = options.error || function () {};
         var formData = new FormData();
-        for (var key in data){
-            if (data[key] instanceof Array){
-                data[key].forEach(function(d){
+        for (var key in data) {
+            if (data[key] instanceof Array) {
+                data[key].forEach(function (d) {
                     formData.append(key, d);
                 })
-            }
-            else
+            } else
                 formData.append(key, data[key]);
         }
         $.ajax({
@@ -62,7 +60,7 @@ module.exports = {
             error: error
         });
     },
-    colorByName: function(name){
+    colorByName: function (name) {
         name = String(name);
         return color(name.replace(/ .*/, ""));
     },
@@ -75,4 +73,16 @@ module.exports = {
         return monthNames[monthNumber]
     },
 
+    returnD3plusFormatLocale: function () {
+        return {
+            separator: "",
+            suffixes: ["y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "B", "t", "q", "Q", "Z", "Y"],
+            grouping: [3],
+            delimiters: {
+                thousands: " ",
+                decimal: ","
+            },
+            currency: ["€", ""]
+        }
+    },
 }

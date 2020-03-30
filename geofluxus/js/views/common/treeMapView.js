@@ -1,6 +1,7 @@
 define(['views/common/baseview',
         'underscore',
         'd3',
+        'd3plus',
         'visualizations/treeMap',
         'collections/collection',
         'app-config',
@@ -13,6 +14,7 @@ define(['views/common/baseview',
         BaseView,
         _,
         d3,
+        d3plus,
         TreeMap,
         Collection,
         config,
@@ -67,8 +69,8 @@ define(['views/common/baseview',
                                     return d.year
                                 },
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                 ]
                             }
@@ -81,8 +83,8 @@ define(['views/common/baseview',
                                     return d.year
                                 },
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                 ]
                             }
@@ -100,8 +102,8 @@ define(['views/common/baseview',
                                     return d.areaName
                                 },
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                 ]
                             }
@@ -113,8 +115,8 @@ define(['views/common/baseview',
                                     return d.actorName
                                 },
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                 ]
                             }
@@ -128,8 +130,8 @@ define(['views/common/baseview',
                             groupBy = ["activityGroupCode"];
                             tooltipConfig = {
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Activity group", function (d) {
                                         return d.activityGroupCode + " " + d.activityGroupName;
@@ -142,8 +144,8 @@ define(['views/common/baseview',
                             groupBy = ["activityGroupCode", "activityCode"];
                             tooltipConfig = {
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Activity", function (d) {
                                         return d.activityCode + " " + d.activityName;
@@ -166,8 +168,8 @@ define(['views/common/baseview',
                                     return d.processGroupCode
                                 },
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Treatment method group", function (d) {
                                         return d.processGroupCode + " " + d.processGroupName;
@@ -183,8 +185,8 @@ define(['views/common/baseview',
                                     return d.processCode
                                 },
                                 tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                                     }],
                                     ["Treatment method", function (d) {
                                         return d.processCode + " " + d.processName;

@@ -61,8 +61,8 @@ define(['views/common/baseview',
                             return d.areaName
                         },
                         tbody: [
-                            ["Total", function (d) {
-                                return d["amount"].toFixed(3)
+                            ["Waste (metric ton)", function (d) {
+                                return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                             }],
                         ]
                     }
