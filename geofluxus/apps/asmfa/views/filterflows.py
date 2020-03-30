@@ -297,7 +297,7 @@ class FilterFlowViewSet(PostGetViewMixin,
                     area = Area.objects.filter(id=group[field])[0]
 
                     # serialize area
-                    flow_item.append(('id', area.id))
+                    flow_item.append(('areaId', area.id))
                     flow_item.append(('areaName', area.name))
                 elif field == 'actor':
                     # recover
