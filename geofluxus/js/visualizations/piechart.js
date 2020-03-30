@@ -25,16 +25,11 @@ define([
                     data: options.data,
                     groupBy: options.groupBy,
                     value: function (d) {
-                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale());
+                        return d["amount"];
                     },
                     tooltipConfig: options.tooltipConfig,
                 })
                 .legend(hasLegend)
-                // .format({
-                //     "number": function(number, params) {
-                //         return number.toFixed(2);
-                //     }
-                // })
                 .shapeConfig({
                     labelConfig: {
                         fontFamily: "Montserrat",
