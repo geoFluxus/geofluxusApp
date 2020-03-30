@@ -32,7 +32,6 @@ define(['views/common/baseview',
         var LinePlotView = BaseView.extend(
             /** @lends module:views/LinePlotView.prototype */
             {
-
                 /**
                  * @param {Object} options
                  * @param {HTMLElement} options.el                   element the view will be rendered in
