@@ -35,8 +35,11 @@ define([
                 .shape("Bar")
                 .downloadPosition("left")
                 .downloadButton(true)
+                .controlConfig({
+                    text: "<i class='fas fa-camera' style='color: white'></i>",
+                })
+                .controlPadding(0)
                 .render();
-
         }
     }
     return BarChart;

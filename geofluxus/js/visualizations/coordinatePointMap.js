@@ -5,14 +5,14 @@ define([
 ], function (d3, d3brush, d3plus) {
     /**
      *
-     * ChoroplethMap chart to display Flows data
+     * CoordinatePointMap chart to display Flows data
      *
      * @author Evert Van Hirtum
      */
-    class ChoroplethMap {
+    class CoordinatePointMap {
         /**
          * @param {Object} options          object containing all option values
-         * @param {string} options.el       CSS Selector of the container element of the ChoroplethMap
+         * @param {string} options.el       CSS Selector of the container element of the CoordinatePointMap
          */
         constructor(options) {
             var options = options || {};
@@ -20,18 +20,23 @@ define([
 
             new d3plus.Geomap()
                 .data(options.data)
+                .groupBy("id")
                 .colorScale("amount")
-                .topojson(options.geoJson)
-                .tooltipConfig(options.tooltipConfig)
-                // .fitFilter(function (d) {
-                //     return ["02", "15", "43", "60", "66", "69", "72", "78"].indexOf(d.id) < 0;
-                // })
                 .colorScaleConfig({
-                    // color: ["red", "orange", "yellow", "green", "blue"]
-                    // color: ["green", "yellow", "red", ]
-                    // scale: "jenks",
                     color: ["red", "orange", "yellow", "green", "blue"].reverse()
                 })
+                .label(function (d) {
+                    return d.actorName;
+                })
+                .point(function (d) {
+                    return [d.lon, d.lat];
+                })
+                .pointSize(function (d) {
+                    return d.amount;
+                })
+                .pointSizeMin(2)
+                .pointSizeMax(50)
+                .tooltipConfig(options.tooltipConfig)
                 .select(options.el)
                 .downloadPosition("left")
                 .downloadButton(true)
@@ -42,5 +47,5 @@ define([
                 .render();
         }
     }
-    return ChoroplethMap;
+    return CoordinatePointMap;
 });

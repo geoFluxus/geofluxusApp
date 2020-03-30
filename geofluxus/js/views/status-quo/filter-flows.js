@@ -478,6 +478,7 @@ define(['views/common/baseview',
                         $(uncheckedToggles).each(function (index, value) {
                             this.bootstrapToggle('enable');
                         });
+                        $("#alertMaxDimensionsRow").fadeOut("fast");
                     }
 
 
@@ -520,7 +521,7 @@ define(['views/common/baseview',
 
                                 let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
 
-                                if (selectedAreaLevelId == "6") {
+                                if (selectedAreaLevelId == "13") {
                                     $("#viz-coordinatepointmap").parent().show();
                                     $("#viz-choroplethmap").parent().hide();
                                 } else {
@@ -566,17 +567,13 @@ define(['views/common/baseview',
 
                 });
 
-
                 $(_this.dimensions.spaceLevelGranSelect).change(function () {
                     let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
-
-                    let selectedAreaName = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.id == selectedAreaLevelId).attributes.name;
-
-                    console.log("level changed");
+                    let selectedAreaLevel = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.id.toString() == selectedAreaLevelId).attributes.level;
 
                     if (_this.selectedDimensionStrings.includes("space")) {
 
-                        if (selectedAreaName == "Actor") {
+                        if (selectedAreaLevel == 1000) {
                             $("#viz-coordinatepointmap").parent().show();
                             $("#viz-choroplethmap").parent().hide();
                         } else {
@@ -585,7 +582,6 @@ define(['views/common/baseview',
                         }
                     }
                 });
-
 
                 // Show granularity on toggle change:
                 $("#dim-toggle-time").change(function () {

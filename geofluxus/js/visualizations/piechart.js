@@ -25,16 +25,11 @@ define([
                     data: options.data,
                     groupBy: options.groupBy,
                     value: function (d) {
-                        return d["amount"].toFixed(3);
+                        return d["amount"];
                     },
                     tooltipConfig: options.tooltipConfig,
                 })
                 .legend(hasLegend)
-                // .format({
-                //     "number": function(number, params) {
-                //         return number.toFixed(2);
-                //     }
-                // })
                 .shapeConfig({
                     labelConfig: {
                         fontFamily: "Montserrat",
@@ -44,6 +39,10 @@ define([
                 .select(options.el)
                 .downloadPosition("left")
                 .downloadButton(true)
+                .controlConfig({
+                    text: "<i class='fas fa-camera' style='color: white'></i>",
+                })
+                .controlPadding(0)
                 .render();
         }
     }
