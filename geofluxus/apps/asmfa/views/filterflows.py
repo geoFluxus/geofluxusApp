@@ -304,7 +304,7 @@ class FilterFlowViewSet(PostGetViewMixin,
                     actor = Actor.objects.filter(id=group[field])[0]
 
                     # serialize actor
-                    flow_item.append(('id', actor.id))
+                    flow_item.append(('actorId', actor.id))
                     flow_item.append(('actorName', actor.company.identifier))
                     flow_item.append(('lon', actor.geom.x))
                     flow_item.append(('lat', actor.geom.y))
