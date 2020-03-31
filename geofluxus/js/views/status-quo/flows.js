@@ -542,6 +542,7 @@ define(['views/common/baseview',
 
                             this[index].id = monthObject.attributes.id;
                             this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
+                            this[index].monthName = this[index].month.substring(0, this[index].month.indexOf(' '));
                             this[index].yearMonthCode = parseInt(monthObject.attributes.code.substring(2, 6) + monthObject.attributes.code.substring(0, 2));
                             this[index].year = parseInt(monthObject.attributes.code.substring(2, 6));
                         }, flows);
@@ -561,6 +562,9 @@ define(['views/common/baseview',
                             break;
                         case "treemap":
                             this.renderTreeMap(dimensions, flows);
+                            break;
+                        case "lineplotmultiple":
+                            this.renderLinePlot(dimensions, flows, true);
                             break;
                         default:
                             // Nothing
@@ -846,7 +850,7 @@ define(['views/common/baseview',
                 });
             },
 
-            renderLinePlot: function (dimensions, flows) {
+            renderLinePlot: function (dimensions, flows, hasMultipleLines) {
                 if (this.linePlotView != null) this.linePlotView.close();
 
                 $(".lineplot-wrapper").fadeIn();
@@ -856,6 +860,7 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
+                    hasMultipleLines: hasMultipleLines,
                 });
             },
 

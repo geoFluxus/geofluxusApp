@@ -514,6 +514,10 @@ define(['views/common/baseview',
                                 $("#viz-treemap").parent().fadeIn();
                                 $("#viz-lineplot").parent().fadeIn();
 
+                                if ($(_this.dimensions.timeToggleGran).prop("checked")) {
+                                    $("#viz-lineplotmultiple").parent().fadeIn();
+                                }
+
                             } else if (_this.selectedDimensionStrings.includes("space")) {
                                 $("#viz-piechart").parent().fadeIn();
                                 $("#viz-barchart").parent().fadeIn();
@@ -583,7 +587,7 @@ define(['views/common/baseview',
                     let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
                     let selectedAreaLevel = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.id.toString() == selectedAreaLevelId).attributes.level;
 
-                    if (_this.selectedDimensionStrings.includes("space")) {
+                    if (_this.selectedDimensionStrings.length == 1 && _this.selectedDimensionStrings.includes("space")) {
 
                         if (selectedAreaLevel == 1000) {
                             $("#viz-coordinatepointmap").parent().fadeIn();
@@ -594,6 +598,16 @@ define(['views/common/baseview',
                         }
                     }
                 });
+
+                // Show Multiple Line option on dimension Time, granularity Month:
+                $(_this.dimensions.timeToggleGran).change(function () {
+                    if ($(_this.dimensions.timeToggleGran).prop("checked")) {
+                        $("#viz-lineplotmultiple").parent().fadeIn();
+                    } else if ($(_this.dimensions.timeToggleGran).prop("checked") && _this.selectedDimensionStrings.length == 1) {
+                        $("#viz-lineplotmultiple").parent().hide();
+                    }
+                });
+
 
                 // Show granularity on toggle change:
                 $("#dim-toggle-time").change(function () {

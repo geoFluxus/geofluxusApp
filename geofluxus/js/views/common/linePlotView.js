@@ -55,10 +55,11 @@ define(['views/common/baseview',
 
                 render: function (data) {
                     let flows = this.options.flows;
-                    
+
                     let dimensionsActual = [];
                     this.options.dimensions.forEach(dim => dimensionsActual.push(dim[0]));
-                        
+
+                    let hasMultipleLines = this.options.hasMultipleLines;
                     let tooltipConfig;
                     let groupBy;
                     let x;
@@ -67,6 +68,7 @@ define(['views/common/baseview',
                     // /////////////////////////////
                     // Time dimension
                     if (this.options.dimensions[0][0] == "time") {
+
                         // Granularity = year
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
                             x = ["year"];
@@ -84,8 +86,13 @@ define(['views/common/baseview',
 
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
-                            //groupBy = ["year"];
                             x = ["yearMonthCode"];
+
+                            if (hasMultipleLines) {
+                                groupBy = ["year"];
+                                x = ["monthName"];
+                            }
+
                             tooltipConfig = {
                                 title: "Waste totals per month",
                                 tbody: [
@@ -98,6 +105,7 @@ define(['views/common/baseview',
                                 ]
                             }
                         }
+                        
                     }
 
                     // //////////////////////////////////////////
