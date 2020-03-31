@@ -719,6 +719,55 @@ define(['views/common/baseview',
             },
 
             render2Dvisualizations: function (dimensions, flows, selectedVizualisationString) {
+                let _this = this;
+                let filterFlowsView = this.filterFlowsView;
+                let dimensionsActual = [];
+                // Array with dimension strings without Granularity:
+                dimensions.forEach(dim => dimensionsActual.push(dim[0]));
+
+                console.log("Dimensions");
+                console.log(dimensionsActual);
+
+                if (dimensionsActual.includes("time") && dimensionsActual.includes("space")) {
+                    console.log("time and space");
+
+                    switch (selectedVizualisationString) {
+                        case "piechart":
+                            //this.renderPieChart1D(dimensions, flows);
+                            break;
+                        case "barchart":
+                            //this.renderBarChart1D(dimensions, flows);
+                            break;
+                        case "treemap":
+                            //this.renderTreeMap1D(dimensions, flows);
+                            break;
+                        default:
+                            // Nothing
+                    }
+
+
+
+                } else if (dimensionsActual.includes("time") && dimensionsActual.includes("economicActivity")) {
+                    console.log("time and economicActivity");
+
+
+                } else if (dimensionsActual.includes("time") && dimensionsActual.includes("treatmentMethod")) {
+                    console.log("time and treatmentMethod");
+
+
+                } else if (dimensionsActual.includes("space") && dimensionsActual.includes("economicActivity")) {
+                    console.log("space and economicActivity");
+
+
+                } else if (dimensionsActual.includes("space") && dimensionsActual.includes("treatmentMethod")) {
+                    console.log("space and treatmentMethod");
+
+
+                } else if (dimensionsActual.includes("economicActivity") && dimensionsActual.includes("treatmentMethod")) {
+                    console.log("economicActivity and treatmentMethod");
+
+
+                }
                 console.log(flows);
             },
 

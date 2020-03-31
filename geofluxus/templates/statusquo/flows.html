@@ -874,8 +874,8 @@
                     
                     <div class="viz-container" style="display: none;">
                         <div class="row" style="width: 100%;">
-                            <div class="col-md-10 d-flex align-items-center" style="margin: auto">
-                                <div class="btn-group btn-group-toggle" id="visualization-type" data-toggle="buttons" style="margin: auto">
+                            <div class="col d-flex align-items-center mr-auto">
+                                <div class="btn-group btn-group-toggle flex-wrap justify-content-center" id="visualization-type" data-toggle="buttons" style="margin: auto">
                                     <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="piechart" style="display: none;">
                                         <input type="radio" id="viz-piechart"><span class="span-viz" id="span-viz-piechart">Pie chart</span>
                                     </label>
@@ -894,6 +894,17 @@
                                     <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="coordinatepointmap" style="display: none;">
                                         <input type="radio" id="viz-coordinatepointmap"><span class="span-viz" id="span-viz-coordinatepointmap">Coordinate point map</span>
                                     </label>
+
+                                    <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="lineplotmultiple" style="display: none;">
+                                        <input type="radio" id="viz-lineplotmultiple"><span class="span-viz" id="span-viz-lineplotmultiple">Multiple line plot</span>
+                                    </label>
+                                    <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="stackedareachart" style="display: none;">
+                                        <input type="radio" id="viz-stackedareachart"><span class="span-viz" id="span-viz-stackedareachart">Stacked area chart</span>
+                                    </label>
+                                    <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="stackedbarchart" style="display: none;">
+                                        <input type="radio" id="viz-stackedbarchart"><span class="span-viz" id="span-viz-stackedbarchart">Stacked bar chart</span>
+                                    </label>
+
                                 </div>
                             </div>
                         </div>
@@ -952,6 +963,10 @@
                 <div class="viz-wrapper-div treemap-wrapper"></div>
                 <div class="viz-wrapper-div choropleth-wrapper"></div>
                 <div class="viz-wrapper-div coordinatepointmap-wrapper"></div>
+
+                <div class="viz-wrapper-div lineplotmultiple-wrapper"></div>
+                <div class="viz-wrapper-div stackedareachart-wrapper"></div>
+                <div class="viz-wrapper-div stackedbarchart-wrapper"></div>
             </div>
         </div>
         

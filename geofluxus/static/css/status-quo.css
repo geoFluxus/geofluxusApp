@@ -173,14 +173,19 @@ label[for="activity-select"] {
 
 .viz-selector-button {
     border-radius: 18px !important;
-    margin-left: 1rem;
     margin-right: 1rem;
+    margin-bottom: 1rem !important;
     min-width: 10rem;
     display: flex;
+    max-width: 10rem;
 }
 
 .viz-selector-button.active {
     background-color: #00b6d6 !important;
+}
+
+.span-viz {
+    width: 100%;
 }
 
 .span-viz::before {
@@ -220,6 +225,20 @@ label[for="activity-select"] {
 #span-viz-lineplot::before {
     background-image: url('../img/viz-lineplot.svg');
 }
+
+
+#span-viz-lineplotmultiple::before {
+    background-image: url('../img/viz-lineplotmultiple.svg');
+}
+
+#span-viz-stackedareachart::before {
+    background-image: url('../img/viz-stackedareachart.svg');
+}
+
+#span-viz-stackedbarchart::before {
+    background-image: url('../img/viz-stackedbarchart.svg');
+}
+
 
 /* VISUALISATION STYLES */
 
@@ -395,10 +414,8 @@ textarea.textarea-autosize.form-control-sm {
 
 /* CSS Tweaks for map control buttons only for Chrome	 */
 
-@media screen and (-webkit-min-device-pixel-ratio:0) { 
-    .d3plus-zoom-control .zoom-control {
-       
-    }
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .d3plus-zoom-control .zoom-control {}
 
     .viz-wrapper-div svg foreignObject {
         width: 42px !important;
