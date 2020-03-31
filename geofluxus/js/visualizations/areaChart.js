@@ -16,7 +16,6 @@ define([
          */
         constructor(options) {
             var options = options || {};
-            var _this = this;
 
             let hasLegend = $("#display-legend").prop("checked");
             let xSort = options.xSort ? options.xSort : null;
@@ -33,7 +32,6 @@ define([
                 .xSort(xSort)
                 .select(options.el)
                 .legend(hasLegend)
-                //.shape("Bar")
                 .downloadPosition("left")
                 .downloadButton(true)
                 .controlConfig({

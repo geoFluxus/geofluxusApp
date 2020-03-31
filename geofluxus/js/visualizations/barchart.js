@@ -33,6 +33,7 @@ define([
                 .select(options.el)
                 .legend(hasLegend)
                 .shape("Bar")
+                .stacked(options.isStacked)
                 .downloadPosition("left")
                 .downloadButton(true)
                 .controlConfig({

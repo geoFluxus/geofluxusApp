@@ -551,16 +551,16 @@ define(['views/common/baseview',
 
                     switch (selectedVizualisationString) {
                         case "piechart":
-                            this.renderPieChart1D(dimensions, flows);
+                            this.renderPieChart(dimensions, flows);
                             break;
                         case "barchart":
-                            this.renderBarChart1D(dimensions, flows);
+                            this.renderBarChart(dimensions, flows);
                             break;
                         case "lineplot":
                             this.renderLinePlot(dimensions, flows);
                             break;
                         case "treemap":
-                            this.renderTreeMap1D(dimensions, flows);
+                            this.renderTreeMap(dimensions, flows);
                             break;
                         default:
                             // Nothing
@@ -579,16 +579,16 @@ define(['views/common/baseview',
 
                     switch (selectedVizualisationString) {
                         case "piechart":
-                            this.renderPieChart1D(dimensions, flows);
+                            this.renderPieChart(dimensions, flows);
                             break;
                         case "barchart":
-                            this.renderBarChart1D(dimensions, flows);
+                            this.renderBarChart(dimensions, flows);
                             break;
                         case "lineplot":
                             this.renderLinePlot(dimensions, flows);
                             break;
                         case "treemap":
-                            this.renderTreeMap1D(dimensions, flows);
+                            this.renderTreeMap(dimensions, flows);
                             break;
                         case "choroplethmap":
                             areas = new Collection([], {
@@ -657,13 +657,13 @@ define(['views/common/baseview',
 
                     switch (selectedVizualisationString) {
                         case "piechart":
-                            this.renderPieChart1D(dimensions, flows);
+                            this.renderPieChart(dimensions, flows);
                             break;
                         case "barchart":
-                            this.renderBarChart1D(dimensions, flows);
+                            this.renderBarChart(dimensions, flows);
                             break;
                         case "treemap":
-                            this.renderTreeMap1D(dimensions, flows);
+                            this.renderTreeMap(dimensions, flows);
                             break;
                         default:
                             // Nothing
@@ -704,13 +704,13 @@ define(['views/common/baseview',
 
                     switch (selectedVizualisationString) {
                         case "piechart":
-                            this.renderPieChart1D(dimensions, flows);
+                            this.renderPieChart(dimensions, flows);
                             break;
                         case "barchart":
-                            this.renderBarChart1D(dimensions, flows);
+                            this.renderBarChart(dimensions, flows);
                             break;
                         case "treemap":
-                            this.renderTreeMap1D(dimensions, flows);
+                            this.renderTreeMap(dimensions, flows);
                             break;
                         default:
                             // Nothing
@@ -770,8 +770,11 @@ define(['views/common/baseview',
                         case "areachart":
                             this.renderAreaChart(dimensions, flows);
                             break;
+                        case "barchart":
+                            this.renderBarChart(dimensions, flows);
+                            break;
                         case "stackedbarchart":
-                            //this.renderTreeMap1D(dimensions, flows);
+                            this.renderBarChart(dimensions, flows, true);
                             break;
                         default:
                             // Nothing
@@ -803,7 +806,7 @@ define(['views/common/baseview',
                 console.log(flows);
             },
 
-            renderPieChart1D: function (dimensions, flows) {
+            renderPieChart: function (dimensions, flows) {
                 if (this.pieChartView != null) this.pieChartView.close();
 
                 $(".piechart-wrapper").fadeIn();
@@ -816,7 +819,7 @@ define(['views/common/baseview',
                 });
             },
 
-            renderTreeMap1D: function (dimensions, flows) {
+            renderTreeMap: function (dimensions, flows) {
                 if (this.treeMapView != null) this.treeMapView.close();
 
                 $(".treemap-wrapper").fadeIn();
@@ -829,7 +832,7 @@ define(['views/common/baseview',
                 });
             },
 
-            renderBarChart1D: function (dimensions, flows) {
+            renderBarChart: function (dimensions, flows, isStacked) {
                 if (this.barChartView != null) this.barChartView.close();
 
                 $(".barchart-wrapper").fadeIn();
@@ -839,6 +842,7 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
+                    isStacked: isStacked,
                 });
             },
 
@@ -896,19 +900,6 @@ define(['views/common/baseview',
             },
 
 
-            // renderLineplotMultiple: function (dimensions, flows) {
-            //     if (this.coordinatePointMapView != null) this.coordinatePointMapView.close();
-
-            //     $(".coordinatepointmap-wrapper").fadeIn();
-
-            //     this.coordinatePointMapView = new CoordinatePointMapView({
-            //         el: ".coordinatepointmap-wrapper",
-            //         dimensions: dimensions,
-            //         flows: flows,
-            //         flowsView: this,
-            //     });
-            // },
-
             closeAllVizViews: function () {
                 $(".viz-wrapper-div").fadeOut();
                 $(".viz-wrapper-div").html("")
@@ -918,6 +909,7 @@ define(['views/common/baseview',
                 if (this.treeMapView != null) this.treeMapView.close();
                 if (this.choroplethView != null) this.choroplethView.close();
                 if (this.coordinatePointMapView != null) this.coordinatePointMapView.close();
+                if (this.areaChartView != null) this.areaChartView.close();
             },
 
             // Fetch flows and calls options.success(flows) on success

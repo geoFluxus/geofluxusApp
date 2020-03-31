@@ -482,7 +482,7 @@ define(['views/common/baseview',
                     }
 
 
-                    // //////////////////////////////////////////////////////
+                    // ///////////////////////////////////////////////////////////////////
                     // Show available visualizations based on selected dimension(s):
 
                     console.log(_this.selectedDimensionStrings);
@@ -502,6 +502,9 @@ define(['views/common/baseview',
                             $(".viz-selector-button").hide();
                             // Show viz option container:
                             $(".viz-container").fadeIn();
+
+                            // Disable legend by default:
+                            //$("#display-legend").prop("checked", false);
 
                             console.log("One dimension");
 
@@ -542,9 +545,14 @@ define(['views/common/baseview',
                             $(".viz-selector-button").hide();
                             $(".viz-container").fadeIn();
 
+                            // Enable legend by default:
+                            //$("#display-legend").prop("checked", true);
+
                             console.log("Two dimensions");
 
                             if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("space")) {
+                                $("#viz-barchart").parent().fadeIn();
+
                                 $("#viz-lineplotmultiple").parent().fadeIn();
                                 $("#viz-areachart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();

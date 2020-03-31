@@ -56,6 +56,9 @@ define(['views/common/baseview',
 
                 render: function (data) {
                     let flows = this.options.flows;
+                    let dimensionsActual = [];
+                    this.options.dimensions.forEach(dim => dimensionsActual.push(dim[0]));
+                    let isStacked = this.options.isStacked;
                     let groupBy;
                     let x;
                     let tooltipConfig;
@@ -217,6 +220,51 @@ define(['views/common/baseview',
                         }
                     }
 
+                    // //////////////////////////////////////////
+                    // Two dimensions
+                    if (dimensionsActual.includes("time") && dimensionsActual.includes("space")) {
+                        groupBy = ["areaName"];
+                        
+                        // Granularity = year
+                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
+
+                            x = ["year"];
+                            tooltipConfig = {
+                                title: "Waste totals per year",
+                                tbody: [
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                                    }],
+                                    ["Year", function (d) {
+                                        return d.year
+                                    }],
+                                    ["Area", function (d) {
+                                        return d.areaName
+                                    }]
+                                ]
+                            }
+
+                            // Granularity = month:
+                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
+                            x = ["yearMonthCode"];
+                            tooltipConfig = {
+                                title: "Waste totals per month",
+                                tbody: [
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                                    }],
+                                    ["Month", function (d) {
+                                        return d.month
+                                    }],
+                                    ["Area", function (d) {
+                                        return d.areaName
+                                    }]
+                                ]
+                            }
+                        }
+
+                    }
+
                     // Create a new D3Plus BarChart object which will be rendered in this.options.el:
                     this.barChart = new BarChart({
                         el: this.options.el,
@@ -225,6 +273,7 @@ define(['views/common/baseview',
                         x: x,
                         tooltipConfig: tooltipConfig,
                         xSort: xSort,
+                        isStacked: isStacked,
                     });
                 },
 
