@@ -12,6 +12,7 @@ define(['views/common/baseview',
         'views/common/treeMapView',
         'views/common/choroplethView',
         'views/common/coordinatePointMapView',
+        'views/common/areaChartView',
     ],
     function (
         BaseView,
@@ -27,6 +28,7 @@ define(['views/common/baseview',
         TreeMapView,
         ChoroplethView,
         CoordinatePointMapView,
+        AreaChartView,
     ) {
 
         var FlowsView = BaseView.extend({
@@ -555,7 +557,7 @@ define(['views/common/baseview',
                             this.renderBarChart1D(dimensions, flows);
                             break;
                         case "lineplot":
-                            this.renderLinePlot1D(dimensions, flows);
+                            this.renderLinePlot(dimensions, flows);
                             break;
                         case "treemap":
                             this.renderTreeMap1D(dimensions, flows);
@@ -583,7 +585,7 @@ define(['views/common/baseview',
                             this.renderBarChart1D(dimensions, flows);
                             break;
                         case "lineplot":
-                            this.renderLinePlot1D(dimensions, flows);
+                            this.renderLinePlot(dimensions, flows);
                             break;
                         case "treemap":
                             this.renderTreeMap1D(dimensions, flows);
@@ -731,14 +733,44 @@ define(['views/common/baseview',
                 if (dimensionsActual.includes("time") && dimensionsActual.includes("space")) {
                     console.log("time and space");
 
+                    let years = filterFlowsView.years.models;
+                    let months = filterFlowsView.months.models;
+
+                    // Granularity = year
+                    if (dimensions[0][1] == "flowchain__month__year") {
+
+                        flows.forEach(function (flow, index) {
+                            let yearObject = years.find(year => year.attributes.id == flow.year);
+
+                            this[index].id = this[index].year;
+                            this[index].year = parseInt(yearObject.attributes.code);
+                        }, flows);
+
+                        flows = _.sortBy(flows, 'year');
+
+                        // Granularity = month:
+                    } else if (dimensions[0][1] == "flowchain__month") {
+
+                        flows.forEach(function (flow, index) {
+                            let monthObject = months.find(month => month.attributes.id == flow.month);
+
+                            this[index].id = monthObject.attributes.id;
+                            this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
+                            this[index].yearMonthCode = parseInt(monthObject.attributes.code.substring(2, 6) + monthObject.attributes.code.substring(0, 2));
+                            this[index].year = parseInt(monthObject.attributes.code.substring(2, 6));
+                        }, flows);
+
+                        flows = _.sortBy(flows, 'id');
+                    }
+
                     switch (selectedVizualisationString) {
-                        case "piechart":
-                            //this.renderPieChart1D(dimensions, flows);
+                        case "lineplotmultiple":
+                            this.renderLinePlot(dimensions, flows);
                             break;
-                        case "barchart":
-                            //this.renderBarChart1D(dimensions, flows);
+                        case "areachart":
+                            this.renderAreaChart(dimensions, flows);
                             break;
-                        case "treemap":
+                        case "stackedbarchart":
                             //this.renderTreeMap1D(dimensions, flows);
                             break;
                         default:
@@ -810,7 +842,7 @@ define(['views/common/baseview',
                 });
             },
 
-            renderLinePlot1D: function (dimensions, flows) {
+            renderLinePlot: function (dimensions, flows) {
                 if (this.linePlotView != null) this.linePlotView.close();
 
                 $(".lineplot-wrapper").fadeIn();
@@ -849,6 +881,33 @@ define(['views/common/baseview',
                     flowsView: this,
                 });
             },
+
+            renderAreaChart: function (dimensions, flows) {
+                if (this.areaChartView != null) this.areaChartView.close();
+
+                $(".areachart-wrapper").fadeIn();
+
+                this.areaChartView = new AreaChartView({
+                    el: ".areachart-wrapper",
+                    dimensions: dimensions,
+                    flows: flows,
+                    flowsView: this,
+                });
+            },
+
+
+            // renderLineplotMultiple: function (dimensions, flows) {
+            //     if (this.coordinatePointMapView != null) this.coordinatePointMapView.close();
+
+            //     $(".coordinatepointmap-wrapper").fadeIn();
+
+            //     this.coordinatePointMapView = new CoordinatePointMapView({
+            //         el: ".coordinatepointmap-wrapper",
+            //         dimensions: dimensions,
+            //         flows: flows,
+            //         flowsView: this,
+            //     });
+            // },
 
             closeAllVizViews: function () {
                 $(".viz-wrapper-div").fadeOut();

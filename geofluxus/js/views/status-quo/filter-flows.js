@@ -546,15 +546,15 @@ define(['views/common/baseview',
 
                             if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("space")) {
                                 $("#viz-lineplotmultiple").parent().fadeIn();
-                                $("#viz-stackedareachart").parent().fadeIn();
+                                $("#viz-areachart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("economicActivity")) {
                                 $("#viz-lineplotmultiple").parent().fadeIn();
-                                $("#viz-stackedareachart").parent().fadeIn();
+                                $("#viz-areachart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
                                 $("#viz-lineplotmultiple").parent().fadeIn();
-                                $("#viz-stackedareachart").parent().fadeIn();
+                                $("#viz-areachart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("space") && _this.selectedDimensionStrings.includes("economicActivity")) {
                                 $("#viz-stackedbarchart").parent().fadeIn();

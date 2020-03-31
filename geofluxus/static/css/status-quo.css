@@ -231,7 +231,7 @@ label[for="activity-select"] {
     background-image: url('../img/viz-lineplotmultiple.svg');
 }
 
-#span-viz-stackedareachart::before {
+#span-viz-areachart::before {
     background-image: url('../img/viz-stackedareachart.svg');
 }
 
