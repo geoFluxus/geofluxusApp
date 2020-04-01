@@ -613,6 +613,10 @@ define(['views/common/baseview',
                                         features.push(feature)
                                     })
 
+                                    flows.forEach(function (flow, index) {
+                                        this[index].id = this[index].areaId;
+                                    }, flows);
+
                                     _this.renderChoropleth1D(dimensions, flows, geoJson);
                                 },
                                 error: function (res) {
