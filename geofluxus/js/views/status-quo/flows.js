@@ -732,17 +732,23 @@ define(['views/common/baseview',
                 let _this = this;
                 let filterFlowsView = this.filterFlowsView;
                 let dimensionsActual = [];
+
+                let years = filterFlowsView.years.models;
+                let months = filterFlowsView.months.models;
+                let activityGroups = filterFlowsView.activityGroups.models;
+                let activities = filterFlowsView.activities.models;
+
                 // Array with dimension strings without Granularity:
                 dimensions.forEach(dim => dimensionsActual.push(dim[0]));
 
                 console.log("Dimensions");
                 console.log(dimensionsActual);
 
+                // ///////////////////////////////////////////////////////////////////////////
+                // Time & Space
                 if (dimensionsActual.includes("time") && dimensionsActual.includes("space")) {
                     console.log("time and space");
 
-                    let years = filterFlowsView.years.models;
-                    let months = filterFlowsView.months.models;
 
                     // Granularity = year
                     if (dimensions[0][1] == "flowchain__month__year") {
@@ -789,23 +795,100 @@ define(['views/common/baseview',
                     }
 
 
-
+                    // ///////////////////////////////////////////////////////////////////////////
+                    // Time & Economic Activity
                 } else if (dimensionsActual.includes("time") && dimensionsActual.includes("economicActivity")) {
                     console.log("time and economicActivity");
 
+                    // Granularity = year
+                    if (dimensions[0][1] == "flowchain__month__year") {
 
+                        flows.forEach(function (flow, index) {
+                            let yearObject = years.find(year => year.attributes.id == flow.year);
+
+                            this[index].id = this[index].year;
+                            this[index].year = parseInt(yearObject.attributes.code);
+                        }, flows);
+
+                        flows = _.sortBy(flows, 'year');
+
+                        // Granularity = month:
+                    } else if (dimensions[0][1] == "flowchain__month") {
+
+                        flows.forEach(function (flow, index) {
+                            let monthObject = months.find(month => month.attributes.id == flow.month);
+
+                            this[index].id = monthObject.attributes.id;
+                            this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
+                            this[index].yearMonthCode = parseInt(monthObject.attributes.code.substring(2, 6) + monthObject.attributes.code.substring(0, 2));
+                            this[index].year = parseInt(monthObject.attributes.code.substring(2, 6));
+                        }, flows);
+
+                        flows = _.sortBy(flows, 'id');
+                    }
+
+                    // Granularity = Activity group
+                    if (dimensions[1][1] == "origin__activity__activitygroup" || dimensions[1][1] == "destination__activity__activitygroup") {
+
+                        flows.forEach(function (flow, index) {
+                            let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.activitygroup);
+
+                            this[index].activityGroupCode = activityGroupObject.attributes.code;
+                            this[index].activityGroupName = activityGroupObject.attributes.name[0].toUpperCase() + activityGroupObject.attributes.name.slice(1).toLowerCase();
+                        }, flows);
+
+                        // Granularity: Activity
+                    } else if (dimensions[1][1] == "origin__activity" || dimensions[1][1] == "destination__activity") {
+
+                        flows.forEach(function (flow, index) {
+                            let activityGroupName = "";
+                            let activityObject = activities.find(activity => activity.attributes.id == flow.activity);
+
+                            this[index].activityCode = activityObject.attributes.nace;
+                            this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
+
+                            this[index].activityGroupCode = this[index].activityCode.substring(0, this[index].activityCode.indexOf('-'));
+                            activityGroupName = activityGroups.find(activityGroup => activityGroup.attributes.code == this[index].activityGroupCode).attributes.name;
+                            this[index].activityGroupName = activityGroupName[0].toUpperCase() + activityGroupName.slice(1).toLowerCase();
+                        }, flows);
+                    }
+
+                    switch (selectedVizualisationString) {
+                        case "lineplotmultiple":
+                            this.renderLinePlot(dimensions, flows);
+                            break;
+                        case "areachart":
+                            this.renderAreaChart(dimensions, flows);
+                            break;
+                        case "barchart":
+                            this.renderBarChart(dimensions, flows);
+                            break;
+                        case "stackedbarchart":
+                            this.renderBarChart(dimensions, flows, true);
+                            break;
+                        default:
+                            // Nothing
+                    }
+
+
+                    // ///////////////////////////////////////////////////////////////////////////
+                    // Time & Economic Economic Activity
                 } else if (dimensionsActual.includes("time") && dimensionsActual.includes("treatmentMethod")) {
                     console.log("time and treatmentMethod");
 
 
+                    // ///////////////////////////////////////////////////////////////////////////
+                    // Space & Economic Activity
                 } else if (dimensionsActual.includes("space") && dimensionsActual.includes("economicActivity")) {
                     console.log("space and economicActivity");
 
-
+                    // ///////////////////////////////////////////////////////////////////////////
+                    // Space & Treatment Method
                 } else if (dimensionsActual.includes("space") && dimensionsActual.includes("treatmentMethod")) {
                     console.log("space and treatmentMethod");
 
-
+                    // ///////////////////////////////////////////////////////////////////////////
+                    // Economic Activity & Treatment Method
                 } else if (dimensionsActual.includes("economicActivity") && dimensionsActual.includes("treatmentMethod")) {
                     console.log("economicActivity and treatmentMethod");
 

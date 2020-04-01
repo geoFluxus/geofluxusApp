@@ -561,6 +561,8 @@ define(['views/common/baseview',
                                 $("#viz-areachart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("economicActivity")) {
+                                $("#viz-barchart").parent().fadeIn();
+
                                 $("#viz-lineplotmultiple").parent().fadeIn();
                                 $("#viz-areachart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();

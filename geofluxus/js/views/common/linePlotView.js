@@ -105,11 +105,13 @@ define(['views/common/baseview',
                                 ]
                             }
                         }
-                        
+
                     }
 
+                    // ///////////////////////////////////////////////////////////////////////////////////////////////////
+
                     // //////////////////////////////////////////
-                    // Two dimensions
+                    // Time & Space
                     if (dimensionsActual.includes("time") && dimensionsActual.includes("space")) {
                         groupBy = ["areaName"];
 
@@ -151,7 +153,66 @@ define(['views/common/baseview',
                             }
                         }
 
+                        // //////////////////////////////////////////
+                        // Time & Economic Activity
+                    } else if (dimensionsActual.includes("time") && dimensionsActual.includes("economicActivity")) {
+
+                        // Granularity = year
+                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
+                            x = ["year"];
+                            tooltipConfig = {
+                                title: "Waste totals per year",
+                                tbody: [
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                                    }],
+                                    ["Year", function (d) {
+                                        return d.year
+                                    }]
+                                ]
+                            }
+
+                            // Granularity = month:
+                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
+                            x = ["yearMonthCode"];
+
+                            if (hasMultipleLines) {
+                                groupBy = ["year"];
+                                x = ["monthName"];
+                            }
+
+                            tooltipConfig = {
+                                title: "Waste totals per month",
+                                tbody: [
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                                    }],
+                                    ["Month", function (d) {
+                                        return d.month
+                                    }]
+                                ]
+                            }
+                        }
+
+
+                        if (this.options.dimensions[1][1] == "origin__activity__activitygroup" || this.options.dimensions[1][1] == "destination__activity__activitygroup") {
+                            groupBy = ["activityGroupCode"];
+                            tooltipConfig.tbody.push(["Activity group",
+                                function (d) {
+                                    return d.activityGroupCode + " " + d.activityGroupName;
+                                },
+                            ])
+                        } else if (this.options.dimensions[1][1] == "origin__activity" || this.options.dimensions[1][1] == "destination__activity") {
+                            groupBy = ["activityCode"];
+                            tooltipConfig.tbody.push(["Activity", function (d) {
+                                    return d.activityCode + " " + d.activityName;
+                                }],
+                                ["Activity group", function (d) {
+                                    return d.activityGroupCode + " " + d.activityGroupName;
+                                }], );
+                        }
                     }
+
 
                     // Create a new D3Plus linePlot object which will be rendered in this.options.el:
                     this.linePlot = new LinePlot({
