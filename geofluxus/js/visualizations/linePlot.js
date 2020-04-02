@@ -30,10 +30,17 @@ define([
                 shapeConfigValue.Line.stroke = "red";
             }
 
+            let legendConfig = {
+                label: function value(d) {
+                    return d.actorName;
+                },
+            }
+
             new d3plus.Plot()
                 .data(options.data)
                 .x(options.x)
                 .y("amount")
+                .legendConfig(legendConfig)
                 .baseline(0)
                 .discrete("x")
                 .groupBy(groupByValue)

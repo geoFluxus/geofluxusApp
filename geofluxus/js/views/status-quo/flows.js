@@ -217,20 +217,23 @@ define(['views/common/baseview',
                 if (filter.origin.role != 'both') {
                     filterParams.flows['origin_role'] = filter.origin.role;
                 }
-                if ($(filter.origin.activitySelect).val() == '-1') {
-                    if ($(filter.origin.activityGroupsSelect).val() != '-1') {
-                        filterParams.flows['origin__activity__activitygroup__in'] = $(filter.origin.activityGroupsSelect).val();
-                    }
-                } else {
-                    filterParams.flows['origin__activity__in'] = $(filter.origin.activitySelect).val();
-                }
 
-                if ($(filter.origin.processSelect).val() == '-1') {
-                    if ($(filter.origin.processGroupSelect).val() != '-1') {
-                        filterParams.flows['origin__process__processgroup__in'] = $(filter.origin.processGroupSelect).val();
+                if (filter.origin.role == "production"){
+                    if ($(filter.origin.activitySelect).val() == '-1') {
+                        if ($(filter.origin.activityGroupsSelect).val() != '-1') {
+                            filterParams.flows['origin__activity__activitygroup__in'] = $(filter.origin.activityGroupsSelect).val();
+                        }
+                    } else {
+                        filterParams.flows['origin__activity__in'] = $(filter.origin.activitySelect).val();
                     }
-                } else {
-                    filterParams.flows['origin__process__in'] = $(filter.origin.processSelect).val();
+                } else if (filter.origin.role == "treatment"){
+                    if ($(filter.origin.processSelect).val() == '-1') {
+                        if ($(filter.origin.processGroupSelect).val() != '-1') {
+                            filterParams.flows['origin__process__processgroup__in'] = $(filter.origin.processGroupSelect).val();
+                        }
+                    } else {
+                        filterParams.flows['origin__process__in'] = $(filter.origin.processSelect).val();
+                    }
                 }
 
 
@@ -252,20 +255,23 @@ define(['views/common/baseview',
                 if (filter.destination.role != 'both') {
                     filterParams.flows['destination_role'] = filter.destination.role;
                 }
-                if ($(filter.destination.activitySelect).val() == '-1') {
-                    if ($(filter.destination.activityGroupsSelect).val() != '-1') {
-                        filterParams.flows['destination__activity__activitygroup__in'] = $(filter.destination.activityGroupsSelect).val();
-                    }
-                } else {
-                    filterParams.flows['destination__activity__in'] = $(filter.destination.activitySelect).val();
-                }
 
-                if ($(filter.destination.processSelect).val() == '-1') {
-                    if ($(filter.destination.processGroupSelect).val() != '-1') {
-                        filterParams.flows['destination__process__processgroup__in'] = $(filter.destination.processGroupSelect).val();
+                if (filter.destination.role == "production"){
+                    if ($(filter.destination.activitySelect).val() == '-1') {
+                        if ($(filter.destination.activityGroupsSelect).val() != '-1') {
+                            filterParams.flows['destination__activity__activitygroup__in'] = $(filter.destination.activityGroupsSelect).val();
+                        }
+                    } else {
+                        filterParams.flows['destination__activity__in'] = $(filter.destination.activitySelect).val();
                     }
-                } else {
-                    filterParams.flows['destination__process__in'] = $(filter.destination.processSelect).val();
+                } else if (filter.destination.role == "treatment"){
+                    if ($(filter.destination.processSelect).val() == '-1') {
+                        if ($(filter.destination.processGroupSelect).val() != '-1') {
+                            filterParams.flows['destination__process__processgroup__in'] = $(filter.destination.processGroupSelect).val();
+                        }
+                    } else {
+                        filterParams.flows['destination__process__in'] = $(filter.destination.processSelect).val();
+                    }
                 }
 
                 // ///////////////////////////////
@@ -573,12 +579,11 @@ define(['views/common/baseview',
                     // /////////////////////////////
                     // Space dimension
                 } else if (dimensions[0][0] == "space") {
-                    let dimension = dimensions[0][1];
 
                     // If level == actor:
                     let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-                    if (dimension.adminlevel == actorAreaLevelId) {
-                        dimensions.isActorLevel = true;
+                    if (dimensions[0][1].adminlevel == actorAreaLevelId) {
+                        dimensions[0][1].isActorLevel = true;
                     }
 
                     switch (selectedVizualisationString) {
@@ -749,6 +754,11 @@ define(['views/common/baseview',
                 if (dimensionsActual.includes("time") && dimensionsActual.includes("space")) {
                     console.log("time and space");
 
+                    // If level == actor:
+                    let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
+                    if (dimensions[1][1].adminlevel == actorAreaLevelId) {
+                        dimensions[1][1].isActorLevel = true;
+                    }
 
                     // Granularity = year
                     if (dimensions[0][1] == "flowchain__month__year") {
@@ -756,7 +766,7 @@ define(['views/common/baseview',
                         flows.forEach(function (flow, index) {
                             let yearObject = years.find(year => year.attributes.id == flow.year);
 
-                            this[index].id = this[index].year;
+                            //this[index].id = this[index].year;
                             this[index].year = parseInt(yearObject.attributes.code);
                         }, flows);
 
@@ -768,7 +778,7 @@ define(['views/common/baseview',
                         flows.forEach(function (flow, index) {
                             let monthObject = months.find(month => month.attributes.id == flow.month);
 
-                            this[index].id = monthObject.attributes.id;
+                            //this[index].id = monthObject.attributes.id;
                             this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
                             this[index].yearMonthCode = parseInt(monthObject.attributes.code.substring(2, 6) + monthObject.attributes.code.substring(0, 2));
                             this[index].year = parseInt(monthObject.attributes.code.substring(2, 6));

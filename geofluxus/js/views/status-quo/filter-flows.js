@@ -372,8 +372,8 @@ define(['views/common/baseview',
                 // Hide/show Activity Group and Activity or Treatment method:
                 $("#origin-role-radio-production").on('click', function () {
                     _this.origin.role = "production";
+                    $(".originContainerTreatmentMethod").hide();
                     $(".originContainerActivity").fadeIn();
-                    $(".originContainerTreatmentMethod").fadeOut();
 
                 });
                 $("#origin-role-radio-both").on('click', function () {
@@ -384,7 +384,7 @@ define(['views/common/baseview',
                 });
                 $("#origin-role-radio-treatment").on('click', function () {
                     _this.origin.role = "treatment";
-                    $(".originContainerActivity").fadeOut();
+                    $(".originContainerActivity").hide();
                     $(".originContainerTreatmentMethod").fadeIn();
                 });
 
@@ -399,8 +399,8 @@ define(['views/common/baseview',
                 // Hide/show Activity Group and Activity or Treatment method:
                 $("#destination-role-radio-production").on('click', function () {
                     _this.destination.role = "production";
+                    $(".destinationContainerTreatmentMethod").hide();
                     $(".destinationContainerActivity").fadeIn();
-                    $(".destinationContainerTreatmentMethod").fadeOut();
 
                 });
                 $("#destination-role-radio-both").on('click', function () {
@@ -411,7 +411,7 @@ define(['views/common/baseview',
                 });
                 $("#destination-role-radio-treatment").on('click', function () {
                     _this.destination.role = "treatment";
-                    $(".destinationContainerActivity").fadeOut();
+                    $(".destinationContainerActivity").hide();
                     $(".destinationContainerTreatmentMethod").fadeIn();
                 });
 
