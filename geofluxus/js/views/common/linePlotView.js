@@ -55,13 +55,20 @@ define(['views/common/baseview',
 
                 render: function (data) {
                     let flows = this.options.flows;
+
+                    let dimensionsActual = [];
+                    this.options.dimensions.forEach(dim => dimensionsActual.push(dim[0]));
+
+                    let hasMultipleLines = this.options.hasMultipleLines;
                     let tooltipConfig;
                     let groupBy;
                     let x;
 
+
                     // /////////////////////////////
                     // Time dimension
                     if (this.options.dimensions[0][0] == "time") {
+
                         // Granularity = year
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
                             x = ["year"];
@@ -79,8 +86,13 @@ define(['views/common/baseview',
 
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
-                            groupBy = ["yearMonthCode"];
                             x = ["yearMonthCode"];
+
+                            if (hasMultipleLines) {
+                                groupBy = ["year"];
+                                x = ["monthName"];
+                            }
+
                             tooltipConfig = {
                                 title: "Waste totals per month",
                                 tbody: [
@@ -93,7 +105,114 @@ define(['views/common/baseview',
                                 ]
                             }
                         }
+
                     }
+
+                    // ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                    // //////////////////////////////////////////
+                    // Time & Space
+                    if (dimensionsActual.includes("time") && dimensionsActual.includes("space")) {
+                        groupBy = ["areaName"];
+
+                        // Granularity = year
+                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
+
+                            x = ["year"];
+                            tooltipConfig = {
+                                title: "Waste totals per year",
+                                tbody: [
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                                    }],
+                                    ["Year", function (d) {
+                                        return d.year
+                                    }],
+                                    ["Area", function (d) {
+                                        return d.areaName
+                                    }]
+                                ]
+                            }
+
+                            // Granularity = month:
+                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
+                            x = ["yearMonthCode"];
+                            tooltipConfig = {
+                                title: "Waste totals per month",
+                                tbody: [
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                                    }],
+                                    ["Month", function (d) {
+                                        return d.month
+                                    }],
+                                    ["Area", function (d) {
+                                        return d.areaName
+                                    }]
+                                ]
+                            }
+                        }
+
+                        // //////////////////////////////////////////
+                        // Time & Economic Activity
+                    } else if (dimensionsActual.includes("time") && dimensionsActual.includes("economicActivity")) {
+
+                        // Granularity = year
+                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
+                            x = ["year"];
+                            tooltipConfig = {
+                                title: "Waste totals per year",
+                                tbody: [
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                                    }],
+                                    ["Year", function (d) {
+                                        return d.year
+                                    }]
+                                ]
+                            }
+
+                            // Granularity = month:
+                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
+                            x = ["yearMonthCode"];
+
+                            if (hasMultipleLines) {
+                                groupBy = ["year"];
+                                x = ["monthName"];
+                            }
+
+                            tooltipConfig = {
+                                title: "Waste totals per month",
+                                tbody: [
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                                    }],
+                                    ["Month", function (d) {
+                                        return d.month
+                                    }]
+                                ]
+                            }
+                        }
+
+
+                        if (this.options.dimensions[1][1] == "origin__activity__activitygroup" || this.options.dimensions[1][1] == "destination__activity__activitygroup") {
+                            groupBy = ["activityGroupCode"];
+                            tooltipConfig.tbody.push(["Activity group",
+                                function (d) {
+                                    return d.activityGroupCode + " " + d.activityGroupName;
+                                },
+                            ])
+                        } else if (this.options.dimensions[1][1] == "origin__activity" || this.options.dimensions[1][1] == "destination__activity") {
+                            groupBy = ["activityCode"];
+                            tooltipConfig.tbody.push(["Activity", function (d) {
+                                    return d.activityCode + " " + d.activityName;
+                                }],
+                                ["Activity group", function (d) {
+                                    return d.activityGroupCode + " " + d.activityGroupName;
+                                }], );
+                        }
+                    }
+
 
                     // Create a new D3Plus linePlot object which will be rendered in this.options.el:
                     this.linePlot = new LinePlot({

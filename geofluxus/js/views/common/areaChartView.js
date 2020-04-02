@@ -2,7 +2,7 @@ define(['views/common/baseview',
         'underscore',
         'd3',
         'd3plus',
-        'visualizations/barchart',
+        'visualizations/areaChart',
         'collections/collection',
         'app-config',
         'save-svg-as-png',
@@ -15,7 +15,7 @@ define(['views/common/baseview',
         _,
         d3,
         d3plus,
-        BarChart,
+        AreaChart,
         Collection,
         config,
         saveSvgAsPng,
@@ -26,11 +26,11 @@ define(['views/common/baseview',
         /**
          *
          * @author Evert Van Hirtum
-         * @name module:views/BarChartView
+         * @name module:views/AreaChartView
          * @augments module:views/BaseView
          */
-        var BarChartView = BaseView.extend(
-            /** @lends module:views/BarChartView.prototype */
+        var AreaChartView = BaseView.extend(
+            /** @lends module:views/AreaChartView.prototype */
             {
 
                 /**
@@ -41,7 +41,7 @@ define(['views/common/baseview',
                  * @see http://backbonejs.org/#View
                  */
                 initialize: function (options) {
-                    BarChartView.__super__.initialize.apply(this, [options]);
+                    AreaChartView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
                     this.options = options;
@@ -58,11 +58,12 @@ define(['views/common/baseview',
                     let flows = this.options.flows;
                     let dimensionsActual = [];
                     this.options.dimensions.forEach(dim => dimensionsActual.push(dim[0]));
-                    let isStacked = this.options.isStacked;
+
                     let groupBy;
                     let x;
                     let tooltipConfig;
                     let xSort;
+                    let isStacked = false;
 
                     // /////////////////////////////
                     // Time dimension
@@ -226,6 +227,7 @@ define(['views/common/baseview',
                     // Time & Space
                     if (dimensionsActual.includes("time") && dimensionsActual.includes("space")) {
                         groupBy = ["areaName"];
+                        isStacked = true;
 
                         // Granularity = year
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
@@ -268,6 +270,7 @@ define(['views/common/baseview',
                         // //////////////////////////////////////////
                         // Time & Economic Activity
                     } else if (dimensionsActual.includes("time") && dimensionsActual.includes("economicActivity")) {
+                        isStacked = true;
 
                         // Granularity = year
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
@@ -287,12 +290,6 @@ define(['views/common/baseview',
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
                             x = ["yearMonthCode"];
-
-                            if (hasMultipleLines) {
-                                groupBy = ["year"];
-                                x = ["monthName"];
-                            }
-
                             tooltipConfig = {
                                 title: "Waste totals per month",
                                 tbody: [
@@ -309,23 +306,24 @@ define(['views/common/baseview',
 
                         if (this.options.dimensions[1][1] == "origin__activity__activitygroup" || this.options.dimensions[1][1] == "destination__activity__activitygroup") {
                             groupBy = ["activityGroupCode"];
-
                             tooltipConfig.tbody.push(["Activity group",
                                 function (d) {
                                     return d.activityGroupCode + " " + d.activityGroupName;
                                 },
                             ])
-
                         } else if (this.options.dimensions[1][1] == "origin__activity" || this.options.dimensions[1][1] == "destination__activity") {
                             groupBy = ["activityCode"];
-                            tooltipConfig.tbody.push(["Activity group", function (d) {
-                                return d.activityGroupCode + " " + d.activityGroupName;
-                            }], )
+                            tooltipConfig.tbody.push(["Activity", function (d) {
+                                    return d.activityCode + " " + d.activityName;
+                                }],
+                                ["Activity group", function (d) {
+                                    return d.activityGroupCode + " " + d.activityGroupName;
+                                }], );
                         }
                     }
 
-                    // Create a new D3Plus BarChart object which will be rendered in this.options.el:
-                    this.barChart = new BarChart({
+                    // Create a new D3Plus AreaChart object which will be rendered in this.options.el:
+                    this.areaChart = new AreaChart({
                         el: this.options.el,
                         data: flows,
                         groupBy: groupBy,
@@ -381,6 +379,6 @@ define(['views/common/baseview',
                 },
 
             });
-        return BarChartView;
+        return AreaChartView;
     }
 );
