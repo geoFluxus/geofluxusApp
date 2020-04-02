@@ -602,7 +602,7 @@ define(['views/common/baseview',
                         case "choroplethmap":
                             areas = new Collection([], {
                                 apiTag: 'areas',
-                                apiIds: [dimension.adminlevel]
+                                apiIds: [dimensions[0][1].adminlevel]
                             });
 
                             areas.fetch({
@@ -752,7 +752,6 @@ define(['views/common/baseview',
                 // ///////////////////////////////////////////////////////////////////////////
                 // Time & Space
                 if (dimensionsActual.includes("time") && dimensionsActual.includes("space")) {
-                    console.log("time and space");
 
                     // If level == actor:
                     let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
@@ -808,7 +807,6 @@ define(['views/common/baseview',
                     // ///////////////////////////////////////////////////////////////////////////
                     // Time & Economic Activity
                 } else if (dimensionsActual.includes("time") && dimensionsActual.includes("economicActivity")) {
-                    console.log("time and economicActivity");
 
                     // Granularity = year
                     if (dimensions[0][1] == "flowchain__month__year") {
@@ -884,24 +882,23 @@ define(['views/common/baseview',
                     // ///////////////////////////////////////////////////////////////////////////
                     // Time & Economic Economic Activity
                 } else if (dimensionsActual.includes("time") && dimensionsActual.includes("treatmentMethod")) {
-                    console.log("time and treatmentMethod");
 
 
                     // ///////////////////////////////////////////////////////////////////////////
                     // Space & Economic Activity
                 } else if (dimensionsActual.includes("space") && dimensionsActual.includes("economicActivity")) {
-                    console.log("space and economicActivity");
 
+                    
                     // ///////////////////////////////////////////////////////////////////////////
                     // Space & Treatment Method
                 } else if (dimensionsActual.includes("space") && dimensionsActual.includes("treatmentMethod")) {
-                    console.log("space and treatmentMethod");
 
+                    
                     // ///////////////////////////////////////////////////////////////////////////
                     // Economic Activity & Treatment Method
                 } else if (dimensionsActual.includes("economicActivity") && dimensionsActual.includes("treatmentMethod")) {
-                    console.log("economicActivity and treatmentMethod");
 
+                    
 
                 }
                 console.log(flows);

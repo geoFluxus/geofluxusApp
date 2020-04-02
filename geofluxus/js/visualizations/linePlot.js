@@ -12,7 +12,7 @@ define([
     class LinePlot {
         /**
          * @param {Object} options          object containing all option values
-         * @param {string} options.el       CSS Selector of the container element of the Pie Chart
+         * @param {string} options.el       CSS Selector of the container element of the viz
          */
         constructor(options) {
             var options = options || {};
@@ -30,17 +30,10 @@ define([
                 shapeConfigValue.Line.stroke = "red";
             }
 
-            let legendConfig = {
-                label: function value(d) {
-                    return d.actorName;
-                },
-            }
-
             new d3plus.Plot()
                 .data(options.data)
                 .x(options.x)
                 .y("amount")
-                .legendConfig(legendConfig)
                 .baseline(0)
                 .discrete("x")
                 .groupBy(groupByValue)
@@ -48,6 +41,9 @@ define([
                 .shapeConfig(shapeConfigValue)
                 .tooltipConfig(options.tooltipConfig)
                 .legend(hasLegend)
+                // .label(function value(d) {
+                //     return d.actorName;
+                // })
                 .downloadPosition("left")
                 .downloadButton(true)
                 .controlConfig({

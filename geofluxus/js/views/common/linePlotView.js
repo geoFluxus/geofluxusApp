@@ -63,7 +63,7 @@ define(['views/common/baseview',
                     let tooltipConfig;
                     let groupBy;
                     let x;
-
+                    let legendConfig;
 
                     // /////////////////////////////
                     // Time dimension
@@ -157,6 +157,11 @@ define(['views/common/baseview',
                             tooltipConfig.tbody.push(["Company", function (d) {
                                 return d.actorName
                             }]);
+                            // labelConfig = {
+                            //     label: function value(d) {
+                            //         return d.actorName;
+                            //     },
+                            // }
                         }
 
                         // //////////////////////////////////////////
@@ -227,7 +232,7 @@ define(['views/common/baseview',
                         groupBy: groupBy,
                         x: x,
                         tooltipConfig: tooltipConfig,
-
+                        //legendConfig: legendConfig,
                     });
                 },
 
