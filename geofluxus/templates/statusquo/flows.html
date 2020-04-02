@@ -1049,7 +1049,7 @@
                         <label for="area-level-select" class="input-label" style="margin-top: .5rem; margin-right: 10px;">Geographic level:</label>
                         <select name="area-level-select" id="area-level-select" class="form-control form-control-sm" style="max-width: 350px;">
                             <% levels.forEach(function(level) { %>
-                                <% if (level.get('level') != "6") %>
+                                <% if (level.get('level') != "1000") %>
                                     <option value="<%= level.id %>"><%= level.get('name') %></option>
                             <% }) %>
                         </select>

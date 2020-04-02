@@ -226,12 +226,12 @@ define(['views/common/baseview',
                     // //////////////////////////////////////////
                     // Time & Space
                     if (dimensionsActual.includes("time") && dimensionsActual.includes("space")) {
-                        groupBy = ["areaName"];
+                        
                         isStacked = true;
 
+                        // TIME ----------------
                         // Granularity = year
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
-
                             x = ["year"];
                             tooltipConfig = {
                                 title: "Waste totals per year",
@@ -241,9 +241,6 @@ define(['views/common/baseview',
                                     }],
                                     ["Year", function (d) {
                                         return d.year
-                                    }],
-                                    ["Area", function (d) {
-                                        return d.areaName
                                     }]
                                 ]
                             }
@@ -259,12 +256,22 @@ define(['views/common/baseview',
                                     }],
                                     ["Month", function (d) {
                                         return d.month
-                                    }],
-                                    ["Area", function (d) {
-                                        return d.areaName
                                     }]
                                 ]
                             }
+                        }
+
+                        // SPACE ----------------
+                        if (!this.options.dimensions[1][1].isActorLevel) {
+                            groupBy = ["areaName"];
+                            tooltipConfig.tbody.push(["Area", function (d) {
+                                return d.areaName
+                            }]);
+                        } else {
+                            groupBy = ["actorName"];
+                            tooltipConfig.tbody.push(["Company", function (d) {
+                                return d.actorName
+                            }]);
                         }
 
                         // //////////////////////////////////////////
