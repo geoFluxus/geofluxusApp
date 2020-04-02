@@ -20,7 +20,7 @@ define([
 
             new d3plus.Geomap()
                 .data(options.data)
-                .groupBy("id")
+                .groupBy("actorId")
                 .colorScale("amount")
                 .colorScaleConfig({
                     color: ["red", "orange", "yellow", "green", "blue"].reverse()
