@@ -1,0 +1,255 @@
+a {
+    color: white;
+}
+
+p {
+    color: white;
+}
+
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: white;
+}
+
+label {
+    color: white;
+}
+
+body {
+    font-family: Montserrat, sans-serif;
+    background-color: black;
+    z-index: 0;
+}
+
+#wrapper {
+    padding-top: 80px;
+    z-index: 800;
+}
+
+#page-content-wrapper {
+    background-color: black;
+    /* padding-left: 80px; */
+    padding-left: 20px;
+    margin-right: 20px;
+    padding-top: 10px;
+    z-index: 400;
+}
+
+/* BORDER RADIUS */
+
+.btn {
+    border-radius: 18px;
+}
+
+.dropdown {
+    border-radius: 18px;
+}
+
+.card {
+    border-radius: 18px;
+
+}
+
+.dropdown-menu.show {
+    border-radius: 18px;
+}
+
+.dropdown-menu.show .bs-searchbox input {
+    border-radius: 18px !important;
+}
+
+.dropdown-content {
+    border-radius: 18px !important;
+}
+
+input {
+    border-radius: 18px;
+}
+
+.alert {
+    border-radius: 25px;
+}
+
+.filter-option {
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+}
+
+
+.dropdown-item {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.dropdown-item.active {
+    background-color: grey !important;
+}
+
+/* BUTTON STYLES */
+
+.btn-default {
+    border-color: white;
+    color: white;
+}
+
+.btn:hover {
+    background-color: grey;
+    border-color: grey;
+    color: white;
+    box-shadow: none;
+}
+
+.btn:focus {
+    background-color: primary;
+    border-color: primary;
+    color: black;
+}
+
+.help-icon.fa-question-circle {
+    margin-left: 10px;
+    font-size: 25px;
+    color: grey;
+}
+
+.help-icon.fa-question-circle:hover {
+    margin-left: 10px;
+    font-size: 25px;
+    color: white;
+    cursor: pointer;
+}
+
+.help-icon.fa-question-circle:focus {
+    outline: none;
+}
+
+.dropdown-button {
+    border-color: black;
+    background-color: transparent;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: black;
+    min-width: 160px;
+    box-shadow: 0px 0px 10px 10px rgba(255, 255, 255, 0.3);
+}
+
+.dropdown-content a {
+    color: white;
+    font-size: 16px;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: white;
+    color: black;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.popover-header {
+    color: black;
+}
+
+/* SCROLLBAR STYLING */
+
+::-webkit-scrollbar {
+    z-index: 800;
+    width: 10px;
+    background: grey;
+    -webkit-box-shadow: inset 10px 0 10px rgba(255, 255, 255, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+    background: white;
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+.modal {
+    top: 10%;
+    overflow: auto;
+}
+
+.modal-header,
+.modal-body,
+.modal-footer,
+.modal .row {
+    padding: 10px;
+}
+
+.modal-content {
+    box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.3);
+    background-color: black;
+    color: white;
+}
+
+.modal-header {
+    border-bottom: 0 none;
+}
+
+.modal-footer {
+    border-top: 0 none;
+}
+
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, .3);
+}
+
+.loader {
+    position: fixed;
+    top: 45%;
+    left: 45%;
+    z-index: 50000000;
+    width: 150px;
+    height: 150px;
+    border: 16px solid black;
+    border-radius: 50%;
+    border-top: 16px solid white;
+    box-shadow: 0 0 20px white, inset 0 0 20px white;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+#navbarID {
+    transition: top 0.3s;
+    /* Transition effect when sliding down (and up) */
+}
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

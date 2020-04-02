@@ -1,0 +1,23 @@
+<!-- divs to put the modals in -->
+<div id="alert-modal" class="modal" role="dialog" style="z-index: 99999;"></div>
+<div id="info-modal" class="modal" role="dialog" style="z-index: 99999;"></div>
+<div id="generic-modal" class="modal" role="dialog" style="z-index: 99999;"></div>
+<div id="confirmation-modal" class="modal" role="dialog" style="z-index: 99999;"></div>
+
+<!-- template for alerts -->
+<script type="text/template" id="alert-modal-template">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><span class="sub-icon fas fa-exclamation-triangle" style="margin-right: 15px;"></span><%= title %></h4>
+        <button type="button" class="close" data-dismiss="modal" style="color: white;">&times;</button>
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <%= message %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</script>

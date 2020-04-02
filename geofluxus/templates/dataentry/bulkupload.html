@@ -1,0 +1,67 @@
+<!--Bulk upload-->
+<script type="text/template" id="bulk-upload-template">
+  <div class="row">
+      <div class='col-md-5' id="uploads">
+          <div class="row">
+              <div class="col-md-6">
+                  <h2>Data Models</h2>
+              </div>
+              <div class="col-md-6">
+                <select title="File encoding" id="encoding-select" class="form-control" style="float: right; width: 110px;">
+                    <option value="utf-8">UTF 8</option>
+                    <option value="cp1252">CP 1252</option>
+                </select>
+                <button id="refresh-status" class="btn" title="Refresh status" style="float: right;  margin-right: 20px;">
+                    Refresh
+                    <span class="fas fa-recycle" style="margin-left: 5px;"></span>
+                </button>
+              </div>
+          </div>
+          <div id="upload-column" class="bordered sunken">
+          </div>
+      </div>
+      <div class='col-md-6' id="logs" style="margin-left: 40px;">
+          <div class="row">
+              <div class="col-md-6">
+                  <h2>Log</h2>
+              </div>
+              <div class="col-md-6">
+                  <button type="button" class="btn btn-primary" title="Clear log" onclick="document.querySelector('#upload-log').innerHTML = '';" style="float: right;">
+                      Clear
+                      <span class="fas fa-eraser" style="margin-left: 5px;"></span>
+                  </button>
+              </div>
+          </div>
+          <div id="upload-log" class="bordered sunken">
+          </div>
+      </div>
+  </div>
+</script>
+
+<!-- a row for a single model api route to bulk upload data to -->
+<script type="text/template" id="upload-row-template">
+  <div class="upload-row" data-tag="<%= apiTag %>">
+      <div class="container">
+          <div class="row">
+              <div class="col-md-6">
+                 <label><%= label %></label>
+                 <a href="<%= templateUrl %>" class="template" title="Download template" style="margin-left: 30px;"><span class="far fa-file-alt" style="margin-right: 2px;"></span>Template</a>
+              </div>
+              <div class="col-md-6">
+                <div id="count" title="Number of entries"></div>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-md-6">
+                <input type="file" accept=".xlsx, .tsv, .csv">
+              </div>
+              <div class="col-md-6">
+                <button class="btn btn-primary upload" data-tag="<%= apiTag %>" id="<%= label %>" title="Upload template" style="float: right;">
+                  Upload
+                  <span class="fas fa-arrow-circle-up" style="margin-left: 5px;"></span>
+                </button>
+              </div>
+          </div>
+      </div>
+  </div>
+</script>

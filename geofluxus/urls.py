@@ -15,7 +15,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls import url, include
+from django.conf.urls.static import static
+from django.conf import settings
+from geofluxus.views import HomeView
+from geofluxus.apps.login.views import LoginView, logout_view
+
 
 urlpatterns = [
+    url(r'^$', HomeView.as_view(), name='index'),
+    url(r'^login/', LoginView.as_view(template_name='login/login.html'),
+        name='login'),
+    url(r'^logout', logout_view, name='logout'),
     path('admin/', admin.site.urls),
-]
+    url(r'^api/', include('geofluxus.rest_urls')),
+    url(r'^data-entry/', include('geofluxus.apps.dataentry.urls')),
+    url(r'^status-quo/', include('geofluxus.apps.statusquo.urls')),
+    url(r'routing/', include('geofluxus.apps.routing.urls')),
+]\
++ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
++ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

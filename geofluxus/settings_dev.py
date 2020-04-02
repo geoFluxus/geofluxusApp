@@ -5,10 +5,6 @@ from geofluxus.settings import *
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['127.0.0.1',
-                 'localhost']
-
-
 DB_NAME = os.environ['DB_NAME']
 DB_USER = os.environ['DB_USER']
 DB_PASS = os.environ['DB_PASS']
@@ -24,8 +20,16 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '5432',
         'OPTIONS': {
-            'sslmode': 'require',
+            'sslmode': 'allow',
             },
     },
+}
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'CACHE': not DEBUG,
+        'BUNDLE_DIR_NAME': 'bundles/dev/',
+        'STATS_FILE': os.path.join(PROJECT_DIR, 'webpack-stats-dev.json'),
+    }
 }
 

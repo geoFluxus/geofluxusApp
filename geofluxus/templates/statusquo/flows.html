@@ -1,0 +1,1074 @@
+<!--Flows-->
+
+<!--Filter editing-->
+<script type="text/template" id="flows-template">
+    <div id="filterViewContainer">
+        <!-- <div class="card bg-dark">
+            <div class="card-header" id="ch-filterViews">
+                <h4 class="mb-0 panel-title">
+                    <button class="btn btn-link collapsingHeaderButton collapsed" id="btn-filterViews"
+                            data-toggle="collapse" data-target="#collapseFilterViews" aria-expanded="false"
+                            aria-controls="collapseFilterViews" data-parent="#filterViewContainer">
+                        <i class="fa fa-chevron-down pull-right"></i>
+                        Saved Filters
+                    </button>
+                </h4>
+            </div>
+            <div id="collapseFilterViews" class="collapse" data-parent="#filterViewContainer">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm">
+                            <div class="row">
+                                <select name="filter" class="form-control form-control-sm">
+                                    <option value="none">No saved filters found.</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm">
+                            <div class="row">
+                                <button class="btn btn-primary btn-sm" title="Edit filter"
+                                        style="margin-right: 10px; width: 6em;"
+                                        id="edit-flowfilter-button">Edit
+                                </button>
+                                <button class="btn btn-primary btn-sm" title="Create filter"
+                                        style="margin-right: 10px; width: 6em;"
+                                        id="new-flowfilter-button">New
+                                </button>
+                                <button class="btn btn-warning btn-sm" title="Delete filter"
+                                        style="background-color: red; color:white; border: red; width: 6em;"
+                                        id="delete-flowfilter-button">Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="filter-attributes">
+                        <div class="col-sm">
+                            <div class="row">
+                                <input class="form-control form-control-sm" id="filterName" name="filterName"
+                                       placeholder="Name">
+                            </div>
+                            <div class="row">
+                                <input class="form-control form-control-sm" id="filterDescription"
+                                       name='filterDescription'
+                                       placeholder="Description">
+                            </div>
+                        </div>
+                        <div class="col-sm">
+                            <div class="row">
+                                <button id='upload-flowfilter-button' title="Save filter"
+                                        class="btn btn-sm btn-danger btn-upload">
+                                    <span class="fas fa-arrow-circle-up" style="margin-right:10px;"></span>Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <div id="flows-content"></div>
+</script>
+
+<!--Filters-->
+<script type="text/template" id="filter-flows-template">
+    <div class="block accordion" id="filterBlock">
+        <h4 style="padding-bottom: 0.5em; padding-top: 1em">1. Filter the flows</h4>
+
+        <!-- ORIGIN CONTROLS -->
+        <div class="card bg-dark">
+            <div class="card-header" id="card-header-collapse-origin">
+                <h4 class="mb-1">
+                    <button class="btn btn-link collapsingHeaderButton" id="btn-collapse-header-origin"
+                            data-toggle="collapse" data-target="#collapseOriginBlock" aria-expanded="true"
+                            aria-controls="collapseOriginBlock">
+                        <i class="fa fa-chevron-down pull-right"></i>
+                        Origin
+                    </button>
+                </h4>
+                <!--                <a  float="left" class="help-icon fas fa-question-circle" data-toggle="popover" title="Activities and Actors Filter"-->
+                <!--                   data-html="true" tabindex="0"-->
+                <!--                   data-content='Filter the flows between activity groups, activities and actors'>-->
+                <!--                </a>-->
+            </div>
+
+            <div id="collapseOriginBlock" class="collapse show" aria-labelledby="card-header-collapse-origin"
+                 data-parent="#filterBlock">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <label for="area-select-button-origin">Limit the origin of the waste flows to geographic areas:</label>
+                            <button id="area-select-button-origin" class="btn btn-sm btn-primary area-select-button mt-2 d-block" data-width="100%"
+                                    style="width: 13em" data-area-select-block="origin">Select areas
+                            </button>
+                            <!-- <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Filter by Areas"
+                               data-html="true" tabindex="0"
+                               data-content="
+                                Clicking the <b>Select areas</b> button opens a dialog where areas may be selected and confirmed.<br>
+                                On confirmation the selected areas are used to limit the Actors to those located inside these areas.<br><br>
+                                This filter is complementary to the other activities and actors filters.">
+                            </a> -->
+                        </div>          
+                    </div>
+
+                    <div class='row areaSelectionsOrigin' style="display: none;">
+                        <div class="col-md-4">
+                            <!-- <label for="areaSelectionsOriginTextarea">Selected areas:</label> -->
+                            <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsOriginTextarea" style="width: 100% !important; display: inline-block" type="text" readonly></textarea>
+                            <button
+                                id="clear-origin-areas-button"
+                                class="btn btn-sm btn-primary clear-areas-button"
+                                data-area-clear-button="origin"
+                                >
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>                        
+                    </div>
+
+                    <div class="row mt-2 areaSelectionsOrigin" style="display: none;">
+                        <div class="col">
+                            <div style="display: block;">
+                                <label style="display: inline-block;">The origin of the flows must be</label>
+                                <div class="checkbox in-or-out-container">
+                                    <input name="in-or-out-origin" id="origin-area-in-or-out" type="checkbox"
+                                        data-height="24" data-toggle="toggle" data-on="outside"
+                                        data-off="within"
+                                        class="in-out-toggle">
+                                    <label style="display: inline-block;">the selected area(s).</label>    
+                                </div>
+                            </div>
+                        </div>
+                    </div>      
+
+                    <div class="row mt-4">
+                        <div class="col-md-4">
+                            <label for="origin-role-radio">Origin role</label>
+                            <a class="help-icon fas fa-question-circle" data-toggle="popover"
+                            title="Role of the Actor"
+                            data-html="true" tabindex="0"
+                            data-content='This filter allows you to filter the flows based on the role of the actor. '>
+                            </a>
+                            <div class="btn-group btn-group-toggle" id="origin-role-radio" data-toggle="buttons" style="width: 100%;">
+                                <label class="btn btn-sm btn-primary" style="width: 40%;">
+                                    <input type="radio"  id="origin-role-radio-production" checked>Production
+                                </label>
+                                <label class="btn btn-sm btn-primary active" style="width: 20%;">
+                                    <input type="radio"  id="origin-role-radio-both">Both
+                                </label>
+                                <label class="btn btn-sm btn-primary" style="width: 40%;">
+                                    <input type="radio"  id="origin-role-radio-treatment">Treatment
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row originContainerActivity" style="display: none;">
+                        <div class="col-md-4">
+                            <label for="origin-activitygroup-select">Activity group</label>
+                            <select id="origin-activitygroup-select" name="origin-activitygroup-select" multiple
+                                    class="form-control form-control-sm selectpicker"
+                                    data-live-search="true"
+                                    data-dropup-auto="false"
+                                    data-size="6"
+                                    style="resize: vertical;">
+                                <option selected value="-1">All (<%= activityGroups.count %>)</option>
+                                <option data-divider="true"></option>
+                                <% activityGroups.forEach(function(activitygroup){ %>
+                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%> <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %> (<%=
+                                    activitygroup.get('flow_count') %> <%= (activitygroup.get('flow_count') == 1) ? 'flow' : 'flows' %>)
+                                </option>
+                                <% }); %>
+                            </select>
+                        </div>
+                        <div class="col-md-4 activitySelectContainer activitySelectContainerOrigin" style="display: none">
+                            <label for="origin-activity-select">Activity</label>
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
+                            <select id="origin-activity-select" name="origin-activity-select" multiple
+                                    class="form-control form-control-sm selectpicker"
+                                    data-live-search="true"
+                                    data-dropup-auto="false" data-size="6" style="resize: vertical;">
+                                <option selected value="-1">All (<%= activities.count %>)</option>
+                                <option data-divider="true"></option>
+                                <% activities.forEach(function(activity){ %>
+                                <option value="<%= activity.id %>"><%= activity.get('nace') %> <%= activity.get('name') %> (<%=
+                                    activity.get('flow_count') %> <%= (activity.get('flow_count') == 1) ? 'flow' :
+                                    'flows' %>)
+                                </option>
+                                <% }); %>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row originContainerTreatmentMethod" style="display: none;">
+                        <div class="col-md-4">
+                            <label for="origin-processGroup-select">Treatment method group</label>
+                            <select name="origin-processGroup-select" id="origin-processGroup-select" multiple
+                            class="form-control form-control-sm selectpicker"
+                            data-live-search="true"
+                            data-size="6"
+                            style="resize: vertical;">
+                            <option selected value="-1">All (<%= processgroups.count %>)</option>
+                            <option data-divider="true"></option>
+                            <% processgroups.forEach(function(process){ %>
+                                <option value="<%= process.id %>"><%= process.get('code') %> <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4" id="originContainerProcesses" style="display: none;">
+                            <label for="origin-process-select">Treatment method</label>
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
+                            <select name="origin-process-select" id="origin-process-select" multiple
+                            class="form-control form-control-sm selectpicker"
+                            data-live-search="true"
+                            data-size="6"
+                            style="resize: vertical;">
+                            <option selected value="-1">All (<%= processes.count %>)</option>
+                            <option data-divider="true"></option>
+                            <% processes.forEach(function(process){ %>
+                                <option value="<%= process.id %>"><%= process.get('name') %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+
+
+                    </div>
+
+
+                        
+                </div>
+            </div>
+
+        </div>
+
+        <!-- DESTINATION CONTROLS -->
+        <div class="card bg-dark">
+            <div class="card-header" id="card-header-collapse-destination">
+                <h4 class="mb-1">
+                    <button class="btn btn-link collapsed collapsingHeaderButton" id="btn-collapse-header-destination"
+                            data-toggle="collapse" data-target="#collapseDestinationBlock" aria-expanded="false"
+                            aria-controls="collapseDestinationBlock">
+                        <i class="fa fa-chevron-down pull-right"></i>
+                        Destination
+                    </button>
+                </h4>
+                <!--                <a  float="left" class="help-icon fas fa-question-circle" data-toggle="popover" title="Activities and Actors Filter"-->
+                <!--                   data-html="true" tabindex="0"-->
+                <!--                   data-content='Filter the flows between activity groups, activities and actors'>-->
+                <!--                </a>-->
+            </div>
+
+            <div id="collapseDestinationBlock" class="collapse" aria-labelledby="card-header-collapse-destination"
+                 data-parent="#filterBlock">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <label for="area-select-button-destination">Limit the destination of the waste flows to geographic areas:</label>
+                            <button id="area-select-button-destination" class="btn btn-sm btn-primary area-select-button mt-2 d-block" data-width="100%"
+                                    style="width: 13em" data-area-select-block="destination">Select areas
+                            </button>
+                            <!-- <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Filter by Areas"
+                               data-html="true" tabindex="0"
+                               data-content="
+                                Clicking the <b>Select areas</b> button opens a dialog where areas may be selected and confirmed.<br>
+                                On confirmation the selected areas are used to limit the Actors to those located inside these areas.<br><br>
+                                This filter is complementary to the other activities and actors filters.">
+                            </a> -->
+                        </div>
+                    </div>
+
+                     <div class='row areaSelectionsDestination' style="display: none;">
+                        <div class="col-md-4">
+                            <!-- <label for="areaSelectionsDestinationTextarea">Selected areas:</label> -->
+                            <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsDestinationTextarea" style="width: 100% !important; display: inline-block" type="text" readonly></textarea>
+                            <button
+                            id="clear-destination-areas-button"
+                            class="btn btn-sm btn-primary clear-areas-button"
+                            data-area-clear-button="destination"
+                            >
+                            <i class="fas fa-times"></i>
+                        </button>
+                        </div>
+                    </div>
+                    <div class="row mt-2 areaSelectionsDestination" style="display: none;">
+                        <div class="col">
+                            <div style="display: block;">
+                                <label style="display: inline-block;">The destination of the flows must be</label>
+                                <div class="checkbox in-or-out-container">
+                                    <input name="in-or-out-destination" id="destination-area-in-or-out" type="checkbox"
+                                        data-height="24" data-toggle="toggle" data-on="outside"
+                                        data-off="within"
+                                        class="in-out-toggle">
+                                    <label style="display: inline-block;">the selected area(s).</label>    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row mt-4">
+                        <div class="col-md-4">
+                            <label for="destination-role-radio">Destination role</label>
+                            <a class="help-icon fas fa-question-circle" data-toggle="popover"
+                            title="Role of the Actor"
+                            data-html="true" tabindex="0"
+                            data-content='This filter allows you to filter the flows based on the role of the actor. '>
+                            </a>
+                            <div class="btn-group btn-group-toggle" id="destination-role-radio" data-toggle="buttons" style="width: 100%;">
+                                <label class="btn btn-sm btn-primary" style="width: 40%;">
+                                    <input type="radio"  id="destination-role-radio-production" checked>Production
+                                </label>
+                                <label class="btn btn-sm btn-primary active" style="width: 20%;">
+                                    <input type="radio"  id="destination-role-radio-both">Both
+                                </label>
+                                <label class="btn btn-sm btn-primary" style="width: 40%;">
+                                    <input type="radio"  id="destination-role-radio-treatment">Treatment
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row destinationContainerActivity" style="display: none;">
+                        <div class="col-md-4">
+                            <label for="destination-activitygroup-select">Activity group</label>
+                            <select id="destination-activitygroup-select" name="destination-activitygroup-select" multiple
+                                    class="form-control form-control-sm selectpicker"
+                                    data-live-search="true"
+                                    data-dropup-auto="false" data-size="6" style="resize: vertical;">
+                                <option selected value="-1">All (<%= activityGroups.count %>)</option>
+                                <option data-divider="true"></option>
+                                <% activityGroups.forEach(function(activitygroup){ %>
+                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%> <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %> (<%=
+                                    activitygroup.get('flow_count') %> <%= (activitygroup.get('flow_count') == 1) ?
+                                    'flow' : 'flows' %>)
+                                </option>
+                                <% }); %>
+                            </select>
+                        </div>
+                        <div class="col-md-4 activitySelectContainer activitySelectContainerDestination" style="display: none">
+                            <label for="destination-activity-select">Activity</label>
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
+                            <select id="destination-activity-select" name="destination-activity-select" multiple
+                                    class="form-control form-control-sm selectpicker"
+                                    data-live-search="true"
+                                    data-dropup-auto="false" data-size="6" style="resize: vertical;">
+                                <option selected value="-1">All (<%= activities.count %>)</option>
+                                <option data-divider="true"></option>
+                                <% activities.forEach(function(activity){ %>
+                                <option value="<%= activity.id %>"><%= activity.get('nace') %> <%= activity.get('name') %> (<%=
+                                    activity.get('flow_count') %> <%= (activity.get('flow_count') == 1) ? 'flow' :
+                                    'flows' %>) | <%=(activity.get('nace'))%>
+                                </option>
+                                <% }); %>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row destinationContainerTreatmentMethod" style="display: none;">
+                        <div class="col-md-4">
+                            <label for="destination-processGroup-select">Treatment method group</label>
+                            <select name="destination-processGroup-select" id="destination-processGroup-select" multiple
+                            class="form-control form-control-sm selectpicker"
+                            data-live-search="true"
+                            data-size="6"
+                            style="resize: vertical;">
+                            <option selected value="-1">All (<%= processgroups.count %>)</option>
+                            <option data-divider="true"></option>
+                            <% processgroups.forEach(function(process){ %>
+                                <option value="<%= process.id %>"><%= process.get('code') %> <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4" id="destinationContainerProcesses" style="display: none;">
+                            <label for="destination-process-select">Treatment method</label>
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
+                            <select name="destination-process-select" id="destination-process-select" multiple class="form-control form-control-sm selectpicker"
+                            data-live-search="true"
+                            data-size="6"
+                            style="resize: vertical;">
+                            <option selected value="-1">All (<%= processes.count %>)</option>
+                            <option data-divider="true"></option>
+                            <% processes.forEach(function(process){ %>
+                                <option value="<%= process.id %>"><%= process.get('name') %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+                    </div>
+  
+                </div>
+            </div>
+
+        </div>
+
+
+
+        <!-- FLOWS CONTROLS -->
+        <div class="card bg-dark">
+            <div class="card-header" id="card-header-collapse-flows">
+                <h4 class="mb-1">
+                    <button class="btn btn-link collapsed collapsingHeaderButton"
+                            id="btn-collapse-header-flows"
+                            data-toggle="collapse"
+                            data-target="#collapseFlowsBlock"
+                            aria-expanded="false"
+                            aria-controls="collapseFlowsBlock">
+                        <i class="fa fa-chevron-down pull-right"></i>
+                        Flows
+                    </button>
+                </h4>
+                <!--                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Flow Filters" data-html="true"-->
+                <!--                   tabindex="0"-->
+                <!--                   data-content='Filter the flows in between activity groups, activities and actors'>-->
+                <!--                </a>-->
+            </div>
+            <div id="collapseFlowsBlock" class="collapse" aria-labelledby="card-header-collapse-flows" data-parent="#filterBlock">
+                <div class="card-body">
+
+                    <h5 class="flowFilterSubtitle">General</h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label style="width: 450px" for="area-select-button-flows">Select the area(s) through which the flows must pass:</label>
+                            <button id="area-select-button-flows" class="btn btn-sm btn-primary area-select-button" data-width="100%"
+                                    style="float: left; width: 13em" data-area-select-block="flows">Select areas
+                            </button>
+                            <!-- <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Filter by Areas"
+                               data-html="true" tabindex="0"
+                               data-content="
+                                Clicking the <b>Select areas</b> button opens a dialog where areas may be selected and confirmed.<br>
+                                On confirmation the selected areas are used to limit the Actors to those located inside these areas.<br><br>
+                                This filter is complementary to the other activities and actors filters.">
+                            </a> -->
+                        </div>
+                    </div>
+                    <div class='row' id="areaSelectionsFlows" style="display: none;">
+                        <div class="col-md-4">
+                            <!-- <label for="areaSelectionsFlowsTextarea">Selected areas:</label> -->
+                            <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsFlowsTextarea" style="width: 100% !important; display: inline-block" type="text" readonly></textarea>
+                            <button
+                            id="clear-flows-areas-button"
+                            class="btn btn-sm btn-primary clear-areas-button"
+                            data-area-clear-button="flows"
+                            >
+                            <i class="fas fa-times"></i>
+                        </button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label>Year</label>
+                            <select name="flows-year-select" multiple class="form-control form-control-sm selectpicker"
+                                    data-live-search="true"
+                                    data-size="6"
+                                    style="resize: vertical;">
+                                <option selected value="-1">All (<%= years.count %>)</option>
+                                <option data-divider="true"></option>
+                                <% years.forEach(function(year){ %>
+                                <option value="<%= year.id %>"><%= year.get('code') %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+                        <div class="col-md-2" id="monthCol" style="display: none;">
+                            <label>Month</label>
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
+                            <select name="flows-month-select" multiple class="form-control form-control-sm selectpicker"
+                                    data-live-search="true"
+                                    data-size="6"
+                                    style="resize: vertical;">
+                                <option selected value="-1">All (<%= months.count %>)</option>
+                                <option data-divider="true"></option>
+                                <% months.forEach(function(month){ %>
+                                <option value="<%= month.id %>"><%= month.get('code') %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h5 class="flowFilterSubtitle">European Waste Catalogue Codes</h5>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Chapter</label>
+                            <select name="flows-waste02-select" multiple class="form-control form-control-sm selectpicker"
+                                    data-live-search="true"
+                                    data-size="6"
+                                    style="resize: vertical;">
+                                <option selected value="-1">All (<%= wastes02.count %>)</option>
+                                <option data-divider="true"></option>
+                                <% wastes02.forEach(function(waste){ %>
+                                <option value="<%= waste.id %>"><%= waste.get('ewc_code') %> <%= waste.get('ewc_name')[0].toUpperCase() + waste.get('ewc_name').slice(1).toLowerCase() %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3" id="wastes04col" style="display: none;">
+                            <label>Sub-chapter</label>
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
+                            <select name="flows-waste04-select" multiple class="form-control form-control-sm selectpicker"
+                                    data-live-search="true"
+                                    data-size="6"
+                                    style="resize: vertical;">
+                                <option selected value="-1">All (<%= wastes04.count %>)</option>
+                                <option data-divider="true"></option>
+                                <% wastes04.forEach(function(waste){ %>
+                                <option value="<%= waste.id %>"><%= waste.get('ewc_code') %> <%=
+                                    waste.get('ewc_name')[0].toUpperCase() + waste.get('ewc_name').slice(1) %>
+                                </option>
+                                <% }); %>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3" id="wastes06col" style="display: none;">
+                            <label>Individual entries</label>
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
+                            <select name="flows-waste06-select" multiple class="form-control form-control-sm selectpicker"
+                                    data-live-search="true"
+                                    data-size="6"
+                                    style="resize: vertical;">
+                                <option selected value="-1">All (<%= wastes06.count %>)</option>
+                                <option data-divider="true"></option>
+                                <% wastes06.forEach(function(waste){ %>
+                                <option value="<%= waste.id %>"><%= waste.get('ewc_code') %> <%=
+                                    waste.get('ewc_name')[0].toUpperCase() + waste.get('ewc_name').slice(1) %>
+                                </option>
+                                <% }); %>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h5 class="flowFilterSubtitle">Contents</h5>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Materials</label>
+                            <select name="flows-material-select" multiple class="form-control form-control-sm selectpicker"
+                                    data-live-search="true"
+                                    data-size="6"
+                                    style="resize: vertical;">
+                                <option selected value="-1">All (<%= materials.count %>)</option>
+                                <option data-divider="true"></option>
+                                <% materials.forEach(function(material){ %>
+                                <option value="<%= material.id %>"> <%= material.get('name')[0].toUpperCase() +
+                                    material.get('name').slice(1) %>
+                                </option>
+                                <% }); %>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Products</label>
+                            <select name="flows-product-select" multiple class="form-control form-control-sm selectpicker"
+                                    data-live-search="true"
+                                    data-size="6"
+                                    style="resize: vertical;">
+                                <option selected value="-1">All (<%= products.count %>)</option>
+                                <option data-divider="true"></option>
+                                <% products.forEach(function(product){ %>
+                                <option value="<%= product.id %>"><%= product.get('name') %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Composites</label>
+                            <select name="flows-composites-select" multiple class="form-control form-control-sm selectpicker"
+                                    data-live-search="true" data-size="6"
+                                    style="resize: vertical;">
+                                <option selected value="-1">All (<%= composites.count %>)</option>
+                                <option data-divider="true"></option>
+                                <% composites.forEach(function(composite){ %>
+                                <option value="<%= composite.id %>"><%= composite.get('name') %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h5 class="flowFilterSubtitle">Characteristics</h5>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Route</label>
+                            <select name="flows-route-select" class="form-control form-control-sm selectpicker">
+                                <option value='both'>ignore</option>
+                                <option value='no'>not route</option>
+                                <option value='yes'>route</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Collector</label>
+                            <select name="flows-collector-select" class="form-control form-control-sm selectpicker">
+                                <option value='both'>ignore</option>
+                                <option value='no'>not collector</option>
+                                <option value='yes'>collector</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Hazardous</label>
+                            <select name="flows-hazardous-select" class="form-control form-control-sm selectpicker">
+                                <option value='both'>ignore</option>
+                                <option value='no'>not hazardous</option>
+                                <option value='yes'>hazardous</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Clean</label>
+                            <select name="flows-clean-select" class="form-control form-control-sm selectpicker" multiple
+                                    style="resize: vertical;">
+                                <option selected value='-1'>ignore</option>
+                                <option data-divider="true"></option>
+                                <option value='unknown'>unknown</option>
+                                <option value='no'>not clean</option>
+                                <option value='yes'>clean</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Mixed</label>
+                            <select name="flows-mixed-select" class="form-control form-control-sm selectpicker" multiple
+                                    style="resize: vertical;">
+                                <option selected value='-1'>ignore</option>
+                                <option data-divider="true"></option>
+                                <option value='unknown'>unknown</option>
+                                <option value='no'>not mixed</option>
+                                <option value='yes'>mixed</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Direct use</label>
+                            <select name="flows-direct-select" class="form-control form-control-sm selectpicker" multiple
+                                    style="resize: vertical;">
+                                <option selected value='-1'>ignore</option>
+                                <option data-divider="true"></option>
+                                <option value='unknown'>unknown</option>
+                                <option value='no'>not direct</option>
+                                <option value='yes'>direct</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Composite</label>
+                            <select name="flows-iscomposite-select" class="form-control form-control-sm selectpicker" multiple
+                                    style="resize: vertical;">
+                                <option selected value='-1'>ignore</option>
+                                <option data-divider="true"></option>
+                                <option value='unknown'>unknown</option>
+                                <option value='no'>product</option>
+                                <option value='yes'>composite</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+                
+    </div>
+
+     <div class="row mt-3 mb-2">
+         <button id='reset-filters' class="btn btn-secondary"
+         title="Reset all the filters"
+         style="margin-left: 20px; float: left; width: 10em">Reset
+        </button>
+    </div>
+        
+    <div class="block accordion" id="dimensionBlock">
+
+        <h4 style="padding-bottom: 0.5em; padding-top: 1em">2. Analyse</h4>
+
+        <div class="card bg-dark" id="dimensionsCard">
+
+            <!-- IF WE NEED COLLAPSE LATER, UNCOMMENT THIS -->
+            <div class="card-header" id="card-header-collapse-dimensions">
+                <h4 class="mb-1">
+                    <button class="btn btn-link collapsingHeaderButton" id="btn-collapse-header-dimensions"
+                        data-toggle="collapse" data-target="#collapseDimensionBlock" aria-expanded="true"
+                        aria-controls="collapseDimensionBlock">
+                        <i class="fa fa-chevron-down pull-right"></i>
+                        Define dimensions & granularity
+                    </button>
+                </h4>
+
+            </div>
+
+            <div id="collapseDimensionBlock" class="collapse show" aria-labelledby="card-header-collapse-dimension"
+                 data-parent="#dimensionBlock">
+
+                <div class="card-body">                    
+                    
+                    <!-- <div class="row align-items-end border-bottom mb-3 mt-1">
+                        <div class="col-md-3 text-center">
+                            <label class="dimensionHeaderLabel">Dimension</label>                          
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <label class="dimensionHeaderLabel">Granularity</label>                          
+                        </div>
+                    </div> -->
+
+                    <!-- TIME -->
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="checkbox">
+                                <input name="dim-toggle-time" class="dimensionToggle" id="dim-toggle-time" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-dim="time" data-on="Time"
+                                    data-off="Time">
+                            </div>
+                        </div>
+                        <div class="col-md-3" id="gran-toggle-time-col" style="display: none">
+                            <div class="checkbox">
+                                <input name="gran-toggle-time" id="gran-toggle-time" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Month"
+                                    data-off="Year">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Space -->
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <div class="checkbox">
+                                <input name="dim-toggle-space" class="dimensionToggle" id="dim-toggle-space" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-dim="space" data-on="Space"
+                                    data-off="Space">
+                            </div>
+                        </div>
+                        <div class="col-md-3" id="gran-toggle-space-col" style="display: none">
+                            <select name="dim-space-gran-select" id="dim-space-gran-select" class="form-control form-control-sm selectpicker" data-height="21"> 
+                                <% levels.forEach(function(level) { %>
+                                <option value="<%= level.id %>"><%= level.get('name') %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3" id="origDest-toggle-space-col" style="display: none">
+                            <div class="checkbox">
+                                <input name="origDest-toggle-space" id="origDest-toggle-space" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Destination"
+                                    data-off="Origin">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Economic Activity -->
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="checkbox">
+                                <input name="dim-toggle-economic-activity" class="dimensionToggle" id="dim-toggle-economic-activity" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-dim="economicActivity" data-on="Economic activity"
+                                    data-off="Economic activity">
+                            </div>
+                        </div>
+                        <div class="col-md-3" id="gran-econ-activity-col" style="display: none">
+                            <div class="checkbox">
+                                <input name="gran-toggle-econ-activity" id="gran-toggle-econ-activity" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Activity"
+                                    data-off="Activity group">
+                            </div>
+                        </div>
+                        <div class="col-md-3" id="origDest-toggle-econAct-col" style="display: none">
+                            <div class="checkbox">
+                                <input name="origDest-toggle-econAct" id="origDest-toggle-econAct" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Destination"
+                                    data-off="Origin">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Treatment Method -->
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="checkbox">
+                                <input name="dim-toggle-treatment-method" class="dimensionToggle" id="dim-toggle-treatment-method" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-dim="treatmentMethod" data-on="Treatment method"
+                                    data-off="Treatment method">
+                            </div>
+                        </div>
+                        <div class="col-md-3" id="gran-treatment-method-col" style="display: none">
+                            <div class="checkbox">
+                                <input name="gran-toggle-treatment-method" id="gran-toggle-treatment-method" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Treatment method"
+                                    data-off="Treatment method group">
+                            </div>
+                        </div>
+                        <div class="col-md-3" id="origDest-toggle-treatment-col" style="display: none">
+                            <div class="checkbox">
+                                <input name="origDest-toggle-treatment" id="origDest-toggle-treatment" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Destination"
+                                    data-off="Origin">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Material -->
+                    <!-- <div class="row">
+                        <div class="col-md-3">
+                            <label for="dim-toggle-material" class="dimensionLabel">Material</label>                          
+                        </div>
+                        <div class="col-md-3">
+                            <div class="checkbox">
+                                <input name="dim-toggle-material" class="dimensionToggle" id="dim-toggle-material" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
+                                    data-off="Aggregate">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                      
+                        </div>
+                    </div> -->
+                    
+                    <!-- Logistics -->
+                    <!-- <div class="row">
+                        <div class="col-md-3">
+                            <label for="dim-toggle-logistics" class="dimensionLabel">Logistics</label>                          
+                        </div>
+                        <div class="col-md-3">
+                            <div class="checkbox">
+                                <input name="dim-toggle-logistics" class="dimensionToggle" id="dim-toggle-logistics" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
+                                    data-off="Aggregate">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                      
+                        </div>
+                    </div> -->
+            
+                     <!-- Max dimensions -->
+                     <div class="row" id="alertMaxDimensionsRow" style="display: none;">
+                        <div class="col mt-3 text-center">
+                            <div class="alert alert-warning fade show" id="alertMaxDimensions" role="alert">
+                                You can select up to <strong><%= maxNumberOfDimensions %> dimensions</strong> at the same time.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+        
+        </div>
+
+
+        <div class="card bg-dark">
+
+            <div class="card-header" id="card-header-collapse-visualizations">
+                <h4 class="mb-1">
+                    <button class="btn btn-link collapsingHeaderButton"
+                            id="btn-collapse-header-vizualisations"
+                            data-toggle="collapse"
+                            data-target="#collapseVizualisationBlock"
+                            aria-expanded="true"
+                            aria-controls="collapseVizualisationBlock">
+                        <i class="fa fa-chevron-down pull-right"></i>
+                        Choose visualization type
+                    </button>
+                </h4>
+
+            </div>
+
+            <div id="collapseVizualisationBlock" class="collapse show" aria-labelledby="card-header-collapse-visualizations"
+                data-parent="#dimensionBlock">
+
+                <div class="card-body">
+
+                    <div class="row" id="message-container-row">
+                        <div class="col">
+                            <span style="color: white">Select at least one dimension.</span>
+                        </div>
+                    </div>
+                    
+                    <div class="viz-container" style="display: none;">
+                        <div class="row" style="width: 100%;">
+                            <div class="col d-flex align-items-center mr-auto">
+                                <div class="btn-group btn-group-toggle flex-wrap justify-content-center" id="visualization-type" data-toggle="buttons" style="margin: auto">
+                                    <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="piechart" style="display: none;">
+                                        <input type="radio" id="viz-piechart"><span class="span-viz" id="span-viz-piechart">Pie chart</span>
+                                    </label>
+                                    <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="barchart" style="display: none;">
+                                        <input type="radio" id="viz-barchart"><span class="span-viz" id="span-viz-barchart">Bar chart</span>
+                                    </label>
+                                    <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="treemap" style="display: none;">
+                                        <input type="radio" id="viz-treemap"><span class="span-viz" id="span-viz-treemap">Treemap</span>
+                                    </label>
+                                    <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="lineplot" style="display: none;">
+                                        <input type="radio" id="viz-lineplot"><span class="span-viz" id="span-viz-lineplot">Line plot</span>
+                                    </label>
+                                    <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="choroplethmap" style="display: none;">
+                                        <input type="radio" id="viz-choroplethmap"><span class="span-viz" id="span-viz-choroplethmap">Choropleth map</span>
+                                    </label>
+                                    <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="coordinatepointmap" style="display: none;">
+                                        <input type="radio" id="viz-coordinatepointmap"><span class="span-viz" id="span-viz-coordinatepointmap">Coordinate point map</span>
+                                    </label>
+
+                                    <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="lineplotmultiple" style="display: none;">
+                                        <input type="radio" id="viz-lineplotmultiple"><span class="span-viz" id="span-viz-lineplotmultiple">Multiple line plot</span>
+                                    </label>
+                                    <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="areachart" style="display: none;">
+                                        <input type="radio" id="viz-areachart"><span class="span-viz" id="span-viz-areachart">Stacked area chart</span>
+                                    </label>
+                                    <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="stackedbarchart" style="display: none;">
+                                        <input type="radio" id="viz-stackedbarchart"><span class="span-viz" id="span-viz-stackedbarchart">Stacked bar chart</span>
+                                    </label>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col d-flex">
+                                <div class="custom-control custom-checkbox" style="margin: auto;">
+                                    <input type="checkbox" class="custom-control-input" id="display-legend">
+                                    <label class="custom-control-label" for="display-legend">Display legend</label>
+                                </div>
+                            </div>
+                        </div>     
+                    </div> 
+
+                </div>
+            </div>
+        </div>
+
+        </div>
+        
+        <div class="row mt-3 mb-2 d-flex justify-content-between">
+
+            <button id='reset-dim-viz' class="btn btn-secondary"
+                title="Reset all dimension and visualization settings"
+                style="width: 10em">Reset
+            </button>
+
+            <div style="margin-right: 1rem;">
+                <div class="helpIconContainer d-inline-flex align-items-center">
+                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Filter & Render"
+                    style="float: left;" data-html="true" tabindex="0"
+                    data-content="<b>Filter</b> the waste flows according to the filters in Origin, Destination,
+                    and Flows, and <b>render</b> the selected visualization based on the chosen dimensions and granularity.">
+                    </a>
+                </div>
+                <button id='apply-filters' class="btn btn-primary"
+                    title="Apply the filters and render the selected visualization."
+                    style="margin-left: 10px; float: right; width: 10em">Visualize
+                </button>
+            </div>
+         </div>
+    </div>
+
+
+    <!-- template for viewing flows as sankey or map  -->
+    <div id="flows-render-template">
+
+         <div class="row">
+            <div class="col">
+                <div class="viz-wrapper-div piechart-wrapper"></div>
+                <div class="viz-wrapper-div barchart-wrapper"></div>
+                <div class="viz-wrapper-div lineplot-wrapper"></div>
+                <div class="viz-wrapper-div treemap-wrapper"></div>
+                <div class="viz-wrapper-div choropleth-wrapper"></div>
+                <div class="viz-wrapper-div coordinatepointmap-wrapper"></div>
+
+                <div class="viz-wrapper-div areachart-wrapper"></div>
+                <div class="viz-wrapper-div stackedbarchart-wrapper"></div>
+            </div>
+        </div>
+        
+        <!-- <div class="row" style="margin-top: 20px;">
+            <div class="col-md-6 min-width-600px">
+                <div class="row" style="padding: 0px;">
+                    <span class="fa-stack sankey-help-icon-container">
+                        <i class="sankey-help-icon-bg fa fa-circle fa-stack-1x"></i>
+                        <a class="sankey-help-icon help-icon fas fa-question-circle fa-stack-1x" data-toggle="popover" title="Sankey Diagram" data-html="true" tabindex="0"
+                        data-content="This diagram displays the filtered flows and their origins and destinations.
+                            Origins and destinations represent groups, activities or actors, depending on the Level selection.
+                            The flow direction is from left to right.<br><br>
+                            <b>Flow selection</b><br>
+                            Tap a flow to display it and the involved actors on the map to the right. Tap it again to unselect it and remove it from the map.
+                            <br><br>
+                            <b>Controls</b><br>
+                            The diagram is zoomable and movable with touch gestures.
+                            The crosshair icon resets the zoom and centers the diagram.
+                            <br><br>
+                            <b>Export</b>
+                            <br> You can export your current view as an image by pressing the camera button.
+                            To export the flow data as a csv file press the button with the paper icon">
+                        </a>
+                    </span>
+                    
+                    <div class="sankey-wrapper" class="noselect">
+                        <div class="d3-zoom-controls">
+                            <a class="btn square" data-zoom="+0.5"><span class="fa fa-plus"></span></a>
+                            <a class="btn square" data-zoom="-0.5"><span class="fa fa-minus"></span></a>
+                            <a class="btn square" data-zoom="0"><span class="fa fa-crosshairs"></span></a>
+                        </div>
+                        <div class="sankeyUtilityButtonContainer">
+                            <button class="export-img fas fa-camera btn btn-primary d3-overlay inverted"></button>
+                            <button class="export-csv fas fa-file btn btn-primary d3-overlay inverted"></button>
+                            <button class="fullscreen-toggle fas fa-expand btn btn-primary d3-overlay inverted"></button>
+                        </div> -->
+                        <!-- <div style="position: absolute; bottom: 15px; left: 10px;">
+                            <button class="select-all fas fa-vector-square btn btn-primary d3-overlay inverted" style="position: relative; float: left; margin-right: 10px; height: 30px;">&nbsp;All</button>
+                            <button class="deselect-all fas fa-ban btn btn-primary d3-overlay inverted" style="position: relative; height: 30px;">&nbsp;None</button>
+                        </div> -->
+                        <!-- <div class="sankey" style="text-align: center;"></div>
+                    </div>
+                </div>
+            </div> -->
+
+
+
+            <!-- <div class="col-md-6 bordered min-width-600px">
+                <a class="help-icon glyphicon glyphicon-question-sign" data-toggle="popover" title="Sankey Map" style="margin: 15px; position: absolute; z-index:1000;" data-html="true" tabindex="0"
+                    data-content="This map displays the selected flows of the sankey diagram to the left on a spatial actor level.
+                        The color coding of the basic flows and activities and actors matches the sankey diagram.
+                        Tap a flow or actor on the map to display a tooltip with information about it.
+                        <br><br>
+                        To visualize the flow direction the <i>Animate Flows</i> checkbox has to be activated.">
+                </a>
+                <div id="flow-map" style="width: 100%; height: 600px;"></div>
+            </div> -->
+
+        </div>
+    </div>
+
+    <!-- temp footer -->
+    <div style="display: block; height: 350px">
+        <span style="color: white; margin: auto">Temporary footer</span>
+    </div>
+
+    <!--Area selection-->
+    <div class="area-filter modal fade" role="dialog"></div>
+</script>
+
+
+<!--Area selection-->
+<script type="text/template" id="area-select-modal-template">
+    <div class="modal-dialog modal-lg">
+        <!-- Modal content-->
+        <div class="modal-content col-md-12">
+            <div class="modal-header" style="padding-bottom: 0px">
+                <h4 class="modal-title">Select areas</h4>
+                <button type="button" class="close" data-dismiss="modal" style="color: white;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class='row' style="padding-top: 0px">
+                    <div class="col">
+                        <label for="area-level-select" class="input-label" style="margin-top: .5rem; margin-right: 10px;">Geographic level:</label>
+                        <select name="area-level-select" id="area-level-select" class="form-control form-control-sm" style="max-width: 350px;">
+                            <% levels.forEach(function(level) { %>
+                                <% if (level.get('level') != "1000") %>
+                                    <option value="<%= level.id %>"><%= level.get('name') %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class='areaModalMapRow map' style=""></div>
+                </div>
+                <div class='row' style="padding-top: 0px">
+                    <div class="col">
+                        <label for="areaSelectionsModalTextarea">Selected areas:</label>
+                        <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsModalTextarea" style="width: 100%" type="text" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn cancel btn-secondary" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary confirm" data-dismiss="modal" aria-hidden="true">OK</button>
+            </div>
+        </div>
+    </div>
+</script>

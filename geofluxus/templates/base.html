@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+{% load render_bundle from webpack_loader %}
+
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Lato|Montserrat|Open+Sans|Roboto" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css">
+
+  {% render_bundle 'commons' %}
+  {% render_bundle 'Base' %}
+  <title>{% block title %}TUDelft{% endblock %}</title>
+</head>
+
+<body>
+  <!--Navbar-->
+  <nav class="navbar navbar-expand-md" id="navbarID">
+    <a class="navbar-brand" href="/">TUDelft</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item" id="data-entry-link">
+          <a class="nav-link" href="/data-entry">Data Entry</a>
+        </li>
+        <li class="nav-item" id="status-quo-link">
+          <a class="nav-link" href="/status-quo">Status Quo</a>
+        </li>
+        <li class="nav-item" id="routing-link">
+          <a class="nav-link" href="/routing">Routing</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          {% if request.user.is_authenticated %}
+          <div class="dropdown">
+            <button class="dropdown-button" type="button">
+              User Area ({{ request.user.username }})
+              <span class="caret"></span>
+            </button>
+            <div class="dropdown-content">
+              {% if request.user.is_superuser %}
+              <a href="/admin">Admin</a>
+              <a href="/api">API</a>
+              {% endif %}
+              <a href="/logout">Logout</a>
+            </div>
+          </div>
+          {% else %}
+          <a class="nav-link" href="/login/login">Login</a>
+          {% endif %}
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Sidebar -->
+  <div id="wrapper" class="active">
+
+    <!-- <div id="sidebar-wrapper" style="display: none;">
+      <div id="sidebar-content" >
+        {% block sidebar %}
+        {% endblock %}
+      </div>
+    </div> -->
+
+    <!-- Page content -->
+    <div id="page-content-wrapper">
+      <!-- Keep all page content within the page-content inset div! -->
+      <div class="page-content inset">
+        <div class="row" style="padding: 0px;">
+          <div id="content" class="col-md-12">
+            {% block content %}{% endblock %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% include 'common.html' %}
+</body>
+
+</html>

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}TUDelft | Login{% endblock %}
+
+{% block content %}
+    {% render_bundle 'Login' %}
+    <div class="container">
+    <div class="row">
+      <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+        <div class="card card-signin my-5">
+          <div class="card-body">
+            <h5 class="card-title text-center">Login</h5>
+            <form class="form-signin" method="post" action="{% url 'login' %}">
+              {% csrf_token %}
+              <div class="form-label-group">
+                <input id="id_username" name="username" type="text" class="form-control">
+                <label for="id_username">Username</label>
+              </div>
+
+              <div class="form-label-group">
+                <input id="id_password" name="password" type="password" class="form-control">
+                <label for="id_password">Password</label>
+              </div>
+
+              {% if form.errors %}
+                <div class="alert alert-danger">
+                  Username and password didn't match. Please try again.
+                </div>
+              {% endif %}
+
+              <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

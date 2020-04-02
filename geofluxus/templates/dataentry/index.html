@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}TUDelft | Data Entry{% endblock %}
+
+{% block sidebar %}
+    <script>
+      document.getElementById("data-entry-link").classList.add('active');
+    </script>
+    <ul class="nav nav-pills nav-stacked" id="sidebar">
+      <li><a href="#bulk-upload" data-toggle="pill" class="active"><span class="sub-icon fas fa-save"></span>Upload</a></li>
+      <li><a href="#update" data-toggle="pill"><span class="sub-icon fas fa-recycle"></span>Update</a></li>
+      <li><a href="#delete" data-toggle="pill"><span class="sub-icon fas fa-exclamation-triangle"></span>Delete</a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/data-entry.css" />
+    <div class="tab-content">
+      <!-- Bulk upload -->
+      <div class="tab-pane fade show active" id="bulk-upload"></div>
+      <!-- Update -->
+      <div class="tab-pane fade in" id="update"></div>
+      <!-- Delete -->
+      <div class="tab-pane fade in" id="delete"></div>
+    </div>
+    {% include "dataentry/bulkupload.html" %}
+    {% include "dataentry/update.html" %}
+    {% include "dataentry/delete.html" %}
+    {% render_bundle 'DataEntry' %}
+{% endblock %}

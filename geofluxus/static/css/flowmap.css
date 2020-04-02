@@ -1,0 +1,98 @@
+.map{
+    width: 1960px;
+    height: 500px;
+}
+.country:hover{
+    stroke: #7d7d7d;
+    stroke-width: 0.5px;
+}
+div.sankeymaptooltip {
+    position: absolute;
+    text-align: left;
+    width: auto;
+    height: auto;
+    padding: 4px;
+    font: 14px sans-serif;
+    color: #111111;
+    background: #fff;
+    border: 0px;
+    border-radius: 0px;
+    pointer-events: none;
+    z-index: 99999;
+    min-width: 200px;
+}
+
+.flow {
+    /*stroke-linecap: round;*/
+}
+
+.animated.flow {
+  /*stroke-dasharray: 10, 4;*/
+  animation: flow 30s linear infinite;
+  -webkit-animation: flow 30s linear infinite;
+}
+
+@keyframes flow {
+  to {
+    stroke-dashoffset: -300;
+  }
+}
+
+@-webkit-keyframes flow {
+  to {
+    stroke-dashoffset: -300;
+  }
+}
+
+.mpoint:hover{
+    stroke:white;
+    stroke-width: 2px;
+}
+
+.route{
+    fill: none;
+}
+
+.route:hover{
+    stroke-width: 4px;
+}
+
+.arc path {
+    stroke: #0fff;
+}
+
+.leaflet-top.leaflet-right {
+    z-index: 2000;
+}
+
+.leaflet-bottom, .leaflet-top {
+    max-width: 50%;
+}
+
+/*legend tends to get really big (bottom right)*/
+.leaflet-right.leaflet-legend {
+    overflow: auto;
+    max-height: 50%;
+    pointer-events: all;
+}
+.leaflet-fullscreen-on .leaflet-right.leaflet-legend {
+    max-width: 20%;
+}
+.leaflet-right.leaflet-legend .leaflet-control {
+    margin-right: 0px;
+}
+
+
+.leaflet-control{
+    max-width: 100%;
+}
+.leaflet-control label{
+    pointer-events: none;
+}
+
+.leaflet-control-zoom {
+    top: 50px;
+}
+.leaflet-div-icon {
+    border: 0px;
+}
