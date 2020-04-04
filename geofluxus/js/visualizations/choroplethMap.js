@@ -1,8 +1,8 @@
 define([
     'd3',
     'd3-brush',
-    'd3plus',
-], function (d3, d3brush, d3plus) {
+    'visualizations/geomap.js',
+], function (d3, d3brush, geomap) {
     /**
      *
      * ChoroplethMap chart to display Flows data
@@ -18,7 +18,7 @@ define([
             var options = options || {};
             var _this = this;
 
-            new d3plus.Geomap()
+            new geomap.Geomap()
                 .data(options.data)
                 .colorScale("amount")
                 .topojson(options.geoJson)
