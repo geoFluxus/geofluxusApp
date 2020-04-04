@@ -12,7 +12,7 @@ define([
     class LinePlot {
         /**
          * @param {Object} options          object containing all option values
-         * @param {string} options.el       CSS Selector of the container element of the Pie Chart
+         * @param {string} options.el       CSS Selector of the container element of the viz
          */
         constructor(options) {
             var options = options || {};
@@ -41,6 +41,9 @@ define([
                 .shapeConfig(shapeConfigValue)
                 .tooltipConfig(options.tooltipConfig)
                 .legend(hasLegend)
+                // .label(function value(d) {
+                //     return d.actorName;
+                // })
                 .downloadPosition("left")
                 .downloadButton(true)
                 .controlConfig({

@@ -9,19 +9,19 @@ define([
      *
      * @author Evert Van Hirtum
      */
-    class BarChart {
+    class AreaChart {
         /**
          * @param {Object} options          object containing all option values
-         * @param {string} options.el       CSS Selector of the container element of the Pie Chart
+         * @param {string} options.el       CSS Selector of the container element of the Area Chart
          */
         constructor(options) {
             var options = options || {};
-            var _this = this;
 
             let hasLegend = $("#display-legend").prop("checked");
             let xSort = options.xSort ? options.xSort : null;
 
-            new d3plus.Plot()
+            new d3plus.AreaPlot()
+                .stacked(options.isStacked)
                 .tooltipConfig(options.tooltipConfig)
                 .data(options.data)
                 .groupBy(options.groupBy[0])
@@ -32,8 +32,6 @@ define([
                 .xSort(xSort)
                 .select(options.el)
                 .legend(hasLegend)
-                .shape("Bar")
-                .stacked(options.isStacked)
                 .downloadPosition("left")
                 .downloadButton(true)
                 .controlConfig({
@@ -43,5 +41,5 @@ define([
                 .render();
         }
     }
-    return BarChart;
+    return AreaChart;
 });

@@ -56,6 +56,9 @@ define(['views/common/baseview',
 
                 render: function (data) {
                     let flows = this.options.flows;
+                    let dimensionsActual = [];
+                    this.options.dimensions.forEach(dim => dimensionsActual.push(dim[0]));
+                    let isStacked = this.options.isStacked;
                     let groupBy;
                     let x;
                     let tooltipConfig;
@@ -217,6 +220,115 @@ define(['views/common/baseview',
                         }
                     }
 
+                    // ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                    // //////////////////////////////////////////
+                    // Time & Space
+                    if (dimensionsActual.includes("time") && dimensionsActual.includes("space")) {
+                        // TIME ----------------
+                        // Granularity = year
+                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
+                            x = ["year"];
+                            tooltipConfig = {
+                                title: "Waste totals per year",
+                                tbody: [
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                                    }],
+                                    ["Year", function (d) {
+                                        return d.year
+                                    }]
+                                ]
+                            }
+
+                            // Granularity = month:
+                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
+                            x = ["yearMonthCode"];
+                            tooltipConfig = {
+                                title: "Waste totals per month",
+                                tbody: [
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                                    }],
+                                    ["Month", function (d) {
+                                        return d.month
+                                    }]
+                                ]
+                            }
+                        }
+
+                        // SPACE ----------------
+                        if (!this.options.dimensions[1][1].isActorLevel) {
+                            groupBy = ["areaName"];
+                            tooltipConfig.tbody.push(["Area", function (d) {
+                                return d.areaName
+                            }]);
+                        } else {
+                            groupBy = ["actorName"];
+                            tooltipConfig.tbody.push(["Company", function (d) {
+                                return d.actorName
+                            }]);
+                        }
+
+                        // //////////////////////////////////////////
+                        // Time & Economic Activity
+                    } else if (dimensionsActual.includes("time") && dimensionsActual.includes("economicActivity")) {
+
+                        // Granularity = year
+                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
+                            x = ["year"];
+                            tooltipConfig = {
+                                title: "Waste totals per year",
+                                tbody: [
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                                    }],
+                                    ["Year", function (d) {
+                                        return d.year
+                                    }]
+                                ]
+                            }
+
+                            // Granularity = month:
+                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
+                            x = ["yearMonthCode"];
+
+                            if (hasMultipleLines) {
+                                groupBy = ["year"];
+                                x = ["monthName"];
+                            }
+
+                            tooltipConfig = {
+                                title: "Waste totals per month",
+                                tbody: [
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                                    }],
+                                    ["Month", function (d) {
+                                        return d.month
+                                    }]
+                                ]
+                            }
+                        }
+
+
+                        if (this.options.dimensions[1][1] == "origin__activity__activitygroup" || this.options.dimensions[1][1] == "destination__activity__activitygroup") {
+                            groupBy = ["activityGroupCode"];
+
+                            tooltipConfig.tbody.push(["Activity group",
+                                function (d) {
+                                    return d.activityGroupCode + " " + d.activityGroupName;
+                                },
+                            ])
+
+                        } else if (this.options.dimensions[1][1] == "origin__activity" || this.options.dimensions[1][1] == "destination__activity") {
+                            groupBy = ["activityCode"];
+                            tooltipConfig.tbody.push(["Activity group", function (d) {
+                                return d.activityGroupCode + " " + d.activityGroupName;
+                            }], )
+                        }
+                    }
+
                     // Create a new D3Plus BarChart object which will be rendered in this.options.el:
                     this.barChart = new BarChart({
                         el: this.options.el,
@@ -225,6 +337,7 @@ define(['views/common/baseview',
                         x: x,
                         tooltipConfig: tooltipConfig,
                         xSort: xSort,
+                        isStacked: isStacked,
                     });
                 },
 

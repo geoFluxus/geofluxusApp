@@ -12,6 +12,7 @@ define(['views/common/baseview',
         'views/common/treeMapView',
         'views/common/choroplethView',
         'views/common/coordinatePointMapView',
+        'views/common/areaChartView',
     ],
     function (
         BaseView,
@@ -27,6 +28,7 @@ define(['views/common/baseview',
         TreeMapView,
         ChoroplethView,
         CoordinatePointMapView,
+        AreaChartView,
     ) {
 
         var FlowsView = BaseView.extend({
@@ -215,20 +217,23 @@ define(['views/common/baseview',
                 if (filter.origin.role != 'both') {
                     filterParams.flows['origin_role'] = filter.origin.role;
                 }
-                if ($(filter.origin.activitySelect).val() == '-1') {
-                    if ($(filter.origin.activityGroupsSelect).val() != '-1') {
-                        filterParams.flows['origin__activity__activitygroup__in'] = $(filter.origin.activityGroupsSelect).val();
-                    }
-                } else {
-                    filterParams.flows['origin__activity__in'] = $(filter.origin.activitySelect).val();
-                }
 
-                if ($(filter.origin.processSelect).val() == '-1') {
-                    if ($(filter.origin.processGroupSelect).val() != '-1') {
-                        filterParams.flows['origin__process__processgroup__in'] = $(filter.origin.processGroupSelect).val();
+                if (filter.origin.role == "production"){
+                    if ($(filter.origin.activitySelect).val() == '-1') {
+                        if ($(filter.origin.activityGroupsSelect).val() != '-1') {
+                            filterParams.flows['origin__activity__activitygroup__in'] = $(filter.origin.activityGroupsSelect).val();
+                        }
+                    } else {
+                        filterParams.flows['origin__activity__in'] = $(filter.origin.activitySelect).val();
                     }
-                } else {
-                    filterParams.flows['origin__process__in'] = $(filter.origin.processSelect).val();
+                } else if (filter.origin.role == "treatment"){
+                    if ($(filter.origin.processSelect).val() == '-1') {
+                        if ($(filter.origin.processGroupSelect).val() != '-1') {
+                            filterParams.flows['origin__process__processgroup__in'] = $(filter.origin.processGroupSelect).val();
+                        }
+                    } else {
+                        filterParams.flows['origin__process__in'] = $(filter.origin.processSelect).val();
+                    }
                 }
 
 
@@ -250,20 +255,23 @@ define(['views/common/baseview',
                 if (filter.destination.role != 'both') {
                     filterParams.flows['destination_role'] = filter.destination.role;
                 }
-                if ($(filter.destination.activitySelect).val() == '-1') {
-                    if ($(filter.destination.activityGroupsSelect).val() != '-1') {
-                        filterParams.flows['destination__activity__activitygroup__in'] = $(filter.destination.activityGroupsSelect).val();
-                    }
-                } else {
-                    filterParams.flows['destination__activity__in'] = $(filter.destination.activitySelect).val();
-                }
 
-                if ($(filter.destination.processSelect).val() == '-1') {
-                    if ($(filter.destination.processGroupSelect).val() != '-1') {
-                        filterParams.flows['destination__process__processgroup__in'] = $(filter.destination.processGroupSelect).val();
+                if (filter.destination.role == "production"){
+                    if ($(filter.destination.activitySelect).val() == '-1') {
+                        if ($(filter.destination.activityGroupsSelect).val() != '-1') {
+                            filterParams.flows['destination__activity__activitygroup__in'] = $(filter.destination.activityGroupsSelect).val();
+                        }
+                    } else {
+                        filterParams.flows['destination__activity__in'] = $(filter.destination.activitySelect).val();
                     }
-                } else {
-                    filterParams.flows['destination__process__in'] = $(filter.destination.processSelect).val();
+                } else if (filter.destination.role == "treatment"){
+                    if ($(filter.destination.processSelect).val() == '-1') {
+                        if ($(filter.destination.processGroupSelect).val() != '-1') {
+                            filterParams.flows['destination__process__processgroup__in'] = $(filter.destination.processGroupSelect).val();
+                        }
+                    } else {
+                        filterParams.flows['destination__process__in'] = $(filter.destination.processSelect).val();
+                    }
                 }
 
                 // ///////////////////////////////
@@ -540,6 +548,7 @@ define(['views/common/baseview',
 
                             this[index].id = monthObject.attributes.id;
                             this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
+                            this[index].monthName = this[index].month.substring(0, this[index].month.indexOf(' '));
                             this[index].yearMonthCode = parseInt(monthObject.attributes.code.substring(2, 6) + monthObject.attributes.code.substring(0, 2));
                             this[index].year = parseInt(monthObject.attributes.code.substring(2, 6));
                         }, flows);
@@ -549,16 +558,19 @@ define(['views/common/baseview',
 
                     switch (selectedVizualisationString) {
                         case "piechart":
-                            this.renderPieChart1D(dimensions, flows);
+                            this.renderPieChart(dimensions, flows);
                             break;
                         case "barchart":
-                            this.renderBarChart1D(dimensions, flows);
+                            this.renderBarChart(dimensions, flows);
                             break;
                         case "lineplot":
-                            this.renderLinePlot1D(dimensions, flows);
+                            this.renderLinePlot(dimensions, flows);
                             break;
                         case "treemap":
-                            this.renderTreeMap1D(dimensions, flows);
+                            this.renderTreeMap(dimensions, flows);
+                            break;
+                        case "lineplotmultiple":
+                            this.renderLinePlot(dimensions, flows, true);
                             break;
                         default:
                             // Nothing
@@ -567,31 +579,30 @@ define(['views/common/baseview',
                     // /////////////////////////////
                     // Space dimension
                 } else if (dimensions[0][0] == "space") {
-                    let dimension = dimensions[0][1];
 
                     // If level == actor:
                     let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-                    if (dimension.adminlevel == actorAreaLevelId) {
-                        dimensions.isActorLevel = true;
+                    if (dimensions[0][1].adminlevel == actorAreaLevelId) {
+                        dimensions[0][1].isActorLevel = true;
                     }
 
                     switch (selectedVizualisationString) {
                         case "piechart":
-                            this.renderPieChart1D(dimensions, flows);
+                            this.renderPieChart(dimensions, flows);
                             break;
                         case "barchart":
-                            this.renderBarChart1D(dimensions, flows);
+                            this.renderBarChart(dimensions, flows);
                             break;
                         case "lineplot":
-                            this.renderLinePlot1D(dimensions, flows);
+                            this.renderLinePlot(dimensions, flows);
                             break;
                         case "treemap":
-                            this.renderTreeMap1D(dimensions, flows);
+                            this.renderTreeMap(dimensions, flows);
                             break;
                         case "choroplethmap":
                             areas = new Collection([], {
                                 apiTag: 'areas',
-                                apiIds: [dimension.adminlevel]
+                                apiIds: [dimensions[0][1].adminlevel]
                             });
 
                             areas.fetch({
@@ -606,6 +617,10 @@ define(['views/common/baseview',
                                         feature['geometry'] = area.get('geom')
                                         features.push(feature)
                                     })
+
+                                    flows.forEach(function (flow, index) {
+                                        this[index].id = this[index].areaId;
+                                    }, flows);
 
                                     _this.renderChoropleth1D(dimensions, flows, geoJson);
                                 },
@@ -655,13 +670,13 @@ define(['views/common/baseview',
 
                     switch (selectedVizualisationString) {
                         case "piechart":
-                            this.renderPieChart1D(dimensions, flows);
+                            this.renderPieChart(dimensions, flows);
                             break;
                         case "barchart":
-                            this.renderBarChart1D(dimensions, flows);
+                            this.renderBarChart(dimensions, flows);
                             break;
                         case "treemap":
-                            this.renderTreeMap1D(dimensions, flows);
+                            this.renderTreeMap(dimensions, flows);
                             break;
                         default:
                             // Nothing
@@ -702,13 +717,13 @@ define(['views/common/baseview',
 
                     switch (selectedVizualisationString) {
                         case "piechart":
-                            this.renderPieChart1D(dimensions, flows);
+                            this.renderPieChart(dimensions, flows);
                             break;
                         case "barchart":
-                            this.renderBarChart1D(dimensions, flows);
+                            this.renderBarChart(dimensions, flows);
                             break;
                         case "treemap":
-                            this.renderTreeMap1D(dimensions, flows);
+                            this.renderTreeMap(dimensions, flows);
                             break;
                         default:
                             // Nothing
@@ -719,10 +734,177 @@ define(['views/common/baseview',
             },
 
             render2Dvisualizations: function (dimensions, flows, selectedVizualisationString) {
+                let _this = this;
+                let filterFlowsView = this.filterFlowsView;
+                let dimensionsActual = [];
+
+                let years = filterFlowsView.years.models;
+                let months = filterFlowsView.months.models;
+                let activityGroups = filterFlowsView.activityGroups.models;
+                let activities = filterFlowsView.activities.models;
+
+                // Array with dimension strings without Granularity:
+                dimensions.forEach(dim => dimensionsActual.push(dim[0]));
+
+                console.log("Dimensions");
+                console.log(dimensionsActual);
+
+                // ///////////////////////////////////////////////////////////////////////////
+                // Time & Space
+                if (dimensionsActual.includes("time") && dimensionsActual.includes("space")) {
+
+                    // If level == actor:
+                    let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
+                    if (dimensions[1][1].adminlevel == actorAreaLevelId) {
+                        dimensions[1][1].isActorLevel = true;
+                    }
+
+                    // Granularity = year
+                    if (dimensions[0][1] == "flowchain__month__year") {
+
+                        flows.forEach(function (flow, index) {
+                            let yearObject = years.find(year => year.attributes.id == flow.year);
+
+                            //this[index].id = this[index].year;
+                            this[index].year = parseInt(yearObject.attributes.code);
+                        }, flows);
+
+                        flows = _.sortBy(flows, 'year');
+
+                        // Granularity = month:
+                    } else if (dimensions[0][1] == "flowchain__month") {
+
+                        flows.forEach(function (flow, index) {
+                            let monthObject = months.find(month => month.attributes.id == flow.month);
+
+                            //this[index].id = monthObject.attributes.id;
+                            this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
+                            this[index].yearMonthCode = parseInt(monthObject.attributes.code.substring(2, 6) + monthObject.attributes.code.substring(0, 2));
+                            this[index].year = parseInt(monthObject.attributes.code.substring(2, 6));
+                        }, flows);
+
+                        flows = _.sortBy(flows, 'id');
+                    }
+
+                    switch (selectedVizualisationString) {
+                        case "lineplotmultiple":
+                            this.renderLinePlot(dimensions, flows);
+                            break;
+                        case "areachart":
+                            this.renderAreaChart(dimensions, flows);
+                            break;
+                        case "barchart":
+                            this.renderBarChart(dimensions, flows);
+                            break;
+                        case "stackedbarchart":
+                            this.renderBarChart(dimensions, flows, true);
+                            break;
+                        default:
+                            // Nothing
+                    }
+
+
+                    // ///////////////////////////////////////////////////////////////////////////
+                    // Time & Economic Activity
+                } else if (dimensionsActual.includes("time") && dimensionsActual.includes("economicActivity")) {
+
+                    // Granularity = year
+                    if (dimensions[0][1] == "flowchain__month__year") {
+
+                        flows.forEach(function (flow, index) {
+                            let yearObject = years.find(year => year.attributes.id == flow.year);
+
+                            this[index].id = this[index].year;
+                            this[index].year = parseInt(yearObject.attributes.code);
+                        }, flows);
+
+                        flows = _.sortBy(flows, 'year');
+
+                        // Granularity = month:
+                    } else if (dimensions[0][1] == "flowchain__month") {
+
+                        flows.forEach(function (flow, index) {
+                            let monthObject = months.find(month => month.attributes.id == flow.month);
+
+                            this[index].id = monthObject.attributes.id;
+                            this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
+                            this[index].yearMonthCode = parseInt(monthObject.attributes.code.substring(2, 6) + monthObject.attributes.code.substring(0, 2));
+                            this[index].year = parseInt(monthObject.attributes.code.substring(2, 6));
+                        }, flows);
+
+                        flows = _.sortBy(flows, 'id');
+                    }
+
+                    // Granularity = Activity group
+                    if (dimensions[1][1] == "origin__activity__activitygroup" || dimensions[1][1] == "destination__activity__activitygroup") {
+
+                        flows.forEach(function (flow, index) {
+                            let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.activitygroup);
+
+                            this[index].activityGroupCode = activityGroupObject.attributes.code;
+                            this[index].activityGroupName = activityGroupObject.attributes.name[0].toUpperCase() + activityGroupObject.attributes.name.slice(1).toLowerCase();
+                        }, flows);
+
+                        // Granularity: Activity
+                    } else if (dimensions[1][1] == "origin__activity" || dimensions[1][1] == "destination__activity") {
+
+                        flows.forEach(function (flow, index) {
+                            let activityGroupName = "";
+                            let activityObject = activities.find(activity => activity.attributes.id == flow.activity);
+
+                            this[index].activityCode = activityObject.attributes.nace;
+                            this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
+
+                            this[index].activityGroupCode = this[index].activityCode.substring(0, this[index].activityCode.indexOf('-'));
+                            activityGroupName = activityGroups.find(activityGroup => activityGroup.attributes.code == this[index].activityGroupCode).attributes.name;
+                            this[index].activityGroupName = activityGroupName[0].toUpperCase() + activityGroupName.slice(1).toLowerCase();
+                        }, flows);
+                    }
+
+                    switch (selectedVizualisationString) {
+                        case "lineplotmultiple":
+                            this.renderLinePlot(dimensions, flows);
+                            break;
+                        case "areachart":
+                            this.renderAreaChart(dimensions, flows);
+                            break;
+                        case "barchart":
+                            this.renderBarChart(dimensions, flows);
+                            break;
+                        case "stackedbarchart":
+                            this.renderBarChart(dimensions, flows, true);
+                            break;
+                        default:
+                            // Nothing
+                    }
+
+
+                    // ///////////////////////////////////////////////////////////////////////////
+                    // Time & Economic Economic Activity
+                } else if (dimensionsActual.includes("time") && dimensionsActual.includes("treatmentMethod")) {
+
+
+                    // ///////////////////////////////////////////////////////////////////////////
+                    // Space & Economic Activity
+                } else if (dimensionsActual.includes("space") && dimensionsActual.includes("economicActivity")) {
+
+                    
+                    // ///////////////////////////////////////////////////////////////////////////
+                    // Space & Treatment Method
+                } else if (dimensionsActual.includes("space") && dimensionsActual.includes("treatmentMethod")) {
+
+                    
+                    // ///////////////////////////////////////////////////////////////////////////
+                    // Economic Activity & Treatment Method
+                } else if (dimensionsActual.includes("economicActivity") && dimensionsActual.includes("treatmentMethod")) {
+
+                    
+
+                }
                 console.log(flows);
             },
 
-            renderPieChart1D: function (dimensions, flows) {
+            renderPieChart: function (dimensions, flows) {
                 if (this.pieChartView != null) this.pieChartView.close();
 
                 $(".piechart-wrapper").fadeIn();
@@ -735,7 +917,7 @@ define(['views/common/baseview',
                 });
             },
 
-            renderTreeMap1D: function (dimensions, flows) {
+            renderTreeMap: function (dimensions, flows) {
                 if (this.treeMapView != null) this.treeMapView.close();
 
                 $(".treemap-wrapper").fadeIn();
@@ -748,7 +930,7 @@ define(['views/common/baseview',
                 });
             },
 
-            renderBarChart1D: function (dimensions, flows) {
+            renderBarChart: function (dimensions, flows, isStacked) {
                 if (this.barChartView != null) this.barChartView.close();
 
                 $(".barchart-wrapper").fadeIn();
@@ -758,10 +940,11 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
+                    isStacked: isStacked,
                 });
             },
 
-            renderLinePlot1D: function (dimensions, flows) {
+            renderLinePlot: function (dimensions, flows, hasMultipleLines) {
                 if (this.linePlotView != null) this.linePlotView.close();
 
                 $(".lineplot-wrapper").fadeIn();
@@ -771,6 +954,7 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
+                    hasMultipleLines: hasMultipleLines,
                 });
             },
 
@@ -801,6 +985,20 @@ define(['views/common/baseview',
                 });
             },
 
+            renderAreaChart: function (dimensions, flows) {
+                if (this.areaChartView != null) this.areaChartView.close();
+
+                $(".areachart-wrapper").fadeIn();
+
+                this.areaChartView = new AreaChartView({
+                    el: ".areachart-wrapper",
+                    dimensions: dimensions,
+                    flows: flows,
+                    flowsView: this,
+                });
+            },
+
+
             closeAllVizViews: function () {
                 $(".viz-wrapper-div").fadeOut();
                 $(".viz-wrapper-div").html("")
@@ -810,6 +1008,7 @@ define(['views/common/baseview',
                 if (this.treeMapView != null) this.treeMapView.close();
                 if (this.choroplethView != null) this.choroplethView.close();
                 if (this.coordinatePointMapView != null) this.coordinatePointMapView.close();
+                if (this.areaChartView != null) this.areaChartView.close();
             },
 
             // Fetch flows and calls options.success(flows) on success

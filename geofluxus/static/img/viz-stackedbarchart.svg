@@ -1,0 +1,19 @@
+<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+ <g>
+  <title>background</title>
+  <rect fill="none" id="canvas_background" height="302" width="302" y="-1" x="-1"/>
+  <g display="none" overflow="visible" y="0" x="0" height="100%" width="100%" id="canvasGrid">
+   <rect fill="url(#gridpattern)" stroke-width="0" y="0" x="0" height="100%" width="100%"/>
+  </g>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <path stroke="null" id="svg_4" d="m43.80467,251.96713l0,-231.14999l-21.29938,0l0,244.74705a10.64969,13.59706 0 0 0 10.64969,13.59706l244.94289,0l0,-27.19412l-234.2932,0z"/>
+  <path stroke="null" id="svg_5" d="m118.3525,131.66434a10.64969,10.64969 0 0 0 -10.64969,-10.64969l-31.94907,0a10.64969,10.64969 0 0 0 -10.64969,10.64969l0,74.54784l53.24845,0l0,-74.54784z"/>
+  <path stroke="null" id="svg_6" d="m192.90034,84.69058a10.64969,6.27469 0 0 0 -10.64969,-6.27469l-31.94907,0a10.64969,6.27469 0 0 0 -10.64969,6.27469l0,69.02161l53.24845,0l0,-69.02161z"/>
+  <path stroke="null" id="svg_7" d="m267.44817,44.68556a10.64969,8.86844 0 0 0 -10.64969,-8.86844l-31.94907,0a10.64969,8.86844 0 0 0 -10.64969,8.86844l0,133.02662l53.24845,0l0,-133.02662z"/>
+  <rect stroke="null" id="svg_10" height="42.99999" width="53.49999" y="209.21826" x="65.05163" stroke-opacity="null" stroke-width="null" fill="#000000"/>
+  <rect stroke="null" id="svg_12" height="95.49997" width="53.49999" y="156.71826" x="139.55161" stroke-opacity="null" stroke-width="null" fill="#000000"/>
+  <rect stroke="null" id="svg_13" height="71.99998" width="53.49999" y="180.71826" x="213.5516" stroke-opacity="null" stroke-width="null" fill="#000000"/>
+ </g>
+</svg>

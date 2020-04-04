@@ -372,8 +372,8 @@ define(['views/common/baseview',
                 // Hide/show Activity Group and Activity or Treatment method:
                 $("#origin-role-radio-production").on('click', function () {
                     _this.origin.role = "production";
+                    $(".originContainerTreatmentMethod").hide();
                     $(".originContainerActivity").fadeIn();
-                    $(".originContainerTreatmentMethod").fadeOut();
 
                 });
                 $("#origin-role-radio-both").on('click', function () {
@@ -384,7 +384,7 @@ define(['views/common/baseview',
                 });
                 $("#origin-role-radio-treatment").on('click', function () {
                     _this.origin.role = "treatment";
-                    $(".originContainerActivity").fadeOut();
+                    $(".originContainerActivity").hide();
                     $(".originContainerTreatmentMethod").fadeIn();
                 });
 
@@ -399,8 +399,8 @@ define(['views/common/baseview',
                 // Hide/show Activity Group and Activity or Treatment method:
                 $("#destination-role-radio-production").on('click', function () {
                     _this.destination.role = "production";
+                    $(".destinationContainerTreatmentMethod").hide();
                     $(".destinationContainerActivity").fadeIn();
-                    $(".destinationContainerTreatmentMethod").fadeOut();
 
                 });
                 $("#destination-role-radio-both").on('click', function () {
@@ -411,7 +411,7 @@ define(['views/common/baseview',
                 });
                 $("#destination-role-radio-treatment").on('click', function () {
                     _this.destination.role = "treatment";
-                    $(".destinationContainerActivity").fadeOut();
+                    $(".destinationContainerActivity").hide();
                     $(".destinationContainerTreatmentMethod").fadeIn();
                 });
 
@@ -482,7 +482,7 @@ define(['views/common/baseview',
                     }
 
 
-                    // //////////////////////////////////////////////////////
+                    // ///////////////////////////////////////////////////////////////////
                     // Show available visualizations based on selected dimension(s):
 
                     console.log(_this.selectedDimensionStrings);
@@ -495,71 +495,89 @@ define(['views/common/baseview',
                             $(".viz-container").hide();
 
                             break;
-                        case 1:
+                        case 1: // One dimension selected
+                            // Hide message if shown:
                             $("#message-container-row").hide();
+                            // Hide all viz option buttons:
+                            $(".viz-selector-button").hide();
+                            // Show viz option container:
                             $(".viz-container").fadeIn();
+
+                            // Disable legend by default:
+                            //$("#display-legend").prop("checked", false);
 
                             console.log("One dimension");
 
                             if (_this.selectedDimensionStrings.includes("time")) {
+                                $("#viz-piechart").parent().fadeIn();
+                                $("#viz-barchart").parent().fadeIn();
+                                $("#viz-treemap").parent().fadeIn();
+                                $("#viz-lineplot").parent().fadeIn();
 
-                                $("#viz-choroplethmap").parent().hide();
-                                $("#viz-coordinatepointmap").parent().hide();
-
-                                $("#viz-piechart").parent().show();
-                                $("#viz-barchart").parent().show();
-                                $("#viz-treemap").parent().show();
-                                $("#viz-lineplot").parent().show();
+                                if ($(_this.dimensions.timeToggleGran).prop("checked")) {
+                                    $("#viz-lineplotmultiple").parent().fadeIn();
+                                }
 
                             } else if (_this.selectedDimensionStrings.includes("space")) {
-
-                                $("#viz-lineplot").parent().hide();
-
-                                $("#viz-piechart").parent().show();
-                                $("#viz-barchart").parent().show();
-                                $("#viz-treemap").parent().show();
+                                $("#viz-piechart").parent().fadeIn();
+                                $("#viz-barchart").parent().fadeIn();
+                                $("#viz-treemap").parent().fadeIn();
 
                                 let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
+                                let actorAreaLevelId = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
 
-                                if (selectedAreaLevelId == "13") {
-                                    $("#viz-coordinatepointmap").parent().show();
-                                    $("#viz-choroplethmap").parent().hide();
+                                if (selectedAreaLevelId == actorAreaLevelId) {
+                                    $("#viz-coordinatepointmap").parent().fadeIn();
                                 } else {
-                                    $("#viz-coordinatepointmap").parent().hide();
-                                    $("#viz-choroplethmap").parent().show();
+                                    $("#viz-choroplethmap").parent().fadeIn();
                                 }
 
                             } else if (_this.selectedDimensionStrings.includes("economicActivity")) {
-
-                                $("#viz-choroplethmap").parent().hide();
-                                $("#viz-coordinatepointmap").parent().hide();
-                                $("#viz-lineplot").parent().hide();
-
-                                $("#viz-piechart").parent().show();
-                                $("#viz-barchart").parent().show();
-                                $("#viz-treemap").parent().show();
-
-
+                                $("#viz-piechart").parent().fadeIn();
+                                $("#viz-barchart").parent().fadeIn();
+                                $("#viz-treemap").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("treatmentMethod")) {
-
-                                $("#viz-choroplethmap").parent().hide();
-                                $("#viz-coordinatepointmap").parent().hide();
-                                $("#viz-lineplot").parent().hide();
-
-                                $("#viz-piechart").parent().show();
-                                $("#viz-barchart").parent().show();
-                                $("#viz-treemap").parent().show();
-
+                                $("#viz-piechart").parent().fadeIn();
+                                $("#viz-barchart").parent().fadeIn();
+                                $("#viz-treemap").parent().fadeIn();
                             }
 
                             break;
-                        case 2:
+
+                        case 2: // Two dimensions:
+                            $("#message-container-row").hide();
+                            $(".viz-selector-button").hide();
+                            $(".viz-container").fadeIn();
+
+                            // Enable legend by default:
+                            //$("#display-legend").prop("checked", true);
+
                             console.log("Two dimensions");
 
-                            $(".viz-selector-button").fadeOut();
+                            if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("space")) {
+                                $("#viz-barchart").parent().fadeIn();
 
+                                $("#viz-lineplotmultiple").parent().fadeIn();
+                                $("#viz-areachart").parent().fadeIn();
+                                $("#viz-stackedbarchart").parent().fadeIn();
+                            } else if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("economicActivity")) {
+                                $("#viz-barchart").parent().fadeIn();
 
-                            // code block
+                                $("#viz-lineplotmultiple").parent().fadeIn();
+                                $("#viz-areachart").parent().fadeIn();
+                                $("#viz-stackedbarchart").parent().fadeIn();
+                            } else if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
+                                $("#viz-lineplotmultiple").parent().fadeIn();
+                                $("#viz-areachart").parent().fadeIn();
+                                $("#viz-stackedbarchart").parent().fadeIn();
+                            } else if (_this.selectedDimensionStrings.includes("space") && _this.selectedDimensionStrings.includes("economicActivity")) {
+                                $("#viz-stackedbarchart").parent().fadeIn();
+                            } else if (_this.selectedDimensionStrings.includes("space") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
+                                $("#viz-stackedbarchart").parent().fadeIn();
+                            } else if (_this.selectedDimensionStrings.includes("economicActivity") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
+                                $("#viz-stackedbarchart").parent().fadeIn();
+                            }
+
                             break;
                         default:
                             // code block
@@ -571,17 +589,27 @@ define(['views/common/baseview',
                     let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
                     let selectedAreaLevel = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.id.toString() == selectedAreaLevelId).attributes.level;
 
-                    if (_this.selectedDimensionStrings.includes("space")) {
+                    if (_this.selectedDimensionStrings.length == 1 && _this.selectedDimensionStrings.includes("space")) {
 
                         if (selectedAreaLevel == 1000) {
-                            $("#viz-coordinatepointmap").parent().show();
+                            $("#viz-coordinatepointmap").parent().fadeIn();
                             $("#viz-choroplethmap").parent().hide();
                         } else {
                             $("#viz-coordinatepointmap").parent().hide();
-                            $("#viz-choroplethmap").parent().show();
+                            $("#viz-choroplethmap").parent().fadeIn();
                         }
                     }
                 });
+
+                // Show Multiple Line option on dimension Time, granularity Month:
+                $(_this.dimensions.timeToggleGran).change(function () {
+                    if ($(_this.dimensions.timeToggleGran).prop("checked")) {
+                        $("#viz-lineplotmultiple").parent().fadeIn();
+                    } else if ($(_this.dimensions.timeToggleGran).prop("checked") && _this.selectedDimensionStrings.length == 1) {
+                        $("#viz-lineplotmultiple").parent().hide();
+                    }
+                });
+
 
                 // Show granularity on toggle change:
                 $("#dim-toggle-time").change(function () {
