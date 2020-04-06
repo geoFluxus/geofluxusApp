@@ -20,17 +20,29 @@ define([
 
             let hasLegend = $("#display-legend").prop("checked");
             let xSort = options.xSort ? options.xSort : null;
+            let groupByValue = options.groupBy ? options.groupBy : null;
+
+            let labelFunction = function (d) {
+                if (options.isActorLevel) {
+                    return d.actorName
+                } else if (groupByValue) {
+                    return d[groupByValue];
+                } else {
+                    return d[x]
+                }
+            }
 
             new d3plus.Plot()
                 .tooltipConfig(options.tooltipConfig)
                 .data(options.data)
-                .groupBy(options.groupBy[0])
+                .groupBy(groupByValue[0])
                 .x(options.x)
                 .y("amount")
                 .baseline(0)
                 .discrete("x")
                 .xSort(xSort)
                 .select(options.el)
+                .label(labelFunction)
                 .legend(hasLegend)
                 .shape("Bar")
                 .stacked(options.isStacked)

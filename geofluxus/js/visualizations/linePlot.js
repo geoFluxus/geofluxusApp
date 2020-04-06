@@ -30,6 +30,16 @@ define([
                 shapeConfigValue.Line.stroke = "red";
             }
 
+            let labelFunction = function (d) {
+                if (options.isActorLevel) {
+                    return d.actorName
+                } else if (groupByValue) {
+                    return d[groupByValue];
+                } else {
+                    return d[x]
+                }
+            }
+
             new d3plus.Plot()
                 .data(options.data)
                 .x(options.x)
@@ -41,9 +51,7 @@ define([
                 .shapeConfig(shapeConfigValue)
                 .tooltipConfig(options.tooltipConfig)
                 .legend(hasLegend)
-                // .label(function value(d) {
-                //     return d.actorName;
-                // })
+                .label(labelFunction)
                 .downloadPosition("left")
                 .downloadButton(true)
                 .controlConfig({
