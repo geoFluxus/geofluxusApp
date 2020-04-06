@@ -61,7 +61,13 @@ define(['views/common/baseview',
                     let isStacked = this.options.isStacked;
                     let groupBy;
                     let x;
-                    let tooltipConfig;
+                    let tooltipConfig = {
+                        tbody: [
+                            ["Waste (metric ton)", function (d) {
+                                return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                            }]
+                        ]
+                    };
                     let xSort;
                     let isActorLevel = false;
 
@@ -72,30 +78,10 @@ define(['views/common/baseview',
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
                             groupBy = ["year"];
                             x = ["year"];
-                            tooltipConfig = {
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                    ["Year", function (d) {
-                                        return d.year
-                                    }]
-                                ]
-                            }
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
                             groupBy = ["month"];
                             x = ["month"];
-                            tooltipConfig = {
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                    ["Month", function (d) {
-                                        return d.month
-                                    }]
-                                ]
-                            }
                         }
 
                         // /////////////////////////////
@@ -109,30 +95,17 @@ define(['views/common/baseview',
                         if (!this.options.dimensions.isActorLevel) {
                             groupBy = ["areaName"];
                             x = ["areaName"];
-                            tooltipConfig = {
-                                title: function (d) {
-                                    return d.areaName
-                                },
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                ]
-                            }
+                            tooltipConfig.title = function (d) {
+                                return d.areaName
+                            };
+
                         } else {
                             // Actor level
                             groupBy = ["actorName"];
                             x = ["actorName"];
-                            tooltipConfig = {
-                                title: function (d) {
-                                    return d.actorName
-                                },
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                ]
-                            }
+                            tooltipConfig.title = function (d) {
+                                return d.actorName
+                            };
                         }
 
                         // /////////////////////////////
@@ -142,44 +115,30 @@ define(['views/common/baseview',
                             return b["amount"] - a["amount"];
                         }
 
+                        tooltipConfig.tbody.push(["Activity group", function (d) {
+                            return d.activityGroupCode + " " + d.activityGroupName;
+                        }]);
+
                         // Granularity: Activity group
                         if (this.options.dimensions[0][1] == "origin__activity__activitygroup" || this.options.dimensions[0][1] == "destination__activity__activitygroup") {
                             groupBy = ["activityGroupCode"];
                             x = ["activityGroupCode"];
-                            tooltipConfig = {
-                                title: function (d) {
-                                    return d.activityGroupCode
-                                },
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                    ["Activity group", function (d) {
-                                        return d.activityGroupCode + " " + d.activityGroupName;
-                                    }],
-                                ]
-                            }
+
+                            tooltipConfig.title = function (d) {
+                                return d.activityGroupCode
+                            };
 
                             // Granularity: Activity
                         } else if (this.options.dimensions[0][1] == "origin__activity" || this.options.dimensions[0][1] == "destination__activity") {
                             x = ["activityCode"];
                             groupBy = ["activityGroupCode", "activityCode"];
-                            tooltipConfig = {
-                                title: function (d) {
-                                    return d.activityCode
-                                },
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                    ["Activity", function (d) {
-                                        return d.activityCode + " " + d.activityName;
-                                    }],
-                                    ["Activity group", function (d) {
-                                        return d.activityGroupCode + " " + d.activityGroupName;
-                                    }],
-                                ]
-                            }
+
+                            tooltipConfig.title = function (d) {
+                                return d.activityCode
+                            };
+                            tooltipConfig.tbody.push(["Activity", function (d) {
+                                return d.activityCode + " " + d.activityName;
+                            }]);
                         }
 
                         // /////////////////////////////
@@ -193,31 +152,17 @@ define(['views/common/baseview',
                         if (this.options.dimensions[0][1] == "origin__process__processgroup" || this.options.dimensions[0][1] == "destination__process__processgroup") {
                             groupBy = ["processGroupCode"];
                             x = ["processGroupCode"];
-                            tooltipConfig = {
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                    ["Treatment method group", function (d) {
-                                        return d.processGroupCode + " " + d.processGroupName;
-                                    }],
-                                ]
-                            }
+                            tooltipConfig.tbody.push(["Treatment method group", function (d) {
+                                return d.processGroupCode + " " + d.processGroupName;
+                            }]);
 
                             // Granularity: Treatment process
                         } else if (this.options.dimensions[0][1] == "origin__process" || this.options.dimensions[0][1] == "destination__process") {
                             groupBy = ["processCode"];
                             x = ["processCode"];
-                            tooltipConfig = {
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                    ["Treatment method", function (d) {
-                                        return d.processCode + " " + d.processName;
-                                    }],
-                                ]
-                            }
+                            tooltipConfig.tbody.push(["Treatment method", function (d) {
+                                return d.processCode + " " + d.processName;
+                            }]);
                         }
                     }
 
@@ -230,32 +175,18 @@ define(['views/common/baseview',
                         // Granularity = year
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
                             x = ["year"];
-                            tooltipConfig = {
-                                title: "Waste totals per year",
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                    ["Year", function (d) {
-                                        return d.year
-                                    }]
-                                ]
-                            }
+                            tooltipConfig.title = "Waste totals per year";
+                            tooltipConfig.tbody.push(["Year", function (d) {
+                                return d.year
+                            }]);
 
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
                             x = ["yearMonthCode"];
-                            tooltipConfig = {
-                                title: "Waste totals per month",
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                    ["Month", function (d) {
-                                        return d.month
-                                    }]
-                                ]
-                            }
+                            tooltipConfig.title = "Waste totals per month";
+                            tooltipConfig.tbody.push(["Month", function (d) {
+                                return d.month
+                            }]);
                         }
 
                         // SPACE ----------------
@@ -279,45 +210,27 @@ define(['views/common/baseview',
                         // Granularity = year
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
                             x = ["year"];
-                            tooltipConfig = {
-                                title: "Waste totals per year",
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                    ["Year", function (d) {
-                                        return d.year
-                                    }]
-                                ]
-                            }
+                            tooltipConfig.title = "Waste totals per year";
+                            tooltipConfig.tbody.push(["Year", function (d) {
+                                return d.year
+                            }]);
 
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
                             x = ["yearMonthCode"];
-
                             if (hasMultipleLines) {
                                 groupBy = ["year"];
                                 x = ["monthName"];
                             }
-
-                            tooltipConfig = {
-                                title: "Waste totals per month",
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                    ["Month", function (d) {
-                                        return d.month
-                                    }]
-                                ]
-                            }
+                            tooltipConfig.title = "Waste totals per month";
+                            tooltipConfig.tbody.push(["Month", function (d) {
+                                return d.month
+                            }]);
                         }
 
-                        tooltipConfig.tbody.push(["Activity group",
-                            function (d) {
-                                return d.activityGroupCode + " " + d.activityGroupName;
-                            },
-                        ])
+                        tooltipConfig.tbody.push(["Activity group", function (d) {
+                            return d.activityGroupCode + " " + d.activityGroupName;
+                        }]);
 
                         if (this.options.dimensions[1][1] == "origin__activity__activitygroup" || this.options.dimensions[1][1] == "destination__activity__activitygroup") {
                             groupBy = ["activityGroupCode"];
@@ -325,7 +238,7 @@ define(['views/common/baseview',
                             groupBy = ["activityCode"];
                             tooltipConfig.tbody.push(["Activity group", function (d) {
                                 return d.activityGroupCode + " " + d.activityGroupName;
-                            }], )
+                            }]);
                         }
 
 
@@ -339,38 +252,23 @@ define(['views/common/baseview',
                         // Granularity = year
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
                             x = ["year"];
-                            tooltipConfig = {
-                                title: "Waste totals per year",
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                    ["Year", function (d) {
-                                        return d.year
-                                    }]
-                                ]
-                            }
+                            tooltipConfig.title = "Waste totals per year";
+                            tooltipConfig.tbody.push(["Year", function (d) {
+                                return d.year
+                            }]);
 
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
                             x = ["yearMonthCode"];
-
                             if (hasMultipleLines) {
                                 groupBy = ["year"];
                                 x = ["monthName"];
                             }
 
-                            tooltipConfig = {
-                                title: "Waste totals per month",
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                    ["Month", function (d) {
-                                        return d.month
-                                    }]
-                                ]
-                            }
+                            tooltipConfig.title = "Waste totals per month";
+                            tooltipConfig.tbody.push(["Month", function (d) {
+                                return d.month
+                            }]);
                         }
 
                         // ///////////////
@@ -392,10 +290,6 @@ define(['views/common/baseview',
                         // Space & Economic activity
                     } else if (dimensionsActual.includes("space") && dimensionsActual.includes("economicActivity")) {
 
-
-                        // tooltipConfig.tbody.push(["Waste (metric ton)", function (d) {
-                        //     return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                        // }]);
 
                         // SPACE ----------------
                         if (!this.options.dimensions.isActorLevel) {

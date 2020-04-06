@@ -573,10 +573,13 @@ define(['views/common/baseview',
                                 $("#viz-areachart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("space") && _this.selectedDimensionStrings.includes("economicActivity")) {
+                                $("#viz-barchart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("space") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
+                                $("#viz-barchart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("economicActivity") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
+                                $("#viz-barchart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
                             }
 

@@ -971,9 +971,6 @@ define(['views/common/baseview',
                         dimensions.isActorLevel = true;
                     }
 
-
-                  
-
                     // Granularity = Activity group
                     if (dimensions[1][1] == "origin__activity__activitygroup" || dimensions[1][1] == "destination__activity__activitygroup") {
 
@@ -1001,6 +998,9 @@ define(['views/common/baseview',
                     }
 
                     switch (selectedVizualisationString) {
+                        case "barchart":
+                            this.renderBarChart(dimensions, flows);
+                            break;
                         case "stackedbarchart":
                             this.renderBarChart(dimensions, flows, true);
                             break;
