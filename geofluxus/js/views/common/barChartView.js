@@ -58,6 +58,7 @@ define(['views/common/baseview',
                     let flows = this.options.flows;
                     let dimensionsActual = [];
                     this.options.dimensions.forEach(dim => dimensionsActual.push(dim[0]));
+
                     let isStacked = this.options.isStacked;
                     let groupBy;
                     let x;
