@@ -393,9 +393,9 @@ define(['views/common/baseview',
                     } else if (dimensionsActual.includes("space") && dimensionsActual.includes("economicActivity")) {
 
 
-                        tooltipConfig.tbody = ["Waste (metric ton)", function (d) {
-                            return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                        }];
+                        // tooltipConfig.tbody.push(["Waste (metric ton)", function (d) {
+                        //     return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                        // }]);
 
                         // SPACE ----------------
                         if (!this.options.dimensions.isActorLevel) {
@@ -405,8 +405,9 @@ define(['views/common/baseview',
                                 return d.areaName
                             }]);
                         } else {
-                            isActorLevel = true;
+                            //isActorLevel = true;
                             x = ["actorName"];
+                            tooltipConfig.title = "Waste totals per company";
                             tooltipConfig.tbody.push(["Company", function (d) {
                                 return d.actorName
                             }]);
