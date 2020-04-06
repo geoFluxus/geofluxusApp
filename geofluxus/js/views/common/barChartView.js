@@ -332,7 +332,6 @@ define(['views/common/baseview',
                         // //////////////////////////////////////////
                         // Time & Treatment method
                     } else if (dimensionsActual.includes("time") && dimensionsActual.includes("treatmentMethod")) {
-                        isStacked = true;
 
                         // ///////////////
                         // Time dimension

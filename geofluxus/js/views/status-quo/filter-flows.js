@@ -554,19 +554,21 @@ define(['views/common/baseview',
 
                             console.log("Two dimensions");
 
+                            // Time & Space
                             if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("space")) {
                                 $("#viz-barchart").parent().fadeIn();
-
                                 $("#viz-lineplotmultiple").parent().fadeIn();
                                 $("#viz-areachart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
+                                // Time & Economic Activity
                             } else if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("economicActivity")) {
                                 $("#viz-barchart").parent().fadeIn();
-
                                 $("#viz-lineplotmultiple").parent().fadeIn();
                                 $("#viz-areachart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
+                                // Time & Treatment Method
                             } else if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
+                                $("#viz-barchart").parent().fadeIn();
                                 $("#viz-lineplotmultiple").parent().fadeIn();
                                 $("#viz-areachart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
