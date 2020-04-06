@@ -218,7 +218,7 @@ define(['views/common/baseview',
                     filterParams.flows['origin_role'] = filter.origin.role;
                 }
 
-                if (filter.origin.role == "production"){
+                if (filter.origin.role == "production") {
                     if ($(filter.origin.activitySelect).val() == '-1') {
                         if ($(filter.origin.activityGroupsSelect).val() != '-1') {
                             filterParams.flows['origin__activity__activitygroup__in'] = $(filter.origin.activityGroupsSelect).val();
@@ -226,7 +226,7 @@ define(['views/common/baseview',
                     } else {
                         filterParams.flows['origin__activity__in'] = $(filter.origin.activitySelect).val();
                     }
-                } else if (filter.origin.role == "treatment"){
+                } else if (filter.origin.role == "treatment") {
                     if ($(filter.origin.processSelect).val() == '-1') {
                         if ($(filter.origin.processGroupSelect).val() != '-1') {
                             filterParams.flows['origin__process__processgroup__in'] = $(filter.origin.processGroupSelect).val();
@@ -256,7 +256,7 @@ define(['views/common/baseview',
                     filterParams.flows['destination_role'] = filter.destination.role;
                 }
 
-                if (filter.destination.role == "production"){
+                if (filter.destination.role == "production") {
                     if ($(filter.destination.activitySelect).val() == '-1') {
                         if ($(filter.destination.activityGroupsSelect).val() != '-1') {
                             filterParams.flows['destination__activity__activitygroup__in'] = $(filter.destination.activityGroupsSelect).val();
@@ -264,7 +264,7 @@ define(['views/common/baseview',
                     } else {
                         filterParams.flows['destination__activity__in'] = $(filter.destination.activitySelect).val();
                     }
-                } else if (filter.destination.role == "treatment"){
+                } else if (filter.destination.role == "treatment") {
                     if ($(filter.destination.processSelect).val() == '-1') {
                         if ($(filter.destination.processGroupSelect).val() != '-1') {
                             filterParams.flows['destination__process__processgroup__in'] = $(filter.destination.processGroupSelect).val();
@@ -965,17 +965,60 @@ define(['views/common/baseview',
                     // Space & Economic Activity
                 } else if (dimensionsActual.includes("space") && dimensionsActual.includes("economicActivity")) {
 
-                    
+                    // If level == actor:
+                    let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
+                    if (dimensions[0][1].adminlevel == actorAreaLevelId) {
+                        dimensions.isActorLevel = true;
+                    }
+
+
+                  
+
+                    // Granularity = Activity group
+                    if (dimensions[1][1] == "origin__activity__activitygroup" || dimensions[1][1] == "destination__activity__activitygroup") {
+
+                        flows.forEach(function (flow, index) {
+                            let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.activitygroup);
+
+                            this[index].activityGroupCode = activityGroupObject.attributes.code;
+                            this[index].activityGroupName = activityGroupObject.attributes.name[0].toUpperCase() + activityGroupObject.attributes.name.slice(1).toLowerCase();
+                        }, flows);
+
+                        // Granularity: Activity
+                    } else if (dimensions[1][1] == "origin__activity" || dimensions[1][1] == "destination__activity") {
+
+                        flows.forEach(function (flow, index) {
+                            let activityGroupName = "";
+                            let activityObject = activities.find(activity => activity.attributes.id == flow.activity);
+
+                            this[index].activityCode = activityObject.attributes.nace;
+                            this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
+
+                            this[index].activityGroupCode = this[index].activityCode.substring(0, this[index].activityCode.indexOf('-'));
+                            activityGroupName = activityGroups.find(activityGroup => activityGroup.attributes.code == this[index].activityGroupCode).attributes.name;
+                            this[index].activityGroupName = activityGroupName[0].toUpperCase() + activityGroupName.slice(1).toLowerCase();
+                        }, flows);
+                    }
+
+                    switch (selectedVizualisationString) {
+                        case "stackedbarchart":
+                            this.renderBarChart(dimensions, flows, true);
+                            break;
+                        default:
+                            // Nothing
+                    }
+
+
                     // ///////////////////////////////////////////////////////////////////////////
                     // Space & Treatment Method
                 } else if (dimensionsActual.includes("space") && dimensionsActual.includes("treatmentMethod")) {
 
-                    
+
                     // ///////////////////////////////////////////////////////////////////////////
                     // Economic Activity & Treatment Method
                 } else if (dimensionsActual.includes("economicActivity") && dimensionsActual.includes("treatmentMethod")) {
 
-                    
+
 
                 }
                 console.log(flows);

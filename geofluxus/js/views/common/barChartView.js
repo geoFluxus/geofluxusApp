@@ -387,6 +387,47 @@ define(['views/common/baseview',
                                 return d.processCode + " " + d.processName;
                             }]);
                         }
+
+                        // //////////////////////////////////////////
+                        // Space & Economic activity
+                    } else if (dimensionsActual.includes("space") && dimensionsActual.includes("economicActivity")) {
+
+
+                        tooltipConfig.tbody = ["Waste (metric ton)", function (d) {
+                            return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                        }];
+
+                        // SPACE ----------------
+                        if (!this.options.dimensions.isActorLevel) {
+                            x = ["areaName"];
+                            tooltipConfig.title = "Waste totals per area";
+                            tooltipConfig.tbody.push(["Area", function (d) {
+                                return d.areaName
+                            }]);
+                        } else {
+                            isActorLevel = true;
+                            x = ["actorName"];
+                            tooltipConfig.tbody.push(["Company", function (d) {
+                                return d.actorName
+                            }]);
+                        }
+
+                        // Economic activity:
+                        tooltipConfig.tbody.push(["Activity group",
+                            function (d) {
+                                return d.activityGroupCode + " " + d.activityGroupName;
+                            },
+                        ])
+
+                        if (this.options.dimensions[1][1] == "origin__activity__activitygroup" || this.options.dimensions[1][1] == "destination__activity__activitygroup") {
+                            groupBy = ["activityGroupCode"];
+                        } else if (this.options.dimensions[1][1] == "origin__activity" || this.options.dimensions[1][1] == "destination__activity") {
+                            groupBy = ["activityCode"];
+                            tooltipConfig.tbody.push(["Activity group", function (d) {
+                                return d.activityGroupCode + " " + d.activityGroupName;
+                            }], )
+                        }
+
                     }
 
                     // Create a new D3Plus BarChart object which will be rendered in this.options.el:
