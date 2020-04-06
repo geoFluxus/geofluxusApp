@@ -63,8 +63,7 @@ define(['views/common/baseview',
                     let tooltipConfig;
                     let groupBy;
                     let x;
-
-                    let isActorLevel = false;
+                    let legendConfig;
 
                     // /////////////////////////////
                     // Time dimension
@@ -148,17 +147,21 @@ define(['views/common/baseview',
                         }
 
                         // SPACE ----------------
-                        if (!this.options.dimensions.isActorLevel) {                            
+                        if (!this.options.dimensions[1][1].isActorLevel) {
                             groupBy = ["areaName"];
                             tooltipConfig.tbody.push(["Area", function (d) {
                                 return d.areaName
                             }]);
                         } else {
-                            isActorLevel = true;
                             groupBy = ["actorId"];
                             tooltipConfig.tbody.push(["Company", function (d) {
                                 return d.actorName
                             }]);
+                            // labelConfig = {
+                            //     label: function value(d) {
+                            //         return d.actorName;
+                            //     },
+                            // }
                         }
 
                         // //////////////////////////////////////////
@@ -229,7 +232,7 @@ define(['views/common/baseview',
                         groupBy: groupBy,
                         x: x,
                         tooltipConfig: tooltipConfig,
-                        isActorLevel: isActorLevel,
+                        //legendConfig: legendConfig,
                     });
                 },
 

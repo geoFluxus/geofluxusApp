@@ -262,7 +262,7 @@ define(['views/common/baseview',
                         }
 
                         // SPACE ----------------
-                        if (!this.options.dimensions.isActorLevel) {
+                        if (!this.options.dimensions[1][1].isActorLevel) {
                             groupBy = ["areaName"];
                             tooltipConfig.tbody.push(["Area", function (d) {
                                 return d.areaName
