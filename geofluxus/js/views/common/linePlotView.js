@@ -1,7 +1,7 @@
 define(['views/common/baseview',
         'underscore',
         'd3',
-        'd3plus',
+        'visualizations/d3plus',
         'visualizations/linePlot',
         'collections/collection',
         'app-config',

@@ -1,7 +1,7 @@
 define([
     'd3',
     'd3-brush',
-    'd3plus',
+    'visualizations/d3plus',
 ], function (d3, d3brush, d3plus) {
     /**
      *
