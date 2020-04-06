@@ -878,8 +878,87 @@ define(['views/common/baseview',
 
 
                     // ///////////////////////////////////////////////////////////////////////////
-                    // Time & Economic Economic Activity
+                    // Time & Treatment method
                 } else if (dimensionsActual.includes("time") && dimensionsActual.includes("treatmentMethod")) {
+
+                    // //////////////////////
+                    // TIME
+                    // Granularity = year
+                    if (dimensions[0][1] == "flowchain__month__year") {
+
+                        flows.forEach(function (flow, index) {
+                            let yearObject = years.find(year => year.attributes.id == flow.year);
+
+                            this[index].id = this[index].year;
+                            this[index].year = parseInt(yearObject.attributes.code);
+                        }, flows);
+
+                        flows = _.sortBy(flows, 'year');
+
+                        // Granularity = month:
+                    } else if (dimensions[0][1] == "flowchain__month") {
+
+                        flows.forEach(function (flow, index) {
+                            let monthObject = months.find(month => month.attributes.id == flow.month);
+
+                            this[index].id = monthObject.attributes.id;
+                            this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
+                            this[index].yearMonthCode = parseInt(monthObject.attributes.code.substring(2, 6) + monthObject.attributes.code.substring(0, 2));
+                            this[index].year = parseInt(monthObject.attributes.code.substring(2, 6));
+                        }, flows);
+
+                        flows = _.sortBy(flows, 'id');
+                    }
+
+                    // //////////////////////
+                    // Treatment method
+                    let processGroups = filterFlowsView.processgroups.models;
+                    let processes = filterFlowsView.processes.models;
+
+                    // Granularity: Treatment Method Group
+                    if (dimensions[1][1] == "origin__process__processgroup" || dimensions[1][1] == "destination__process__processgroup") {
+
+                        flows.forEach(function (flow, index) {
+                            let processGroupObject = processGroups.find(processGroup => processGroup.attributes.id == flow.processgroup);
+
+                            this[index].processGroupCode = processGroupObject.attributes.code;
+                            this[index].processGroupName = processGroupObject.attributes.name[0].toUpperCase() + processGroupObject.attributes.name.slice(1).toLowerCase();
+                        }, flows);
+
+                        // Granularity: Treatment Method
+                    } else if (dimensions[1][1] == "origin__process" || dimensions[1][1] == "destination__process") {
+
+                        flows.forEach(function (flow, index) {
+                            let processGroupName = "";
+                            let processObject = processes.find(process => process.attributes.id == flow.process);
+
+                            this[index].processCode = processObject.attributes.code;
+                            this[index].processName = processObject.attributes.name[0].toUpperCase() + processObject.attributes.name.slice(1).toLowerCase();
+
+                            this[index].processGroupCode = processObject.attributes.code.substring(0, 1);
+                            processGroupName = processGroups.find(processGroup => processGroup.attributes.code == this[index].processGroupCode).attributes.name;
+                            this[index].processGroupName = processGroupName[0].toUpperCase() + processGroupName.slice(1).toLowerCase();
+                        }, flows);
+                    }
+
+                    switch (selectedVizualisationString) {
+                        case "lineplotmultiple":
+                            this.renderLinePlot(dimensions, flows);
+                            break;
+                        case "areachart":
+                            this.renderAreaChart(dimensions, flows);
+                            break;
+                        case "barchart":
+                            this.renderBarChart(dimensions, flows);
+                            break;
+                        case "stackedbarchart":
+                            this.renderBarChart(dimensions, flows, true);
+                            break;
+                        default:
+                            // Nothing
+                    }
+
+
 
 
                     // ///////////////////////////////////////////////////////////////////////////

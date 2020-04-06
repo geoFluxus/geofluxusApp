@@ -148,7 +148,7 @@ define(['views/common/baseview',
                         }
 
                         // SPACE ----------------
-                        if (!this.options.dimensions.isActorLevel) {                            
+                        if (!this.options.dimensions.isActorLevel) {
                             groupBy = ["areaName"];
                             tooltipConfig.tbody.push(["Area", function (d) {
                                 return d.areaName
@@ -202,22 +202,78 @@ define(['views/common/baseview',
                             }
                         }
 
+                        tooltipConfig.tbody.push(["Activity group",
+                            function (d) {
+                                return d.activityGroupCode + " " + d.activityGroupName;
+                            },
+                        ])
 
                         if (this.options.dimensions[1][1] == "origin__activity__activitygroup" || this.options.dimensions[1][1] == "destination__activity__activitygroup") {
                             groupBy = ["activityGroupCode"];
-                            tooltipConfig.tbody.push(["Activity group",
-                                function (d) {
-                                    return d.activityGroupCode + " " + d.activityGroupName;
-                                },
-                            ])
                         } else if (this.options.dimensions[1][1] == "origin__activity" || this.options.dimensions[1][1] == "destination__activity") {
                             groupBy = ["activityCode"];
                             tooltipConfig.tbody.push(["Activity", function (d) {
-                                    return d.activityCode + " " + d.activityName;
-                                }],
-                                ["Activity group", function (d) {
-                                    return d.activityGroupCode + " " + d.activityGroupName;
-                                }], );
+                                return d.activityCode + " " + d.activityName;
+                            }]);
+                        }
+
+                        // //////////////////////////////////////////
+                        // Time & Treatment method
+                    } else if (dimensionsActual.includes("time") && dimensionsActual.includes("treatmentMethod")) {
+
+                        // ///////////////
+                        // Time dimension
+
+                        // Granularity = year
+                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
+                            x = ["year"];
+                            tooltipConfig = {
+                                title: "Waste totals per year",
+                                tbody: [
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                                    }],
+                                    ["Year", function (d) {
+                                        return d.year
+                                    }]
+                                ]
+                            }
+
+                            // Granularity = month:
+                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
+                            x = ["yearMonthCode"];
+
+                            if (hasMultipleLines) {
+                                groupBy = ["year"];
+                                x = ["monthName"];
+                            }
+
+                            tooltipConfig = {
+                                title: "Waste totals per month",
+                                tbody: [
+                                    ["Waste (metric ton)", function (d) {
+                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                                    }],
+                                    ["Month", function (d) {
+                                        return d.month
+                                    }]
+                                ]
+                            }
+                        }
+
+                        // ///////////////
+                        // Treatment method dimension
+                        tooltipConfig.tbody.push(["Treatment method group", function (d) {
+                            return d.processGroupCode + " " + d.processGroupName;
+                        }])
+
+                        if (this.options.dimensions[1][1] == "origin__process__processgroup" || this.options.dimensions[1][1] == "destination__process__processgroup") {
+                            groupBy = ["processGroupCode"];
+                        } else if (this.options.dimensions[1][1] == "origin__process" || this.options.dimensions[1][1] == "destination__process") {
+                            groupBy = ["processCode"];
+                            tooltipConfig.tbody.push(["Treatment method", function (d) {
+                                return d.processCode + " " + d.processName;
+                            }]);
                         }
                     }
 
