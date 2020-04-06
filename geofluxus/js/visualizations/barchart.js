@@ -35,7 +35,7 @@ define([
             new d3plus.Plot()
                 .tooltipConfig(options.tooltipConfig)
                 .data(options.data)
-                .groupBy(groupByValue[0])
+                .groupBy(groupByValue)
                 .x(options.x)
                 .y("amount")
                 .baseline(0)

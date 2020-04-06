@@ -402,6 +402,7 @@ textarea.textarea-autosize.form-control-sm {
     color: white !important;
     background-color: #007bff !important;
     border: none !important;
+    user-select: none;
 }
 
 .choropleth-wrapper svg {

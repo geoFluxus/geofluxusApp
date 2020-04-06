@@ -266,7 +266,7 @@ define(['views/common/baseview',
                             }]);
                         } else {
                             isActorLevel = true;
-                            groupBy = ["actorName"];
+                            groupBy = ["actorId"];
                             tooltipConfig.tbody.push(["Company", function (d) {
                                 return d.actorName
                             }]);
