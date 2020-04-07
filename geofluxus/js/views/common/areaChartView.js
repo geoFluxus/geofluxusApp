@@ -51,7 +51,6 @@ define(['views/common/baseview',
 
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
-                    'click .export-csv': 'exportCSV',
                 },
 
                 render: function (data) {

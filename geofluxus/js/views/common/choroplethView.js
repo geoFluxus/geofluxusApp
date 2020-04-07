@@ -42,14 +42,12 @@ define(['views/common/baseview',
                 initialize: function (options) {
                     ChoroplethView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
-                    _.bindAll(this, 'exportCSV');
                     this.options = options;
                     this.render();
                 },
 
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
-                    'click .export-csv': 'exportCSV',
                 },
 
                 render: function (data) {

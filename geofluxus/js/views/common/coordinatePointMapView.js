@@ -43,7 +43,6 @@ define(['views/common/baseview',
                 initialize: function (options) {
                     CoordinatePointMapView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
-                    _.bindAll(this, 'exportCSV');
                     var _this = this;
 
                     this.options = options;
@@ -54,7 +53,6 @@ define(['views/common/baseview',
 
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
-                    'click .export-csv': 'exportCSV',
                 },
 
                 /*

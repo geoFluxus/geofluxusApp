@@ -196,7 +196,8 @@ define(['views/common/baseview',
                     origin: {},
                     destination: {},
                     flows: {},
-                    dimensions: {}
+                    dimensions: {},
+                    isFlowsFormat: false,
                 }
 
                 // ///////////////////////////////
@@ -527,6 +528,8 @@ define(['views/common/baseview',
                 if (dimensions[0][0] == "time") {
                     let years = filterFlowsView.years.models;
                     let months = filterFlowsView.months.models;
+
+                    // enrichFlowsTime(flows, granularity)
 
                     // Granularity = year
                     if (dimensions[0][1] == "flowchain__month__year") {
