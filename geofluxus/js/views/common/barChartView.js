@@ -1,7 +1,7 @@
 define(['views/common/baseview',
         'underscore',
         'd3',
-        'd3plus',
+        'visualizations/d3plus',
         'visualizations/barchart',
         'collections/collection',
         'app-config',
@@ -63,6 +63,7 @@ define(['views/common/baseview',
                     let x;
                     let tooltipConfig;
                     let xSort;
+                    let isActorLevel = false;
 
                     // /////////////////////////////
                     // Time dimension
@@ -258,12 +259,13 @@ define(['views/common/baseview',
                         }
 
                         // SPACE ----------------
-                        if (!this.options.dimensions[1][1].isActorLevel) {
+                        if (!this.options.dimensions.isActorLevel) {
                             groupBy = ["areaName"];
                             tooltipConfig.tbody.push(["Area", function (d) {
                                 return d.areaName
                             }]);
                         } else {
+                            isActorLevel = true;
                             groupBy = ["actorName"];
                             tooltipConfig.tbody.push(["Company", function (d) {
                                 return d.actorName
@@ -338,6 +340,7 @@ define(['views/common/baseview',
                         tooltipConfig: tooltipConfig,
                         xSort: xSort,
                         isStacked: isStacked,
+                        isActorLevel: isActorLevel,
                     });
                 },
 

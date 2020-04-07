@@ -1,7 +1,7 @@
 define(['views/common/baseview',
         'underscore',
         'd3',
-        'd3plus',
+        'visualizations/d3plus',
         'visualizations/areaChart',
         'collections/collection',
         'app-config',
@@ -262,7 +262,7 @@ define(['views/common/baseview',
                         }
 
                         // SPACE ----------------
-                        if (!this.options.dimensions[1][1].isActorLevel) {
+                        if (!this.options.dimensions.isActorLevel) {
                             groupBy = ["areaName"];
                             tooltipConfig.tbody.push(["Area", function (d) {
                                 return d.areaName

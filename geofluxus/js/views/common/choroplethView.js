@@ -7,7 +7,7 @@ define(['views/common/baseview',
         'save-svg-as-png',
         'file-saver',
         'utils/utils',
-        'd3plus',
+        'visualizations/d3plus',
     ],
 
     function (

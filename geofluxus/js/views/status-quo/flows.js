@@ -583,7 +583,7 @@ define(['views/common/baseview',
                     // If level == actor:
                     let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
                     if (dimensions[0][1].adminlevel == actorAreaLevelId) {
-                        dimensions[0][1].isActorLevel = true;
+                        dimensions.isActorLevel = true;
                     }
 
                     switch (selectedVizualisationString) {
@@ -756,7 +756,7 @@ define(['views/common/baseview',
                     // If level == actor:
                     let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
                     if (dimensions[1][1].adminlevel == actorAreaLevelId) {
-                        dimensions[1][1].isActorLevel = true;
+                        dimensions.isActorLevel = true;
                     }
 
                     // Granularity = year
@@ -765,7 +765,6 @@ define(['views/common/baseview',
                         flows.forEach(function (flow, index) {
                             let yearObject = years.find(year => year.attributes.id == flow.year);
 
-                            //this[index].id = this[index].year;
                             this[index].year = parseInt(yearObject.attributes.code);
                         }, flows);
 
@@ -777,7 +776,6 @@ define(['views/common/baseview',
                         flows.forEach(function (flow, index) {
                             let monthObject = months.find(month => month.attributes.id == flow.month);
 
-                            //this[index].id = monthObject.attributes.id;
                             this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
                             this[index].yearMonthCode = parseInt(monthObject.attributes.code.substring(2, 6) + monthObject.attributes.code.substring(0, 2));
                             this[index].year = parseInt(monthObject.attributes.code.substring(2, 6));

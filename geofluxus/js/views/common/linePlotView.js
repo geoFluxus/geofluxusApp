@@ -1,7 +1,7 @@
 define(['views/common/baseview',
         'underscore',
         'd3',
-        'd3plus',
+        'visualizations/d3plus',
         'visualizations/linePlot',
         'collections/collection',
         'app-config',
@@ -63,7 +63,8 @@ define(['views/common/baseview',
                     let tooltipConfig;
                     let groupBy;
                     let x;
-                    let legendConfig;
+
+                    let isActorLevel = false;
 
                     // /////////////////////////////
                     // Time dimension
@@ -147,21 +148,17 @@ define(['views/common/baseview',
                         }
 
                         // SPACE ----------------
-                        if (!this.options.dimensions[1][1].isActorLevel) {
+                        if (!this.options.dimensions.isActorLevel) {                            
                             groupBy = ["areaName"];
                             tooltipConfig.tbody.push(["Area", function (d) {
                                 return d.areaName
                             }]);
                         } else {
+                            isActorLevel = true;
                             groupBy = ["actorId"];
                             tooltipConfig.tbody.push(["Company", function (d) {
                                 return d.actorName
                             }]);
-                            // labelConfig = {
-                            //     label: function value(d) {
-                            //         return d.actorName;
-                            //     },
-                            // }
                         }
 
                         // //////////////////////////////////////////
@@ -232,7 +229,7 @@ define(['views/common/baseview',
                         groupBy: groupBy,
                         x: x,
                         tooltipConfig: tooltipConfig,
-                        //legendConfig: legendConfig,
+                        isActorLevel: isActorLevel,
                     });
                 },
 
