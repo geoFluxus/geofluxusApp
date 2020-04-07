@@ -60,7 +60,13 @@ define(['views/common/baseview',
                     this.options.dimensions.forEach(dim => dimensionsActual.push(dim[0]));
 
                     let hasMultipleLines = this.options.hasMultipleLines;
-                    let tooltipConfig;
+                    let tooltipConfig = {
+                        tbody: [
+                            ["Waste (metric ton)", function (d) {
+                                return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                            }]
+                        ]
+                    };
                     let groupBy;
                     let x;
 
@@ -73,38 +79,17 @@ define(['views/common/baseview',
                         // Granularity = year
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
                             x = ["year"];
-                            tooltipConfig = {
-                                title: "Waste totals per year",
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                    ["Year", function (d) {
-                                        return d.year
-                                    }]
-                                ]
-                            }
-
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
                             x = ["yearMonthCode"];
-
                             if (hasMultipleLines) {
                                 groupBy = ["year"];
                                 x = ["monthName"];
                             }
-
-                            tooltipConfig = {
-                                title: "Waste totals per month",
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                    ["Month", function (d) {
-                                        return d.month
-                                    }]
-                                ]
-                            }
+                            tooltipConfig.title = "Waste totals per month";
+                            tooltipConfig.tbody.push(["Month", function (d) {
+                                return d.month
+                            }]);
                         }
 
                     }
@@ -119,32 +104,16 @@ define(['views/common/baseview',
                         // Granularity = year
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
                             x = ["year"];
-                            tooltipConfig = {
-                                title: "Waste totals per year",
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                    ["Year", function (d) {
-                                        return d.year
-                                    }]
-                                ]
-                            }
+                            tooltipConfig.tbody.push(["Year", function (d) {
+                                return d.year
+                            }]);
 
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
                             x = ["yearMonthCode"];
-                            tooltipConfig = {
-                                title: "Waste totals per month",
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                    ["Month", function (d) {
-                                        return d.month
-                                    }]
-                                ]
-                            }
+                            tooltipConfig.tbody.push(["Month", function (d) {
+                                return d.month
+                            }]);
                         }
 
                         // SPACE ----------------
@@ -168,17 +137,9 @@ define(['views/common/baseview',
                         // Granularity = year
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
                             x = ["year"];
-                            tooltipConfig = {
-                                title: "Waste totals per year",
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                    ["Year", function (d) {
-                                        return d.year
-                                    }]
-                                ]
-                            }
+                            tooltipConfig.tbody.push(["Year", function (d) {
+                                return d.year
+                            }]);
 
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
@@ -188,25 +149,14 @@ define(['views/common/baseview',
                                 groupBy = ["year"];
                                 x = ["monthName"];
                             }
-
-                            tooltipConfig = {
-                                title: "Waste totals per month",
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                    ["Month", function (d) {
-                                        return d.month
-                                    }]
-                                ]
-                            }
+                            tooltipConfig.tbody.push(["Month", function (d) {
+                                return d.month
+                            }]);
                         }
 
-                        tooltipConfig.tbody.push(["Activity group",
-                            function (d) {
-                                return d.activityGroupCode + " " + d.activityGroupName;
-                            },
-                        ])
+                        tooltipConfig.tbody.push(["Activity group", function (d) {
+                            return d.activityGroupCode + " " + d.activityGroupName;
+                        }, ])
 
                         if (this.options.dimensions[1][1] == "origin__activity__activitygroup" || this.options.dimensions[1][1] == "destination__activity__activitygroup") {
                             groupBy = ["activityGroupCode"];
@@ -227,17 +177,9 @@ define(['views/common/baseview',
                         // Granularity = year
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
                             x = ["year"];
-                            tooltipConfig = {
-                                title: "Waste totals per year",
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                    ["Year", function (d) {
-                                        return d.year
-                                    }]
-                                ]
-                            }
+                            tooltipConfig.tbody.push(["Year", function (d) {
+                                return d.year
+                            }]);
 
                             // Granularity = month:
                         } else if (this.options.dimensions[0][1] == "flowchain__month") {
@@ -247,18 +189,9 @@ define(['views/common/baseview',
                                 groupBy = ["year"];
                                 x = ["monthName"];
                             }
-
-                            tooltipConfig = {
-                                title: "Waste totals per month",
-                                tbody: [
-                                    ["Waste (metric ton)", function (d) {
-                                        return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                                    }],
-                                    ["Month", function (d) {
-                                        return d.month
-                                    }]
-                                ]
-                            }
+                            tooltipConfig.tbody.push(["Month", function (d) {
+                                return d.month
+                            }]);
                         }
 
                         // ///////////////

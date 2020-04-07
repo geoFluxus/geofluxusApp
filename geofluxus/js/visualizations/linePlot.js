@@ -36,7 +36,7 @@ define([
                 } else if (groupByValue) {
                     return d[groupByValue];
                 } else {
-                    return d[x]
+                    return d[options.x]
                 }
             }
 
