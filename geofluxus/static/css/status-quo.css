@@ -376,16 +376,18 @@ textarea.textarea-autosize.form-control-sm {
     background-color: #007bff;
     border: none;
     position: relative;
-    font-size: 0;
     width: 32px;
     height: 32px;
     border-radius: 16px;
     top: 5px;
     color: transparent;
+    margin-bottom: 5px !important;
+    font-size: 14px;
+    margin: 0px 5px;
 }
 
-/* .d3plus-zoom-controls */
 
+/* .d3plus-zoom-controls */
 .d3plus-zoom-control {
     position: absolute !important;
     top: 50px !important;
@@ -413,18 +415,6 @@ textarea.textarea-autosize.form-control-sm {
     border-radius: 18px !important;
 }
 
-
-.fullscreen-toggle {
-    background-color: #007bff;
-    border: none;
-    position: relative;
-    font-size: 0;
-    width: 32px;
-    height: 32px;
-    border-radius: 16px;
-    top: 5px;
-    color: transparent;
-}
 
 
 /* CSS Tweaks for map control buttons only for Chrome	 */

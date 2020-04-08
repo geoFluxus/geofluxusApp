@@ -54,6 +54,7 @@ define(['views/common/baseview',
                 },
 
                 render: function (data) {
+                    let _this = this;
                     let flows = this.options.flows;
                     let groupBy;
                     let tooltipConfig = {
@@ -136,30 +137,37 @@ define(['views/common/baseview',
 
                     this.addFullScreenToggle();
 
+                    $(window).on('resize', function () {
+                        setTimeout(function () {
+                            _this.addFullScreenToggle();
+                        }, 600);
+                    });
+
                 },
 
                 addFullScreenToggle: function () {
-                    console.log("addFullScreenToggle");
-
-                    //$(this.el).children()[0].prepend('<button class="fullscreen-toggle" type="button"><i class="fas fa-expand" style="color: white"></i></button>');
-
                     let svg = d3.select(".d3plus-viz");
-
-                    svg.select(".d3plus-viz-controls-left")
+                    svg.select(".d3plus-Form.d3plus-Form-Button")
                         .append("button")
-                        .attr("class", "fullscreen-toggle")
+                        .attr("class", "d3plus-Button fullscreen-toggle")
                         .attr("type", "button")
                         .html('<i class="fas fa-expand" style="color: white"></i>');
-
-                    //('<button class="fullscreen-toggle" type="button"><i class="fas fa-expand" style="color: white"></i></button>');
-
-
                 },
 
                 toggleFullscreen: function (event) {
+                    let _this = this;
                     $(this.el).toggleClass('fullscreen');
-                    //this.refresh();
+                    window.dispatchEvent(new Event('resize'));
+                    //this.addFullScreenToggle();
                     event.stopImmediatePropagation();
+
+
+                    // if ($(this.el).hasClass('fullscreen')) {
+                    //     setTimeout(function () {
+                    //         _this.addFullScreenToggle();
+                    //     }, 200);
+                    // }
+
                 },
 
                 close: function () {
