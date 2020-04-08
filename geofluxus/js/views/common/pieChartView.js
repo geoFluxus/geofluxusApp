@@ -133,11 +133,32 @@ define(['views/common/baseview',
                         groupBy: groupBy,
                         tooltipConfig: tooltipConfig,
                     });
+
+                    this.addFullScreenToggle();
+
+                },
+
+                addFullScreenToggle: function () {
+                    console.log("addFullScreenToggle");
+
+                    //$(this.el).children()[0].prepend('<button class="fullscreen-toggle" type="button"><i class="fas fa-expand" style="color: white"></i></button>');
+
+                    let svg = d3.select(".d3plus-viz");
+
+                    svg.select(".d3plus-viz-controls-left")
+                        .append("button")
+                        .attr("class", "fullscreen-toggle")
+                        .attr("type", "button")
+                        .html('<i class="fas fa-expand" style="color: white"></i>');
+
+                    //('<button class="fullscreen-toggle" type="button"><i class="fas fa-expand" style="color: white"></i></button>');
+
+
                 },
 
                 toggleFullscreen: function (event) {
-                    this.el.classList.toggle('fullscreen');
-                    this.refresh();
+                    $(this.el).toggleClass('fullscreen');
+                    //this.refresh();
                     event.stopImmediatePropagation();
                 },
 

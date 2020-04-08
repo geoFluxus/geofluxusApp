@@ -413,6 +413,20 @@ textarea.textarea-autosize.form-control-sm {
     border-radius: 18px !important;
 }
 
+
+.fullscreen-toggle {
+    background-color: #007bff;
+    border: none;
+    position: relative;
+    font-size: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    top: 5px;
+    color: transparent;
+}
+
+
 /* CSS Tweaks for map control buttons only for Chrome	 */
 
 @media screen and (-webkit-min-device-pixel-ratio:0) {
