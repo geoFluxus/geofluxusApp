@@ -134,22 +134,18 @@ define(['views/common/baseview',
                         groupBy: groupBy,
                         tooltipConfig: tooltipConfig,
                     });
-
                     this.addFullScreenToggle();
 
+                    // Event for window resize:
                     $(window).on('resize', function () {
                         setTimeout(function () {
-                            //d3.select(".fullscreen-toggle")
-                            
                             let addToggle = d3.select(".d3plus-Form.d3plus-Form-Button")._groups[0][0].children.length == 1;
-                            
                             if (addToggle) {
                                 _this.addFullScreenToggle();
                                 console.log("Toggle added");
                             }
                         }, 600);
                     });
-
                 },
 
                 addFullScreenToggle: function () {
@@ -162,19 +158,9 @@ define(['views/common/baseview',
                 },
 
                 toggleFullscreen: function (event) {
-                    let _this = this;
                     $(this.el).toggleClass('fullscreen');
-                    window.dispatchEvent(new Event('resize'));
-                    //this.addFullScreenToggle();
                     event.stopImmediatePropagation();
-
-
-                    // if ($(this.el).hasClass('fullscreen')) {
-                    //     setTimeout(function () {
-                    //         _this.addFullScreenToggle();
-                    //     }, 200);
-                    // }
-
+                    window.dispatchEvent(new Event('resize'));
                 },
 
                 close: function () {
