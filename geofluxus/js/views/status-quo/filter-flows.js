@@ -632,6 +632,9 @@ define(['views/common/baseview',
                     $("#gran-treatment-method-col").fadeToggle();
                     $("#origDest-toggle-treatment-col").fadeToggle();
                 });
+                $("#dim-toggle-material").change(function () {
+                    $("#gran-material-col").fadeToggle();
+                });
             },
 
             initializeControls: function () {
@@ -750,8 +753,8 @@ define(['views/common/baseview',
                 this.dimensions.materialToggle = this.el.querySelector('#dim-toggle-material');
                 $(this.dimensions.materialToggle).bootstrapToggle();
 
-                this.dimensions.logisticsToggle = this.el.querySelector('#dim-toggle-logistics');
-                $(this.dimensions.logisticsToggle).bootstrapToggle();
+                // this.dimensions.logisticsToggle = this.el.querySelector('#dim-toggle-logistics');
+                // $(this.dimensions.logisticsToggle).bootstrapToggle();
 
                 //Area select modal
 
@@ -1133,6 +1136,7 @@ define(['views/common/baseview',
                 $("#gran-toggle-space-col").hide();
                 $("#gran-econ-activity-col").hide();
                 $("#gran-treatment-method-col").hide();
+                $("#gran-material-col").hide();
 
                 $("#origDest-toggle-space-col").hide();
                 $("#origDest-toggle-econAct-col").hide();

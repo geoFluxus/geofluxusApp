@@ -795,21 +795,34 @@
                     </div>
                     
                     <!-- Material -->
-                    <!-- <div class="row">
-                        <div class="col-md-3">
-                            <label for="dim-toggle-material" class="dimensionLabel">Material</label>                          
-                        </div>
+                    <div class="row">
                         <div class="col-md-3">
                             <div class="checkbox">
                                 <input name="dim-toggle-material" class="dimensionToggle" id="dim-toggle-material" type="checkbox"
-                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Selected"
-                                    data-off="Aggregate">
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-dim="material" data-on="Material"
+                                    data-off="Material">
                             </div>
                         </div>
-                        <div class="col-md-3">
-                      
+                        <div class="col-md-3" id="gran-material-col" style="display: none">
+                            <!-- <div class="checkbox">
+                                <input name="gran-toggle-treatment-method" id="gran-toggle-treatment-method" type="checkbox"
+                                    data-width="100%" data-height="21" data-toggle="toggle" data-on="Treatment method"
+                                    data-off="Treatment method group">
+                            </div> -->
+
+                            <div class="btn-group btn-group-toggle" id="gran-radio-material" data-toggle="buttons" style="width: 100%;">
+                                <label class="btn btn-sm btn-primary active">
+                                    <input type="radio"  id="gran-radio-material-ewc2" checked>EWC 2
+                                </label>
+                                <label class="btn btn-sm btn-primary">
+                                    <input type="radio"  id="gran-radio-material-ewc4">EWC 4
+                                </label>
+                                <label class="btn btn-sm btn-primary">
+                                    <input type="radio"  id="gran-radio-material-ewc6">EWC 6
+                                </label>
+                            </div>
                         </div>
-                    </div> -->
+                    </div>
                     
                     <!-- Logistics -->
                     <!-- <div class="row">

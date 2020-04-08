@@ -43,7 +43,6 @@ define(['views/common/baseview',
                 initialize: function (options) {
                     TreeMapView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
-                    _.bindAll(this, 'exportCSV');
                     this.options = options;
                     this.render();
                 },
