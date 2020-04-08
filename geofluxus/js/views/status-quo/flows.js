@@ -202,7 +202,6 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////
                 // isFlowsFormat
-
                 let selectedVizualisationString;
                 $('.viz-selector-button').each(function (index, value) {
                     if ($(this).hasClass("active")) {
@@ -212,7 +211,6 @@ define(['views/common/baseview',
                 if (selectedVizualisationString.includes("flowmap") || selectedVizualisationString.includes("parallelsets")) {
                     filterParams.isFlowsFormat = true;
                 }
-
 
                 // ///////////////////////////////
                 // ORIGIN
