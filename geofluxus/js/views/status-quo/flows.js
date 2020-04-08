@@ -201,6 +201,20 @@ define(['views/common/baseview',
                 }
 
                 // ///////////////////////////////
+                // isFlowsFormat
+
+                let selectedVizualisationString;
+                $('.viz-selector-button').each(function (index, value) {
+                    if ($(this).hasClass("active")) {
+                        selectedVizualisationString = $(this).attr("data-viz");
+                    }
+                });
+                if (selectedVizualisationString.includes("flowmap") || selectedVizualisationString.includes("parallelsets")) {
+                    filterParams.isFlowsFormat = true;
+                }
+
+
+                // ///////////////////////////////
                 // ORIGIN
 
                 if (filter.selectedAreasOrigin !== undefined &&
