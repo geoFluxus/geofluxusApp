@@ -139,7 +139,14 @@ define(['views/common/baseview',
 
                     $(window).on('resize', function () {
                         setTimeout(function () {
-                            _this.addFullScreenToggle();
+                            //d3.select(".fullscreen-toggle")
+                            
+                            let addToggle = d3.select(".d3plus-Form.d3plus-Form-Button")._groups[0][0].children.length == 1;
+                            
+                            if (addToggle) {
+                                _this.addFullScreenToggle();
+                                console.log("Toggle added");
+                            }
                         }, 600);
                     });
 
