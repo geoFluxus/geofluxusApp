@@ -433,12 +433,10 @@ define(['views/common/baseview',
                 // DIMENSIONS
 
                 if ($(filter.dimensions.timeToggle).prop("checked")) {
-                    var timeFilter,
+                    var timeFilter = 'flowchain__month',
                         gran = $(filter.dimensions.timeToggleGran).prop("checked") ? 'month' : 'year';
-                    if (gran == 'month') {
-                        timeFilter = 'flowchain__month';
-                    } else {
-                        timeFilter = 'flowchain__month__year';
+                    if (gran == 'year') {
+                        timeFilter += '__year';
                     }
                     filterParams.dimensions.time = timeFilter;
                 }
@@ -464,7 +462,15 @@ define(['views/common/baseview',
                 }
 
                 if ($(filter.dimensions.materialToggle).prop("checked")) {
-                    filterParams.dimensions.material = $($(".gran-radio-material-label.active")).attr("data-ewc");
+                    let gran = $($(".gran-radio-material-label.active")).attr("data-ewc"),
+                        materialFilter = 'flowchain__waste06';
+                    if (gran === 'ewc4') {
+                        materialFilter += '__waste04'
+                    }
+                    else if (gran === 'ewc2') {
+                        materialFilter += '__waste04__waste02'
+                    }
+                    filterParams.dimensions.material = materialFilter;
                 }
 
                 console.log(filterParams);
