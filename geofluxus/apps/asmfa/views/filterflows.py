@@ -212,6 +212,7 @@ class FilterFlowViewSet(PostGetViewMixin,
         space = dimensions.pop('space', None)
         eco = dimensions.pop('economicActivity', None)
         treat = dimensions.pop('treatmentMethod', None)
+        mat = dimensions.pop('material', None)
 
         # TIME DIMENSION
         levels, fields = [], []
@@ -262,6 +263,11 @@ class FilterFlowViewSet(PostGetViewMixin,
         if treat:
             levels.append(treat.split('__')[-1])
             fields.append(treat)
+
+        # MATERIAL DIMENSION
+        if mat:
+            levels.append(mat.split('__')[-1])
+            fields.append(mat)
 
         # workaround Django ORM bug
         queryset = queryset.order_by()
