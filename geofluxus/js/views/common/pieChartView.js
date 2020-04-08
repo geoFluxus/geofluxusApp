@@ -134,9 +134,16 @@ define(['views/common/baseview',
                         groupBy: groupBy,
                         tooltipConfig: tooltipConfig,
                     });
+
+                    // Add the fullscreenToggle-button to SVG:
                     this.addFullScreenToggle();
 
-                    // Event for window resize:
+                    // Smooth scroll to top of Viz
+                    $("#apply-filters")[0].scrollIntoView({
+                        behavior: "smooth"
+                    });
+
+                    // Event for window resize to re-add fullscreenToggle-button after D3plus makes it disappear:
                     $(window).on('resize', function () {
                         setTimeout(function () {
                             let addToggle = d3.select(".d3plus-Form.d3plus-Form-Button")._groups[0][0].children.length == 1;
@@ -160,6 +167,13 @@ define(['views/common/baseview',
                 toggleFullscreen: function (event) {
                     $(this.el).toggleClass('fullscreen');
                     event.stopImmediatePropagation();
+
+                    if (!$(this.el).hasClass('fullscreen')) {
+                        $("#apply-filters")[0].scrollIntoView({
+                            behavior: "smooth"
+                        });
+                    }
+
                     window.dispatchEvent(new Event('resize'));
                 },
 
