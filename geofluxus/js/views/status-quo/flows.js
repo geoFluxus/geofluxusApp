@@ -451,16 +451,11 @@ define(['views/common/baseview',
                         filterParams.dimensions.treatmentMethod = originOrDestination + gran;
                 }
 
-                // ORIGIN OR DESTINATION FILTERS
-                // $(_this.dimensions.spaceOrigDest).prop("checked")
-                // $(_this.dimensions.economicActivityOrigDest).prop("checked")
-                // $(_this.dimensions.treatmentMethodOrigDest).prop("checked")
-
-
-
+                if ($(filter.dimensions.materialToggle).prop("checked")) {
+                    filterParams.dimensions.material = $($(".gran-radio-material-label.active")).attr("data-ewc");
+                }
 
                 console.log(filterParams);
-
                 return filterParams;
             },
 

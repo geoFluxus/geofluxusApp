@@ -811,14 +811,14 @@
                             </div> -->
 
                             <div class="btn-group btn-group-toggle" id="gran-radio-material" data-toggle="buttons" style="width: 100%;">
-                                <label class="btn btn-sm btn-primary active">
-                                    <input type="radio"  id="gran-radio-material-ewc2" checked>EWC 2
+                                <label class="btn btn-sm btn-primary gran-radio-material-label active" data-ewc="ewc2">
+                                    <input type="radio" class="gran-radio-material-input" id="gran-radio-material-ewc2" checked>EWC 2
                                 </label>
-                                <label class="btn btn-sm btn-primary">
-                                    <input type="radio"  id="gran-radio-material-ewc4">EWC 4
+                                <label class="btn btn-sm btn-primary gran-radio-material-label" data-ewc="ewc4">
+                                    <input type="radio" class="gran-radio-material-input" id="gran-radio-material-ewc4">EWC 4
                                 </label>
-                                <label class="btn btn-sm btn-primary">
-                                    <input type="radio"  id="gran-radio-material-ewc6">EWC 6
+                                <label class="btn btn-sm btn-primary gran-radio-material-label" data-ewc="ewc6">
+                                    <input type="radio" class="gran-radio-material-input" id="gran-radio-material-ewc6">EWC 6
                                 </label>
                             </div>
                         </div>
@@ -916,6 +916,13 @@
                                     </label>
                                     <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="stackedbarchart" style="display: none;">
                                         <input type="radio" id="viz-stackedbarchart"><span class="span-viz" id="span-viz-stackedbarchart">Stacked bar chart</span>
+                                    </label>
+
+                                    <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="parallelsets" style="display: none;">
+                                        <input type="radio" id="viz-parallelsets"><span class="span-viz" id="span-viz-parallelsets">Parallel sets</span>
+                                    </label>
+                                    <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button" data-viz="flowmap" style="display: none;">
+                                        <input type="radio" id="viz-flowmap"><span class="span-viz" id="span-viz-flowmap">Flow map</span>
                                     </label>
 
                                 </div>

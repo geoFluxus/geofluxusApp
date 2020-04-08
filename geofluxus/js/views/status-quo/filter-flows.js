@@ -540,6 +540,10 @@ define(['views/common/baseview',
                                 $("#viz-piechart").parent().fadeIn();
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-treemap").parent().fadeIn();
+                            } else if (_this.selectedDimensionStrings.includes("material")) {
+                                $("#viz-piechart").parent().fadeIn();
+                                $("#viz-barchart").parent().fadeIn();
+                                $("#viz-treemap").parent().fadeIn();
                             }
 
                             break;
@@ -560,6 +564,8 @@ define(['views/common/baseview',
                                 $("#viz-lineplotmultiple").parent().fadeIn();
                                 $("#viz-areachart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
+
+                                $("#viz-flowmap").parent().fadeIn();
                                 // Time & Economic Activity
                             } else if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("economicActivity")) {
                                 $("#viz-barchart").parent().fadeIn();
@@ -575,12 +581,18 @@ define(['views/common/baseview',
                             } else if (_this.selectedDimensionStrings.includes("space") && _this.selectedDimensionStrings.includes("economicActivity")) {
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
+                                $("#viz-flowmap").parent().fadeIn();
+
                             } else if (_this.selectedDimensionStrings.includes("space") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
+
+                                $("#viz-flowmap").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("economicActivity") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
+
+                                $("#viz-parallelsets").parent().fadeIn();
                             }
 
                             break;
