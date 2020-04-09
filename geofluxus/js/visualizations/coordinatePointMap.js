@@ -45,11 +45,11 @@ define([
                 })
                 .controlPadding(0)
                 .render(function () {
-                    _this.addFullScreenToggle();
                     _this.addDownloadButton();
+                    _this.addFullScreenToggle();
                 });
         }
-        
+
         addFullScreenToggle() {
             let svg = d3.select(".d3plus-viz");
             svg.select(".d3plus-Form.d3plus-Form-Button")

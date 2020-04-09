@@ -44,8 +44,8 @@ define([
                 })
                 .controlPadding(0)
                 .render(function () {
-                    _this.addFullScreenToggle();
                     _this.addDownloadButton();
+                    _this.addFullScreenToggle();
                 });
         }
 

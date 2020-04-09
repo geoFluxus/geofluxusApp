@@ -40,8 +40,8 @@ define([
                 })
                 .controlPadding(0)
                 .render(function () {
-                    _this.addFullScreenToggle();
                     _this.addDownloadButton();
+                    _this.addFullScreenToggle();
                 });
         }
 
@@ -53,7 +53,7 @@ define([
                 .attr("type", "button")
                 .html('<i class="fas fa-expand" style="color: white"></i>');
         }
-        
+
         addDownloadButton() {
             let svg = d3.select(".d3plus-viz");
             svg.select(".d3plus-Form.d3plus-Form-Button")
