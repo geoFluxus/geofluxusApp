@@ -57,8 +57,8 @@ define(['views/common/baseview',
                 render: function (data) {
                     let _this = this;
                     let flows = this.options.flows;
-                    let dimensionsActual = [];
-                    this.options.dimensions.forEach(dim => dimensionsActual.push(dim[0]));
+                    let dimStrings = [];
+                    this.options.dimensions.forEach(dim => dimStrings.push(dim[0]));
 
                     let isStacked = this.options.isStacked;
                     let groupBy;
@@ -172,7 +172,7 @@ define(['views/common/baseview',
 
                     // //////////////////////////////////////////
                     // Time & Space
-                    if (dimensionsActual.includes("time") && dimensionsActual.includes("space")) {
+                    if (dimStrings.includes("time") && dimStrings.includes("space")) {
                         // TIME ----------------
                         // Granularity = year
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
@@ -207,7 +207,7 @@ define(['views/common/baseview',
 
                         // //////////////////////////////////////////
                         // Time & Economic Activity
-                    } else if (dimensionsActual.includes("time") && dimensionsActual.includes("economicActivity")) {
+                    } else if (dimStrings.includes("time") && dimStrings.includes("economicActivity")) {
 
                         // Granularity = year
                         if (this.options.dimensions[0][1] == "flowchain__month__year") {
@@ -246,7 +246,7 @@ define(['views/common/baseview',
 
                         // //////////////////////////////////////////
                         // Time & Treatment method
-                    } else if (dimensionsActual.includes("time") && dimensionsActual.includes("treatmentMethod")) {
+                    } else if (dimStrings.includes("time") && dimStrings.includes("treatmentMethod")) {
 
                         // ///////////////
                         // Time dimension
@@ -290,7 +290,7 @@ define(['views/common/baseview',
 
                         // //////////////////////////////////////////
                         // Space & Economic activity
-                    } else if (dimensionsActual.includes("space") && dimensionsActual.includes("economicActivity")) {
+                    } else if (dimStrings.includes("space") && dimStrings.includes("economicActivity")) {
 
 
                         // SPACE ----------------

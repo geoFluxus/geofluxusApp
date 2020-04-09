@@ -673,6 +673,7 @@ define(['views/common/baseview',
                     // Space & Treatment Method
                 } else if (dimStrings.includes("space") && dimStrings.includes("treatmentMethod")) {
 
+                    // To do
 
                     // Economic Activity & Treatment Method
                 } else if (dimStrings.includes("economicActivity") && dimStrings.includes("treatmentMethod")) {
@@ -697,10 +698,6 @@ define(['views/common/baseview',
                     default:
                         // Nothing
                 }
-
-
-
-                
 
                 console.log(flows);
             },

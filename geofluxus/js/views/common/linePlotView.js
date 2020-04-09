@@ -58,8 +58,13 @@ define(['views/common/baseview',
                     let _this = this;
                     let flows = this.options.flows;
 
-                    let dimensionsActual = [];
-                    this.options.dimensions.forEach(dim => dimensionsActual.push(dim[0]));
+                    let dim1String = this.options.dimensions[0][0];
+                    let gran1 = this.options.dimensions[0][1];
+                    let dim2String = this.options.dimensions[1][0];
+                    let gran2 = this.options.dimensions[1][1];
+
+                    let dimStrings = [];
+                    this.options.dimensions.forEach(dim => dimStrings.push(dim[0]));
 
                     let hasMultipleLines = this.options.hasMultipleLines;
                     let tooltipConfig = {
@@ -75,50 +80,34 @@ define(['views/common/baseview',
                     let isActorLevel = false;
 
                     // /////////////////////////////
-                    // Time dimension
-                    if (this.options.dimensions[0][0] == "time") {
+                    // 1D - Time dimension
 
-                        // Granularity = year
-                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
-                            x = ["year"];
-                            // Granularity = month:
-                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
-                            x = ["yearMonthCode"];
-                            if (hasMultipleLines) {
-                                groupBy = ["year"];
-                                x = ["monthName"];
-                            }
-                            tooltipConfig.title = "Waste totals per month";
-                            tooltipConfig.tbody.push(["Month", function (d) {
-                                return d.month
-                            }]);
+                    // Granularity = year
+                    if (gran1 == "flowchain__month__year") {
+                        x = ["year"];
+                        tooltipConfig.title = "Waste totals per year";
+                        tooltipConfig.tbody.push(["Year", function (d) {
+                            return d.year
+                        }]);
+
+                        // Granularity = month:
+                    } else if (gran1 == "flowchain__month") {
+                        x = ["yearMonthCode"];
+                        if (hasMultipleLines) {
+                            groupBy = ["year"];
+                            x = ["monthName"];
                         }
-
+                        tooltipConfig.title = "Waste totals per month";
+                        tooltipConfig.tbody.push(["Month", function (d) {
+                            return d.month
+                        }]);
                     }
 
-                    // ///////////////////////////////////////////////////////////////////////////////////////////////////
 
                     // //////////////////////////////////////////
-                    // Time & Space
-                    if (dimensionsActual.includes("time") && dimensionsActual.includes("space")) {
+                    // 2D - Time & Space
+                    if (dimStrings.includes("space")) {
 
-                        // TIME ----------------
-                        // Granularity = year
-                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
-                            x = ["year"];
-                            tooltipConfig.tbody.push(["Year", function (d) {
-                                return d.year
-                            }]);
-
-                            // Granularity = month:
-                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
-                            x = ["yearMonthCode"];
-                            tooltipConfig.tbody.push(["Month", function (d) {
-                                return d.month
-                            }]);
-                        }
-
-                        // SPACE ----------------
                         if (!this.options.dimensions.isActorLevel) {
                             groupBy = ["areaName"];
                             tooltipConfig.tbody.push(["Area", function (d) {
@@ -133,28 +122,8 @@ define(['views/common/baseview',
                         }
 
                         // //////////////////////////////////////////
-                        // Time & Economic Activity
-                    } else if (dimensionsActual.includes("time") && dimensionsActual.includes("economicActivity")) {
-
-                        // Granularity = year
-                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
-                            x = ["year"];
-                            tooltipConfig.tbody.push(["Year", function (d) {
-                                return d.year
-                            }]);
-
-                            // Granularity = month:
-                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
-                            x = ["yearMonthCode"];
-
-                            if (hasMultipleLines) {
-                                groupBy = ["year"];
-                                x = ["monthName"];
-                            }
-                            tooltipConfig.tbody.push(["Month", function (d) {
-                                return d.month
-                            }]);
-                        }
+                        // 2D - Time & Economic Activity
+                    } else if (dimStrings.includes("economicActivity")) {
 
                         tooltipConfig.tbody.push(["Activity group", function (d) {
                             return d.activityGroupCode + " " + d.activityGroupName;
@@ -170,34 +139,9 @@ define(['views/common/baseview',
                         }
 
                         // //////////////////////////////////////////
-                        // Time & Treatment method
-                    } else if (dimensionsActual.includes("time") && dimensionsActual.includes("treatmentMethod")) {
+                        // 2D - Time & Treatment method
+                    } else if (dimStrings.includes("treatmentMethod")) {
 
-                        // ///////////////
-                        // Time dimension
-
-                        // Granularity = year
-                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
-                            x = ["year"];
-                            tooltipConfig.tbody.push(["Year", function (d) {
-                                return d.year
-                            }]);
-
-                            // Granularity = month:
-                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
-                            x = ["yearMonthCode"];
-
-                            if (hasMultipleLines) {
-                                groupBy = ["year"];
-                                x = ["monthName"];
-                            }
-                            tooltipConfig.tbody.push(["Month", function (d) {
-                                return d.month
-                            }]);
-                        }
-
-                        // ///////////////
-                        // Treatment method dimension
                         tooltipConfig.tbody.push(["Treatment method group", function (d) {
                             return d.processGroupCode + " " + d.processGroupName;
                         }])
@@ -211,8 +155,7 @@ define(['views/common/baseview',
                             }]);
                         }
                     }
-
-
+                    
                     // Create a new D3Plus linePlot object which will be rendered in this.options.el:
                     this.linePlot = new LinePlot({
                         el: this.options.el,
@@ -222,7 +165,7 @@ define(['views/common/baseview',
                         tooltipConfig: tooltipConfig,
                         isActorLevel: isActorLevel,
                     });
-                 
+
                     // Smooth scroll to top of Viz
                     $("#apply-filters")[0].scrollIntoView({
                         behavior: "smooth"

@@ -57,8 +57,8 @@ define(['views/common/baseview',
                 render: function (data) {
                     let _this = this;
                     let flows = this.options.flows;
-                    let dimensionsActual = [];
-                    this.options.dimensions.forEach(dim => dimensionsActual.push(dim[0]));
+                    let dimStrings = [];
+                    this.options.dimensions.forEach(dim => dimStrings.push(dim[0]));
 
                     let groupBy;
                     let x;
@@ -75,7 +75,7 @@ define(['views/common/baseview',
 
                     // //////////////////////////////////////////
                     // Time & Space
-                    if (dimensionsActual.includes("time") && dimensionsActual.includes("space")) {
+                    if (dimStrings.includes("time") && dimStrings.includes("space")) {
                         isStacked = true;
 
                         // TIME ----------------
@@ -111,7 +111,7 @@ define(['views/common/baseview',
 
                         // //////////////////////////////////////////
                         // Time & Economic Activity
-                    } else if (dimensionsActual.includes("time") && dimensionsActual.includes("economicActivity")) {
+                    } else if (dimStrings.includes("time") && dimStrings.includes("economicActivity")) {
                         isStacked = true;
 
                         // Granularity = year
@@ -149,7 +149,7 @@ define(['views/common/baseview',
 
                         // //////////////////////////////////////////
                         // Time & Treatment method
-                    } else if (dimensionsActual.includes("time") && dimensionsActual.includes("treatmentMethod")) {
+                    } else if (dimStrings.includes("time") && dimStrings.includes("treatmentMethod")) {
                         isStacked = true;
 
                         // ///////////////
