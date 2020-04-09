@@ -545,7 +545,11 @@ define(['views/common/baseview',
                         flows = enrichFlows.enrichTime(flows, filterFlowsView, granularityString);
                         break;
                     case "space":
-                        // Nothing
+                        // Set isActorLevel if necessary:
+                        let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
+                        if (dimensions[0][1].adminlevel == actorAreaLevelId) {
+                            dimensions.isActorLevel = true;
+                        }
                         break;
                     case "economicActivity":
                         flows = enrichFlows.enrichEconActivity(flows, filterFlowsView, granularityString);
@@ -575,10 +579,7 @@ define(['views/common/baseview',
                         break;
                     case "choroplethmap":
                         // If level == actor:
-                        let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-                        if (dimensions[0][1].adminlevel == actorAreaLevelId) {
-                            dimensions.isActorLevel = true;
-                        }
+                        
                         areas = new Collection([], {
                             apiTag: 'areas',
                             apiIds: [dimensions[0][1].adminlevel]
