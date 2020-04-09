@@ -66,6 +66,9 @@ define(['views/common/baseview',
                     let dimStrings = [];
                     this.options.dimensions.forEach(dim => dimStrings.push(dim[0]));
 
+                    let groupBy;
+                    let x;
+                    let isActorLevel = false;
                     let hasMultipleLines = this.options.hasMultipleLines;
                     let tooltipConfig = {
                         tbody: [
@@ -74,10 +77,6 @@ define(['views/common/baseview',
                             }]
                         ]
                     };
-                    let groupBy;
-                    let x;
-
-                    let isActorLevel = false;
 
                     // /////////////////////////////
                     // 1D - Time dimension
@@ -155,7 +154,7 @@ define(['views/common/baseview',
                             }]);
                         }
                     }
-                    
+
                     // Create a new D3Plus linePlot object which will be rendered in this.options.el:
                     this.linePlot = new LinePlot({
                         el: this.options.el,

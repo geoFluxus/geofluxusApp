@@ -57,9 +57,17 @@ define(['views/common/baseview',
                 render: function (data) {
                     let _this = this;
                     let flows = this.options.flows;
+
+                    let dim1String = this.options.dimensions[0][0];
+                    let gran1 = this.options.dimensions[0][1];
+                    let dim2String = this.options.dimensions[1][0];
+                    let gran2 = this.options.dimensions[1][1];
+
                     let dimStrings = [];
                     this.options.dimensions.forEach(dim => dimStrings.push(dim[0]));
 
+                    let xSort;
+                    let isStacked = true;
                     let groupBy;
                     let x;
                     let tooltipConfig = {
@@ -69,34 +77,32 @@ define(['views/common/baseview',
                             }]
                         ]
                     };
-                    let xSort;
-                    let isStacked = false;
+
+                    // //////////////////////////////////////////
+                    // TIME is always a dimension for areaChart
+
+                    // Granularity = year
+                    if (gran1 == "flowchain__month__year") {
+                        x = ["year"];
+                        tooltipConfig.title = "Waste totals per year";
+                        tooltipConfig.tbody.push(["Year", function (d) {
+                            return d.year
+                        }]);
+
+                        // Granularity = month:
+                    } else if (gran1 == "flowchain__month") {
+                        x = ["yearMonthCode"];
+                        tooltipConfig.title = "Waste totals per month";
+                        tooltipConfig.tbody.push(["Month", function (d) {
+                            return d.month
+                        }]);
+                    }
 
 
                     // //////////////////////////////////////////
                     // Time & Space
-                    if (dimStrings.includes("time") && dimStrings.includes("space")) {
-                        isStacked = true;
+                    if (dimStrings.includes("space")) {
 
-                        // TIME ----------------
-                        // Granularity = year
-                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
-                            x = ["year"];
-                            tooltipConfig.title = "Waste totals per year";
-                            tooltipConfig.tbody.push(["Year", function (d) {
-                                return d.year
-                            }]);
-
-                            // Granularity = month:
-                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
-                            x = ["yearMonthCode"];
-                            tooltipConfig.title = "Waste totals per month";
-                            tooltipConfig.tbody.push(["Month", function (d) {
-                                return d.month
-                            }]);
-                        }
-
-                        // SPACE ----------------
                         if (!this.options.dimensions.isActorLevel) {
                             groupBy = ["areaName"];
                             tooltipConfig.tbody.push(["Area", function (d) {
@@ -111,25 +117,7 @@ define(['views/common/baseview',
 
                         // //////////////////////////////////////////
                         // Time & Economic Activity
-                    } else if (dimStrings.includes("time") && dimStrings.includes("economicActivity")) {
-                        isStacked = true;
-
-                        // Granularity = year
-                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
-                            x = ["year"];
-                            tooltipConfig.title = "Waste totals per year";
-                            tooltipConfig.tbody.push(["Year", function (d) {
-                                return d.year
-                            }]);
-
-                            // Granularity = month:
-                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
-                            x = ["yearMonthCode"];
-                            tooltipConfig.title = "Waste totals per month";
-                            tooltipConfig.tbody.push(["Month", function (d) {
-                                return d.month
-                            }]);
-                        }
+                    } else if (dimStrings.includes("economicActivity")) {
 
                         tooltipConfig.tbody.push(["Activity group",
                             function (d) {
@@ -137,56 +125,26 @@ define(['views/common/baseview',
                             },
                         ])
 
-                        if (this.options.dimensions[1][1] == "origin__activity__activitygroup" || this.options.dimensions[1][1] == "destination__activity__activitygroup") {
+                        if (gran2 == "origin__activity__activitygroup" || gran2 == "destination__activity__activitygroup") {
                             groupBy = ["activityGroupCode"];
-                        } else if (this.options.dimensions[1][1] == "origin__activity" || this.options.dimensions[1][1] == "destination__activity") {
+                        } else if (gran2 == "origin__activity" || gran2 == "destination__activity") {
                             groupBy = ["activityCode"];
                             tooltipConfig.tbody.push(["Activity", function (d) {
                                 return d.activityCode + " " + d.activityName;
                             }]);
                         }
 
-
                         // //////////////////////////////////////////
                         // Time & Treatment method
-                    } else if (dimStrings.includes("time") && dimStrings.includes("treatmentMethod")) {
-                        isStacked = true;
+                    } else if (dimStrings.includes("treatmentMethod")) {
 
-                        // ///////////////
-                        // Time dimension
-
-                        // Granularity = year
-                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
-                            x = ["year"];
-                            tooltipConfig.title = "Waste totals per year";
-                            tooltipConfig.tbody.push(["Year", function (d) {
-                                return d.year
-                            }]);
-
-                            // Granularity = month:
-                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
-                            x = ["yearMonthCode"];
-
-                            if (hasMultipleLines) {
-                                groupBy = ["year"];
-                                x = ["monthName"];
-                            }
-
-                            tooltipConfig.title = "Waste totals per month";
-                            tooltipConfig.tbody.push(["Month", function (d) {
-                                return d.month
-                            }]);
-                        }
-
-                        // //////////////////////////
-                        // Treatment method dimension
                         tooltipConfig.tbody.push(["Treatment method group", function (d) {
                             return d.processGroupCode + " " + d.processGroupName;
                         }])
 
-                        if (this.options.dimensions[1][1] == "origin__process__processgroup" || this.options.dimensions[1][1] == "destination__process__processgroup") {
+                        if (gran2 == "origin__process__processgroup" || gran2 == "destination__process__processgroup") {
                             groupBy = ["processGroupCode"];
-                        } else if (this.options.dimensions[1][1] == "origin__process" || this.options.dimensions[1][1] == "destination__process") {
+                        } else if (gran2 == "origin__process" || gran2 == "destination__process") {
                             groupBy = ["processCode"];
                             tooltipConfig.tbody.push(["Treatment method", function (d) {
                                 return d.processCode + " " + d.processName;
