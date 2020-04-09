@@ -15,8 +15,8 @@ define([
          * @param {string} options.el       CSS Selector of the container element of the ChoroplethMap
          */
         constructor(options) {
+            let _this = this;
             var options = options || {};
-            var _this = this;
 
             new geomap.Geomap()
                 .data(options.data)
@@ -39,7 +39,29 @@ define([
                     text: "<i class='fas fa-camera' style='color: white'></i>",
                 })
                 .controlPadding(0)
-                .render();
+                .render(function () {
+                    _this.addDownloadButton();
+                    _this.addFullScreenToggle();
+                });
+        }
+
+        addFullScreenToggle() {
+            let svg = d3.select(".d3plus-viz");
+            svg.select(".d3plus-Form.d3plus-Form-Button")
+                .append("button")
+                .attr("class", "d3plus-Button fullscreen-toggle")
+                .attr("type", "button")
+                .html('<i class="fas fa-expand" style="color: white"></i>')
+                .lower();
+        }
+
+        addDownloadButton() {
+            let svg = d3.select(".d3plus-viz");
+            svg.select(".d3plus-Form.d3plus-Form-Button")
+                .append("button")
+                .attr("class", "d3plus-Button export-csv")
+                .attr("type", "button")
+                .html('<i class="fas fa-file" style="color: white"></i>');
         }
     }
     return ChoroplethMap;

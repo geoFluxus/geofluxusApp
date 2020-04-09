@@ -540,6 +540,10 @@ define(['views/common/baseview',
                                 $("#viz-piechart").parent().fadeIn();
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-treemap").parent().fadeIn();
+                            } else if (_this.selectedDimensionStrings.includes("material")) {
+                                $("#viz-piechart").parent().fadeIn();
+                                $("#viz-barchart").parent().fadeIn();
+                                $("#viz-treemap").parent().fadeIn();
                             }
 
                             break;
@@ -554,28 +558,41 @@ define(['views/common/baseview',
 
                             console.log("Two dimensions");
 
+                            // Time & Space
                             if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("space")) {
                                 $("#viz-barchart").parent().fadeIn();
-
                                 $("#viz-lineplotmultiple").parent().fadeIn();
                                 $("#viz-areachart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
+
+                                $("#viz-flowmap").parent().fadeIn();
+                                // Time & Economic Activity
                             } else if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("economicActivity")) {
                                 $("#viz-barchart").parent().fadeIn();
-
                                 $("#viz-lineplotmultiple").parent().fadeIn();
                                 $("#viz-areachart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
+                                // Time & Treatment Method
                             } else if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
+                                $("#viz-barchart").parent().fadeIn();
                                 $("#viz-lineplotmultiple").parent().fadeIn();
                                 $("#viz-areachart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("space") && _this.selectedDimensionStrings.includes("economicActivity")) {
+                                $("#viz-barchart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
+                                $("#viz-flowmap").parent().fadeIn();
+
                             } else if (_this.selectedDimensionStrings.includes("space") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
+                                $("#viz-barchart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
+
+                                $("#viz-flowmap").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("economicActivity") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
+                                $("#viz-barchart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
+
+                                $("#viz-parallelsets").parent().fadeIn();
                             }
 
                             break;
@@ -626,6 +643,9 @@ define(['views/common/baseview',
                 $("#dim-toggle-treatment-method").change(function () {
                     $("#gran-treatment-method-col").fadeToggle();
                     $("#origDest-toggle-treatment-col").fadeToggle();
+                });
+                $("#dim-toggle-material").change(function () {
+                    $("#gran-material-col").fadeToggle();
                 });
             },
 
@@ -745,8 +765,8 @@ define(['views/common/baseview',
                 this.dimensions.materialToggle = this.el.querySelector('#dim-toggle-material');
                 $(this.dimensions.materialToggle).bootstrapToggle();
 
-                this.dimensions.logisticsToggle = this.el.querySelector('#dim-toggle-logistics');
-                $(this.dimensions.logisticsToggle).bootstrapToggle();
+                // this.dimensions.logisticsToggle = this.el.querySelector('#dim-toggle-logistics');
+                // $(this.dimensions.logisticsToggle).bootstrapToggle();
 
                 //Area select modal
 
@@ -1128,6 +1148,7 @@ define(['views/common/baseview',
                 $("#gran-toggle-space-col").hide();
                 $("#gran-econ-activity-col").hide();
                 $("#gran-treatment-method-col").hide();
+                $("#gran-material-col").hide();
 
                 $("#origDest-toggle-space-col").hide();
                 $("#origDest-toggle-econAct-col").hide();

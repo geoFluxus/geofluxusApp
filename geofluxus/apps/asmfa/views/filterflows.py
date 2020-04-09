@@ -10,7 +10,10 @@ from geofluxus.apps.asmfa.models import (Flow,
                                          Year,
                                          Activity,
                                          ActivityGroup,
-                                         Actor)
+                                         Actor,
+                                         Waste02,
+                                         Waste04,
+                                         Waste06)
 from geofluxus.apps.asmfa.serializers import (FlowSerializer)
 import json
 import numpy as np
@@ -299,23 +302,50 @@ class FilterFlowViewSet(PostGetViewMixin,
             flow_item = [('amount', group_amount)]
             for level, field in zip(levels, fields):
                 if field == 'area':
-                    # recover area info
-                    area = Area.objects.filter(id=group[field])[0]
-
-                    # serialize area
-                    flow_item.append(('areaId', area.id))
-                    flow_item.append(('areaName', area.name))
+                    self.serialize_area(group[field], flow_item)
                 elif field == 'actor':
-                    # recover
-                    actor = Actor.objects.filter(id=group[field])[0]
-
-                    # serialize actor
-                    flow_item.append(('actorId', actor.id))
-                    flow_item.append(('actorName', actor.company.identifier))
-                    flow_item.append(('lon', actor.geom.x))
-                    flow_item.append(('lat', actor.geom.y))
+                    self.serialize_actor(group[field], flow_item)
+                elif 'waste' in field:
+                    self.serialize_waste(field, group, flow_item)
                 else:
                     flow_item.append((level, group[field]))
 
             data.append(OrderedDict(flow_item))
         return data
+
+    @staticmethod
+    def serialize_area(id, item):
+        # recover area info
+        area = Area.objects.filter(id=id)[0]
+
+        # serialize area
+        item.append(('areaId', area.id))
+        item.append(('areaName', area.name))
+        return item
+
+    @staticmethod
+    def serialize_actor(id, item):
+        # recover
+        actor = Actor.objects.filter(id=id)[0]
+
+        # serialize actor
+        item.append(('actorId', actor.id))
+        item.append(('actorName', actor.company.identifier))
+        item.append(('lon', actor.geom.x))
+        item.append(('lat', actor.geom.y))
+        return item
+
+    @staticmethod
+    def serialize_waste(field, group, item):
+        if 'waste02' in field:
+            item.append(('waste02', group[field]))
+        elif 'waste04' in field:
+            waste04 = Waste04.objects.filter(id=group[field])[0]
+            item.append(('waste04', group[field]))
+            item.append(('waste02', waste04.waste02.id))
+        else:
+            waste06 = Waste06.objects.filter(id=group[field])[0]
+            item.append(('waste06', group[field]))
+            item.append(('waste04', waste06.waste04.id))
+            item.append(('waste02', waste06.waste04.waste02.id))
+        return item

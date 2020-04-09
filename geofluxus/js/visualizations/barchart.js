@@ -15,8 +15,8 @@ define([
          * @param {string} options.el       CSS Selector of the container element of the Pie Chart
          */
         constructor(options) {
+            let _this = this;
             var options = options || {};
-            var _this = this;
 
             let hasLegend = $("#display-legend").prop("checked");
             let xSort = options.xSort ? options.xSort : null;
@@ -28,14 +28,14 @@ define([
                 } else if (groupByValue) {
                     return d[groupByValue];
                 } else {
-                    return d[x]
+                    return d[options.x]
                 }
             }
 
             new d3plus.Plot()
                 .tooltipConfig(options.tooltipConfig)
                 .data(options.data)
-                .groupBy(groupByValue[0])
+                .groupBy(groupByValue)
                 .x(options.x)
                 .y("amount")
                 .baseline(0)
@@ -52,7 +52,29 @@ define([
                     text: "<i class='fas fa-camera' style='color: white'></i>",
                 })
                 .controlPadding(0)
-                .render();
+                .render(function () {
+                    _this.addDownloadButton();
+                    _this.addFullScreenToggle();
+                });
+        }
+
+        addFullScreenToggle() {
+            let svg = d3.select(".d3plus-viz");
+            svg.select(".d3plus-Form.d3plus-Form-Button")
+                .append("button")
+                .attr("class", "d3plus-Button fullscreen-toggle")
+                .attr("type", "button")
+                .html('<i class="fas fa-expand" style="color: white"></i>')
+                .lower();
+        }
+
+        addDownloadButton() {
+            let svg = d3.select(".d3plus-viz");
+            svg.select(".d3plus-Form.d3plus-Form-Button")
+                .append("button")
+                .attr("class", "d3plus-Button export-csv")
+                .attr("type", "button")
+                .html('<i class="fas fa-file" style="color: white"></i>');
         }
     }
     return BarChart;
