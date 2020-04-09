@@ -15,6 +15,7 @@ define([
          * @param {string} options.el       CSS Selector of the container element of the viz
          */
         constructor(options) {
+            let _this = this;
             var options = options || {};
 
             let hasLegend = $("#display-legend").prop("checked");
@@ -59,7 +60,28 @@ define([
                 })
                 .controlPadding(0)
                 .select(options.el)
-                .render();
+                .render(function () {
+                    _this.addDownloadButton();
+                    _this.addFullScreenToggle();
+                });
+        }
+
+        addFullScreenToggle() {
+            let svg = d3.select(".d3plus-viz");
+            svg.select(".d3plus-Form.d3plus-Form-Button")
+                .append("button")
+                .attr("class", "d3plus-Button fullscreen-toggle")
+                .attr("type", "button")
+                .html('<i class="fas fa-expand" style="color: white"></i>')
+                .lower();
+        }
+        addDownloadButton() {
+            let svg = d3.select(".d3plus-viz");
+            svg.select(".d3plus-Form.d3plus-Form-Button")
+                .append("button")
+                .attr("class", "d3plus-Button export-csv")
+                .attr("type", "button")
+                .html('<i class="fas fa-file" style="color: white"></i>');
         }
     }
     return LinePlot;

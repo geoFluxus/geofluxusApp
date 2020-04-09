@@ -4,6 +4,7 @@ define(['views/common/baseview',
         'views/status-quo/filter-flows',
         'collections/collection',
         'utils/utils',
+        'utils/enrichFlows',
         'views/common/flowsankey',
         'views/common/flowsankeymap',
         'views/common/pieChartView',
@@ -20,6 +21,7 @@ define(['views/common/baseview',
         FilterFlowsView,
         Collection,
         utils,
+        enrichFlows,
         FlowSankeyView,
         FlowMapView,
         PieChartView,
@@ -466,8 +468,7 @@ define(['views/common/baseview',
                         materialFilter = 'flowchain__waste06';
                     if (gran === 'ewc4') {
                         materialFilter += '__waste04'
-                    }
-                    else if (gran === 'ewc2') {
+                    } else if (gran === 'ewc2') {
                         materialFilter += '__waste04__waste02'
                     }
                     filterParams.dimensions.material = materialFilter;
@@ -536,214 +537,86 @@ define(['views/common/baseview',
             render1Dvisualizations: function (dimensions, flows, selectedVizualisationString) {
                 let _this = this;
                 let filterFlowsView = this.filterFlowsView;
+                let dimensionString = dimensions[0][0];
+                let granularity = dimensions[0][1];
 
-                // Enrich data here
-                if (dimensions[0][0] == "time") {
-                    let years = filterFlowsView.years.models;
-                    let months = filterFlowsView.months.models;
+                switch (dimensionString) {
+                    case "time":
+                        flows = enrichFlows.enrichTime(flows, filterFlowsView, granularity);
+                        break;
+                    case "space":
+                        // Set isActorLevel if necessary:
+                        let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
+                        if (dimensions[0][1].adminlevel == actorAreaLevelId) {
+                            dimensions.isActorLevel = true;
+                        }
+                        break;
+                    case "economicActivity":
+                        flows = enrichFlows.enrichEconActivity(flows, filterFlowsView, granularity);
+                        break;
+                    case "treatmentMethod":
+                        flows = enrichFlows.enrichTreatmentMethod(flows, filterFlowsView, granularity);
+                        break;
+                    case "material":
+                        flows = enrichFlows.enrichEWC(flows, filterFlowsView, granularity);
+                        break;
+                    default:
+                        // Nothing
+                }
 
-                    // enrichFlowsTime(flows, granularity)
+                switch (selectedVizualisationString) {
+                    case "piechart":
+                        this.renderPieChart(dimensions, flows);
+                        break;
+                    case "barchart":
+                        this.renderBarChart(dimensions, flows);
+                        break;
+                    case "lineplot":
+                        this.renderLinePlot(dimensions, flows);
+                        break;
+                    case "treemap":
+                        this.renderTreeMap(dimensions, flows);
+                        break;
+                    case "lineplotmultiple":
+                        this.renderLinePlot(dimensions, flows, true);
+                        break;
+                    case "choroplethmap":
+                        // If level == actor:
 
-                    // Granularity = year
-                    if (dimensions[0][1] == "flowchain__month__year") {
+                        areas = new Collection([], {
+                            apiTag: 'areas',
+                            apiIds: [dimensions[0][1].adminlevel]
+                        });
 
-                        flows.forEach(function (flow, index) {
-                            let yearObject = years.find(year => year.attributes.id == flow.year);
+                        areas.fetch({
+                            success: function () {
+                                var geoJson = {};
+                                geoJson['type'] = 'FeatureCollection';
+                                features = geoJson['features'] = [];
+                                areas.forEach(function (area) {
+                                    var feature = {};
+                                    feature['type'] = 'Feature';
+                                    feature['id'] = area.get('id')
+                                    feature['geometry'] = area.get('geom')
+                                    features.push(feature)
+                                })
 
-                            this[index].id = this[index].year;
-                            this[index].year = parseInt(yearObject.attributes.code);
-                        }, flows);
+                                flows.forEach(function (flow, index) {
+                                    this[index].id = this[index].areaId;
+                                }, flows);
 
-                        flows = _.sortBy(flows, 'year');
-
-                        // Granularity = month:
-                    } else if (dimensions[0][1] == "flowchain__month") {
-
-                        flows.forEach(function (flow, index) {
-                            let monthObject = months.find(month => month.attributes.id == flow.month);
-
-                            this[index].id = monthObject.attributes.id;
-                            this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
-                            this[index].monthName = this[index].month.substring(0, this[index].month.indexOf(' '));
-                            this[index].yearMonthCode = parseInt(monthObject.attributes.code.substring(2, 6) + monthObject.attributes.code.substring(0, 2));
-                            this[index].year = parseInt(monthObject.attributes.code.substring(2, 6));
-                        }, flows);
-
-                        flows = _.sortBy(flows, 'id');
-                    }
-
-                    switch (selectedVizualisationString) {
-                        case "piechart":
-                            this.renderPieChart(dimensions, flows);
-                            break;
-                        case "barchart":
-                            this.renderBarChart(dimensions, flows);
-                            break;
-                        case "lineplot":
-                            this.renderLinePlot(dimensions, flows);
-                            break;
-                        case "treemap":
-                            this.renderTreeMap(dimensions, flows);
-                            break;
-                        case "lineplotmultiple":
-                            this.renderLinePlot(dimensions, flows, true);
-                            break;
-                        default:
-                            // Nothing
-                    }
-
-                    // /////////////////////////////
-                    // Space dimension
-                } else if (dimensions[0][0] == "space") {
-
-                    // If level == actor:
-                    let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-                    if (dimensions[0][1].adminlevel == actorAreaLevelId) {
-                        dimensions.isActorLevel = true;
-                    }
-
-                    switch (selectedVizualisationString) {
-                        case "piechart":
-                            this.renderPieChart(dimensions, flows);
-                            break;
-                        case "barchart":
-                            this.renderBarChart(dimensions, flows);
-                            break;
-                        case "lineplot":
-                            this.renderLinePlot(dimensions, flows);
-                            break;
-                        case "treemap":
-                            this.renderTreeMap(dimensions, flows);
-                            break;
-                        case "choroplethmap":
-                            areas = new Collection([], {
-                                apiTag: 'areas',
-                                apiIds: [dimensions[0][1].adminlevel]
-                            });
-
-                            areas.fetch({
-                                success: function () {
-                                    var geoJson = {};
-                                    geoJson['type'] = 'FeatureCollection';
-                                    features = geoJson['features'] = [];
-                                    areas.forEach(function (area) {
-                                        var feature = {};
-                                        feature['type'] = 'Feature';
-                                        feature['id'] = area.get('id')
-                                        feature['geometry'] = area.get('geom')
-                                        features.push(feature)
-                                    })
-
-                                    flows.forEach(function (flow, index) {
-                                        this[index].id = this[index].areaId;
-                                    }, flows);
-
-                                    _this.renderChoropleth1D(dimensions, flows, geoJson);
-                                },
-                                error: function (res) {
-                                    console.log(res);
-                                }
-                            });
-                            break;
-                        case "coordinatepointmap": // Only in case of Actor
-                            _this.renderCoordinatePointMap1D(dimensions, flows);
-                            break;
-                        default:
-                            // Nothing
-                    }
-
-                    // /////////////////////////////
-                    // Economic Activity dimension
-                } else if (dimensions[0][0] == "economicActivity") {
-                    let activityGroups = filterFlowsView.activityGroups.models;
-                    let activities = filterFlowsView.activities.models;
-
-                    // Granularity = Activity group
-                    if (dimensions[0][1] == "origin__activity__activitygroup" || dimensions[0][1] == "destination__activity__activitygroup") {
-
-                        flows.forEach(function (flow, index) {
-                            let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.activitygroup);
-
-                            this[index].activityGroupCode = activityGroupObject.attributes.code;
-                            this[index].activityGroupName = activityGroupObject.attributes.name[0].toUpperCase() + activityGroupObject.attributes.name.slice(1).toLowerCase();
-                        }, flows);
-
-                        // Granularity: Activity
-                    } else if (dimensions[0][1] == "origin__activity" || dimensions[0][1] == "destination__activity") {
-
-                        flows.forEach(function (flow, index) {
-                            let activityGroupName = "";
-                            let activityObject = activities.find(activity => activity.attributes.id == flow.activity);
-
-                            this[index].activityCode = activityObject.attributes.nace;
-                            this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
-
-                            this[index].activityGroupCode = this[index].activityCode.substring(0, this[index].activityCode.indexOf('-'));
-                            activityGroupName = activityGroups.find(activityGroup => activityGroup.attributes.code == this[index].activityGroupCode).attributes.name;
-                            this[index].activityGroupName = activityGroupName[0].toUpperCase() + activityGroupName.slice(1).toLowerCase();
-                        }, flows);
-                    }
-
-                    switch (selectedVizualisationString) {
-                        case "piechart":
-                            this.renderPieChart(dimensions, flows);
-                            break;
-                        case "barchart":
-                            this.renderBarChart(dimensions, flows);
-                            break;
-                        case "treemap":
-                            this.renderTreeMap(dimensions, flows);
-                            break;
-                        default:
-                            // Nothing
-                    }
-
-                    // /////////////////////////////
-                    // Treatment Method Dimension
-                } else if (dimensions[0][0] == "treatmentMethod") {
-                    let processGroups = filterFlowsView.processgroups.models;
-                    let processes = filterFlowsView.processes.models;
-                    console.log("Treatment method")
-
-                    // Granularity: Treatment Method Group
-                    if (dimensions[0][1] == "origin__process__processgroup" || dimensions[0][1] == "destination__process__processgroup") {
-
-                        flows.forEach(function (flow, index) {
-                            let processGroupObject = processGroups.find(processGroup => processGroup.attributes.id == flow.processgroup);
-
-                            this[index].processGroupCode = processGroupObject.attributes.code;
-                            this[index].processGroupName = processGroupObject.attributes.name[0].toUpperCase() + processGroupObject.attributes.name.slice(1).toLowerCase();
-                        }, flows);
-
-                        // Granularity: Treatment Method
-                    } else if (dimensions[0][1] == "origin__process" || dimensions[0][1] == "destination__process") {
-
-                        flows.forEach(function (flow, index) {
-                            let processGroupName = "";
-                            let processObject = processes.find(process => process.attributes.id == flow.process);
-
-                            this[index].processCode = processObject.attributes.code;
-                            this[index].processName = processObject.attributes.name[0].toUpperCase() + processObject.attributes.name.slice(1).toLowerCase();
-
-                            this[index].processGroupCode = processObject.attributes.code.substring(0, 1);
-                            processGroupName = processGroups.find(processGroup => processGroup.attributes.code == this[index].processGroupCode).attributes.name;
-                            this[index].processGroupName = processGroupName[0].toUpperCase() + processGroupName.slice(1).toLowerCase();
-                        }, flows);
-                    }
-
-                    switch (selectedVizualisationString) {
-                        case "piechart":
-                            this.renderPieChart(dimensions, flows);
-                            break;
-                        case "barchart":
-                            this.renderBarChart(dimensions, flows);
-                            break;
-                        case "treemap":
-                            this.renderTreeMap(dimensions, flows);
-                            break;
-                        default:
-                            // Nothing
-                    }
+                                _this.renderChoropleth1D(dimensions, flows, geoJson);
+                            },
+                            error: function (res) {
+                                console.log(res);
+                            }
+                        });
+                        break;
+                    case "coordinatepointmap": // Only in case of Actor
+                        _this.renderCoordinatePointMap1D(dimensions, flows);
+                        break;
+                    default:
+                        // Nothing
                 }
 
                 console.log(flows);
@@ -752,234 +625,45 @@ define(['views/common/baseview',
             render2Dvisualizations: function (dimensions, flows, selectedVizualisationString) {
                 let _this = this;
                 let filterFlowsView = this.filterFlowsView;
-                let dimensionsActual = [];
+                let dimStrings = [];
 
-                let years = filterFlowsView.years.models;
-                let months = filterFlowsView.months.models;
-                let activityGroups = filterFlowsView.activityGroups.models;
-                let activities = filterFlowsView.activities.models;
+                let dim1String = dimensions[0][0];
+                let gran1 = dimensions[0][1];
+                let dim2String = dimensions[1][0];
+                let gran2 = dimensions[1][1];
 
                 // Array with dimension strings without Granularity:
-                dimensions.forEach(dim => dimensionsActual.push(dim[0]));
+                dimensions.forEach(dim => dimStrings.push(dim[0]));
 
                 console.log("Dimensions");
-                console.log(dimensionsActual);
+                console.log(dimStrings);
 
-                // ///////////////////////////////////////////////////////////////////////////
                 // Time & Space
-                if (dimensionsActual.includes("time") && dimensionsActual.includes("space")) {
+                if (dimStrings.includes("time") && dimStrings.includes("space")) {
+                    
+                    flows = enrichFlows.enrichTime(flows, filterFlowsView, gran1);
+                    // Actor level:
 
-                    // If level == actor:
                     let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
                     if (dimensions[1][1].adminlevel == actorAreaLevelId) {
                         dimensions.isActorLevel = true;
                     }
 
-                    // Granularity = year
-                    if (dimensions[0][1] == "flowchain__month__year") {
-
-                        flows.forEach(function (flow, index) {
-                            let yearObject = years.find(year => year.attributes.id == flow.year);
-
-                            this[index].year = parseInt(yearObject.attributes.code);
-                        }, flows);
-
-                        flows = _.sortBy(flows, 'year');
-
-                        // Granularity = month:
-                    } else if (dimensions[0][1] == "flowchain__month") {
-
-                        flows.forEach(function (flow, index) {
-                            let monthObject = months.find(month => month.attributes.id == flow.month);
-
-                            this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
-                            this[index].yearMonthCode = parseInt(monthObject.attributes.code.substring(2, 6) + monthObject.attributes.code.substring(0, 2));
-                            this[index].year = parseInt(monthObject.attributes.code.substring(2, 6));
-                        }, flows);
-
-                        flows = _.sortBy(flows, 'id');
-                    }
-
-                    switch (selectedVizualisationString) {
-                        case "lineplotmultiple":
-                            this.renderLinePlot(dimensions, flows);
-                            break;
-                        case "areachart":
-                            this.renderAreaChart(dimensions, flows);
-                            break;
-                        case "barchart":
-                            this.renderBarChart(dimensions, flows);
-                            break;
-                        case "stackedbarchart":
-                            this.renderBarChart(dimensions, flows, true);
-                            break;
-                        default:
-                            // Nothing
-                    }
-
-
-                    // ///////////////////////////////////////////////////////////////////////////
                     // Time & Economic Activity
-                } else if (dimensionsActual.includes("time") && dimensionsActual.includes("economicActivity")) {
+                } else if (dimStrings.includes("time") && dimStrings.includes("economicActivity")) {
 
-                    // Granularity = year
-                    if (dimensions[0][1] == "flowchain__month__year") {
-
-                        flows.forEach(function (flow, index) {
-                            let yearObject = years.find(year => year.attributes.id == flow.year);
-
-                            this[index].id = this[index].year;
-                            this[index].year = parseInt(yearObject.attributes.code);
-                        }, flows);
-
-                        flows = _.sortBy(flows, 'year');
-
-                        // Granularity = month:
-                    } else if (dimensions[0][1] == "flowchain__month") {
-
-                        flows.forEach(function (flow, index) {
-                            let monthObject = months.find(month => month.attributes.id == flow.month);
-
-                            this[index].id = monthObject.attributes.id;
-                            this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
-                            this[index].yearMonthCode = parseInt(monthObject.attributes.code.substring(2, 6) + monthObject.attributes.code.substring(0, 2));
-                            this[index].year = parseInt(monthObject.attributes.code.substring(2, 6));
-                        }, flows);
-
-                        flows = _.sortBy(flows, 'id');
-                    }
-
-                    // Granularity = Activity group
-                    if (dimensions[1][1] == "origin__activity__activitygroup" || dimensions[1][1] == "destination__activity__activitygroup") {
-
-                        flows.forEach(function (flow, index) {
-                            let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.activitygroup);
-
-                            this[index].activityGroupCode = activityGroupObject.attributes.code;
-                            this[index].activityGroupName = activityGroupObject.attributes.name[0].toUpperCase() + activityGroupObject.attributes.name.slice(1).toLowerCase();
-                        }, flows);
-
-                        // Granularity: Activity
-                    } else if (dimensions[1][1] == "origin__activity" || dimensions[1][1] == "destination__activity") {
-
-                        flows.forEach(function (flow, index) {
-                            let activityGroupName = "";
-                            let activityObject = activities.find(activity => activity.attributes.id == flow.activity);
-
-                            this[index].activityCode = activityObject.attributes.nace;
-                            this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
-
-                            this[index].activityGroupCode = this[index].activityCode.substring(0, this[index].activityCode.indexOf('-'));
-                            activityGroupName = activityGroups.find(activityGroup => activityGroup.attributes.code == this[index].activityGroupCode).attributes.name;
-                            this[index].activityGroupName = activityGroupName[0].toUpperCase() + activityGroupName.slice(1).toLowerCase();
-                        }, flows);
-                    }
-
-                    switch (selectedVizualisationString) {
-                        case "lineplotmultiple":
-                            this.renderLinePlot(dimensions, flows);
-                            break;
-                        case "areachart":
-                            this.renderAreaChart(dimensions, flows);
-                            break;
-                        case "barchart":
-                            this.renderBarChart(dimensions, flows);
-                            break;
-                        case "stackedbarchart":
-                            this.renderBarChart(dimensions, flows, true);
-                            break;
-                        default:
-                            // Nothing
-                    }
+                    flows = enrichFlows.enrichTime(flows, filterFlowsView, gran1);
+                    flows = enrichFlows.enrichEconActivity(flows, filterFlowsView, gran2);
 
 
-                    // ///////////////////////////////////////////////////////////////////////////
                     // Time & Treatment method
-                } else if (dimensionsActual.includes("time") && dimensionsActual.includes("treatmentMethod")) {
+                } else if (dimStrings.includes("time") && dimStrings.includes("treatmentMethod")) {
 
-                    // //////////////////////
-                    // TIME
-                    // Granularity = year
-                    if (dimensions[0][1] == "flowchain__month__year") {
+                    flows = enrichFlows.enrichTime(flows, filterFlowsView, gran1);
+                    flows = enrichFlows.enrichTreatmentMethod(flows, filterFlowsView, gran2);
 
-                        flows.forEach(function (flow, index) {
-                            let yearObject = years.find(year => year.attributes.id == flow.year);
-
-                            this[index].id = this[index].year;
-                            this[index].year = parseInt(yearObject.attributes.code);
-                        }, flows);
-
-                        flows = _.sortBy(flows, 'year');
-
-                        // Granularity = month:
-                    } else if (dimensions[0][1] == "flowchain__month") {
-
-                        flows.forEach(function (flow, index) {
-                            let monthObject = months.find(month => month.attributes.id == flow.month);
-
-                            this[index].id = monthObject.attributes.id;
-                            this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
-                            this[index].yearMonthCode = parseInt(monthObject.attributes.code.substring(2, 6) + monthObject.attributes.code.substring(0, 2));
-                            this[index].year = parseInt(monthObject.attributes.code.substring(2, 6));
-                        }, flows);
-
-                        flows = _.sortBy(flows, 'id');
-                    }
-
-                    // //////////////////////
-                    // Treatment method
-                    let processGroups = filterFlowsView.processgroups.models;
-                    let processes = filterFlowsView.processes.models;
-
-                    // Granularity: Treatment Method Group
-                    if (dimensions[1][1] == "origin__process__processgroup" || dimensions[1][1] == "destination__process__processgroup") {
-
-                        flows.forEach(function (flow, index) {
-                            let processGroupObject = processGroups.find(processGroup => processGroup.attributes.id == flow.processgroup);
-
-                            this[index].processGroupCode = processGroupObject.attributes.code;
-                            this[index].processGroupName = processGroupObject.attributes.name[0].toUpperCase() + processGroupObject.attributes.name.slice(1).toLowerCase();
-                        }, flows);
-
-                        // Granularity: Treatment Method
-                    } else if (dimensions[1][1] == "origin__process" || dimensions[1][1] == "destination__process") {
-
-                        flows.forEach(function (flow, index) {
-                            let processGroupName = "";
-                            let processObject = processes.find(process => process.attributes.id == flow.process);
-
-                            this[index].processCode = processObject.attributes.code;
-                            this[index].processName = processObject.attributes.name[0].toUpperCase() + processObject.attributes.name.slice(1).toLowerCase();
-
-                            this[index].processGroupCode = processObject.attributes.code.substring(0, 1);
-                            processGroupName = processGroups.find(processGroup => processGroup.attributes.code == this[index].processGroupCode).attributes.name;
-                            this[index].processGroupName = processGroupName[0].toUpperCase() + processGroupName.slice(1).toLowerCase();
-                        }, flows);
-                    }
-
-                    switch (selectedVizualisationString) {
-                        case "lineplotmultiple":
-                            this.renderLinePlot(dimensions, flows);
-                            break;
-                        case "areachart":
-                            this.renderAreaChart(dimensions, flows);
-                            break;
-                        case "barchart":
-                            this.renderBarChart(dimensions, flows);
-                            break;
-                        case "stackedbarchart":
-                            this.renderBarChart(dimensions, flows, true);
-                            break;
-                        default:
-                            // Nothing
-                    }
-
-
-
-
-                    // ///////////////////////////////////////////////////////////////////////////
                     // Space & Economic Activity
-                } else if (dimensionsActual.includes("space") && dimensionsActual.includes("economicActivity")) {
+                } else if (dimStrings.includes("space") && dimStrings.includes("economicActivity")) {
 
                     // If level == actor:
                     let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
@@ -987,56 +671,37 @@ define(['views/common/baseview',
                         dimensions.isActorLevel = true;
                     }
 
-                    // Granularity = Activity group
-                    if (dimensions[1][1] == "origin__activity__activitygroup" || dimensions[1][1] == "destination__activity__activitygroup") {
+                    flows = enrichFlows.enrichEconActivity(flows, filterFlowsView, gran2);
 
-                        flows.forEach(function (flow, index) {
-                            let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.activitygroup);
-
-                            this[index].activityGroupCode = activityGroupObject.attributes.code;
-                            this[index].activityGroupName = activityGroupObject.attributes.name[0].toUpperCase() + activityGroupObject.attributes.name.slice(1).toLowerCase();
-                        }, flows);
-
-                        // Granularity: Activity
-                    } else if (dimensions[1][1] == "origin__activity" || dimensions[1][1] == "destination__activity") {
-
-                        flows.forEach(function (flow, index) {
-                            let activityGroupName = "";
-                            let activityObject = activities.find(activity => activity.attributes.id == flow.activity);
-
-                            this[index].activityCode = activityObject.attributes.nace;
-                            this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
-
-                            this[index].activityGroupCode = this[index].activityCode.substring(0, this[index].activityCode.indexOf('-'));
-                            activityGroupName = activityGroups.find(activityGroup => activityGroup.attributes.code == this[index].activityGroupCode).attributes.name;
-                            this[index].activityGroupName = activityGroupName[0].toUpperCase() + activityGroupName.slice(1).toLowerCase();
-                        }, flows);
-                    }
-
-                    switch (selectedVizualisationString) {
-                        case "barchart":
-                            this.renderBarChart(dimensions, flows);
-                            break;
-                        case "stackedbarchart":
-                            this.renderBarChart(dimensions, flows, true);
-                            break;
-                        default:
-                            // Nothing
-                    }
-
-
-                    // ///////////////////////////////////////////////////////////////////////////
                     // Space & Treatment Method
-                } else if (dimensionsActual.includes("space") && dimensionsActual.includes("treatmentMethod")) {
+                } else if (dimStrings.includes("space") && dimStrings.includes("treatmentMethod")) {
 
+                    // To do
 
-                    // ///////////////////////////////////////////////////////////////////////////
                     // Economic Activity & Treatment Method
-                } else if (dimensionsActual.includes("economicActivity") && dimensionsActual.includes("treatmentMethod")) {
+                } else if (dimStrings.includes("economicActivity") && dimStrings.includes("treatmentMethod")) {
 
 
 
                 }
+
+                switch (selectedVizualisationString) {
+                    case "lineplotmultiple":
+                        this.renderLinePlot(dimensions, flows);
+                        break;
+                    case "areachart":
+                        this.renderAreaChart(dimensions, flows);
+                        break;
+                    case "barchart":
+                        this.renderBarChart(dimensions, flows);
+                        break;
+                    case "stackedbarchart":
+                        this.renderBarChart(dimensions, flows, true);
+                        break;
+                    default:
+                        // Nothing
+                }
+
                 console.log(flows);
             },
 
