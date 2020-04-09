@@ -557,6 +557,9 @@ define(['views/common/baseview',
                     case "treatmentMethod":
                         flows = enrichFlows.enrichTreatmentMethod(flows, filterFlowsView, granularity);
                         break;
+                    case "material":
+                        flows = enrichFlows.enrichEWC(flows, filterFlowsView, granularity);
+                        break;
                     default:
                         // Nothing
                 }
@@ -579,7 +582,7 @@ define(['views/common/baseview',
                         break;
                     case "choroplethmap":
                         // If level == actor:
-                        
+
                         areas = new Collection([], {
                             apiTag: 'areas',
                             apiIds: [dimensions[0][1].adminlevel]
@@ -649,10 +652,10 @@ define(['views/common/baseview',
                     // Time & Economic Activity
                 } else if (dimStrings.includes("time") && dimStrings.includes("economicActivity")) {
 
-                    flows = enrichFlows.enrichTime(flows, filterFlowsView, gran1);                  
+                    flows = enrichFlows.enrichTime(flows, filterFlowsView, gran1);
                     flows = enrichFlows.enrichEconActivity(flows, filterFlowsView, gran2);
 
-          
+
                     // Time & Treatment method
                 } else if (dimStrings.includes("time") && dimStrings.includes("treatmentMethod")) {
 
@@ -667,7 +670,7 @@ define(['views/common/baseview',
                     if (dimensions[0][1].adminlevel == actorAreaLevelId) {
                         dimensions.isActorLevel = true;
                     }
-                    
+
                     flows = enrichFlows.enrichEconActivity(flows, filterFlowsView, gran2);
 
                     // Space & Treatment Method
@@ -681,7 +684,7 @@ define(['views/common/baseview',
 
 
                 }
-                
+
                 switch (selectedVizualisationString) {
                     case "lineplotmultiple":
                         this.renderLinePlot(dimensions, flows);

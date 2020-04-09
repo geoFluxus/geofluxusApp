@@ -57,6 +57,10 @@ define(['views/common/baseview',
                 render: function (data) {
                     let _this = this;
                     let flows = this.options.flows;
+
+                    let dim1String = this.options.dimensions[0][0];
+                    let gran1 = this.options.dimensions[0][1];
+
                     let groupBy;
                     let tooltipConfig = {
                         tbody: [
@@ -68,18 +72,17 @@ define(['views/common/baseview',
 
                     // /////////////////////////////
                     // Time dimension
-                    if (this.options.dimensions[0][0] == "time") {
+                    if (dim1String == "time") {
                         // Granularity = year
-                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
+                        if (gran1 == "flowchain__month__year") {
                             groupBy = ["year"];
                             // Granularity = month:
-                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
+                        } else if (gran1 == "flowchain__month") {
                             groupBy = ["year", "month"];
                         }
 
-                        // /////////////////////////////
                         // Space dimension
-                    } else if (this.options.dimensions[0][0] == "space") {
+                    } else if (dim1String == "space") {
 
                         // Areas:
                         if (!this.options.dimensions.isActorLevel) {
@@ -89,40 +92,63 @@ define(['views/common/baseview',
                             groupBy = ["actorName"];
                         }
 
-                        // /////////////////////////////
                         // Economic Activity dimension
-                    } else if (this.options.dimensions[0][0] == "economicActivity") {
+                    } else if (dim1String == "economicActivity") {
                         tooltipConfig.tbody.push(["Activity group", function (d) {
                             return d.activityGroupCode + " " + d.activityGroupName;
                         }]);
 
                         // Granularity = Activity group
-                        if (this.options.dimensions[0][1] == "origin__activity__activitygroup" || this.options.dimensions[0][1] == "destination__activity__activitygroup") {
+                        if (gran1 == "origin__activity__activitygroup" || gran1 == "destination__activity__activitygroup") {
                             groupBy = ["activityGroupCode"];
                             // Granularity: Activity
-                        } else if (this.options.dimensions[0][1] == "origin__activity" || this.options.dimensions[0][1] == "destination__activity") {
+                        } else if (gran1 == "origin__activity" || gran1 == "destination__activity") {
                             groupBy = ["activityGroupCode", "activityCode"];
                             tooltipConfig.tbody.push(["Activity group", function (d) {
                                 return d.activityGroupCode + " " + d.activityGroupName;
                             }]);
                         }
 
-                        // /////////////////////////////
                         // Treatment method dimension
-                    } else if (this.options.dimensions[0][0] == "treatmentMethod") {
+                    } else if (dim1String == "treatmentMethod") {
 
                         tooltipConfig.tbody.push(["Treatment method group", function (d) {
                             return d.processGroupCode + " " + d.processGroupName;
                         }]);
 
-                        if (this.options.dimensions[0][1] == "origin__process__processgroup" || this.options.dimensions[0][1] == "destination__process__processgroup") {
+                        if (gran1 == "origin__process__processgroup" || gran1 == "destination__process__processgroup") {
                             groupBy = ["processGroupCode"];
 
                             // Granularity: Activity
-                        } else if (this.options.dimensions[0][1] == "origin__process" || this.options.dimensions[0][1] == "destination__process") {
+                        } else if (gran1 == "origin__process" || gran1 == "destination__process") {
                             groupBy = ["processGroupCode", "processCode"];
                             tooltipConfig.tbody.push(["Treatment method group", function (d) {
                                 return d.processGroupCode + " " + d.processGroupName;
+                            }]);
+                        }
+
+                        // Material
+                    } else if (dim1String == "material") {
+                        // ewc2
+                        if (gran1 == "flowchain__waste06__waste04__waste02") {
+                            groupBy = ["ewc2Code"];
+                            tooltipConfig.title = "Waste per Chapter";
+                            tooltipConfig.tbody.push(["Chapter", function (d) {
+                                return d.ewc2Code + " " + d.ewc2Name;
+                            }]);
+                            // ewc4
+                        } else if (gran1 == "flowchain__waste06__waste04") {
+                            groupBy = ["ewc4Code"];
+                            tooltipConfig.title = "Waste per Sub-Chapter";
+                            tooltipConfig.tbody.push(["Sub-Chapter", function (d) {
+                                return d.ewc4Code + " " + d.ewc4Name;
+                            }]);
+                            // ewc6
+                        } else if (gran1 == "flowchain__waste06") {
+                            groupBy = ["ewc6Code"];
+                            tooltipConfig.title = "Waste per Entry";
+                            tooltipConfig.tbody.push(["Entry", function (d) {
+                                return d.ewc6Code + " " + d.ewc6Name;
                             }]);
                         }
                     }
@@ -134,7 +160,7 @@ define(['views/common/baseview',
                         groupBy: groupBy,
                         tooltipConfig: tooltipConfig,
                     });
-              
+
                     // Smooth scroll to top of Viz
                     $("#apply-filters")[0].scrollIntoView({
                         behavior: "smooth"

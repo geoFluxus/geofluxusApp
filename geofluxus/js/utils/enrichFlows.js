@@ -96,4 +96,52 @@ module.exports = {
 
         return flows
     },
+
+    enrichEWC: function (flows, filterFlowsView, granularity) {
+        let ewc2 = filterFlowsView.wastes02.models;
+        let ewc4 = filterFlowsView.wastes04.models;
+        let ewc6 = filterFlowsView.wastes06.models;
+
+        // ewc2
+        if (granularity == "flowchain__waste06__waste04__waste02") {
+
+            flows.forEach(function (flow, index) {
+                let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.waste02);
+
+                this[index].ewc2Code = ewc2Object.attributes.ewc_code;
+                this[index].ewc2Name = ewc2Object.attributes.ewc_name[0].toUpperCase() + ewc2Object.attributes.ewc_name.slice(1).toLowerCase();
+            }, flows);
+
+            // ewc4
+        } else if (granularity == "flowchain__waste06__waste04") {
+
+            flows.forEach(function (flow, index) {
+                //let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.waste02);
+                let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.waste04);
+
+                //this[index].ewc2Code = ewc2Object.attributes.ewc_code;
+                //this[index].ewc2Name = ewc2Object.attributes.ewc_name[0].toUpperCase() + ewc2Object.attributes.ewc_name.slice(1).toLowerCase();
+                this[index].ewc4Code = ewc4Object.attributes.ewc_code;
+                this[index].ewc4Name = ewc4Object.attributes.ewc_name[0].toUpperCase() + ewc4Object.attributes.ewc_name.slice(1).toLowerCase();
+            }, flows);
+
+            // ewc6
+        } else if (granularity == "flowchain__waste06") {
+            flows.forEach(function (flow, index) {
+                //let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.waste02);
+                //let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.waste04);
+                let ewc6Object = ewc6.find(ewc => ewc.attributes.id == flow.waste06);
+
+                //this[index].ewc2Code = ewc2Object.attributes.ewc_code;
+                //this[index].ewc2Name = ewc2Object.attributes.ewc_name[0].toUpperCase() + ewc2Object.attributes.ewc_name.slice(1).toLowerCase();
+                //this[index].ewc4Code = ewc4Object.attributes.ewc_code;
+                //this[index].ewc4Name = ewc4Object.attributes.ewc_name[0].toUpperCase() + ewc4Object.attributes.ewc_name.slice(1).toLowerCase();
+                this[index].ewc6Code = ewc6Object.attributes.ewc_code;
+                this[index].ewc6Name = ewc6Object.attributes.ewc_name[0].toUpperCase() + ewc6Object.attributes.ewc_name.slice(1).toLowerCase();
+            }, flows);
+
+        }
+
+        return flows
+    },
 }
