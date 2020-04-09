@@ -78,9 +78,6 @@ define(['views/common/baseview',
                         ]
                     };
 
-                    // //////////////////////////////////////////
-                    // TIME is always a dimension for areaChart
-
                     // Granularity = year
                     if (gran1 == "flowchain__month__year") {
                         x = ["year"];
@@ -119,11 +116,9 @@ define(['views/common/baseview',
                         // Time & Economic Activity
                     } else if (dimStrings.includes("economicActivity")) {
 
-                        tooltipConfig.tbody.push(["Activity group",
-                            function (d) {
-                                return d.activityGroupCode + " " + d.activityGroupName;
-                            },
-                        ])
+                        tooltipConfig.tbody.push(["Activity group", function (d) {
+                            return d.activityGroupCode + " " + d.activityGroupName;
+                        }])
 
                         if (gran2 == "origin__activity__activitygroup" || gran2 == "destination__activity__activitygroup") {
                             groupBy = ["activityGroupCode"];

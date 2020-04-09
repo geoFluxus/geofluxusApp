@@ -72,7 +72,8 @@ define([
                 .append("button")
                 .attr("class", "d3plus-Button fullscreen-toggle")
                 .attr("type", "button")
-                .html('<i class="fas fa-expand" style="color: white"></i>');
+                .html('<i class="fas fa-expand" style="color: white"></i>')
+                .lower();
         }
         addDownloadButton() {
             let svg = d3.select(".d3plus-viz");

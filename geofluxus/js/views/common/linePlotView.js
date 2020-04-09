@@ -60,8 +60,8 @@ define(['views/common/baseview',
 
                     let dim1String = this.options.dimensions[0][0];
                     let gran1 = this.options.dimensions[0][1];
-                    let dim2String = this.options.dimensions[1][0];
-                    let gran2 = this.options.dimensions[1][1];
+                    // let dim2String = this.options.dimensions[1][0];
+                    // let gran2 = this.options.dimensions[1][1];
 
                     let dimStrings = [];
                     this.options.dimensions.forEach(dim => dimStrings.push(dim[0]));
