@@ -640,14 +640,14 @@ define(['views/common/baseview',
 
                 // Time & Space
                 if (dimStrings.includes("time") && dimStrings.includes("space")) {
+                    
+                    flows = enrichFlows.enrichTime(flows, filterFlowsView, gran1);
+                    // Actor level:
 
-                    // If level == actor:
                     let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
                     if (dimensions[1][1].adminlevel == actorAreaLevelId) {
                         dimensions.isActorLevel = true;
                     }
-
-                    flows = enrichFlows.enrichTime(flows, filterFlowsView, gran1);
 
                     // Time & Economic Activity
                 } else if (dimStrings.includes("time") && dimStrings.includes("economicActivity")) {
