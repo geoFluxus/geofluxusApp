@@ -540,131 +540,79 @@ define(['views/common/baseview',
                 let dimensionString = dimensions[0][0];
                 let granularityString = dimensions[0][1];
 
-                // /////////////////////////////
-                // Time  dimension
-                if (dimensionString == "time") {
+                switch (dimensionString) {
+                    case "time":
+                        flows = enrichFlows.enrichTime(flows, filterFlowsView, granularityString);
+                        break;
+                    case "space":
+                        // Nothing
+                        break;
+                    case "economicActivity":
+                        flows = enrichFlows.enrichEconActivity(flows, filterFlowsView, granularityString);
+                        break;
+                    case "treatmentMethod":
+                        flows = enrichFlows.enrichTreatmentMethod(flows, filterFlowsView, granularityString);
+                        break;
+                    default:
+                        // Nothing
+                }
 
-                    flows = enrichFlows.enrichTime(flows, filterFlowsView, granularityString);
+                switch (selectedVizualisationString) {
+                    case "piechart":
+                        this.renderPieChart(dimensions, flows);
+                        break;
+                    case "barchart":
+                        this.renderBarChart(dimensions, flows);
+                        break;
+                    case "lineplot":
+                        this.renderLinePlot(dimensions, flows);
+                        break;
+                    case "treemap":
+                        this.renderTreeMap(dimensions, flows);
+                        break;
+                    case "lineplotmultiple":
+                        this.renderLinePlot(dimensions, flows, true);
+                        break;
+                    case "choroplethmap":
+                        // If level == actor:
+                        let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
+                        if (dimensions[0][1].adminlevel == actorAreaLevelId) {
+                            dimensions.isActorLevel = true;
+                        }
+                        areas = new Collection([], {
+                            apiTag: 'areas',
+                            apiIds: [dimensions[0][1].adminlevel]
+                        });
 
-                    switch (selectedVizualisationString) {
-                        case "piechart":
-                            this.renderPieChart(dimensions, flows);
-                            break;
-                        case "barchart":
-                            this.renderBarChart(dimensions, flows);
-                            break;
-                        case "lineplot":
-                            this.renderLinePlot(dimensions, flows);
-                            break;
-                        case "treemap":
-                            this.renderTreeMap(dimensions, flows);
-                            break;
-                        case "lineplotmultiple":
-                            this.renderLinePlot(dimensions, flows, true);
-                            break;
-                        default:
-                            // Nothing
-                    }
+                        areas.fetch({
+                            success: function () {
+                                var geoJson = {};
+                                geoJson['type'] = 'FeatureCollection';
+                                features = geoJson['features'] = [];
+                                areas.forEach(function (area) {
+                                    var feature = {};
+                                    feature['type'] = 'Feature';
+                                    feature['id'] = area.get('id')
+                                    feature['geometry'] = area.get('geom')
+                                    features.push(feature)
+                                })
 
-                    // /////////////////////////////
-                    // Space dimension
-                } else if (dimensionString == "space") {
+                                flows.forEach(function (flow, index) {
+                                    this[index].id = this[index].areaId;
+                                }, flows);
 
-                    // If level == actor:
-                    let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-                    if (dimensions[0][1].adminlevel == actorAreaLevelId) {
-                        dimensions.isActorLevel = true;
-                    }
-
-                    switch (selectedVizualisationString) {
-                        case "piechart":
-                            this.renderPieChart(dimensions, flows);
-                            break;
-                        case "barchart":
-                            this.renderBarChart(dimensions, flows);
-                            break;
-                        case "lineplot":
-                            this.renderLinePlot(dimensions, flows);
-                            break;
-                        case "treemap":
-                            this.renderTreeMap(dimensions, flows);
-                            break;
-                        case "choroplethmap":
-                            areas = new Collection([], {
-                                apiTag: 'areas',
-                                apiIds: [dimensions[0][1].adminlevel]
-                            });
-
-                            areas.fetch({
-                                success: function () {
-                                    var geoJson = {};
-                                    geoJson['type'] = 'FeatureCollection';
-                                    features = geoJson['features'] = [];
-                                    areas.forEach(function (area) {
-                                        var feature = {};
-                                        feature['type'] = 'Feature';
-                                        feature['id'] = area.get('id')
-                                        feature['geometry'] = area.get('geom')
-                                        features.push(feature)
-                                    })
-
-                                    flows.forEach(function (flow, index) {
-                                        this[index].id = this[index].areaId;
-                                    }, flows);
-
-                                    _this.renderChoropleth1D(dimensions, flows, geoJson);
-                                },
-                                error: function (res) {
-                                    console.log(res);
-                                }
-                            });
-                            break;
-                        case "coordinatepointmap": // Only in case of Actor
-                            _this.renderCoordinatePointMap1D(dimensions, flows);
-                            break;
-                        default:
-                            // Nothing
-                    }
-
-                    // /////////////////////////////
-                    // Economic Activity dimension
-                } else if (dimensionString == "economicActivity") {
-
-                    flows = enrichFlows.enrichEconActivity(flows, filterFlowsView, granularityString);
-
-                    switch (selectedVizualisationString) {
-                        case "piechart":
-                            this.renderPieChart(dimensions, flows);
-                            break;
-                        case "barchart":
-                            this.renderBarChart(dimensions, flows);
-                            break;
-                        case "treemap":
-                            this.renderTreeMap(dimensions, flows);
-                            break;
-                        default:
-                            // Nothing
-                    }
-
-                    // /////////////////////////////
-                    // Treatment Method Dimension
-                } else if (dimensionString == "treatmentMethod") {
-
-                    flows = enrichFlows.enrichTreatmentMethod(flows, filterFlowsView, granularityString);
-
-                    switch (selectedVizualisationString) {
-                        case "piechart":
-                            this.renderPieChart(dimensions, flows);
-                            break;
-                        case "barchart":
-                            this.renderBarChart(dimensions, flows);
-                            break;
-                        case "treemap":
-                            this.renderTreeMap(dimensions, flows);
-                            break;
-                        default:
-                            // Nothing
-                    }
+                                _this.renderChoropleth1D(dimensions, flows, geoJson);
+                            },
+                            error: function (res) {
+                                console.log(res);
+                            }
+                        });
+                        break;
+                    case "coordinatepointmap": // Only in case of Actor
+                        _this.renderCoordinatePointMap1D(dimensions, flows);
+                        break;
+                    default:
+                        // Nothing
                 }
 
                 console.log(flows);
@@ -674,6 +622,9 @@ define(['views/common/baseview',
                 let _this = this;
                 let filterFlowsView = this.filterFlowsView;
                 let dimensionsActual = [];
+
+                let dim1String = dimensions[0][0];
+                let gran1 = dimensions[0][1];
 
                 let years = filterFlowsView.years.models;
                 let months = filterFlowsView.months.models;
