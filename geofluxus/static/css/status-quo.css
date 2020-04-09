@@ -390,7 +390,7 @@ textarea.textarea-autosize.form-control-sm {
 /* .d3plus-zoom-controls */
 .d3plus-zoom-control {
     position: absolute !important;
-    top: 50px !important;
+    top: 100px !important;
     left: 0 !important;
 }
 

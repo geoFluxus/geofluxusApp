@@ -135,45 +135,22 @@ define(['views/common/baseview',
                         tooltipConfig: tooltipConfig,
                     });
 
-                    // Add the fullscreenToggle-button to SVG:
-                    this.addFullScreenToggle();
-
                     // Smooth scroll to top of Viz
                     $("#apply-filters")[0].scrollIntoView({
                         behavior: "smooth"
                     });
 
-                    // Event for window resize to re-add fullscreenToggle-button after D3plus makes it disappear:
-                    $(window).on('resize', function () {
-                        setTimeout(function () {
-                            let addToggle = d3.select(".d3plus-Form.d3plus-Form-Button")._groups[0][0].children.length == 1;
-                            if (addToggle) {
-                                _this.addFullScreenToggle();
-                                console.log("Toggle added");
-                            }
-                        }, 600);
-                    });
-                },
-
-                addFullScreenToggle: function () {
-                    let svg = d3.select(".d3plus-viz");
-                    svg.select(".d3plus-Form.d3plus-Form-Button")
-                        .append("button")
-                        .attr("class", "d3plus-Button fullscreen-toggle")
-                        .attr("type", "button")
-                        .html('<i class="fas fa-expand" style="color: white"></i>');
                 },
 
                 toggleFullscreen: function (event) {
                     $(this.el).toggleClass('fullscreen');
                     event.stopImmediatePropagation();
-
+                    // Only scroll when going to normal view:
                     if (!$(this.el).hasClass('fullscreen')) {
                         $("#apply-filters")[0].scrollIntoView({
                             behavior: "smooth"
                         });
                     }
-
                     window.dispatchEvent(new Event('resize'));
                 },
 

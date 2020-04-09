@@ -53,6 +53,7 @@ define(['views/common/baseview',
                 },
 
                 render: function (data) {
+                    let _this = this;
                     let flows = this.options.flows;
                     let dimensionsActual = [];
                     this.options.dimensions.forEach(dim => dimensionsActual.push(dim[0]));
@@ -335,44 +336,23 @@ define(['views/common/baseview',
                         isStacked: isStacked,
                         isActorLevel: isActorLevel,
                     });
-                },
 
+                    // Smooth scroll to top of Viz
+                    $("#apply-filters")[0].scrollIntoView({
+                        behavior: "smooth"
+                    });
+                },
+                
                 toggleFullscreen: function (event) {
-                    this.el.classList.toggle('fullscreen');
-                    this.refresh();
+                    $(this.el).toggleClass('fullscreen');
                     event.stopImmediatePropagation();
-                },
-
-                exportCSV: function (event) {
-                    if (!this.transformedData) return;
-
-                    var header = ['Origin', 'Origin Code',
-                            'Destination', 'Destination Code',
-                            'Amount (t/year)'
-                        ],
-                        rows = [],
-                        _this = this;
-                    rows.push(header.join(',\t'));
-                    this.transformedData.links.forEach(function (link) {
-                        var origin = link.source,
-                            destination = link.target,
-                            originName = origin.name,
-                            destinationName = destination.name,
-                            amount = link.value.toFixed(3);
-
-                        var originCode = origin.code,
-                            destinationCode = destination.code;
-
-                        var row = ['"' + originName + '",', originCode + ',"', destinationName + '",', destinationCode + ',', amount];
-                        rows.push(row.join('\t'));
-                    });
-                    var text = rows.join('\r\n');
-                    var blob = new Blob([text], {
-                        type: "text/plain;charset=utf-8"
-                    });
-                    FileSaver.saveAs(blob, "data.csv");
-
-                    event.stopImmediatePropagation();
+                    // Only scroll when going to normal view:
+                    if (!$(this.el).hasClass('fullscreen')) {
+                        $("#apply-filters")[0].scrollIntoView({
+                            behavior: "smooth"
+                        });
+                    }
+                    window.dispatchEvent(new Event('resize'));
                 },
 
                 close: function () {

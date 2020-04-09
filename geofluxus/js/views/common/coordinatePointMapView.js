@@ -43,7 +43,6 @@ define(['views/common/baseview',
                 initialize: function (options) {
                     CoordinatePointMapView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
-                    var _this = this;
 
                     this.options = options;
 
@@ -59,6 +58,7 @@ define(['views/common/baseview',
                  * render the view
                  */
                 render: function (data) {
+                    let _this = this;
                     let flows = this.options.flows;
                     let tooltipConfig = {
                         title: function (d) {
@@ -77,12 +77,23 @@ define(['views/common/baseview',
                         data: flows,
                         tooltipConfig: tooltipConfig,
                     });
+
+                    // Smooth scroll to top of Viz
+                    $("#apply-filters")[0].scrollIntoView({
+                        behavior: "smooth"
+                    });
                 },
 
                 toggleFullscreen: function (event) {
-                    this.el.classList.toggle('fullscreen');
-                    this.refresh();
+                    $(this.el).toggleClass('fullscreen');
                     event.stopImmediatePropagation();
+                    // Only scroll when going to normal view:
+                    if (!$(this.el).hasClass('fullscreen')) {
+                        $("#apply-filters")[0].scrollIntoView({
+                            behavior: "smooth"
+                        });
+                    }
+                    window.dispatchEvent(new Event('resize'));
                 },
 
                 close: function () {

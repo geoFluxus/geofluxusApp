@@ -51,6 +51,7 @@ define(['views/common/baseview',
                 },
 
                 render: function (data) {
+                    let _this = this;
                     let flows = this.options.flows;
                     let tooltipConfig = {
                         title: function (d) {
@@ -70,12 +71,23 @@ define(['views/common/baseview',
                         tooltipConfig: tooltipConfig,
                         geoJson: this.options.geoJson,
                     });
+                   
+                    // Smooth scroll to top of Viz
+                    $("#apply-filters")[0].scrollIntoView({
+                        behavior: "smooth"
+                    });
                 },
 
                 toggleFullscreen: function (event) {
-                    this.el.classList.toggle('fullscreen');
-                    this.refresh();
+                    $(this.el).toggleClass('fullscreen');
                     event.stopImmediatePropagation();
+                    // Only scroll when going to normal view:
+                    if (!$(this.el).hasClass('fullscreen')) {
+                        $("#apply-filters")[0].scrollIntoView({
+                            behavior: "smooth"
+                        });
+                    }
+                    window.dispatchEvent(new Event('resize'));
                 },
 
                 close: function () {

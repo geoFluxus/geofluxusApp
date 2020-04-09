@@ -43,7 +43,6 @@ define(['views/common/baseview',
                 initialize: function (options) {
                     AreaChartView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
-                    _.bindAll(this, 'exportCSV');
                     this.options = options;
 
                     this.render();
@@ -54,6 +53,7 @@ define(['views/common/baseview',
                 },
 
                 render: function (data) {
+                    let _this = this;
                     let flows = this.options.flows;
                     let dimensionsActual = [];
                     this.options.dimensions.forEach(dim => dimensionsActual.push(dim[0]));
@@ -70,144 +70,6 @@ define(['views/common/baseview',
                     let xSort;
                     let isStacked = false;
 
-
-                    // // /////////////////////////////
-                    // // Time dimension
-                    // if (this.options.dimensions[0][0] == "time") {
-                    //     // Granularity = year
-                    //     if (this.options.dimensions[0][1] == "flowchain__month__year") {
-                    //         groupBy = ["year"];
-                    //         x = ["year"];
-                    //         tooltipConfig.tbody.push(["Year", function (d) {
-                    //             return d.year
-                    //         }]);
-                    //         // Granularity = month:
-                    //     } else if (this.options.dimensions[0][1] == "flowchain__month") {
-                    //         groupBy = ["month"];
-                    //         x = ["month"];
-                    //         tooltipConfig.tbody.push(["Month", function (d) {
-                    //             return d.month
-                    //         }]);
-                    //     }
-
-                    //     // /////////////////////////////
-                    //     // Space dimension
-                    // } else if (this.options.dimensions[0][0] == "space") {
-                    //     xSort = function (a, b) {
-                    //         return b["amount"] - a["amount"];
-                    //     }
-
-                    //     // Areas:
-                    //     if (!this.options.dimensions.isActorLevel) {
-                    //         groupBy = ["areaName"];
-                    //         x = ["areaName"];
-                    //         tooltipConfig.title = function (d) {
-                    //             return d.areaName
-                    //         };
-
-                    //     } else {
-                    //         // Actor level
-                    //         groupBy = ["actorName"];
-                    //         x = ["actorName"];
-                    //         tooltipConfig = {
-                    //             title: function (d) {
-                    //                 return d.actorName
-                    //             },
-                    //             tbody: [
-                    //                 ["Waste (metric ton)", function (d) {
-                    //                     return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                    //                 }],
-                    //             ]
-                    //         }
-                    //     }
-
-                    //     // /////////////////////////////
-                    //     // Economic Activity dimension
-                    // } else if (this.options.dimensions[0][0] == "economicActivity") {
-                    //     xSort = function (a, b) {
-                    //         return b["amount"] - a["amount"];
-                    //     }
-
-                    //     // Granularity: Activity group
-                    //     if (this.options.dimensions[0][1] == "origin__activity__activitygroup" || this.options.dimensions[0][1] == "destination__activity__activitygroup") {
-                    //         groupBy = ["activityGroupCode"];
-                    //         x = ["activityGroupCode"];
-                    //         tooltipConfig = {
-                    //             title: function (d) {
-                    //                 return d.activityGroupCode
-                    //             },
-                    //             tbody: [
-                    //                 ["Waste (metric ton)", function (d) {
-                    //                     return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                    //                 }],
-                    //                 ["Activity group", function (d) {
-                    //                     return d.activityGroupCode + " " + d.activityGroupName;
-                    //                 }],
-                    //             ]
-                    //         }
-
-                    //         // Granularity: Activity
-                    //     } else if (this.options.dimensions[0][1] == "origin__activity" || this.options.dimensions[0][1] == "destination__activity") {
-                    //         x = ["activityCode"];
-                    //         groupBy = ["activityGroupCode", "activityCode"];
-                    //         tooltipConfig = {
-                    //             title: function (d) {
-                    //                 return d.activityCode
-                    //             },
-                    //             tbody: [
-                    //                 ["Waste (metric ton)", function (d) {
-                    //                     return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                    //                 }],
-                    //                 ["Activity", function (d) {
-                    //                     return d.activityCode + " " + d.activityName;
-                    //                 }],
-                    //                 ["Activity group", function (d) {
-                    //                     return d.activityGroupCode + " " + d.activityGroupName;
-                    //                 }],
-                    //             ]
-                    //         }
-                    //     }
-
-                    //     // /////////////////////////////
-                    //     // Treatment method dimension
-                    // } else if (this.options.dimensions[0][0] == "treatmentMethod") {
-                    //     xSort = function (a, b) {
-                    //         return b["amount"] - a["amount"];
-                    //     }
-
-                    //     // Granularity: Treatment process group
-                    //     if (this.options.dimensions[0][1] == "origin__process__processgroup" || this.options.dimensions[0][1] == "destination__process__processgroup") {
-                    //         groupBy = ["processGroupCode"];
-                    //         x = ["processGroupCode"];
-                    //         tooltipConfig = {
-                    //             tbody: [
-                    //                 ["Waste (metric ton)", function (d) {
-                    //                     return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                    //                 }],
-                    //                 ["Treatment method group", function (d) {
-                    //                     return d.processGroupCode + " " + d.processGroupName;
-                    //                 }],
-                    //             ]
-                    //         }
-
-                    //         // Granularity: Treatment process
-                    //     } else if (this.options.dimensions[0][1] == "origin__process" || this.options.dimensions[0][1] == "destination__process") {
-                    //         groupBy = ["processCode"];
-                    //         x = ["processCode"];
-                    //         tooltipConfig = {
-                    //             tbody: [
-                    //                 ["Waste (metric ton)", function (d) {
-                    //                     return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
-                    //                 }],
-                    //                 ["Treatment method", function (d) {
-                    //                     return d.processCode + " " + d.processName;
-                    //                 }],
-                    //             ]
-                    //         }
-                    //     }
-                    // }
-
-                    // ///////////////////////////////////////////////////////////////////////////////////////////////////
 
                     // //////////////////////////////////////////
                     // Time & Space
@@ -340,12 +202,23 @@ define(['views/common/baseview',
                         xSort: xSort,
                         isStacked: isStacked,
                     });
+
+                    // Smooth scroll to top of Viz
+                    $("#apply-filters")[0].scrollIntoView({
+                        behavior: "smooth"
+                    });
                 },
 
                 toggleFullscreen: function (event) {
-                    this.el.classList.toggle('fullscreen');
-                    this.refresh();
+                    $(this.el).toggleClass('fullscreen');
                     event.stopImmediatePropagation();
+                    // Only scroll when going to normal view:
+                    if (!$(this.el).hasClass('fullscreen')) {
+                        $("#apply-filters")[0].scrollIntoView({
+                            behavior: "smooth"
+                        });
+                    }
+                    window.dispatchEvent(new Event('resize'));
                 },
 
                 close: function () {
