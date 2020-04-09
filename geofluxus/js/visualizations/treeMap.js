@@ -42,6 +42,7 @@ define([
                 .controlPadding(0)
                 .render(function () {
                     _this.addFullScreenToggle();
+                    _this.addDownloadButton();
                 });
         }
         
@@ -52,6 +53,15 @@ define([
                 .attr("class", "d3plus-Button fullscreen-toggle")
                 .attr("type", "button")
                 .html('<i class="fas fa-expand" style="color: white"></i>');
+        }
+        
+        addDownloadButton() {
+            let svg = d3.select(".d3plus-viz");
+            svg.select(".d3plus-Form.d3plus-Form-Button")
+                .append("button")
+                .attr("class", "d3plus-Button export-csv")
+                .attr("type", "button")
+                .html('<i class="fas fa-file" style="color: white"></i>');
         }
     }
     return TreeMap;

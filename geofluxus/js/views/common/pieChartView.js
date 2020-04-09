@@ -43,6 +43,7 @@ define(['views/common/baseview',
                 initialize: function (options) {
                     PieChartView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
+                    _.bindAll(this, 'exportCSV');
 
                     this.options = options;
 
@@ -51,6 +52,7 @@ define(['views/common/baseview',
 
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
+                    'click .export-csv': 'exportCSV',
                 },
 
                 render: function (data) {
@@ -152,6 +154,31 @@ define(['views/common/baseview',
                         });
                     }
                     window.dispatchEvent(new Event('resize'));
+                },
+
+                exportPNG: function (event) {
+                    var svg = this.sankeyDiv.querySelector('svg');
+                    saveSvgAsPng.saveSvgAsPng(svg, "sankey-diagram.png", {
+                        scale: 2,
+                        backgroundColor: "#FFFFFF"
+                    });
+                    event.stopImmediatePropagation();
+                },
+
+                exportCSV: function (event) {
+                    const items = this.options.flows;
+                    const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
+                    const header = Object.keys(items[0])
+                    let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+                    csv.unshift(header.join(','))
+                    csv = csv.join('\r\n')
+
+                    var blob = new Blob([csv], {
+                        type: "text/plain;charset=utf-8"
+                    });
+                    FileSaver.saveAs(blob, "data.csv");
+
+                    event.stopImmediatePropagation();
                 },
 
                 close: function () {
