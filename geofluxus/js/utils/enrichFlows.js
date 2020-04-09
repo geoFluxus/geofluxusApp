@@ -2,15 +2,11 @@ var _ = require('underscore');
 
 module.exports = {
 
-    enrichTime: function (flows, filterFlowsView, granularityString) {
-        console.log("enrichtTime");
-
+    enrichTime: function (flows, filterFlowsView, granularity) {
         let years = filterFlowsView.years.models;
         let months = filterFlowsView.months.models;
 
-        if (granularityString == "flowchain__month__year") {
-
-
+        if (granularity == "flowchain__month__year") {
             flows.forEach(function (flow, index) {
                 let yearObject = years.find(year => year.attributes.id == flow.year);
 
@@ -20,8 +16,7 @@ module.exports = {
 
             flows = _.sortBy(flows, 'year');
 
-        } else if (granularityString == "flowchain__month") {
-
+        } else if (granularity == "flowchain__month") {
             flows.forEach(function (flow, index) {
                 let monthObject = months.find(month => month.attributes.id == flow.month);
 
@@ -38,15 +33,12 @@ module.exports = {
         return flows
     },
 
-    enrichEconActivity: function (flows, filterFlowsView, granularityString) {
-
-
+    enrichEconActivity: function (flows, filterFlowsView, granularity) {
         let activityGroups = filterFlowsView.activityGroups.models;
         let activities = filterFlowsView.activities.models;
 
         // Granularity = Activity group
-        if (granularityString == "origin__activity__activitygroup" || granularityString == "destination__activity__activitygroup") {
-
+        if (granularity == "origin__activity__activitygroup" || granularity == "destination__activity__activitygroup") {
             flows.forEach(function (flow, index) {
                 let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.activitygroup);
 
@@ -55,8 +47,7 @@ module.exports = {
             }, flows);
 
             // Granularity: Activity
-        } else if (granularityString == "origin__activity" || granularityString == "destination__activity") {
-
+        } else if (granularity == "origin__activity" || granularity == "destination__activity") {
             flows.forEach(function (flow, index) {
                 let activityGroupName = "";
                 let activityObject = activities.find(activity => activity.attributes.id == flow.activity);
@@ -73,12 +64,12 @@ module.exports = {
         return flows
     },
 
-    enrichTreatmentMethod: function (flows, filterFlowsView, granularityString) {
+    enrichTreatmentMethod: function (flows, filterFlowsView, granularity) {
         let processGroups = filterFlowsView.processgroups.models;
         let processes = filterFlowsView.processes.models;
 
         // Granularity: Treatment Method Group
-        if (granularityString == "origin__process__processgroup" || granularityString == "destination__process__processgroup") {
+        if (granularity == "origin__process__processgroup" || granularity == "destination__process__processgroup") {
 
             flows.forEach(function (flow, index) {
                 let processGroupObject = processGroups.find(processGroup => processGroup.attributes.id == flow.processgroup);
@@ -88,7 +79,7 @@ module.exports = {
             }, flows);
 
             // Granularity: Treatment Method
-        } else if (granularityString == "origin__process" || granularityString == "destination__process") {
+        } else if (granularity == "origin__process" || granularity == "destination__process") {
 
             flows.forEach(function (flow, index) {
                 let processGroupName = "";
