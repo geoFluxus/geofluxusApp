@@ -22,6 +22,11 @@ from rest_framework.response import Response
 from django.db.models import (Q, OuterRef, Subquery, F)
 from django.contrib.gis.db.models import Union
 
+MODEL ={
+    'actor': Actor,
+    'area': Area
+}
+
 
 # Filter Flow View
 class FilterFlowViewSet(PostGetViewMixin,
@@ -282,7 +287,8 @@ class FilterFlowViewSet(PostGetViewMixin,
                 elif field == 'actor':
                     self.serialize_actor(group[field], flow_item)
                 elif 'node' in field:
-                    flow_item.append((level, self.serialize_node(group[field])))
+                    level, model = level.split('_')
+                    flow_item.append((level, self.serialize_node(group[field], MODEL[model])))
                 elif 'waste' in field:
                     self.serialize_waste(field, group, flow_item)
                 else:
@@ -311,7 +317,16 @@ class FilterFlowViewSet(PostGetViewMixin,
                 queryset = queryset.annotate(destination_node=Subquery(subq.values('id')))
 
                 # append to other dimensions
-                levels.extend(['origin', 'destination'])
+                levels.extend(['origin_area', 'destination_area'])
+                fields.extend(['origin_node', 'destination_node'])
+            else:
+                # origin actor
+                queryset = queryset.annotate(origin_node=F('origin'))
+                # destination actor
+                queryset = queryset.annotate(destination_node=F('destination'))
+
+                # append to other dimensions
+                levels.extend(['origin_actor', 'destination_actor'])
                 fields.extend(['origin_node', 'destination_node'])
         return queryset, levels, fields
 
@@ -374,16 +389,24 @@ class FilterFlowViewSet(PostGetViewMixin,
         return item
 
     @staticmethod
-    def serialize_node(id):
+    def serialize_node(id, model):
         # recover
-        area = Area.objects.filter(id=id)[0]
+        node = model.objects.filter(id=id)[0]
 
         # serialize area
         item = {}
-        item['id'] = area.id
-        item['name'] = area.name
-        # item['lon'] = area.geom.x
-        # item['lat'] = area.geom.y
+        item['id'] = node.id
+
+        # serialize geometry
+        geom = node.geom
+        if geom.geom_type == 'Point':
+            item['name'] = node.company.name
+            item['lon'] = geom.x
+            item['lat'] = geom.y
+        else:
+            item['name'] = node.name
+            item['lon'] = geom.centroid.x
+            item['lat'] = geom.centroid.y
         return item
 
     @staticmethod
