@@ -239,6 +239,13 @@ label[for="activity-select"] {
     background-image: url('../img/viz-stackedbarchart.svg');
 }
 
+#span-viz-flowmap::before {
+    background-image: url('../img/viz-flowmap.svg');
+}
+
+#span-viz-parallelsets::before {
+    background-image: url('../img/viz-parallelsets.svg');
+}
 
 /* VISUALISATION STYLES */
 
@@ -246,7 +253,7 @@ label[for="activity-select"] {
     display: none;
     height: 700px;
     min-width: 500px;
-    background-color:  rgb(182, 182, 182);
+    background-color: rgb(182, 182, 182);
     border-radius: 18px;
 }
 

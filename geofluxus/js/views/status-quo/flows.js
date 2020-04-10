@@ -547,7 +547,7 @@ define(['views/common/baseview',
                     case "space":
                         // Set isActorLevel if necessary:
                         let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-                        if (dimensions[0][1].adminlevel == actorAreaLevelId) {
+                        if (granularity.adminlevel == actorAreaLevelId) {
                             dimensions.isActorLevel = true;
                         }
                         break;
@@ -585,7 +585,7 @@ define(['views/common/baseview',
 
                         areas = new Collection([], {
                             apiTag: 'areas',
-                            apiIds: [dimensions[0][1].adminlevel]
+                            apiIds: [granularity.adminlevel]
                         });
 
                         areas.fetch({
@@ -640,7 +640,7 @@ define(['views/common/baseview',
 
                 // Time & Space
                 if (dimStrings.includes("time") && dimStrings.includes("space")) {
-                    
+
                     flows = enrichFlows.enrichTime(flows, filterFlowsView, gran1);
                     // Actor level:
 
@@ -655,19 +655,24 @@ define(['views/common/baseview',
                     flows = enrichFlows.enrichTime(flows, filterFlowsView, gran1);
                     flows = enrichFlows.enrichEconActivity(flows, filterFlowsView, gran2);
 
-
                     // Time & Treatment method
                 } else if (dimStrings.includes("time") && dimStrings.includes("treatmentMethod")) {
 
                     flows = enrichFlows.enrichTime(flows, filterFlowsView, gran1);
                     flows = enrichFlows.enrichTreatmentMethod(flows, filterFlowsView, gran2);
 
+                    // Time & Material
+                } else if (dimStrings.includes("time") && dimStrings.includes("material")) {
+
+                    flows = enrichFlows.enrichTime(flows, filterFlowsView, gran1);
+                    flows = enrichFlows.enrichEWC(flows, filterFlowsView, gran2);
+
                     // Space & Economic Activity
                 } else if (dimStrings.includes("space") && dimStrings.includes("economicActivity")) {
 
                     // If level == actor:
                     let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-                    if (dimensions[0][1].adminlevel == actorAreaLevelId) {
+                    if (gran1.adminlevel == actorAreaLevelId) {
                         dimensions.isActorLevel = true;
                     }
 
@@ -676,13 +681,36 @@ define(['views/common/baseview',
                     // Space & Treatment Method
                 } else if (dimStrings.includes("space") && dimStrings.includes("treatmentMethod")) {
 
-                    // To do
+                    // If level == actor:
+                    let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
+                    if (gran1.adminlevel == actorAreaLevelId) {
+                        dimensions.isActorLevel = true;
+                    }
+
+                    flows = enrichFlows.enrichTreatmentMethod(flows, filterFlowsView, gran2);
+
+                    // Space & Material
+                } else if (dimStrings.includes("space") && dimStrings.includes("material")) {
+
+                    // If level == actor:
+                    let actorAreaLevelId = filterFlowsView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
+                    if (gran1.adminlevel == actorAreaLevelId) {
+                        dimensions.isActorLevel = true;
+                    }
+
+                    flows = enrichFlows.enrichEWC(flows, filterFlowsView, gran2);
 
                     // Economic Activity & Treatment Method
                 } else if (dimStrings.includes("economicActivity") && dimStrings.includes("treatmentMethod")) {
 
+                    flows = enrichFlows.enrichEconActivity(flows, filterFlowsView, gran1);
+                    flows = enrichFlows.enrichTreatmentMethod(flows, filterFlowsView, gran2);
 
+                    // Economic Activity & Material
+                } else if (dimStrings.includes("economicActivity") && dimStrings.includes("material")) {
 
+                    flows = enrichFlows.enrichEconActivity(flows, filterFlowsView, gran1);
+                    flows = enrichFlows.enrichEWC(flows, filterFlowsView, gran2);
                 }
 
                 switch (selectedVizualisationString) {

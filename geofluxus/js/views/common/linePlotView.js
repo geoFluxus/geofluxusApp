@@ -61,7 +61,7 @@ define(['views/common/baseview',
                     let dim1String = this.options.dimensions[0][0];
                     let gran1 = this.options.dimensions[0][1];
                     // let dim2String = this.options.dimensions[1][0];
-                    // let gran2 = this.options.dimensions[1][1];
+                     let gran2 = this.options.dimensions[1] ? this.options.dimensions[1][1] : {};
 
                     let dimStrings = [];
                     this.options.dimensions.forEach(dim => dimStrings.push(dim[0]));
@@ -128,9 +128,9 @@ define(['views/common/baseview',
                             return d.activityGroupCode + " " + d.activityGroupName;
                         }, ])
 
-                        if (this.options.dimensions[1][1] == "origin__activity__activitygroup" || this.options.dimensions[1][1] == "destination__activity__activitygroup") {
+                        if (gran2 == "origin__activity__activitygroup" || gran2 == "destination__activity__activitygroup") {
                             groupBy = ["activityGroupCode"];
-                        } else if (this.options.dimensions[1][1] == "origin__activity" || this.options.dimensions[1][1] == "destination__activity") {
+                        } else if (gran2 == "origin__activity" || gran2 == "destination__activity") {
                             groupBy = ["activityCode"];
                             tooltipConfig.tbody.push(["Activity", function (d) {
                                 return d.activityCode + " " + d.activityName;
@@ -145,12 +145,44 @@ define(['views/common/baseview',
                             return d.processGroupCode + " " + d.processGroupName;
                         }])
 
-                        if (this.options.dimensions[1][1] == "origin__process__processgroup" || this.options.dimensions[1][1] == "destination__process__processgroup") {
+                        if (gran2 == "origin__process__processgroup" || gran2 == "destination__process__processgroup") {
                             groupBy = ["processGroupCode"];
-                        } else if (this.options.dimensions[1][1] == "origin__process" || this.options.dimensions[1][1] == "destination__process") {
+                        } else if (gran2 == "origin__process" || gran2 == "destination__process") {
                             groupBy = ["processCode"];
                             tooltipConfig.tbody.push(["Treatment method", function (d) {
                                 return d.processCode + " " + d.processName;
+                            }]);
+                        }
+                    
+                        // //////////////////////////////////////////
+                        // 2D - Time & Material
+                    } else if (dimStrings.includes("material")) {
+
+                        tooltipConfig.tbody.push(["Chapter", function (d) {
+                            return d.ewc2Code + " " + d.ewc2Name;
+                        }]);
+
+                        // ewc2
+                        if (gran2 == "flowchain__waste06__waste04__waste02") {
+                            groupBy = ["ewc2Code"];
+                            tooltipConfig.title = "Waste per Chapter";
+                            // ewc4
+                        } else if (gran2 == "flowchain__waste06__waste04") {
+                            groupBy = ["ewc4Code"];
+                            tooltipConfig.title = "Waste per Sub-Chapter";
+                            tooltipConfig.tbody.push(["Sub-Chapter", function (d) {
+                                return d.ewc4Code + " " + d.ewc4Name;
+                            }]);
+                            // ewc6
+                        } else if (gran2 == "flowchain__waste06") {
+                            groupBy = ["ewc6Code"];
+                            tooltipConfig.title = "Waste per Entry";
+                            tooltipConfig.tbody.push(
+                                ["Sub-Chapter", function (d) {
+                                    return d.ewc4Code + " " + d.ewc4Name;
+                                }],
+                                ["Entry", function (d) {
+                                return d.ewc6Code + " " + d.ewc6Name;
                             }]);
                         }
                     }
