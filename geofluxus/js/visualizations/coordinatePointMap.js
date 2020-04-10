@@ -45,7 +45,7 @@ define([
                 })
                 .controlPadding(0)
                 .render(function () {
-                    _this.addDownloadButton();
+                    _this.addExportCsvButton();
                     _this.addFullScreenToggle();
                 });
         }
@@ -60,7 +60,7 @@ define([
                 .lower();
         }
 
-        addDownloadButton() {
+        addExportCsvButton() {
             let svg = d3.select(".d3plus-viz");
             svg.select(".d3plus-Form.d3plus-Form-Button")
                 .append("button")

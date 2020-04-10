@@ -167,6 +167,13 @@ define(['views/common/baseview',
                         behavior: "smooth"
                     });
 
+                    $(".exportPngButton").click(function () {
+                        setTimeout(function () {
+                            window.dispatchEvent(new Event('resize'));
+                        }, 100);
+                        console.log("exportPngButton clicked");
+                    });
+
                 },
 
                 toggleFullscreen: function (event) {

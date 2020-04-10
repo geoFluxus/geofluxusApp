@@ -44,9 +44,17 @@ define([
                 })
                 .controlPadding(0)
                 .render(function () {
-                    _this.addDownloadButton();
+                    _this.addClassToDownloadButton();
+                    _this.addExportCsvButton();
                     _this.addFullScreenToggle();
                 });
+        }
+
+        addClassToDownloadButton() {
+            //let svg = d3.select(".d3plus-viz");
+            let exportPngIcon = d3.select(".fa-camera");
+            let exportPngButton = exportPngIcon.select(function() { return this.parentNode; })
+            exportPngButton.attr("class", "d3plus-Button exportPngButton");
         }
 
         addFullScreenToggle() {
@@ -59,7 +67,7 @@ define([
                 .lower();
         }
 
-        addDownloadButton() {
+        addExportCsvButton() {
             let svg = d3.select(".d3plus-viz");
             svg.select(".d3plus-Form.d3plus-Form-Button")
                 .append("button")
