@@ -71,7 +71,8 @@ class FilterFlowViewSet(PostGetViewMixin,
 
         # serialize data according to dimension
         dimensions = params.pop('dimensions', {})
-        data = self.serialize(queryset, dimensions)
+        format = params.pop('isFlowsFormat', False)
+        data = self.serialize(queryset, dimensions, format)
         return Response(data)
 
     # filter chain classifications
@@ -200,7 +201,7 @@ class FilterFlowViewSet(PostGetViewMixin,
 
         return queryset
 
-    def serialize(self, queryset, dimensions):
+    def serialize(self, queryset, dimensions, format):
         '''
         Serialize data into groups
         according to the requested dimensions
@@ -225,37 +226,12 @@ class FilterFlowViewSet(PostGetViewMixin,
 
         # SPACE DIMENSION
         if space:
-            # recover all areas of the selected
-            # administrative level
-            adminlevel = space.pop('adminlevel', None)
-            if adminlevel:
-                areas = Area.objects.filter(adminlevel=adminlevel)
-
-            # attach to flows the area
-            # to which their origin / destination belongs
-            field = space.pop('field', None)
-            if field:
-                # Actor level is the only one
-                # with no areas!
-                if areas.count() != 0:
-                    # recover the area id to which
-                    # the flow origin / destination belongs
-                    subq = areas.filter(geom__contains=OuterRef(field))
-
-                    # annotate to area id to flows
-                    queryset = queryset.annotate(area=Subquery(subq.values('id')))
-
-                    # append to other dimensions
-                    levels.append('area')
-                    fields.append('area')
-                else:
-                    # annotate origin / destination id
-                    field = field.split('__')[0] + '__id'
-                    queryset = queryset.annotate(actor=F(field))
-
-                    # append to other dimensions
-                    levels.append('actor')
-                    fields.append('actor')
+            if format:
+                queryset, levels, fields = self.format_flows(space, queryset,
+                                                             levels, fields)
+            else:
+                queryset, levels, fields = self.format_space(space, queryset,
+                                                             levels, fields)
 
         # ECO DIMENSION
         if eco:
@@ -305,6 +281,8 @@ class FilterFlowViewSet(PostGetViewMixin,
                     self.serialize_area(group[field], flow_item)
                 elif field == 'actor':
                     self.serialize_actor(group[field], flow_item)
+                elif 'node' in field:
+                    flow_item.append((level, self.serialize_node(group[field])))
                 elif 'waste' in field:
                     self.serialize_waste(field, group, flow_item)
                 else:
@@ -312,6 +290,66 @@ class FilterFlowViewSet(PostGetViewMixin,
 
             data.append(OrderedDict(flow_item))
         return data
+
+    @staticmethod
+    def format_flows(space, queryset, levels, fields):
+        # recover all areas of the selected
+        # administrative level
+        adminlevel = space.pop('adminlevel', None)
+        if adminlevel:
+            areas = Area.objects.filter(adminlevel=adminlevel)
+
+            # Actor level is the only one
+            # with no areas!
+            if areas.count() != 0:
+                # origin area
+                subq = areas.filter(geom__contains=OuterRef('origin__geom'))
+                queryset = queryset.annotate(origin_node=Subquery(subq.values('id')))
+
+                # destination area
+                subq = areas.filter(geom__contains=OuterRef('destination__geom'))
+                queryset = queryset.annotate(destination_node=Subquery(subq.values('id')))
+
+                # append to other dimensions
+                levels.extend(['origin', 'destination'])
+                fields.extend(['origin_node', 'destination_node'])
+        return queryset, levels, fields
+
+    @staticmethod
+    def format_space(space, queryset,
+                     levels, fields):
+        # recover all areas of the selected
+        # administrative level
+        adminlevel = space.pop('adminlevel', None)
+        if adminlevel:
+            areas = Area.objects.filter(adminlevel=adminlevel)
+
+            # attach to flows the area
+            # to which their origin / destination belongs
+            field = space.pop('field', None)
+            if field:
+                # Actor level is the only one
+                # with no areas!
+                if areas.count() != 0:
+                    # recover the area id to which
+                    # the flow origin / destination belongs
+                    subq = areas.filter(geom__contains=OuterRef(field))
+
+                    # annotate to area id to flows
+                    queryset = queryset.annotate(area=Subquery(subq.values('id')))
+
+                    # append to other dimensions
+                    levels.append('area')
+                    fields.append('area')
+                else:
+                    # annotate origin / destination id
+                    field = field.split('__')[0] + '__id'
+                    queryset = queryset.annotate(actor=F(field))
+
+                    # append to other dimensions
+                    levels.append('actor')
+                    fields.append('actor')
+        return queryset, levels, fields
 
     @staticmethod
     def serialize_area(id, item):
@@ -333,6 +371,19 @@ class FilterFlowViewSet(PostGetViewMixin,
         item.append(('actorName', actor.company.identifier))
         item.append(('lon', actor.geom.x))
         item.append(('lat', actor.geom.y))
+        return item
+
+    @staticmethod
+    def serialize_node(id):
+        # recover
+        area = Area.objects.filter(id=id)[0]
+
+        # serialize area
+        item = {}
+        item['id'] = area.id
+        item['name'] = area.name
+        # item['lon'] = area.geom.x
+        # item['lat'] = area.geom.y
         return item
 
     @staticmethod
