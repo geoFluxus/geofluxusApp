@@ -367,18 +367,16 @@ textarea.textarea-autosize.form-control-sm {
     z-index: 1;
 }
 
-.d3plus-viz-controls-container {
-    position: absolute !important;
-    left: 0px;
-    top: 5px;
-    z-index: 3;
-}
 
 
 .d3plus-viz-controls-container .d3plus-Form {
     z-index: 1;
     position: absolute;
 } */
+
+.d3plus-viz-controls-container {
+    min-height: 100px;
+}
 
 .d3plus-viz-controls-container .d3plus-Button {
     background-color: #007bff;

@@ -44,20 +44,32 @@ define([
                 })
                 .controlPadding(0)
                 .render(function () {
-                    _this.addClassToDownloadButton();
+                    //_this.addClassToDownloadButton();
                     _this.addExportCsvButton();
                     _this.addFullScreenToggle();
                 });
         }
 
-        addClassToDownloadButton() {
-            //let svg = d3.select(".d3plus-viz");
-            let exportPngIcon = d3.select(".fa-camera");
-            let exportPngButton = exportPngIcon.select(function() { return this.parentNode; })
-            exportPngButton.attr("class", "d3plus-Button exportPngButton");
-        }
+        // addClassToDownloadButton() {
+        //     // let _this = this;
+        //     // let exportPngIcon = d3.select(".fa-camera");
+        //     // let exportPngButton = exportPngIcon.select(function () {
+        //     //     return this.parentNode;
+        //     // })
+        //     // exportPngButton.attr("class", "d3plus-Button exportPngButton");
+
+        //     // Check on hover over Viz if it still contains Fullscreen button, if not, readd:
+        //     d3.select(".d3plus-viz").on("mouseover", function () {
+        //         let buttonFullscreen = d3.select(".fullscreen-toggle")
+        //         if (buttonFullscreen.empty()) {
+        //             _this.addExportCsvButton();
+        //             _this.addFullScreenToggle();
+        //         }
+        //     })
+        // }
 
         addFullScreenToggle() {
+            let _this = this;
             let svg = d3.select(".d3plus-viz");
             svg.select(".d3plus-Form.d3plus-Form-Button")
                 .append("button")
@@ -65,6 +77,15 @@ define([
                 .attr("type", "button")
                 .html('<i class="fas fa-expand" style="color: white"></i>')
                 .lower();
+                
+            // Check on hover over Viz if it still contains Fullscreen button, if not, readd:
+            svg.on("mouseover", function () {
+                let buttonFullscreen = d3.select(".fullscreen-toggle")
+                if (buttonFullscreen.empty()) {
+                    _this.addExportCsvButton();
+                    _this.addFullScreenToggle();
+                }
+            })
         }
 
         addExportCsvButton() {
