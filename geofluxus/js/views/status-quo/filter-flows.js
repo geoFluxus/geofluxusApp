@@ -540,6 +540,7 @@ define(['views/common/baseview',
                                 $("#viz-piechart").parent().fadeIn();
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-treemap").parent().fadeIn();
+                                $("#viz-parallelsets").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("material")) {
                                 $("#viz-piechart").parent().fadeIn();
                                 $("#viz-barchart").parent().fadeIn();
@@ -599,6 +600,10 @@ define(['views/common/baseview',
                                 $("#viz-stackedbarchart").parent().fadeIn();
                                 $("#viz-parallelsets").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("economicActivity") && _this.selectedDimensionStrings.includes("material")) {
+                                $("#viz-barchart").parent().fadeIn();
+                                $("#viz-stackedbarchart").parent().fadeIn();
+                                $("#viz-parallelsets").parent().fadeIn();
+                            } else if (_this.selectedDimensionStrings.includes("material") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
                                 $("#viz-parallelsets").parent().fadeIn();
