@@ -145,7 +145,41 @@ define(['views/common/baseview',
                                 return d.processCode + " " + d.processName;
                             }]);
                         }
+
+                        // //////////////////////////////////////////
+                        // 2D - Time & Material
+                    } else if (dimStrings.includes("material")) {
+
+                        tooltipConfig.tbody.push(["Chapter", function (d) {
+                            return d.ewc2Code + " " + d.ewc2Name;
+                        }]);
+
+                        // ewc2
+                        if (gran2 == "flowchain__waste06__waste04__waste02") {
+                            groupBy = ["ewc2Code"];
+                            tooltipConfig.title = "Waste per Chapter";
+                            // ewc4
+                        } else if (gran2 == "flowchain__waste06__waste04") {
+                            groupBy = ["ewc4Code"];
+                            tooltipConfig.title = "Waste per Sub-Chapter";
+                            tooltipConfig.tbody.push(["Sub-Chapter", function (d) {
+                                return d.ewc4Code + " " + d.ewc4Name;
+                            }]);
+                            // ewc6
+                        } else if (gran2 == "flowchain__waste06") {
+                            groupBy = ["ewc6Code"];
+                            tooltipConfig.title = "Waste per Entry";
+                            tooltipConfig.tbody.push(
+                                ["Sub-Chapter", function (d) {
+                                    return d.ewc4Code + " " + d.ewc4Name;
+                                }],
+                                ["Entry", function (d) {
+                                    return d.ewc6Code + " " + d.ewc6Name;
+                                }]);
+                        }
                     }
+
+
 
                     // Create a new D3Plus AreaChart object which will be rendered in this.options.el:
                     this.areaChart = new AreaChart({
