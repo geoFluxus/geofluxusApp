@@ -1,4 +1,9 @@
-var color = "" //d3.scale.category20();
+var d3 = require('d3');
+
+//var color = "" //d3.scale.category20();
+
+var color = d3.scaleOrdinal(d3.schemeCategory10);
+
 module.exports = {
 
     // loader shown in center of given div as spinning circle when activated
