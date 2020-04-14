@@ -54,6 +54,15 @@ define([
                 .attr("type", "button")
                 .html('<i class="fas fa-expand" style="color: white"></i>')
                 .lower();
+
+            // Check on hover over Viz if it still contains Fullscreen button, if not, readd:
+            svg.on("mouseover", function () {
+                let buttonFullscreen = d3.select(".fullscreen-toggle")
+                if (buttonFullscreen.empty()) {
+                    _this.addExportCsvButton();
+                    _this.addFullScreenToggle();
+                }
+            })
         }
 
         addExportCsvButton() {

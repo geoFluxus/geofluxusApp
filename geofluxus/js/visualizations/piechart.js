@@ -44,29 +44,10 @@ define([
                 })
                 .controlPadding(0)
                 .render(function () {
-                    //_this.addClassToDownloadButton();
                     _this.addExportCsvButton();
                     _this.addFullScreenToggle();
                 });
         }
-
-        // addClassToDownloadButton() {
-        //     // let _this = this;
-        //     // let exportPngIcon = d3.select(".fa-camera");
-        //     // let exportPngButton = exportPngIcon.select(function () {
-        //     //     return this.parentNode;
-        //     // })
-        //     // exportPngButton.attr("class", "d3plus-Button exportPngButton");
-
-        //     // Check on hover over Viz if it still contains Fullscreen button, if not, readd:
-        //     d3.select(".d3plus-viz").on("mouseover", function () {
-        //         let buttonFullscreen = d3.select(".fullscreen-toggle")
-        //         if (buttonFullscreen.empty()) {
-        //             _this.addExportCsvButton();
-        //             _this.addFullScreenToggle();
-        //         }
-        //     })
-        // }
 
         addFullScreenToggle() {
             let _this = this;
