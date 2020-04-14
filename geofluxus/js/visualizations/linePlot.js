@@ -67,6 +67,7 @@ define([
         }
 
         addFullScreenToggle() {
+            let _this = this;
             let svg = d3.select(".d3plus-viz");
             svg.select(".d3plus-Form.d3plus-Form-Button")
                 .append("button")
