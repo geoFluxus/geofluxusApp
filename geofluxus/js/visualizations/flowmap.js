@@ -55,13 +55,13 @@ define([
                 this.stream.point(point.x, point.y);
             }
 
-            // var transform = d3.geo.transform({point: projectPoint});
+            // var transform = d3.geo.transform({point: projectPoint}); // old version of D3
             var transform = d3.geoTransform({
                 point: projectPoint
             });
 
             this.overlay = map.getPanes().overlayPane;
-            //this.path = d3.geo.path().projection(transform);
+            //this.path = d3.geo.path().projection(transform);  // old version of D3
             this.path = d3.geoPath().projection(transform);
 
             // tooltip
@@ -94,7 +94,6 @@ define([
 
         // fit svg layer to map
         resetView() {
-
             this.svg.node().style.visibility = 'visible';
             var svgPos = this.resetBbox();
             if (!svgPos) return;
@@ -213,7 +212,7 @@ define([
                         console.log('Warning: missing actor for flow');
                         return;
                     }
-                    // smaller dots for ainimation
+                    // smaller dots for animation
                     var maxFlowWidth = (_this.animate && _this.dottedLines) ? 20 : _this.maxFlowWidth,
                         minFlowWidth = (_this.animate && _this.dottedLines) ? 2 : _this.minFlowWidth,
                         normFactor = maxFlowWidth / _this.maxFlowValue;
@@ -287,6 +286,8 @@ define([
             }
             var maxNodeRadius = calcRadius(this.maxNodeValue);
             var scaleFactor = (maxNodeRadius > 60) ? 60 / maxNodeRadius : 1
+
+            
             // use addpoint for each node in nodesDataFlow
             Object.values(_this.nodesPos).forEach(function (nodes) {
 
@@ -314,6 +315,7 @@ define([
                         label = '',
                         radius = 0,
                         total = 0;
+
                     nodesToShow.forEach(function (node) {
                         total += node.value;
                         radius += node.radius || 0;
@@ -393,6 +395,9 @@ define([
         addPoint(x, y, label, innerLabel, color, radius, opacity) {
             var _this = this;
 
+
+            radius = 20;
+
             var point = this.g.append("g").attr("class", "node");
             point.append("circle")
                 .attr("cx", x)
@@ -432,7 +437,9 @@ define([
         drawPath(points, label, color, strokeWidth, options) {
             var _this = this,
                 options = options || {};
-            var line = d3.svg.line()
+            //var line = d3.svg.line()
+
+            var line = d3.line()
                 .x(function (d) {
                     return d.x;
                 })
