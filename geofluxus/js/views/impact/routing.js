@@ -7,14 +7,14 @@ define(['views/common/baseview',
 
 function(BaseView, _, Collection, Map) {
 
-    var RoutesView = BaseView.extend({
+    var RoutingView = BaseView.extend({
 
         // Initialization
         initialize: function (options) {
             var _this = this;
-            RoutesView.__super__.initialize.apply(this, [options]);
+            RoutingView.__super__.initialize.apply(this, [options]);
 
-            this.routes = new Collection([], {
+            this.routings = new Collection([], {
                 apiTag: 'routings'
             });
             this.actors = new Collection([], {
@@ -23,7 +23,7 @@ function(BaseView, _, Collection, Map) {
 
             this.loader.activate();
             var promises = [
-                this.routes.fetch(),
+                this.routings.fetch(),
                 this.actors.fetch(),
             ];
             Promise.all(promises).then(function(){
@@ -44,12 +44,12 @@ function(BaseView, _, Collection, Map) {
                 _this = this;
             this.el.innerHTML = template();
 
-            this.routeMap = new Map({
+            this.routingMap = new Map({
                 el: this.el.querySelector('.map'),
                 source: 'light',
                 opacity: 1.0
             });
-            this.routeMap.addLayer('routes', {
+            this.routingMap.addLayer('routings', {
                 stroke: 'rgb(255, 0, 0)',
                 select: {
                     selectable: true,
@@ -57,27 +57,27 @@ function(BaseView, _, Collection, Map) {
                     stroke: 'rgb(0, 255, 0)'
                 }
             });
-            this.routeMap.addLayer('actors', {
+            this.routingMap.addLayer('actors', {
                 radius: 5,
                 fill: 'rgb(255, 200, 0)'
             });
 
-            this.drawRoutes(_this.routes);
+            this.drawRoutings(_this.routings);
             this.drawActors(_this.actors);
         },
 
         // Draw routes
-        drawRoutes: function(routes){
+        drawRoutings: function(routings){
             var _this = this;
-            routes.forEach(function(route){
-                var coords = route.get('geom').coordinates,
-                    type = route.get('geom').type.toLowerCase();
-                _this.routeMap.addGeometry(coords, {
-                        projection: 'EPSG:4326', layername: 'routes',
+            routings.forEach(function(routing){
+                var coords = routing.get('geom').coordinates,
+                    type = routing.get('geom').type.toLowerCase();
+                _this.routingMap.addGeometry(coords, {
+                        projection: 'EPSG:4326', layername: 'routings',
                         type: type, renderOSM: false
                 });
             })
-            this.routeMap.centerOnLayer('routes');
+            this.routingMap.centerOnLayer('routings');
         },
 
         // Draw actors
@@ -85,7 +85,7 @@ function(BaseView, _, Collection, Map) {
             var _this = this;
             actors.forEach(function(actor){
                 var coords = actor.get('geom').coordinates;
-                _this.routeMap.addGeometry(coords, {
+                _this.routingMap.addGeometry(coords, {
                         projection: 'EPSG:4326', layername: 'actors',
                         type: 'Point', renderOSM: false
                 });
@@ -94,5 +94,5 @@ function(BaseView, _, Collection, Map) {
 
     });
 
-    return RoutesView;
+    return RoutingView;
 })
