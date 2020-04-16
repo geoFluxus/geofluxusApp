@@ -294,6 +294,10 @@ if __name__ == "__main__":
                 SELECT ST_AsText(geom) as geom FROM origin_linestring
                 union
                 SELECT ST_AsText(geom) as geom FROM destination_linestring
+                union
+                SELECT ST_AsText(geom) as geom FROM origin_proj_distance
+                union
+                SELECT ST_AsText(geom) as geom FROM destination_proj_distance
             )
             
             select st_astext(st_linemerge(st_collect(geom))) as geom
