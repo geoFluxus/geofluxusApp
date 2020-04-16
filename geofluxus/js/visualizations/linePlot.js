@@ -61,12 +61,13 @@ define([
                 .controlPadding(0)
                 .select(options.el)
                 .render(function () {
-                    _this.addDownloadButton();
+                    _this.addExportCsvButton();
                     _this.addFullScreenToggle();
                 });
         }
 
         addFullScreenToggle() {
+            let _this = this;
             let svg = d3.select(".d3plus-viz");
             svg.select(".d3plus-Form.d3plus-Form-Button")
                 .append("button")
@@ -74,8 +75,16 @@ define([
                 .attr("type", "button")
                 .html('<i class="fas fa-expand" style="color: white"></i>')
                 .lower();
+            // Check on hover over Viz if it still contains Fullscreen button, if not, readd:
+            svg.on("mouseover", function () {
+                let buttonFullscreen = d3.select(".fullscreen-toggle")
+                if (buttonFullscreen.empty()) {
+                    _this.addExportCsvButton();
+                    _this.addFullScreenToggle();
+                }
+            })
         }
-        addDownloadButton() {
+        addExportCsvButton() {
             let svg = d3.select(".d3plus-viz");
             svg.select(".d3plus-Form.d3plus-Form-Button")
                 .append("button")

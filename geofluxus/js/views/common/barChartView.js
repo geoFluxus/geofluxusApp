@@ -69,7 +69,7 @@ define(['views/common/baseview',
                     let isStacked = this.options.isStacked;
                     let groupBy;
                     let x;
-                    let xSort;
+                    let xSort = true;
                     let isActorLevel = false;
                     let tooltipConfig = {
                         tbody: [
@@ -81,6 +81,7 @@ define(['views/common/baseview',
 
                     // Time dimension
                     if (dim1String == "time") {
+                        xSort = false;
                         // Granularity = year
                         if (gran1 == "flowchain__month__year") {
                             x = groupBy = ["year"];
@@ -91,10 +92,6 @@ define(['views/common/baseview',
 
                         // Space dimension
                     } else if (dim1String == "space") {
-                        xSort = function (a, b) {
-                            return b["amount"] - a["amount"];
-                        }
-
                         // Areas:
                         if (!this.options.dimensions.isActorLevel) {
                             groupBy = ["areaName"];
@@ -113,9 +110,6 @@ define(['views/common/baseview',
 
                         // Economic Activity dimension
                     } else if (dim1String == "economicActivity") {
-                        xSort = function (a, b) {
-                            return b["amount"] - a["amount"];
-                        }
 
                         tooltipConfig.tbody.push(["Activity group", function (d) {
                             return d.activityGroupCode + " " + d.activityGroupName;
@@ -144,10 +138,7 @@ define(['views/common/baseview',
                         // /////////////////////////////
                         // Treatment method dimension
                     } else if (dim1String == "treatmentMethod") {
-                        xSort = function (a, b) {
-                            return b["amount"] - a["amount"];
-                        }
-
+                    
                         // Granularity: Treatment process group
                         if (gran1 == "origin__process__processgroup" || gran1 == "destination__process__processgroup") {
                             x = groupBy = ["processGroupCode"];
@@ -194,6 +185,7 @@ define(['views/common/baseview',
 
                     // Time & Space
                     if (dimStrings.includes("time") && dimStrings.includes("space")) {
+                        xSort = false;
                         // TIME
                         // Granularity = year
                         if (gran1 == "flowchain__month__year") {
@@ -229,6 +221,7 @@ define(['views/common/baseview',
                         ////////////////////////////
                         // Time & Economic Activity
                     } else if (dimStrings.includes("time") && dimStrings.includes("economicActivity")) {
+                        xSort = false;
 
                         // Granularity = year
                         if (gran1 == "flowchain__month__year") {
@@ -269,8 +262,8 @@ define(['views/common/baseview',
                         // Time & Treatment method
                     } else if (dimStrings.includes("time") && dimStrings.includes("treatmentMethod")) {
 
-                        // Time dimension
-
+                        // Time dimension                        
+                        xSort = false;
                         // Granularity = year
                         if (gran1 == "flowchain__month__year") {
                             x = ["year"];
@@ -310,6 +303,7 @@ define(['views/common/baseview',
                         ////////////////////////////
                         // Time & Material
                     } else if (dimStrings.includes("time") && dimStrings.includes("material")) {
+                        xSort = false;
 
                         // Granularity = year
                         if (gran1 == "flowchain__month__year") {
@@ -529,6 +523,14 @@ define(['views/common/baseview',
                                 }]);
                         }
 
+                    }
+
+
+                    // Update xSort variable to store function if true:
+                    if (xSort) {
+                        xSort = function (a, b) {
+                            return b["amount"] - a["amount"];
+                        }
                     }
 
                     // Create a new D3Plus BarChart object which will be rendered in this.options.el:

@@ -166,12 +166,10 @@ define(['views/common/baseview',
                     $("#apply-filters")[0].scrollIntoView({
                         behavior: "smooth"
                     });
-
                 },
 
                 toggleFullscreen: function (event) {
                     $(this.el).toggleClass('fullscreen');
-                    event.stopImmediatePropagation();
                     // Only scroll when going to normal view:
                     if (!$(this.el).hasClass('fullscreen')) {
                         $("#apply-filters")[0].scrollIntoView({
@@ -179,15 +177,16 @@ define(['views/common/baseview',
                         });
                     }
                     window.dispatchEvent(new Event('resize'));
+                    event.stopImmediatePropagation();
                 },
 
                 exportPNG: function (event) {
-                    var svg = this.sankeyDiv.querySelector('svg');
-                    saveSvgAsPng.saveSvgAsPng(svg, "sankey-diagram.png", {
-                        scale: 2,
-                        backgroundColor: "#FFFFFF"
-                    });
-                    event.stopImmediatePropagation();
+                    // var svg = this.el.querySelector('svg');
+                    // saveSvgAsPng.saveSvgAsPng(svg, "sankey-diagram.png", {
+                    //     scale: 2,
+                    //     backgroundColor: "#FFFFFF"
+                    // });
+                    // event.stopImmediatePropagation();
                 },
 
                 exportCSV: function (event) {
