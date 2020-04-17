@@ -3,15 +3,13 @@ require(['jquery',
          'document-ready',
          'utils/overrides',
          'bootstrap',
-         'bootstrap-select',
          'bootstrap-select/dist/css/bootstrap-select.css',
          'static/css/base.css',
          'static/css/main-navbar.css',
          'static/css/sidebar.css',
          '@fortawesome/fontawesome-free/css/all.css',
          'openlayers/css/ol.css',
-         'static/css/map.css',
-         'textarea-autosize'],
+         'static/css/map.css',],
 function($, ready){
     ready(function(){
          // hide sidebar if there is no content in it
@@ -22,6 +20,9 @@ function($, ready){
         //  else {
         //    document.getElementById('sidebar-wrapper').style.display = 'inline';
         //  }
+
+        // Activate help icons
+        setTimeout(function (){ $('[data-toggle="popover"]').popover({trigger: "focus"});},1000);
 
         // Hide navbar on scroll down, show navbar on scroll up:
         var prevScrollpos = window.pageYOffset;

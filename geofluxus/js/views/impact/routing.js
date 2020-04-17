@@ -2,10 +2,13 @@
 define(['views/common/baseview',
         'underscore',
         'collections/collection',
-        'visualizations/map'
+        'visualizations/map',
+        'views/common/filters',
+        'textarea-autosize',
+        'bootstrap-select',
         ],
 
-function(BaseView, _, Collection, Map) {
+function(BaseView, _, Collection, Map, FiltersView) {
 
     var RoutingView = BaseView.extend({
 
@@ -14,27 +17,29 @@ function(BaseView, _, Collection, Map) {
             var _this = this;
             RoutingView.__super__.initialize.apply(this, [options]);
 
-            this.routings = new Collection([], {
-                apiTag: 'routings'
-            });
-            this.actors = new Collection([], {
-                apiTag: 'actors'
-            })
+            this.render();
 
-            this.loader.activate();
-            var promises = [
-                this.routings.fetch(),
-                this.actors.fetch(),
-            ];
-            Promise.all(promises).then(function(){
-                _this.loader.deactivate();
-                _this.render();
-            })
+//            this.routings = new Collection([], {
+//                apiTag: 'routings'
+//            });
+//            this.actors = new Collection([], {
+//                apiTag: 'actors'
+//            })
+
+//            this.loader.activate();
+//            var promises = [
+//                this.routings.fetch(),
+//                this.actors.fetch(),
+//            ];
+//            Promise.all(promises).then(function(){
+//                _this.loader.deactivate();
+//                _this.render();
+//            })
         },
 
         // DOM Events
         events: {
-
+            'click #apply-filters': 'fetchFlows',
         },
 
         // Rendering
@@ -43,6 +48,8 @@ function(BaseView, _, Collection, Map) {
                 template = _.template(html),
                 _this = this;
             this.el.innerHTML = template();
+
+            this.renderFiltersView();
 
             this.routingMap = new Map({
                 el: this.el.querySelector('.map'),
@@ -62,8 +69,19 @@ function(BaseView, _, Collection, Map) {
                 fill: 'rgb(255, 200, 0)'
             });
 
-            this.drawRoutings(_this.routings);
-            this.drawActors(_this.actors);
+//            this.drawRoutings(_this.routings);
+//            this.drawActors(_this.actors);
+        },
+
+        // Render filters
+        renderFiltersView: function(){
+            var el = this.el.querySelector('#filter-content'),
+                    _this = this;
+
+            this.filtersView = new FiltersView({
+                el: el,
+                template: 'filter-template',
+            });
         },
 
         // Draw routes
@@ -90,7 +108,50 @@ function(BaseView, _, Collection, Map) {
                         type: 'Point', renderOSM: false
                 });
             })
-        }
+        },
+
+        // Returns parameters for filtered post-fetching based on assigned filter
+        getFlowFilterParams: function () {
+            // Prepare filters for request
+            let filterParams = this.filtersView.getFilterParams();
+
+            return filterParams;
+        },
+
+        // Fetch flows
+        fetchFlows: function (options) {
+            let _this = this,
+                filterParams = this.getFlowFilterParams(),
+                data = {};
+
+            let flows = new Collection([], {
+                apiTag: 'flows',
+            });
+
+            this.loader.activate();
+
+            flows.postfetch({
+                data: data,
+                body: filterParams,
+                success: function (response) {
+
+                    _this.flows = flows.models;
+
+                    _this.flows.forEach(function (flow, index) {
+                        this[index] = flow.attributes;
+                    }, _this.flows);
+
+                    _this.loader.deactivate();
+                    if (options.success) {
+                        options.success(flows);
+                    }
+                },
+                error: function (error) {
+                    _this.loader.deactivate();
+                    console.log(error);
+                }
+            });
+        },
 
     });
 
