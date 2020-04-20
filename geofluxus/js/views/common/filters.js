@@ -953,7 +953,7 @@ define(['views/common/baseview',
                 if (this.selectedAreasFlows !== undefined &&
                     this.selectedAreasFlows.length > 0) {
                     filterParams.flows.selectedAreas = [];
-                    filter.selectedAreasFlows.forEach(function (area) {
+                    this.selectedAreasFlows.forEach(function (area) {
                         filterParams.flows.selectedAreas.push(area.id);
                     });
                 }

@@ -180,29 +180,38 @@ class FilterFlowViewSet(PostGetViewMixin,
         if area_ids:
             area = Area.objects.filter(id__in=area_ids).aggregate(area=Union('geom'))['area']
 
-            # FIRST TEST
-            # filter flows with origin / destination
-            # within the selected area
-            inside = queryset.filter(Q(origin__geom__within=area) &\
-                                     Q(destination__geom__within=area))
-
-            # SECOND TEST
-            # check routing for rest
-            outside = queryset.exclude(Q(origin__geom__within=area) &\
-                                       Q(destination__geom__within=area))
-
-            # retrieve routings
-            routings = Routing.objects.filter(geom__intersects=area)
-
-            # annotate routings to flows
+            routings = Routing.objects
             subq = routings.filter(Q(origin=OuterRef('origin')) &\
                                    Q(destination=OuterRef('destination')))
-            inside = inside.annotate(routing=Subquery(subq.values('geom')))
-            outside = outside.annotate(routing=Subquery(subq.values('geom')))
-            outside = outside.exclude(routing=None)
+            queryset = queryset.annotate(routing=Subquery(subq.values('geom')))
+            queryset = queryset.filter((Q(origin__geom__within=area) \
+                                        & Q(destination__geom__within=area)) |
+                                        Q(routing__intersects=area)
+                                       )
 
-            # FIRST / SECOND TEST UNION
-            queryset = inside.union(outside)
+            # # FIRST TEST
+            # # filter flows with origin / destination
+            # # within the selected area
+            # inside = queryset.filter(Q(origin__geom__within=area) &\
+            #                          Q(destination__geom__within=area))
+            #
+            # # SECOND TEST
+            # # check routing for rest
+            # outside = queryset.exclude(Q(origin__geom__within=area) &\
+            #                            Q(destination__geom__within=area))
+            #
+            # # retrieve routings
+            # routings = Routing.objects.filter(geom__intersects=area)
+            #
+            # # annotate routings to flows
+            # subq = routings.filter(Q(origin=OuterRef('origin')) &\
+            #                        Q(destination=OuterRef('destination')))
+            # inside = inside.annotate(routing=Subquery(subq.values('geom')))
+            # outside = outside.annotate(routing=Subquery(subq.values('geom')))
+            # outside = outside.exclude(routing=None)
+            #
+            # # FIRST / SECOND TEST UNION
+            # queryset = inside.union(outside)
 
         return queryset
 
