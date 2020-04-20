@@ -385,7 +385,7 @@ define(['views/common/baseview',
                 });
 
                 let flows = new Collection([], {
-                    apiTag: 'flows',
+                    apiTag: 'impactflows',
                 });
 
                 // Only fetch Flows if at least one dimension has been selected:

@@ -32,6 +32,7 @@ function(Session) {
         flowchains:        '/api/flowchains/',
         allflows:          '/api/allflows/',
         statusquoflows:    '/api/statusquoflows/',
+        impactflows:       '/api/impactflows/',
         classifications:   '/api/classifications/',
         extradescriptions: '/api/extradescriptions/',
         routings:          '/api/routings/',
