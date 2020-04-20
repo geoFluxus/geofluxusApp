@@ -750,7 +750,7 @@ define(['views/common/baseview',
                         dimensions.isActorLevel = true;
                     }
 
-                    flows = enrichFlows.enrichEconActivity(flows, filterFlowsView, gran2);
+                    flows = enrichFlows.enrichEconActivity(flows, filtersView, gran2);
 
                     // Space & Treatment Method
                 } else if (dimStrings.includes("space") && dimStrings.includes("treatmentMethod")) {
@@ -761,7 +761,7 @@ define(['views/common/baseview',
                         dimensions.isActorLevel = true;
                     }
 
-                    flows = enrichFlows.enrichTreatmentMethod(flows, filterFlowsView, gran2);
+                    flows = enrichFlows.enrichTreatmentMethod(flows, filtersView, gran2);
 
                     // Space & Material
                 } else if (dimStrings.includes("space") && dimStrings.includes("material")) {
@@ -772,7 +772,7 @@ define(['views/common/baseview',
                         dimensions.isActorLevel = true;
                     }
 
-                    flows = enrichFlows.enrichEWC(flows, filterFlowsView, gran2);
+                    flows = enrichFlows.enrichEWC(flows, filtersView, gran2);
 
                     // Economic Activity & Treatment Method
                 } else if (dimStrings.includes("economicActivity") && dimStrings.includes("treatmentMethod")) {
@@ -928,7 +928,7 @@ define(['views/common/baseview',
                 });
 
                 let flows = new Collection([], {
-                    apiTag: 'flows',
+                    apiTag: 'statusquoflows',
                 });
 
                 // Reset all visualizations:
