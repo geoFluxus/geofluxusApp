@@ -3,7 +3,11 @@ require(['jquery',
          'document-ready',
          'utils/overrides',
          'bootstrap',
+         'bootstrap-select',
+         'bootstrap-toggle',
+         'textarea-autosize',
          'bootstrap-select/dist/css/bootstrap-select.css',
+         'bootstrap-toggle/css/bootstrap-toggle.min.css',
          'static/css/base.css',
          'static/css/main-navbar.css',
          'static/css/sidebar.css',
@@ -22,7 +26,7 @@ function($, ready){
         //  }
 
         // Activate help icons
-        setTimeout(function (){ $('[data-toggle="popover"]').popover({trigger: "focus"});},1000);
+        setTimeout(function (){ $('[data-toggle="popover"]').popover({trigger: "focus"});}, 1000);
 
         // Hide navbar on scroll down, show navbar on scroll up:
         var prevScrollpos = window.pageYOffset;

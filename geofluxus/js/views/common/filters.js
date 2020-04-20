@@ -4,8 +4,6 @@ define(['views/common/baseview',
         'visualizations/map',
         'openlayers',
         'utils/utils',
-        'bootstrap-toggle',
-        'bootstrap-toggle/css/bootstrap-toggle.min.css',
     ],
 
     function (BaseView, _, Collection, Map, ol, utils) {
