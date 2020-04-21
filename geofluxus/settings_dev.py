@@ -5,7 +5,8 @@ from geofluxus.settings import *
 DEBUG = True
 
 
-DB_NAME = os.environ['DB_NAME']
+DEFAULT = os.environ['DEFAULT']
+ROUTING = os.environ['ROUTING']
 DB_USER = os.environ['DB_USER']
 DB_PASS = os.environ['DB_PASS']
 SECRET_KEY = os.environ['SECRET_KEY']
@@ -14,7 +15,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': DB_NAME,
+        'NAME': DEFAULT,
         'USER': DB_USER,
         'PASSWORD': DB_PASS,
         'HOST': 'localhost',
@@ -23,6 +24,17 @@ DATABASES = {
             'sslmode': 'allow',
             },
     },
+    'routing': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': ROUTING,
+        'USER': DB_USER,
+        'PASSWORD': DB_PASS,
+        'HOST': 'localhost',
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'allow',
+            },
+    }
 }
 
 WEBPACK_LOADER = {

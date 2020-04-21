@@ -492,16 +492,15 @@ define(['views/common/baseview',
                 let filterParams = this.filtersView.getFilterParams();
 
                 // ///////////////////////////////
-                // isFlowsFormat
+                // format
                 let selectedVizualisationString;
-                filterParams.isFlowsFormat = false;
                 $('.viz-selector-button').each(function (index, value) {
                     if ($(this).hasClass("active")) {
                         selectedVizualisationString = $(this).attr("data-viz");
                     }
                 });
                 if (selectedVizualisationString.includes("flowmap") || selectedVizualisationString.includes("parallelsets")) {
-                    filterParams.isFlowsFormat = true;
+                    filterParams.format = selectedVizualisationString;
                 }
 
                 // ///////////////////////////////

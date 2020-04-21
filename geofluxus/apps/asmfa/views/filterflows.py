@@ -62,7 +62,7 @@ class FilterFlowViewSet(PostGetViewMixin,
 
         # serialize data according to dimension
         dimensions = params.pop('dimensions', {})
-        format = params.pop('isFlowsFormat', False)
+        format = params.pop('format', None)
         data = self.serialize(queryset, dimensions, format)
         return Response(data)
 

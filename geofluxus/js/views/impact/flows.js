@@ -17,12 +17,12 @@ define(['views/common/baseview',
         utils,
     ) {
 
-        var RoutingView = BaseView.extend({
+        var FlowsView = BaseView.extend({
 
             // Initialization
             initialize: function (options) {
                 var _this = this;
-                RoutingView.__super__.initialize.apply(this, [options]);
+                FlowsView.__super__.initialize.apply(this, [options]);
 
                 this.dimensions = {};
                 this.maxNumberOfDimensions = 1;
@@ -156,139 +156,6 @@ define(['views/common/baseview',
                         });
                         $("#alertMaxDimensionsRow").fadeOut("fast");
                     }
-
-
-                    // ///////////////////////////////////////////////////////////////////
-                    // Show available visualizations based on selected dimension(s):
-
-                    console.log(_this.selectedDimensionStrings);
-
-                    switch (checkedToggles.length) {
-                        case 0: // No dimensions
-                            console.log("No dimensions");
-
-                            $("#message-container-row").fadeIn();
-                            $(".viz-container").hide();
-
-                            break;
-                        case 1: // One dimension selected
-                            // Hide message if shown:
-                            $("#message-container-row").hide();
-                            // Hide all viz option buttons:
-                            $(".viz-selector-button").hide();
-                            // Show viz option container:
-                            $(".viz-container").fadeIn();
-
-                            // Disable legend by default:
-                            //$("#display-legend").prop("checked", false);
-
-                            console.log("One dimension");
-
-                            if (_this.selectedDimensionStrings.includes("time")) {
-                                $("#viz-piechart").parent().fadeIn();
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-treemap").parent().fadeIn();
-                                $("#viz-lineplot").parent().fadeIn();
-
-                                if ($(_this.dimensions.timeToggleGran).prop("checked")) {
-                                    $("#viz-lineplotmultiple").parent().fadeIn();
-                                }
-
-                            } else if (_this.selectedDimensionStrings.includes("space")) {
-                                $("#viz-piechart").parent().fadeIn();
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-treemap").parent().fadeIn();
-
-                                let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
-                                let actorAreaLevelId = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-
-                                if (selectedAreaLevelId == actorAreaLevelId) {
-                                    $("#viz-coordinatepointmap").parent().fadeIn();
-                                } else {
-                                    $("#viz-choroplethmap").parent().fadeIn();
-                                }
-
-                            } else if (_this.selectedDimensionStrings.includes("economicActivity")) {
-                                $("#viz-piechart").parent().fadeIn();
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-treemap").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("treatmentMethod")) {
-                                $("#viz-piechart").parent().fadeIn();
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-treemap").parent().fadeIn();
-                                $("#viz-parallelsets").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("material")) {
-                                $("#viz-piechart").parent().fadeIn();
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-treemap").parent().fadeIn();
-                            }
-                            break;
-
-                        case 2: // Two dimensions:
-                            $("#message-container-row").hide();
-                            $(".viz-selector-button").hide();
-                            $(".viz-container").fadeIn();
-
-                            // Enable legend by default:
-                            //$("#display-legend").prop("checked", true);
-
-                            console.log("Two dimensions");
-
-                            // Time & Space
-                            if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("space")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-lineplotmultiple").parent().fadeIn();
-                                $("#viz-areachart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-
-                                $("#viz-flowmap").parent().fadeIn();
-                                // Time & Economic Activity
-                            } else if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("economicActivity")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-lineplotmultiple").parent().fadeIn();
-                                $("#viz-areachart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                                // Time & Treatment Method
-                            } else if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-lineplotmultiple").parent().fadeIn();
-                                $("#viz-areachart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("material")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-lineplotmultiple").parent().fadeIn();
-                                $("#viz-areachart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("space") && _this.selectedDimensionStrings.includes("economicActivity")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                                $("#viz-flowmap").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("space") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                                $("#viz-flowmap").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("space") && _this.selectedDimensionStrings.includes("material")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                                $("#viz-flowmap").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("economicActivity") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                                $("#viz-parallelsets").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("economicActivity") && _this.selectedDimensionStrings.includes("material")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                                $("#viz-parallelsets").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("material") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                                $("#viz-parallelsets").parent().fadeIn();
-                            }
-                            break;
-                        default:
-                            // code block
-                    }
-
                 });
 
                 $(_this.dimensions.spaceLevelGranSelect).change(function () {
@@ -322,6 +189,9 @@ define(['views/common/baseview',
 
                 // Prepare filters for request
                 let filterParams = this.filtersView.getFilterParams();
+
+                // format
+                filterParams.format = "routing";
 
                 // ///////////////////////////////
                 // DIMENSIONS
@@ -459,5 +329,5 @@ define(['views/common/baseview',
             },
 
         });
-        return RoutingView;
+        return FlowsView;
     });

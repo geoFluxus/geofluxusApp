@@ -16,9 +16,9 @@
     <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/impact.css" />
     <div class="tab-content">
       <!-- Routing -->
-      <div class="tab-pane fade show active" id="routing"></div>
+      <div class="tab-pane fade show active" id="flows"></div>
     </div>
     {% include "filters.html" %}
-    {% include "impact/routing.html" %}
+    {% include "impact/flows.html" %}
     {% render_bundle 'Impact' %}
 {% endblock %}

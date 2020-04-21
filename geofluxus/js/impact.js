@@ -1,12 +1,12 @@
 // Routing
-define(['views/impact/routing'],
-function(RoutingView) {
-    var routingView;
+define(['views/impact/flows'],
+function(FlowsView) {
+    var FlowsView;
 
     function renderRouting() {
-        routingView = new RoutingView({
-            el: document.getElementById('routing'),
-            template: 'routing-template'
+        flowsView = new FlowsView({
+            el: document.getElementById('flows'),
+            template: 'flow-template'
         })
     }
 
