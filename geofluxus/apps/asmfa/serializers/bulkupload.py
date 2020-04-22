@@ -420,7 +420,8 @@ class RoutingCreateSerializer(BulkSerializerMixin,
         'destination': Reference(name='destination',
                                  referenced_field='identifier',
                                  referenced_model=Actor),
-        'wkt': 'geom'
+        'wkt': 'geom',
+        'seq': 'seq'
     }
     index_columns = ['origin', 'destination']
 
