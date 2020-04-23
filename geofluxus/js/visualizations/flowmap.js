@@ -67,7 +67,7 @@ define([
             // tooltip
             this.tooltip = d3.select(this.overlay)
                 .append("div")
-                .attr("class", "sankeymaptooltip")
+                .attr("class", "flowMapToolTip")
                 .style("opacity", 0);
 
             this.svg = d3.select(this.overlay).append("svg");
@@ -151,7 +151,6 @@ define([
                 })
             })
             this.resetBbox([topLeft, bottomRight]);
-
         }
 
         zoomToFit() {
@@ -394,7 +393,7 @@ define([
             var _this = this;
 
 
-            radius = 20;
+            //radius = 5;
 
             var point = this.g.append("g").attr("class", "node");
             point.append("circle")

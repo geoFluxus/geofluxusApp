@@ -332,6 +332,14 @@ textarea.textarea-autosize.form-control-sm {
     box-sizing: content-box !important;
 }
 
+/* flowmap tooltip */
+
+.flowMapToolTip {
+    border: 1px solid black !important;
+    border-radius: 14px !important;
+    padding: 2rem;
+    z-index: 99999;
+}
 
 /* d3plus Tooltip */
 
@@ -463,9 +471,9 @@ textarea.textarea-autosize.form-control-sm {
 .sankey,
 .tooltip,
 .oltooltip,
-.sankeymaptooltip,
+.flowMapToolTip,
 .d3-tip {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Montserrat', sans-serif !important;
 }
 
 .d3-tip h1 {

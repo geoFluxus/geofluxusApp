@@ -463,7 +463,7 @@ textarea.textarea-autosize.form-control-sm {
 .sankey,
 .tooltip,
 .oltooltip,
-.sankeymaptooltip,
+.flowMapToolTip,
 .d3-tip {
     font-family: 'Roboto', sans-serif;
 }

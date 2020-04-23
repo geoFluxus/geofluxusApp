@@ -4,6 +4,8 @@ define(['underscore',
         'collections/geolocation',
         'collections/flows',
         'visualizations/flowmap',
+        'd3',
+        'd3plus',
         'openlayers',
         'utils/utils',
         'leaflet',
@@ -17,7 +19,7 @@ define(['underscore',
         'leaflet-fullscreen/dist/leaflet.fullscreen.css'
     ],
 
-    function (_, BaseView, Collection, GeoLocation, Flows, FlowMap, ol, utils, L) {
+    function (_, BaseView, Collection, GeoLocation, Flows, FlowMap, d3, d3plus, ol, utils, L) {
 
         /**
          *
@@ -49,10 +51,14 @@ define(['underscore',
                     this.options = options;
                     this.flows = this.options.flows;
 
-                    this.clear();
+                    this.dimStrings = [];
+                    this.options.dimensions.forEach(dim => this.dimStrings.push(dim[0]));
+                    this.dim2 = this.options.dimensions.find(dim => dim[0] != "space");
+
+
                     this.render();
 
-                    this.rerender(this.flows);
+                    this.rerender(true);
 
                 },
 
@@ -67,13 +73,17 @@ define(['underscore',
                 render: function () {
                     //this.backgroundLayer = new L.TileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png");
                     this.backgroundLayer = new L.TileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
-                        attribution: '© OpenStreetMap contributors, © CartoDB'
+                        attribution: '© OpenStreetMap, © CartoDB'
                     });
 
                     // Old center
                     //var center = [52.51, 13.36];
                     // Center of Netherlands
                     var center = [52.1326, 5.2913];
+
+                    if (this.el._leaflet_id != undefined) {
+                        this.el._leaflet_id = null;
+                    }
 
 
                     this.leafletMap = new L.Map(this.el, {
@@ -93,7 +103,7 @@ define(['underscore',
                     }));
                     this.leafletMap.addControl(new L.easyPrint({
                         position: 'topright',
-                        filename: 'sankey-map',
+                        filename: 'flowmap',
                         exportOnly: true,
                         hideControlContainer: true,
                         sizeModes: ['A4Landscape']
@@ -427,7 +437,7 @@ define(['underscore',
                     this.flowMap.toggleTag('actor', this.actorCheck.checked);
 
                     this.flowMap.resetView();
-                    //if (zoomToFit) this.flowMap.zoomToFit();
+                    if (zoomToFit) this.flowMap.zoomToFit();
                 },
 
                 rerender: function (zoomToFit) {
@@ -435,7 +445,7 @@ define(['underscore',
 
                     //var data = _this.transformData(_this.flows);
 
-                    var data = _this.transformDataNew(_this.flows);
+                    var data = _this.transformToLinksAndNodes(_this.flows);
 
 
                     if (_this.displayWarnings && data.warnings.length > 0) {
@@ -477,6 +487,7 @@ define(['underscore',
                     //this.data = null;
                     if (this.flowMap) {
                         this.flowMap.clear();
+                        this.el = "";
                     }
                 },
 
@@ -509,7 +520,74 @@ define(['underscore',
                 //     return data;
                 // },
 
-                transformDataNew: function (flows, options) {
+                returnLinkInfo: function (link) {
+                    let fromToText = link.origin.name + ' &#10132; ' + link.destination.name + '<br>'
+                    let dimensionText = "";
+                    let dimensionValue = "";
+                    let amountText = '<br><b>Amount: </b>' + d3plus.formatAbbreviate(link.amount, utils.returnD3plusFormatLocale()) + ' t/year';
+
+                    switch (this.dim2[0]) {
+                        case "time":
+                            if (this.dim2[1] == "flowchain__month__year") {
+                                dimensionText = "Year";
+                                dimensionValue = link.year;
+                            } else if (this.dim2[1] == "flowchain__month") {
+                                dimensionText = "Month";
+                                dimensionValue = link.month;
+                            }
+                            break;
+                        case "economicActivity":
+                            if (this.dim2[1] == "origin__activity__activitygroup" || this.dim2[1] == "destination__activity__activitygroup") {
+                                dimensionText = "Activity group";
+                                dimensionValue = link.activityGroupCode + " " + link.activityGroupName;
+                            } else if (this.dim2[1] == "origin__activity" || this.dim2[1] == "destination__activity") {
+                                dimensionText = "Activity";
+                                dimensionValue = link.activityCode + " " + link.activityName;
+                            }
+                            break;
+                        case "treatmentMethod":
+                            if (this.dim2[1] == "origin__process__processgroup" || this.dim2[1] == "destination__process__processgroup") {
+                                dimensionText = "Treatment method group";
+                                dimensionValue = link.processGroupCode + " " + link.processGroupName;
+                            } else if (this.dim2[1] == "origin__process" || this.dim2[1] == "destination__process") {
+                                dimensionText = "Treatment method";
+                                dimensionValue = link.processCode + " " + link.processName;
+                            }
+                            break;
+                        case "material":
+
+                            switch (this.dim2[1]) {
+                                case "flowchain__waste06__waste04__waste02":
+                                    dimensionText = "EWC Chapter";
+                                    dimensionValue = link.ewc2Code + " " + link.ewc2Name;
+                                    break;
+                                case "flowchain__waste06__waste04":
+                                    dimensionText = "EWC Sub-Chapter";
+                                    dimensionValue = link.ewc4Code + " " + link.ewc4Name;
+                                    break;
+                                case "flowchain__waste06":
+                                    dimensionText = "EWC Entry";
+                                    dimensionValue = link.ewc6Code + " " + link.ewc6Name;
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            break;
+                        default:
+                            break;
+                    }
+
+                    let description = '<br><b>' + dimensionText + ':</b> ';
+
+                    return {
+                        toolTipText: fromToText + description + dimensionValue + amountText,
+                        color: utils.colorByName(dimensionValue),
+                    }
+
+                },
+
+                transformToLinksAndNodes: function (flows, options) {
                     var _this = this,
                         options = options || {},
                         nodes = [],
@@ -547,35 +625,40 @@ define(['underscore',
                         // Add the origin and destination to Nodes:
                         nodes.push(flow.origin, flow.destination)
 
+                        let link = flow;
 
-                        // origin.color = utils.colorByName(origin.name);
-                        // destination.color = utils.colorByName(destination.name);
+                        link.source = this[index].origin.id;
+                        link.target = this[index].destination.id;
+                        link.value = this[index].amount;
+                        // link.style = {
+                        //     nodeColor: utils.colorByName(this[index].origin.name),
+                        //     color: utils.colorByName(this[index].id),
+                        // };
+                        link.color = _this.returnLinkInfo(this[index]).color;
+                        link.label = _this.returnLinkInfo(this[index]).toolTipText;
 
+                        delete link.amount;
+                        delete link.destination;
+                        delete link.origin;
 
-                        links.push({
-                            id: this[index].id,
-                            source: this[index].origin.id,
-                            target: this[index].destination.id,
-                            value: this[index].amount,
-                            //valueTotal: this[index].amount,
-                            label: this[index].activityGroupName,
-                            //labelTotal: "link labelTotal",
-                            style: {
-                                nodeColor: utils.colorByName(this[index].origin.name),
-                                color: utils.colorByName(this[index].activityGroupName),
-                            },
-                            color: utils.colorByName(this[index].activityGroupName),
-
-                        })
+                        // Add link:
+                        links.push(link)
 
 
                     }, flows);
 
-                        
+
+
                     nodes.forEach(function (node, index) {
                         this[index].color = utils.colorByName(this[index].name);
                         this[index].label = this[index].name;
+                        this[index].opacity = 0.8;
                     }, nodes);
+
+
+
+                    // Remove all duplicates nodes:
+                    //nodes = _.uniq(nodes, 'id');
 
 
                     console.log("Links:");
