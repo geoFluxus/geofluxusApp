@@ -287,7 +287,6 @@ define([
             var maxNodeRadius = calcRadius(this.maxNodeValue);
             var scaleFactor = (maxNodeRadius > 60) ? 60 / maxNodeRadius : 1
 
-            
             // use addpoint for each node in nodesDataFlow
             Object.values(_this.nodesPos).forEach(function (nodes) {
 
@@ -308,9 +307,8 @@ define([
                     // calculate radius by value, if radius is not given
                     var radius = Math.max(5, first.radius || calcRadius(first.value));
                     _this.addPoint(x, y, first.label, first.innerLabel, first.color, radius, first.opacity);
-                }
-                // multiple nodes at same position -> piechart
-                else {
+                } else {
+                    // multiple nodes at same position -> piechart
                     var data = [],
                         label = '',
                         radius = 0,
@@ -343,11 +341,11 @@ define([
         addPieChart(x, y, label, radius, data) {
             var _this = this;
 
-            var pie = d3.layout.pie().value(function (d) {
+            var pie = d3.pie().value(function (d) {
                 return d.value;
             });
 
-            var arc = d3.svg.arc()
+            var arc = d3.arc()
                 .outerRadius(radius)
                 .innerRadius(0);
             var point = this.g.append("g").attr("class", "node")

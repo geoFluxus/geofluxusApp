@@ -562,22 +562,20 @@ define(['underscore',
                             //labelTotal: "link labelTotal",
                             style: {
                                 nodeColor: utils.colorByName(this[index].origin.name),
-                                radius: 20,
                                 color: utils.colorByName(this[index].activityGroupName),
                             },
                             color: utils.colorByName(this[index].activityGroupName),
+
                         })
 
 
                     }, flows);
 
-                    // Remove all duplicates nodes:
-                    nodes = _.uniq(nodes, 'id');
+                        
                     nodes.forEach(function (node, index) {
                         this[index].color = utils.colorByName(this[index].name);
                         this[index].label = this[index].name;
                     }, nodes);
-
 
 
                     console.log("Links:");
