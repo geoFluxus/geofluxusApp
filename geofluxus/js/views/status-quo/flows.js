@@ -14,6 +14,7 @@ define(['views/common/baseview',
         'views/common/choroplethView',
         'views/common/coordinatePointMapView',
         'views/common/areaChartView',
+         'views/common/flowMapView',
         'bootstrap',
         'bootstrap-select',
         'bootstrap-toggle',
@@ -35,6 +36,7 @@ define(['views/common/baseview',
         ChoroplethView,
         CoordinatePointMapView,
         AreaChartView,
+        FlowMapView,
     ) {
 
         var FlowsView = BaseView.extend({
@@ -551,41 +553,41 @@ define(['views/common/baseview',
                 return filterParams;
             },
 
-            // linkSelected: function (e) {
-            //     console.log("Link selected: ", e);
-            //     // only actors atm
-            //     var data = e.detail,
-            //         _this = this,
-            //         showDelta = this.modDisplaySelect.value === 'delta';
+            linkSelected: function (e) {
+                console.log("Link selected: ", e);
+                // only actors atm
+                var data = e.detail,
+                    _this = this,
+                    showDelta = this.modDisplaySelect.value === 'delta';
 
-            //     if (showDelta) return;
+                if (showDelta) return;
 
-            //     if (!Array.isArray(data)) data = [data];
-            //     var promises = [];
-            //     this.loader.activate();
-            //     data.forEach(function (d) {
+                if (!Array.isArray(data)) data = [data];
+                var promises = [];
+                this.loader.activate();
+                data.forEach(function (d) {
 
-            //         // display level actor
-            //         if (_this.nodeLevel === 'actor') {
-            //             _this.flowMapView.addFlows(d);
-            //         }
-            //         // display level activity or group
-            //         else {
-            //             promises.push(_this.addGroupedActors(d));
-            //         }
-            //     })
+                    // display level actor
+                    if (_this.nodeLevel === 'actor') {
+                        _this.flowMapView.addFlows(d);
+                    }
+                    // display level activity or group
+                    else {
+                        promises.push(_this.addGroupedActors(d));
+                    }
+                })
 
-            //     function render() {
-            //         _this.flowMapView.rerender(true);
-            //         _this.loader.deactivate();
-            //     }
-            //     if (promises.length > 0) {
-            //         Promise.all(promises).then(render)
-            //     } else {
-            //         render();
-            //     }
+                function render() {
+                    _this.flowMapView.rerender(true);
+                    _this.loader.deactivate();
+                }
+                if (promises.length > 0) {
+                    Promise.all(promises).then(render)
+                } else {
+                    render();
+                }
 
-            // },
+            },
 
             // linkDeselected: function (e) {
             //     // only actors atm
@@ -799,6 +801,9 @@ define(['views/common/baseview',
                     case "stackedbarchart":
                         this.renderBarChart(dimensions, flows, true);
                         break;
+                    case "flowmap":
+                        this.renderFlowMap(dimensions, flows);
+                        break;
                     default:
                         // Nothing
                 }
@@ -900,6 +905,24 @@ define(['views/common/baseview',
                 });
             },
 
+            renderFlowMap: function (dimensions, flows) {
+                if (this.flowMapView != null) this.flowMapView.close();
+
+                $(".flowmap-wrapper").fadeIn();
+
+                this.flowMapView = new FlowMapView({
+                    el: ".flowmap-wrapper",
+                    dimensions: dimensions,
+                    flows: flows,
+                    flowsView: this,
+                });
+
+                //this.loader.deactivate();
+                //this.flowMapView.addFlows(flows);
+                //this.flowMapView.rerender(true);
+            },
+
+
             closeAllVizViews: function () {
                 $(".viz-wrapper-div").fadeOut();
                 $(".viz-wrapper-div").html("")
@@ -910,6 +933,7 @@ define(['views/common/baseview',
                 if (this.choroplethView != null) this.choroplethView.close();
                 if (this.coordinatePointMapView != null) this.coordinatePointMapView.close();
                 if (this.areaChartView != null) this.areaChartView.close();
+                if (this.flowMapView != null) this.flowMapView.close();
             },
 
             // Fetch flows and calls options.success(flows) on success
