@@ -1,6 +1,6 @@
 import psycopg2 as pg
 import os
-from django.contrib.gis.geos import GEOSGeometry, LineString, MultiLineString
+from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.gis.geos.error import GEOSException
 
 # Database credentials
@@ -80,7 +80,7 @@ if __name__ == "__main__":
     rcon, rcur = open_connection(ROUTING)
 
     f = open(FILENAME, 'w')
-    f.write('origin;destination;wkt\n')
+    f.write('origin;destination;wkt;seq\n')
 
     base = \
         '''
@@ -273,7 +273,7 @@ if __name__ == "__main__":
             ),
             
             route AS (
-                SELECT ways.the_geom as geom FROM pgr_dijkstra('
+                SELECT id, ways.the_geom as geom FROM pgr_dijkstra('
                     SELECT id,
                            source,
                            target,
@@ -299,16 +299,33 @@ if __name__ == "__main__":
                 union
                 SELECT ST_AsText(geom) as geom FROM destination_proj_distance
             )
-            
-            select st_astext(st_linemerge(st_collect(geom))) as geom
-            from total
             '''.format(orig_wkt=orig_wkt, dest_wkt=dest_wkt)
         if orig_wkt != dest_wkt:
-            wkt = fetch(rcur, query)[0][0]
+            # recover geometry
+            wkt_query = query + \
+            '''
+                select st_astext(st_linemerge(st_collect(geom))) as geom
+                from total
+            '''
+            wkt = fetch(rcur, wkt_query)[0][0]
             geom = validate(wkt)
+
+            # recover sequence
+            seq_query = query + \
+            '''
+                select id
+                from route
+            '''
+            seq = fetch(rcur, seq_query)
+            seq = [str(id[0]) for id in seq][:-1]
+            seq = '@'.join(seq)
+
             if geom:
                 print(geom.geom_type)
-                line = '{};{};{}\n'.format(orig_name, dest_name, wkt)
+                line = '{};{};{};{}\n'.format(orig_name,
+                                              dest_name,
+                                              wkt,
+                                              seq)
                 f.write(line)
 
     # Close connections
