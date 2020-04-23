@@ -3,6 +3,8 @@ from geofluxus.apps.asmfa.models import (Routing)
 from collections import OrderedDict
 from django.db.models import (Q, OuterRef, Subquery, F)
 from django.db import connections
+from django.core.serializers import serialize
+from django.contrib.gis.geos import GEOSGeometry
 
 
 class ImpactViewSet(FilterFlowViewSet):
@@ -39,7 +41,7 @@ class ImpactViewSet(FilterFlowViewSet):
         cursor.execute("SELECT id, ST_AsText(the_geom) from ways")
         for way in cursor.fetchall():
             flow_item = []
-            id, geom = way
+            id, wkt = way
             flow_item.append(('id', id))
             if id in ways:
                 flow_item.append(('amount', ways[id]))
