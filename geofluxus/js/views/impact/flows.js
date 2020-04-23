@@ -65,7 +65,7 @@ define(['views/common/baseview',
                 // Render map for visualizations
                 this.routingMap = new Map({
                     el: this.el.querySelector('.map'),
-                    source: 'light',
+                    source: 'dark',
                     opacity: 1.0
                 });
 
@@ -276,7 +276,6 @@ define(['views/common/baseview',
                         data: data,
                         body: filterParams,
                         success: function (response) {
-
                             _this.flows = flows.models;
 
                             _this.flows.forEach(function (flow, index) {
@@ -284,7 +283,7 @@ define(['views/common/baseview',
                             }, _this.flows);
 
                             // Render network map for visualizations
-                            _this.renderNetworkMap();
+                            _this.renderNetworkMap(_this.flows);
 
                             _this.loader.deactivate();
 
@@ -302,7 +301,7 @@ define(['views/common/baseview',
             },
 
             // Render network map for visualizations
-            renderNetworkMap: function () {
+            renderNetworkMap: function (flows) {
                 var _this = this;
 
                 ways = new Collection([], {
@@ -312,7 +311,7 @@ define(['views/common/baseview',
                 ways.fetch({
                         success: function () {
                             _this.loader.deactivate();
-                            _this.drawNetwork(ways);
+                            _this.drawNetwork(ways, flows);
                         },
                         error: function (res) {
                             _this.loader.deactivate();
@@ -321,7 +320,7 @@ define(['views/common/baseview',
                 });
 
                 this.routingMap.addLayer('ways', {
-                    stroke: 'rgb(0, 0, 0)',
+                    stroke: 'rgb(255, 255, 255)',
                     select: {
                         selectable: true,
                         strokeWidth: 10,
@@ -331,16 +330,66 @@ define(['views/common/baseview',
             },
 
             // Add network layer to map
-            drawNetwork: function(ways) {
+            drawNetwork: function(ways, flows) {
                 var _this = this;
+
+                // process flows to point to amounts
+                var amounts = {}
+                flows.forEach(function(flow) {
+                    var id = flow['id'],
+                        amount = flow['amount'];
+                    amounts[id] = amount;
+                })
+
+                // define color scale for amounts
+                // 5 colors - blue -> red
+                var colors = [
+                    'rgb(0, 0, 255)',
+                    'rgb(0, 255, 255)',
+                    'rgb(0, 255, 0)',
+                    'rgb(255, 255, 0)',
+                    'rgb(255, 0, 0)'
+                ]
+
+                var arr = Object.values(amounts),
+                    min = Math.min(...arr),
+                    max = Math.max(...arr),
+                    step = (max - min) / colors.length,
+                    scale = [];
+
+                for (i = 0; i < colors.length; i++) {
+                    var interval = [ min + i * step,
+                                     min + (i + 1) * step];
+                    scale[i] = { [colors[i]] : interval };
+                }
+
+                function assignColor(amount) {
+                    for (i = 0; i < scale.length; i++) {
+                        for ([color, interval] of Object.entries(scale[i])) {
+                            var min = interval[0],
+                                max = interval[1];
+                        }
+                        if (amount >= min && amount <= max) {
+                            return color;
+                        }
+                    }
+                }
+
+                // add ways to map and load with amounts
                 ways.forEach(function(way) {
-                    var coords = way.get('the_geom').coordinates,
+                    var id = way.get('id'),
+                        coords = way.get('the_geom').coordinates,
                         type = way.get('the_geom').type.toLowerCase();
+                        amount = amounts[id];
+                        color = assignColor(amount);
+                    console.log(color);
                     _this.routingMap.addGeometry(coords, {
                         projection: 'EPSG:4326', layername: 'ways',
                         type: type, renderOSM: false
                     });
                 });
+
+                // focus on ways layer
                 this.routingMap.centerOnLayer('ways');
             },
 
