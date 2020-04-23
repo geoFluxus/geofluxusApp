@@ -100,10 +100,10 @@ define(['underscore',
                     this.flowMap = new FlowMap(this.leafletMap);
 
                     this.leafletMap.addControl(new L.Control.Fullscreen({
-                        position: 'topright'
+                        position: 'topleft'
                     }));
                     this.leafletMap.addControl(new L.easyPrint({
-                        position: 'topright',
+                        position: 'topleft',
                         filename: 'flowmap',
                         exportOnly: true,
                         hideControlContainer: true,
@@ -112,13 +112,13 @@ define(['underscore',
                     this.leafletMap.on("zoomend", this.zoomed);
 
                     var exportControls = L.control({
-                            position: 'topright'
+                            position: 'topleft'
                         }),
                         exportDiv = document.createElement('div'),
                         exportImgBtn = document.createElement('button');
                     exportImgBtn.classList.add('fas', 'fa-camera', 'btn', 'btn-primary', 'inverted');
-                    exportImgBtn.style.height = "30px";
-                    exportImgBtn.style.width = "30px";
+                    exportImgBtn.style.height = "32px";
+                    exportImgBtn.style.width = "32px";
                     exportImgBtn.style.padding = "0px";
                     exportDiv.appendChild(exportImgBtn);
                     exportControls.onAdd = function (map) {

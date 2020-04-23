@@ -334,21 +334,22 @@ textarea.textarea-autosize.form-control-sm {
 
 /* flowmap tooltip */
 
+.d3plus-tooltip,
 .flowMapToolTip {
     border: 1px solid black !important;
     border-radius: 14px !important;
-    padding: 2rem;
     z-index: 99999;
+    min-width: 15rem;
+    max-width: 18rem;
 }
 
 /* d3plus Tooltip */
 
-.d3plus-tooltip {
+/* .d3plus-tooltip {
     border: 1px solid black !important;
     border-radius: 14px !important;
-    padding: 2rem;
     z-index: 99999;
-}
+} */
 
 .d3plus-tooltip-title {
     font-family: 'Montserrat', sans-serif !important;
@@ -398,6 +399,53 @@ textarea.textarea-autosize.form-control-sm {
     margin-bottom: 5px !important;
     font-size: 14px;
     margin: 0px 5px;
+}
+
+
+.leaflet-control {
+    margin-right: 5px !important;
+    margin-top: 5px !important;
+}
+
+.leaflet-control-zoom {
+    
+}
+
+
+.leaflet-control-fullscreen {
+    background: none !important;
+    border: none !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 16px !important;
+}
+
+.leaflet-control-fullscreen a {
+    background-color: #007bff;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px !important;
+    font-size: 14px;
+    color: white !important;
+    background-image: none !important;
+}
+
+.leaflet-control-fullscreen a::before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: white;
+    content: "\f065";
+    font-size: 14px;
+}
+
+.leaflet-control-fullscreen a:hover {
+    background-color: grey !important;
+    border-color: grey !important;
+}
+
+
+.leaflet-control-easyPrint {
+    display: none;
 }
 
 
