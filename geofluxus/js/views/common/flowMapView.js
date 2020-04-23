@@ -81,9 +81,10 @@ define(['underscore',
                     // Center of Netherlands
                     var center = [52.1326, 5.2913];
 
-                    if (this.el._leaflet_id != undefined) {
-                        this.el._leaflet_id = null;
-                    }
+                    // if (this.el._leaflet_id != undefined) {
+                    //     this.el._leaflet_id = null;
+                    // }
+
 
 
                     this.leafletMap = new L.Map(this.el, {
@@ -288,10 +289,10 @@ define(['underscore',
                 toggleLight() {
                     var _this = this;
                     var darkBack = new L.TileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
-                        attribution: '© OpenStreetMap contributors, © CartoDB'
+                        attribution: '© OpenStreetMap, © CartoDB'
                     });
                     var lightBack = new L.TileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
-                        attribution: '© OpenStreetMap contributors, © CartoDB'
+                        attribution: '© OpenStreetMap, © CartoDB'
                     });
                     this.leafletMap.removeLayer(this.backgroundLayer);
                     var checked = _this.lightCheck.checked;
@@ -488,6 +489,14 @@ define(['underscore',
                     if (this.flowMap) {
                         this.flowMap.clear();
                         this.el = "";
+                    }
+
+                    if (this.leafletMap) {
+                        this.leafletMap.eachLayer(function (layer) {
+                            layer.remove();
+                        });
+                        this.leafletMap.remove();
+                        this.leafletMap = null;
                     }
                 },
 
@@ -977,6 +986,7 @@ define(['underscore',
                 },
 
                 close: function () {
+                    this.clear();
                     this.undelegateEvents(); // remove click events
                     this.unbind(); // Unbind all local event bindings
                     $(this.options.el).html(""); //empty the DOM element
