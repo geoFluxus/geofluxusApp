@@ -1,6 +1,7 @@
 // Flows
 define(['views/common/baseview',
         'underscore',
+        'visualizations/map',
         'views/common/filters',
         'collections/collection',
         'utils/utils',
@@ -12,6 +13,7 @@ define(['views/common/baseview',
     function (
         BaseView,
         _,
+        Map,
         FiltersView,
         Collection,
         utils,
@@ -32,6 +34,7 @@ define(['views/common/baseview',
                     apiTag: 'arealevels',
                     comparator: "level",
                 });
+
                 var promises = [
                     this.areaLevels.fetch(),
                 ];
@@ -58,6 +61,13 @@ define(['views/common/baseview',
 
                 // Render flow filters
                 this.renderFiltersView();
+
+                // Render map for visualizations
+                this.routingMap = new Map({
+                    el: this.el.querySelector('.map'),
+                    source: 'light',
+                    opacity: 1.0
+                });
 
                 this.initializeControls();
                 this.addEventListeners();
@@ -273,6 +283,9 @@ define(['views/common/baseview',
                                 this[index] = flow.attributes;
                             }, _this.flows);
 
+                            // Render network map for visualizations
+                            _this.renderNetworkMap();
+
                             _this.loader.deactivate();
 
                             if (options.success) {
@@ -286,6 +299,49 @@ define(['views/common/baseview',
                         }
                     });
                 }
+            },
+
+            // Render network map for visualizations
+            renderNetworkMap: function () {
+                var _this = this;
+
+                ways = new Collection([], {
+                    apiTag: 'ways',
+                });
+                this.loader.activate();
+                ways.fetch({
+                        success: function () {
+                            _this.loader.deactivate();
+                            _this.drawNetwork(ways);
+                        },
+                        error: function (res) {
+                            _this.loader.deactivate();
+                            _this.onError(res);
+                        }
+                });
+
+                this.routingMap.addLayer('ways', {
+                    stroke: 'rgb(0, 0, 0)',
+                    select: {
+                        selectable: true,
+                        strokeWidth: 10,
+                        stroke: 'rgb(0, 255, 0)'
+                    }
+                });
+            },
+
+            // Add network layer to map
+            drawNetwork: function(ways) {
+                var _this = this;
+                ways.forEach(function(way) {
+                    var coords = way.get('the_geom').coordinates,
+                        type = way.get('the_geom').type.toLowerCase();
+                    _this.routingMap.addGeometry(coords, {
+                        projection: 'EPSG:4326', layername: 'ways',
+                        type: type, renderOSM: false
+                    });
+                });
+                this.routingMap.centerOnLayer('ways');
             },
 
             resetDimAndVizToDefault: function () {

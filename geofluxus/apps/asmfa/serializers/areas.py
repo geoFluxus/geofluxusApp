@@ -3,7 +3,7 @@ from rest_framework.serializers import (HyperlinkedModelSerializer,
 from geofluxus.apps.asmfa.models import (AdminLevel,
                                          Area)
 from rest_framework_gis.serializers import (GeometryField)
-from rest_framework.relations import  HyperlinkedIdentityField
+from rest_framework.relations import HyperlinkedIdentityField
 
 
 # AdminLevel

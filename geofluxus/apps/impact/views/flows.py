@@ -1,10 +1,8 @@
 from geofluxus.apps.asmfa.views import FilterFlowViewSet
-from geofluxus.apps.asmfa.models import (Routing)
+from geofluxus.apps.asmfa.models import (Routing, Ways)
 from collections import OrderedDict
 from django.db.models import (Q, OuterRef, Subquery, F)
 from django.db import connections
-from django.core.serializers import serialize
-from django.contrib.gis.geos import GEOSGeometry
 
 
 class ImpactViewSet(FilterFlowViewSet):
