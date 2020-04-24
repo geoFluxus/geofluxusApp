@@ -401,6 +401,9 @@ textarea.textarea-autosize.form-control-sm {
     margin: 0px 5px;
 }
 
+.leaflet-control div label {
+    color: black;
+}
 
 .leaflet-control {
     margin-right: 5px !important;
@@ -408,16 +411,43 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .leaflet-control-zoom {
-    
+    top: 80px !important;
 }
 
+.leaflet-control-fullscreen a {
+    width: 32px !important;
+    height: 32px !important;
+}
 
-.leaflet-control-fullscreen {
+.leaflet-control-fullscreen,
+.leaflet-control-export {
+    position: absolute;
+    right: 8px;
+    border: none !important;
+    border-width: 0px;
     background: none !important;
     border: none !important;
     width: 32px !important;
     height: 32px !important;
     border-radius: 16px !important;
+}
+
+.leaflet-control-export {
+    top: 34px;
+}
+
+.leaflet-control-export button::before {
+    right: 0.5px;
+    position: relative;
+}
+.leaflet-control-fullscreen a::before {
+        position: relative;
+        top: 1.5px;
+}
+
+.leaflet-control-export button::before {
+    right: 0.5px;
+    position: relative;
 }
 
 .leaflet-control-fullscreen a {

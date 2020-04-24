@@ -108,6 +108,8 @@ define(['underscore',
                         }),
                         exportDiv = document.createElement('div'),
                         exportImgBtn = document.createElement('button');
+
+                    exportDiv.classList.add("leaflet-control-export");
                     exportImgBtn.classList.add('fas', 'fa-camera', 'btn', 'btn-primary', 'inverted');
                     exportImgBtn.style.height = "32px";
                     exportImgBtn.style.width = "32px";
@@ -440,7 +442,6 @@ define(['underscore',
 
                     var data = _this.transformToLinksAndNodes(_this.flows);
 
-
                     if (_this.displayWarnings && data.warnings.length > 0) {
                         var msg = '';
                         data.warnings.forEach(function (warning) {
@@ -582,52 +583,38 @@ define(['underscore',
                     let description = '<br><b>' + dimensionText + ':</b> ';
 
                     return {
+                        dimensionValue: dimensionValue,
                         toolTipText: fromToText + description + dimensionValue + amountText,
                         color: utils.colorByName(dimensionValue),
                     }
 
                 },
 
-                transformToLinksAndNodes: function (flows, options) {
+                transformToLinksAndNodes: function (flows) {
                     var _this = this,
-                        options = options || {},
                         nodes = [],
                         links = [];
 
-
-                    // * Nodes:
-                    // * @param {object} nodesData
-                    // * @param {string} nodesData.name - Label for the tooltips
-                    // * @param {number} nodesData.lon - Longitude (first part of coordinates)
-                    // * @param {number} nodesData.lat - Latitude (second part of coordinates)
-                    // * @param {string} nodesData.label - Label for the tooltips
-                    // * @param {number} nodesData.style - Style ID for the color
-                    // * @param {number} nodesData.level - Level to use for the radius
-                    // *
-                    // * Flows:
-                    // * @param {object} flowsData
-                    // * @param {string} flowsData.id - ID for each flow
-                    // * @param {number} flowsData.source - flow origin needs id that is connected to coordinates of the Data for the nodes
-                    // * @param {number} flowsData.target - flow destination needs id that is connected to coordinates of the Data for the nodes
-                    // * @param {number} flowsData.value - value for the widths (for seperated flows)
-                    // * @param {number} flowsData.valueTotal -   total value for the widths
-                    // * @param {string} flowsData.label - Label for the tooltips (for seperated flows)
-                    // * @param {string} flowsData.labelTotal - Label for the tooltips
-                    // * @param {number} flowsData.style - Style ID for the color
-                    // *
-                    // * Styles:
-                    // * @param{object} styles
-                    // * @param{hex} styles.nodeColor - color for the nodes
-                    // * @param{number} styles.radius - radius for the node
-                    // * @param{hex} styles.color - color for the flows
-
                     flows.forEach(function (flow, index) {
-
-                        // Add the origin and destination to Nodes:
-                        nodes.push(flow.origin, flow.destination)
-
+                        let originNode = flow.origin;
+                        let destinationNode = flow.destination
                         let link = flow;
+                        let linkInfo = _this.returnLinkInfo(this[index]);
 
+                        // NODES
+                        // Add the origin and destination to Nodes, and include amounts:
+                        // originNode.value = flow.amount;
+                        // destinationNode.value = flow.amount;
+                        
+                        originNode.label = linkInfo.dimensionValue;
+                        destinationNode.label = linkInfo.dimensionValue;
+
+                        originNode.color = linkInfo.color;
+                        destinationNode.color = linkInfo.color;
+
+                        nodes.push(originNode, destinationNode)
+
+                        // LINKS
                         link.source = this[index].origin.id;
                         link.target = this[index].destination.id;
                         link.value = this[index].amount;
@@ -635,15 +622,13 @@ define(['underscore',
                         //     nodeColor: utils.colorByName(this[index].origin.name),
                         //     color: utils.colorByName(this[index].id),
                         // };
-                        link.color = _this.returnLinkInfo(this[index]).color;
-                        link.label = _this.returnLinkInfo(this[index]).toolTipText;
 
-                        // Add link:
+                        link.color = linkInfo.color;
+                        link.label = linkInfo.toolTipText;
+
                         links.push(link)
 
-
                     }, flows);
-
 
 
                     nodes.forEach(function (node, index) {
@@ -653,16 +638,10 @@ define(['underscore',
                     }, nodes);
 
 
-
-                    // Remove all duplicates nodes:
-                    //nodes = _.uniq(nodes, 'id');
-
-
                     console.log("Links:");
                     console.log(links);
                     console.log("Nodes:");
                     console.log(nodes);
-                    // console.log(Object.values(nodes));
 
                     return {
                         flows: links,
@@ -677,301 +656,301 @@ define(['underscore',
                  * options.splitByComposition - split flows by their compositions (aka materials) into seperate flows
                  * options.clusters - array of objects with keys "lat", "lon" (location) and "ids" (array of actor ids that belong to that cluster)
                  */
-                transformData: function (flows, options) {
+                // transformData: function (flows, options) {
 
-                    var _this = this,
-                        options = options || {},
-                        nodes = {},
-                        links = [],
-                        clusters = options.clusters || [],
-                        splitByComposition = options.splitByComposition,
-                        clusterMap = {},
-                        pFlows = [],
-                        warnings = [],
-                        maxStock = 0;
+                //     var _this = this,
+                //         options = options || {},
+                //         nodes = {},
+                //         links = [],
+                //         clusters = options.clusters || [],
+                //         splitByComposition = options.splitByComposition,
+                //         clusterMap = {},
+                //         pFlows = [],
+                //         warnings = [],
+                //         maxStock = 0;
 
-                    var i = 0;
+                //     var i = 0;
 
-                    // clusters.forEach(function (cluster) {
-                    //     var nNodes = cluster.ids.length,
-                    //         clusterId = 'cluster' + i,
-                    //         label = cluster.label + ' (' + nNodes + ' ' + 'actors' + ')';
-                    //     var clusterNode = {
-                    //         id: clusterId,
-                    //         name: label,
-                    //         label: label,
-                    //         color: cluster.color,
-                    //         opacity: 0.8,
-                    //         lon: cluster.lon,
-                    //         lat: cluster.lat,
-                    //         radius: Math.min(25, 10 + nNodes / 3),
-                    //         innerLabel: nNodes,
-                    //         cluster: cluster,
-                    //         tag: 'actor'
-                    //     }
-                    //     nodes[clusterId] = clusterNode;
-                    //     i++;
-                    //     cluster.ids.forEach(function (id) {
-                    //         clusterMap[id] = clusterId;
-                    //     })
-                    // })
+                //     // clusters.forEach(function (cluster) {
+                //     //     var nNodes = cluster.ids.length,
+                //     //         clusterId = 'cluster' + i,
+                //     //         label = cluster.label + ' (' + nNodes + ' ' + 'actors' + ')';
+                //     //     var clusterNode = {
+                //     //         id: clusterId,
+                //     //         name: label,
+                //     //         label: label,
+                //     //         color: cluster.color,
+                //     //         opacity: 0.8,
+                //     //         lon: cluster.lon,
+                //     //         lat: cluster.lat,
+                //     //         radius: Math.min(25, 10 + nNodes / 3),
+                //     //         innerLabel: nNodes,
+                //     //         cluster: cluster,
+                //     //         tag: 'actor'
+                //     //     }
+                //     //     nodes[clusterId] = clusterNode;
+                //     //     i++;
+                //     //     cluster.ids.forEach(function (id) {
+                //     //         clusterMap[id] = clusterId;
+                //     //     })
+                //     // })
 
-                    function transformNode(node) {
-                        var id = node.id,
-                            clusterId = clusterMap[id];
+                //     function transformNode(node) {
+                //         var id = node.id,
+                //             clusterId = clusterMap[id];
 
-                        // node is clustered, take cluster as origin resp. destination
-                        if (clusterId != null) return nodes[clusterId];
+                //         // node is clustered, take cluster as origin resp. destination
+                //         if (clusterId != null) return nodes[clusterId];
 
-                        // already transformed
-                        var transNode = nodes[id];
-                        if (transNode) return transNode;
+                //         // already transformed
+                //         var transNode = nodes[id];
+                //         if (transNode) return transNode;
 
-                        var name = node.name,
-                            level = node.level;
-                        code = node.code || node.nace || node.activity_nace;
+                //         var name = node.name,
+                //             level = node.level;
+                //         code = node.code || node.nace || node.activity_nace;
 
-                        if ((_this.anonymize) && (level === 'actor'))
-                            name = 'Actor';
-                        name += ' (' + code + ')';
+                //         if ((_this.anonymize) && (level === 'actor'))
+                //             name = 'Actor';
+                //         name += ' (' + code + ')';
 
-                        if (!node.geom) {
-                            var warning = 'Actor referenced by flow, but missing a location: ' + name;
-                            warnings.push(warning);
-                            return;
-                        }
-                        var coords = node.geom.coordinates;
-                        transNode = {
-                            id: id,
-                            name: name,
-                            label: name,
-                            color: node.color,
-                            opacity: 0.8,
-                            group: node.group,
-                            lon: coords[0].toFixed(4),
-                            lat: coords[1].toFixed(4),
-                            radius: 5,
-                            tag: 'actor'
-                        }
-                        nodes[id] = transNode;
-                        return transNode;
-                    }
+                //         if (!node.geom) {
+                //             var warning = 'Actor referenced by flow, but missing a location: ' + name;
+                //             warnings.push(warning);
+                //             return;
+                //         }
+                //         var coords = node.geom.coordinates;
+                //         transNode = {
+                //             id: id,
+                //             name: name,
+                //             label: name,
+                //             color: node.color,
+                //             opacity: 0.8,
+                //             group: node.group,
+                //             lon: coords[0].toFixed(4),
+                //             lat: coords[1].toFixed(4),
+                //             radius: 5,
+                //             tag: 'actor'
+                //         }
+                //         nodes[id] = transNode;
+                //         return transNode;
+                //     }
 
-                    var aggMap = {};
+                //     var aggMap = {};
 
-                    function aggregate(flow, source, target) {
-                        var key = flow.get('waste') + source.id,
-                            is_stock = flow.get('stock');
-                        if (!is_stock) key += '-' + target.id;
-                        var mapped = aggMap[key];
-                        // not mapped yet -> create mapped flow
-                        if (!mapped) {
-                            mapped = {
-                                id: key,
-                                source: source,
-                                target: target,
-                                waste: flow.get('waste'),
-                                amount: 1000,
-                                fractions: {},
-                                is_stock: is_stock
-                            }
-                            fractions = mapped.fractions;
-                            flow.get('materials').forEach(function (material) {
-                                fractions[material.material] = Object.assign({}, material);
-                            })
-                            aggMap[key] = mapped;
-                            pFlows.push(mapped);
-                        }
-                        // mapped -> add to mapped flow
-                        else {
-                            fractions = mapped.fractions;
-                            flow.get('materials').forEach(function (material) {
-                                var mat = fractions[material.material];
-                                if (!mat) {
-                                    mat = Object.assign({}, material);
-                                    fractions[material.material] = mat;
-                                } else {
-                                    mat.amount += material.amount;
-                                }
-                            })
-                            mapped.amount += flow.get('amount');
-                        }
-                    }
-                    i = 0;
-                    // add the flows that don't have to be aggregated, because origin and destination are not clustered
-                    flows.forEach(function (flow) {
-                        var origin = flow.origin;
-                        var destination = flow.destination;
-                        var amount = flow.amount;
+                //     function aggregate(flow, source, target) {
+                //         var key = flow.get('waste') + source.id,
+                //             is_stock = flow.get('stock');
+                //         if (!is_stock) key += '-' + target.id;
+                //         var mapped = aggMap[key];
+                //         // not mapped yet -> create mapped flow
+                //         if (!mapped) {
+                //             mapped = {
+                //                 id: key,
+                //                 source: source,
+                //                 target: target,
+                //                 waste: flow.get('waste'),
+                //                 amount: 1000,
+                //                 fractions: {},
+                //                 is_stock: is_stock
+                //             }
+                //             fractions = mapped.fractions;
+                //             flow.get('materials').forEach(function (material) {
+                //                 fractions[material.material] = Object.assign({}, material);
+                //             })
+                //             aggMap[key] = mapped;
+                //             pFlows.push(mapped);
+                //         }
+                //         // mapped -> add to mapped flow
+                //         else {
+                //             fractions = mapped.fractions;
+                //             flow.get('materials').forEach(function (material) {
+                //                 var mat = fractions[material.material];
+                //                 if (!mat) {
+                //                     mat = Object.assign({}, material);
+                //                     fractions[material.material] = mat;
+                //                 } else {
+                //                     mat.amount += material.amount;
+                //                 }
+                //             })
+                //             mapped.amount += flow.get('amount');
+                //         }
+                //     }
+                //     i = 0;
+                //     // add the flows that don't have to be aggregated, because origin and destination are not clustered
+                //     flows.forEach(function (flow) {
+                //         var origin = flow.origin;
+                //         var destination = flow.destination;
+                //         var amount = flow.amount;
 
-                        origin.color = utils.colorByName(origin.name);
-                        destination.color = utils.colorByName(destination.name);
-
-
-                        var source = transformNode(origin);
-                        var target = transformNode(destination);
-                        // var source = transformNode(origin),
-                        //     target = (!is_stock) ? transformNode(destination) : source; // set target to source in case of stocks just for convenience, doesn't matter
+                //         origin.color = utils.colorByName(origin.name);
+                //         destination.color = utils.colorByName(destination.name);
 
 
-                        // one node might have no geom (in case of stocks same node) -> cannot shown on map
-                        if (!source || !target) return;
-
-                        // one node is clustered (in case of stocks same node) -> aggregate
-                        if (source.cluster || target.cluster) {
-                            aggregate(flow, source, target);
-                        } else {
-                            pFlows.push({
-                                id: flow.id || i,
-                                source: source,
-                                target: target,
-                                amount: amount,
-                                color: flow.color,
-                                //fractions: flow.get('materials'),
-                                //waste: flow.get('waste'),
-                                //process: flow.get('process'),
-                                description: flow.get('description')
-                            });
-                        }
-                        i += 1;
-                    })
-
-                    var maxClusterStock = 0;
-                    // posproc the aggregation (just dict to list)
-                    Object.values(aggMap).forEach(function (flow) {
-                        flow.fractions = Object.values(flow.fractions);
-                        if (flow.is_stock)
-                            maxClusterStock = Math.max(maxClusterStock, flow.amount)
-                    })
-
-                    function transformFlow(pFlow) {
-                        var source = pFlow.source,
-                            target = pFlow.target,
-                            fractions = pFlow.fractions,
-                            description = pFlow.description;
-
-                        var descText = '<br><b>Description:</b> ';
-                        description.forEach(function (d) {
-                            descText += d + ', ';
-                        })
-                        descText = descText.substring(0, descText.length - 2);
-
-                        var //wasteLabel = (pFlow.waste) ? gettext('Waste') : gettext('Product'),
-                            //processLabel = gettext('Process') + ': ' + (pFlow.process || '-'),
-                            totalAmount = pFlow.amount,
-                            flowLabel = source.name + '&#10132; ' + target.name + '<br>' + descText;
-
-                        // if (splitByComposition) {
-                        //     var cl = [];
-                        //     fractions.forEach(function (material) {
-                        //         var amount = Math.round(material.amount),
-                        //             label = flowLabel + '<br><b>Material: </b>' + material.name +
-                        //             '<br><b>Amount: </b>' + _this.format(amount) + ' t/year',
-                        //             color;
-                        //         if (!uniqueMaterials[material.material]) {
-                        //             color = utils.colorByName(material.name)
-                        //             uniqueMaterials[material.material] = {
-                        //                 color: color,
-                        //                 name: material.name
-                        //             };
-                        //         } else
-                        //             color = uniqueMaterials[material.material].color;
-                        //         cl.push({
-                        //             id: pFlow.id,
-                        //             label: label,
-                        //             source: source.id,
-                        //             target: target.id,
-                        //             value: Math.abs(amount),
-                        //             material: material.material,
-                        //             tag: material.material,
-                        //             color: color
-                        //         })
-                        //     })
-                        //     return cl;
-                        // } else {
-                        var label = flowLabel + '<br><b>Amount: </b>' + _this.format(totalAmount) + ' t/year';
-                        return [{
-                            id: pFlow.id,
-                            label: label,
-                            source: source.id,
-                            target: target.id,
-                            color: pFlow.color || source.color,
-                            value: Math.abs(totalAmount)
-                        }]
-                        //}
-                    }
-
-                    // function transformStock(pFlow) {
-                    //     var source = pFlow.source,
-                    //         fractions = pFlow.fractions;
-
-                    //     var wasteLabel = (pFlow.waste) ? 'Waste' : 'Product',
-                    //         totalAmount = Math.round(pFlow.amount),
-                    //         stockLabel = source.name + '<br>' + wasteLabel + ' ' + 'Stock';
-                    //     if (splitByComposition) {
-                    //         var cs = [];
-                    //         fractions.forEach(function (material) {
-                    //             var amount = Math.round(material.amount),
-                    //                 label = stockLabel + '<br><b>Material: </b>' + material.name + '<br><b>Amount: </b>' + _this.format(amount) + ' t/year',
-                    //                 color;
-                    //             if (!uniqueMaterials[material.material]) {
-                    //                 color = utils.colorByName(material.name)
-                    //                 uniqueMaterials[material.material] = {
-                    //                     color: color,
-                    //                     name: material.name
-                    //                 };
-                    //             } else
-                    //                 color = uniqueMaterials[material.material].color;
-                    //             cs.push({
-                    //                 id: 'stock' + pFlow.id,
-                    //                 label: label,
-                    //                 color: color,
-                    //                 lon: source.lon,
-                    //                 lat: source.lat,
-                    //                 //radius: radius,
-                    //                 value: Math.abs(amount),
-                    //                 tag: material.material
-                    //             })
-                    //         })
-                    //         return cs;
-                    //     } else {
-                    //         var label = stockLabel + '<br><b>Amount: </b>' + _this.format(totalAmount) + ' t/year';
-                    //         var stock = [{
-                    //             id: 'stock' + pFlow.id,
-                    //             label: label,
-                    //             color: source.color,
-                    //             group: source.group,
-                    //             lon: source.lon,
-                    //             lat: source.lat,
-                    //             opacity: 0.8,
-                    //             //radius: radius,
-                    //             value: Math.abs(totalAmount),
-                    //             tag: 'stock'
-                    //         }]
-                    //         return stock;
-                    //     }
-                    // }
-
-                    // var stocks = [];
-
-                    // var uniqueMaterials = {};
-                    // pFlows.forEach(function (pFlow) {
-                    //     if (pFlow.amount == 0) return;
-                    //     if (!pFlow.is_stock)
-                    //         links = links.concat(transformFlow(pFlow));
-                    //     else
-                    //         stocks = stocks.concat(transformStock(pFlow));
-                    // })
+                //         var source = transformNode(origin);
+                //         var target = transformNode(destination);
+                //         // var source = transformNode(origin),
+                //         //     target = (!is_stock) ? transformNode(destination) : source; // set target to source in case of stocks just for convenience, doesn't matter
 
 
-                    return {
-                        flows: links,
-                        nodes: Object.values(nodes),
-                        //stocks: stocks,
-                        //materials: uniqueMaterials,
-                        //warnings: warnings
-                    }
-                },
+                //         // one node might have no geom (in case of stocks same node) -> cannot shown on map
+                //         if (!source || !target) return;
+
+                //         // one node is clustered (in case of stocks same node) -> aggregate
+                //         if (source.cluster || target.cluster) {
+                //             aggregate(flow, source, target);
+                //         } else {
+                //             pFlows.push({
+                //                 id: flow.id || i,
+                //                 source: source,
+                //                 target: target,
+                //                 amount: amount,
+                //                 color: flow.color,
+                //                 //fractions: flow.get('materials'),
+                //                 //waste: flow.get('waste'),
+                //                 //process: flow.get('process'),
+                //                 description: flow.get('description')
+                //             });
+                //         }
+                //         i += 1;
+                //     })
+
+                //     var maxClusterStock = 0;
+                //     // posproc the aggregation (just dict to list)
+                //     Object.values(aggMap).forEach(function (flow) {
+                //         flow.fractions = Object.values(flow.fractions);
+                //         if (flow.is_stock)
+                //             maxClusterStock = Math.max(maxClusterStock, flow.amount)
+                //     })
+
+                //     function transformFlow(pFlow) {
+                //         var source = pFlow.source,
+                //             target = pFlow.target,
+                //             fractions = pFlow.fractions,
+                //             description = pFlow.description;
+
+                //         var descText = '<br><b>Description:</b> ';
+                //         description.forEach(function (d) {
+                //             descText += d + ', ';
+                //         })
+                //         descText = descText.substring(0, descText.length - 2);
+
+                //         var //wasteLabel = (pFlow.waste) ? gettext('Waste') : gettext('Product'),
+                //             //processLabel = gettext('Process') + ': ' + (pFlow.process || '-'),
+                //             totalAmount = pFlow.amount,
+                //             flowLabel = source.name + '&#10132; ' + target.name + '<br>' + descText;
+
+                //         // if (splitByComposition) {
+                //         //     var cl = [];
+                //         //     fractions.forEach(function (material) {
+                //         //         var amount = Math.round(material.amount),
+                //         //             label = flowLabel + '<br><b>Material: </b>' + material.name +
+                //         //             '<br><b>Amount: </b>' + _this.format(amount) + ' t/year',
+                //         //             color;
+                //         //         if (!uniqueMaterials[material.material]) {
+                //         //             color = utils.colorByName(material.name)
+                //         //             uniqueMaterials[material.material] = {
+                //         //                 color: color,
+                //         //                 name: material.name
+                //         //             };
+                //         //         } else
+                //         //             color = uniqueMaterials[material.material].color;
+                //         //         cl.push({
+                //         //             id: pFlow.id,
+                //         //             label: label,
+                //         //             source: source.id,
+                //         //             target: target.id,
+                //         //             value: Math.abs(amount),
+                //         //             material: material.material,
+                //         //             tag: material.material,
+                //         //             color: color
+                //         //         })
+                //         //     })
+                //         //     return cl;
+                //         // } else {
+                //         var label = flowLabel + '<br><b>Amount: </b>' + _this.format(totalAmount) + ' t/year';
+                //         return [{
+                //             id: pFlow.id,
+                //             label: label,
+                //             source: source.id,
+                //             target: target.id,
+                //             color: pFlow.color || source.color,
+                //             value: Math.abs(totalAmount)
+                //         }]
+                //         //}
+                //     }
+
+                //     // function transformStock(pFlow) {
+                //     //     var source = pFlow.source,
+                //     //         fractions = pFlow.fractions;
+
+                //     //     var wasteLabel = (pFlow.waste) ? 'Waste' : 'Product',
+                //     //         totalAmount = Math.round(pFlow.amount),
+                //     //         stockLabel = source.name + '<br>' + wasteLabel + ' ' + 'Stock';
+                //     //     if (splitByComposition) {
+                //     //         var cs = [];
+                //     //         fractions.forEach(function (material) {
+                //     //             var amount = Math.round(material.amount),
+                //     //                 label = stockLabel + '<br><b>Material: </b>' + material.name + '<br><b>Amount: </b>' + _this.format(amount) + ' t/year',
+                //     //                 color;
+                //     //             if (!uniqueMaterials[material.material]) {
+                //     //                 color = utils.colorByName(material.name)
+                //     //                 uniqueMaterials[material.material] = {
+                //     //                     color: color,
+                //     //                     name: material.name
+                //     //                 };
+                //     //             } else
+                //     //                 color = uniqueMaterials[material.material].color;
+                //     //             cs.push({
+                //     //                 id: 'stock' + pFlow.id,
+                //     //                 label: label,
+                //     //                 color: color,
+                //     //                 lon: source.lon,
+                //     //                 lat: source.lat,
+                //     //                 //radius: radius,
+                //     //                 value: Math.abs(amount),
+                //     //                 tag: material.material
+                //     //             })
+                //     //         })
+                //     //         return cs;
+                //     //     } else {
+                //     //         var label = stockLabel + '<br><b>Amount: </b>' + _this.format(totalAmount) + ' t/year';
+                //     //         var stock = [{
+                //     //             id: 'stock' + pFlow.id,
+                //     //             label: label,
+                //     //             color: source.color,
+                //     //             group: source.group,
+                //     //             lon: source.lon,
+                //     //             lat: source.lat,
+                //     //             opacity: 0.8,
+                //     //             //radius: radius,
+                //     //             value: Math.abs(totalAmount),
+                //     //             tag: 'stock'
+                //     //         }]
+                //     //         return stock;
+                //     //     }
+                //     // }
+
+                //     // var stocks = [];
+
+                //     // var uniqueMaterials = {};
+                //     // pFlows.forEach(function (pFlow) {
+                //     //     if (pFlow.amount == 0) return;
+                //     //     if (!pFlow.is_stock)
+                //     //         links = links.concat(transformFlow(pFlow));
+                //     //     else
+                //     //         stocks = stocks.concat(transformStock(pFlow));
+                //     // })
+
+
+                //     return {
+                //         flows: links,
+                //         nodes: Object.values(nodes),
+                //         //stocks: stocks,
+                //         //materials: uniqueMaterials,
+                //         //warnings: warnings
+                //     }
+                // },
 
                 close: function () {
                     this.clear();
