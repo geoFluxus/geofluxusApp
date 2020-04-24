@@ -76,16 +76,8 @@ define(['underscore',
                         attribution: '© OpenStreetMap, © CartoDB'
                     });
 
-                    // Old center
-                    //var center = [52.51, 13.36];
                     // Center of Netherlands
                     var center = [52.1326, 5.2913];
-
-                    // if (this.el._leaflet_id != undefined) {
-                    //     this.el._leaflet_id = null;
-                    // }
-
-
 
                     this.leafletMap = new L.Map(this.el, {
                             center: center,
@@ -151,8 +143,8 @@ define(['underscore',
                         lightLabel = document.createElement('label'),
                         _this = this;
 
-                    aniLabel.innerHTML = 'Animate flows';
-                    actorLabel.innerHTML = 'Show actors';
+                    aniLabel.innerHTML = 'Animate';
+                    actorLabel.innerHTML = 'Actors';
                     flowLabel.innerHTML = 'Show flows';
                     lightLabel.innerHTML = 'Light/dark';
 
@@ -431,9 +423,9 @@ define(['underscore',
                     this.flowMap.showNodes = true;
                     this.flowMap.showFlows = true;
 
-                    //this.flowMap.showNodes = (this.actorCheck.checked) ? true : false;
-                    //this.flowMap.showFlows = (this.flowCheck.checked) ? true : false;
-                    //this.flowMap.dottedLines = (this.aniDotsRadio.checked) ? true : false;
+                    this.flowMap.showNodes = (this.actorCheck.checked) ? true : false;
+                    this.flowMap.showFlows = (this.flowCheck.checked) ? true : false;
+                    this.flowMap.dottedLines = (this.aniDotsRadio.checked) ? true : false;
                     //this.updateLegend();
                     this.flowMap.toggleTag('actor', this.actorCheck.checked);
 
@@ -645,10 +637,6 @@ define(['underscore',
                         // };
                         link.color = _this.returnLinkInfo(this[index]).color;
                         link.label = _this.returnLinkInfo(this[index]).toolTipText;
-
-                        delete link.amount;
-                        delete link.destination;
-                        delete link.origin;
 
                         // Add link:
                         links.push(link)
