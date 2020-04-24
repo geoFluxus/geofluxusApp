@@ -166,9 +166,15 @@ label[for="activity-select"] {
     font-size: 1.1em;
 }
 
-.dimensionToggle[disabled]+.toggle-group label {
+.bootstrapToggle[disabled]+.toggle-group label {
     color: rgb(63, 62, 62);
+    /* border-color: rgb(107, 107, 107) !important; */
+    border-color: red !important;
+}
 
+.bootstrapToggle[disabled]+.toggle-group label:hover {
+    color: rgb(63, 62, 62);
+    background: black !important;
 }
 
 .viz-selector-button {
@@ -440,9 +446,10 @@ textarea.textarea-autosize.form-control-sm {
     right: 0.5px;
     position: relative;
 }
+
 .leaflet-control-fullscreen a::before {
-        position: relative;
-        top: 1.5px;
+    position: relative;
+    top: 1.5px;
 }
 
 .leaflet-control-export button::before {
@@ -478,6 +485,34 @@ textarea.textarea-autosize.form-control-sm {
     display: none;
 }
 
+.leaflet-control-custom-controls {
+    margin: 0px !important;
+    border-top-right-radius: 16px;
+    top: 10px;
+}
+
+.aniToggleDiv {
+    position: relative;
+    left: -5px;
+}
+
+.flowmap-anim-radio-label {
+    display: block;
+    position: relative;
+    right: -10px;
+}
+
+.flowmap-anim-radio-label input {
+    float: left;
+    position: relative;
+    left: -10px;
+}
+
+
+.leaflet-control-attribution {
+    margin-right: 0px !important;
+    padding-right: 10px;
+}
 
 /* .d3plus-zoom-controls */
 .d3plus-zoom-control {

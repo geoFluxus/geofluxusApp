@@ -91,9 +91,14 @@ define(['underscore',
 
                     this.flowMap = new FlowMap(this.leafletMap);
 
+                    // //////////////////////
+                    // Fullscreen button
                     this.leafletMap.addControl(new L.Control.Fullscreen({
                         position: 'topleft'
                     }));
+
+                    // //////////////////////
+                    // Export PNG button
                     this.leafletMap.addControl(new L.easyPrint({
                         position: 'topleft',
                         filename: 'flowmap',
@@ -128,6 +133,8 @@ define(['underscore',
                         easyprintCsBtn.click();
                     })
 
+                    // //////////////////////
+                    // Custom controls
                     var customControls = L.control({
                         position: 'bottomleft'
                     });
@@ -145,10 +152,11 @@ define(['underscore',
                         lightLabel = document.createElement('label'),
                         _this = this;
 
+                    div.classList.add("leaflet-control-custom-controls");
                     aniLabel.innerHTML = 'Animate';
                     actorLabel.innerHTML = 'Actors';
-                    flowLabel.innerHTML = 'Show flows';
-                    lightLabel.innerHTML = 'Light/dark';
+                    flowLabel.innerHTML = 'Flows';
+                    lightLabel.innerHTML = 'Light / Dark';
 
                     [
                         this.animationCheck, this.actorCheck,
@@ -188,6 +196,9 @@ define(['underscore',
                     var aniLinesLabel = document.createElement('label'),
                         aniDotsLabel = document.createElement('label');
 
+                    aniLinesLabel.classList.add("flowmap-anim-radio-label");
+                    aniDotsLabel.classList.add("flowmap-anim-radio-label");
+
                     this.aniLinesRadio = document.createElement('input');
                     this.aniDotsRadio = document.createElement('input');
                     this.aniLinesRadio.type = 'radio';
@@ -199,19 +210,21 @@ define(['underscore',
                     this.aniDotsRadio.style.transform = 'scale(1.5)';
                     this.aniDotsRadio.style.marginLeft = '5px';
 
-                    this.aniDotsRadio.checked = true;
+                    this.aniLinesRadio.checked = true;
 
-                    aniCheckWrap.style.float = 'left';
-                    aniCheckWrap.style.marginRight = '5px';
-                    aniToggleDiv.style.float = 'left';
-                    aniLinesLabel.style.marginRight = '3px';
+                    // aniCheckWrap.style.float = 'left';
+                    // aniCheckWrap.style.marginRight = '5px';
+                    // aniToggleDiv.style.float = 'left';
+                    // aniLinesLabel.style.marginRight = '3px';
 
-                    aniLinesLabel.innerHTML = 'lines only';
-                    aniDotsLabel.innerHTML = 'dotted';
+                    aniLinesLabel.innerHTML = '<span>Lines</span>';
+                    aniDotsLabel.innerHTML = '<span>Dots</span>';
                     aniLinesLabel.appendChild(this.aniLinesRadio);
                     aniDotsLabel.appendChild(this.aniDotsRadio);
                     aniToggleDiv.appendChild(aniLinesLabel);
                     aniToggleDiv.appendChild(aniDotsLabel);
+
+                    aniToggleDiv.classList.add("aniToggleDiv");
 
                     customControls.onAdd = function (map) {
                         return div;
@@ -251,9 +264,7 @@ define(['underscore',
                     div.appendChild(lightDiv);
                     div.appendChild(document.createElement('br'));
                     div.appendChild(aniDiv);
-                    div.appendChild(document.createElement('br'));
                     div.appendChild(aniToggleDiv);
-                    div.appendChild(document.createElement('br'));
 
                     var legendControl = L.control({
                         position: 'bottomright'
@@ -605,7 +616,7 @@ define(['underscore',
                         // Add the origin and destination to Nodes, and include amounts:
                         // originNode.value = flow.amount;
                         // destinationNode.value = flow.amount;
-                        
+
                         originNode.label = linkInfo.dimensionValue;
                         destinationNode.label = linkInfo.dimensionValue;
 
