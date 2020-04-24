@@ -1,6 +1,7 @@
 // Flows
 define(['views/common/baseview',
         'underscore',
+        'd3',
         'visualizations/map',
         'views/common/filters',
         'collections/collection',
@@ -13,6 +14,7 @@ define(['views/common/baseview',
     function (
         BaseView,
         _,
+        d3,
         Map,
         FiltersView,
         Collection,
@@ -321,11 +323,7 @@ define(['views/common/baseview',
 
                 this.routingMap.addLayer('ways', {
                     stroke: 'rgb(255, 255, 255)',
-                    select: {
-                        selectable: true,
-                        strokeWidth: 10,
-                        stroke: 'rgb(0, 255, 0)'
-                    }
+                    strokeWidth: 5
                 });
             },
 
@@ -334,46 +332,37 @@ define(['views/common/baseview',
                 var _this = this;
 
                 // process flows to point to amounts
-                var amounts = {}
+                var amounts = {},
+                    data = [];
                 flows.forEach(function(flow) {
                     var id = flow['id'],
                         amount = flow['amount'];
                     amounts[id] = amount;
+                    // exclude zero values from scale definition
+                    if (amount > 0) {
+                        data.push(amount);
+                    }
                 })
 
                 // define color scale for amounts
-                // 5 colors - blue -> red
                 var colors = [
-                    'rgb(0, 0, 255)',
-                    'rgb(0, 255, 255)',
-                    'rgb(0, 255, 0)',
-                    'rgb(255, 255, 0)',
-                    'rgb(255, 0, 0)'
+                    'rgb(26, 152, 80)',
+                    'rgb(102, 189, 99)',
+                    'rgb(166, 217, 106)',
+                    'rgb(217, 239, 139)',
+                    'rgb(255, 255, 191)',
+                    'rgb(254, 224, 139)',
+                    'rgb(253, 174, 97)',
+                    'rgb(244, 109, 67)',
+                    'rgb(215, 48, 39)',
+                    'rgb(168, 0, 0)'
                 ]
 
-                var arr = Object.values(amounts),
-                    min = Math.min(...arr),
-                    max = Math.max(...arr),
-                    step = (max - min) / colors.length,
-                    scale = [];
-
-                for (i = 0; i < colors.length; i++) {
-                    var interval = [ min + i * step,
-                                     min + (i + 1) * step];
-                    scale[i] = { [colors[i]] : interval };
-                }
-
-                function assignColor(amount) {
-                    for (i = 0; i < scale.length; i++) {
-                        for ([color, interval] of Object.entries(scale[i])) {
-                            var min = interval[0],
-                                max = interval[1];
-                        }
-                        if (amount >= min && amount <= max) {
-                            return color;
-                        }
-                    }
-                }
+                // scale of equal frequency intervals
+                var max = Math.max(...data),
+                    quantile = d3.scaleQuantile()
+                                 .domain(data)
+                                 .range(colors);
 
                 // add ways to map and load with amounts
                 ways.forEach(function(way) {
@@ -381,11 +370,15 @@ define(['views/common/baseview',
                         coords = way.get('the_geom').coordinates,
                         type = way.get('the_geom').type.toLowerCase();
                         amount = amounts[id];
-                        color = assignColor(amount);
-                    console.log(color);
                     _this.routingMap.addGeometry(coords, {
                         projection: 'EPSG:4326', layername: 'ways',
-                        type: type, renderOSM: false
+                        type: type, renderOSM: false,
+                        style : {
+                            // color, width & zIndex based on amount
+                            strokeColor: amount > 0 ? quantile(amount) : 'rgb(255,255,255)',
+                            strokeWidth: amount > 0 ? 2 * (1 + 2 * amount / max) : 0.5,
+                            zIndex: amount
+                        }
                     });
                 });
 

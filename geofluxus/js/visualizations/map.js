@@ -328,7 +328,8 @@ function(ol, turf)
         addGeometry(geometry, options){
             var options = options || {},
                 type = options.type.toLowerCase() || 'polygon',
-                proj = options.projection || this.mapProjection;
+                proj = options.projection || this.mapProjection,
+                style = options.style || null;
             if (!((geometry instanceof ol.geom.MultiPolygon) ||
                   (geometry instanceof ol.geom.Polygon) ||
                   (geometry instanceof ol.geom.LineString) ||
@@ -355,6 +356,16 @@ function(ol, turf)
 
             if (!layer) layer = this.addLayer(layername);
             var feature = new ol.Feature({ geometry: geometry.transform(proj, this.mapProjection) });
+            if (style) {
+                var style = new ol.style.Style({
+                    stroke: new ol.style.Stroke({
+                        color: style.strokeColor,
+                        width: style.strokeWidth
+                    }),
+                    zIndex: style.zIndex
+                });
+                feature.setStyle(style);
+            }
             feature.set('label', options.label);
             feature.set('tooltip', options.tooltip);
             feature.set('id', options.id);
