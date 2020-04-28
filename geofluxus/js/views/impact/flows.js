@@ -2,6 +2,7 @@
 define(['views/common/baseview',
         'underscore',
         'd3',
+        'openlayers',
         'visualizations/map',
         'views/common/filters',
         'collections/collection',
@@ -15,6 +16,7 @@ define(['views/common/baseview',
         BaseView,
         _,
         d3,
+        ol,
         Map,
         FiltersView,
         Collection,
@@ -378,12 +380,49 @@ define(['views/common/baseview',
                             strokeColor: amount > 0 ? quantile(amount) : 'rgb(255,255,255)',
                             strokeWidth: amount > 0 ? 2 * (1 + 2 * amount / max) : 0.5,
                             zIndex: amount
-                        }
+                        },
+                        tooltip: `${(amount/1000.0).toFixed(1)} kt`
                     });
                 });
 
                 // focus on ways layer
                 this.routingMap.centerOnLayer('ways');
+
+                // add legend
+                var legend = document.getElementById('legend');
+                if (legend) {
+                    legend.parentElement.removeChild(legend);
+                }
+                var legend = document.createElement('div');
+                legend.className = 'ol-control-panel ol-unselectable ol-control';
+                legend.id = 'legend';
+                var controlPanel = new ol.control.Control({
+                    element: legend
+                });
+                this.routingMap.map.addControl(controlPanel);
+
+                var title = document.createElement('div');
+                title.style.margin = "5%";
+                title.innerHTML = '<h2 style="text-align: center;">Legend</h2>'
+                legend.appendChild(title);
+
+                // add color scale to legend
+                var x =0,
+                    width = height = 30;
+                var scale = d3.select("#legend")
+                              .append("center")
+                              .append("svg")
+                              .attr("width", width * colors.length)
+                              .attr("height", 100);
+                colors.forEach(function(color) {
+                    var rect = scale.append("rect")
+                                    .attr("x", x)
+                                    .attr("y", 10)
+                                    .attr("width", width)
+                                    .attr("height", height)
+                                    .attr("fill", color);
+                    x += width;
+                })
             },
 
             resetDimAndVizToDefault: function () {

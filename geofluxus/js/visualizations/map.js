@@ -47,12 +47,8 @@ function(ol, turf)
             var basicLayer = new ol.layer.Vector({ source: new ol.source.Vector() });
             initlayers.push(basicLayer);
 
-            var controls = (showControls) ? ol.control.defaults({
-                                    attributionOptions: ({
-                                        collapsible: false
-                                    })}).extend([
-                                        new ol.control.FullScreen({source: options.el})
-                                    ]) : [];
+            var controls = ol.control.defaults({attribution: false })
+                                     .extend([new ol.control.FullScreen({source: options.el})]);
 
             var interactOptions = {
                     doubleClickZoom : enableZoom,
