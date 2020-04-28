@@ -366,6 +366,37 @@ define(['views/common/baseview',
                                  .domain(data)
                                  .range(colors);
 
+                // prettify scale intervals
+                function prettify(val) {
+                    if (val <= 5) {
+                        return Math.round(val / 5) * 5;
+                    }
+                    else if (val > 5 && val <= 100) {
+                        return Math.round(val / 10) * 10;
+                    }
+                    else if (val > 100 && val <= 1000) {
+                        return Math.round(val / 100) * 100;
+                    }
+                    else if (val > 1000 && val <= 10000) {
+                        return Math.round(val / 1000) * 1000;
+                    }
+                    return val;
+                }
+                var values = [];
+                Object.values(quantile.quantiles()).forEach(function(val) {
+                    values.push(prettify(val));
+                });
+                values.unshift(0);
+
+                function assignColor(amount){
+                    for (i = 1; i < values.length; i++) {
+                        if (amount <= values[i]) {
+                            return colors[i - 1];
+                        }
+                    }
+                    return colors[colors.length - 1];
+                }
+
                 // add ways to map and load with amounts
                 ways.forEach(function(way) {
                     var id = way.get('id'),
@@ -377,11 +408,11 @@ define(['views/common/baseview',
                         type: type, renderOSM: false,
                         style : {
                             // color, width & zIndex based on amount
-                            strokeColor: amount > 0 ? quantile(amount) : 'rgb(255,255,255)',
+                            strokeColor: amount > 0 ? assignColor(amount) : 'rgb(255,255,255)',
                             strokeWidth: amount > 0 ? 2 * (1 + 2 * amount / max) : 0.5,
                             zIndex: amount
                         },
-                        tooltip: `${(amount/1000.0).toFixed(1)} kt`
+                        tooltip: `${amount} tons`
                     });
                 });
 
@@ -403,26 +434,34 @@ define(['views/common/baseview',
 
                 var title = document.createElement('div');
                 title.style.margin = "5%";
-                title.innerHTML = '<h2 style="text-align: center;">Legend</h2>'
+                title.innerHTML = '<h4 style="text-align: center;">Legend</h4>'
                 legend.appendChild(title);
 
                 // add color scale to legend
-                var x =0,
-                    width = height = 30;
+                var width = height = 30;
                 var scale = d3.select("#legend")
                               .append("center")
                               .append("svg")
                               .attr("width", width * colors.length)
-                              .attr("height", 100);
-                colors.forEach(function(color) {
-                    var rect = scale.append("rect")
-                                    .attr("x", x)
-                                    .attr("y", 10)
-                                    .attr("width", width)
-                                    .attr("height", height)
-                                    .attr("fill", color);
-                    x += width;
-                })
+                              .attr("height", 100),
+                    rects = scale.selectAll('rect')
+                                 .data(colors)
+                                 .enter()
+                                 .append("rect")
+                                 .attr("x", function(d, i) { return i * width; })
+                                 .attr("y", 10)
+                                 .attr("width", 30)
+                                 .attr("height", 30)
+                                 .attr("fill", function(d) { return d; }),
+                    texts = scale.selectAll('text')
+                                 .data(values)
+                                 .enter()
+                                 .append('text')
+                                 .text(function (d) { return `${d}`; })
+                                 .attr("x", function(d, i) { return i * width; })
+                                 .attr('y', 2 * height)
+                                 .attr('fill', 'white')
+                                 .attr('font-size', 10);
             },
 
             resetDimAndVizToDefault: function () {
