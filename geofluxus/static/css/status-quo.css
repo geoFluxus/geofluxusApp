@@ -345,8 +345,26 @@ textarea.textarea-autosize.form-control-sm {
     border: 1px solid black !important;
     border-radius: 14px !important;
     z-index: 99999;
-    min-width: 15rem;
-    max-width: 18rem;
+    min-width: 25rem;
+    max-width: 25rem;
+}
+
+.flowmap-legend-wrapper {
+    width: 10rem !important;
+    height: 10rem !important;
+}
+
+
+
+.flowmap-legend-wrapper .d3plus-Rect-group {
+    width: 10rem !important;
+    height: 10rem !important;
+}
+
+.flowmap-legend-wrapper .d3plus-Legend {
+    display: inline-block !important;
+    width: 100%;
+    height: 100%;
 }
 
 /* d3plus Tooltip */

@@ -4,6 +4,7 @@ define(['underscore',
         'collections/geolocation',
         'collections/flows',
         'visualizations/flowmap',
+        'visualizations/d3plusLegend',
         'd3',
         'd3plus',
         'openlayers',
@@ -19,11 +20,11 @@ define(['underscore',
         'leaflet-fullscreen/dist/leaflet.fullscreen.css'
     ],
 
-    function (_, BaseView, Collection, GeoLocation, Flows, FlowMap, d3, d3plus, ol, utils, L) {
+    function (_, BaseView, Collection, GeoLocation, Flows, FlowMap, D3plusLegend, d3, d3plus, ol, utils, L) {
 
         /**
          *
-         * @author Christoph Franke, Vilma Jochim
+         * @author Christoph Franke, Vilma Jochim, Evert Van Hirtum
          * @name module:views/FlowMapView
          * @augments module:views/BaseView
          */
@@ -54,6 +55,7 @@ define(['underscore',
                     this.dimStrings = [];
                     this.options.dimensions.forEach(dim => this.dimStrings.push(dim[0]));
                     this.dim2 = this.options.dimensions.find(dim => dim[0] != "space");
+                    this.allDimensionValues = [];
 
 
                     this.render();
@@ -258,11 +260,8 @@ define(['underscore',
                     });
 
                     div.appendChild(actorDiv);
-                    div.appendChild(document.createElement('br'));
                     div.appendChild(flowDiv);
-                    div.appendChild(document.createElement('br'));
                     div.appendChild(lightDiv);
-                    div.appendChild(document.createElement('br'));
                     div.appendChild(aniDiv);
                     div.appendChild(aniToggleDiv);
 
@@ -271,12 +270,21 @@ define(['underscore',
                     });
                     this.legend = document.createElement('div');
                     this.legend.style.background = "rgba(255, 255, 255, 0.5)";
-                    this.legend.style.visibility = 'hidden';
+                    //this.legend.style.visibility = 'hidden';
+
+                    this.legend.style.width = "10rem";
+                    this.legend.style.height = "10rem";
                     legendControl.onAdd = function () {
                         return _this.legend;
                     };
                     legendControl.addTo(this.leafletMap);
                     this.el.querySelector('.leaflet-right.leaflet-bottom').classList.add('leaflet-legend');
+
+                    this.el.querySelector('.leaflet-right.leaflet-bottom').firstChild.classList.add("flowmap-legend-wrapper");
+
+                    this.el.querySelector(".flowmap-legend-wrapper").style.width = "10rem";
+                    this.el.querySelector(".flowmap-legend-wrapper").style.height = "10rem";
+
                     L.DomEvent.disableClickPropagation(this.legend);
                     L.DomEvent.disableScrollPropagation(this.legend);
 
@@ -309,47 +317,91 @@ define(['underscore',
                 },
 
                 updateLegend(data) {
-                    var data = data || this.data,
-                        _this = this;
-                    this.legend.innerHTML = '';
-                    var materials = data.materials;
-                    // ToDo_this.lightCheck.checked: inefficient, done too often for just toggling visibility
-                    Object.keys(materials).forEach(function (matId) {
-                        var material = materials[matId],
-                            color = material.color,
-                            div = document.createElement('div'),
-                            text = document.createElement('div'),
-                            check = document.createElement('input'),
-                            colorDiv = document.createElement('div');
-                        div.style.height = '30px';
-                        div.style.cursor = 'pointer';
-                        text.innerHTML = material.name;
-                        text.style.fontSize = '1.3em';
-                        text.style.overflow = 'hidden';
-                        text.style.lightSpace = 'nowrap';
-                        text.style.textOverflow = 'ellipsis';
-                        colorDiv.style.width = '25px';
-                        colorDiv.style.height = '100%';
-                        colorDiv.style.textAlign = 'center';
-                        colorDiv.style.background = color;
-                        colorDiv.style.float = 'left';
-                        colorDiv.style.paddingTop = '5px';
-                        check.type = 'checkbox';
-                        check.checked = _this.showMaterials[matId] === true;
-                        check.style.transform = 'scale(1.7)';
-                        check.style.pointerEvents = 'none';
-                        div.appendChild(colorDiv);
-                        div.appendChild(text);
-                        colorDiv.appendChild(check);
-                        _this.legend.appendChild(div);
-                        div.addEventListener('click', function () {
-                            check.checked = !check.checked;
-                            _this.showMaterials[matId] = check.checked;
-                            _this.flowMap.toggleTag(matId, check.checked);
-                            _this.rerender();
-                        })
-                        _this.flowMap.toggleTag(matId, check.checked)
+                    var _this = this;
+
+                    console.log("______ legend data _______")
+                    console.log(this.allDimensionValues);
+
+                    this.d3plusLegend = new D3plusLegend({
+                        el: ".flowmap-d3pluslegend-wrapper",
+                        data: _this.allDimensionValues,
+                        flowMapView: _this,
+                        direction: "column",
+                        label: function (d) {
+                            return d.label.substring(0, 1);
+                        },
+                        shapeConfig: {
+                            fill: function (d) {
+                                return d.color;
+                            },
+                            height: 25,
+                            width: 25
+                        },
                     });
+
+
+                    // //_this.legend = document.querySelector(".flowmap-legend-wrapper");
+                    // _this.legend = new d3plus.Legend()
+                    //     .data(_this.allDimensionValues)
+                    //     // .shapeConfig({
+                    //     //     fill: function (d) {
+                    //     //         return d.color;
+                    //     //     },
+                    //     //     height: 25,
+                    //     //     width: 25
+                    //     // })
+                    //     .direction("column")
+                    //     .label(function (d) {
+                    //         return d.label;
+                    //     })
+                    //     .height(200)
+                    //     .width(200)
+                    //     .select(_this.legend)
+                    //     //.select(".flowmap-legend-wrapper")
+                    //     .render();
+
+
+                    // var data = data || this.data,
+                    //     _this = this;
+                    // this.legend.innerHTML = '';
+                    // var materials = data.materials;
+                    // // ToDo_this.lightCheck.checked: inefficient, done too often for just toggling visibility
+                    // Object.keys(materials).forEach(function (matId) {
+                    //     var material = materials[matId],
+                    //         color = material.color,
+                    //         div = document.createElement('div'),
+                    //         text = document.createElement('div'),
+                    //         check = document.createElement('input'),
+                    //         colorDiv = document.createElement('div');
+                    //     div.style.height = '30px';
+                    //     div.style.cursor = 'pointer';
+                    //     text.innerHTML = material.name;
+                    //     text.style.fontSize = '1.3em';
+                    //     text.style.overflow = 'hidden';
+                    //     text.style.lightSpace = 'nowrap';
+                    //     text.style.textOverflow = 'ellipsis';
+                    //     colorDiv.style.width = '25px';
+                    //     colorDiv.style.height = '100%';
+                    //     colorDiv.style.textAlign = 'center';
+                    //     colorDiv.style.background = color;
+                    //     colorDiv.style.float = 'left';
+                    //     colorDiv.style.paddingTop = '5px';
+                    //     check.type = 'checkbox';
+                    //     check.checked = _this.showMaterials[matId] === true;
+                    //     check.style.transform = 'scale(1.7)';
+                    //     check.style.pointerEvents = 'none';
+                    //     div.appendChild(colorDiv);
+                    //     div.appendChild(text);
+                    //     colorDiv.appendChild(check);
+                    //     _this.legend.appendChild(div);
+                    //     div.addEventListener('click', function () {
+                    //         check.checked = !check.checked;
+                    //         _this.showMaterials[matId] = check.checked;
+                    //         _this.flowMap.toggleTag(matId, check.checked);
+                    //         _this.rerender();
+                    //     })
+                    //     _this.flowMap.toggleTag(matId, check.checked)
+                    // });
                 },
 
                 zoomed: function () {
@@ -439,7 +491,9 @@ define(['underscore',
                     this.flowMap.showNodes = (this.actorCheck.checked) ? true : false;
                     this.flowMap.showFlows = (this.flowCheck.checked) ? true : false;
                     this.flowMap.dottedLines = (this.aniDotsRadio.checked) ? true : false;
-                    //this.updateLegend();
+
+                    this.updateLegend(data);
+
                     this.flowMap.toggleTag('actor', this.actorCheck.checked);
 
                     this.flowMap.resetView();
@@ -537,7 +591,8 @@ define(['underscore',
                     let fromToText = link.origin.name + ' &#10132; ' + link.destination.name + '<br>'
                     let dimensionText = "";
                     let dimensionValue = "";
-                    let amountText = '<br><b>Amount: </b>' + d3plus.formatAbbreviate(link.amount, utils.returnD3plusFormatLocale()) + ' t/year';
+                    let amountText = d3plus.formatAbbreviate(link.amount, utils.returnD3plusFormatLocale()) + ' t/year';
+                    let dimensionId;
 
                     switch (this.dim2[0]) {
                         case "time":
@@ -552,9 +607,11 @@ define(['underscore',
                         case "economicActivity":
                             if (this.dim2[1] == "origin__activity__activitygroup" || this.dim2[1] == "destination__activity__activitygroup") {
                                 dimensionText = "Activity group";
+                                dimensionId = link.activitygroup;
                                 dimensionValue = link.activityGroupCode + " " + link.activityGroupName;
                             } else if (this.dim2[1] == "origin__activity" || this.dim2[1] == "destination__activity") {
                                 dimensionText = "Activity";
+                                dimensionId = link.activity;
                                 dimensionValue = link.activityCode + " " + link.activityName;
                             }
                             break;
@@ -595,7 +652,9 @@ define(['underscore',
 
                     return {
                         dimensionValue: dimensionValue,
-                        toolTipText: fromToText + description + dimensionValue + amountText,
+                        dimensionId: dimensionId,
+                        toolTipText: fromToText + description + dimensionValue + '<br><b>Amount: </b>' + amountText,
+                        amountText: amountText,
                         color: utils.colorByName(dimensionValue),
                     }
 
@@ -614,16 +673,21 @@ define(['underscore',
 
                         // NODES
                         // Add the origin and destination to Nodes, and include amounts:
-                        // originNode.value = flow.amount;
-                        // destinationNode.value = flow.amount;
-
-                        originNode.label = linkInfo.dimensionValue;
-                        destinationNode.label = linkInfo.dimensionValue;
-
+                        //originNode.value = flow.amount;
+                        originNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
                         originNode.color = linkInfo.color;
-                        destinationNode.color = linkInfo.color;
+
+                        //destinationNode.value = flow.amount;
+                        // destinationNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
+                        // destinationNode.color = linkInfo.color;
 
                         nodes.push(originNode, destinationNode)
+
+                        _this.allDimensionValues.push({
+                            label: linkInfo.dimensionValue,
+                            id: linkInfo.dimensionId,
+                            color: linkInfo.color,
+                        });
 
                         // LINKS
                         link.source = this[index].origin.id;
@@ -641,12 +705,13 @@ define(['underscore',
 
                     }, flows);
 
-
                     nodes.forEach(function (node, index) {
-                        this[index].color = utils.colorByName(this[index].name);
-                        this[index].label = this[index].name;
+                        //this[index].color = utils.colorByName(this[index].name);
+                        //this[index].label = this[index].name;
                         this[index].opacity = 0.8;
                     }, nodes);
+
+
 
 
                     console.log("Links:");
