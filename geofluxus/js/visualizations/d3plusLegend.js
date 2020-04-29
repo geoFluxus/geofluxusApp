@@ -21,9 +21,11 @@ define([
             new d3plus.Legend()
                 .data(options.data)
                 .shapeConfig(options.shapeConfig)
-                .direction(options.direction)
+                //.direction(options.direction)
                 .label(options.label)
                 .select(options.el)
+                .height(400)
+                .width(400)
                 .render();
         }
     }

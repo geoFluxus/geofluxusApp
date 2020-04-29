@@ -2,8 +2,8 @@
     position: fixed;
     height: 80px;
     width: 100%;
-    background-color: #000000;
-    box-shadow: 0px 5px 10px rgba(255, 255, 255, 0.3);
+    background-color: #484848;
+    /* box-shadow: 0px 5px 10px rgba(255, 255, 255, 0.3); */
     z-index: 1000;
 }
 
@@ -13,6 +13,7 @@
     color: white;
     font-size: 38px;
     padding-right: 20px;
+    width: 4.5em;
 }
 
 .navbar-brand:hover {
@@ -27,14 +28,13 @@
 .nav-link {
     position: relative;
     color: white;
-    font-size: 20px;
+    font-size: 16px;
 }
 
 .nav-link:hover {
     color: white;
-    font-size: 30px;
     text-shadow: 0px 0px 10px white;
-    transition: font-size 0.1s, text-shadow 0.1s;
+    transition: text-shadow 0.1s;
 }
 
 .nav-item.active>.nav-link {
@@ -51,7 +51,7 @@
 /* .navbar-top select, */
 .navbar .dropdown-button {
     color: white !important;
-    background-color: black !important;
+    /* background-color: black !important; */
     border: none;
     font-size: 1em;
     margin-top: 15px;
@@ -79,11 +79,11 @@
 
 .dropdown-content {
     display: none;
+    right: 0.25rem;
     position: absolute;
     background-color: white;
     min-width: 160px;
     overflow: auto;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 10;
     border-radius: 18px;
 }

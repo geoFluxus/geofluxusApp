@@ -29,9 +29,9 @@
         <li class="nav-item">
           {% if request.user.is_authenticated %}
           <div class="dropdown">
-            <button class="dropdown-button" type="button">
-              User Area ({{ request.user.username }})
-              <span class="caret"></span>
+            <button class="dropdown-button" type="button" style="">
+              <i class="fas fa-user"></i><span style="margin-left: 0.5rem;">{{ request.user.username }}</span>
+              <i class="fas fa-caret-down"></i>
             </button>
             <div class="dropdown-content">
               {% if request.user.is_superuser %}
@@ -80,7 +80,8 @@
 
         <div class="col-md-6 mt-md-0 mt-3 text-center border-top" style="margin: auto; padding-top: 2.5rem;">
           <!-- <h5>geoFluxus</h5> -->
-          <p style="font-size: small; max-width: 26rem; margin: auto; margin-top: 1rem; " >The open-source platform that maps, analyses and predicts resource flows as the essential trigger for a Circular Economy.</p>
+          <p style="font-size: small; max-width: 26rem; margin: auto; margin-top: 1rem; ">The open-source platform that
+            maps, analyses and predicts resource flows as the essential trigger for a Circular Economy.</p>
         </div>
 
         <hr class="clearfix w-100 d-md-none pb-3">
