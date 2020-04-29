@@ -5,17 +5,38 @@
 }
 
 .block {
+    background-color: #393939;
+    border-radius: 22px;
+    padding: 1.5rem;
+    padding-bottom: 1rem;
+    margin: 1.5rem;
     /*margin-top: 15px;
-    padding: 20px;
     box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.3);*/
 }
 
 .card {
     background-color: #252525 !important;
+    border-radius: 22px !important;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .card-body {
     padding-top: 0em !important;
+}
+
+.card.bg-dark {
+    overflow-y: visible;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.card.bg-dark::-webkit-scrollbar {
+    display: none;
+}
+
+.card-header .fa {
+    transition: .3s transform ease-in-out;
 }
 
 
@@ -69,15 +90,12 @@
     z-index: 1000;
 }
 
-.card.bg-dark {
-    overflow-y: visible;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+.collapseFlowsBlock {
+    border-bottom-left-radius: 18px !important;
+    border-bottom-right-radius: 18px !important;
 }
 
-.card.bg-dark::-webkit-scrollbar {
-    display: none;
-}
+
 
 .flowFilterSubtitle {
     margin-top: 2em;
@@ -87,9 +105,6 @@
     transition: display 1s;
 }
 
-.card-header .fa {
-    transition: .3s transform ease-in-out;
-}
 
 .card-header .collapsed .fa {
     -webkit-transform: rotate(-90deg);
