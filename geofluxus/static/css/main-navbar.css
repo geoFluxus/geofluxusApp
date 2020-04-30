@@ -8,6 +8,7 @@
 }
 
 .navbar-brand {
+    width: 5.25em;
     position: relative;
     overflow: hidden;
     color: white;

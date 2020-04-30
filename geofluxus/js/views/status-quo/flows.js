@@ -15,10 +15,10 @@ define(['views/common/baseview',
         'views/common/coordinatePointMapView',
         'views/common/areaChartView',
         'views/common/flowMapView',
-        'bootstrap',
-        'bootstrap-select',
-        'bootstrap-toggle',
-        'textarea-autosize',
+         'bootstrap',
+         'bootstrap-select',
+         'bootstrap-toggle',
+         'textarea-autosize',
     ],
     function (
         BaseView,
@@ -84,11 +84,11 @@ define(['views/common/baseview',
                     maxNumberOfDimensions: this.maxNumberOfDimensions
                 });
 
-                //                // Activate help icons
-                //                var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
-                //                $(popovers).popover({
-                //                    trigger: "focus"
-                //                });
+                // Activate help icons
+                var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
+                $(popovers).popover({
+                    trigger: "focus"
+                });
 
                 // this.sankeyWrapper = this.el.querySelector('.sankey-wrapper');
                 // this.sankeyWrapper.addEventListener('linkSelected', this.linkSelected);
@@ -339,12 +339,12 @@ define(['views/common/baseview',
 
                 });
 
-                
+
 
 
                 // Disable origin/destination toggle for Space for Flowmap and Parallel Sets
                 $(".viz-selector-button").click(function (event) {
-                    
+
                     let clickedToggleHasFlowsFormat = $($(event.currentTarget)[0]).hasClass("hasFlowsFormat")
 
                     // At least two dimensions, and one is Space:

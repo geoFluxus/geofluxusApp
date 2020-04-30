@@ -108,6 +108,12 @@ input {
     color: black;
 }
 
+.buttonHelpiconContainer a{
+    position: relative;
+    top: 0.32rem;
+    margin-left: 0px !important;
+}
+
 .help-icon.fa-question-circle {
     margin-left: 10px;
     font-size: 25px;
@@ -163,8 +169,19 @@ input {
     display: block;
 }
 
+.popover {
+    border-radius: 18px;
+}
+
 .popover-header {
+    border-top-right-radius: 18px;
+    border-top-left-radius: 18px;
     color: black;
+}
+
+.popover-body {
+    text-align: justify;
+    text-justify: inter-word;
 }
 
 /* SCROLLBAR STYLING */
