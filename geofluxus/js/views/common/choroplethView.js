@@ -7,7 +7,7 @@ define(['views/common/baseview',
         'save-svg-as-png',
         'file-saver',
         'utils/utils',
-        'd3plus',
+        'visualizations/d3plus',
     ],
 
     function (
@@ -32,7 +32,6 @@ define(['views/common/baseview',
         var ChoroplethView = BaseView.extend(
             /** @lends module:views/ChoroplethView.prototype */
             {
-
                 /**
                  * @param {Object} options
                  * @param {HTMLElement} options.el                   element the view will be rendered in
@@ -44,35 +43,26 @@ define(['views/common/baseview',
                     ChoroplethView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
-                    var _this = this;
 
                     this.options = options;
-
-                    //this.transformedData = this.transformData(this.flows);
-                    //this.render(this.transformedData);
                     this.render();
                 },
-
 
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
                 },
 
-                /*
-                 * render the view
-                 */
                 render: function (data) {
+                    let _this = this;
                     let flows = this.options.flows;
-                    let tooltipConfig = {};
-
-                    tooltipConfig = {
+                    let tooltipConfig = {
                         title: function (d) {
                             return d.areaName
                         },
                         tbody: [
-                            ["Total", function (d) {
-                                return d["amount"].toFixed(3)
+                            ["Waste (metric ton)", function (d) {
+                                return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
                             }],
                         ]
                     }
@@ -84,42 +74,34 @@ define(['views/common/baseview',
                         tooltipConfig: tooltipConfig,
                         geoJson: this.options.geoJson,
                     });
+                   
+                    // Smooth scroll to top of Viz
+                    $("#apply-filters")[0].scrollIntoView({
+                        behavior: "smooth"
+                    });
                 },
-
 
                 toggleFullscreen: function (event) {
-                    this.el.classList.toggle('fullscreen');
-                    this.refresh();
+                    $(this.el).toggleClass('fullscreen');
                     event.stopImmediatePropagation();
-                    //this.render(this.transformedData);
+                    // Only scroll when going to normal view:
+                    if (!$(this.el).hasClass('fullscreen')) {
+                        $("#apply-filters")[0].scrollIntoView({
+                            behavior: "smooth"
+                        });
+                    }
+                    window.dispatchEvent(new Event('resize'));
                 },
 
-
                 exportCSV: function (event) {
-                    if (!this.transformedData) return;
+                    const items = this.options.flows;
+                    const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
+                    const header = Object.keys(items[0])
+                    let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+                    csv.unshift(header.join(','))
+                    csv = csv.join('\r\n')
 
-                    var header = ['Origin', 'Origin Code',
-                            'Destination', 'Destination Code',
-                            'Amount (t/year)'
-                        ],
-                        rows = [],
-                        _this = this;
-                    rows.push(header.join(',\t'));
-                    this.transformedData.links.forEach(function (link) {
-                        var origin = link.source,
-                            destination = link.target,
-                            originName = origin.name,
-                            destinationName = destination.name,
-                            amount = link.value.toFixed(3);
-
-                        var originCode = origin.code,
-                            destinationCode = destination.code;
-
-                        var row = ['"' + originName + '",', originCode + ',"', destinationName + '",', destinationCode + ',', amount];
-                        rows.push(row.join('\t'));
-                    });
-                    var text = rows.join('\r\n');
-                    var blob = new Blob([text], {
+                    var blob = new Blob([csv], {
                         type: "text/plain;charset=utf-8"
                     });
                     FileSaver.saveAs(blob, "data.csv");
@@ -127,9 +109,6 @@ define(['views/common/baseview',
                     event.stopImmediatePropagation();
                 },
 
-                /*
-                 * remove this view from the DOM
-                 */
                 close: function () {
                     this.undelegateEvents(); // remove click events
                     this.unbind(); // Unbind all local event bindings

@@ -2,31 +2,25 @@ define(['views/common/baseview',
         'underscore',
         'collections/collection',
         'visualizations/map',
-        'views/status-quo/flows',
         'openlayers',
         'utils/utils',
-        'bootstrap-toggle',
-        'bootstrap-toggle/css/bootstrap-toggle.min.css',
+        'bootstrap',
     ],
 
-    function (BaseView, _, Collection, Map, FlowsView, ol, utils) {
+    function (BaseView, _, Collection, Map, ol, utils) {
 
-        var FilterFlowsView = BaseView.extend({
+        var FiltersView = BaseView.extend({
             initialize: function (options) {
                 var _this = this;
-                FilterFlowsView.__super__.initialize.apply(this, [options]);
+                FiltersView.__super__.initialize.apply(this, [options]);
                 _.bindAll(this, 'prepareAreas');
 
                 this.origin = {};
                 this.destination = {};
                 this.flows = {};
-                this.dimensions = {};
-                this.maxNumberOfDimensions = 2;
                 this.selectedAreasOrigin = [];
                 this.selectedAreasDestination = [];
                 this.selectedAreasFlows = [];
-
-                this.selectedDimensionStrings = [];
 
                 this.template = options.template;
                 this.activityGroups = new Collection([], {
@@ -104,7 +98,6 @@ define(['views/common/baseview',
                 'click .area-select-button': 'showAreaSelection',
                 'change select[name="area-level-select"]': 'changeAreaLevel',
                 'click #reset-filters': 'resetFiltersToDefault',
-                'click #reset-dim-viz': 'resetDimAndVizToDefault',
                 'click .clear-areas-button': 'clearAreas',
             },
 
@@ -128,14 +121,13 @@ define(['views/common/baseview',
                     levels: this.areaLevels,
                     years: this.years,
                     months: this.months,
-                    maxNumberOfDimensions: this.maxNumberOfDimensions,
                 });
 
-                // Activate help icons
-                var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
-                $(popovers).popover({
-                    trigger: "focus"
-                });
+            //    // Activate help icons
+            //    var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
+            //    $(popovers).popover({
+            //        trigger: "focus"
+            //    });
 
                 this.renderAreaSelectModal();
 
@@ -372,8 +364,8 @@ define(['views/common/baseview',
                 // Hide/show Activity Group and Activity or Treatment method:
                 $("#origin-role-radio-production").on('click', function () {
                     _this.origin.role = "production";
+                    $(".originContainerTreatmentMethod").hide();
                     $(".originContainerActivity").fadeIn();
-                    $(".originContainerTreatmentMethod").fadeOut();
 
                 });
                 $("#origin-role-radio-both").on('click', function () {
@@ -384,7 +376,7 @@ define(['views/common/baseview',
                 });
                 $("#origin-role-radio-treatment").on('click', function () {
                     _this.origin.role = "treatment";
-                    $(".originContainerActivity").fadeOut();
+                    $(".originContainerActivity").hide();
                     $(".originContainerTreatmentMethod").fadeIn();
                 });
 
@@ -399,8 +391,8 @@ define(['views/common/baseview',
                 // Hide/show Activity Group and Activity or Treatment method:
                 $("#destination-role-radio-production").on('click', function () {
                     _this.destination.role = "production";
+                    $(".destinationContainerTreatmentMethod").hide();
                     $(".destinationContainerActivity").fadeIn();
-                    $(".destinationContainerTreatmentMethod").fadeOut();
 
                 });
                 $("#destination-role-radio-both").on('click', function () {
@@ -411,7 +403,7 @@ define(['views/common/baseview',
                 });
                 $("#destination-role-radio-treatment").on('click', function () {
                     _this.destination.role = "treatment";
-                    $(".destinationContainerActivity").fadeOut();
+                    $(".destinationContainerActivity").hide();
                     $(".destinationContainerTreatmentMethod").fadeIn();
                 });
 
@@ -431,178 +423,6 @@ define(['views/common/baseview',
                 $(this.flows.mixedSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.directSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.isCompositeSelect).on('changed.bs.select', multiCheck);
-
-
-                // Dimension toggles: ---------------------------
-
-                // Show alert if user clicks on disabled dimension toggle:
-                $("#dimensionsCard .toggle.btn").on("click", function (event) {
-
-                    if ($($(event.currentTarget)[0]).is('[disabled=disabled]')) {
-                        $("#alertMaxDimensionsRow").fadeIn("fast");
-                        $("#alertMaxDimensions").alert();
-
-                        setTimeout(function () {
-                            $("#alertMaxDimensionsRow").fadeOut("fast");
-                        }, 6000);
-                    }
-                });
-
-                $(".dimensionToggle").change(function (event) {
-                    // //////////////////////////////////////////////////////
-                    // Disable dimension toggles for max number of dimensions:
-                    let checkedToggles = [];
-                    let uncheckedToggles = [];
-                    _this.selectedDimensionStrings = [];
-
-                    // Divide the toggles in arrays of checked and unchecked toggles:
-                    $('.dimensionToggle').each(function (index, value) {
-                        let checked = $(this.parentElement.firstChild).prop('checked')
-                        if (!checked) {
-                            uncheckedToggles.push($(this));
-                        } else {
-                            checkedToggles.push($(this));
-
-                            _this.selectedDimensionStrings.push($(this).attr("data-dim"));
-                        }
-                    });
-
-                    // If the maximum number of dimensions has been selected:
-                    if (_this.maxNumberOfDimensions == checkedToggles.length) {
-                        // Disable the remaining unchecked toggles:
-                        $(uncheckedToggles).each(function (index, value) {
-                            this.bootstrapToggle('disable');
-                        });
-                    } else {
-                        // (Re)enable the toggles:
-                        $(uncheckedToggles).each(function (index, value) {
-                            this.bootstrapToggle('enable');
-                        });
-                    }
-
-
-                    // //////////////////////////////////////////////////////
-                    // Show available visualizations based on selected dimension(s):
-
-                    console.log(_this.selectedDimensionStrings);
-
-                    switch (checkedToggles.length) {
-                        case 0: // No dimensions
-                            console.log("No dimensions");
-
-                            $("#message-container-row").fadeIn();
-                            $(".viz-container").hide();
-
-                            break;
-                        case 1:
-                            $("#message-container-row").hide();
-                            $(".viz-container").fadeIn();
-
-                            console.log("One dimension");
-
-                            if (_this.selectedDimensionStrings.includes("time")) {
-
-                                $("#viz-choroplethmap").parent().hide();
-                                $("#viz-coordinatepointmap").parent().hide();
-
-                                $("#viz-piechart").parent().show();
-                                $("#viz-barchart").parent().show();
-                                $("#viz-treemap").parent().show();
-                                $("#viz-lineplot").parent().show();
-
-                            } else if (_this.selectedDimensionStrings.includes("space")) {
-
-                                $("#viz-lineplot").parent().hide();
-
-                                $("#viz-piechart").parent().show();
-                                $("#viz-barchart").parent().show();
-                                $("#viz-treemap").parent().show();
-
-                                let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
-
-                                if (selectedAreaLevelId == "6") {
-                                    $("#viz-coordinatepointmap").parent().show();
-                                    $("#viz-choroplethmap").parent().hide();
-                                } else {
-                                    $("#viz-coordinatepointmap").parent().hide();
-                                    $("#viz-choroplethmap").parent().show();
-                                }
-
-                            } else if (_this.selectedDimensionStrings.includes("economicActivity")) {
-
-                                $("#viz-choroplethmap").parent().hide();
-                                $("#viz-coordinatepointmap").parent().hide();
-                                $("#viz-lineplot").parent().hide();
-
-                                $("#viz-piechart").parent().show();
-                                $("#viz-barchart").parent().show();
-                                $("#viz-treemap").parent().show();
-
-
-                            } else if (_this.selectedDimensionStrings.includes("treatmentMethod")) {
-
-                                $("#viz-choroplethmap").parent().hide();
-                                $("#viz-coordinatepointmap").parent().hide();
-                                $("#viz-lineplot").parent().hide();
-
-                                $("#viz-piechart").parent().show();
-                                $("#viz-barchart").parent().show();
-                                $("#viz-treemap").parent().show();
-
-                            }
-
-                            break;
-                        case 2:
-                            console.log("Two dimensions");
-
-                            $(".viz-selector-button").fadeOut();
-
-
-                            // code block
-                            break;
-                        default:
-                            // code block
-                    }
-
-                });
-
-
-                $(_this.dimensions.spaceLevelGranSelect).change(function () {
-                    let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
-
-                    let selectedAreaName = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.id == selectedAreaLevelId).attributes.name;
-
-                    console.log("level changed");
-
-                    if (_this.selectedDimensionStrings.includes("space")) {
-
-                        if (selectedAreaName == "Actor") {
-                            $("#viz-coordinatepointmap").parent().show();
-                            $("#viz-choroplethmap").parent().hide();
-                        } else {
-                            $("#viz-coordinatepointmap").parent().hide();
-                            $("#viz-choroplethmap").parent().show();
-                        }
-                    }
-                });
-
-
-                // Show granularity on toggle change:
-                $("#dim-toggle-time").change(function () {
-                    $("#gran-toggle-time-col").fadeToggle();
-                });
-                $("#dim-toggle-space").change(function () {
-                    $("#gran-toggle-space-col").fadeToggle();
-                    $("#origDest-toggle-space-col").fadeToggle();
-                });
-                $("#dim-toggle-economic-activity").change(function () {
-                    $("#gran-econ-activity-col").fadeToggle();
-                    $("#origDest-toggle-econAct-col").fadeToggle();
-                });
-                $("#dim-toggle-treatment-method").change(function () {
-                    $("#gran-treatment-method-col").fadeToggle();
-                    $("#origDest-toggle-treatment-col").fadeToggle();
-                });
             },
 
             initializeControls: function () {
@@ -689,43 +509,7 @@ define(['views/common/baseview',
                 this.flows.isCompositeSelect = this.el.querySelector('select[name="flows-iscomposite-select"]');
                 $(this.flows.isCompositeSelect).selectpicker();
 
-
-                // //////////////////////////////////
-                // Dimension controls:
-                this.dimensions.timeToggle = this.el.querySelector('#dim-toggle-time');
-                $(this.dimensions.timeToggle).bootstrapToggle();
-                this.dimensions.timeToggleGran = this.el.querySelector('#gran-toggle-time');
-                $(this.dimensions.timeToggleGran).bootstrapToggle();
-
-                this.dimensions.spaceToggle = this.el.querySelector('#dim-toggle-space');
-                $(this.dimensions.spaceToggle).bootstrapToggle();
-                this.dimensions.spaceLevelGranSelect = this.el.querySelector('#dim-space-gran-select');
-                $(this.dimensions.spaceLevelGranSelect).selectpicker();
-                this.dimensions.spaceOrigDest = this.el.querySelector('#origDest-toggle-space');
-                $(this.dimensions.spaceOrigDest).bootstrapToggle();
-
-                this.dimensions.economicActivityToggle = this.el.querySelector('#dim-toggle-economic-activity');
-                $(this.dimensions.economicActivityToggle).bootstrapToggle();
-                this.dimensions.economicActivityToggleGran = this.el.querySelector('#gran-toggle-econ-activity');
-                $(this.dimensions.economicActivityToggleGran).bootstrapToggle();
-                this.dimensions.economicActivityOrigDest = this.el.querySelector('#origDest-toggle-econAct');
-                $(this.dimensions.economicActivityOrigDest).bootstrapToggle();
-
-                this.dimensions.treatmentMethodToggle = this.el.querySelector('#dim-toggle-treatment-method');
-                $(this.dimensions.treatmentMethodToggle).bootstrapToggle();
-                this.dimensions.treatmentMethodToggleGran = this.el.querySelector('#gran-toggle-treatment-method');
-                $(this.dimensions.treatmentMethodToggleGran).bootstrapToggle();
-                this.dimensions.treatmentMethodOrigDest = this.el.querySelector('#origDest-toggle-treatment');
-                $(this.dimensions.treatmentMethodOrigDest).bootstrapToggle();
-
-                this.dimensions.materialToggle = this.el.querySelector('#dim-toggle-material');
-                $(this.dimensions.materialToggle).bootstrapToggle();
-
-                this.dimensions.logisticsToggle = this.el.querySelector('#dim-toggle-logistics');
-                $(this.dimensions.logisticsToggle).bootstrapToggle();
-
                 //Area select modal
-
                 this.areaLevelSelect = this.el.querySelector('#area-level-select');
                 $(this.areaLevelSelect).selectpicker();
 
@@ -1080,53 +864,242 @@ define(['views/common/baseview',
                 $(".selectpicker").selectpicker('refresh');
             },
 
-            resetDimAndVizToDefault: function () {
-                _this = this;
+            getFilterParams: function () {
 
-                // //////////////////////////////////
-                // Dimension controls:
-                $(_this.dimensions.timeToggle).bootstrapToggle('off');
-                $(_this.dimensions.timeToggleGran).bootstrapToggle('Year');
+                let filterParams = {
+                    origin: {},
+                    destination: {},
+                    flows: {},
+                }
 
-                $(_this.dimensions.spaceToggle).bootstrapToggle('off');
-                $(_this.dimensions.spaceLevelGranSelect).val($('#dim-space-gran-select:first-child')[0].value);
-                $(_this.dimensions.spaceOrigDest).bootstrapToggle('off');
+                 // ///////////////////////////////
+                // ORIGIN
 
-                $(_this.dimensions.economicActivityToggle).bootstrapToggle('off');
-                $(_this.dimensions.economicActivityToggleGran).bootstrapToggle('off');
-                $(_this.dimensions.economicActivityOrigDest).bootstrapToggle('off');
+                if (this.selectedAreasOrigin !== undefined &&
+                    this.selectedAreasOrigin.length > 0) {
+                    filterParams.origin.selectedAreas = [];
+                    this.selectedAreasOrigin.forEach(function (area) {
+                        filterParams.origin.selectedAreas.push(area.id);
+                    });
+                }
+                if ($(this.origin.inOrOut).prop('checked')) {
+                    filterParams.origin.inOrOut = 'out';
+                } else {
+                    filterParams.origin.inOrOut = 'in';
+                }
+                if (this.origin.role != 'both') {
+                    filterParams.flows['origin_role'] = this.origin.role;
+                }
 
-                $(_this.dimensions.treatmentMethodToggle).bootstrapToggle('off');
-                $(_this.dimensions.treatmentMethodToggleGran).bootstrapToggle('off');
-                $(_this.dimensions.treatmentMethodOrigDest).bootstrapToggle('off');
+                if (this.origin.role == "production") {
+                    if ($(this.origin.activitySelect).val() == '-1') {
+                        if ($(this.origin.activityGroupsSelect).val() != '-1') {
+                            filterParams.flows['origin__activity__activitygroup__in'] = $(this.origin.activityGroupsSelect).val();
+                        }
+                    } else {
+                        filterParams.flows['origin__activity__in'] = $(this.origin.activitySelect).val();
+                    }
+                } else if (this.origin.role == "treatment") {
+                    if ($(this.origin.processSelect).val() == '-1') {
+                        if ($(this.origin.processGroupSelect).val() != '-1') {
+                            filterParams.flows['origin__process__processgroup__in'] = $(this.origin.processGroupSelect).val();
+                        }
+                    } else {
+                        filterParams.flows['origin__process__in'] = $(this.origin.processSelect).val();
+                    }
+                }
 
-                $("#gran-toggle-time-col").hide();
-                $("#gran-toggle-space-col").hide();
-                $("#gran-econ-activity-col").hide();
-                $("#gran-treatment-method-col").hide();
 
-                $("#origDest-toggle-space-col").hide();
-                $("#origDest-toggle-econAct-col").hide();
-                $("#origDest-toggle-treatment-col").hide();
+                // ///////////////////////////////
+                // DESTINATION
 
+                if (this.selectedAreasDestination !== undefined &&
+                    this.selectedAreasDestination.length > 0) {
+                    filterParams.destination.selectedAreas = [];
+                    filter.selectedAreasDestination.forEach(function (area) {
+                        filterParams.destination.selectedAreas.push(area.id);
+                    });
+                }
+                if ($(this.destination.inOrOut).prop('checked')) {
+                    filterParams.destination.inOrOut = 'out';
+                } else {
+                    filterParams.destination.inOrOut = 'in';
+                }
+                if (this.destination.role != 'both') {
+                    filterParams.flows['destination_role'] = this.destination.role;
+                }
 
-                // //////////////////////////////////
-                // Vizualisation controls:
-                $(".viz-selector-button").removeClass("active");
+                if (this.destination.role == "production") {
+                    if ($(this.destination.activitySelect).val() == '-1') {
+                        if ($(this.destination.activityGroupsSelect).val() != '-1') {
+                            filterParams.flows['destination__activity__activitygroup__in'] = $(this.destination.activityGroupsSelect).val();
+                        }
+                    } else {
+                        filterParams.flows['destination__activity__in'] = $(this.destination.activitySelect).val();
+                    }
+                } else if (this.destination.role == "treatment") {
+                    if ($(this.destination.processSelect).val() == '-1') {
+                        if ($(this.destination.processGroupSelect).val() != '-1') {
+                            filterParams.flows['destination__process__processgroup__in'] = $(this.destination.processGroupSelect).val();
+                        }
+                    } else {
+                        filterParams.flows['destination__process__in'] = $(this.destination.processSelect).val();
+                    }
+                }
 
+                // ///////////////////////////////
+                // FLOWS
+                if (this.selectedAreasFlows !== undefined &&
+                    this.selectedAreasFlows.length > 0) {
+                    filterParams.flows.selectedAreas = [];
+                    this.selectedAreasFlows.forEach(function (area) {
+                        filterParams.flows.selectedAreas.push(area.id);
+                    });
+                }
 
-                // Refresh all selectpickers:
-                $(".selectpicker").selectpicker('refresh');
+                // Year
+                let year = $(this.flows.yearSelect).val();
+                let month = $(this.flows.monthSelect).val();
+
+                if (year[0] !== "-1") {
+                    if (month == "-1") {
+                        filterParams.flows['flowchain__month__year__in'] = year;
+                    } else {
+                        filterParams.flows['flowchain__month__in'] = month;
+                    }
+                }
+
+                // Wastes
+                let wastes02 = $(this.flows.waste02Select).val();
+                let wastes04 = $(this.flows.waste04Select).val();
+                let wastes06 = $(this.flows.waste06Select).val();
+
+                // Waste02 is not All:
+                if (wastes02[0] !== "-1") {
+                    // Waste04 is All, so send Waste02:
+                    if (wastes04[0] == "-1") {
+                        filterParams.flows['flowchain__waste06__waste04__waste02__in'] = wastes02;
+                    } else {
+                        // Waste06 is All, so send Waste04
+                        if (wastes06[0] == "-1") {
+                            filterParams.flows['flowchain__waste06__waste04__in'] = wastes04;
+                        } else {
+                            // Send Waste06:
+                            filterParams.flows['flowchain__waste06__in'] = wastes06;
+                        }
+                    }
+                }
+
+                // Materials
+                let materials = $(this.flows.materialSelect).val();
+                if (materials[0] !== "-1") {
+                    filterParams.flows['flowchain__materials__in'] = materials;
+                }
+
+                // Products
+                let products = $(this.flows.productSelect).val();
+                if (products[0] !== "-1") {
+                    filterParams.flows['flowchain__products__in'] = products;
+                }
+
+                // Composites
+                let composites = $(this.flows.compositesSelect).val();
+                if (composites[0] !== "-1") {
+                    filterParams.flows['flowchain__composites__in'] = composites;
+                }
+
+                // isRoute
+                let route = $(this.flows.routeSelect).val();
+                if (route != 'both') {
+                    let is_route = (route == 'yes') ? true : false;
+                    filterParams.flows['flowchain__route'] = is_route;
+                }
+
+                // isCollector
+                let collector = $(this.flows.collectorSelect).val();
+                if (collector != 'both') {
+                    let is_collector = (collector == 'yes') ? true : false;
+                    filterParams.flows['flowchain__collector'] = is_collector;
+                }
+
+                // isHazardous
+                let hazardous = $(this.flows.hazardousSelect).val();
+                if (hazardous != 'both') {
+                    let is_hazardous = (hazardous == 'yes') ? true : false;
+                    filterParams.flows['flowchain__waste06__hazardous'] = is_hazardous;
+                }
+
+                // isClean
+                let clean = $(this.flows.cleanSelect).val();
+                if (clean[0] !== "-1") {
+                    var options = [];
+                    clean.forEach(function (option) {
+                        if (option == 'unknown') {
+                            options.push(null);
+                        } else {
+                            var is_clean = (option == 'yes') ? true : false;
+                            options.push(is_clean);
+                        }
+                    })
+                    filterParams.flows['clean'] = options;
+                }
+
+                // isMixed
+                let mixed = $(this.flows.mixedSelect).val();
+                if (mixed[0] !== "-1") {
+                    var options = [];
+                    mixed.forEach(function (option) {
+                        if (option == 'unknown') {
+                            options.push(null);
+                        } else {
+                            var is_mixed = (option == 'yes') ? true : false;
+                            options.push(is_mixed);
+                        }
+                    })
+                    filterParams.flows['mixed'] = options;
+                }
+
+                // isDirectUse
+                let direct = $(this.flows.directSelect).val();
+                if (direct[0] !== "-1") {
+                    var options = [];
+                    direct.forEach(function (option) {
+                        if (option == 'unknown') {
+                            options.push(null);
+                        } else {
+                            var is_direct = (option == 'yes') ? true : false;
+                            options.push(is_direct);
+                        }
+                    })
+                    filterParams.flows['direct'] = options;
+                }
+
+                // isComposite
+                let composite = $(this.flows.isCompositeSelect).val();
+                if (composite[0] !== "-1") {
+                    var options = [];
+                    composite.forEach(function (option) {
+                        if (option == 'unknown') {
+                            options.push(null);
+                        } else {
+                            var is_composite = (option == 'yes') ? true : false;
+                            options.push(is_composite);
+                        }
+                    })
+                    filterParams.flows['composite'] = options;
+                }
+
+                return filterParams;
             },
 
             close: function () {
                 //        if (this.flowsView) this.flowsView.close();
-                FilterFlowsView.__super__.close.call(this);
+                FiltersView.__super__.close.call(this);
             }
 
         });
 
-        return FilterFlowsView;
+        return FiltersView;
 
     }
 );

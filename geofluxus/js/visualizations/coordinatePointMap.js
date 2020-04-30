@@ -1,8 +1,8 @@
 define([
     'd3',
     'd3-brush',
-    'd3plus',
-], function (d3, d3brush, d3plus) {
+    'visualizations/geomap.js',
+], function (d3, d3brush, geomap) {
     /**
      *
      * CoordinatePointMap chart to display Flows data
@@ -15,12 +15,12 @@ define([
          * @param {string} options.el       CSS Selector of the container element of the CoordinatePointMap
          */
         constructor(options) {
+            let _this = this;
             var options = options || {};
-            var _this = this;
 
-            new d3plus.Geomap()
+            new geomap.Geomap()
                 .data(options.data)
-                .groupBy("id")
+                .groupBy("actorId")
                 .colorScale("amount")
                 .colorScaleConfig({
                     color: ["red", "orange", "yellow", "green", "blue"].reverse()
@@ -40,29 +40,42 @@ define([
                 .select(options.el)
                 .downloadPosition("left")
                 .downloadButton(true)
-                .render();
+                .controlConfig({
+                    text: "<i class='fas fa-camera' style='color: white'></i>",
+                })
+                .controlPadding(0)
+                .render(function () {
+                    _this.addExportCsvButton();
+                    _this.addFullScreenToggle();
+                });
+        }
 
+        addFullScreenToggle() {
+            let _this = this;
+            let svg = d3.select(".d3plus-viz");
+            svg.select(".d3plus-Form.d3plus-Form-Button")
+                .append("button")
+                .attr("class", "d3plus-Button fullscreen-toggle")
+                .attr("type", "button")
+                .html('<i class="fas fa-expand" style="color: white"></i>')
+                .lower();
+            // Check on hover over Viz if it still contains Fullscreen button, if not, readd:
+            svg.on("mouseover", function () {
+                let buttonFullscreen = d3.select(".fullscreen-toggle")
+                if (buttonFullscreen.empty()) {
+                    _this.addExportCsvButton();
+                    _this.addFullScreenToggle();
+                }
+            })
+        }
 
-            // new d3plus.Geomap()
-            //     .config({
-            //         data: "https://d3plus.org/data/city_coords.json",
-            //         groupBy: "slug",
-            //         colorScale: "dma_code",
-            //         label: function (d) {
-            //             return d.city + ", " + d.region;
-            //         },
-            //         point: function (d) {
-            //             return [d.longitude, d.latitude];
-            //         },
-            //         pointSize: function (d) {
-            //             return d.dma_code;
-            //         },
-            //         pointSizeMin: 1,
-            //         pointSizeMax: 10
-            //     })
-            //     .render();
-
-
+        addExportCsvButton() {
+            let svg = d3.select(".d3plus-viz");
+            svg.select(".d3plus-Form.d3plus-Form-Button")
+                .append("button")
+                .attr("class", "d3plus-Button export-csv")
+                .attr("type", "button")
+                .html('<i class="fas fa-file" style="color: white"></i>');
         }
     }
     return CoordinatePointMap;

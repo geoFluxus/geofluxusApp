@@ -2,12 +2,13 @@
     position: fixed;
     height: 80px;
     width: 100%;
-    background-color: #000000;
-    box-shadow: 0px 5px 10px rgba(255, 255, 255, 0.3);
+    background-color: #484848;
+    /* box-shadow: 0px 5px 10px rgba(255, 255, 255, 0.3); */
     z-index: 1000;
 }
 
 .navbar-brand {
+    width: 5.25em;
     position: relative;
     overflow: hidden;
     color: white;
@@ -15,9 +16,19 @@
     padding-right: 20px;
 }
 
+.navbar-brand img {
+    width: 4em;
+    position: relative;
+    top: -0.25rem;
+}
+
 .navbar-brand:hover {
     color: white;
     text-shadow: 0px 0px 10px white;
+}
+
+.navbar-nav {
+    padding-left: 3rem;
 }
 
 .nav-item {
@@ -27,20 +38,18 @@
 .nav-link {
     position: relative;
     color: white;
-    font-size: 20px;
+    font-size: 18px;
 }
 
 .nav-link:hover {
     color: white;
-    font-size: 30px;
-    text-shadow: 0px 0px 10px white;
-    transition: font-size 0.1s, text-shadow 0.1s;
+    text-shadow: 0px 0px 3px white;
+    transition: text-shadow 0.1s;
 }
 
 .nav-item.active>.nav-link {
-    color: white;
-    font-size: 30px;
-    text-shadow: 0px 0px 10px white;
+    color: #007bff;
+    font-weight: bolder;
 }
 
 
@@ -51,7 +60,7 @@
 /* .navbar-top select, */
 .navbar .dropdown-button {
     color: white !important;
-    background-color: black !important;
+    /* background-color: black !important; */
     border: none;
     font-size: 1em;
     margin-top: 15px;
@@ -79,11 +88,11 @@
 
 .dropdown-content {
     display: none;
+    right: 0.25rem;
     position: absolute;
     background-color: white;
     min-width: 160px;
     overflow: auto;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 10;
     border-radius: 18px;
 }
@@ -114,6 +123,52 @@
 .navbar .navbar-collapse {
     position: relative;
     width: 100%;
+}
+
+
+/* FOOTER */
+
+.page-footer {
+    background-color: #484848;
+}
+
+.footer-logos li {
+    display: inline-block;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+}
+
+.footer-logos li a {
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer-logos li a img {
+    max-height: 3.75rem;
+}
+
+.h2020funding p {
+    text-align: justify;
+    -moz-text-align-last: center;
+    text-align-last: center;
+    font-size: small;
+    margin: auto;
+    max-width: 26rem;
+    margin-top: 1rem;
+}
+
+
+.footer-copyright {
+    height: 10rem;
+    /* background-color: #484848; */
+    background-color: #252525;
+}
+
+.footer-copyright span {
+    font-size: smaller;
+    color: white
 }
 
 /* 

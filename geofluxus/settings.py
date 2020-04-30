@@ -34,6 +34,10 @@ if os.name == 'nt':
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'b48^-g4x&z8b)6c*j9%#cr^mtlnaaz36y)0xqlr3isqrh1td2t'
 
+ALLOWED_HOSTS = ['slca.h2020cinderela.bk.tudelft.nl',
+                 '127.0.0.1',
+                 'localhost']
+
 # Application definition
 
 INSTALLED_APPS = [

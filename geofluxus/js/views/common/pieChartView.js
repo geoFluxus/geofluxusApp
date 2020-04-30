@@ -1,6 +1,7 @@
 define(['views/common/baseview',
         'underscore',
         'd3',
+        'visualizations/d3plus',
         'visualizations/piechart',
         'collections/collection',
         'app-config',
@@ -13,6 +14,7 @@ define(['views/common/baseview',
         BaseView,
         _,
         d3,
+        d3plus,
         PieChart,
         Collection,
         config,
@@ -42,137 +44,113 @@ define(['views/common/baseview',
                     PieChartView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
-                    var _this = this;
 
                     this.options = options;
 
-                    //this.transformedData = this.transformData(this.flows);
-                    //this.render(this.transformedData);
                     this.render();
                 },
-
 
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
                 },
 
-                /*
-                 * render the view
-                 */
                 render: function (data) {
+                    let _this = this;
                     let flows = this.options.flows;
-                    let groupBy;
-                    let tooltipConfig = {};
+                    let dim1String = this.options.dimensions[0][0];
+                    let gran1 = this.options.dimensions[0][1];
 
-                    // /////////////////////////////
-                    // Time dimension
-                    if (this.options.dimensions[0][0] == "time") {
+                    let groupBy;
+                    let tooltipConfig = {
+                        tbody: [
+                            ["Waste (metric ton)", function (d) {
+                                return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                            }]
+                        ]
+                    };
+
+                    // Time 
+                    if (dim1String == "time") {
                         // Granularity = year
-                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
+                        if (gran1 == "flowchain__month__year") {
                             groupBy = ["year"];
-                            tooltipConfig = {
-                                tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
-                                    }],
-                                ]
-                            }
 
                             // Granularity = month:
-                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
+                        } else if (gran1 == "flowchain__month") {
                             groupBy = ["month"];
-                            tooltipConfig = {
-                                title: function (d) {
-                                    return d.month
-                                },
-                                tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
-                                    }],
-                                ]
-                            }
                         }
 
+                        // Space
+                    } else if (dim1String == "space") {
 
-                        // /////////////////////////////
-                        // Space dimension
-                    } else if (this.options.dimensions[0][0] == "space") {
-                        groupBy = ["areaName"];
-                        tooltipConfig = {
-                            title: function (d) {
-                                return d.areaName
-                            },
-                            tbody: [
-                                ["Total", function (d) {
-                                    return d["amount"].toFixed(3)
-                                }],
-                            ]
+                        // Areas:
+                        if (!this.options.dimensions.isActorLevel) {
+                            groupBy = ["areaName"];
+                        } else {
+                            // Actor level
+                            groupBy = ["actorName"];
                         }
 
-                        // /////////////////////////////
                         // Economic Activity dimension
-                    } else if (this.options.dimensions[0][0] == "economicActivity") {
-                        // Granularity = Activity group
-                        if (this.options.dimensions[0][1] == "origin__activity__activitygroup" || this.options.dimensions[0][1] == "destination__activity__activitygroup") {
+                    } else if (dim1String == "economicActivity") {
+                        tooltipConfig.tbody.push(["Activity group", function (d) {
+                            return d.activityGroupCode + " " + d.activityGroupName;
+                        }]);
+
+                        // Granularity: Activity group
+                        if (gran1 == "origin__activity__activitygroup" || gran1 == "destination__activity__activitygroup") {
                             groupBy = ["activityGroupCode"];
-                            tooltipConfig = {
-                                tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
-                                    }],
-                                    ["Activity group", function (d) {
-                                        return d.activityGroupCode + " " + d.activityGroupName;
-                                    }],
-                                ]
-                            }
 
                             // Granularity: Activity
-                        } else if (this.options.dimensions[0][1] == "origin__activity" || this.options.dimensions[0][1] == "destination__activity") {
+                        } else if (gran1 == "origin__activity" || gran1 == "destination__activity") {
                             groupBy = ["activityCode"];
-                            tooltipConfig = {
-                                tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
-                                    }],
-                                    ["Activity", function (d) {
-                                        return d.activityCode + " " + d.activityName;
-                                    }],
-                                ]
-                            }
+                            tooltipConfig.tbody.push(["Activity", function (d) {
+                                return d.activityCode + " " + d.activityName;
+                            }]);
                         }
-                    } else if (this.options.dimensions[0][0] == "treatmentMethod") {
 
-                        if (this.options.dimensions[0][1] == "origin__process__processgroup" || this.options.dimensions[0][1] == "destination__process__processgroup") {
+                        // Treatment method 
+                    } else if (dim1String == "treatmentMethod") {
+                        tooltipConfig.tbody.push(["Treatment method group", function (d) {
+                            return d.processGroupCode + " " + d.processGroupName;
+                        }]);
+
+                        if (gran1 == "origin__process__processgroup" || gran1 == "destination__process__processgroup") {
                             groupBy = ["processGroupCode"];
-                            tooltipConfig = {
-                                tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
-                                    }],
-                                    ["Treatment method group", function (d) {
-                                        return d.processGroupCode + " " + d.processGroupName;
-                                    }],
-                                ]
-                            }
 
                             // Granularity: Activity
-                        } else if (this.options.dimensions[0][1] == "origin__process" || this.options.dimensions[0][1] == "destination__process") {
+                        } else if (gran1 == "origin__process" || gran1 == "destination__process") {
                             groupBy = ["processCode"];
-                            tooltipConfig = {
-                                tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
-                                    }],
-                                    ["Treatment method", function (d) {
-                                        return d.processCode + " " + d.processName;
-                                    }],
-                                ]
-                            }
+                            tooltipConfig.tbody.push(["Treatment method", function (d) {
+                                return d.processCode + " " + d.processName;
+                            }]);
                         }
 
-
-
+                        // Material
+                    } else if (dim1String == "material") {
+                        // ewc2
+                        if (gran1 == "flowchain__waste06__waste04__waste02") {
+                            groupBy = ["ewc2Code"];
+                            tooltipConfig.title = "Waste per EWC Chapter";
+                            tooltipConfig.tbody.push(["EWC Chapter", function (d) {
+                                return d.ewc2Code + " " + d.ewc2Name;
+                            }]);
+                            // ewc4
+                        } else if (gran1 == "flowchain__waste06__waste04") {
+                            groupBy = ["ewc4Code"];
+                            tooltipConfig.title = "Waste per EWC Sub-Chapter";
+                            tooltipConfig.tbody.push(["EWC Sub-Chapter", function (d) {
+                                return d.ewc4Code + " " + d.ewc4Name;
+                            }]);
+                            // ewc6
+                        } else if (gran1 == "flowchain__waste06") {
+                            groupBy = ["ewc6Code"];
+                            tooltipConfig.title = "Waste per EWC Entry";
+                            tooltipConfig.tbody.push(["EWC Entry", function (d) {
+                                return d.ewc6Code + " " + d.ewc6Name;
+                            }]);
+                        }
 
                     }
 
@@ -183,44 +161,43 @@ define(['views/common/baseview',
                         groupBy: groupBy,
                         tooltipConfig: tooltipConfig,
                     });
+
+                    // Smooth scroll to top of Viz
+                    $("#apply-filters")[0].scrollIntoView({
+                        behavior: "smooth"
+                    });
                 },
 
-                /*
-                 * render sankey-diagram in fullscreen
-                 */
                 toggleFullscreen: function (event) {
-                    this.el.classList.toggle('fullscreen');
-                    this.refresh();
+                    $(this.el).toggleClass('fullscreen');
+                    // Only scroll when going to normal view:
+                    if (!$(this.el).hasClass('fullscreen')) {
+                        $("#apply-filters")[0].scrollIntoView({
+                            behavior: "smooth"
+                        });
+                    }
+                    window.dispatchEvent(new Event('resize'));
                     event.stopImmediatePropagation();
-                    //this.render(this.transformedData);
                 },
 
+                exportPNG: function (event) {
+                    // var svg = this.el.querySelector('svg');
+                    // saveSvgAsPng.saveSvgAsPng(svg, "sankey-diagram.png", {
+                    //     scale: 2,
+                    //     backgroundColor: "#FFFFFF"
+                    // });
+                    // event.stopImmediatePropagation();
+                },
 
                 exportCSV: function (event) {
-                    if (!this.transformedData) return;
+                    const items = this.options.flows;
+                    const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
+                    const header = Object.keys(items[0])
+                    let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+                    csv.unshift(header.join(','))
+                    csv = csv.join('\r\n')
 
-                    var header = ['Origin', 'Origin Code',
-                            'Destination', 'Destination Code',
-                            'Amount (t/year)'
-                        ],
-                        rows = [],
-                        _this = this;
-                    rows.push(header.join(',\t'));
-                    this.transformedData.links.forEach(function (link) {
-                        var origin = link.source,
-                            destination = link.target,
-                            originName = origin.name,
-                            destinationName = destination.name,
-                            amount = link.value.toFixed(3);
-
-                        var originCode = origin.code,
-                            destinationCode = destination.code;
-
-                        var row = ['"' + originName + '",', originCode + ',"', destinationName + '",', destinationCode + ',', amount];
-                        rows.push(row.join('\t'));
-                    });
-                    var text = rows.join('\r\n');
-                    var blob = new Blob([text], {
+                    var blob = new Blob([csv], {
                         type: "text/plain;charset=utf-8"
                     });
                     FileSaver.saveAs(blob, "data.csv");
@@ -228,9 +205,6 @@ define(['views/common/baseview',
                     event.stopImmediatePropagation();
                 },
 
-                /*
-                 * remove this view from the DOM
-                 */
                 close: function () {
                     this.undelegateEvents(); // remove click events
                     this.unbind(); // Unbind all local event bindings

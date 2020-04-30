@@ -1,12 +1,14 @@
-.map{
+.map {
     width: 1960px;
     height: 500px;
 }
-.country:hover{
+
+.country:hover {
     stroke: #7d7d7d;
     stroke-width: 0.5px;
 }
-div.sankeymaptooltip {
+
+div.flowMapToolTip {
     position: absolute;
     text-align: left;
     width: auto;
@@ -19,7 +21,6 @@ div.sankeymaptooltip {
     border-radius: 0px;
     pointer-events: none;
     z-index: 99999;
-    min-width: 200px;
 }
 
 .flow {
@@ -27,33 +28,33 @@ div.sankeymaptooltip {
 }
 
 .animated.flow {
-  /*stroke-dasharray: 10, 4;*/
-  animation: flow 30s linear infinite;
-  -webkit-animation: flow 30s linear infinite;
+    /*stroke-dasharray: 10, 4;*/
+    animation: flow 30s linear infinite;
+    -webkit-animation: flow 30s linear infinite;
 }
 
 @keyframes flow {
-  to {
-    stroke-dashoffset: -300;
-  }
+    to {
+        stroke-dashoffset: -300;
+    }
 }
 
 @-webkit-keyframes flow {
-  to {
-    stroke-dashoffset: -300;
-  }
+    to {
+        stroke-dashoffset: -300;
+    }
 }
 
-.mpoint:hover{
-    stroke:white;
+.mpoint:hover {
+    stroke: white;
     stroke-width: 2px;
 }
 
-.route{
+.route {
     fill: none;
 }
 
-.route:hover{
+.route:hover {
     stroke-width: 4px;
 }
 
@@ -65,7 +66,8 @@ div.sankeymaptooltip {
     z-index: 2000;
 }
 
-.leaflet-bottom, .leaflet-top {
+.leaflet-bottom,
+.leaflet-top {
     max-width: 50%;
 }
 
@@ -75,24 +77,28 @@ div.sankeymaptooltip {
     max-height: 50%;
     pointer-events: all;
 }
+
 .leaflet-fullscreen-on .leaflet-right.leaflet-legend {
     max-width: 20%;
 }
+
 .leaflet-right.leaflet-legend .leaflet-control {
     margin-right: 0px;
 }
 
 
-.leaflet-control{
+.leaflet-control {
     max-width: 100%;
 }
-.leaflet-control label{
+
+.leaflet-control label {
     pointer-events: none;
 }
 
 .leaflet-control-zoom {
     top: 50px;
 }
+
 .leaflet-div-icon {
     border: 0px;
 }

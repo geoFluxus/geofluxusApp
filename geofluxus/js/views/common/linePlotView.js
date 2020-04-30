@@ -1,6 +1,7 @@
 define(['views/common/baseview',
         'underscore',
         'd3',
+        'visualizations/d3plus',
         'visualizations/linePlot',
         'collections/collection',
         'app-config',
@@ -13,6 +14,7 @@ define(['views/common/baseview',
         BaseView,
         _,
         d3,
+        d3plus,
         LinePlot,
         Collection,
         config,
@@ -30,7 +32,6 @@ define(['views/common/baseview',
         var LinePlotView = BaseView.extend(
             /** @lends module:views/LinePlotView.prototype */
             {
-
                 /**
                  * @param {Object} options
                  * @param {HTMLElement} options.el                   element the view will be rendered in
@@ -42,64 +43,147 @@ define(['views/common/baseview',
                     LinePlotView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
-                    var _this = this;
 
                     this.options = options;
 
-                    //this.transformedData = this.transformData(this.flows);
-                    //this.render(this.transformedData);
                     this.render();
                 },
-
 
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
                 },
 
-                /*
-                 * render the view
-                 */
                 render: function (data) {
+                    let _this = this;
                     let flows = this.options.flows;
-                    let tooltipConfig;
+
+                    let dim1String = this.options.dimensions[0][0];
+                    let gran1 = this.options.dimensions[0][1];
+                    // let dim2String = this.options.dimensions[1][0];
+                     let gran2 = this.options.dimensions[1] ? this.options.dimensions[1][1] : {};
+
+                    let dimStrings = [];
+                    this.options.dimensions.forEach(dim => dimStrings.push(dim[0]));
+
                     let groupBy;
                     let x;
+                    let isActorLevel = false;
+                    let hasMultipleLines = this.options.hasMultipleLines;
+                    let tooltipConfig = {
+                        tbody: [
+                            ["Waste (metric ton)", function (d) {
+                                return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                            }]
+                        ]
+                    };
 
                     // /////////////////////////////
-                    // Time dimension
-                    if (this.options.dimensions[0][0] == "time") {
-                        // Granularity = year
-                        if (this.options.dimensions[0][1] == "flowchain__month__year") {
-                            x = ["year"];
-                            tooltipConfig = {
-                                title: "Waste totals per year",
-                                tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
-                                    }],
-                                    ["Year", function (d) {
-                                        return d.year
-                                    }]
-                                ]
-                            }
+                    // 1D - Time dimension
+
+                    // Granularity = year
+                    if (gran1 == "flowchain__month__year") {
+                        x = ["year"];
+                        tooltipConfig.title = "Waste totals per year";
+                        tooltipConfig.tbody.push(["Year", function (d) {
+                            return d.year
+                        }]);
+
+                        // Granularity = month:
+                    } else if (gran1 == "flowchain__month") {
+                        x = ["yearMonthCode"];
+                        if (hasMultipleLines) {
+                            groupBy = ["year"];
+                            x = ["monthName"];
+                        }
+                        tooltipConfig.title = "Waste totals per month";
+                        tooltipConfig.tbody.push(["Month", function (d) {
+                            return d.month
+                        }]);
+                    }
 
 
-                            // Granularity = month:
-                        } else if (this.options.dimensions[0][1] == "flowchain__month") {
-                            groupBy = ["yearMonthCode"];
-                            x = ["yearMonthCode"];
-                            tooltipConfig = {
-                                title: "Waste totals per month",
-                                tbody: [
-                                    ["Total", function (d) {
-                                        return d["amount"].toFixed(3)
-                                    }],
-                                    ["Month", function (d) {
-                                        return d.month
-                                    }]
-                                ]
-                            }
+                    // //////////////////////////////////////////
+                    // 2D - Time & Space
+                    if (dimStrings.includes("space")) {
+
+                        if (!this.options.dimensions.isActorLevel) {
+                            groupBy = ["areaName"];
+                            tooltipConfig.tbody.push(["Area", function (d) {
+                                return d.areaName
+                            }]);
+                        } else {
+                            isActorLevel = true;
+                            groupBy = ["actorId"];
+                            tooltipConfig.tbody.push(["Company", function (d) {
+                                return d.actorName
+                            }]);
+                        }
+
+                        // //////////////////////////////////////////
+                        // 2D - Time & Economic Activity
+                    } else if (dimStrings.includes("economicActivity")) {
+
+                        tooltipConfig.tbody.push(["Activity group", function (d) {
+                            return d.activityGroupCode + " " + d.activityGroupName;
+                        }, ])
+
+                        if (gran2 == "origin__activity__activitygroup" || gran2 == "destination__activity__activitygroup") {
+                            groupBy = ["activityGroupCode"];
+                        } else if (gran2 == "origin__activity" || gran2 == "destination__activity") {
+                            groupBy = ["activityCode"];
+                            tooltipConfig.tbody.push(["Activity", function (d) {
+                                return d.activityCode + " " + d.activityName;
+                            }]);
+                        }
+
+                        // //////////////////////////////////////////
+                        // 2D - Time & Treatment method
+                    } else if (dimStrings.includes("treatmentMethod")) {
+
+                        tooltipConfig.tbody.push(["Treatment method group", function (d) {
+                            return d.processGroupCode + " " + d.processGroupName;
+                        }])
+
+                        if (gran2 == "origin__process__processgroup" || gran2 == "destination__process__processgroup") {
+                            groupBy = ["processGroupCode"];
+                        } else if (gran2 == "origin__process" || gran2 == "destination__process") {
+                            groupBy = ["processCode"];
+                            tooltipConfig.tbody.push(["Treatment method", function (d) {
+                                return d.processCode + " " + d.processName;
+                            }]);
+                        }
+                    
+                        // //////////////////////////////////////////
+                        // 2D - Time & Material
+                    } else if (dimStrings.includes("material")) {
+
+                        tooltipConfig.tbody.push(["EWC Chapter", function (d) {
+                            return d.ewc2Code + " " + d.ewc2Name;
+                        }]);
+
+                        // ewc2
+                        if (gran2 == "flowchain__waste06__waste04__waste02") {
+                            groupBy = ["ewc2Code"];
+                            tooltipConfig.title = "Waste per EWC Chapter";
+                            // ewc4
+                        } else if (gran2 == "flowchain__waste06__waste04") {
+                            groupBy = ["ewc4Code"];
+                            tooltipConfig.title = "Waste per EWC Sub-Chapter";
+                            tooltipConfig.tbody.push(["EWC Sub-Chapter", function (d) {
+                                return d.ewc4Code + " " + d.ewc4Name;
+                            }]);
+                            // ewc6
+                        } else if (gran2 == "flowchain__waste06") {
+                            groupBy = ["ewc6Code"];
+                            tooltipConfig.title = "Waste per Entry";
+                            tooltipConfig.tbody.push(
+                                ["EWC Sub-Chapter", function (d) {
+                                    return d.ewc4Code + " " + d.ewc4Name;
+                                }],
+                                ["EWC Entry", function (d) {
+                                return d.ewc6Code + " " + d.ewc6Name;
+                            }]);
                         }
                     }
 
@@ -110,46 +194,36 @@ define(['views/common/baseview',
                         groupBy: groupBy,
                         x: x,
                         tooltipConfig: tooltipConfig,
+                        isActorLevel: isActorLevel,
+                    });
 
+                    // Smooth scroll to top of Viz
+                    $("#apply-filters")[0].scrollIntoView({
+                        behavior: "smooth"
                     });
                 },
 
-                /*
-                 * render sankey-diagram in fullscreen
-                 */
                 toggleFullscreen: function (event) {
-                    this.el.classList.toggle('fullscreen');
-                    this.refresh();
+                    $(this.el).toggleClass('fullscreen');
                     event.stopImmediatePropagation();
-                    //this.render(this.transformedData);
+                    // Only scroll when going to normal view:
+                    if (!$(this.el).hasClass('fullscreen')) {
+                        $("#apply-filters")[0].scrollIntoView({
+                            behavior: "smooth"
+                        });
+                    }
+                    window.dispatchEvent(new Event('resize'));
                 },
-
 
                 exportCSV: function (event) {
-                    if (!this.transformedData) return;
+                    const items = this.options.flows;
+                    const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
+                    const header = Object.keys(items[0])
+                    let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+                    csv.unshift(header.join(','))
+                    csv = csv.join('\r\n')
 
-                    var header = ['Origin', 'Origin Code',
-                            'Destination', 'Destination Code',
-                            'Amount (t/year)'
-                        ],
-                        rows = [],
-                        _this = this;
-                    rows.push(header.join(',\t'));
-                    this.transformedData.links.forEach(function (link) {
-                        var origin = link.source,
-                            destination = link.target,
-                            originName = origin.name,
-                            destinationName = destination.name,
-                            amount = link.value.toFixed(3);
-
-                        var originCode = origin.code,
-                            destinationCode = destination.code;
-
-                        var row = ['"' + originName + '",', originCode + ',"', destinationName + '",', destinationCode + ',', amount];
-                        rows.push(row.join('\t'));
-                    });
-                    var text = rows.join('\r\n');
-                    var blob = new Blob([text], {
+                    var blob = new Blob([csv], {
                         type: "text/plain;charset=utf-8"
                     });
                     FileSaver.saveAs(blob, "data.csv");
@@ -157,9 +231,6 @@ define(['views/common/baseview',
                     event.stopImmediatePropagation();
                 },
 
-                /*
-                 * remove this view from the DOM
-                 */
                 close: function () {
                     this.undelegateEvents(); // remove click events
                     this.unbind(); // Unbind all local event bindings
