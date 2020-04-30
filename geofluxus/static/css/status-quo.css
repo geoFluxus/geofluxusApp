@@ -39,6 +39,10 @@
     transition: .3s transform ease-in-out;
 }
 
+.resetButton {
+    float: left;
+    width: 10em;
+}
 
 #btn-filterViews {
     background: none;
