@@ -57,7 +57,9 @@
 }
 
 .collapsingHeaderButton {
-    width: 93% !important;
+    padding: 1rem !important;
+    margin: -1rem;
+    width: 100%;
     text-align: left;
     background: none;
     color: white;

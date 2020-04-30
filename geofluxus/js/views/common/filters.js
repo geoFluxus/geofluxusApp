@@ -4,6 +4,7 @@ define(['views/common/baseview',
         'visualizations/map',
         'openlayers',
         'utils/utils',
+        'bootstrap',
     ],
 
     function (BaseView, _, Collection, Map, ol, utils) {
@@ -122,11 +123,11 @@ define(['views/common/baseview',
                     months: this.months,
                 });
 
-//                // Activate help icons
-//                var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
-//                $(popovers).popover({
-//                    trigger: "focus"
-//                });
+            //    // Activate help icons
+            //    var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
+            //    $(popovers).popover({
+            //        trigger: "focus"
+            //    });
 
                 this.renderAreaSelectModal();
 
