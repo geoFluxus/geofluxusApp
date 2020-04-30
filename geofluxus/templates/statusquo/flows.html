@@ -10,6 +10,20 @@
 
     <div class="card bg-dark" id="dimensionsCard">
         
+
+        <div class="row" id="message-container-row">
+            <div class="col mt-3">
+                <span style="color: white">Select at least one dimension.</span>
+            </div>
+        </div>
+        <div class="row" id="alertMaxDimensionsRow" style="display: none;">
+            <div class="col mt-3 text-center">
+                <div class="alert alert-warning fade show" id="alertMaxDimensions" role="alert">
+                    You can select up to <strong><%= maxNumberOfDimensions %> dimensions</strong> at the same time.
+                </div>
+            </div>
+        </div>
+
         <!-- IF WE NEED COLLAPSE LATER, UNCOMMENT THIS -->
         <!-- <div class="card-header" id="card-header-collapse-dimensions">
                 <h4 class="mb-1">
@@ -158,13 +172,15 @@
         </div>
 
         <!-- Max dimensions -->
-        <div class="row" id="alertMaxDimensionsRow" style="display: none;">
+        <!-- <div class="row" id="alertMaxDimensionsRow" style="display: none;">
             <div class="col mt-3 text-center">
                 <div class="alert alert-warning fade show" id="alertMaxDimensions" role="alert">
                     You can select up to <strong><%= maxNumberOfDimensions %> dimensions</strong> at the same time.
                 </div>
             </div>
-        </div>
+        </div> -->
+
+        
 
         <!-- </div>
             </div> -->
@@ -194,11 +210,11 @@
 
             <div class="card-body">
 
-                <div class="row" id="message-container-row">
+                <!-- <div class="row" id="message-container-row">
                     <div class="col d-flex align-items-center">
                         <span style="color: white; margin: auto">Select at least one dimension.</span>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="viz-container" style="display: none;">
                     <div class="row" style="width: 100%;">
