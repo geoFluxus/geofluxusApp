@@ -84,11 +84,11 @@ define(['views/common/baseview',
                     maxNumberOfDimensions: this.maxNumberOfDimensions
                 });
 
-                // // Activate help icons
-                // var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
-                // $(popovers).popover({
-                //     trigger: "focus"
-                // });
+                // Activate help icons
+                var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
+                $(popovers).popover({
+                    trigger: "focus"
+                });
 
                 // this.sankeyWrapper = this.el.querySelector('.sankey-wrapper');
                 // this.sankeyWrapper.addEventListener('linkSelected', this.linkSelected);
