@@ -74,7 +74,6 @@ define(['views/common/baseview',
                 var promises = [
                     this.activityGroups.fetch(),
                     this.activities.fetch(),
-                    //this.actors.fetch(),
                     this.processes.fetch(),
                     this.processgroups.fetch(),
                     this.wastes02.fetch(),
@@ -123,11 +122,11 @@ define(['views/common/baseview',
                     months: this.months,
                 });
 
-            //    // Activate help icons
-            //    var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
-            //    $(popovers).popover({
-            //        trigger: "focus"
-            //    });
+               // Activate help icons
+               var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
+               $(popovers).popover({
+                   trigger: "focus"
+               });
 
                 this.renderAreaSelectModal();
 

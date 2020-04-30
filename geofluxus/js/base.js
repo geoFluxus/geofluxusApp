@@ -27,11 +27,11 @@ require(['jquery',
       //  }
 
       // Activate help icons
-      setTimeout(function () {
-        $('[data-toggle="popover"]').popover({
-          trigger: "focus"
-        });
-      }, 1000);
+      // setTimeout(function () {
+      //   $('[data-toggle="popover"]').popover({
+      //     trigger: "focus"
+      //   });
+      // }, 5000);
 
       // Hide navbar on scroll down, show navbar on scroll up:
       var prevScrollpos = window.pageYOffset;
