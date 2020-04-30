@@ -1,6 +1,9 @@
 // Flows
 define(['views/common/baseview',
         'underscore',
+        'd3',
+        'openlayers',
+        'visualizations/map',
         'views/common/filters',
         'collections/collection',
         'utils/utils',
@@ -12,6 +15,9 @@ define(['views/common/baseview',
     function (
         BaseView,
         _,
+        d3,
+        ol,
+        Map,
         FiltersView,
         Collection,
         utils,
@@ -32,6 +38,7 @@ define(['views/common/baseview',
                     apiTag: 'arealevels',
                     comparator: "level",
                 });
+
                 var promises = [
                     this.areaLevels.fetch(),
                 ];
@@ -58,6 +65,13 @@ define(['views/common/baseview',
 
                 // Render flow filters
                 this.renderFiltersView();
+
+                // Render map for visualizations
+                this.routingMap = new Map({
+                    el: this.el.querySelector('.map'),
+                    source: 'dark',
+                    opacity: 1.0
+                });
 
                 this.initializeControls();
                 this.addEventListeners();
@@ -266,12 +280,14 @@ define(['views/common/baseview',
                         data: data,
                         body: filterParams,
                         success: function (response) {
-
                             _this.flows = flows.models;
 
                             _this.flows.forEach(function (flow, index) {
                                 this[index] = flow.attributes;
                             }, _this.flows);
+
+                            // Render network map for visualizations
+                            _this.renderNetworkMap(_this.flows);
 
                             _this.loader.deactivate();
 
@@ -286,6 +302,166 @@ define(['views/common/baseview',
                         }
                     });
                 }
+            },
+
+            // Render network map for visualizations
+            renderNetworkMap: function (flows) {
+                var _this = this;
+
+                ways = new Collection([], {
+                    apiTag: 'ways',
+                });
+                this.loader.activate();
+                ways.fetch({
+                        success: function () {
+                            _this.loader.deactivate();
+                            _this.drawNetwork(ways, flows);
+                        },
+                        error: function (res) {
+                            _this.loader.deactivate();
+                            _this.onError(res);
+                        }
+                });
+
+                this.routingMap.addLayer('ways', {
+                    stroke: 'rgb(255, 255, 255)',
+                    strokeWidth: 5
+                });
+            },
+
+            // Add network layer to map
+            drawNetwork: function(ways, flows) {
+                var _this = this;
+
+                // process flows to point to amounts
+                var amounts = {},
+                    data = [];
+                flows.forEach(function(flow) {
+                    var id = flow['id'],
+                        amount = flow['amount'];
+                    amounts[id] = amount;
+                    // exclude zero values from scale definition
+                    if (amount > 0) {
+                        data.push(amount);
+                    }
+                })
+
+                // define color scale for amounts
+                var colors = [
+                    'rgb(26, 152, 80)',
+                    'rgb(102, 189, 99)',
+                    'rgb(166, 217, 106)',
+                    'rgb(217, 239, 139)',
+                    'rgb(255, 255, 191)',
+                    'rgb(254, 224, 139)',
+                    'rgb(253, 174, 97)',
+                    'rgb(244, 109, 67)',
+                    'rgb(215, 48, 39)',
+                    'rgb(168, 0, 0)'
+                ]
+
+                // scale of equal frequency intervals
+                var max = Math.max(...data),
+                    quantile = d3.scaleQuantile()
+                                 .domain(data)
+                                 .range(colors);
+
+                // prettify scale intervals
+                function prettify(val) {
+                    if (val <= 5) {
+                        return Math.round(val / 5) * 5;
+                    }
+                    else if (val > 5 && val <= 100) {
+                        return Math.round(val / 10) * 10;
+                    }
+                    else if (val > 100 && val <= 1000) {
+                        return Math.round(val / 100) * 100;
+                    }
+                    else if (val > 1000 && val <= 10000) {
+                        return Math.round(val / 1000) * 1000;
+                    }
+                    return val;
+                }
+                var values = [];
+                Object.values(quantile.quantiles()).forEach(function(val) {
+                    values.push(prettify(val));
+                });
+                values.unshift(0);
+
+                function assignColor(amount){
+                    for (i = 1; i < values.length; i++) {
+                        if (amount <= values[i]) {
+                            return colors[i - 1];
+                        }
+                    }
+                    return colors[colors.length - 1];
+                }
+
+                // add ways to map and load with amounts
+                ways.forEach(function(way) {
+                    var id = way.get('id'),
+                        coords = way.get('the_geom').coordinates,
+                        type = way.get('the_geom').type.toLowerCase();
+                        amount = amounts[id];
+                    _this.routingMap.addGeometry(coords, {
+                        projection: 'EPSG:4326', layername: 'ways',
+                        type: type, renderOSM: false,
+                        style : {
+                            // color, width & zIndex based on amount
+                            strokeColor: amount > 0 ? assignColor(amount) : 'rgb(255,255,255)',
+                            strokeWidth: amount > 0 ? 2 * (1 + 2 * amount / max) : 0.5,
+                            zIndex: amount
+                        },
+                        tooltip: amount < 1000 ? `${amount.toFixed(3)} t` : `${(amount / 1000).toFixed(3)} kt`
+                    });
+                });
+
+                // focus on ways layer
+                this.routingMap.centerOnLayer('ways');
+
+                // add legend
+                var legend = document.getElementById('legend');
+                if (legend) {
+                    legend.parentElement.removeChild(legend);
+                }
+                var legend = document.createElement('div');
+                legend.className = 'ol-control-panel ol-unselectable ol-control';
+                legend.id = 'legend';
+                var controlPanel = new ol.control.Control({
+                    element: legend
+                });
+                this.routingMap.map.addControl(controlPanel);
+
+                var title = document.createElement('div');
+                title.style.margin = "5%";
+                title.innerHTML = '<h4 style="text-align: center;">Legend</h4>'
+                legend.appendChild(title);
+
+                // add color scale to legend
+                var width = height = 30;
+                var scale = d3.select("#legend")
+                              .append("center")
+                              .append("svg")
+                              .attr("width", width * colors.length)
+                              .attr("height", 100),
+                    rects = scale.selectAll('rect')
+                                 .data(colors)
+                                 .enter()
+                                 .append("rect")
+                                 .attr("x", function(d, i) { return i * width; })
+                                 .attr("y", 10)
+                                 .attr("width", 30)
+                                 .attr("height", 30)
+                                 .attr("fill", function(d) { return d; }),
+                    texts = scale.selectAll('text')
+                                 .data(values)
+                                 .enter()
+                                 .append('text')
+                                 .text(function (d) { return `${d}`; })
+                                 .attr("x", function(d, i) { return i * width; })
+                                 .attr('y', 2 * height)
+                                 .attr('fill', 'white')
+                                 .attr('font-size', 10);
             },
 
             resetDimAndVizToDefault: function () {

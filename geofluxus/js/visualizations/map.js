@@ -47,12 +47,8 @@ function(ol, turf)
             var basicLayer = new ol.layer.Vector({ source: new ol.source.Vector() });
             initlayers.push(basicLayer);
 
-            var controls = (showControls) ? ol.control.defaults({
-                                    attributionOptions: ({
-                                        collapsible: false
-                                    })}).extend([
-                                        new ol.control.FullScreen({source: options.el})
-                                    ]) : [];
+            var controls = ol.control.defaults({attribution: false })
+                                     .extend([new ol.control.FullScreen({source: options.el})]);
 
             var interactOptions = {
                     doubleClickZoom : enableZoom,
@@ -112,6 +108,9 @@ function(ol, turf)
                     tooltip.innerHTML = feature.get('tooltip');
                     tooltip.style.display = '';
                     tooltip.style.color = 'black';
+                    tooltip.style.borderRadius = '10px';
+                    tooltip.style.padding = '10px';
+                    tooltip.style.font = '14px sans-serif';
                 }
                 else tooltip.style.display = 'none';
             };
@@ -328,7 +327,8 @@ function(ol, turf)
         addGeometry(geometry, options){
             var options = options || {},
                 type = options.type.toLowerCase() || 'polygon',
-                proj = options.projection || this.mapProjection;
+                proj = options.projection || this.mapProjection,
+                style = options.style || null;
             if (!((geometry instanceof ol.geom.MultiPolygon) ||
                   (geometry instanceof ol.geom.Polygon) ||
                   (geometry instanceof ol.geom.LineString) ||
@@ -355,6 +355,16 @@ function(ol, turf)
 
             if (!layer) layer = this.addLayer(layername);
             var feature = new ol.Feature({ geometry: geometry.transform(proj, this.mapProjection) });
+            if (style) {
+                var style = new ol.style.Style({
+                    stroke: new ol.style.Stroke({
+                        color: style.strokeColor,
+                        width: style.strokeWidth
+                    }),
+                    zIndex: style.zIndex
+                });
+                feature.setStyle(style);
+            }
             feature.set('label', options.label);
             feature.set('tooltip', options.tooltip);
             feature.set('id', options.id);

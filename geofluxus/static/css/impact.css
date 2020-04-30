@@ -629,3 +629,22 @@ div.fullscreen {
     top: 0;
     left: 0;
 }
+
+.map {
+    min-height: 400px;
+    min-width: 400px;
+    height: 10%;
+    width: 100%;
+}
+
+#legend {
+    right: 5%;
+    bottom: 5%;
+    background: rgba(255, 255, 255, 0.1);
+    width: 350px;
+    height: 150px;
+}
+
+#legend:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
