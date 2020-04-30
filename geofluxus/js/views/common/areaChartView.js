@@ -150,30 +150,30 @@ define(['views/common/baseview',
                         // 2D - Time & Material
                     } else if (dimStrings.includes("material")) {
 
-                        tooltipConfig.tbody.push(["Chapter", function (d) {
+                        tooltipConfig.tbody.push(["EWC Chapter", function (d) {
                             return d.ewc2Code + " " + d.ewc2Name;
                         }]);
 
                         // ewc2
                         if (gran2 == "flowchain__waste06__waste04__waste02") {
                             groupBy = ["ewc2Code"];
-                            tooltipConfig.title = "Waste per Chapter";
+                            tooltipConfig.title = "Waste per EWC Chapter";
                             // ewc4
                         } else if (gran2 == "flowchain__waste06__waste04") {
                             groupBy = ["ewc4Code"];
-                            tooltipConfig.title = "Waste per Sub-Chapter";
-                            tooltipConfig.tbody.push(["Sub-Chapter", function (d) {
+                            tooltipConfig.title = "Waste per EWC Sub-Chapter";
+                            tooltipConfig.tbody.push(["EWC Sub-Chapter", function (d) {
                                 return d.ewc4Code + " " + d.ewc4Name;
                             }]);
                             // ewc6
                         } else if (gran2 == "flowchain__waste06") {
                             groupBy = ["ewc6Code"];
-                            tooltipConfig.title = "Waste per Entry";
+                            tooltipConfig.title = "Waste per EWC Entry";
                             tooltipConfig.tbody.push(
-                                ["Sub-Chapter", function (d) {
+                                ["EWC Sub-Chapter", function (d) {
                                     return d.ewc4Code + " " + d.ewc4Name;
                                 }],
-                                ["Entry", function (d) {
+                                ["EWC Entry", function (d) {
                                     return d.ewc6Code + " " + d.ewc6Name;
                                 }]);
                         }

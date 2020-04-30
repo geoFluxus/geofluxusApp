@@ -19,18 +19,18 @@ DATABASES = {
             'sslmode': 'require',
             },
     },
-    'routing': {
-
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': ROUTING,
-        'USER': DB_USER,
-        'PASSWORD': DB_PASS,
-        'HOST': 'h2020repair.bk.tudelft.nl',
-        'PORT': '5432',
-        'OPTIONS': {
-            'sslmode': 'require',
-            },
-    },
+    # 'routing': {
+    #
+    #     'ENGINE': 'django.contrib.gis.db.backends.postgis',
+    #     'NAME': ROUTING,
+    #     'USER': DB_USER,
+    #     'PASSWORD': DB_PASS,
+    #     'HOST': 'h2020repair.bk.tudelft.nl',
+    #     'PORT': '5432',
+    #     'OPTIONS': {
+    #         'sslmode': 'require',
+    #         },
+    # },
 }
 
 DEBUG = False

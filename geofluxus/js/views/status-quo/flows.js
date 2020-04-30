@@ -14,11 +14,11 @@ define(['views/common/baseview',
         'views/common/choroplethView',
         'views/common/coordinatePointMapView',
         'views/common/areaChartView',
-         'views/common/flowMapView',
-        'bootstrap',
-        'bootstrap-select',
-        'bootstrap-toggle',
-        'textarea-autosize',
+        'views/common/flowMapView',
+         'bootstrap',
+         'bootstrap-select',
+         'bootstrap-toggle',
+         'textarea-autosize',
     ],
     function (
         BaseView,
@@ -84,11 +84,11 @@ define(['views/common/baseview',
                     maxNumberOfDimensions: this.maxNumberOfDimensions
                 });
 
-//                // Activate help icons
-//                var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
-//                $(popovers).popover({
-//                    trigger: "focus"
-//                });
+                // Activate help icons
+                var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
+                $(popovers).popover({
+                    trigger: "focus"
+                });
 
                 // this.sankeyWrapper = this.el.querySelector('.sankey-wrapper');
                 // this.sankeyWrapper.addEventListener('linkSelected', this.linkSelected);
@@ -159,7 +159,10 @@ define(['views/common/baseview',
                 // Show alert if user clicks on disabled dimension toggle:
                 $("#dimensionsCard .toggle.btn").on("click", function (event) {
 
-                    if ($($(event.currentTarget)[0]).is('[disabled=disabled]')) {
+                    let clickedToggle = $($(event.currentTarget)[0]);
+                    let isDimensionToggle = $(clickedToggle[0].children[0]).hasClass("dimensionToggle");
+
+                    if (clickedToggle.is('[disabled=disabled]') && isDimensionToggle) {
                         $("#alertMaxDimensionsRow").fadeIn("fast");
                         $("#alertMaxDimensions").alert();
 
@@ -172,31 +175,31 @@ define(['views/common/baseview',
                 $(".dimensionToggle").change(function (event) {
                     // //////////////////////////////////////////////////////
                     // Disable dimension toggles for max number of dimensions:
-                    let checkedToggles = [];
-                    let uncheckedToggles = [];
+                    _this.checkedDimToggles = [];
+                    _this.uncheckedDimToggles = [];
                     _this.selectedDimensionStrings = [];
 
                     // Divide the toggles in arrays of checked and unchecked toggles:
                     $('.dimensionToggle').each(function (index, value) {
                         let checked = $(this.parentElement.firstChild).prop('checked')
                         if (!checked) {
-                            uncheckedToggles.push($(this));
+                            _this.uncheckedDimToggles.push($(this));
                         } else {
-                            checkedToggles.push($(this));
+                            _this.checkedDimToggles.push($(this));
 
                             _this.selectedDimensionStrings.push($(this).attr("data-dim"));
                         }
                     });
 
                     // If the maximum number of dimensions has been selected:
-                    if (_this.maxNumberOfDimensions == checkedToggles.length) {
+                    if (_this.maxNumberOfDimensions == _this.checkedDimToggles.length) {
                         // Disable the remaining unchecked toggles:
-                        $(uncheckedToggles).each(function (index, value) {
+                        $(_this.uncheckedDimToggles).each(function (index, value) {
                             this.bootstrapToggle('disable');
                         });
                     } else {
                         // (Re)enable the toggles:
-                        $(uncheckedToggles).each(function (index, value) {
+                        $(_this.uncheckedDimToggles).each(function (index, value) {
                             this.bootstrapToggle('enable');
                         });
                         $("#alertMaxDimensionsRow").fadeOut("fast");
@@ -208,7 +211,7 @@ define(['views/common/baseview',
 
                     console.log(_this.selectedDimensionStrings);
 
-                    switch (checkedToggles.length) {
+                    switch (_this.checkedDimToggles.length) {
                         case 0: // No dimensions
                             console.log("No dimensions");
 
@@ -336,6 +339,30 @@ define(['views/common/baseview',
 
                 });
 
+
+
+
+                // Disable origin/destination toggle for Space for Flowmap and Parallel Sets
+                $(".viz-selector-button").click(function (event) {
+
+                    let clickedToggleHasFlowsFormat = $($(event.currentTarget)[0]).hasClass("hasFlowsFormat")
+
+                    // At least two dimensions, and one is Space:
+                    if ((_this.checkedDimToggles.length > 1) && _this.selectedDimensionStrings.includes("space") && clickedToggleHasFlowsFormat) {
+                        console.log("origDest-toggle-space disabled");
+
+                        $("#origDest-toggle-space").bootstrapToggle('disable');
+                        event.preventDefault();
+                    } else {
+                        console.log("origDest-toggle-space enabled");
+
+                        $("#origDest-toggle-space").bootstrapToggle('enable');
+                        event.preventDefault();
+                    }
+                });
+
+
+
                 $(_this.dimensions.spaceLevelGranSelect).change(function () {
                     let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
                     let selectedAreaLevel = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.id.toString() == selectedAreaLevelId).attributes.level;
@@ -382,19 +409,19 @@ define(['views/common/baseview',
                     $("#gran-material-col").fadeToggle();
                 });
             },
-//
-//            // Render the empty Sankey Map
-//            renderSankeyMap: function () {
-//                this.flowMapView = new FlowMapView({
-//                    el: this.el.querySelector('#flow-map'),
-//                    //caseStudy: this.caseStudy,
-//                    //keyflowId: this.keyflowId,
-//                    //materials: this.materials,
-//                    //displayWarnings: this.displayWarnings,
-//                    //anonymize: this.filter.get('anonymize')
-//                });
-//            },
-//
+            //
+            //            // Render the empty Sankey Map
+            //            renderSankeyMap: function () {
+            //                this.flowMapView = new FlowMapView({
+            //                    el: this.el.querySelector('#flow-map'),
+            //                    //caseStudy: this.caseStudy,
+            //                    //keyflowId: this.keyflowId,
+            //                    //materials: this.materials,
+            //                    //displayWarnings: this.displayWarnings,
+            //                    //anonymize: this.filter.get('anonymize')
+            //                });
+            //            },
+            //
             postprocess: function (flows) {
                 var idx = 0;
                 flows.forEach(function (flow) {
@@ -417,75 +444,75 @@ define(['views/common/baseview',
                 this.draw();
             },
 
-//            draw: function (displayLevel) {
-//                this.flowMem = {};
-//                if (this.flowMapView != null) this.flowMapView.clear();
-//                if (this.flowSankeyView != null) this.flowSankeyView.close();
-//                var displayLevel = displayLevel || 'activitygroup';
-//
-//                this.nodeLevel = displayLevel.toLowerCase();
-//
-//                var el = this.el.querySelector('.sankey-wrapper');;
-//                var _this = this;
-//                //var showDelta = this.modDisplaySelect.value === 'delta',
-//
-//                // function listFlows() {
-//                //var flowTable = _this.el.querySelector('#flow_table');
-//                // flowTable.innerHTML = '<strong>FLOW MATERIALS</strong>';
-//                //var modDisplay = _this.modDisplaySelect.value,
-//                //flows = (modDisplay == 'statusquo') ? _this.flows : (modDisplay == 'strategy') ? _this.strategyFlows : _this.deltaFlows;
-//                //flows.forEach(function(flow) {
-//                //var name = flow.get("materials")[0].name;
-//                // var div = document.createElement("div");
-//                // if (flowTable.innerHTML.indexOf(name) === -1) {
-//                // div.innerHTML = name;
-//                //  flowTable.appendChild(div);
-//                //}
-//                // });
-//                // }
-//
-//                function drawSankey() {
-//                    // override value and color
-//                    _this.flows.models.forEach(function (flow) {
-//                        var amount = flow._amount;
-//                        var description = flow.description;
-//                        flow.set('amount', amount);
-//                        flow.set('description', description);
-//                        //flow.color = (!showDelta) ? null : (amount > 0) ? '#23FE01' : 'red';
-//                        // var materials = flow.get('materials');
-//                        // materials.forEach(function(material){
-//                        // material.amount = material._amount;
-//                        // })
-//                        // flow.set('materials', materials);
-//                    });
-//                    _this.flowSankeyView = new FlowSankeyView({
-//                        el: el,
-//                        width: el.clientWidth,
-//                        //width: el.clientWidth - 10,
-//                        flows: _this.flows.models,
-//                        height: 600,
-//                        originLevel: displayLevel,
-//                        destinationLevel: displayLevel,
-//                        //anonymize: _this.filter.get('anonymize'),
-//                        //showRelativeComposition: !showDelta,
-//                        //forceSignum: showDelta
-//                    })
-//                }
-//                // no need to fetch flows if display level didn't change from last time
-//                if (this.displayLevel != displayLevel) {
-//                    this.fetchFlows({
-//                        displayLevel: displayLevel,
-//                        success: function (flows) {
-//                            _this.flows = flows;
-//                            //drawSankey();
-//                        }
-//                    })
-//                } else {
-//                    //listFlows();
-//                    drawSankey();
-//                }
-//                this.displayLevel = displayLevel;
-//            },
+            //            draw: function (displayLevel) {
+            //                this.flowMem = {};
+            //                if (this.flowMapView != null) this.flowMapView.clear();
+            //                if (this.flowSankeyView != null) this.flowSankeyView.close();
+            //                var displayLevel = displayLevel || 'activitygroup';
+            //
+            //                this.nodeLevel = displayLevel.toLowerCase();
+            //
+            //                var el = this.el.querySelector('.sankey-wrapper');;
+            //                var _this = this;
+            //                //var showDelta = this.modDisplaySelect.value === 'delta',
+            //
+            //                // function listFlows() {
+            //                //var flowTable = _this.el.querySelector('#flow_table');
+            //                // flowTable.innerHTML = '<strong>FLOW MATERIALS</strong>';
+            //                //var modDisplay = _this.modDisplaySelect.value,
+            //                //flows = (modDisplay == 'statusquo') ? _this.flows : (modDisplay == 'strategy') ? _this.strategyFlows : _this.deltaFlows;
+            //                //flows.forEach(function(flow) {
+            //                //var name = flow.get("materials")[0].name;
+            //                // var div = document.createElement("div");
+            //                // if (flowTable.innerHTML.indexOf(name) === -1) {
+            //                // div.innerHTML = name;
+            //                //  flowTable.appendChild(div);
+            //                //}
+            //                // });
+            //                // }
+            //
+            //                function drawSankey() {
+            //                    // override value and color
+            //                    _this.flows.models.forEach(function (flow) {
+            //                        var amount = flow._amount;
+            //                        var description = flow.description;
+            //                        flow.set('amount', amount);
+            //                        flow.set('description', description);
+            //                        //flow.color = (!showDelta) ? null : (amount > 0) ? '#23FE01' : 'red';
+            //                        // var materials = flow.get('materials');
+            //                        // materials.forEach(function(material){
+            //                        // material.amount = material._amount;
+            //                        // })
+            //                        // flow.set('materials', materials);
+            //                    });
+            //                    _this.flowSankeyView = new FlowSankeyView({
+            //                        el: el,
+            //                        width: el.clientWidth,
+            //                        //width: el.clientWidth - 10,
+            //                        flows: _this.flows.models,
+            //                        height: 600,
+            //                        originLevel: displayLevel,
+            //                        destinationLevel: displayLevel,
+            //                        //anonymize: _this.filter.get('anonymize'),
+            //                        //showRelativeComposition: !showDelta,
+            //                        //forceSignum: showDelta
+            //                    })
+            //                }
+            //                // no need to fetch flows if display level didn't change from last time
+            //                if (this.displayLevel != displayLevel) {
+            //                    this.fetchFlows({
+            //                        displayLevel: displayLevel,
+            //                        success: function (flows) {
+            //                            _this.flows = flows;
+            //                            //drawSankey();
+            //                        }
+            //                    })
+            //                } else {
+            //                    //listFlows();
+            //                    drawSankey();
+            //                }
+            //                this.displayLevel = displayLevel;
+            //            },
 
             // Returns parameters for filtered post-fetching based on assigned filter
             getFlowFilterParams: function () {
