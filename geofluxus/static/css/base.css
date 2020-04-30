@@ -22,7 +22,7 @@ label {
 
 body {
     font-family: Montserrat, sans-serif;
-    background-color: black;
+    background-color: rgb(24, 24, 24);
     z-index: 0;
 }
 
@@ -32,8 +32,6 @@ body {
 }
 
 #page-content-wrapper {
-    background-color: black;
-    /* padding-left: 80px; */
     padding-left: 20px;
     margin-right: 20px;
     padding-top: 10px;
