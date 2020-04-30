@@ -93,7 +93,7 @@ function(ol, turf)
             }
             var overlay = new ol.Overlay({
                 element: tooltip,
-                offset: [0, 0],
+                offset: [10, 0],
                 positioning: 'bottom-left'
             });
             this.map.addOverlay(overlay);
@@ -108,9 +108,9 @@ function(ol, turf)
                     tooltip.innerHTML = feature.get('tooltip');
                     tooltip.style.display = '';
                     tooltip.style.color = 'black';
-                    tooltip.style.opacity = 0.8;
                     tooltip.style.borderRadius = '10px';
                     tooltip.style.padding = '10px';
+                    tooltip.style.font = '14px sans-serif';
                 }
                 else tooltip.style.display = 'none';
             };

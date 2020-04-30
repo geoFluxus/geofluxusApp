@@ -412,7 +412,7 @@ define(['views/common/baseview',
                             strokeWidth: amount > 0 ? 2 * (1 + 2 * amount / max) : 0.5,
                             zIndex: amount
                         },
-                        tooltip: `${amount} tons`
+                        tooltip: amount < 1000 ? `${amount.toFixed(3)} t` : `${(amount / 1000).toFixed(3)} kt`
                     });
                 });
 
