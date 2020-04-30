@@ -492,7 +492,7 @@ define(['underscore',
                     this.flowMap.showFlows = (this.flowCheck.checked) ? true : false;
                     this.flowMap.dottedLines = (this.aniDotsRadio.checked) ? true : false;
 
-                    this.updateLegend(data);
+                    //this.updateLegend(data);
 
                     this.flowMap.toggleTag('actor', this.actorCheck.checked);
 
