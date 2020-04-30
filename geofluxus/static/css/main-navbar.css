@@ -26,6 +26,10 @@
     text-shadow: 0px 0px 10px white;
 }
 
+.navbar-nav {
+    padding-left: 3rem;
+}
+
 .nav-item {
     padding-right: 20px;
 }
@@ -33,19 +37,18 @@
 .nav-link {
     position: relative;
     color: white;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 .nav-link:hover {
     color: white;
-    text-shadow: 0px 0px 10px white;
+    text-shadow: 0px 0px 3px white;
     transition: text-shadow 0.1s;
 }
 
 .nav-item.active>.nav-link {
     color: #007bff;
-    font-size: 30px;
-    text-shadow: 0px 0px 10px white;
+    font-weight: bolder;
 }
 
 

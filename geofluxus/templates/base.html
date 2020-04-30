@@ -15,13 +15,13 @@
     <a class="navbar-brand" href="/"><img src="../static/img/nav/tudelft.png"></a>
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item" id="data-entry-link">
+        <li class="nav-item {% if request.resolver_match.url_name == 'data-entry' %} active{% endif %}" id="data-entry-link">
           <a class="nav-link" href="/data-entry">Data Entry</a>
         </li>
-        <li class="nav-item" id="status-quo-link">
+        <li class="nav-item {% if request.resolver_match.url_name == 'status-quo' %} active{% endif %}" id="status-quo-link">
           <a class="nav-link" href="/status-quo">Status Quo</a>
         </li>
-        <li class="nav-item" id="impact-link">
+        <li class="nav-item {% if request.resolver_match.url_name == 'impact' %} active{% endif %}" id="impact-link">
           <a class="nav-link" href="/impact">Impact</a>
         </li>
       </ul>
