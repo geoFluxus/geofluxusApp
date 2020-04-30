@@ -24,7 +24,8 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Area,
                                          Publication,
                                          PublicationType,
-                                         Routing)
+                                         Routing,
+                                         Ways)
 from django.contrib.admin import ModelAdmin, TabularInline
 from django.contrib.gis.admin import GeoModelAdmin
 from django.db.models.functions import Lower

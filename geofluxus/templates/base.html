@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-{% load staticfiles %}
-{% load render_bundle from webpack_loader %}
+{% load staticfiles %} {% load render_bundle from webpack_loader %}
 
 <head>
   <link href="https://fonts.googleapis.com/css?family=Lato|Montserrat|Open+Sans|Roboto" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css">
-
-  {% render_bundle 'commons' %}
+  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css"> {% render_bundle 'commons' %}
   {% render_bundle 'Base' %}
   <title>{% block title %}TUDelft{% endblock %}</title>
 </head>
@@ -15,38 +12,36 @@
 <body>
   <!--Navbar-->
   <nav class="navbar navbar-expand-md" id="navbarID">
-    <a class="navbar-brand" href="/">TUDelft</a>
+    <a class="navbar-brand" href="/"><img src="../static/img/nav/tudelft.png"></a>
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item" id="data-entry-link">
+        <li class="nav-item {% if request.resolver_match.url_name == 'data-entry' %} active{% endif %}" id="data-entry-link">
           <a class="nav-link" href="/data-entry">Data Entry</a>
         </li>
-        <li class="nav-item" id="status-quo-link">
+        <li class="nav-item {% if request.resolver_match.url_name == 'status-quo' %} active{% endif %}" id="status-quo-link">
           <a class="nav-link" href="/status-quo">Status Quo</a>
         </li>
-        <li class="nav-item" id="routing-link">
-          <a class="nav-link" href="/routing">Routing</a>
-        </li>
+<!--        <li class="nav-item {% if request.resolver_match.url_name == 'impact' %} active{% endif %}" id="impact-link">-->
+<!--          <a class="nav-link" href="/impact">Impact</a>-->
+<!--        </li>-->
       </ul>
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
           {% if request.user.is_authenticated %}
           <div class="dropdown">
             <button class="dropdown-button" type="button">
-              User Area ({{ request.user.username }})
-              <span class="caret"></span>
+              <i class="fas fa-user"></i><span style="margin-left: 0.5rem;">{{ request.user.username }}</span>
+              <i class="fas fa-caret-down"></i>
             </button>
             <div class="dropdown-content">
               {% if request.user.is_superuser %}
               <a href="/admin">Admin</a>
-              <a href="/api">API</a>
-              {% endif %}
+              <a href="/api">API</a> {% endif %}
               <a href="/logout">Logout</a>
             </div>
           </div>
           {% else %}
-          <a class="nav-link" href="/login/login">Login</a>
-          {% endif %}
+          <a class="nav-link" href="/login/login">Login</a> {% endif %}
         </li>
       </ul>
     </div>
@@ -56,11 +51,11 @@
   <div id="wrapper" class="active">
 
     <!-- <div id="sidebar-wrapper" style="display: none;">
-      <div id="sidebar-content" >
-        {% block sidebar %}
-        {% endblock %}
-      </div>
-    </div> -->
+          <div id="sidebar-content" >
+            {% block sidebar %}
+            {% endblock %}
+          </div>
+        </div> -->
 
     <!-- Page content -->
     <div id="page-content-wrapper">
@@ -74,6 +69,59 @@
       </div>
     </div>
   </div>
+
+  <!-- Footer -->
+  <footer class="page-footer font-small pt-5">
+
+    <!-- Footer Links -->
+    <div class="container-fluid text-center text-md-left">
+
+      <hr class="clearfix w-100 d-md-none pb-3">
+
+      <div class="row pt-5 align-items-center ">
+
+        <!-- <div class="col-md-6 mt-md-0 mt-3 text-center border-top" style="margin: auto; padding-top: 2.5rem;">
+          <h5>geoFluxus</h5>
+          <p style="font-size: small; max-width: 26rem; margin: auto; margin-top: 1rem; ">The open-source platform that
+            maps, analyses and predicts resource flows as the essential trigger for a Circular Economy.</p>
+        </div> -->
+
+        <ul class="list-unstyled footer-logos mx-auto d-block">
+          <li>
+            <a href="https://ec.europa.eu/programmes/horizon2020/"><img src="../static/img/footer/eu.jpg"></a>
+          </li>
+          <li>
+            <a href="http://h2020repair.eu/"><img src="../static/img/footer/repair.png"></a>
+          </li>
+          <li>
+            <a href="https://www.cinderela.eu/"><img src="../static/img/footer/cinderela.png"></a>
+          </li>
+          <li>
+            <a href="https://www.ams-institute.org/"><img src="../static/img/footer/ams.png"></a>
+          </li>
+          <li>
+            <a href="http://urbanism.nl/"><img src="../static/img/footer/tudelft.png" style="padding: 0.1rem;"></a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-md-6 mt-md-0 mt-3 pt-2 text-center border-top mx-auto h2020funding">
+        <p>This project has received
+          funding from the European Union’s Horizon 2020 research and innovation programme under Grant Agreements No.
+          <a href="https://cordis.europa.eu/project/id/776751"><u>776751</u></a> and No. <a href="https://cordis.europa.eu/project/id/"><u>688920</u></a>.</p>
+      </div>
+
+    </div>
+    <!-- Footer Links -->
+
+    <div class="footer-copyright mt-4 pt-5 pb-4 text-center">
+      <span>License: <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"><u>GNU GPLv2</u></a></span>
+      <!-- <span>© {%now "Y"%} </span>
+      <a href="http://tudelft.nl/" style="font-size: small;">tudelft.nl</a> -->
+    </div>
+
+  </footer>
+  <!-- Footer -->
 
   {% include 'common.html' %}
 </body>

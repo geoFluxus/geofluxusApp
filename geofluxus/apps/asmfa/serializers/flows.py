@@ -140,7 +140,8 @@ class RoutingSerializer(HyperlinkedModelSerializer):
                   'id',
                   'origin',
                   'destination',
-                  'geom')
+                  'geom',
+                  'seq')
 
 
 class RoutingListSerializer(RoutingSerializer):
@@ -148,4 +149,5 @@ class RoutingListSerializer(RoutingSerializer):
         fields = ('id',
                   'origin',
                   'destination',
-                  'geom')
+                  'geom',
+                  'seq')

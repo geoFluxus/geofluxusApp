@@ -31,10 +31,12 @@ function(Session) {
         months:            '/api/months/',
         flowchains:        '/api/flowchains/',
         allflows:          '/api/allflows/',
-        flows:             '/api/flows/',
+        statusquoflows:    '/api/statusquoflows/',
+        impactflows:       '/api/impactflows/',
         classifications:   '/api/classifications/',
         extradescriptions: '/api/extradescriptions/',
         routings:          '/api/routings/',
+        ways:              '/api/ways/'
     }
 
     return config;

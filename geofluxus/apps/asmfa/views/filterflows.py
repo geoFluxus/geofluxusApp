@@ -2,21 +2,14 @@ from geofluxus.apps.utils.views import (PostGetViewMixin,
                                         ViewSetMixin,
                                         ModelPermissionViewSet)
 from geofluxus.apps.asmfa.models import (Flow,
-                                         FlowChain,
                                          Classification,
                                          Area,
-                                         Routing,
-                                         Month,
-                                         Year,
-                                         Activity,
-                                         ActivityGroup,
-                                         Actor)
+                                         Routing)
 from geofluxus.apps.asmfa.serializers import (FlowSerializer)
 import json
 import numpy as np
-from collections import OrderedDict
 from rest_framework.response import Response
-from django.db.models import (Q, OuterRef, Subquery, F)
+from django.db.models import (Q, OuterRef, Subquery)
 from django.contrib.gis.db.models import Union
 
 
@@ -68,7 +61,8 @@ class FilterFlowViewSet(PostGetViewMixin,
 
         # serialize data according to dimension
         dimensions = params.pop('dimensions', {})
-        data = self.serialize(queryset, dimensions)
+        format = params.pop('format', None)
+        data = self.serialize(queryset, dimensions, format)
         return Response(data)
 
     # filter chain classifications
@@ -171,145 +165,17 @@ class FilterFlowViewSet(PostGetViewMixin,
         if area_ids:
             area = Area.objects.filter(id__in=area_ids).aggregate(area=Union('geom'))['area']
 
-            # FIRST TEST
-            # filter flows with origin / destination
-            # within the selected area
-            inside = queryset.filter(Q(origin__geom__within=area) &\
-                                     Q(destination__geom__within=area))
-
-            # SECOND TEST
-            # check routing for rest
-            outside = queryset.exclude(Q(origin__geom__within=area) &\
-                                       Q(destination__geom__within=area))
-
-            # retrieve routings
-            routings = Routing.objects.filter(geom__intersects=area)
-
             # annotate routings to flows
+            routings = Routing.objects
             subq = routings.filter(Q(origin=OuterRef('origin')) &\
                                    Q(destination=OuterRef('destination')))
-            inside = inside.annotate(routing=Subquery(subq.values('geom')))
-            outside = outside.annotate(routing=Subquery(subq.values('geom')))
-            outside = outside.exclude(routing=None)
+            queryset = queryset.annotate(routing=Subquery(subq.values('geom')))
 
-            # FIRST / SECOND TEST UNION
-            queryset = inside.union(outside)
-
+            # filter flows:
+            # 1) with origin / destination within area OR
+            # 2) with routing intersecting the area
+            queryset = queryset.filter((Q(origin__geom__within=area) \
+                                        & Q(destination__geom__within=area)) |
+                                        Q(routing__intersects=area)
+                                       )
         return queryset
-
-    def serialize(self, queryset, dimensions):
-        '''
-        Serialize data into groups
-        according to the requested dimensions
-        '''
-        data = []
-
-        # annotate info from chains to flows
-        queryset = queryset.annotate(amount=F('flowchain__amount'))
-
-        # recover dimensions
-        time = dimensions.pop('time', None)
-        space = dimensions.pop('space', None)
-        eco = dimensions.pop('economicActivity', None)
-        treat = dimensions.pop('treatmentMethod', None)
-
-        # TIME DIMENSION
-        levels, fields = [], []
-        if time:
-            levels.append(time.split('__')[-1])
-            fields.append(time)
-
-        # SPACE DIMENSION
-        if space:
-            # recover all areas of the selected
-            # administrative level
-            adminlevel = space.pop('adminlevel', None)
-            if adminlevel:
-                areas = Area.objects.filter(adminlevel=adminlevel)
-
-            # attach to flows the area
-            # to which their origin / destination belongs
-            field = space.pop('field', None)
-            if field:
-                # Actor level is the only one
-                # with no areas!
-                if areas.count() != 0:
-                    # recover the area id to which
-                    # the flow origin / destination belongs
-                    subq = areas.filter(geom__contains=OuterRef(field))
-
-                    # annotate to area id to flows
-                    queryset = queryset.annotate(area=Subquery(subq.values('id')))
-
-                    # append to other dimensions
-                    levels.append('area')
-                    fields.append('area')
-                else:
-                    # annotate origin / destination id
-                    field = field.split('__')[0] + '__id'
-                    queryset = queryset.annotate(actor=F(field))
-
-                    # append to other dimensions
-                    levels.append('actor')
-                    fields.append('actor')
-
-        # ECO DIMENSION
-        if eco:
-            levels.append(eco.split('__')[-1])
-            fields.append(eco)
-
-        # TREAT DIMENSION
-        if treat:
-            levels.append(treat.split('__')[-1])
-            fields.append(treat)
-
-        # workaround Django ORM bug
-        queryset = queryset.order_by()
-
-        # aggregate flows into groups
-        groups = queryset.values(*fields).distinct()
-
-        # serialize aggregated flow groups
-        for group in groups:
-            # check for groups fields with null values!
-            # these groups should be excluded entirely
-            has_null = False
-            for field, value in group.items():
-                if not value:
-                    has_null = True
-                    break
-            if has_null: continue
-
-            # retrieve group
-            grouped = queryset.filter(**group)
-            # and EXCLUDE it from further search...
-            #queryset = queryset.exclude(**group)
-
-            # aggregate amount
-            group_amount = sum(grouped.values_list('amount', flat=True))
-
-            # for the dimensions, return the id
-            # to recover any info in the frontend
-            flow_item = [('amount', group_amount)]
-            for level, field in zip(levels, fields):
-                if field == 'area':
-                    # recover area info
-                    area = Area.objects.filter(id=group[field])[0]
-
-                    # serialize area
-                    flow_item.append(('areaId', area.id))
-                    flow_item.append(('areaName', area.name))
-                elif field == 'actor':
-                    # recover
-                    actor = Actor.objects.filter(id=group[field])[0]
-
-                    # serialize actor
-                    flow_item.append(('actorId', actor.id))
-                    flow_item.append(('actorName', actor.company.identifier))
-                    flow_item.append(('lon', actor.geom.x))
-                    flow_item.append(('lat', actor.geom.y))
-                else:
-                    flow_item.append((level, group[field]))
-
-            data.append(OrderedDict(flow_item))
-        return data

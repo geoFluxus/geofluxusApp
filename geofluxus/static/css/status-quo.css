@@ -5,20 +5,44 @@
 }
 
 .block {
+    background-color: #393939;
+    border-radius: 22px;
+    padding: 1.5rem;
+    padding-bottom: 1rem;
+    margin: 1.5rem;
     /*margin-top: 15px;
-    padding: 20px;
     box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.3);*/
 }
 
 .card {
-    background-color: black !important;
-    box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.3);
+    background-color: #252525 !important;
+    border-radius: 22px !important;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .card-body {
     padding-top: 0em !important;
 }
 
+.card.bg-dark {
+    overflow-y: visible;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.card.bg-dark::-webkit-scrollbar {
+    display: none;
+}
+
+.card-header .fa {
+    transition: .3s transform ease-in-out;
+}
+
+.resetButton {
+    float: left;
+    width: 10em;
+}
 
 #btn-filterViews {
     background: none;
@@ -33,7 +57,9 @@
 }
 
 .collapsingHeaderButton {
-    width: 93% !important;
+    padding: 1rem !important;
+    margin: -1rem;
+    width: 100%;
     text-align: left;
     background: none;
     color: white;
@@ -70,15 +96,12 @@
     z-index: 1000;
 }
 
-.card.bg-dark {
-    overflow-y: visible;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+.collapseFlowsBlock {
+    border-bottom-left-radius: 18px !important;
+    border-bottom-right-radius: 18px !important;
 }
 
-.card.bg-dark::-webkit-scrollbar {
-    display: none;
-}
+
 
 .flowFilterSubtitle {
     margin-top: 2em;
@@ -88,9 +111,6 @@
     transition: display 1s;
 }
 
-.card-header .fa {
-    transition: .3s transform ease-in-out;
-}
 
 .card-header .collapsed .fa {
     -webkit-transform: rotate(-90deg);
@@ -122,9 +142,10 @@ label[for="activity-select"] {
 .clear-areas-button {
     display: inline-block;
     position: absolute;
-    right: -1.4rem;
-    height: 34px !important;
-    width: 34px !important;
+    right: -1.5rem;
+    height: 38px !important;
+    width: 38px !important;
+    border-radius: 19px;
 }
 
 
@@ -133,8 +154,7 @@ label[for="activity-select"] {
 }
 
 
-
-/* WITHIN/OUTSIDE TOGGLE */
+/* WITHIN/OUTSIDE TOGGLE for area selections */
 
 .in-or-out-container {
     display: inline-block;
@@ -166,9 +186,19 @@ label[for="activity-select"] {
     font-size: 1.1em;
 }
 
-.dimensionToggle[disabled]+.toggle-group label {
-    color: rgb(63, 62, 62);
+#dimensionsCard .row .col-md-3 {
+    min-width: 14rem !important;
+}
 
+.bootstrapToggle[disabled]+.toggle-group label {
+    color: rgb(63, 62, 62);
+    /* border-color: rgb(107, 107, 107) !important; */
+    border-color: red !important;
+}
+
+.bootstrapToggle[disabled]+.toggle-group label:hover {
+    color: rgb(63, 62, 62);
+    background: black !important;
 }
 
 .viz-selector-button {
@@ -239,6 +269,13 @@ label[for="activity-select"] {
     background-image: url('../img/viz-stackedbarchart.svg');
 }
 
+#span-viz-flowmap::before {
+    background-image: url('../img/viz-flowmap.svg');
+}
+
+#span-viz-parallelsets::before {
+    background-image: url('../img/viz-parallelsets.svg');
+}
 
 /* VISUALISATION STYLES */
 
@@ -246,7 +283,7 @@ label[for="activity-select"] {
     display: none;
     height: 700px;
     min-width: 500px;
-    background-color: rgba(255, 255, 255, 0.712);
+    background-color: rgb(182, 182, 182);
     border-radius: 18px;
 }
 
@@ -325,14 +362,42 @@ textarea.textarea-autosize.form-control-sm {
     box-sizing: content-box !important;
 }
 
+/* flowmap tooltip */
+
+.d3plus-tooltip,
+.flowMapToolTip {
+    border: 1px solid black !important;
+    border-radius: 14px !important;
+    z-index: 99999;
+    min-width: 25rem;
+    max-width: 25rem;
+}
+
+.flowmap-legend-wrapper {
+    width: 10rem !important;
+    height: 10rem !important;
+}
+
+
+
+.flowmap-legend-wrapper .d3plus-Rect-group {
+    width: 10rem !important;
+    height: 10rem !important;
+}
+
+.flowmap-legend-wrapper .d3plus-Legend {
+    display: inline-block !important;
+    width: 100%;
+    height: 100%;
+}
 
 /* d3plus Tooltip */
 
-.d3plus-tooltip {
+/* .d3plus-tooltip {
     border: 1px solid black !important;
     border-radius: 14px !important;
-    padding: 2rem;
-}
+    z-index: 99999;
+} */
 
 .d3plus-tooltip-title {
     font-family: 'Montserrat', sans-serif !important;
@@ -359,12 +424,6 @@ textarea.textarea-autosize.form-control-sm {
     z-index: 1;
 }
 
-.d3plus-viz-controls-container {
-    position: absolute !important;
-    left: 0px;
-    top: 5px;
-    z-index: 3;
-}
 
 
 .d3plus-viz-controls-container .d3plus-Form {
@@ -372,23 +431,135 @@ textarea.textarea-autosize.form-control-sm {
     position: absolute;
 } */
 
+.d3plus-viz-controls-container {
+    min-height: 100px;
+}
+
 .d3plus-viz-controls-container .d3plus-Button {
     background-color: #007bff;
     border: none;
     position: relative;
-    font-size: 0;
     width: 32px;
     height: 32px;
     border-radius: 16px;
     top: 5px;
     color: transparent;
+    margin-bottom: 5px !important;
+    font-size: 14px;
+    margin: 0px 5px;
+}
+
+.leaflet-control div label {
+    color: black;
+}
+
+.leaflet-control {
+    margin-right: 5px !important;
+    margin-top: 5px !important;
+}
+
+.leaflet-control-zoom {
+    top: 80px !important;
+}
+
+.leaflet-control-fullscreen a {
+    width: 32px !important;
+    height: 32px !important;
+}
+
+.leaflet-control-fullscreen,
+.leaflet-control-export {
+    position: absolute;
+    right: 8px;
+    border: none !important;
+    border-width: 0px;
+    background: none !important;
+    border: none !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 16px !important;
+}
+
+.leaflet-control-export {
+    top: 34px;
+}
+
+.leaflet-control-export button::before {
+    right: 0.5px;
+    position: relative;
+}
+
+.leaflet-control-fullscreen a::before {
+    position: relative;
+    top: 1.5px;
+}
+
+.leaflet-control-export button::before {
+    right: 0.5px;
+    position: relative;
+}
+
+.leaflet-control-fullscreen a {
+    background-color: #007bff;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px !important;
+    font-size: 14px;
+    color: white !important;
+    background-image: none !important;
+}
+
+.leaflet-control-fullscreen a::before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: white;
+    content: "\f065";
+    font-size: 14px;
+}
+
+.leaflet-control-fullscreen a:hover {
+    background-color: grey !important;
+    border-color: grey !important;
+}
+
+
+.leaflet-control-easyPrint {
+    display: none;
+}
+
+.leaflet-control-custom-controls {
+    margin: 0px !important;
+    border-top-right-radius: 16px;
+    top: 10px;
+}
+
+.aniToggleDiv {
+    position: relative;
+    left: -5px;
+}
+
+.flowmap-anim-radio-label {
+    display: block;
+    position: relative;
+    right: -10px;
+}
+
+.flowmap-anim-radio-label input {
+    float: left;
+    position: relative;
+    left: -10px;
+}
+
+
+.leaflet-control-attribution {
+    margin-right: 0px !important;
+    padding-right: 10px;
 }
 
 /* .d3plus-zoom-controls */
-
 .d3plus-zoom-control {
     position: absolute !important;
-    top: 50px !important;
+    top: 545px !important;
     left: 0 !important;
 }
 
@@ -402,6 +573,7 @@ textarea.textarea-autosize.form-control-sm {
     color: white !important;
     background-color: #007bff !important;
     border: none !important;
+    user-select: none;
 }
 
 .choropleth-wrapper svg {
@@ -411,6 +583,8 @@ textarea.textarea-autosize.form-control-sm {
 .coordinatepointmap-wrapper svg {
     border-radius: 18px !important;
 }
+
+
 
 /* CSS Tweaks for map control buttons only for Chrome	 */
 
@@ -452,9 +626,9 @@ textarea.textarea-autosize.form-control-sm {
 .sankey,
 .tooltip,
 .oltooltip,
-.sankeymaptooltip,
+.flowMapToolTip,
 .d3-tip {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Montserrat', sans-serif !important;
 }
 
 .d3-tip h1 {
@@ -611,10 +785,10 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 div.fullscreen {
-    z-index: 99999;
+    z-index: 99990;
     width: 100%;
     height: 100%;
-    position: fixed;
+    position: fixed !important;
     top: 0;
     left: 0;
 }
