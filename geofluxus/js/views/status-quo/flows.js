@@ -389,9 +389,10 @@ define(['views/common/baseview',
 
                 // Show Multiple Line option on dimension Time, granularity Month:
                 $(_this.dimensions.timeToggleGran).change(function () {
-                    if ($(_this.dimensions.timeToggleGran).prop("checked")) {
+                    let granularityIsMonth = $(_this.dimensions.timeToggleGran).prop("checked");
+                    if (granularityIsMonth) {
                         $("#viz-lineplotmultiple").parent().fadeIn();
-                    } else if ($(_this.dimensions.timeToggleGran).prop("checked") && _this.selectedDimensionStrings.length == 1) {
+                    } else if (!granularityIsMonth && _this.selectedDimensionStrings.length == 1) {
                         $("#viz-lineplotmultiple").parent().hide();
                     }
                 });
