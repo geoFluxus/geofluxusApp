@@ -108,7 +108,7 @@ input {
     color: black;
 }
 
-.buttonHelpiconContainer a{
+.buttonHelpiconContainer a {
     position: relative;
     top: 0.32rem;
     margin-left: 0px !important;
@@ -182,6 +182,11 @@ input {
 .popover-body {
     text-align: justify;
     text-justify: inter-word;
+}
+
+.popover-body a {
+    color: black !important;
+    text-decoration: underline;
 }
 
 /* SCROLLBAR STYLING */

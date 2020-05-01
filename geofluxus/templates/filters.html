@@ -178,7 +178,25 @@
 
                     <div class="row originContainerActivity" style="display: none;">
                         <div class="col-md-4">
+
                             <label for="origin-activitygroup-select">Activity group</label>
+                            <div class="d-inline buttonHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Activity group"
+                                    data-html="true" tabindex="0" data-content="
+                                    The Activity Group indicates the economic activity of the Origin of the waste production.<br>
+                                    This classification is based on the Statistical Classification of Economic Activities in the European Community, 
+                                    also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL&StrNom=NACE_REV2&StrLanguageCode=EN&IntPcKey=&StrLayoutCode=HIERARCHIC'>here</a>.<br>
+                                    This filter also contains four additional custom entries:
+                                    <ul>
+                                        <li>V - Onbekend</li>
+                                        <li>WT - Unknown waste treatment</li>
+                                        <li>WU - Unknown</li>
+                                        <li>X - Route inzameling</li>
+                                    </ul>
+                                    ">
+                                </a>
+                            </div>
+
                             <select id="origin-activitygroup-select" name="origin-activitygroup-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true"
                                 data-dropup-auto="false" data-size="6" style="resize: vertical;">
@@ -193,10 +211,20 @@
                                 <% }); %>
                             </select>
                         </div>
+
                         <div class="col-md-4 activitySelectContainer activitySelectContainerOrigin"
                             style="display: none">
+
                             <label for="origin-activity-select">Activity</label>
+                            <div class="d-inline buttonHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Activity"
+                                    data-html="true" tabindex="0" data-content="Economic activity
+                                    ">
+                                </a>
+                            </div>
                             <i class="fas fa-angle-double-right filterDoubleChevron"></i>
+
+
                             <select id="origin-activity-select" name="origin-activity-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true"
                                 data-dropup-auto="false" data-size="6" style="resize: vertical;">
