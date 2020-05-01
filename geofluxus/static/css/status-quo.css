@@ -111,12 +111,12 @@
     transition: display 1s;
 }
 
-.activitySelectContainer .buttonHelpiconContainer {
+.originContainerActivity .buttonHelpiconContainer,
+.destinationContainerActivity .buttonHelpiconContainer {
     position: relative;
     top: -0.1rem;
     left: 0.1rem;
 }
-
 
 .card-header .collapsed .fa {
     -webkit-transform: rotate(-90deg);

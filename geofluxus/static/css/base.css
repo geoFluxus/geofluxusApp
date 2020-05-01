@@ -171,6 +171,7 @@ input {
 
 .popover {
     border-radius: 18px;
+    max-width: 350px;
 }
 
 .popover-header {
@@ -184,7 +185,7 @@ input {
     text-justify: inter-word;
 }
 
-.popover-body a {
+.popover-body span a {
     color: black !important;
     text-decoration: underline;
 }
