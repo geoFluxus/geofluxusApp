@@ -238,7 +238,7 @@
                             <select id="origin-activity-select" name="origin-activity-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true"
                                 data-dropup-auto="false" data-size="6" style="resize: vertical;">
-                                <option selected value="-1">All (<%= activities.count %>)</option>
+                                <!-- <option selected value="-1">All (<%= activities.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% activities.forEach(function(activity){ %>
                                 <option value="<%= activity.id %>"><%= activity.get('nace') %>
@@ -246,7 +246,7 @@
                                     activity.get('flow_count') %> <%= (activity.get('flow_count') == 1) ? 'flow' :
                                     'flows' %>)
                                 </option>
-                                <% }); %>
+                                <% }); %> -->
                             </select>
                         </div>
                     </div>
@@ -273,18 +273,16 @@
                             <select name="origin-process-select" id="origin-process-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
-                                <option selected value="-1">All (<%= processes.count %>)</option>
+                                <!-- <option selected value="-1">All (<%= processes.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% processes.forEach(function(process){ %>
                                 <option value="<%= process.id %>"><%= process.get('name') %></option>
-                                <% }); %>
+                                <% }); %> -->
                             </select>
                         </div>
 
 
                     </div>
-
-
 
                 </div>
             </div>
@@ -418,8 +416,8 @@
                                     ">
                                 </a>
                             </div>
-                            
-                            
+
+
                             <select id="destination-activitygroup-select" name="destination-activitygroup-select"
                                 multiple class="form-control form-control-sm selectpicker" data-live-search="true"
                                 data-dropup-auto="false" data-size="6" style="resize: vertical;">
@@ -455,7 +453,7 @@
                             <select id="destination-activity-select" name="destination-activity-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true"
                                 data-dropup-auto="false" data-size="6" style="resize: vertical;">
-                                <option selected value="-1">All (<%= activities.count %>)</option>
+                                <!-- <option selected value="-1">All (<%= activities.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% activities.forEach(function(activity){ %>
                                 <option value="<%= activity.id %>"><%= activity.get('nace') %>
@@ -463,7 +461,7 @@
                                     activity.get('flow_count') %> <%= (activity.get('flow_count') == 1) ? 'flow' :
                                     'flows' %>) | <%=(activity.get('nace'))%>
                                 </option>
-                                <% }); %>
+                                <% }); %> -->
                             </select>
                         </div>
                     </div>
@@ -490,11 +488,11 @@
                             <select name="destination-process-select" id="destination-process-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
-                                <option selected value="-1">All (<%= processes.count %>)</option>
+                                <!-- <option selected value="-1">All (<%= processes.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% processes.forEach(function(process){ %>
                                 <option value="<%= process.id %>"><%= process.get('name') %></option>
-                                <% }); %>
+                                <% }); %> -->
                             </select>
                         </div>
                     </div>
@@ -561,8 +559,9 @@
                     <div class="row">
                         <div class="col-md-3">
                             <label for="yearSelect">Year</label>
-                            <select name="flows-year-select" id="yearSelect" multiple class="form-control form-control-sm selectpicker"
-                                data-live-search="true" data-size="6" style="resize: vertical;">
+                            <select name="flows-year-select" id="yearSelect" multiple
+                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
+                                style="resize: vertical;">
                                 <option selected value="-1">All (<%= years.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% years.forEach(function(year){ %>
@@ -574,13 +573,14 @@
                         <div class="col-md-3" id="monthCol" style="display: none;">
                             <label for="monthSelect">Month</label>
                             <i class="fas fa-angle-double-right filterDoubleChevron"></i>
-                            <select name="flows-month-select" id="monthSelect" multiple class="form-control form-control-sm selectpicker"
-                                data-live-search="true" data-size="6" style="resize: vertical;">
-                                <option selected value="-1">All (<%= months.count %>)</option>
+                            <select name="flows-month-select" id="monthSelect" multiple
+                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
+                                style="resize: vertical;">
+                                <!-- <option selected value="-1">All (<%= months.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% months.forEach(function(month){ %>
                                 <option value="<%= month.id %>"><%= month.get('code') %></option>
-                                <% }); %>
+                                <% }); %> -->
                             </select>
                         </div>
                     </div>
@@ -608,13 +608,13 @@
                             <select name="flows-waste04-select" id="flows-waste04-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
-                                <option selected value="-1">All (<%= wastes04.count %>)</option>
+                                <!-- <option selected value="-1">All (<%= wastes04.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% wastes04.forEach(function(waste){ %>
                                 <option value="<%= waste.id %>"><%= waste.get('ewc_code') %> <%=
                                     waste.get('ewc_name')[0].toUpperCase() + waste.get('ewc_name').slice(1) %>
                                 </option>
-                                <% }); %>
+                                <% }); %> -->
                             </select>
                         </div>
 
@@ -624,13 +624,13 @@
                             <select name="flows-waste06-select" id="flows-waste06-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
-                                <option selected value="-1">All (<%= wastes06.count %>)</option>
+                                <!-- <option selected value="-1">All (<%= wastes06.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% wastes06.forEach(function(waste){ %>
                                 <option value="<%= waste.id %>"><%= waste.get('ewc_code') %> <%=
                                     waste.get('ewc_name')[0].toUpperCase() + waste.get('ewc_name').slice(1) %>
                                 </option>
-                                <% }); %>
+                                <% }); %> -->
                             </select>
                         </div>
                     </div>
