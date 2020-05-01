@@ -111,12 +111,30 @@
     transition: display 1s;
 }
 
+
+label[for="origin-activity-select"],
+label[for="destination-activity-select"],
+label[for="origin-process-select"],
+label[for="destination-process-select"],
+label[for="monthSelect"],
+label[for="flows-waste04-select"],
+label[for="flows-waste06-select"] {
+    position: relative;
+    left: -1.2em;
+}
+
 .originContainerActivity .buttonHelpiconContainer,
 .destinationContainerActivity .buttonHelpiconContainer {
     position: relative;
     top: -0.1rem;
     left: 0.1rem;
 }
+
+.originContainerActivity .activitySelectContainer .buttonHelpiconContainer,
+.destinationContainerActivity .activitySelectContainer .buttonHelpiconContainer {
+    left: -1.1rem;
+}
+
 
 .card-header .collapsed .fa {
     -webkit-transform: rotate(-90deg);
@@ -134,11 +152,6 @@
     left: -1.05em;
     top: 1.675em;
     float: left;
-}
-
-label[for="activity-select"] {
-    position: relative;
-    left: -1.2em;
 }
 
 #flows-render-template {

@@ -232,9 +232,8 @@
                                     ">
                                 </a>
                             </div>
+
                             <i class="fas fa-angle-double-right filterDoubleChevron"></i>
-
-
                             <select id="origin-activity-select" name="origin-activity-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true"
                                 data-dropup-auto="false" data-size="6" style="resize: vertical;">
@@ -398,6 +397,27 @@
                     <div class="row destinationContainerActivity" style="display: none;">
                         <div class="col-md-4">
                             <label for="destination-activitygroup-select">Activity group</label>
+                            <div class="d-inline buttonHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Activity group"
+                                    data-html="true" tabindex="0" data-content="
+                                    <span>The Activity group indicates the economic activity of the Destination of the waste production.</span>
+                                    <br>
+                                    <span>This classification is based on the Statistical Classification of Economic Activities in the European Community, 
+                                    also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL&StrNom=NACE_REV2&StrLanguageCode=EN&IntPcKey=&StrLayoutCode=HIERARCHIC'>here</a>.</span>
+                                    <br>
+                                    <span>This filter also contains four additional custom entries:</span>
+                                    <ul>
+                                        <li>V - Onbekend</li>
+                                        <li>WT - Unknown waste treatment</li>
+                                        <li>WU - Unknown</li>
+                                        <li>X - Route inzameling</li>
+                                    </ul>
+                                    <span>Upon selecting an Activity group, the Activity filter will become available, containing the Activities belonging to the selection made in this filter.</span>
+                                    ">
+                                </a>
+                            </div>
+                            
+                            
                             <select id="destination-activitygroup-select" name="destination-activitygroup-select"
                                 multiple class="form-control form-control-sm selectpicker" data-live-search="true"
                                 data-dropup-auto="false" data-size="6" style="resize: vertical;">
@@ -415,6 +435,20 @@
                         <div class="col-md-4 activitySelectContainer activitySelectContainerDestination"
                             style="display: none">
                             <label for="destination-activity-select">Activity</label>
+                            <div class="d-inline buttonHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Activity"
+                                    data-html="true" tabindex="0" data-content="
+                                    <span>The Activity indicates the economic activity of the Destination of the waste production on the most detailed level.
+                                    This filter contains the Activities belonging to the selection made in the Activity group filter.</span>
+                                    <br>
+                                    <span>This classification is based on the Statistical Classification of Economic Activities in the European Community, 
+                                    also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL_LINEAR&StrNom=NACE_REV2&StrLanguageCode=EN'>here</a>.</span>
+                                    <br>
+                                    <span>This filter also contains several additional custom entries belonging to the custom Activity groups.</span>
+                                    ">
+                                </a>
+                            </div>
+
                             <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                             <select id="destination-activity-select" name="destination-activity-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true"
@@ -523,8 +557,8 @@
 
                     <div class="row">
                         <div class="col-md-3">
-                            <label>Year</label>
-                            <select name="flows-year-select" multiple class="form-control form-control-sm selectpicker"
+                            <label for="yearSelect">Year</label>
+                            <select name="flows-year-select" id="yearSelect" multiple class="form-control form-control-sm selectpicker"
                                 data-live-search="true" data-size="6" style="resize: vertical;">
                                 <option selected value="-1">All (<%= years.count %>)</option>
                                 <option data-divider="true"></option>
@@ -533,10 +567,11 @@
                                 <% }); %>
                             </select>
                         </div>
+
                         <div class="col-md-3" id="monthCol" style="display: none;">
-                            <label>Month</label>
+                            <label for="monthSelect">Month</label>
                             <i class="fas fa-angle-double-right filterDoubleChevron"></i>
-                            <select name="flows-month-select" multiple class="form-control form-control-sm selectpicker"
+                            <select name="flows-month-select" id="monthSelect" multiple class="form-control form-control-sm selectpicker"
                                 data-live-search="true" data-size="6" style="resize: vertical;">
                                 <option selected value="-1">All (<%= months.count %>)</option>
                                 <option data-divider="true"></option>
@@ -565,9 +600,9 @@
                         </div>
 
                         <div class="col-md-3" id="wastes04col" style="display: none;">
-                            <label>Sub-chapter</label>
+                            <label for="flows-waste04-select">Sub-chapter</label>
                             <i class="fas fa-angle-double-right filterDoubleChevron"></i>
-                            <select name="flows-waste04-select" multiple
+                            <select name="flows-waste04-select" id="flows-waste04-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
                                 <option selected value="-1">All (<%= wastes04.count %>)</option>
@@ -581,9 +616,9 @@
                         </div>
 
                         <div class="col-md-3" id="wastes06col" style="display: none;">
-                            <label>Individual entries</label>
+                            <label for="flows-waste06-select">Individual entries</label>
                             <i class="fas fa-angle-double-right filterDoubleChevron"></i>
-                            <select name="flows-waste06-select" multiple
+                            <select name="flows-waste06-select" id="flows-waste06-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
                                 <option selected value="-1">All (<%= wastes06.count %>)</option>
