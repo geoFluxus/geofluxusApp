@@ -181,7 +181,7 @@
                         <div class="col-md-4">
 
                             <label for="origin-activitygroup-select">Activity group</label>
-                            <div class="d-inline buttonHelpiconContainer">
+                            <div class="labelHelpiconContainer">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Activity group"
                                     data-html="true" tabindex="0" data-content="
                                     <span>The Activity group indicates the economic activity of the Origin of the waste production.</span>
@@ -220,7 +220,7 @@
                             style="display: none">
 
                             <label for="origin-activity-select">Activity</label>
-                            <div class="d-inline buttonHelpiconContainer">
+                            <div class="labelHelpiconContainer">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Activity"
                                     data-html="true" tabindex="0" data-content="
                                     <span>The Activity indicates the economic activity of the Origin of the waste production on the most detailed level.
@@ -253,7 +253,21 @@
 
                     <div class="row originContainerTreatmentMethod" style="display: none;">
                         <div class="col-md-4">
+
                             <label for="origin-processGroup-select">Treatment method group</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover"
+                                    title="Treatment method group" data-html="true" tabindex="0" data-content="
+                                    <span>The Treatment method group indicates the general treatment method group used by the Origin of the flows.</span>
+                                    <br>
+                                    <span>This classification is based on the classification system of the Dutch government agency 'Landelijk Meldpunt Afvalstoffen'.
+                                    The full list of entries can be consulted <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a>.</span>
+                                    <br>
+                                    <span>Upon selecting a Treatment method group, the Treatment method filter will become available, containing the Treatment methods belonging to the selection made in this filter.</span>
+                                    ">
+                                </a>
+                            </div>
+
                             <select name="origin-processGroup-select" id="origin-processGroup-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
@@ -268,7 +282,20 @@
                         </div>
 
                         <div class="col-md-4" id="originContainerProcesses" style="display: none;">
+
                             <label for="origin-process-select">Treatment method</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover"
+                                    title="Treatment method" data-html="true" tabindex="0" data-content="
+                                    <span>The Treatment method indicates the specific treatment method used by the Origin of the flows.</span>
+                                    <br>
+                                    <span>This classification is based on the classification system of the Dutch government agency 'Landelijk Meldpunt Afvalstoffen'.
+                                    The full list of entries can be consulted <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a>.</span>
+                                    ">
+                                </a>
+                            </div>
+
+
                             <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                             <select name="origin-process-select" id="origin-process-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
@@ -397,7 +424,7 @@
                     <div class="row destinationContainerActivity" style="display: none;">
                         <div class="col-md-4">
                             <label for="destination-activitygroup-select">Activity group</label>
-                            <div class="d-inline buttonHelpiconContainer">
+                            <div class="labelHelpiconContainer">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Activity group"
                                     data-html="true" tabindex="0" data-content="
                                     <span>The Activity group indicates the economic activity of the Destination of the waste production.</span>
@@ -435,7 +462,7 @@
                         <div class="col-md-4 activitySelectContainer activitySelectContainerDestination"
                             style="display: none">
                             <label for="destination-activity-select">Activity</label>
-                            <div class="d-inline buttonHelpiconContainer">
+                            <div class="labelHelpiconContainer">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Activity"
                                     data-html="true" tabindex="0" data-content="
                                     <span>The Activity indicates the economic activity of the Destination of the waste production on the most detailed level.
@@ -468,7 +495,21 @@
 
                     <div class="row destinationContainerTreatmentMethod" style="display: none;">
                         <div class="col-md-4">
+
                             <label for="destination-processGroup-select">Treatment method group</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover"
+                                    title="Treatment method group" data-html="true" tabindex="0" data-content="
+                                    <span>The Treatment method group indicates the general treatment method group used by the Destination of the flows.</span>
+                                    <br>
+                                    <span>This classification is based on the classification system of the Dutch government agency 'Landelijk Meldpunt Afvalstoffen'.
+                                    The full list of entries can be consulted <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a>.</span>
+                                    <br>
+                                    <span>Upon selecting a Treatment method group, the Treatment method filter will become available, containing the Treatment methods belonging to the selection made in this filter.</span>
+                                    ">
+                                </a>
+                            </div>
+
                             <select name="destination-processGroup-select" id="destination-processGroup-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
@@ -483,7 +524,19 @@
                         </div>
 
                         <div class="col-md-4" id="destinationContainerProcesses" style="display: none;">
+
                             <label for="destination-process-select">Treatment method</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover"
+                                    title="Treatment method" data-html="true" tabindex="0" data-content="
+                                    <span>The Treatment method indicates the specific treatment method used by the Destination of the flows.</span>
+                                    <br>
+                                    <span>This classification is based on the classification system of the Dutch government agency 'Landelijk Meldpunt Afvalstoffen'.
+                                    The full list of entries can be consulted <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a>.</span>
+                                    ">
+                                </a>
+                            </div>
+
                             <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                             <select name="destination-process-select" id="destination-process-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
@@ -558,7 +611,16 @@
 
                     <div class="row">
                         <div class="col-md-3">
+
                             <label for="yearSelect">Year</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Year"
+                                    data-html="true" tabindex="0" data-content="Select the year in which the waste flow has been reported.<br>
+                                    Upon selecting a Year, the Month filter will become available, containing the months belonging to the selection made in this filter.
+                                    ">
+                                </a>
+                            </div>
+
                             <select name="flows-year-select" id="yearSelect" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
@@ -571,7 +633,15 @@
                         </div>
 
                         <div class="col-md-3" id="monthCol" style="display: none;">
+
                             <label for="monthSelect">Month</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Month"
+                                    data-html="true" tabindex="0"
+                                    data-content="Select the month in which the waste flow has been reported.">
+                                </a>
+                            </div>
+
                             <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                             <select name="flows-month-select" id="monthSelect" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"

@@ -39,6 +39,15 @@
     transition: .3s transform ease-in-out;
 }
 
+.card-header .collapsed .fa {
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    transition: .3s transform ease-in-out;
+}
+
 .resetButton {
     float: left;
     width: 10em;
@@ -101,15 +110,15 @@
     border-bottom-right-radius: 18px !important;
 }
 
-
-
 .flowFilterSubtitle {
     margin-top: 2em;
 }
 
-#activitySelectContainer {
-    transition: display 1s;
+label[for="origin-processGroup-select"],
+label[for="destination-processGroup-select"] {
+    min-width: 13rem;
 }
+
 
 
 label[for="origin-activity-select"],
@@ -123,37 +132,44 @@ label[for="flows-waste06-select"] {
     left: -1.2em;
 }
 
+/* 
 .originContainerActivity .buttonHelpiconContainer,
 .destinationContainerActivity .buttonHelpiconContainer {
     position: relative;
     top: -0.1rem;
     left: 0.1rem;
+} */
+
+.labelHelpiconContainer {
+    position: relative;
+    display: inline-block;
+    top: 0.125rem;
+    left: -0.5rem;
 }
 
-.originContainerActivity .activitySelectContainer .buttonHelpiconContainer,
-.destinationContainerActivity .activitySelectContainer .buttonHelpiconContainer {
-    left: -1.1rem;
+.labelHelpiconContainer .fa-question-circle::before {
+    font-size: 22.5px;
 }
 
-
-.card-header .collapsed .fa {
-    -webkit-transform: rotate(-90deg);
-    -moz-transform: rotate(-90deg);
-    -ms-transform: rotate(-90deg);
-    -o-transform: rotate(-90deg);
-    transform: rotate(-90deg);
-    transition: .3s transform ease-in-out;
+.originContainerActivity .activitySelectContainer .labelHelpiconContainer,
+.destinationContainerActivity .activitySelectContainer .labelHelpiconContainer,
+#originContainerProcesses .labelHelpiconContainer,
+#destinationContainerProcesses .labelHelpiconContainer,
+#monthCol .labelHelpiconContainer {
+    left: -1.7rem !important;
 }
+
 
 .filterDoubleChevron {
     color: white;
     font-size: 1.5em;
     position: relative;
     left: -1.05em;
-    top: 1.525em;
+    top: 1.675em;
     float: left;
 }
 
+/* 
 .originContainerActivity .filterDoubleChevron,
 .destinationContainerActivity .filterDoubleChevron {
     color: white;
@@ -162,7 +178,7 @@ label[for="flows-waste06-select"] {
     left: -1.05em;
     top: 1.675em;
     float: left;
-}
+} */
 
 #flows-render-template {
     margin-bottom: 5em;
