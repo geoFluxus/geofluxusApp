@@ -6,7 +6,33 @@
   <link href="https://fonts.googleapis.com/css?family=Lato|Montserrat|Open+Sans|Roboto" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css"> {% render_bundle 'commons' %}
   {% render_bundle 'Base' %}
-  <title>{% block title %}TUDelft{% endblock %}</title>
+  <title>{% block title %}TU Delft{% endblock %}</title>
+  <link rel="apple-touch-icon" sizes="57x57"
+    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60"
+    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72"
+    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76"
+    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114"
+    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120"
+    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144"
+    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152"
+    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180"
+    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-180x180.png">
+  <link rel="icon" type="image/png" sizes="16x16"
+    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32"
+    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96"
+    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="192x192"
+    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-192x192.png">
 </head>
 
 <body>
@@ -15,15 +41,17 @@
     <a class="navbar-brand" href="/"><img src="../static/img/nav/tudelft.png"></a>
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item {% if request.resolver_match.url_name == 'data-entry' %} active{% endif %}" id="data-entry-link">
+        <li class="nav-item {% if request.resolver_match.url_name == 'data-entry' %} active{% endif %}"
+          id="data-entry-link">
           <a class="nav-link" href="/data-entry">Data Entry</a>
         </li>
-        <li class="nav-item {% if request.resolver_match.url_name == 'status-quo' %} active{% endif %}" id="status-quo-link">
+        <li class="nav-item {% if request.resolver_match.url_name == 'status-quo' %} active{% endif %}"
+          id="status-quo-link">
           <a class="nav-link" href="/status-quo">Status Quo</a>
         </li>
-<!--        <li class="nav-item {% if request.resolver_match.url_name == 'impact' %} active{% endif %}" id="impact-link">-->
-<!--          <a class="nav-link" href="/impact">Impact</a>-->
-<!--        </li>-->
+        <!--        <li class="nav-item {% if request.resolver_match.url_name == 'impact' %} active{% endif %}" id="impact-link">-->
+        <!--          <a class="nav-link" href="/impact">Impact</a>-->
+        <!--        </li>-->
       </ul>
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
@@ -108,7 +136,8 @@
       <div class="col-md-6 mt-md-0 mt-3 pt-2 text-center border-top mx-auto h2020funding">
         <p>This project has received
           funding from the European Union’s Horizon 2020 research and innovation programme under Grant Agreements No.
-          <a href="https://cordis.europa.eu/project/id/776751"><u>776751</u></a> and No. <a href="https://cordis.europa.eu/project/id/"><u>688920</u></a>.</p>
+          <a href="https://cordis.europa.eu/project/id/776751"><u>776751</u></a> and No. <a
+            href="https://cordis.europa.eu/project/id/"><u>688920</u></a>.</p>
       </div>
 
     </div>
