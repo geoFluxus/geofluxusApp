@@ -264,10 +264,6 @@
                         Destination
                     </button>
                 </h4>
-                <!--                <a  float="left" class="help-icon fas fa-question-circle" data-toggle="popover" title="Activities and Actors Filter"-->
-                <!--                   data-html="true" tabindex="0"-->
-                <!--                   data-content='Filter the flows between activity groups, activities and actors'>-->
-                <!--                </a>-->
             </div>
 
             <div id="collapseDestinationBlock" class="collapse" aria-labelledby="card-header-collapse-destination"
@@ -445,34 +441,37 @@
                         Flows
                     </button>
                 </h4>
-                <!--                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Flow Filters" data-html="true"-->
-                <!--                   tabindex="0"-->
-                <!--                   data-content='Filter the flows in between activity groups, activities and actors'>-->
-                <!--                </a>-->
             </div>
+
             <div id="collapseFlowsBlock" class="collapse" aria-labelledby="card-header-collapse-flows"
                 data-parent="#filterBlock">
                 <div class="card-body">
 
                     <h5 class="flowFilterSubtitle">General</h5>
+
                     <div class="row">
-                        <div class="col-md-4">
-                            <!-- <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Select areas"
-                                data-html="true" tabindex="0"
-                                data-content="Clicking the <b>Select areas</b> button opens a dialog where areas may be selected.<br>
-                                On confirmation, the selected areas will be used to filter the waste flows based on coordinates the Origin.">
-                            </a> -->
+                        <div class="col-md-10">
                             <label style="width: 450px" for="area-select-button-flows">Select the area(s) through which
                                 the flows must pass:</label>
-                            <button id="area-select-button-flows" class="btn btn-sm btn-primary area-select-button"
-                                data-width="100%" style="float: left; width: 13em" data-area-select-block="flows">Select
-                                areas
-                            </button>
+
+                            <div class="d-block">
+                                <button id="area-select-button-flows" class="btn btn-sm btn-primary area-select-button"
+                                    data-width="100%" style="width: 13em" data-area-select-block="flows">Select areas
+                                </button>
+
+                                <div class="d-inline buttonHelpiconContainer">
+                                    <a class="help-icon fas fa-question-circle" data-toggle="popover"
+                                        title="Select areas" data-html="true" tabindex="0"
+                                        data-content="Clicking the <b>Select areas</b> button opens a dialog in which you can select one or more geographic areas.<br> The selected areas will be used to filter the waste flows based on the <b>estimated route</b> of the waste transport.">
+                                    </a>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                     <div class='row' id="areaSelectionsFlows" style="display: none;">
                         <div class="col-md-4">
-                            <!-- <label for="areaSelectionsFlowsTextarea">Selected areas:</label> -->
+
                             <textarea class="form-control-sm textarea-autosize selections"
                                 id="areaSelectionsFlowsTextarea" style="width: 100% !important; display: inline-block"
                                 type="text" readonly></textarea>
@@ -480,6 +479,7 @@
                                 data-area-clear-button="flows">
                                 <i class="fas fa-times"></i>
                             </button>
+
                         </div>
                     </div>
 
