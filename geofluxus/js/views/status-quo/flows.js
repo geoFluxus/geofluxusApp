@@ -215,13 +215,13 @@ define(['views/common/baseview',
                         case 0: // No dimensions
                             console.log("No dimensions");
 
-                            $("#message-container-row").fadeIn();
+                            //$("#message-container-row").fadeIn();
                             $(".viz-container").hide();
 
                             break;
                         case 1: // One dimension selected
                             // Hide message if shown:
-                            $("#message-container-row").hide();
+                            //$("#message-container-row").hide();
                             // Hide all viz option buttons:
                             $(".viz-selector-button").hide();
                             // Show viz option container:
@@ -273,7 +273,7 @@ define(['views/common/baseview',
                             break;
 
                         case 2: // Two dimensions:
-                            $("#message-container-row").hide();
+                            //$("#message-container-row").hide();
                             $(".viz-selector-button").hide();
                             $(".viz-container").fadeIn();
 
@@ -332,6 +332,14 @@ define(['views/common/baseview',
                                 $("#viz-stackedbarchart").parent().fadeIn();
                                 $("#viz-parallelsets").parent().fadeIn();
                             }
+                            break;
+                        case 3: // Three dimensions:
+                            // $(".viz-selector-button").hide();
+                            // $(".viz-container").fadeIn();
+
+                            console.log("Three  dimensions");
+
+
                             break;
                         default:
                             // code block
