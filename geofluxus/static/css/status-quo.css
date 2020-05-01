@@ -129,7 +129,7 @@ label[for="monthSelect"],
 label[for="flows-waste04-select"],
 label[for="flows-waste06-select"] {
     position: relative;
-    left: -1.2em;
+    left: -1.3em;
 }
 
 /* 
@@ -155,8 +155,10 @@ label[for="flows-waste06-select"] {
 .destinationContainerActivity .activitySelectContainer .labelHelpiconContainer,
 #originContainerProcesses .labelHelpiconContainer,
 #destinationContainerProcesses .labelHelpiconContainer,
-#monthCol .labelHelpiconContainer {
-    left: -1.7rem !important;
+#monthCol .labelHelpiconContainer,
+#wastes04col .labelHelpiconContainer,
+#wastes06col .labelHelpiconContainer {
+    left: -1.85em !important;
 }
 
 

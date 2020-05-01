@@ -658,8 +658,21 @@
                     <h5 class="flowFilterSubtitle">European Waste Catalogue Codes</h5>
                     <div class="row">
                         <div class="col-md-3">
-                            <label>Chapter</label>
-                            <select name="flows-waste02-select" multiple
+
+                            <label for="flows-waste02-select">Chapter</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="EWC Chapter"
+                                    data-html="true" tabindex="0" data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
+                                    EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
+                                    <br>
+                                    <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a>.</span>
+                                    <br>
+                                    <span>Upon selecting an EWC Chapter, the Sub-Chapter filter will become available, containing the Sub-Chapters belonging to the selection made in this filter.</span>
+                                    ">
+                                </a>
+                            </div>
+
+                            <select name="flows-waste02-select" id="flows-waste02-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
                                 <option selected value="-1">All (<%= wastes02.count %>)</option>
@@ -673,7 +686,20 @@
                         </div>
 
                         <div class="col-md-3" id="wastes04col" style="display: none;">
-                            <label for="flows-waste04-select">Sub-chapter</label>
+
+                            <label for="flows-waste04-select">Sub-Chapter</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover"
+                                    title="EWC Sub-Chapter" data-html="true" tabindex="0" data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
+                                    EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
+                                    <br>
+                                    <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a>.</span>
+                                    <br>
+                                    <span>Upon selecting an EWC Sub-Chapter, the EWC Entry filter will become available, containing the EWC Entries belonging to the selection made in this filter.</span>
+                                    ">
+                                </a>
+                            </div>
+
                             <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                             <select name="flows-waste04-select" id="flows-waste04-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
@@ -689,7 +715,18 @@
                         </div>
 
                         <div class="col-md-3" id="wastes06col" style="display: none;">
-                            <label for="flows-waste06-select">Individual entries</label>
+
+                            <label for="flows-waste06-select">EWC Entry</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="EWC Entry"
+                                    data-html="true" tabindex="0" data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
+                                    EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
+                                    <br>
+                                    <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a>.</span>
+                                    ">
+                                </a>
+                            </div>
+
                             <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                             <select name="flows-waste06-select" id="flows-waste06-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
