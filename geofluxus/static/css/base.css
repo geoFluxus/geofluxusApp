@@ -26,6 +26,36 @@ body {
     z-index: 0;
 }
 
+
+
+
+
+
+.block {
+    background-color: #393939;
+    border-radius: 22px;
+    padding: 1.5rem;
+    padding-bottom: 1rem;
+    margin: 1.5rem;
+}
+
+.card {
+    background-color: #252525 !important;
+    border-radius: 22px !important;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.card-body {
+    padding-top: 0em !important;
+}
+
+
+
+
+
+
+
 #wrapper {
     padding-top: 80px;
     z-index: 800;
@@ -46,11 +76,6 @@ body {
 
 .dropdown {
     border-radius: 18px;
-}
-
-.card {
-    border-radius: 18px;
-
 }
 
 .dropdown-menu.show {
@@ -108,7 +133,7 @@ input {
     color: black;
 }
 
-.buttonHelpiconContainer a{
+.buttonHelpiconContainer a {
     position: relative;
     top: 0.32rem;
     margin-left: 0px !important;
@@ -149,7 +174,6 @@ input {
     position: absolute;
     /* background-color: black; */
     min-width: 160px;
-    /* box-shadow: 0px 0px 10px 10px rgba(255, 255, 255, 0.3); */
 }
 
 .dropdown-content a {
@@ -171,6 +195,7 @@ input {
 
 .popover {
     border-radius: 18px;
+    max-width: 350px;
 }
 
 .popover-header {
@@ -182,6 +207,11 @@ input {
 .popover-body {
     text-align: justify;
     text-justify: inter-word;
+}
+
+.popover-body span a {
+    color: black !important;
+    text-decoration: underline;
 }
 
 /* SCROLLBAR STYLING */

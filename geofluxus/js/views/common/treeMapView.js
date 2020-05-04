@@ -104,8 +104,8 @@ define(['views/common/baseview',
                             // Granularity: Activity
                         } else if (gran1 == "origin__activity" || gran1 == "destination__activity") {
                             groupBy = ["activityGroupCode", "activityCode"];
-                            tooltipConfig.tbody.push(["Activity group", function (d) {
-                                return d.activityGroupCode + " " + d.activityGroupName;
+                            tooltipConfig.tbody.push(["Activity", function (d) {
+                                return d.activityCode + " " + d.activityName;
                             }]);
                         }
 
@@ -119,11 +119,11 @@ define(['views/common/baseview',
                         if (gran1 == "origin__process__processgroup" || gran1 == "destination__process__processgroup") {
                             groupBy = ["processGroupCode"];
 
-                            // Granularity: Activity
+                            // Granularity: Treatment method
                         } else if (gran1 == "origin__process" || gran1 == "destination__process") {
                             groupBy = ["processGroupCode", "processCode"];
-                            tooltipConfig.tbody.push(["Treatment method group", function (d) {
-                                return d.processGroupCode + " " + d.processGroupName;
+                            tooltipConfig.tbody.push(["Treatment method", function (d) {
+                                return d.processCode + " " + d.processName;
                             }]);
                         }
 
@@ -153,8 +153,8 @@ define(['views/common/baseview',
                                     return d.ewc4Code + " " + d.ewc4Name;
                                 }],
                                 ["EWC Entry", function (d) {
-                                return d.ewc6Code + " " + d.ewc6Name;
-                            }]);
+                                    return d.ewc6Code + " " + d.ewc6Name;
+                                }]);
                         }
                     }
 
