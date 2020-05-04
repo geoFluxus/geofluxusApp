@@ -41,10 +41,6 @@
     <!-- <a class="navbar-brand" href="/"><img src="../static/img/nav/tudelft.png"></a> -->
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item {% if request.resolver_match.url_name == 'data-entry' %} active{% endif %}"
-          id="data-entry-link">
-          <a class="nav-link" href="/data-entry">Data Entry</a>
-        </li>
         <li class="nav-item {% if request.resolver_match.url_name == 'status-quo' %} active{% endif %}"
           id="status-quo-link">
           <a class="nav-link" href="/status-quo">Monitor</a>
@@ -64,6 +60,7 @@
             </button>
             <div class="dropdown-content">
               {% if request.user.is_superuser %}
+              <a href="/data-entry">Data Entry</a>
               <a href="/admin">Admin</a>
               <a href="/api">API</a> {% endif %}
               <a href="/logout">Logout</a>
