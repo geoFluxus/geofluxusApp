@@ -438,6 +438,9 @@ textarea.textarea-autosize.form-control-sm {
     height: 100%;
 }
 
+
+
+
 /* d3plus Tooltip */
 
 /* .d3plus-tooltip {
@@ -507,6 +510,28 @@ textarea.textarea-autosize.form-control-sm {
 
 .leaflet-control-zoom {
     top: 80px !important;
+    border: none !important;
+    margin: 0 !important;
+}
+
+.flowmap-wrapper .leaflet-control-zoom a {
+    background-color: #007bff;
+    border: none;
+    width: 32px;
+    height: 32px;
+    color: white;
+    font-size: 22px;
+    margin: 0px 5px;
+}
+
+.leaflet-control-zoom-in {
+    border-top-left-radius: 16px !important;
+    border-top-right-radius: 16px !important;
+}
+
+.leaflet-control-zoom-out {
+    border-bottom-left-radius: 16px !important;
+    border-bottom-right-radius: 16px !important;
 }
 
 .leaflet-control-fullscreen a {
@@ -516,8 +541,8 @@ textarea.textarea-autosize.form-control-sm {
 
 .leaflet-control-fullscreen,
 .leaflet-control-export {
+    margin-left: 5px !important;
     position: absolute;
-    right: 8px;
     border: none !important;
     border-width: 0px;
     background: none !important;
@@ -536,11 +561,6 @@ textarea.textarea-autosize.form-control-sm {
     position: relative;
 }
 
-.leaflet-control-fullscreen a::before {
-    position: relative;
-    top: 1.5px;
-}
-
 .leaflet-control-export button::before {
     right: 0.5px;
     position: relative;
@@ -557,6 +577,8 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .leaflet-control-fullscreen a::before {
+    position: relative;
+    top: 1.5px;
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     color: white;
