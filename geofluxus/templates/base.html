@@ -38,7 +38,7 @@
 <body>
   <!--Navbar-->
   <nav class="navbar navbar-expand-md" id="navbarID">
-    <a class="navbar-brand" href="/"><img src="../static/img/nav/tudelft.png"></a>
+    <!-- <a class="navbar-brand" href="/"><img src="../static/img/nav/tudelft.png"></a> -->
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item {% if request.resolver_match.url_name == 'data-entry' %} active{% endif %}"
@@ -47,12 +47,13 @@
         </li>
         <li class="nav-item {% if request.resolver_match.url_name == 'status-quo' %} active{% endif %}"
           id="status-quo-link">
-          <a class="nav-link" href="/status-quo">Status Quo</a>
+          <a class="nav-link" href="/status-quo">Monitor</a>
         </li>
-        <!--        <li class="nav-item {% if request.resolver_match.url_name == 'impact' %} active{% endif %}" id="impact-link">-->
-        <!--          <a class="nav-link" href="/impact">Impact</a>-->
-        <!--        </li>-->
+        <li class="nav-item {% if request.resolver_match.url_name == 'impact' %} active{% endif %}" id="impact-link">
+          <a class="nav-link" href="/impact">Impact</a>
+        </li>
       </ul>
+
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
           {% if request.user.is_authenticated %}
