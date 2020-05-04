@@ -23,6 +23,7 @@ define(['views/common/baseview',
                 this.selectedAreasFlows = [];
 
                 this.template = options.template;
+                
                 this.activityGroups = new Collection([], {
                     apiTag: 'activitygroups'
                 });
@@ -105,7 +106,7 @@ define(['views/common/baseview',
                 var html = document.getElementById(this.template).innerHTML,
                     template = _.template(html),
                     _this = this;
-                // Add to template context !!!
+                // Add to template context:
                 this.el.innerHTML = template({
                     processes: this.processes,
                     processgroups: this.processgroups,
@@ -163,7 +164,6 @@ define(['views/common/baseview',
 
                     let selectedActivityGroupIDs = [];
                     let filteredActivities = [];
-                    let allActivitiesOptionsHTML = "";
                     let newActivityOptionsHTML = "";
 
                     let activityGroupsSelect;
@@ -187,10 +187,6 @@ define(['views/common/baseview',
                     if (selectedActivityGroupIDs.length == 0 || selectedActivityGroupIDs[0] == "-1") {
                         activitySelectContainer.fadeOut("fast");
 
-                        allActivitiesOptionsHTML = '<option selected value="-1">All (' + _this.activities.length + ')</option><option data-divider="true"></option>';
-                        _this.activities.models.forEach(activity => allActivitiesOptionsHTML += "<option value='" + activity.attributes.id + "'>" + activity.attributes.nace + " " + activity.attributes.name + "</option>");
-                        $(activitySelect).html(allActivitiesOptionsHTML);
-                        $(activitySelect).selectpicker("refresh");
                     } else {
                         // Filter all activities by the selected Activity Groups:
                         filteredActivities = _this.activities.models.filter(function (activity) {
@@ -212,7 +208,6 @@ define(['views/common/baseview',
 
                     let selectedProcessGroupIDs = [];
                     let filteredProcesses = [];
-                    let allProcessOptionsHTML = "";
                     let newProcessOptionsHTML = "";
 
                     let processGroupSelect;
@@ -236,10 +231,6 @@ define(['views/common/baseview',
                     if (selectedProcessGroupIDs.length == 0 || selectedProcessGroupIDs[0] == "-1") {
                         processSelectContainer.fadeOut("fast");
 
-                        allProcessOptionsHTML = '<option selected value="-1">All (' + _this.processes.length + ')</option><option data-divider="true"></option>';
-                        _this.processes.models.forEach(process => allProcessOptionsHTML += "<option value='" + process.attributes.id + "'>" + process.attributes.code + " " + process.attributes.name + "</option>");
-                        $(processSelect).html(allProcessOptionsHTML);
-                        $(processSelect).selectpicker("refresh");
                     } else {
                         // Filter all activities by the selected Process Groups:
                         filteredProcesses = _this.processes.models.filter(function (process) {
@@ -259,20 +250,13 @@ define(['views/common/baseview',
                 function filterEWC02to04(event, clickedIndex, checked) {
                     let selectedEWC02IDs = [];
                     let filteredWastes04 = [];
-                    let allWastes04OptionsHTML = "";
                     let newWastes04OptionsHTML = "";
 
                     selectedEWC02IDs = $(_this.flows.waste02Select).val()
 
                     if (selectedEWC02IDs.length == 0 || selectedEWC02IDs[0] == "-1") {
-
                         $("#wastes04col").fadeOut("fast");
 
-                        allWastes04OptionsHTML = '<option selected value="-1">All (' + _this.wastes04.length + ')</option><option data-divider="true"></option>';
-                        _this.wastes04.models.forEach(waste04 => allWastes04OptionsHTML += "<option value='" + waste04.attributes.id + "'>" + waste04.attributes.ewc_code + " " + waste04.attributes.ewc_name + "</option>");
-
-                        $(_this.flows.waste04Select).html(allWastes04OptionsHTML);
-                        $(_this.flows.waste04Select).selectpicker("refresh");
                     } else {
                         filteredWastes04 = _this.wastes04.models.filter(function (waste04) {
                             return selectedEWC02IDs.includes(waste04.attributes.waste02.toString())
@@ -290,20 +274,13 @@ define(['views/common/baseview',
                 function filterEWC04to06() {
                     let selectedEWC04IDs = [];
                     let filteredWastes06 = [];
-                    let allWastes06OptionsHTML = "";
                     let newWastes06OptionsHTML = "";
 
                     selectedEWC04IDs = $(_this.flows.waste04Select).val()
 
                     if (selectedEWC04IDs.length == 0 || selectedEWC04IDs[0] == "-1") {
-
                         $("#wastes06col").fadeOut("fast");
 
-                        allWastes06OptionsHTML = '<option selected value="-1">All (' + _this.wastes06.length + ')</option><option data-divider="true"></option>';
-                        _this.wastes06.models.forEach(waste06 => allWastes06OptionsHTML += "<option value='" + waste06.attributes.id + "'>" + waste06.attributes.ewc_code + " " + waste06.attributes.ewc_name + "</option>");
-
-                        $(_this.flows.waste06Select).html(allWastes06OptionsHTML);
-                        $(_this.flows.waste06Select).selectpicker("refresh");
                     } else {
                         filteredWastes06 = _this.wastes06.models.filter(function (waste06) {
                             return selectedEWC04IDs.includes(waste06.attributes.waste04.toString())
@@ -322,7 +299,6 @@ define(['views/common/baseview',
                 function filterMonths() {
                     let selectedYearIDs = [];
                     let filteredMonths = [];
-                    let allMonthOptionsHTML = "";
                     let newMonthOptionsHTML = "";
 
                     selectedYearIDs = $(_this.flows.yearSelect).val()
@@ -330,11 +306,6 @@ define(['views/common/baseview',
                     if (selectedYearIDs.length == 0 || selectedYearIDs[0] == "-1") {
                         $("#monthCol").fadeOut("fast");
 
-                        allMonthOptionsHTML = '<option selected value="-1">All (' + _this.months.length + ')</option><option data-divider="true"></option>';
-                        _this.months.models.forEach(month => allMonthOptionsHTML += "<option value='" + month.attributes.id + "'>" + month.attributes.code.substring(2, 6) + " " + utils.returnMonthString(month.attributes.code.substring(0, 2)) + "</option>");
-
-                        $(_this.flows.monthSelect).html(allMonthOptionsHTML);
-                        $(_this.flows.monthSelect).selectpicker("refresh");
                     } else {
                         filteredMonths = _this.months.models.filter(function (month) {
                             return selectedYearIDs.includes(month.attributes.year.toString())
@@ -360,18 +331,16 @@ define(['views/common/baseview',
                 $(this.origin.processGroupSelect).on('changed.bs.select', filterTreatmentMethods);
                 $(this.origin.processSelect).on('changed.bs.select', multiCheck);
 
-                // Hide/show Activity Group and Activity or Treatment method:
+                // Hide/show Activity Group or Treatment method group containers
                 $("#origin-role-radio-production").on('click', function () {
                     _this.origin.role = "production";
                     $(".originContainerTreatmentMethod").hide();
                     $(".originContainerActivity").fadeIn();
-
                 });
                 $("#origin-role-radio-both").on('click', function () {
                     _this.origin.role = "both";
                     $(".originContainerActivity").fadeOut();
                     $(".originContainerTreatmentMethod").fadeOut();
-
                 });
                 $("#origin-role-radio-treatment").on('click', function () {
                     _this.origin.role = "treatment";
@@ -392,13 +361,11 @@ define(['views/common/baseview',
                     _this.destination.role = "production";
                     $(".destinationContainerTreatmentMethod").hide();
                     $(".destinationContainerActivity").fadeIn();
-
                 });
                 $("#destination-role-radio-both").on('click', function () {
                     _this.destination.role = "both";
                     $(".destinationContainerActivity").fadeOut();
                     $(".destinationContainerTreatmentMethod").fadeOut();
-
                 });
                 $("#destination-role-radio-treatment").on('click', function () {
                     _this.destination.role = "treatment";
@@ -724,7 +691,7 @@ define(['views/common/baseview',
 
                             // Loop through all selected areas in selectedAreasOrigin:
                             _this.selectedAreasOrigin.forEach(selectedArea => {
-                                // Get the feature object base on the id:
+                                // Get the feature object based on the id:
                                 let feature = _this.areaMap.getFeature("areas", selectedArea.id);
                                 labelStringArray.push(selectedArea.attributes.name);
 

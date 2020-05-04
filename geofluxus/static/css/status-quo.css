@@ -4,14 +4,12 @@
     padding-bottom: 10px;
 }
 
-.block {
+/* .block {
     background-color: #393939;
     border-radius: 22px;
     padding: 1.5rem;
     padding-bottom: 1rem;
     margin: 1.5rem;
-    /*margin-top: 15px;
-    box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.3);*/
 }
 
 .card {
@@ -23,7 +21,7 @@
 
 .card-body {
     padding-top: 0em !important;
-}
+} */
 
 .card.bg-dark {
     overflow-y: visible;
@@ -36,6 +34,15 @@
 }
 
 .card-header .fa {
+    transition: .3s transform ease-in-out;
+}
+
+.card-header .collapsed .fa {
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    transform: rotate(-90deg);
     transition: .3s transform ease-in-out;
 }
 
@@ -101,39 +108,77 @@
     border-bottom-right-radius: 18px !important;
 }
 
-
-
 .flowFilterSubtitle {
     margin-top: 2em;
 }
 
-#activitySelectContainer {
-    transition: display 1s;
+label[for="origin-processGroup-select"],
+label[for="destination-processGroup-select"] {
+    min-width: 13rem;
 }
 
 
-.card-header .collapsed .fa {
-    -webkit-transform: rotate(-90deg);
-    -moz-transform: rotate(-90deg);
-    -ms-transform: rotate(-90deg);
-    -o-transform: rotate(-90deg);
-    transform: rotate(-90deg);
-    transition: .3s transform ease-in-out;
+
+label[for="origin-activity-select"],
+label[for="destination-activity-select"],
+label[for="origin-process-select"],
+label[for="destination-process-select"],
+label[for="monthSelect"],
+label[for="flows-waste04-select"],
+label[for="flows-waste06-select"] {
+    position: relative;
+    left: -1.3em;
 }
+
+/* 
+.originContainerActivity .buttonHelpiconContainer,
+.destinationContainerActivity .buttonHelpiconContainer {
+    position: relative;
+    top: -0.1rem;
+    left: 0.1rem;
+} */
+
+.labelHelpiconContainer {
+    position: relative;
+    display: inline-block;
+    top: 0.125rem;
+    left: -0.5rem;
+}
+
+.labelHelpiconContainer .fa-question-circle::before {
+    font-size: 22.5px;
+}
+
+.originContainerActivity .activitySelectContainer .labelHelpiconContainer,
+.destinationContainerActivity .activitySelectContainer .labelHelpiconContainer,
+#originContainerProcesses .labelHelpiconContainer,
+#destinationContainerProcesses .labelHelpiconContainer,
+#monthCol .labelHelpiconContainer,
+#wastes04col .labelHelpiconContainer,
+#wastes06col .labelHelpiconContainer {
+    left: -1.85em !important;
+}
+
 
 .filterDoubleChevron {
     color: white;
     font-size: 1.5em;
     position: relative;
     left: -1.05em;
-    top: 1.5em;
+    top: 1.675em;
     float: left;
 }
 
-label[for="activity-select"] {
+/* 
+.originContainerActivity .filterDoubleChevron,
+.destinationContainerActivity .filterDoubleChevron {
+    color: white;
+    font-size: 1.5em;
     position: relative;
-    left: -1.2em;
-}
+    left: -1.05em;
+    top: 1.675em;
+    float: left;
+} */
 
 #flows-render-template {
     margin-bottom: 5em;
@@ -391,6 +436,9 @@ textarea.textarea-autosize.form-control-sm {
     height: 100%;
 }
 
+
+
+
 /* d3plus Tooltip */
 
 /* .d3plus-tooltip {
@@ -460,6 +508,28 @@ textarea.textarea-autosize.form-control-sm {
 
 .leaflet-control-zoom {
     top: 80px !important;
+    border: none !important;
+    margin: 0 !important;
+}
+
+.flowmap-wrapper .leaflet-control-zoom a {
+    background-color: #007bff;
+    border: none;
+    width: 32px;
+    height: 32px;
+    color: white;
+    font-size: 22px;
+    margin: 0px 5px;
+}
+
+.leaflet-control-zoom-in {
+    border-top-left-radius: 16px !important;
+    border-top-right-radius: 16px !important;
+}
+
+.leaflet-control-zoom-out {
+    border-bottom-left-radius: 16px !important;
+    border-bottom-right-radius: 16px !important;
 }
 
 .leaflet-control-fullscreen a {
@@ -469,8 +539,8 @@ textarea.textarea-autosize.form-control-sm {
 
 .leaflet-control-fullscreen,
 .leaflet-control-export {
+    margin-left: 5px !important;
     position: absolute;
-    right: 8px;
     border: none !important;
     border-width: 0px;
     background: none !important;
@@ -489,11 +559,6 @@ textarea.textarea-autosize.form-control-sm {
     position: relative;
 }
 
-.leaflet-control-fullscreen a::before {
-    position: relative;
-    top: 1.5px;
-}
-
 .leaflet-control-export button::before {
     right: 0.5px;
     position: relative;
@@ -510,6 +575,8 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .leaflet-control-fullscreen a::before {
+    position: relative;
+    top: 1.5px;
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     color: white;
