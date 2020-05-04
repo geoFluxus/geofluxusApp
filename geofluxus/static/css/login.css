@@ -3,10 +3,6 @@
   --input-padding-y: .75rem;
 }
 
-body {
-  background: black;
-}
-
 h5 {
   color: white;
 }
@@ -16,7 +12,6 @@ h5 {
   border: 0;
   border-radius: 1rem;
   z-index: 1000;
-  box-shadow: 0px 0px 10px 10px rgba(255, 255, 255, 0.3);
 }
 
 .card-signin .card-title {
@@ -34,7 +29,7 @@ h5 {
 }
 
 .form-signin .btn {
-  background: blue;
+  background: #007bff;
   font-size: 80%;
   border-radius: 5rem;
   letter-spacing: .1rem;

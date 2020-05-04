@@ -26,6 +26,36 @@ body {
     z-index: 0;
 }
 
+
+
+
+
+
+.block {
+    background-color: #393939;
+    border-radius: 22px;
+    padding: 1.5rem;
+    padding-bottom: 1rem;
+    margin: 1.5rem;
+}
+
+.card {
+    background-color: #252525 !important;
+    border-radius: 22px !important;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.card-body {
+    padding-top: 0em !important;
+}
+
+
+
+
+
+
+
 #wrapper {
     padding-top: 80px;
     z-index: 800;
@@ -46,11 +76,6 @@ body {
 
 .dropdown {
     border-radius: 18px;
-}
-
-.card {
-    border-radius: 18px;
-
 }
 
 .dropdown-menu.show {
@@ -149,7 +174,6 @@ input {
     position: absolute;
     /* background-color: black; */
     min-width: 160px;
-    /* box-shadow: 0px 0px 10px 10px rgba(255, 255, 255, 0.3); */
 }
 
 .dropdown-content a {
