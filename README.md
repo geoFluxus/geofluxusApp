@@ -46,3 +46,26 @@ to download all the dependencies listed in package.json.
 To start the app, run the backend and frontend servers
 - Backend: To run the backend server, there are multiple options (to be continued...)
 - Frontend: ```node server-dev.js```
+
+## App archtitecture
+(Add the image from Google documents)
+
+## Project structure
+The repo contains:
+- *\geofluxus*: The app directory (frontend & backend)
+  - *\apps*: Backend support for the app modules. An app may contain:
+    - *\models*: How a data model of the app should be represented in a database table
+    - *\serializers*: How each model should be sent from backend to frontend through RESTful API
+    - *\views*: How each model should be recovered from the database, serialized and rendered in the frontend
+  - *\js*: Frontend support for the app modules based on backbone.js framework and Django REST framework.
+    - *\models*: An instance of a data model collected from the database
+    - *\collections*: A group of same model instances
+    - *\views*: The interface representation of each app module
+    - *\visualizations*: JS classes for the visualizations used across the app
+    - *\app-config.js*: An inventory to access data models through RESTful API
+  - *\static*: All .css and .img files
+  - *\templates*: All .html templates
+- *manage.py*: Supports the backend server & other functionalities (create & apply migrations etc.)
+- *package.json*: The frontend dependencies
+- *requirements.txt*: The backend dependencies
+- *server-dev.js*: The frontend server
