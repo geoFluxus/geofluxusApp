@@ -32,4 +32,17 @@ If the command is recognized, the currentrly installed version of Python should 
   ```
 
 ### Frontend
-To install the frontend dependencies, [Yarn](https://classic.yarnpkg.com/en/docs/install/#windows-stable) is needed (check the currently installed version in your computer by using the command *yarn version* in terminal. Once installed, run *yarn install* to download all the dependencies listed in package.json.
+To install the frontend dependencies, [Yarn](https://classic.yarnpkg.com/en/docs/install/#windows-stable) is needed (check the currently installed version in your computer by using the terminal command
+
+```yarn version```
+
+Once installed, run
+
+```yarn install``` 
+
+to download all the dependencies listed in package.json.
+
+### Run servers
+To start the app, run the backend and frontend servers
+- Backend: To run the backend server, there are multiple options (to be continued...)
+- Frontend: ```node server-dev.js```
