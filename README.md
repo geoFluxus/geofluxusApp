@@ -47,8 +47,11 @@ To start the app, run the backend and frontend servers
 - Backend: To run the backend server, there are multiple options (to be continued...)
 - Frontend: ```node server-dev.js```
 
-## App archtitecture
-(Add the image from Google documents)
+## App architecture
+- **BACKEND**: Django-based app connected to PostgreSQL database. Geospatial and road network data support via PostGIS and pgRouting.
+- **RESTful API**: Connection between backend and frontend establish through Django REST Framework
+- **FRONTEND**: Frontend connection to RESTful API established via Backbone.js. Project dependencies handled by Yarn. Javascript and static files (.css, .less, .img) bundled and served by Webpack.
+![Architecture](./geofluxus/static/img/architecture.png)
 
 ## Project structure
 The repo contains:
