@@ -69,6 +69,16 @@ class StatusQuoViewSet(FilterFlowViewSet):
         # aggregate flows into groups
         groups = queryset.values(*fields).distinct()
 
+        # convert queryset to list and process
+        # avoids hitting the database multiple times
+        queryset = list(queryset.values(*fields, 'amount'))
+
+        # make matches between flow / group attributes
+        def check(flow, group):
+            for field in fields:
+                if flow[field] != group[field]: return False
+            return True
+
         # serialize aggregated flow groups
         for group in groups:
             # check for groups fields with null values!
@@ -81,12 +91,12 @@ class StatusQuoViewSet(FilterFlowViewSet):
             if has_null: continue
 
             # retrieve group
-            grouped = queryset.filter(**group)
+            #grouped = queryset.filter(**group)
             # and EXCLUDE it from further search...
             #queryset = queryset.exclude(**group)
 
             # aggregate amount
-            group_amount = sum(grouped.values_list('amount', flat=True))
+            group_amount = sum([flow['amount'] for flow in queryset if check(flow, group)])
 
             # for the dimensions, return the id
             # to recover any info in the frontend
@@ -112,7 +122,8 @@ class StatusQuoViewSet(FilterFlowViewSet):
                         process = Process.objects.filter(id=group[field])[0]
                         flow_item.append(('processgroup', process.processgroup.id))
                 else:
-                    flow_item.append((level, group[field]))
+                 flow_item.append((level, group[field]))
+
             data.append(OrderedDict(flow_item))
         return data
 
