@@ -106,7 +106,9 @@ class StatusQuoViewSet(FilterFlowViewSet):
                     if level == 'activity':
                         activity = Activity.objects.filter(id=group[field])[0]
                         flow_item.append(('activitygroup', activity.activitygroup.id))
-                    elif level == 'process':
+                elif 'process' in field:
+                    flow_item.append((level, group[field]))
+                    if level == 'process':
                         process = Process.objects.filter(id=group[field])[0]
                         flow_item.append(('processgroup', process.processgroup.id))
 
