@@ -361,13 +361,9 @@ define(['views/common/baseview',
 
                     // At least two dimensions, and one is Space:
                     if ((_this.checkedDimToggles.length > 1) && _this.selectedDimensionStrings.includes("space") && clickedToggleHasFlowsFormat) {
-                        console.log("origDest-toggle-space disabled");
-
                         $("#origDest-toggle-space").bootstrapToggle('disable');
                         event.preventDefault();
                     } else {
-                        console.log("origDest-toggle-space enabled");
-
                         $("#origDest-toggle-space").bootstrapToggle('enable');
                         event.preventDefault();
                     }
