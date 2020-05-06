@@ -431,27 +431,27 @@ define(['views/common/baseview',
             //                });
             //            },
             //
-            postprocess: function (flows) {
-                var idx = 0;
-                flows.forEach(function (flow) {
-                    var origin = flow.get('origin');
-                    var destination = flow.get('destination');
+            // postprocess: function (flows) {
+            //     var idx = 0;
+            //     flows.forEach(function (flow) {
+            //         var origin = flow.get('origin');
+            //         var destination = flow.get('destination');
 
-                    // API aggregates flows and doesn't return an id. Generate internal ID to assign interactions:
-                    flow.set('id', idx);
-                    idx++;
+            //         // API aggregates flows and doesn't return an id. Generate internal ID to assign interactions:
+            //         flow.set('id', idx);
+            //         idx++;
 
-                    // Save original amounts to be able to swap amount with delta and back
-                    flow._amount = flow.get('amount');
+            //         // Save original amounts to be able to swap amount with delta and back
+            //         flow._amount = flow.get('amount');
 
-                    // Color:
-                    origin.color = utils.colorByName(origin.name);
-                    destination.color = utils.colorByName(destination.name);
-                })
+            //         // Color:
+            //         origin.color = utils.colorByName(origin.name);
+            //         destination.color = utils.colorByName(destination.name);
+            //     })
 
-                this.flows = flows;
-                this.draw();
-            },
+            //     this.flows = flows;
+            //     this.draw();
+            // },
 
             //            draw: function (displayLevel) {
             //                this.flowMem = {};
@@ -1042,35 +1042,39 @@ define(['views/common/baseview',
 
                 // //////////////////////////////////
                 // Dimension controls:
+
                 $(_this.dimensions.timeToggle).bootstrapToggle('off');
                 $(_this.dimensions.timeToggleGran).bootstrapToggle('Year');
+                $("#gran-toggle-time-col").hide();
 
                 $(_this.dimensions.spaceToggle).bootstrapToggle('off');
                 $(_this.dimensions.spaceLevelGranSelect).val($('#dim-space-gran-select:first-child')[0].value);
                 $(_this.dimensions.spaceOrigDest).bootstrapToggle('off');
-
+                $("#gran-toggle-space-col").hide();
+                $("#origDest-toggle-space-col").hide();
+                
                 $(_this.dimensions.economicActivityToggle).bootstrapToggle('off');
                 $(_this.dimensions.economicActivityToggleGran).bootstrapToggle('off');
                 $(_this.dimensions.economicActivityOrigDest).bootstrapToggle('off');
-
+                $("#gran-econ-activity-col").hide();
+                $("#origDest-toggle-econAct-col").hide();
+                
                 $(_this.dimensions.treatmentMethodToggle).bootstrapToggle('off');
                 $(_this.dimensions.treatmentMethodToggleGran).bootstrapToggle('off');
                 $(_this.dimensions.treatmentMethodOrigDest).bootstrapToggle('off');
-
-                $("#gran-toggle-time-col").hide();
-                $("#gran-toggle-space-col").hide();
-                $("#gran-econ-activity-col").hide();
                 $("#gran-treatment-method-col").hide();
-                $("#gran-material-col").hide();
-
-                $("#origDest-toggle-space-col").hide();
-                $("#origDest-toggle-econAct-col").hide();
                 $("#origDest-toggle-treatment-col").hide();
-
+                
+                $(".gran-radio-material-label").removeClass("active");
+                $($("#gran-radio-material")[0].children[0]).addClass("active");
+                $(_this.dimensions.materialToggle).bootstrapToggle('off');
+                $("#gran-material-col").hide();
 
                 // //////////////////////////////////
                 // Vizualisation controls:
                 $(".viz-selector-button").removeClass("active");
+
+                $("#collapseVizualisationBlock").hide();
 
 
                 // Refresh all selectpickers:
