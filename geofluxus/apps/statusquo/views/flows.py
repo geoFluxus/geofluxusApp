@@ -111,7 +111,8 @@ class StatusQuoViewSet(FilterFlowViewSet):
                     if level == 'process':
                         process = Process.objects.filter(id=group[field])[0]
                         flow_item.append(('processgroup', process.processgroup.id))
-
+                else:
+                    flow_item.append((level, group[field]))
             data.append(OrderedDict(flow_item))
         return data
 
