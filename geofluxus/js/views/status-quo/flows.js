@@ -173,6 +173,10 @@ define(['views/common/baseview',
                 });
 
                 $(".dimensionToggle").change(function (event) {
+                    if (_this.resetInProgres) {
+                        return
+                    }
+
                     // //////////////////////////////////////////////////////
                     // Disable dimension toggles for max number of dimensions:
                     _this.checkedDimToggles = [];
@@ -209,13 +213,13 @@ define(['views/common/baseview',
                     // ///////////////////////////////////////////////////////////////////
                     // Show available visualizations based on selected dimension(s):
 
-                    console.log(_this.selectedDimensionStrings);
+                    //console.log(_this.selectedDimensionStrings);
 
                     switch (_this.checkedDimToggles.length) {
                         case 0: // No dimensions
-                            console.log("No dimensions");
+                            //console.log("No dimensions");
 
-                            //$("#message-container-row").fadeIn();
+                            $("#message-container-row").fadeIn();
                             $(".viz-container").hide();
 
                             break;
@@ -230,7 +234,7 @@ define(['views/common/baseview',
                             // Disable legend by default:
                             //$("#display-legend").prop("checked", false);
 
-                            console.log("One dimension");
+                            //console.log("One dimension");
 
                             if (_this.selectedDimensionStrings.includes("time")) {
                                 $("#viz-piechart").parent().fadeIn();
@@ -280,7 +284,7 @@ define(['views/common/baseview',
                             // Enable legend by default:
                             //$("#display-legend").prop("checked", true);
 
-                            console.log("Two dimensions");
+                            //console.log("Two dimensions");
 
                             // Time & Space
                             if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("space")) {
@@ -337,7 +341,7 @@ define(['views/common/baseview',
                             // $(".viz-selector-button").hide();
                             // $(".viz-container").fadeIn();
 
-                            console.log("Three  dimensions");
+                            //console.log("Three  dimensions");
 
 
                             break;
@@ -530,15 +534,18 @@ define(['views/common/baseview',
                 let filterParams = this.filtersView.getFilterParams();
 
                 // ///////////////////////////////
-                // format
+                // Format
                 let selectedVizualisationString;
                 $('.viz-selector-button').each(function (index, value) {
                     if ($(this).hasClass("active")) {
                         selectedVizualisationString = $(this).attr("data-viz");
                     }
                 });
-                if (selectedVizualisationString.includes("flowmap") || selectedVizualisationString.includes("parallelsets")) {
-                    filterParams.format = selectedVizualisationString;
+
+                if (selectedVizualisationString) {
+                    if (selectedVizualisationString.includes("flowmap") || selectedVizualisationString.includes("parallelsets")) {
+                        filterParams.format = selectedVizualisationString;
+                    }
                 }
 
                 // ///////////////////////////////
@@ -1037,14 +1044,15 @@ define(['views/common/baseview',
                 }
             },
 
-            resetDimAndVizToDefault: function () {
+            resetDimAndVizToDefault: function (event) {
                 _this = this;
+                _this.resetInProgres = true;
 
                 // //////////////////////////////////
                 // Dimension controls:
 
                 $(_this.dimensions.timeToggle).bootstrapToggle('off');
-                $(_this.dimensions.timeToggleGran).bootstrapToggle('Year');
+                $(_this.dimensions.timeToggleGran).bootstrapToggle('off');
                 $("#gran-toggle-time-col").hide();
 
                 $(_this.dimensions.spaceToggle).bootstrapToggle('off');
@@ -1065,20 +1073,28 @@ define(['views/common/baseview',
                 $("#gran-treatment-method-col").hide();
                 $("#origDest-toggle-treatment-col").hide();
                 
+                $(_this.dimensions.materialToggle).bootstrapToggle('off');
                 $(".gran-radio-material-label").removeClass("active");
                 $($("#gran-radio-material")[0].children[0]).addClass("active");
-                $(_this.dimensions.materialToggle).bootstrapToggle('off');
                 $("#gran-material-col").hide();
+
+
+                // Enable all toggles:
+                $('.bootstrapToggle').each(function (index, value) {
+                    $(this).bootstrapToggle('enable');
+                });
 
                 // //////////////////////////////////
                 // Vizualisation controls:
                 $(".viz-selector-button").removeClass("active");
 
-                $("#collapseVizualisationBlock").hide();
+
+                $(".viz-container").hide();
 
 
                 // Refresh all selectpickers:
                 $(".selectpicker").selectpicker('refresh');
+                _this.resetInProgres = false;
             },
 
         });

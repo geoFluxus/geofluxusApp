@@ -82,7 +82,6 @@ module.exports = {
         } else if (granularity == "origin__process" || granularity == "destination__process") {
 
             flows.forEach(function (flow, index) {
-                //let processGroupName = "";
                 let processObject = processes.find(process => process.attributes.id == flow.process);
                 let processGroupObject = processGroups.find(processGroup => processGroup.attributes.id == flow.processgroup);
 
