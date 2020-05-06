@@ -50,15 +50,14 @@ module.exports = {
             // Granularity: Activity
         } else if (granularity == "origin__activity" || granularity == "destination__activity") {
             flows.forEach(function (flow, index) {
-                let activityGroupName = "";
                 let activityObject = activities.find(activity => activity.attributes.id == flow.activity);
+                let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.activitygroup);
 
                 this[index].activityCode = activityObject.attributes.nace;
                 this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
 
-                this[index].activityGroupCode = this[index].activityCode.substring(0, this[index].activityCode.indexOf('-'));
-                activityGroupName = activityGroups.find(activityGroup => activityGroup.attributes.code == this[index].activityGroupCode).attributes.name;
-                this[index].activityGroupName = activityGroupName[0].toUpperCase() + activityGroupName.slice(1).toLowerCase();
+                this[index].activityGroupCode = activityGroupObject.attributes.code;
+                this[index].activityGroupName = activityGroupObject.attributes.name[0].toUpperCase() + activityGroupObject.attributes.name.slice(1).toLowerCase();
             }, flows);
         }
 
@@ -83,15 +82,15 @@ module.exports = {
         } else if (granularity == "origin__process" || granularity == "destination__process") {
 
             flows.forEach(function (flow, index) {
-                let processGroupName = "";
+                //let processGroupName = "";
                 let processObject = processes.find(process => process.attributes.id == flow.process);
+                let processGroupObject = processGroups.find(processGroup => processGroup.attributes.id == flow.processgroup);
 
                 this[index].processCode = processObject.attributes.code;
                 this[index].processName = processObject.attributes.name[0].toUpperCase() + processObject.attributes.name.slice(1).toLowerCase();
 
-                this[index].processGroupCode = processObject.attributes.code.substring(0, 1);
-                processGroupName = processGroups.find(processGroup => processGroup.attributes.code == this[index].processGroupCode).attributes.name;
-                this[index].processGroupName = processGroupName[0].toUpperCase() + processGroupName.slice(1).toLowerCase();
+                this[index].processGroupCode = processGroupObject.attributes.code;
+                this[index].processGroupName = processGroupObject.attributes.name[0].toUpperCase() + processGroupObject.attributes.name.slice(1).toLowerCase();
             }, flows);
         }
 
