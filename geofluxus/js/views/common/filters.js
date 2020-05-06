@@ -858,20 +858,22 @@ define(['views/common/baseview',
                 }
 
                 if (this.origin.role == "production") {
-                    if ($(this.origin.activitySelect).val() == '-1') {
-                        if ($(this.origin.activityGroupsSelect).val() != '-1') {
+                    if ($(this.origin.activityGroupsSelect).val() != '-1') {
+                        if ($(this.origin.activitySelect).val() == '-1') {
                             filterParams.flows['origin__activity__activitygroup__in'] = $(this.origin.activityGroupsSelect).val();
                         }
-                    } else {
-                        filterParams.flows['origin__activity__in'] = $(this.origin.activitySelect).val();
+                        else {
+                            filterParams.flows['origin__activity__in'] = $(this.origin.activitySelect).val();
+                        }
                     }
                 } else if (this.origin.role == "treatment") {
-                    if ($(this.origin.processSelect).val() == '-1') {
-                        if ($(this.origin.processGroupSelect).val() != '-1') {
+                    if ($(this.origin.processGroupSelect).val() != '-1') {
+                        if ($(this.origin.processSelect).val() == '-1') {
                             filterParams.flows['origin__process__processgroup__in'] = $(this.origin.processGroupSelect).val();
                         }
-                    } else {
-                        filterParams.flows['origin__process__in'] = $(this.origin.processSelect).val();
+                        else {
+                            filterParams.flows['origin__process__in'] = $(this.origin.processSelect).val();
+                        }
                     }
                 }
 
@@ -896,20 +898,22 @@ define(['views/common/baseview',
                 }
 
                 if (this.destination.role == "production") {
-                    if ($(this.destination.activitySelect).val() == '-1') {
-                        if ($(this.destination.activityGroupsSelect).val() != '-1') {
+                    if ($(this.destination.activityGroupsSelect).val() != '-1') {
+                        if ($(this.destination.activitySelect).val() == '-1') {
                             filterParams.flows['destination__activity__activitygroup__in'] = $(this.destination.activityGroupsSelect).val();
                         }
-                    } else {
-                        filterParams.flows['destination__activity__in'] = $(this.destination.activitySelect).val();
+                        else {
+                            filterParams.flows['destination__activity__in'] = $(this.destination.activitySelect).val();
+                        }
                     }
                 } else if (this.destination.role == "treatment") {
-                    if ($(this.destination.processSelect).val() == '-1') {
-                        if ($(this.destination.processGroupSelect).val() != '-1') {
+                    if ($(this.destination.processGroupSelect).val() != '-1') {
+                        if ($(this.destination.processSelect).val() == '-1') {
                             filterParams.flows['destination__process__processgroup__in'] = $(this.destination.processGroupSelect).val();
                         }
-                    } else {
-                        filterParams.flows['destination__process__in'] = $(this.destination.processSelect).val();
+                        else {
+                            filterParams.flows['destination__process__in'] = $(this.destination.processSelect).val();
+                        }
                     }
                 }
 

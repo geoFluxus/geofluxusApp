@@ -1,6 +1,8 @@
 from geofluxus.apps.asmfa.views import FilterFlowViewSet
 from geofluxus.apps.asmfa.models import (Area,
                                          Actor,
+                                         Activity,
+                                         Process,
                                          Waste04,
                                          Waste06)
 from collections import OrderedDict
@@ -99,8 +101,16 @@ class StatusQuoViewSet(FilterFlowViewSet):
                     flow_item.append((level, self.serialize_node(group[field], MODEL[model])))
                 elif 'waste' in field:
                     self.serialize_waste(field, group, flow_item)
-                else:
+                elif 'activity' in field:
                     flow_item.append((level, group[field]))
+                    if level == 'activity':
+                        activity = Activity.objects.filter(id=group[field])[0]
+                        flow_item.append(('activitygroup', activity.activitygroup.id))
+                elif 'process' in field:
+                    flow_item.append((level, group[field]))
+                    if level == 'process':
+                        process = Process.objects.filter(id=group[field])[0]
+                        flow_item.append(('processgroup', process.processgroup.id))
 
             data.append(OrderedDict(flow_item))
         return data
