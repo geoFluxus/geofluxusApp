@@ -352,8 +352,6 @@ define(['views/common/baseview',
                 });
 
 
-
-
                 // Disable origin/destination toggle for Space for Flowmap and Parallel Sets
                 $(".viz-selector-button").click(function (event) {
 
@@ -368,8 +366,6 @@ define(['views/common/baseview',
                         event.preventDefault();
                     }
                 });
-
-
 
                 $(_this.dimensions.spaceLevelGranSelect).change(function () {
                     let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
