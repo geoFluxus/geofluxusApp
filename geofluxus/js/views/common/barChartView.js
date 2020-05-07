@@ -234,10 +234,6 @@ define(['views/common/baseview',
                             // Granularity = month:
                         } else if (gran1 == "flowchain__month") {
                             x = ["yearMonthCode"];
-                            if (hasMultipleLines) {
-                                groupBy = ["year"];
-                                x = ["monthName"];
-                            }
                             tooltipConfig.title = "Waste totals per month";
                             tooltipConfig.tbody.push(["Month", function (d) {
                                 return d.month
@@ -275,11 +271,7 @@ define(['views/common/baseview',
                             // Granularity = month:
                         } else if (gran1 == "flowchain__month") {
                             x = ["yearMonthCode"];
-                            if (hasMultipleLines) {
-                                groupBy = ["year"];
-                                x = ["monthName"];
-                            }
-
+                           
                             tooltipConfig.title = "Waste totals per month";
                             tooltipConfig.tbody.push(["Month", function (d) {
                                 return d.month
@@ -316,11 +308,6 @@ define(['views/common/baseview',
                             // Granularity = month:
                         } else if (gran1 == "flowchain__month") {
                             x = ["yearMonthCode"];
-                            if (hasMultipleLines) {
-                                groupBy = ["year"];
-                                x = ["monthName"];
-                            }
-
                             tooltipConfig.title = "Waste totals per month";
                             tooltipConfig.tbody.push(["Month", function (d) {
                                 return d.month
