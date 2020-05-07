@@ -138,7 +138,6 @@ module.exports = {
                 this[index].ewc6Code = ewc6Object.attributes.ewc_code;
                 this[index].ewc6Name = ewc6Object.attributes.ewc_name[0].toUpperCase() + ewc6Object.attributes.ewc_name.slice(1).toLowerCase();
             }, flows);
-
         }
 
         return flows

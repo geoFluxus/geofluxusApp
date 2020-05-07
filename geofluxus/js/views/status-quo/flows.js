@@ -15,10 +15,11 @@ define(['views/common/baseview',
         'views/common/coordinatePointMapView',
         'views/common/areaChartView',
         'views/common/flowMapView',
-         'bootstrap',
-         'bootstrap-select',
-         'bootstrap-toggle',
-         'textarea-autosize',
+        'views/common/parallelSetsView',
+        'bootstrap',
+        'bootstrap-select',
+        'bootstrap-toggle',
+        'textarea-autosize',
     ],
     function (
         BaseView,
@@ -37,6 +38,7 @@ define(['views/common/baseview',
         CoordinatePointMapView,
         AreaChartView,
         FlowMapView,
+        ParallelSetsView,
     ) {
 
         var FlowsView = BaseView.extend({
@@ -268,7 +270,7 @@ define(['views/common/baseview',
                                 $("#viz-piechart").parent().fadeIn();
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-treemap").parent().fadeIn();
-                                //$("#viz-parallelsets").parent().fadeIn();
+                                $("#viz-parallelsets").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("material")) {
                                 $("#viz-piechart").parent().fadeIn();
                                 $("#viz-barchart").parent().fadeIn();
@@ -326,15 +328,15 @@ define(['views/common/baseview',
                             } else if (_this.selectedDimensionStrings.includes("economicActivity") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
-                                //$("#viz-parallelsets").parent().fadeIn();
+                                $("#viz-parallelsets").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("economicActivity") && _this.selectedDimensionStrings.includes("material")) {
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
-                                //$("#viz-parallelsets").parent().fadeIn();
+                                $("#viz-parallelsets").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("material") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
-                                //$("#viz-parallelsets").parent().fadeIn();
+                                $("#viz-parallelsets").parent().fadeIn();
                             }
                             break;
                         case 3: // Three dimensions:
@@ -536,7 +538,7 @@ define(['views/common/baseview',
 
                 if (selectedVizualisationString) {
                     if (selectedVizualisationString.includes("flowmap") || selectedVizualisationString.includes("parallelsets")) {
-                        filterParams.format = selectedVizualisationString;
+                        filterParams.format = "flowmap";
                     }
                 }
 
@@ -839,6 +841,10 @@ define(['views/common/baseview',
                     case "flowmap":
                         this.renderFlowMap(dimensions, flows);
                         break;
+                    case "parallelsets":
+                        this.renderParallelSets(dimensions, flows);
+                        break;
+
                     default:
                         // Nothing
                 }
@@ -957,6 +963,19 @@ define(['views/common/baseview',
                 //this.flowMapView.rerender(true);
             },
 
+            renderParallelSets: function (dimensions, flows) {
+                if (this.parallelSetsView != null) this.parallelSetsView.close();
+
+                $(".parallelsets-wrapper").fadeIn();
+
+                this.parallelSetsView = new ParallelSetsView({
+                    el: ".parallelsets-wrapper",
+                    dimensions: dimensions,
+                    flows: flows,
+                    flowsView: this,
+                });
+            },
+
 
             closeAllVizViews: function () {
                 $(".viz-wrapper-div").fadeOut();
@@ -1052,19 +1071,19 @@ define(['views/common/baseview',
                 $(_this.dimensions.spaceOrigDest).bootstrapToggle('off');
                 $("#gran-toggle-space-col").hide();
                 $("#origDest-toggle-space-col").hide();
-                
+
                 $(_this.dimensions.economicActivityToggle).bootstrapToggle('off');
                 $(_this.dimensions.economicActivityToggleGran).bootstrapToggle('off');
                 $(_this.dimensions.economicActivityOrigDest).bootstrapToggle('off');
                 $("#gran-econ-activity-col").hide();
                 $("#origDest-toggle-econAct-col").hide();
-                
+
                 $(_this.dimensions.treatmentMethodToggle).bootstrapToggle('off');
                 $(_this.dimensions.treatmentMethodToggleGran).bootstrapToggle('off');
                 $(_this.dimensions.treatmentMethodOrigDest).bootstrapToggle('off');
                 $("#gran-treatment-method-col").hide();
                 $("#origDest-toggle-treatment-col").hide();
-                
+
                 $(_this.dimensions.materialToggle).bootstrapToggle('off');
                 $(".gran-radio-material-label").removeClass("active");
                 $($("#gran-radio-material")[0].children[0]).addClass("active");
