@@ -538,7 +538,7 @@ define(['views/common/baseview',
 
                 if (selectedVizualisationString) {
                     if (selectedVizualisationString.includes("flowmap") || selectedVizualisationString.includes("parallelsets")) {
-                        filterParams.format = "flowmap";
+                        filterParams.format = selectedVizualisationString;
                     }
                 }
 

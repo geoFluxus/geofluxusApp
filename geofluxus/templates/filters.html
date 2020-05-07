@@ -803,8 +803,17 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label>Hazardous</label>
-                            <select name="flows-hazardous-select" class="form-control form-control-sm selectpicker">
+                            <label for="flows-hazardous-select">Hazardous</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Hazardous"
+                                    data-html="true" tabindex="0"
+                                    data-content="<span>The European Waste Catalogue (EWC) Code of a waste flow contains an asterisk (*) to indicate whether the waste is considered to be hazardous.
+                                    This filters allows you to include or exclude flows that contain hazardous materials. By default, this filter ignores this property and returns both options.</span>
+                                    <span>The full list of EWC Entries, including the hazardous entries, can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'></span>
+                                    ">
+                                </a>
+                            </div>
+                            <select name="flows-hazardous-select" id="flows-hazardous-select" class="form-control form-control-sm selectpicker">
                                 <option value='both'>ignore</option>
                                 <option value='no'>not hazardous</option>
                                 <option value='yes'>hazardous</option>
