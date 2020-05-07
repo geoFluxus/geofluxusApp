@@ -787,8 +787,29 @@
                     <h5 class="flowFilterSubtitle">Characteristics</h5>
                     <div class="row">
                         <div class="col-md-3">
-                            <label>Route</label>
-                            <select name="flows-route-select" class="form-control form-control-sm selectpicker">
+                            <label for="flows-route-select">Route</label>
+                            <!-- <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Route"
+                                    data-html="true" tabindex="0"
+                                    data-content="<span>The Route property indicates whether a waste collection company has collected the same type of waste
+                                        from multiple different producers of waste. During the waste collection process
+                                        
+                                        
+                                        Route-inzameling betekent dat een inzamelaar hetzelfde soort afval in een route bij verschillende
+                                        adressen ophaalt. Tijdens de rit voegt de inzamelaar het afval samen.
+                                        Een voorbeeld van route-inzameling is huis-aan-huis-inzameling van huishoudelijk afval.
+                                        Voor deze vorm van inzameling gebruikt de inzamelaar één afvalstroomnummer voor de verschillende
+                                        adressen waar hij het afval ophaalt.
+                                        
+                                         indicates whether the waste flow contains specific types of waste collected from different producers of waste by a certain collection company.
+
+                                        Bij de inzamelaarsregeling geeft het bedrijf dat afval ontvangt een afvalstroomnummer aan de inzamelaar. De inzamelaar haalt dan bij verschillende bedrijven hetzelfde soort afval op. 
+                                    </span>
+                                    <span>The full list of EWC Entries, including the hazardous entries, can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'></span>
+                                    ">
+                                </a>
+                            </div> -->
+                            <select name="flows-route-select" id="flows-route-select" class="form-control form-control-sm selectpicker">
                                 <option value='both'>ignore</option>
                                 <option value='no'>not route</option>
                                 <option value='yes'>route</option>
@@ -803,8 +824,17 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label>Hazardous</label>
-                            <select name="flows-hazardous-select" class="form-control form-control-sm selectpicker">
+                            <label for="flows-hazardous-select">Hazardous</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Hazardous"
+                                    data-html="true" tabindex="0"
+                                    data-content="<span>The European Waste Catalogue (EWC) Code of a waste flow contains an asterisk (*) to indicate whether the waste is considered to be hazardous.
+                                    This filters allows you to include or exclude flows that contain hazardous materials. By default, this filter ignores this property and returns both options.</span>
+                                    <span>The full list of EWC Entries, including the hazardous entries, can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'></span>
+                                    ">
+                                </a>
+                            </div>
+                            <select name="flows-hazardous-select" id="flows-hazardous-select" class="form-control form-control-sm selectpicker">
                                 <option value='both'>ignore</option>
                                 <option value='no'>not hazardous</option>
                                 <option value='yes'>hazardous</option>
