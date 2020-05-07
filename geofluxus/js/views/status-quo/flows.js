@@ -1013,7 +1013,7 @@ define(['views/common/baseview',
 
 
                 // No visualization has been selected, inform user:
-                if (!selectedVizualisationString || _this.selectedDimensions.length > 0) {
+                if (!selectedVizualisationString || _this.selectedDimensions.length == 0) {
 
                     let options = {
                         template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-body"></div></div>',
