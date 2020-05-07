@@ -1,17 +1,44 @@
 from geofluxus.apps.asmfa.views import FilterFlowViewSet
 from geofluxus.apps.asmfa.models import (Area,
                                          Actor,
+                                         ActivityGroup,
                                          Activity,
+                                         ProcessGroup,
                                          Process,
+                                         Waste02,
                                          Waste04,
-                                         Waste06)
+                                         Waste06,
+                                         Year,
+                                         Month)
 from collections import OrderedDict
 from django.db.models import (OuterRef, Subquery, F)
 
+DIMENSIONS = ['time',
+              'economicActivity',
+              'treatmentMethod',
+              'treatmentMethod', # check again for parallel sets
+              'material']
 
-MODEL ={
+MODEL = {
     'actor': Actor,
-    'area': Area
+    'area': Area,
+    'waste02': Waste02,
+    'waste04': Waste04,
+    'waste06': Waste06,
+    'activitygroup': ActivityGroup,
+    'activity': Activity,
+    'processgroup': ProcessGroup,
+    'process': Process,
+    'year': Year,
+    'month': Month,
+}
+
+PARENT = {
+    'waste04': ['waste02'],
+    'waste06': ['waste04', 'waste02'],
+    'activity': ['activitygroup'],
+    'process': ['processgroup'],
+    'month': ['year']
 }
 
 
@@ -27,41 +54,27 @@ class StatusQuoViewSet(FilterFlowViewSet):
         queryset = queryset.annotate(amount=F('flowchain__amount'))
 
         # recover dimensions
-        time = dimensions.pop('time', None)
+        dims = []
+        for dim in DIMENSIONS:
+            dims.append(dimensions.pop(dim, None))
+        # recover space separately
         space = dimensions.pop('space', None)
-        eco = dimensions.pop('economicActivity', None)
-        treat = dimensions.pop('treatmentMethod', None)
-        mat = dimensions.pop('material', None)
 
-        # TIME DIMENSION
-        levels, fields = [], []
-        if time:
-            levels.append(time.split('__')[-1])
-            fields.append(time)
-
-        # SPACE DIMENSION
+        # process dimensions for flow groups
+        levels, fields = [], []  # levels: dimension granularity, fields: exact field to search
+        # all dimensions (except space)
+        for dim in dims:
+            if dim:
+                levels.append(dim.split('__')[-1])
+                fields.append(dim)
+        # process space dimension separately
         if space:
-            if format:
+            if format == 'flowmap':
                 queryset, levels, fields = self.format_flows(space, queryset,
                                                              levels, fields)
             else:
                 queryset, levels, fields = self.format_space(space, queryset,
                                                              levels, fields)
-
-        # ECO DIMENSION
-        if eco:
-            levels.append(eco.split('__')[-1])
-            fields.append(eco)
-
-        # TREAT DIMENSION
-        if treat:
-            levels.append(treat.split('__')[-1])
-            fields.append(treat)
-
-        # MATERIAL DIMENSION
-        if mat:
-            levels.append(mat.split('__')[-1])
-            fields.append(mat)
 
         # workaround Django ORM bug
         queryset = queryset.order_by()
@@ -102,21 +115,20 @@ class StatusQuoViewSet(FilterFlowViewSet):
             # to recover any info in the frontend
             flow_item = [('amount', group_amount)]
             for level, field in zip(levels, fields):
-                if 'area' in field:
-                    self.serialize_area(group[field], flow_item)
-                elif 'actor' in field:
-                    self.serialize_actor(group[field], flow_item)
+                if field in ['area', 'actor']:
+                    self.serialize_space(field, group, flow_item)
                 elif 'node' in field:
-                    level, model = level.split('_')
-                    flow_item.append((level, self.serialize_node(group[field], MODEL[model])))
-                elif 'waste' in field:
-                    self.serialize_waste(field, group, flow_item)
-                elif 'activity' in field:
-                    self.serialize_activity(field, group, flow_item)
-                elif 'process' in field:
-                    self.serialize_process(field, group, flow_item)
-                else:
-                    flow_item.append((level, group[field]))
+                    label, model = level.split('_')
+                    flow_item.append((label, self.serialize_node(group[field], MODEL[model])))
+                elif 'waste' in field or \
+                     'activity' in field or \
+                     'process' in field or \
+                     'month' in field:
+                    if format == 'parallelsets':
+                        label = field.split('__')[0]
+                        flow_item.append((label, {'id': group[field]}))
+                    else:
+                        self.serialize_hierarchy(field, group, flow_item)
             data.append(OrderedDict(flow_item))
 
         return data
@@ -191,26 +203,21 @@ class StatusQuoViewSet(FilterFlowViewSet):
         return queryset, levels, fields
 
     @staticmethod
-    def serialize_area(id, item):
-        # recover area info
-        area = Area.objects.filter(id=id)[0]
+    def serialize_space(field, group, item):
+        # recover model instance
+        model, id = MODEL[field], group[field]
+        instance = model.objects.filter(id=id)[0]
 
-        # serialize area
-        item.append(('areaId', area.id))
-        item.append(('areaName', area.name))
-        return item
-
-    @staticmethod
-    def serialize_actor(id, item):
-        # recover
-        actor = Actor.objects.filter(id=id)[0]
-
-        # serialize actor
-        item.append(('actorId', actor.id))
-        item.append(('actorName', actor.company.identifier))
-        item.append(('lon', actor.geom.x))
-        item.append(('lat', actor.geom.y))
-        return item
+        if 'area' in field:
+            # serialize area
+            item.append(('areaId', instance.id))
+            item.append(('areaName', instance.name))
+        elif 'actor' in field:
+            # serialize actor
+            item.append(('actorId', instance.id))
+            item.append(('actorName', instance.company.identifier))
+            item.append(('lon', instance.geom.x))
+            item.append(('lat', instance.geom.y))
 
     @staticmethod
     def serialize_node(id, model):
@@ -234,36 +241,13 @@ class StatusQuoViewSet(FilterFlowViewSet):
         return item
 
     @staticmethod
-    def serialize_waste(field, group, item):
-        if 'waste02' in field:
-            item.append(('waste02', group[field]))
-        elif 'waste04' in field:
-            waste04 = Waste04.objects.filter(id=group[field])[0]
-            item.append(('waste04', group[field]))
-            item.append(('waste02', waste04.waste02.id))
-        else:
-            waste06 = Waste06.objects.filter(id=group[field])[0]
-            item.append(('waste06', group[field]))
-            item.append(('waste04', waste06.waste04.id))
-            item.append(('waste02', waste06.waste04.waste02.id))
-        return item
+    def serialize_hierarchy(field, group, item):
+        label, id = field.split('__')[-1], group[field]
+        item.append((label, id))
 
-    @staticmethod
-    def serialize_activity(field, group, item):
-        if 'activitygroup' in field:
-            item.append(('activitygroup', group[field]))
-        else:
-            item.append(('activity', group[field]))
-            activity = Activity.objects.filter(id=group[field])[0]
-            item.append(('activitygroup', activity.activitygroup.id))
-        return item
-
-    @staticmethod
-    def serialize_process(field, group, item):
-        if 'processgroup' in field:
-            item.append(('processgroup', group[field]))
-        else:
-            item.append(('process', group[field]))
-            process = Process.objects.filter(id=group[field])[0]
-            item.append(('processgroup', process.processgroup.id))
-        return item
+        if label in PARENT.keys():
+            for parent in PARENT[label]:
+                model = MODEL[label]
+                instance = model.objects.filter(id=id)[0]
+                label, id = parent, getattr(instance, parent + '_id')
+                item.append((label, id))
