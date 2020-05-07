@@ -69,6 +69,16 @@ class StatusQuoViewSet(FilterFlowViewSet):
         # aggregate flows into groups
         groups = queryset.values(*fields).distinct()
 
+        # convert queryset to list and process
+        # avoids hitting the database multiple times
+        queryset = list(queryset.values(*fields, 'amount'))
+
+        # make matches between flow / group attributes
+        def check(flow, group):
+            for field in fields:
+                if flow[field] != group[field]: return False
+            return True
+
         # serialize aggregated flow groups
         for group in groups:
             # check for groups fields with null values!
@@ -81,20 +91,20 @@ class StatusQuoViewSet(FilterFlowViewSet):
             if has_null: continue
 
             # retrieve group
-            grouped = queryset.filter(**group)
+            #grouped = queryset.filter(**group)
             # and EXCLUDE it from further search...
             #queryset = queryset.exclude(**group)
 
             # aggregate amount
-            group_amount = sum(grouped.values_list('amount', flat=True))
+            group_amount = sum([flow['amount'] for flow in queryset if check(flow, group)])
 
             # for the dimensions, return the id
             # to recover any info in the frontend
             flow_item = [('amount', group_amount)]
             for level, field in zip(levels, fields):
-                if field == 'area':
+                if 'area' in field:
                     self.serialize_area(group[field], flow_item)
-                elif field == 'actor':
+                elif 'actor' in field:
                     self.serialize_actor(group[field], flow_item)
                 elif 'node' in field:
                     level, model = level.split('_')
@@ -102,18 +112,13 @@ class StatusQuoViewSet(FilterFlowViewSet):
                 elif 'waste' in field:
                     self.serialize_waste(field, group, flow_item)
                 elif 'activity' in field:
-                    flow_item.append((level, group[field]))
-                    if level == 'activity':
-                        activity = Activity.objects.filter(id=group[field])[0]
-                        flow_item.append(('activitygroup', activity.activitygroup.id))
+                    self.serialize_activity(field, group, flow_item)
                 elif 'process' in field:
-                    flow_item.append((level, group[field]))
-                    if level == 'process':
-                        process = Process.objects.filter(id=group[field])[0]
-                        flow_item.append(('processgroup', process.processgroup.id))
+                    self.serialize_process(field, group, flow_item)
                 else:
                     flow_item.append((level, group[field]))
             data.append(OrderedDict(flow_item))
+
         return data
 
     @staticmethod
@@ -241,4 +246,24 @@ class StatusQuoViewSet(FilterFlowViewSet):
             item.append(('waste06', group[field]))
             item.append(('waste04', waste06.waste04.id))
             item.append(('waste02', waste06.waste04.waste02.id))
+        return item
+
+    @staticmethod
+    def serialize_activity(field, group, item):
+        if 'activitygroup' in field:
+            item.append(('activitygroup', group[field]))
+        else:
+            item.append(('activity', group[field]))
+            activity = Activity.objects.filter(id=group[field])[0]
+            item.append(('activitygroup', activity.activitygroup.id))
+        return item
+
+    @staticmethod
+    def serialize_process(field, group, item):
+        if 'processgroup' in field:
+            item.append(('processgroup', group[field]))
+        else:
+            item.append(('process', group[field]))
+            process = Process.objects.filter(id=group[field])[0]
+            item.append(('processgroup', process.processgroup.id))
         return item
