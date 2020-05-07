@@ -1011,8 +1011,21 @@ define(['views/common/baseview',
                 // Reset all visualizations:
                 this.closeAllVizViews();
 
-                // Only fetch Flows if at least one dimension has been selected:
-                if (_this.selectedDimensions.length > 0) {
+
+                // No visualization has been selected, inform user:
+                if (!selectedVizualisationString || _this.selectedDimensions.length > 0) {
+
+                    let options = {
+                        template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-body"></div></div>',
+                        content: "Make sure to select at least one dimension and a visualization!",
+                        trigger: "focus",
+                    }
+
+                    $('#apply-filters').popover(options);
+                    $('#apply-filters').popover('show');
+
+                    // Only fetch Flows if a visualization has been selected:
+                } else {
                     this.loader.activate();
 
                     flows.postfetch({
@@ -1090,7 +1103,7 @@ define(['views/common/baseview',
                 $("#gran-material-col").hide();
 
 
-                // Enable all toggles:
+                // (Re)enable all toggles:
                 $('.bootstrapToggle').each(function (index, value) {
                     $(this).bootstrapToggle('enable');
                 });
@@ -1099,7 +1112,7 @@ define(['views/common/baseview',
                 // Vizualisation controls:
                 $(".viz-selector-button").removeClass("active");
 
-
+                // Hide all Viz options:
                 $(".viz-container").hide();
 
 
