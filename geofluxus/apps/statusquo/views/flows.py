@@ -102,9 +102,9 @@ class StatusQuoViewSet(FilterFlowViewSet):
             # to recover any info in the frontend
             flow_item = [('amount', group_amount)]
             for level, field in zip(levels, fields):
-                if field == 'area':
+                if 'area' in field:
                     self.serialize_area(group[field], flow_item)
-                elif field == 'actor':
+                elif 'actor' in field:
                     self.serialize_actor(group[field], flow_item)
                 elif 'node' in field:
                     level, model = level.split('_')
@@ -112,19 +112,13 @@ class StatusQuoViewSet(FilterFlowViewSet):
                 elif 'waste' in field:
                     self.serialize_waste(field, group, flow_item)
                 elif 'activity' in field:
-                    flow_item.append((level, group[field]))
-                    if level == 'activity':
-                        activity = Activity.objects.filter(id=group[field])[0]
-                        flow_item.append(('activitygroup', activity.activitygroup.id))
+                    self.serialize_activity(field, group, flow_item)
                 elif 'process' in field:
-                    flow_item.append((level, group[field]))
-                    if level == 'process':
-                        process = Process.objects.filter(id=group[field])[0]
-                        flow_item.append(('processgroup', process.processgroup.id))
+                    self.serialize_process(field, group, flow_item)
                 else:
-                 flow_item.append((level, group[field]))
-
+                    flow_item.append((level, group[field]))
             data.append(OrderedDict(flow_item))
+
         return data
 
     @staticmethod
@@ -252,4 +246,24 @@ class StatusQuoViewSet(FilterFlowViewSet):
             item.append(('waste06', group[field]))
             item.append(('waste04', waste06.waste04.id))
             item.append(('waste02', waste06.waste04.waste02.id))
+        return item
+
+    @staticmethod
+    def serialize_activity(field, group, item):
+        if 'activitygroup' in field:
+            item.append(('activitygroup', group[field]))
+        else:
+            item.append(('activity', group[field]))
+            activity = Activity.objects.filter(id=group[field])[0]
+            item.append(('activitygroup', activity.activitygroup.id))
+        return item
+
+    @staticmethod
+    def serialize_process(field, group, item):
+        if 'processgroup' in field:
+            item.append(('processgroup', group[field]))
+        else:
+            item.append(('process', group[field]))
+            process = Process.objects.filter(id=group[field])[0]
+            item.append(('processgroup', process.processgroup.id))
         return item
