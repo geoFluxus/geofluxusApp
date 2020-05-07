@@ -522,7 +522,7 @@ define(['views/common/baseview',
             //            },
 
             // Returns parameters for filtered post-fetching based on assigned filter
-            getFlowFilterParams: function () {
+            getFilterAndDimParams: function () {
 
                 // Prepare filters for request
                 let filterParams = this.filtersView.getFilterParams();
@@ -993,7 +993,7 @@ define(['views/common/baseview',
             // Fetch flows and calls options.success(flows) on success
             fetchFlows: function (options) {
                 let _this = this;
-                let filterParams = this.getFlowFilterParams();
+                let filterParams = this.getFilterAndDimParams();
                 let data = {};
                 let selectedVizualisationString;
                 this.selectedDimensions = Object.entries(filterParams.dimensions);
