@@ -73,8 +73,8 @@ define(['views/common/baseview',
                     let isActorLevel = false;
                     let tooltipConfig = {
                         tbody: [
-                            ["Waste (metric ton)", function (d) {
-                                return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                            ["Waste", function (d) {
+                                return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale()) + " t"
                             }]
                         ]
                     };

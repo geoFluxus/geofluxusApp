@@ -969,7 +969,6 @@ define(['views/common/baseview',
                 $(".parallelsets-container").show();
                 $(".parallelsets-wrapper").fadeIn();
 
-
                 this.parallelSetsView = new ParallelSetsView({
                     el: ".parallelsets-wrapper",
                     dimensions: dimensions,

@@ -25,7 +25,6 @@ define([
                 .nodes(options.nodes)
                 .nodePadding(5)
                 .tooltipConfig(options.tooltipConfig)
-                .totalPadding(false)
                 .legend(hasLegend)
                 .shapeConfig({
                     labelConfig: {

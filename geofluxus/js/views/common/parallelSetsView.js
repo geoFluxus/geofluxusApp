@@ -69,8 +69,8 @@ define(['views/common/baseview',
 
                     let tooltipConfig = {
                         tbody: [
-                            ["Waste (metric ton)", function (d) {
-                                return d3plus.formatAbbreviate(d["value"], utils.returnD3plusFormatLocale())
+                            ["Waste", function (d) {
+                                return d3plus.formatAbbreviate(d["value"], utils.returnD3plusFormatLocale()) + " t"
                             }]
                         ]
                     };
@@ -94,12 +94,6 @@ define(['views/common/baseview',
                 
                 returnLinkInfo: function (link) {
 
-
-                    // let fromToText = link.origin.name + ' &#10132; ' + link.destination.name + '<br>'
-                    // let dimensionText = "";
-                    // let dimensionValue = "";
-                    // let amountText = d3plus.formatAbbreviate(link.amount, utils.returnD3plusFormatLocale()) + ' t/year';
-                    // let dimensionId;
 
                     switch (this.dim2[0]) {
                         case "time":
