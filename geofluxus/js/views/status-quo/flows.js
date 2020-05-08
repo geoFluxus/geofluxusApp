@@ -546,6 +546,7 @@ define(['views/common/baseview',
                 // DIMENSIONS
                 filterParams.dimensions = {};
 
+                // Time
                 if ($(this.dimensions.timeToggle).prop("checked")) {
                     var timeFilter = 'flowchain__month',
                         gran = $(this.dimensions.timeToggleGran).prop("checked") ? 'month' : 'year';
@@ -555,6 +556,7 @@ define(['views/common/baseview',
                     filterParams.dimensions.time = timeFilter;
                 }
 
+                // Space
                 if ($(this.dimensions.spaceToggle).prop("checked")) {
                     let originOrDestination = $(this.dimensions.spaceOrigDest).prop("checked") ? 'destination__geom' : 'origin__geom',
                         gran = $('#dim-space-gran-select option:selected').val();
@@ -563,12 +565,14 @@ define(['views/common/baseview',
                     filterParams.dimensions.space.field = originOrDestination;
                 }
 
+                // Economic activity
                 if ($(this.dimensions.economicActivityToggle).prop("checked")) {
                     let originOrDestination = $(this.dimensions.economicActivityOrigDest).prop("checked") ? 'destination__' : 'origin__';
                     gran = $(this.dimensions.economicActivityToggleGran).prop("checked") ? 'activity' : 'activity__activitygroup',
                         filterParams.dimensions.economicActivity = originOrDestination + gran;
                 }
 
+                // Treatment method
                 if ($(this.dimensions.treatmentMethodToggle).prop("checked")) {
                     let originOrDestination = $(this.dimensions.treatmentMethodOrigDest).prop("checked") ? 'destination__' : 'origin__';
                     gran = $(this.dimensions.treatmentMethodToggleGran).prop("checked") ? 'process' : 'process__processgroup',
@@ -975,7 +979,6 @@ define(['views/common/baseview',
                     flowsView: this,
                 });
             },
-
 
             closeAllVizViews: function () {
                 $(".viz-wrapper-div").fadeOut();

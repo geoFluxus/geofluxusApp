@@ -619,6 +619,27 @@
                     </div>
 
                     <h5 class="flowFilterSubtitle">European Waste Catalogue Codes</h5>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="flows-hazardous-select">Hazardous</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Hazardous"
+                                    data-html="true" tabindex="0" data-content="<span>The European Waste Catalogue (EWC) Code of a waste flow contains an asterisk (*) to indicate whether the waste is considered to be hazardous.
+                                    This filter allows you to include or exclude flows containing hazardous materials. By default, this filter ignores this property and returns both options.</span>
+                                    <span>The full list of EWC Entries, including the hazardous entries, can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a></span>
+                                    ">
+                                </a>
+                            </div>
+                            <select name="flows-hazardous-select" id="flows-hazardous-select"
+                                class="form-control form-control-sm selectpicker">
+                                <option value='both'>ignore</option>
+                                <option value='no'>not hazardous</option>
+                                <option value='yes'>hazardous</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="col-md-3">
 
@@ -690,28 +711,6 @@
                             </select>
                         </div>
                     </div>
-
-
-                    <div class="row">
-                        <div class="col-md-3">
-                            <label for="flows-hazardous-select">Hazardous</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Hazardous"
-                                    data-html="true" tabindex="0" data-content="<span>The European Waste Catalogue (EWC) Code of a waste flow contains an asterisk (*) to indicate whether the waste is considered to be hazardous.
-                                    This filter allows you to include or exclude flows containing hazardous materials. By default, this filter ignores this property and returns both options.</span>
-                                    <span>The full list of EWC Entries, including the hazardous entries, can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a></span>
-                                    ">
-                                </a>
-                            </div>
-                            <select name="flows-hazardous-select" id="flows-hazardous-select"
-                                class="form-control form-control-sm selectpicker">
-                                <option value='both'>ignore</option>
-                                <option value='no'>not hazardous</option>
-                                <option value='yes'>hazardous</option>
-                            </select>
-                        </div>
-                    </div>
-
 
                     <h5 class="flowFilterSubtitle">Contents</h5>
                     <div class="row">
