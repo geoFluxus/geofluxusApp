@@ -44,7 +44,9 @@ to download all the dependencies listed in package.json.
 
 ### Run servers
 To start the app, run the backend and frontend servers
-- Backend: To run the backend server, there are multiple options (to be continued...)
+- Backend: (**Make sure that you have asked for the credentials before!**)
+
+  ```python manage.py runserver --settings=geofluxus.settings_dev_online```
 - Frontend: ```node server-dev.js```
 
 ## App architecture
