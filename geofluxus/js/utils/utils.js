@@ -71,7 +71,7 @@ module.exports = {
         name = String(name);
         return color(name.replace(/ .*/, ""));
     },
-    returnMonthString: function (monthNumber) {
+    toMonthString: function (monthNumber) {
         monthNumber = parseInt(monthNumber) - 1;
         const monthNames = ["January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"
@@ -92,4 +92,8 @@ module.exports = {
             currency: ["€", ""]
         }
     },
+
+    capitalizeFirstLetter: function (inputString) {
+        return inputString.charAt(0).toUpperCase() + inputString.slice(1).toLowerCase();
+    }
 }

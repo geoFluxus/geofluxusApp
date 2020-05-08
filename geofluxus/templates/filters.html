@@ -184,7 +184,7 @@
                             <div class="labelHelpiconContainer">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Activity group"
                                     data-html="true" tabindex="0" data-content="
-                                    <span>The Activity group indicates the economic activity of the Origin of the waste production.</span>
+                                    <span>The Activity group indicates the economic activity of the Origin of the waste flow.</span>
                                     <br>
                                     <span>This classification is based on the Statistical Classification of Economic Activities in the European Community, 
                                     also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL&StrNom=NACE_REV2&StrLanguageCode=EN&IntPcKey=&StrLayoutCode=HIERARCHIC'>here</a>.</span>
@@ -208,9 +208,7 @@
                                 <option data-divider="true"></option>
                                 <% activityGroups.forEach(function(activitygroup){ %>
                                 <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>
-                                    <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %> (<%=
-                                    activitygroup.get('flow_count') %>
-                                    <%= (activitygroup.get('flow_count') == 1) ? 'flow' : 'flows' %>)
+                                    <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
                                 </option>
                                 <% }); %>
                             </select>
@@ -223,7 +221,7 @@
                             <div class="labelHelpiconContainer">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Activity"
                                     data-html="true" tabindex="0" data-content="
-                                    <span>The Activity indicates the economic activity of the Origin of the waste production on the most detailed level.
+                                    <span>The Activity indicates the economic activity of the Origin of the waste flow on the most detailed level.
                                     This filter contains the Activities belonging to the selection made in the Activity group filter.</span>
                                     <br>
                                     <span>This classification is based on the Statistical Classification of Economic Activities in the European Community, 
@@ -238,15 +236,6 @@
                             <select id="origin-activity-select" name="origin-activity-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true"
                                 data-dropup-auto="false" data-size="6" style="resize: vertical;">
-                                <!-- <option selected value="-1">All (<%= activities.count %>)</option>
-                                <option data-divider="true"></option>
-                                <% activities.forEach(function(activity){ %>
-                                <option value="<%= activity.id %>"><%= activity.get('nace') %>
-                                    <%= activity.get('name') %> (<%=
-                                    activity.get('flow_count') %> <%= (activity.get('flow_count') == 1) ? 'flow' :
-                                    'flows' %>)
-                                </option>
-                                <% }); %> -->
                             </select>
                         </div>
                     </div>
@@ -300,11 +289,6 @@
                             <select name="origin-process-select" id="origin-process-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
-                                <!-- <option selected value="-1">All (<%= processes.count %>)</option>
-                                <option data-divider="true"></option>
-                                <% processes.forEach(function(process){ %>
-                                <option value="<%= process.id %>"><%= process.get('name') %></option>
-                                <% }); %> -->
                             </select>
                         </div>
 
@@ -410,7 +394,7 @@
                                 <div class="d-inline buttonHelpiconContainer">
                                     <a class="help-icon fas fa-question-circle" data-toggle="popover"
                                         title="Origin role" data-html="true" tabindex="0"
-                                        data-content="Choose the role of the Origin of the waste flow: waste production, waste treatment, or both.<br>
+                                        data-content="Choose the role of the Destination of the waste flow: waste production, waste treatment, or both.<br>
                                                 If you select waste production, the filters for economic activities will appear. 
                                                 If you choose waste treatment, the filters for the different waste treatment methods will become available.">
                                     </a>
@@ -427,7 +411,7 @@
                             <div class="labelHelpiconContainer">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Activity group"
                                     data-html="true" tabindex="0" data-content="
-                                    <span>The Activity group indicates the economic activity of the Destination of the waste production.</span>
+                                    <span>The Activity group indicates the economic activity of the Destination of the waste flow.</span>
                                     <br>
                                     <span>This classification is based on the Statistical Classification of Economic Activities in the European Community, 
                                     also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL&StrNom=NACE_REV2&StrLanguageCode=EN&IntPcKey=&StrLayoutCode=HIERARCHIC'>here</a>.</span>
@@ -452,9 +436,7 @@
                                 <option data-divider="true"></option>
                                 <% activityGroups.forEach(function(activitygroup){ %>
                                 <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>
-                                    <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %> (<%=
-                                    activitygroup.get('flow_count') %> <%= (activitygroup.get('flow_count') == 1) ?
-                                    'flow' : 'flows' %>)
+                                    <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
                                 </option>
                                 <% }); %>
                             </select>
@@ -465,7 +447,7 @@
                             <div class="labelHelpiconContainer">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Activity"
                                     data-html="true" tabindex="0" data-content="
-                                    <span>The Activity indicates the economic activity of the Destination of the waste production on the most detailed level.
+                                    <span>The Activity indicates the economic activity of the Destination of the waste flow  on the most detailed level.
                                     This filter contains the Activities belonging to the selection made in the Activity group filter.</span>
                                     <br>
                                     <span>This classification is based on the Statistical Classification of Economic Activities in the European Community, 
@@ -480,15 +462,6 @@
                             <select id="destination-activity-select" name="destination-activity-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true"
                                 data-dropup-auto="false" data-size="6" style="resize: vertical;">
-                                <!-- <option selected value="-1">All (<%= activities.count %>)</option>
-                                <option data-divider="true"></option>
-                                <% activities.forEach(function(activity){ %>
-                                <option value="<%= activity.id %>"><%= activity.get('nace') %>
-                                    <%= activity.get('name') %> (<%=
-                                    activity.get('flow_count') %> <%= (activity.get('flow_count') == 1) ? 'flow' :
-                                    'flows' %>) | <%=(activity.get('nace'))%>
-                                </option>
-                                <% }); %> -->
                             </select>
                         </div>
                     </div>
@@ -541,11 +514,6 @@
                             <select name="destination-process-select" id="destination-process-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
-                                <!-- <option selected value="-1">All (<%= processes.count %>)</option>
-                                <option data-divider="true"></option>
-                                <% processes.forEach(function(process){ %>
-                                <option value="<%= process.id %>"><%= process.get('name') %></option>
-                                <% }); %> -->
                             </select>
                         </div>
                     </div>
@@ -646,16 +614,32 @@
                             <select name="flows-month-select" id="monthSelect" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
-                                <!-- <option selected value="-1">All (<%= months.count %>)</option>
-                                <option data-divider="true"></option>
-                                <% months.forEach(function(month){ %>
-                                <option value="<%= month.id %>"><%= month.get('code') %></option>
-                                <% }); %> -->
                             </select>
                         </div>
                     </div>
 
                     <h5 class="flowFilterSubtitle">European Waste Catalogue Codes</h5>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="flows-hazardous-select">Hazardous</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Hazardous"
+                                    data-html="true" tabindex="0" data-content="<span>The European Waste Catalogue (EWC) Code of a waste flow contains an asterisk (*) to indicate whether the waste is considered to be hazardous.
+                                    This filter allows you to include or exclude flows containing hazardous materials. By default, this filter ignores this property and returns both options.</span>
+                                    <span>The full list of EWC Entries, including the hazardous entries, can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a></span>
+                                    ">
+                                </a>
+                            </div>
+                            <select name="flows-hazardous-select" id="flows-hazardous-select"
+                                class="form-control form-control-sm selectpicker">
+                                <option value='both'>ignore</option>
+                                <option value='no'>not hazardous</option>
+                                <option value='yes'>hazardous</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="col-md-3">
 
@@ -704,13 +688,6 @@
                             <select name="flows-waste04-select" id="flows-waste04-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
-                                <!-- <option selected value="-1">All (<%= wastes04.count %>)</option>
-                                <option data-divider="true"></option>
-                                <% wastes04.forEach(function(waste){ %>
-                                <option value="<%= waste.id %>"><%= waste.get('ewc_code') %> <%=
-                                    waste.get('ewc_name')[0].toUpperCase() + waste.get('ewc_name').slice(1) %>
-                                </option>
-                                <% }); %> -->
                             </select>
                         </div>
 
@@ -731,13 +708,6 @@
                             <select name="flows-waste06-select" id="flows-waste06-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
-                                <!-- <option selected value="-1">All (<%= wastes06.count %>)</option>
-                                <option data-divider="true"></option>
-                                <% wastes06.forEach(function(waste){ %>
-                                <option value="<%= waste.id %>"><%= waste.get('ewc_code') %> <%=
-                                    waste.get('ewc_name')[0].toUpperCase() + waste.get('ewc_name').slice(1) %>
-                                </option>
-                                <% }); %> -->
                             </select>
                         </div>
                     </div>
@@ -788,56 +758,40 @@
                     <div class="row">
                         <div class="col-md-3">
                             <label for="flows-route-select">Route</label>
-                            <!-- <div class="labelHelpiconContainer">
+                            <div class="labelHelpiconContainer">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Route"
-                                    data-html="true" tabindex="0"
-                                    data-content="<span>The Route property indicates whether a waste collection company has collected the same type of waste
-                                        from multiple different producers of waste. During the waste collection process
-                                        
-                                        
-                                        Route-inzameling betekent dat een inzamelaar hetzelfde soort afval in een route bij verschillende
-                                        adressen ophaalt. Tijdens de rit voegt de inzamelaar het afval samen.
-                                        Een voorbeeld van route-inzameling is huis-aan-huis-inzameling van huishoudelijk afval.
-                                        Voor deze vorm van inzameling gebruikt de inzamelaar één afvalstroomnummer voor de verschillende
-                                        adressen waar hij het afval ophaalt.
-                                        
-                                         indicates whether the waste flow contains specific types of waste collected from different producers of waste by a certain collection company.
-
-                                        Bij de inzamelaarsregeling geeft het bedrijf dat afval ontvangt een afvalstroomnummer aan de inzamelaar. De inzamelaar haalt dan bij verschillende bedrijven hetzelfde soort afval op. 
-                                    </span>
-                                    <span>The full list of EWC Entries, including the hazardous entries, can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'></span>
+                                    data-html="true" tabindex="0" data-content="The Route property indicates whether a waste collection company has collected the same type of waste
+                                        from multiple different producers of waste. During the waste collection process, the waste from 
+                                        all sources is combined.
+                                        <br>
+                                        An example would be municipal waste collection in which the waste from every building is collected by a truck.                                        
                                     ">
                                 </a>
-                            </div> -->
-                            <select name="flows-route-select" id="flows-route-select" class="form-control form-control-sm selectpicker">
+                            </div>
+                            <select name="flows-route-select" id="flows-route-select"
+                                class="form-control form-control-sm selectpicker">
                                 <option value='both'>ignore</option>
                                 <option value='no'>not route</option>
                                 <option value='yes'>route</option>
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label>Collector</label>
-                            <select name="flows-collector-select" class="form-control form-control-sm selectpicker">
-                                <option value='both'>ignore</option>
-                                <option value='no'>not collector</option>
-                                <option value='yes'>collector</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="flows-hazardous-select">Hazardous</label>
+                            <label for="flows-collector-select">Collector</label>
                             <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Hazardous"
-                                    data-html="true" tabindex="0"
-                                    data-content="<span>The European Waste Catalogue (EWC) Code of a waste flow contains an asterisk (*) to indicate whether the waste is considered to be hazardous.
-                                    This filters allows you to include or exclude flows that contain hazardous materials. By default, this filter ignores this property and returns both options.</span>
-                                    <span>The full list of EWC Entries, including the hazardous entries, can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'></span>
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Collector"
+                                    data-html="true" tabindex="0" data-content="<span>The Collector property indicates whether 
+                                        a waste collection company has collected the same type of waste from different sources.
+                                        In this case, the waste from the different sources has not been combined, 
+                                        and may only consist of certain types of waste, which can be consulted 
+                                        <a href='https://www.lma.nl/publish/pages/105041/5-bijlage-a-van-de-regeling2.pdf'>here</a>.</span>
                                     ">
                                 </a>
                             </div>
-                            <select name="flows-hazardous-select" id="flows-hazardous-select" class="form-control form-control-sm selectpicker">
+                            <select name="flows-collector-select" id="flows-collector-select"
+                                class="form-control form-control-sm selectpicker">
                                 <option value='both'>ignore</option>
-                                <option value='no'>not hazardous</option>
-                                <option value='yes'>hazardous</option>
+                                <option value='no'>not collector</option>
+                                <option value='yes'>collector</option>
                             </select>
                         </div>
                     </div>

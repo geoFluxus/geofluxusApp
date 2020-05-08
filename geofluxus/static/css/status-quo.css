@@ -94,11 +94,11 @@
 }
 
 #filterBlock .dropdown-menu {
-    max-width: 60rem;
+    max-width: 80vw;
 }
 
 #filterBlock .dropdown-menu .show {
-    max-width: 60rem;
+    max-width: 80vw;
     overflow-x: hidden;
     z-index: 1000;
 }
