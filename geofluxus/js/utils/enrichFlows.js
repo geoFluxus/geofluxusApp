@@ -22,7 +22,7 @@ module.exports = {
                 let monthObject = months.find(month => month.attributes.id == flow.month);
 
                 this[index].id = monthObject.attributes.id;
-                this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
+                this[index].month = utils.toMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
                 this[index].monthName = this[index].month.substring(0, this[index].month.indexOf(' '));
                 this[index].yearMonthCode = parseInt(monthObject.attributes.code.substring(2, 6) + monthObject.attributes.code.substring(0, 2));
                 this[index].year = parseInt(monthObject.attributes.code.substring(2, 6));
