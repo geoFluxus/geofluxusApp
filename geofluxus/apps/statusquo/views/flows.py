@@ -11,7 +11,7 @@ from geofluxus.apps.asmfa.models import (Area,
                                          Year,
                                          Month)
 from collections import OrderedDict
-from django.db.models import (OuterRef, Subquery, F)
+from django.db.models import (OuterRef, Subquery, F, Sum)
 
 DIMENSIONS = ['time',
               'economicActivity',
@@ -77,20 +77,24 @@ class StatusQuoViewSet(FilterFlowViewSet):
                                                              levels, fields)
 
         # workaround Django ORM bug
-        queryset = queryset.order_by()
+        # queryset = queryset.order_by()
 
         # aggregate flows into groups
-        groups = queryset.values(*fields).distinct()
+        # groups = queryset.values(*fields).distinct()
+        groups = queryset.values(*fields)\
+                         .order_by(*fields)\
+                         .annotate(total=Sum('amount'))
 
-        # convert queryset to list and process
-        # avoids hitting the database multiple times
-        queryset = list(queryset.values(*fields, 'amount'))
 
-        # make matches between flow / group attributes
-        def check(flow, group):
-            for field in fields:
-                if flow[field] != group[field]: return False
-            return True
+        # # convert queryset to list and process
+        # # avoids hitting the database multiple times
+        # queryset = list(queryset.values(*fields, 'amount'))
+        #
+        # # make matches between flow / group attributes
+        # def check(flow, group):
+        #     for field in fields:
+        #         if flow[field] != group[field]: return False
+        #     return True
 
         # serialize aggregated flow groups
         for group in groups:
@@ -103,17 +107,18 @@ class StatusQuoViewSet(FilterFlowViewSet):
                     break
             if has_null: continue
 
-            # retrieve group
-            #grouped = queryset.filter(**group)
-            # and EXCLUDE it from further search...
-            #queryset = queryset.exclude(**group)
-
-            # aggregate amount
-            group_amount = sum([flow['amount'] for flow in queryset if check(flow, group)])
-
+            # #
+            # # # retrieve group
+            # # #grouped = queryset.filter(**group)
+            # # # and EXCLUDE it from further search...
+            # # #queryset = queryset.exclude(**group)
+            # #
+            # # # aggregate amount
+            # # group_amount = sum([flow['amount'] for flow in queryset if check(flow, group)])
+            #
             # for the dimensions, return the id
             # to recover any info in the frontend
-            flow_item = [('amount', group_amount)]
+            flow_item = [('amount', group['total'])]
             for level, field in zip(levels, fields):
                 if field in ['area', 'actor']:
                     self.serialize_space(field, group, flow_item)
@@ -145,11 +150,11 @@ class StatusQuoViewSet(FilterFlowViewSet):
             # with no areas!
             if areas.count() != 0:
                 # origin area
-                subq = areas.filter(geom__contains=OuterRef('origin__geom'))
+                subq = areas.filter(geom__covers=OuterRef('origin__geom'))
                 queryset = queryset.annotate(origin_node=Subquery(subq.values('id')))
 
                 # destination area
-                subq = areas.filter(geom__contains=OuterRef('destination__geom'))
+                subq = areas.filter(geom__covers=OuterRef('destination__geom'))
                 queryset = queryset.annotate(destination_node=Subquery(subq.values('id')))
 
                 # append to other dimensions
@@ -184,7 +189,7 @@ class StatusQuoViewSet(FilterFlowViewSet):
                 if areas.count() != 0:
                     # recover the area id to which
                     # the flow origin / destination belongs
-                    subq = areas.filter(geom__contains=OuterRef(field))
+                    subq = areas.filter(geom__covers=OuterRef(field))
 
                     # annotate to area id to flows
                     queryset = queryset.annotate(area=Subquery(subq.values('id')))
