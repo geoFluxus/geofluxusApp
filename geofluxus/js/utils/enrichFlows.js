@@ -142,4 +142,66 @@ module.exports = {
 
         return flows
     },
+
+    transformToLinksAndNodes: function (flows, dimensions, filtersView) {
+        let nodes = [],
+            links = [];
+
+        flows.forEach(function (flow, index) {
+            let link = {};
+            let originNode = {};
+            let destinationNode = {};
+
+            let activityGroups = filtersView.activityGroups.models;
+            let processGroups = filtersView.processgroups.models;
+
+            let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.origin.id);
+            let processGroupObject = processGroups.find(processGroup => processGroup.attributes.id == flow.destination.id);
+
+            originNode.id = activityGroupObject.attributes.code + " " + utils.capitalizeFirstLetter(activityGroupObject.attributes.name);
+            originNode.value = flow.amount;
+            destinationNode.id = processGroupObject.attributes.code + " " + utils.capitalizeFirstLetter(processGroupObject.attributes.name);
+            destinationNode.value = flow.amount;
+
+
+            nodes.push(originNode, destinationNode)
+
+            // LINKS
+            link.source = originNode.id;
+            link.target = destinationNode.id;
+            link.value = flow.amount;
+
+            links.push(link)
+
+        }, flows);
+
+
+
+
+        // Group the nodes by id and sum the values:                    
+        let summed_by_type = _(nodes).reduce(function (mem, d) {
+            mem[d.id] = (mem[d.id] || 0) + d.value
+            return mem
+        }, {})
+        nodes = _(summed_by_type).map(function (v, k) {
+            return {
+                id: k,
+                value: v
+            }
+        })
+
+        console.log("Links:");
+        console.log(links);
+        console.log("Nodes:");
+        console.log(nodes);
+
+        return {
+            links: links,
+            nodes: nodes,
+        }
+    },
+
+    getNodeInfo: function (node) {
+
+    }
 }

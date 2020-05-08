@@ -335,6 +335,15 @@ label[for="flows-waste06-select"] {
     border-radius: 18px;
 }
 
+.viz-wrapper-div.parallelsets-wrapper {
+    background-color: #393939;
+}
+
+.parallelsets-container {
+    background-color: #393939;
+    border-radius: 18px;
+}
+
 
 /* Area Select Modal Styles */
 
@@ -499,6 +508,13 @@ textarea.textarea-autosize.form-control-sm {
     font-size: 14px;
     margin: 0px 5px;
 }
+
+.parallelsets-wrapper .d3plus-viz-controls-container .d3plus-Button {
+    left: -0.25rem;
+    top: 0;
+}
+
+
 
 .leaflet-control div label {
     color: black;

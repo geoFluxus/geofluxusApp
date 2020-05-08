@@ -845,10 +845,6 @@ define(['views/common/baseview',
                     case "flowmap":
                         this.renderFlowMap(dimensions, flows);
                         break;
-                    case "parallelsets":
-                        this.renderParallelSets(dimensions, flows);
-                        break;
-
                     default:
                         // Nothing
                 }
@@ -970,7 +966,9 @@ define(['views/common/baseview',
             renderParallelSets: function (dimensions, flows) {
                 if (this.parallelSetsView != null) this.parallelSetsView.close();
 
+                $(".parallelsets-container").show();
                 $(".parallelsets-wrapper").fadeIn();
+
 
                 this.parallelSetsView = new ParallelSetsView({
                     el: ".parallelsets-wrapper",
@@ -982,6 +980,7 @@ define(['views/common/baseview',
 
             closeAllVizViews: function () {
                 $(".viz-wrapper-div").fadeOut();
+                $(".parallelsets-container").hide();
                 $(".viz-wrapper-div").html("")
                 if (this.barChartView != null) this.barChartView.close();
                 if (this.pieChartView != null) this.pieChartView.close();
@@ -1047,7 +1046,11 @@ define(['views/common/baseview',
                                     _this.render1Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
                                     break;
                                 case 2:
-                                    _this.render2Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
+                                    if (selectedVizualisationString == "parallelsets") {
+                                        _this.renderParallelSets(_this.selectedDimensions, _this.flows);
+                                    } else {
+                                        _this.render2Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
+                                    }
                                     break;
                                 default:
                                     // Nothing

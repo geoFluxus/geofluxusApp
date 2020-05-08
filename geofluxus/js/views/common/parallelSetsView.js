@@ -7,7 +7,8 @@ define(['views/common/baseview',
         'app-config',
         'save-svg-as-png',
         'file-saver',
-        'utils/utils'
+        'utils/utils',
+        'utils/enrichFlows',
     ],
 
     function (
@@ -21,6 +22,7 @@ define(['views/common/baseview',
         saveSvgAsPng,
         FileSaver,
         utils,
+        enrichFlows,
         Slider) {
 
         /**
@@ -58,113 +60,28 @@ define(['views/common/baseview',
                     let _this = this;
                     let flows = this.options.flows;
 
-                    let dim1String = this.options.dimensions[0][0];
-                    let gran1 = this.options.dimensions[0][1];
+                    this.filtersView = this.options.flowsView.filtersView;
 
-                    let groupBy;
+                    // let dim1String = this.options.dimensions[0][0];
+                    // let gran1 = this.options.dimensions[0][1];
+                    // let dim2String = this.options.dimensions[1][0];
+                    // let gran2 = this.options.dimensions[1] ? this.options.dimensions[1][1] : {};
+
                     let tooltipConfig = {
                         tbody: [
                             ["Waste (metric ton)", function (d) {
-                                return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                                return d3plus.formatAbbreviate(d["value"], utils.returnD3plusFormatLocale())
                             }]
                         ]
                     };
 
-                    flows = this.transformToLinksAndNodes(this.options.flows);
+                    flows = enrichFlows.transformToLinksAndNodes(this.options.flows, this.options.dimensions, this.filtersView);
 
-                    // // /////////////////////////////
-                    // // Time dimension
-                    // if (dim1String == "time") {
-                    //     // Granularity = year
-                    //     if (gran1 == "flowchain__month__year") {
-                    //         groupBy = ["year"];
-                    //         // Granularity = month:
-                    //     } else if (gran1 == "flowchain__month") {
-                    //         groupBy = ["year", "month"];
-                    //     }
-
-                    //     // Space dimension
-                    // } else if (dim1String == "space") {
-
-                    //     // Areas:
-                    //     if (!this.options.dimensions.isActorLevel) {
-                    //         groupBy = ["areaName"];
-                    //     } else {
-                    //         // Actor level
-                    //         groupBy = ["actorName"];
-                    //     }
-
-                    //     // Economic Activity dimension
-                    // } else if (dim1String == "economicActivity") {
-                    //     tooltipConfig.tbody.push(["Activity group", function (d) {
-                    //         return d.activityGroupCode + " " + d.activityGroupName;
-                    //     }]);
-
-                    //     // Granularity = Activity group
-                    //     if (gran1 == "origin__activity__activitygroup" || gran1 == "destination__activity__activitygroup") {
-                    //         groupBy = ["activityGroupCode"];
-                    //         // Granularity: Activity
-                    //     } else if (gran1 == "origin__activity" || gran1 == "destination__activity") {
-                    //         groupBy = ["activityGroupCode", "activityCode"];
-                    //         tooltipConfig.tbody.push(["Activity", function (d) {
-                    //             return d.activityCode + " " + d.activityName;
-                    //         }]);
-                    //     }
-
-                    //     // Treatment method dimension
-                    // } else if (dim1String == "treatmentMethod") {
-
-                    //     tooltipConfig.tbody.push(["Treatment method group", function (d) {
-                    //         return d.processGroupCode + " " + d.processGroupName;
-                    //     }]);
-
-                    //     if (gran1 == "origin__process__processgroup" || gran1 == "destination__process__processgroup") {
-                    //         groupBy = ["processGroupCode"];
-
-                    //         // Granularity: Treatment method
-                    //     } else if (gran1 == "origin__process" || gran1 == "destination__process") {
-                    //         groupBy = ["processGroupCode", "processCode"];
-                    //         tooltipConfig.tbody.push(["Treatment method", function (d) {
-                    //             return d.processCode + " " + d.processName;
-                    //         }]);
-                    //     }
-
-                    //     // Material
-                    // } else if (dim1String == "material") {
-                    //     tooltipConfig.tbody.push(["EWC Chapter", function (d) {
-                    //         return d.ewc2Code + " " + d.ewc2Name;
-                    //     }]);
-
-                    //     // ewc2
-                    //     if (gran1 == "flowchain__waste06__waste04__waste02") {
-                    //         groupBy = ["ewc2Code"];
-                    //         tooltipConfig.title = "Waste per EWC Chapter";
-                    //         // ewc4
-                    //     } else if (gran1 == "flowchain__waste06__waste04") {
-                    //         groupBy = ["ewc2Code", "ewc4Code"];
-                    //         tooltipConfig.title = "Waste per EWC Sub-Chapter";
-                    //         tooltipConfig.tbody.push(["EWC Sub-Chapter", function (d) {
-                    //             return d.ewc4Code + " " + d.ewc4Name;
-                    //         }]);
-                    //         // ewc6
-                    //     } else if (gran1 == "flowchain__waste06") {
-                    //         groupBy = ["ewc2Code", "ewc4Code", "ewc6Code"];
-                    //         tooltipConfig.title = "Waste per Entry";
-                    //         tooltipConfig.tbody.push(
-                    //             ["EWC Sub-Chapter", function (d) {
-                    //                 return d.ewc4Code + " " + d.ewc4Name;
-                    //             }],
-                    //             ["EWC Entry", function (d) {
-                    //                 return d.ewc6Code + " " + d.ewc6Name;
-                    //             }]);
-                    //     }
-                    // }
-
-                    // Create a new D3Plus TreeMap object which will be rendered in this.options.el:
+                   
                     this.SimpleSankey = new SimpleSankey({
                         el: this.options.el,
-                        data: flows,
-                        //groupBy: groupBy,
+                        links: flows.links,
+                        nodes: flows.nodes,
                         tooltipConfig: tooltipConfig,
                     });
 
@@ -174,67 +91,15 @@ define(['views/common/baseview',
                     });
                 },
 
-                transformToLinksAndNodes: function (flows) {
-                    var _this = this,
-                        nodes = [],
-                        links = [];
-
-                    flows.forEach(function (flow, index) {
-                        let originNode = flow.origin;
-                        let destinationNode = flow.destination
-                        let link = flow;
-                        let linkInfo = _this.returnLinkInfo(this[index]);
-
-                        // NODES
-                        // Add the origin and destination to Nodes, and include amounts:
-                        originNode.value = flow.amount;
-                        originNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
-                        originNode.color = linkInfo.color;
-
-                        destinationNode.value = flow.amount;
-                        destinationNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
-                        destinationNode.color = linkInfo.color;
-
-                        nodes.push(originNode, destinationNode)
-
-                        // LINKS
-                        link.source = this[index].origin.id;
-                        link.target = this[index].destination.id;
-                        link.value = this[index].amount;
-                       
-                        link.color = linkInfo.color;
-                        link.label = linkInfo.toolTipText;
-
-                        links.push(link)
-
-                    }, flows);
-
-                    nodes.forEach(function (node, index) {
-                        //this[index].color = utils.colorByName(this[index].name);
-                        //this[index].label = this[index].name;
-                        this[index].opacity = 0.8;
-                    }, nodes);
-
-
-
-
-                    console.log("Links:");
-                    console.log(links);
-                    console.log("Nodes:");
-                    console.log(nodes);
-
-                    return {
-                        flows: links,
-                        nodes: nodes,
-                    }
-                },
-
+                
                 returnLinkInfo: function (link) {
-                    let fromToText = link.origin.name + ' &#10132; ' + link.destination.name + '<br>'
-                    let dimensionText = "";
-                    let dimensionValue = "";
-                    let amountText = d3plus.formatAbbreviate(link.amount, utils.returnD3plusFormatLocale()) + ' t/year';
-                    let dimensionId;
+
+
+                    // let fromToText = link.origin.name + ' &#10132; ' + link.destination.name + '<br>'
+                    // let dimensionText = "";
+                    // let dimensionValue = "";
+                    // let amountText = d3plus.formatAbbreviate(link.amount, utils.returnD3plusFormatLocale()) + ' t/year';
+                    // let dimensionId;
 
                     switch (this.dim2[0]) {
                         case "time":

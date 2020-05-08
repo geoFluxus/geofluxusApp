@@ -21,14 +21,11 @@ define([
             let hasLegend = $("#display-legend").prop("checked");
 
             new d3plus.Sankey()
-                .nodes(options.data.nodes)
-                .links(options.data.links)
-                .config({
-                    value: function (d) {
-                        return d["amount"];
-                    },
-                    tooltipConfig: options.tooltipConfig,
-                })
+                .links(options.links)
+                .nodes(options.nodes)
+                .nodePadding(5)
+                .tooltipConfig(options.tooltipConfig)
+                .totalPadding(false)
                 .legend(hasLegend)
                 .shapeConfig({
                     labelConfig: {
@@ -58,7 +55,7 @@ define([
                 .attr("type", "button")
                 .html('<i class="fas fa-expand" style="color: white"></i>')
                 .lower();
-                
+
             // Check on hover over Viz if it still contains Fullscreen button, if not, readd:
             svg.on("mouseover", function () {
                 let buttonFullscreen = d3.select(".fullscreen-toggle")
