@@ -156,9 +156,12 @@ label[for="flows-waste06-select"] {
 #monthCol .labelHelpiconContainer,
 #wastes04col .labelHelpiconContainer,
 #wastes06col .labelHelpiconContainer {
-    left: -1.85em !important;
+    left: -1.85em;
 }
 
+.hazaIconPos {
+    left: -0.5rem !important;
+}
 
 .filterDoubleChevron {
     color: white;

@@ -252,45 +252,44 @@ define(['views/common/baseview',
 
                     switch (showOnlyHazardous) {
                         case "both":
-                            //showOnlyHazardous = true;
-
                             $("#wastes02col").show();
-                            $("#wastes06col").fadeOut("fast");
-
+                            $("#wastes04col").hide();
+                            $(".chevronEwc06").show();
+                            $("#flows-waste06-label").css("position", "relative");
+                            $("#helpiconWaste06").removeClass("hazaIconPos");
+                            $("#wastes06col").hide();
                             break;
                         case "yes":
                             showOnlyHazardous = true;
+                            $("#wastes02col").hide();
+                            $("#wastes04col").hide();
+
                             break;
                         case "no":
                             showOnlyHazardous = false;
+                            $("#wastes02col").hide();
+                            $("#wastes04col").hide();
                             break;
                         default:
                             break;
                     }
 
-                    if (showOnlyHazardous == "yes") {} else {
-                        showOnlyHazardous = false;
+                    if (showOnlyHazardous != "both") {
+                        let filteredWastes06 = _this.wastes06.models.filter(function (waste06) {
+                            return waste06.attributes.hazardous == showOnlyHazardous;
+                        });
+
+                        // Fill selectPicker with filtered items, add to DOM, and refresh:
+                        newWastes06OptionsHTML = '<option selected value="-1">All (' + filteredWastes06.length + ')</option><option data-divider="true"></option>';
+                        filteredWastes06.forEach(waste06 => newWastes06OptionsHTML += "<option class='dropdown-item' value='" + waste06.attributes.id + "'>" + waste06.attributes.ewc_code + " " + waste06.attributes.ewc_name + (waste06.attributes.hazardous ? "*" : "") + "</option>");
+                        $(_this.flows.waste06Select).html(newWastes06OptionsHTML);
+                        $(_this.flows.waste06Select).selectpicker("refresh");
+
+                        $(".chevronEwc06").hide();
+                        $("#flows-waste06-label").css("position", "static");
+                        $("#helpiconWaste06").addClass("hazaIconPos");
+                        $("#wastes06col").fadeIn("fast");
                     }
-
-                    console.log("showOnlyHazardous: ", showOnlyHazardous);
-
-                    let filteredWastes06 = _this.wastes06.models.filter(function (waste06) {
-                        return waste06.attributes.hazardous == showOnlyHazardous;
-                    });
-
-                    console.log(filteredWastes06);
-
-
-                    // Fill selectPicker with filtered items, add to DOM, and refresh:
-                    newWastes06OptionsHTML = '<option selected value="-1">All (' + filteredWastes06.length + ')</option><option data-divider="true"></option>';
-                    filteredWastes06.forEach(waste06 => newWastes06OptionsHTML += "<option class='dropdown-item' value='" + waste06.attributes.id + "'>" + waste06.attributes.ewc_code + " " + waste06.attributes.ewc_name + (waste06.attributes.hazardous ? "*" : "") + "</option>");
-                    $(_this.flows.waste06Select).html(newWastes06OptionsHTML);
-                    $(_this.flows.waste06Select).selectpicker("refresh");
-
-                    $("#wastes02col").hide();
-                    $("#wastes06col").fadeIn("fast");
-
-
                 }
 
                 function filterEWC02to04(event, clickedIndex, checked) {

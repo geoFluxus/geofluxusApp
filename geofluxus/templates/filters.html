@@ -641,7 +641,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-3" id="wastes02col">
 
                             <label for="flows-waste02-select">Chapter</label>
                             <div class="labelHelpiconContainer">
@@ -693,8 +693,8 @@
 
                         <div class="col-md-3" id="wastes06col" style="display: none;">
 
-                            <label for="flows-waste06-select">EWC Entry</label>
-                            <div class="labelHelpiconContainer">
+                            <label for="flows-waste06-select" id="flows-waste06-label">EWC Entry</label>
+                            <div class="labelHelpiconContainer" id="helpiconWaste06">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover" title="EWC Entry"
                                     data-html="true" tabindex="0" data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
                                     EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
@@ -704,7 +704,7 @@
                                 </a>
                             </div>
 
-                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
+                            <i class="fas fa-angle-double-right filterDoubleChevron chevronEwc06"></i>
                             <select name="flows-waste06-select" id="flows-waste06-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
