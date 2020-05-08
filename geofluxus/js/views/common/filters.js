@@ -254,7 +254,7 @@ define(['views/common/baseview',
                         case "both":
                             //showOnlyHazardous = true;
 
-                            $("#wastes02col").hide;
+                            $("#wastes02col").show();
                             $("#wastes06col").fadeOut("fast");
 
                             break;
