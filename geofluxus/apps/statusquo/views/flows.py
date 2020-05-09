@@ -63,7 +63,7 @@ class StatusQuoViewSet(FilterFlowViewSet):
             levels.append(time.split('__')[-1])
             fields.append(time)
 
-        # ECO DIMENSION
+        # ECONOMIC DIMENSION
         eco = dimensions.pop('economicActivity', None)
         eco_inv ={}
         if eco:
@@ -74,6 +74,18 @@ class StatusQuoViewSet(FilterFlowViewSet):
 
             levels.append(level)
             fields.append(eco)
+
+        # TREATMENT DIMENSION
+        treat = dimensions.pop('treatmentMethod', None)
+        treat_inv = {}
+        if treat:
+            # create inventory to recover parent activitygroup
+            level = treat.split('__')[-1]
+            if level == 'process':
+                treat_inv = {x.pk: x for x in Process.objects.only('processgroup__id')}
+
+            levels.append(level)
+            fields.append(treat)
         # # all dimensions (except space)
         # for dim in dims:
         #     if dim:
@@ -135,7 +147,11 @@ class StatusQuoViewSet(FilterFlowViewSet):
             flow_item = [('amount', group['total'])]
             for level, field in zip(levels, fields):
                 if level == 'activity':
-                    flow_item.append(('activitygroup', eco_inv[group[field]].activitygroup.id))
+                    activity = eco_inv[group[field]]
+                    flow_item.append(('activitygroup', activity.activitygroup.id))
+                elif level == 'process':
+                    process = treat_inv[group[field]]
+                    flow_item.append(('processgroup', process.processgroup.id))
                 flow_item.append((level, group[field]))
             #     # if 'actor' in field:
             #     #     actor = actors[group[field]]
