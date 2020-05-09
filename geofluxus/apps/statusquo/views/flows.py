@@ -53,28 +53,40 @@ class StatusQuoViewSet(FilterFlowViewSet):
         # annotate info from chains to flows
         queryset = queryset.annotate(amount=F('flowchain__amount'))
 
-        # recover dimensions
-        dims = []
-        for dim in DIMENSIONS:
-            dims.append(dimensions.pop(dim, None))
-        # recover space separately
-        space = dimensions.pop('space', None)
-
         # process dimensions for flow groups
         levels, fields = [], []  # levels: dimension granularity, fields: exact field to search
-        # all dimensions (except space)
-        for dim in dims:
-            if dim:
-                levels.append(dim.split('__')[-1])
-                fields.append(dim)
-        # process space dimension separately
-        if space:
-            if format == 'flowmap':
-                queryset, levels, fields = self.format_flows(space, queryset,
-                                                             levels, fields)
-            else:
-                queryset, levels, fields = self.format_space(space, queryset,
-                                                             levels, fields)
+
+        # recover dimensions
+        # TIME DIMENSION
+        time = dimensions.pop('time', None)
+        if time:
+            levels.append(time.split('__')[-1])
+            fields.append(time)
+
+        # ECO DIMENSION
+        eco = dimensions.pop('economicActivity', None)
+        eco_inv ={}
+        if eco:
+            # create inventory to recover parent activitygroup
+            level = eco.split('__')[-1]
+            if level == 'activity':
+                eco_inv = {x.pk:x for x in Activity.objects.only('activitygroup__id')}
+
+            levels.append(level)
+            fields.append(eco)
+        # # all dimensions (except space)
+        # for dim in dims:
+        #     if dim:
+        #         levels.append(dim.split('__')[-1])
+        #         fields.append(dim)
+        # # process space dimension separately
+        # if space:
+        #     if format == 'flowmap':
+        #         queryset, levels, fields = self.format_flows(space, queryset,
+        #                                                      levels, fields)
+        #     else:
+        #         queryset, levels, fields = self.format_space(space, queryset,
+        #                                                      levels, fields)
 
         # workaround Django ORM bug
         # queryset = queryset.order_by()
@@ -97,6 +109,8 @@ class StatusQuoViewSet(FilterFlowViewSet):
         #     return True
 
         # serialize aggregated flow groups
+        # actors = {x.pk:x for x in Actor.objects.all()}
+        # areas = {x.pk: x for x in Area.objects.only('id', 'name')}
         for group in groups:
             # check for groups fields with null values!
             # these groups should be excluded entirely
@@ -120,20 +134,31 @@ class StatusQuoViewSet(FilterFlowViewSet):
             # to recover any info in the frontend
             flow_item = [('amount', group['total'])]
             for level, field in zip(levels, fields):
-                if field in ['area', 'actor']:
-                    self.serialize_space(field, group, flow_item)
-                elif 'node' in field:
-                    label, model = level.split('_')
-                    flow_item.append((label, self.serialize_node(group[field], MODEL[model])))
-                elif 'waste' in field or \
-                     'activity' in field or \
-                     'process' in field or \
-                     'month' in field:
-                    if format == 'parallelsets':
-                        label = field.split('__')[0]
-                        flow_item.append((label, {'id': group[field]}))
-                    else:
-                        self.serialize_hierarchy(field, group, flow_item)
+                if level == 'activity':
+                    flow_item.append(('activitygroup', eco_inv[group[field]].activitygroup.id))
+                flow_item.append((level, group[field]))
+            #     # if 'actor' in field:
+            #     #     actor = actors[group[field]]
+            #     #     flow_item.append(('actorId', actor.id))
+            #     #     flow_item.append(('actorName', actor.company.name))
+            #     #     flow_item.append(('lon', actor.geom.x))
+            #     #     flow_item.append(('lat', actor.geom.y))
+            #     # elif 'area' in field:
+            #     #     area = areas[group[field]]
+            #     #     flow_item.append(('areaId', area.id))
+            #     #     flow_item.append(('areaName', area.name))
+            #     # elif 'node' in field:
+            #     #     label, model = level.split('_')
+            #     #     flow_item.append((label, self.serialize_node(group[field], MODEL[model])))
+            #     # elif 'waste' in field or \
+            #     #      'activity' in field or \
+            #     #      'process' in field or \
+            #     #      'month' in field:
+            #     #     if format == 'parallelsets':
+            #     #         label = field.split('__')[0]
+            #     #         flow_item.append((label, {'id': group[field]}))
+            #     #     else:
+            #     #         self.serialize_hierarchy(field, group, flow_item)
             data.append(OrderedDict(flow_item))
 
         return data
@@ -150,11 +175,11 @@ class StatusQuoViewSet(FilterFlowViewSet):
             # with no areas!
             if areas.count() != 0:
                 # origin area
-                subq = areas.filter(geom__covers=OuterRef('origin__geom'))
+                subq = areas.filter(geom__contains=OuterRef('origin__geom'))
                 queryset = queryset.annotate(origin_node=Subquery(subq.values('id')))
 
                 # destination area
-                subq = areas.filter(geom__covers=OuterRef('destination__geom'))
+                subq = areas.filter(geom__contains=OuterRef('destination__geom'))
                 queryset = queryset.annotate(destination_node=Subquery(subq.values('id')))
 
                 # append to other dimensions
@@ -189,7 +214,7 @@ class StatusQuoViewSet(FilterFlowViewSet):
                 if areas.count() != 0:
                     # recover the area id to which
                     # the flow origin / destination belongs
-                    subq = areas.filter(geom__covers=OuterRef(field))
+                    subq = areas.filter(geom__contains=OuterRef(field))
 
                     # annotate to area id to flows
                     queryset = queryset.annotate(area=Subquery(subq.values('id')))
