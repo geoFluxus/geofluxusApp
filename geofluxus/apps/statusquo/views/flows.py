@@ -36,8 +36,8 @@ class StatusQuoViewSet(FilterFlowViewSet):
             # create inventory to recover parent activitygroup
             level = eco.split('__')[-1]
             if level == 'activity':
-                eco_inv = {x.pk:x for x in Activity.objects.only('activitygroup__id')}
-
+                eco_inv = Activity.objects.values('id',
+                                                  'activitygroup__id')
             levels.append(level)
             fields.append(eco)
 
@@ -48,8 +48,8 @@ class StatusQuoViewSet(FilterFlowViewSet):
             # create inventory to recover parent processgroup
             level = treat.split('__')[-1]
             if level == 'process':
-                treat_inv = {x.pk: x for x in Process.objects.only('processgroup__id')}
-
+                treat_inv = Process.objects.values('id',
+                                                   'process__id')
             levels.append(level)
             fields.append(treat)
 
@@ -60,26 +60,24 @@ class StatusQuoViewSet(FilterFlowViewSet):
             # create inventory to recover parent waste
             level = mat.split('__')[-1]
             if level == 'waste04':
-                mat_inv = {x.pk: x for x in Waste04.objects.only('waste02__id')}
+                mat_inv = Waste04.objects.values('id',
+                                                 'waste02__id')
             elif level == 'waste06':
-                mat_inv = {x.pk: x for x in Waste06.objects.only('waste04__id',
-                                                                 'waste04__waste02__id')}
+                mat_inv = Waste06.objects.values('id',
+                                                 'waste04__id',
+                                                 'waste04__waste02__id')
             levels.append(level)
             fields.append(mat)
 
-        # # all dimensions (except space)
-        # for dim in dims:
-        #     if dim:
-        #         levels.append(dim.split('__')[-1])
-        #         fields.append(dim)
-        # # process space dimension separately
-        # if space:
-        #     if format == 'flowmap':
-        #         queryset, levels, fields = self.format_flows(space, queryset,
-        #                                                      levels, fields)
-        #     else:
-        #         queryset, levels, fields = self.format_space(space, queryset,
-        #                                                      levels, fields)
+        # SPACE DIMENSION
+        space = dimensions.pop('material', None)
+        if space:
+            if format == 'flowmap':
+                queryset, levels, fields = self.format_flows(space, queryset,
+                                                             levels, fields)
+            else:
+                queryset, levels, fields = self.format_space(space, queryset,
+                                                             levels, fields)
 
         # workaround Django ORM bug
         # queryset = queryset.order_by()
@@ -107,19 +105,19 @@ class StatusQuoViewSet(FilterFlowViewSet):
             for level, field in zip(levels, fields):
                 # format parent fields
                 if level == 'activity' and format != 'parallelsets':
-                    activity = eco_inv[group[field]]
-                    flow_item.append(('activitygroup', activity.activitygroup.id))
+                    activity = next(x for x in eco_inv if x['id'] == group[field])
+                    flow_item.append(('activitygroup', activity['activitygroup__id']))
                 elif level == 'process' and format != "parallelsets":
-                    process = treat_inv[group[field]]
-                    flow_item.append(('processgroup', process.processgroup.id))
+                    process = next(x for x in treat_inv if x['id'] == group[field])
+                    flow_item.append(('processgroup', process['processgroup__id']))
                 elif 'waste' in level and format != "parallelsets":
                     if level == 'waste04':
-                        waste04 = mat_inv[group[field]]
-                        flow_item.append(('waste02', waste04.waste02.id))
+                        waste04 = next(x for x in mat_inv if x['id'] == group[field])
+                        flow_item.append(('waste02', waste04['waste02__id']))
                     elif level == 'waste06':
-                        waste06 = mat_inv[group[field]]
-                        flow_item.append(('waste04', waste06.waste04.id))
-                        flow_item.append(('waste02', waste06.waste04.waste02.id))
+                        waste06 = next(x for x in mat_inv if x['id'] == group[field])
+                        flow_item.append(('waste04', waste06['waste04__id']))
+                        flow_item.append(('waste02', waste06['waste04__waste02__id']))
 
                 # format field
                 if format == 'parallelsets':
