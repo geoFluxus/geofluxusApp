@@ -1,45 +1,11 @@
 from geofluxus.apps.asmfa.views import FilterFlowViewSet
 from geofluxus.apps.asmfa.models import (Area,
-                                         Actor,
-                                         ActivityGroup,
                                          Activity,
-                                         ProcessGroup,
                                          Process,
-                                         Waste02,
                                          Waste04,
-                                         Waste06,
-                                         Year,
-                                         Month)
+                                         Waste06)
 from collections import OrderedDict
 from django.db.models import (OuterRef, Subquery, F, Sum)
-
-DIMENSIONS = ['time',
-              'economicActivity',
-              'treatmentMethod',
-              'treatmentMethod', # check again for parallel sets
-              'material']
-
-MODEL = {
-    'actor': Actor,
-    'area': Area,
-    'waste02': Waste02,
-    'waste04': Waste04,
-    'waste06': Waste06,
-    'activitygroup': ActivityGroup,
-    'activity': Activity,
-    'processgroup': ProcessGroup,
-    'process': Process,
-    'year': Year,
-    'month': Month,
-}
-
-PARENT = {
-    'waste04': ['waste02'],
-    'waste06': ['waste04', 'waste02'],
-    'activity': ['activitygroup'],
-    'process': ['processgroup'],
-    'month': ['year']
-}
 
 
 class StatusQuoViewSet(FilterFlowViewSet):
@@ -96,7 +62,8 @@ class StatusQuoViewSet(FilterFlowViewSet):
             if level == 'waste04':
                 mat_inv = {x.pk: x for x in Waste04.objects.only('waste02__id')}
             elif level == 'waste06':
-                mat_inv = {x.pk: x for x in Waste06.objects.only('waste04__id', 'waste04__waste02__id')}
+                mat_inv = {x.pk: x for x in Waste06.objects.only('waste04__id',
+                                                                 'waste04__waste02__id')}
             levels.append(level)
             fields.append(mat)
 
@@ -123,20 +90,7 @@ class StatusQuoViewSet(FilterFlowViewSet):
                          .order_by(*fields)\
                          .annotate(total=Sum('amount'))
 
-
-        # # convert queryset to list and process
-        # # avoids hitting the database multiple times
-        # queryset = list(queryset.values(*fields, 'amount'))
-        #
-        # # make matches between flow / group attributes
-        # def check(flow, group):
-        #     for field in fields:
-        #         if flow[field] != group[field]: return False
-        #     return True
-
         # serialize aggregated flow groups
-        # actors = {x.pk:x for x in Actor.objects.all()}
-        # areas = {x.pk: x for x in Area.objects.only('id', 'name')}
         for group in groups:
             # check for groups fields with null values!
             # these groups should be excluded entirely
@@ -147,26 +101,18 @@ class StatusQuoViewSet(FilterFlowViewSet):
                     break
             if has_null: continue
 
-            # #
-            # # # retrieve group
-            # # #grouped = queryset.filter(**group)
-            # # # and EXCLUDE it from further search...
-            # # #queryset = queryset.exclude(**group)
-            # #
-            # # # aggregate amount
-            # # group_amount = sum([flow['amount'] for flow in queryset if check(flow, group)])
-            #
             # for the dimensions, return the id
             # to recover any info in the frontend
             flow_item = [('amount', group['total'])]
             for level, field in zip(levels, fields):
-                if level == 'activity':
+                # format parent fields
+                if level == 'activity' and format != 'parallelsets':
                     activity = eco_inv[group[field]]
                     flow_item.append(('activitygroup', activity.activitygroup.id))
-                elif level == 'process':
+                elif level == 'process' and format != "parallelsets":
                     process = treat_inv[group[field]]
                     flow_item.append(('processgroup', process.processgroup.id))
-                elif 'waste' in level:
+                elif 'waste' in level and format != "parallelsets":
                     if level == 'waste04':
                         waste04 = mat_inv[group[field]]
                         flow_item.append(('waste02', waste04.waste02.id))
@@ -174,7 +120,13 @@ class StatusQuoViewSet(FilterFlowViewSet):
                         waste06 = mat_inv[group[field]]
                         flow_item.append(('waste04', waste06.waste04.id))
                         flow_item.append(('waste02', waste06.waste04.waste02.id))
-                flow_item.append((level, group[field]))
+
+                # format field
+                if format == 'parallelsets':
+                    label = field.split('__')[0]
+                    flow_item.append((label, {level: group[field]}))
+                else:
+                    flow_item.append((level, group[field]))
             #     # if 'actor' in field:
             #     #     actor = actors[group[field]]
             #     #     flow_item.append(('actorId', actor.id))
@@ -307,15 +259,3 @@ class StatusQuoViewSet(FilterFlowViewSet):
             item['lon'] = geom.centroid.x
             item['lat'] = geom.centroid.y
         return item
-
-    @staticmethod
-    def serialize_hierarchy(field, group, item):
-        label, id = field.split('__')[-1], group[field]
-        item.append((label, id))
-
-        if label in PARENT.keys():
-            for parent in PARENT[label]:
-                model = MODEL[label]
-                instance = model.objects.filter(id=id)[0]
-                label, id = parent, getattr(instance, parent + '_id')
-                item.append((label, id))
