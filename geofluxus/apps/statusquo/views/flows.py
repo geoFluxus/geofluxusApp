@@ -79,13 +79,27 @@ class StatusQuoViewSet(FilterFlowViewSet):
         treat = dimensions.pop('treatmentMethod', None)
         treat_inv = {}
         if treat:
-            # create inventory to recover parent activitygroup
+            # create inventory to recover parent processgroup
             level = treat.split('__')[-1]
             if level == 'process':
                 treat_inv = {x.pk: x for x in Process.objects.only('processgroup__id')}
 
             levels.append(level)
             fields.append(treat)
+
+        # MATERIAL DIMENSION
+        mat = dimensions.pop('material', None)
+        mat_inv = {}
+        if mat:
+            # create inventory to recover parent waste
+            level = mat.split('__')[-1]
+            if level == 'waste04':
+                mat_inv = {x.pk: x for x in Waste04.objects.only('waste02__id')}
+            elif level == 'waste06':
+                mat_inv = {x.pk: x for x in Waste06.objects.only('waste04__id', 'waste04__waste02__id')}
+            levels.append(level)
+            fields.append(mat)
+
         # # all dimensions (except space)
         # for dim in dims:
         #     if dim:
@@ -152,6 +166,14 @@ class StatusQuoViewSet(FilterFlowViewSet):
                 elif level == 'process':
                     process = treat_inv[group[field]]
                     flow_item.append(('processgroup', process.processgroup.id))
+                elif 'waste' in level:
+                    if level == 'waste04':
+                        waste04 = mat_inv[group[field]]
+                        flow_item.append(('waste02', waste04.waste02.id))
+                    elif level == 'waste06':
+                        waste06 = mat_inv[group[field]]
+                        flow_item.append(('waste04', waste06.waste04.id))
+                        flow_item.append(('waste02', waste06.waste04.waste02.id))
                 flow_item.append((level, group[field]))
             #     # if 'actor' in field:
             #     #     actor = actors[group[field]]
