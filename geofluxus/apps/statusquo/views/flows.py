@@ -3,7 +3,8 @@ from geofluxus.apps.asmfa.models import (Area,
                                          Activity,
                                          Process,
                                          Waste04,
-                                         Waste06)
+                                         Waste06,
+                                         Actor)
 from collections import OrderedDict
 from django.db.models import (OuterRef, Subquery, F, Sum)
 
@@ -49,7 +50,7 @@ class StatusQuoViewSet(FilterFlowViewSet):
             level = treat.split('__')[-1]
             if level == 'process':
                 treat_inv = Process.objects.values('id',
-                                                   'process__id')
+                                                   'processgroup__id')
             levels.append(level)
             fields.append(treat)
 
@@ -70,14 +71,20 @@ class StatusQuoViewSet(FilterFlowViewSet):
             fields.append(mat)
 
         # SPACE DIMENSION
-        space = dimensions.pop('material', None)
+        space = dimensions.pop('space', None)
+        space_inv = {}
         if space:
-            if format == 'flowmap':
-                queryset, levels, fields = self.format_flows(space, queryset,
-                                                             levels, fields)
-            else:
-                queryset, levels, fields = self.format_space(space, queryset,
-                                                             levels, fields)
+            # if format == 'flowmap':
+            #     queryset, levels, fields = self.format_flows(space, queryset,
+            #                                                  levels, fields)
+            # else:
+            queryset, level, field = self.format_space(queryset, space)
+            if level == 'actor':
+                space_inv = Actor.objects.values('id',
+                                                 'company__name',
+                                                 'geom')
+            levels.append(level)
+            fields.append(field)
 
         # workaround Django ORM bug
         # queryset = queryset.order_by()
@@ -104,7 +111,14 @@ class StatusQuoViewSet(FilterFlowViewSet):
             flow_item = [('amount', group['total'])]
             for level, field in zip(levels, fields):
                 # format parent fields
-                if level == 'activity' and format != 'parallelsets':
+                if level == 'actor':
+                    actor = next(x for x in space_inv if x['id'] == group[field])
+                    flow_item.append(('actorId', actor['id']))
+                    flow_item.append(('actorName', actor['company__name']))
+                    flow_item.append(('lon', actor['geom'].x))
+                    flow_item.append(('lat', actor['geom'].y))
+                    continue
+                elif level == 'activity' and format != 'parallelsets':
                     activity = next(x for x in eco_inv if x['id'] == group[field])
                     flow_item.append(('activitygroup', activity['activitygroup__id']))
                 elif level == 'process' and format != "parallelsets":
@@ -151,42 +165,41 @@ class StatusQuoViewSet(FilterFlowViewSet):
 
         return data
 
+    # @staticmethod
+    # def format_flows(space, queryset, levels, fields):
+    #     # recover all areas of the selected
+    #     # administrative level
+    #     adminlevel = space.pop('adminlevel', None)
+    #     if adminlevel:
+    #         areas = Area.objects.filter(adminlevel=adminlevel)
+    #
+    #         # Actor level is the only one
+    #         # with no areas!
+    #         if areas.count() != 0:
+    #             # origin area
+    #             subq = areas.filter(geom__contains=OuterRef('origin__geom'))
+    #             queryset = queryset.annotate(origin_node=Subquery(subq.values('id')))
+    #
+    #             # destination area
+    #             subq = areas.filter(geom__contains=OuterRef('destination__geom'))
+    #             queryset = queryset.annotate(destination_node=Subquery(subq.values('id')))
+    #
+    #             # append to other dimensions
+    #             levels.extend(['origin_area', 'destination_area'])
+    #             fields.extend(['origin_node', 'destination_node'])
+    #         else:
+    #             # origin actor
+    #             queryset = queryset.annotate(origin_node=F('origin'))
+    #             # destination actor
+    #             queryset = queryset.annotate(destination_node=F('destination'))
+    #
+    #             # append to other dimensions
+    #             levels.extend(['origin_actor', 'destination_actor'])
+    #             fields.extend(['origin_node', 'destination_node'])
+    #     return queryset, levels, fields
+
     @staticmethod
-    def format_flows(space, queryset, levels, fields):
-        # recover all areas of the selected
-        # administrative level
-        adminlevel = space.pop('adminlevel', None)
-        if adminlevel:
-            areas = Area.objects.filter(adminlevel=adminlevel)
-
-            # Actor level is the only one
-            # with no areas!
-            if areas.count() != 0:
-                # origin area
-                subq = areas.filter(geom__contains=OuterRef('origin__geom'))
-                queryset = queryset.annotate(origin_node=Subquery(subq.values('id')))
-
-                # destination area
-                subq = areas.filter(geom__contains=OuterRef('destination__geom'))
-                queryset = queryset.annotate(destination_node=Subquery(subq.values('id')))
-
-                # append to other dimensions
-                levels.extend(['origin_area', 'destination_area'])
-                fields.extend(['origin_node', 'destination_node'])
-            else:
-                # origin actor
-                queryset = queryset.annotate(origin_node=F('origin'))
-                # destination actor
-                queryset = queryset.annotate(destination_node=F('destination'))
-
-                # append to other dimensions
-                levels.extend(['origin_actor', 'destination_actor'])
-                fields.extend(['origin_node', 'destination_node'])
-        return queryset, levels, fields
-
-    @staticmethod
-    def format_space(space, queryset,
-                     levels, fields):
+    def format_space(queryset, space):
         # recover all areas of the selected
         # administrative level
         adminlevel = space.pop('adminlevel', None)
@@ -208,17 +221,17 @@ class StatusQuoViewSet(FilterFlowViewSet):
                     queryset = queryset.annotate(area=Subquery(subq.values('id')))
 
                     # append to other dimensions
-                    levels.append('area')
-                    fields.append('area')
+                    level = 'area'
+                    field = 'area'
                 else:
                     # annotate origin / destination id
                     field = field.split('__')[0] + '__id'
                     queryset = queryset.annotate(actor=F(field))
 
                     # append to other dimensions
-                    levels.append('actor')
-                    fields.append('actor')
-        return queryset, levels, fields
+                    level = 'actor'
+                    field = 'actor'
+        return queryset, level, field
 
     @staticmethod
     def serialize_space(field, group, item):
