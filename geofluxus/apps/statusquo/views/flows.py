@@ -74,17 +74,22 @@ class StatusQuoViewSet(FilterFlowViewSet):
         space = dimensions.pop('space', None)
         space_inv = {}
         if space:
-            # if format == 'flowmap':
-            #     queryset, levels, fields = self.format_flows(space, queryset,
-            #                                                  levels, fields)
-            # else:
-            queryset, level, field = self.format_space(queryset, space)
-            if level == 'actor':
+            # annotate spatial info to flows
+            if format == 'flowmap':
+                queryset, level, field = self.format_flows(queryset, space)
+                levels.extend(level)
+                fields.extend(field)
+                level = level[0]
+            else:
+                queryset, level, field = self.format_space(queryset, space)
+                levels.append(level)
+                fields.append(field)
+
+            # create inventory to recover actors
+            if 'actor' in level:
                 space_inv = Actor.objects.values('id',
                                                  'company__name',
                                                  'geom')
-            levels.append(level)
-            fields.append(field)
 
         # workaround Django ORM bug
         # queryset = queryset.order_by()
@@ -110,13 +115,22 @@ class StatusQuoViewSet(FilterFlowViewSet):
             # to recover any info in the frontend
             flow_item = [('amount', group['total'])]
             for level, field in zip(levels, fields):
-                # format parent fields
-                if level == 'actor':
+                # format parent / special fields
+                if 'actor' in level:
                     actor = next(x for x in space_inv if x['id'] == group[field])
-                    flow_item.append(('actorId', actor['id']))
-                    flow_item.append(('actorName', actor['company__name']))
-                    flow_item.append(('lon', actor['geom'].x))
-                    flow_item.append(('lat', actor['geom'].y))
+                    if format == 'flowmap':
+                        item = {}
+                        item['id'] = actor['id']
+                        item['name'] = actor['company__name']
+                        item['lon'] = actor['geom'].x
+                        item['lat'] = actor['geom'].y
+                        label = level.split('_')[0]
+                        flow_item.append((label, item))
+                    else:
+                        flow_item.append(('actorId', actor['id']))
+                        flow_item.append(('actorName', actor['company__name']))
+                        flow_item.append(('lon', actor['geom'].x))
+                        flow_item.append(('lat', actor['geom'].y))
                     continue
                 elif level == 'activity' and format != 'parallelsets':
                     activity = next(x for x in eco_inv if x['id'] == group[field])
@@ -139,64 +153,43 @@ class StatusQuoViewSet(FilterFlowViewSet):
                     flow_item.append((label, {level: group[field]}))
                 else:
                     flow_item.append((level, group[field]))
-            #     # if 'actor' in field:
-            #     #     actor = actors[group[field]]
-            #     #     flow_item.append(('actorId', actor.id))
-            #     #     flow_item.append(('actorName', actor.company.name))
-            #     #     flow_item.append(('lon', actor.geom.x))
-            #     #     flow_item.append(('lat', actor.geom.y))
-            #     # elif 'area' in field:
-            #     #     area = areas[group[field]]
-            #     #     flow_item.append(('areaId', area.id))
-            #     #     flow_item.append(('areaName', area.name))
-            #     # elif 'node' in field:
-            #     #     label, model = level.split('_')
-            #     #     flow_item.append((label, self.serialize_node(group[field], MODEL[model])))
-            #     # elif 'waste' in field or \
-            #     #      'activity' in field or \
-            #     #      'process' in field or \
-            #     #      'month' in field:
-            #     #     if format == 'parallelsets':
-            #     #         label = field.split('__')[0]
-            #     #         flow_item.append((label, {'id': group[field]}))
-            #     #     else:
-            #     #         self.serialize_hierarchy(field, group, flow_item)
+                    
             data.append(OrderedDict(flow_item))
 
         return data
 
-    # @staticmethod
-    # def format_flows(space, queryset, levels, fields):
-    #     # recover all areas of the selected
-    #     # administrative level
-    #     adminlevel = space.pop('adminlevel', None)
-    #     if adminlevel:
-    #         areas = Area.objects.filter(adminlevel=adminlevel)
-    #
-    #         # Actor level is the only one
-    #         # with no areas!
-    #         if areas.count() != 0:
-    #             # origin area
-    #             subq = areas.filter(geom__contains=OuterRef('origin__geom'))
-    #             queryset = queryset.annotate(origin_node=Subquery(subq.values('id')))
-    #
-    #             # destination area
-    #             subq = areas.filter(geom__contains=OuterRef('destination__geom'))
-    #             queryset = queryset.annotate(destination_node=Subquery(subq.values('id')))
-    #
-    #             # append to other dimensions
-    #             levels.extend(['origin_area', 'destination_area'])
-    #             fields.extend(['origin_node', 'destination_node'])
-    #         else:
-    #             # origin actor
-    #             queryset = queryset.annotate(origin_node=F('origin'))
-    #             # destination actor
-    #             queryset = queryset.annotate(destination_node=F('destination'))
-    #
-    #             # append to other dimensions
-    #             levels.extend(['origin_actor', 'destination_actor'])
-    #             fields.extend(['origin_node', 'destination_node'])
-    #     return queryset, levels, fields
+    @staticmethod
+    def format_flows(queryset, space):
+        # recover all areas of the selected
+        # administrative level
+        adminlevel = space.pop('adminlevel', None)
+        if adminlevel:
+            areas = Area.objects.filter(adminlevel=adminlevel)
+
+            # Actor level is the only one
+            # with no areas!
+            if areas.count() != 0:
+                # origin area
+                subq = areas.filter(geom__contains=OuterRef('origin__geom'))
+                queryset = queryset.annotate(origin_node=Subquery(subq.values('id')))
+
+                # destination area
+                subq = areas.filter(geom__contains=OuterRef('destination__geom'))
+                queryset = queryset.annotate(destination_node=Subquery(subq.values('id')))
+
+                # append to other dimensions
+                level = ['origin_area', 'destination_area']
+                field = ['origin_node', 'destination_node']
+            else:
+                # origin actor
+                queryset = queryset.annotate(origin_node=F('origin'))
+                # destination actor
+                queryset = queryset.annotate(destination_node=F('destination'))
+
+                # append to other dimensions
+                level = ['origin_actor', 'destination_actor']
+                field = ['origin_node', 'destination_node']
+        return queryset, level, field
 
     @staticmethod
     def format_space(queryset, space):
@@ -233,40 +226,40 @@ class StatusQuoViewSet(FilterFlowViewSet):
                     field = 'actor'
         return queryset, level, field
 
-    @staticmethod
-    def serialize_space(field, group, item):
-        # recover model instance
-        model, id = MODEL[field], group[field]
-        instance = model.objects.filter(id=id)[0]
-
-        if 'area' in field:
-            # serialize area
-            item.append(('areaId', instance.id))
-            item.append(('areaName', instance.name))
-        elif 'actor' in field:
-            # serialize actor
-            item.append(('actorId', instance.id))
-            item.append(('actorName', instance.company.identifier))
-            item.append(('lon', instance.geom.x))
-            item.append(('lat', instance.geom.y))
-
-    @staticmethod
-    def serialize_node(id, model):
-        # recover
-        node = model.objects.filter(id=id)[0]
-
-        # serialize area
-        item = {}
-        item['id'] = node.id
-
-        # serialize geometry
-        geom = node.geom
-        if geom.geom_type == 'Point':
-            item['name'] = node.company.name
-            item['lon'] = geom.x
-            item['lat'] = geom.y
-        else:
-            item['name'] = node.name
-            item['lon'] = geom.centroid.x
-            item['lat'] = geom.centroid.y
-        return item
+    # @staticmethod
+    # def serialize_space(field, group, item):
+    #     # recover model instance
+    #     model, id = MODEL[field], group[field]
+    #     instance = model.objects.filter(id=id)[0]
+    #
+    #     if 'area' in field:
+    #         # serialize area
+    #         item.append(('areaId', instance.id))
+    #         item.append(('areaName', instance.name))
+    #     elif 'actor' in field:
+    #         # serialize actor
+    #         item.append(('actorId', instance.id))
+    #         item.append(('actorName', instance.company.identifier))
+    #         item.append(('lon', instance.geom.x))
+    #         item.append(('lat', instance.geom.y))
+    #
+    # @staticmethod
+    # def serialize_node(id, model):
+    #     # recover
+    #     node = model.objects.filter(id=id)[0]
+    #
+    #     # serialize area
+    #     item = {}
+    #     item['id'] = node.id
+    #
+    #     # serialize geometry
+    #     geom = node.geom
+    #     if geom.geom_type == 'Point':
+    #         item['name'] = node.company.name
+    #         item['lon'] = geom.x
+    #         item['lat'] = geom.y
+    #     else:
+    #         item['name'] = node.name
+    #         item['lon'] = geom.centroid.x
+    #         item['lat'] = geom.centroid.y
+    #     return item
