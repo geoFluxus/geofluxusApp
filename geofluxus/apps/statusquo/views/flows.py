@@ -1,45 +1,12 @@
 from geofluxus.apps.asmfa.views import FilterFlowViewSet
 from geofluxus.apps.asmfa.models import (Area,
-                                         Actor,
-                                         ActivityGroup,
                                          Activity,
-                                         ProcessGroup,
                                          Process,
-                                         Waste02,
                                          Waste04,
                                          Waste06,
-                                         Year,
-                                         Month)
+                                         Actor)
 from collections import OrderedDict
-from django.db.models import (OuterRef, Subquery, F)
-
-DIMENSIONS = ['time',
-              'economicActivity',
-              'treatmentMethod',
-              'treatmentMethod', # check again for parallel sets
-              'material']
-
-MODEL = {
-    'actor': Actor,
-    'area': Area,
-    'waste02': Waste02,
-    'waste04': Waste04,
-    'waste06': Waste06,
-    'activitygroup': ActivityGroup,
-    'activity': Activity,
-    'processgroup': ProcessGroup,
-    'process': Process,
-    'year': Year,
-    'month': Month,
-}
-
-PARENT = {
-    'waste04': ['waste02'],
-    'waste06': ['waste04', 'waste02'],
-    'activity': ['activitygroup'],
-    'process': ['processgroup'],
-    'month': ['year']
-}
+from django.db.models import (OuterRef, Subquery, F, Sum)
 
 
 class StatusQuoViewSet(FilterFlowViewSet):
@@ -53,46 +20,98 @@ class StatusQuoViewSet(FilterFlowViewSet):
         # annotate info from chains to flows
         queryset = queryset.annotate(amount=F('flowchain__amount'))
 
-        # recover dimensions
-        dims = []
-        for dim in DIMENSIONS:
-            dims.append(dimensions.pop(dim, None))
-        # recover space separately
-        space = dimensions.pop('space', None)
-
         # process dimensions for flow groups
         levels, fields = [], []  # levels: dimension granularity, fields: exact field to search
-        # all dimensions (except space)
-        for dim in dims:
-            if dim:
-                levels.append(dim.split('__')[-1])
-                fields.append(dim)
-        # process space dimension separately
+
+        # recover dimensions
+        # TIME DIMENSION
+        time = dimensions.pop('time', None)
+        if time:
+            levels.append(time.split('__')[-1])
+            fields.append(time)
+
+        # ECONOMIC DIMENSION
+        eco = dimensions.pop('economicActivity', None)
+        eco_inv ={}
+        if eco:
+            # create inventory to recover parent activitygroup
+            level = eco.split('__')[-1]
+            if level == 'activity':
+                eco_inv = Activity.objects.values('id',
+                                                  'activitygroup__id')
+            levels.append(level)
+            fields.append(eco)
+
+        # TREATMENT DIMENSION
+        treat = dimensions.pop('treatmentMethod', None)
+        treat_inv = {}
+        if treat:
+            # create inventory to recover parent processgroup
+            level = treat.split('__')[-1]
+            if level == 'process':
+                treat_inv = Process.objects.values('id',
+                                                   'processgroup__id')
+            levels.append(level)
+            fields.append(treat)
+
+        # MATERIAL DIMENSION
+        mat = dimensions.pop('material', None)
+        mat_inv = {}
+        if mat:
+            # create inventory to recover parent waste
+            level = mat.split('__')[-1]
+            if level == 'waste04':
+                mat_inv = Waste04.objects.values('id',
+                                                 'waste02__id')
+            elif level == 'waste06':
+                mat_inv = Waste06.objects.values('id',
+                                                 'waste04__id',
+                                                 'waste04__waste02__id')
+            levels.append(level)
+            fields.append(mat)
+
+        # SPACE DIMENSION
+        space = dimensions.pop('space', None)
+        space_inv = {}
         if space:
+            # annotate spatial info to flows
             if format == 'flowmap':
-                queryset, levels, fields = self.format_flows(space, queryset,
-                                                             levels, fields)
+                queryset, level, field = self.format_flows(queryset, space)
+                levels.extend(level)
+                fields.extend(field)
+                level = level[0]
             else:
-                queryset, levels, fields = self.format_space(space, queryset,
-                                                             levels, fields)
+                queryset, level, field = self.format_space(queryset, space)
+                levels.append(level)
+                fields.append(field)
+
+            # create inventory to recover actors
+            if 'actor' in level:
+                space_inv = Actor.objects.values('id',
+                                                 'company__name',
+                                                 'geom')
+            elif 'area' in level:
+                space_inv = Area.objects.values('id',
+                                                'name',
+                                                'geom')
+
+        if format == "parallelsets" and len(fields) == 1:
+            levels, fields = [], []
+            levels.extend(['processgroup', 'processgroup'])
+            fields.extend(['origin__process__processgroup',
+                           'destination__process__processgroup'])
 
         # workaround Django ORM bug
-        queryset = queryset.order_by()
+        # queryset = queryset.order_by()
 
         # aggregate flows into groups
-        groups = queryset.values(*fields).distinct()
-
-        # convert queryset to list and process
-        # avoids hitting the database multiple times
-        queryset = list(queryset.values(*fields, 'amount'))
-
-        # make matches between flow / group attributes
-        def check(flow, group):
-            for field in fields:
-                if flow[field] != group[field]: return False
-            return True
+        # groups = queryset.values(*fields).distinct()
+        groups = queryset.values(*fields)\
+                         .order_by(*fields)\
+                         .annotate(total=Sum('amount'))
 
         # serialize aggregated flow groups
+        import random
         for group in groups:
             # check for groups fields with null values!
             # these groups should be excluded entirely
@@ -103,38 +122,75 @@ class StatusQuoViewSet(FilterFlowViewSet):
                     break
             if has_null: continue
 
-            # retrieve group
-            #grouped = queryset.filter(**group)
-            # and EXCLUDE it from further search...
-            #queryset = queryset.exclude(**group)
-
-            # aggregate amount
-            group_amount = sum([flow['amount'] for flow in queryset if check(flow, group)])
-
             # for the dimensions, return the id
             # to recover any info in the frontend
-            flow_item = [('amount', group_amount)]
+            flow_item = [('amount', group['total'])]
             for level, field in zip(levels, fields):
-                if field in ['area', 'actor']:
-                    self.serialize_space(field, group, flow_item)
-                elif 'node' in field:
-                    label, model = level.split('_')
-                    flow_item.append((label, self.serialize_node(group[field], MODEL[model])))
-                elif 'waste' in field or \
-                     'activity' in field or \
-                     'process' in field or \
-                     'month' in field:
-                    if format == 'parallelsets':
-                        label = field.split('__')[0]
-                        flow_item.append((label, {'id': group[field]}))
+                # format parent / special fields
+                if 'actor' in level:
+                    actor = next(x for x in space_inv if x['id'] == group[field])
+                    if format == 'flowmap':
+                        item = {}
+                        item['id'] = actor['id']
+                        item['name'] = 'anonymous' + str(random.randint(1, 1000000))
+                        item['lon'] = actor['geom'].x + random.randint(0, 10) * 0.01
+                        item['lat'] = actor['geom'].y + random.randint(0, 10) * 0.01
+                        label = level.split('_')[0]
+                        flow_item.append((label, item))
                     else:
-                        self.serialize_hierarchy(field, group, flow_item)
+                        flow_item.append(('actorId', actor['id']))
+                        flow_item.append(('actorName', 'anonymous' + str(random.randint(1, 1000000))))
+                        flow_item.append(('lon', actor['geom'].x + random.randint(0, 10) * 0.01))
+                        flow_item.append(('lat', actor['geom'].y + random.randint(0, 10) * 0.01))
+                    continue
+                elif 'area' in level:
+                    area = next(x for x in space_inv if x['id'] == group[field])
+                    if format == 'flowmap':
+                        item = {}
+                        item['id'] = area['id']
+                        item['name'] = area['name']
+                        item['lon'] = area['geom'].centroid.x
+                        item['lat'] = area['geom'].centroid.y
+                        label = level.split('_')[0]
+                        flow_item.append((label, item))
+                    else:
+                        flow_item.append(('areaId', area['id']))
+                        flow_item.append(('areaName', area['name']))
+                    continue
+                elif level == 'activity' and format != 'parallelsets':
+                    activity = next(x for x in eco_inv if x['id'] == group[field])
+                    flow_item.append(('activitygroup', activity['activitygroup__id']))
+                elif level == 'process' and format != "parallelsets":
+                    process = next(x for x in treat_inv if x['id'] == group[field])
+                    flow_item.append(('processgroup', process['processgroup__id']))
+                elif 'waste' in level and format != "parallelsets":
+                    if level == 'waste04':
+                        waste04 = next(x for x in mat_inv if x['id'] == group[field])
+                        flow_item.append(('waste02', waste04['waste02__id']))
+                    elif level == 'waste06':
+                        waste06 = next(x for x in mat_inv if x['id'] == group[field])
+                        flow_item.append(('waste04', waste06['waste04__id']))
+                        flow_item.append(('waste02', waste06['waste04__waste02__id']))
+
+                # format field
+                if format == 'parallelsets':
+                    if 'waste' in field:
+                        if any('origin' in f for f in fields):
+                            flow_item.append(('destination', {level: group[field]}))
+                        elif any('destination' in f for f in fields):
+                            flow_item.append(('origin', {level: group[field]}))
+                        continue
+                    label = field.split('__')[0]
+                    flow_item.append((label, {level: group[field]}))
+                else:
+                    flow_item.append((level, group[field]))
+                    
             data.append(OrderedDict(flow_item))
 
         return data
 
     @staticmethod
-    def format_flows(space, queryset, levels, fields):
+    def format_flows(queryset, space):
         # recover all areas of the selected
         # administrative level
         adminlevel = space.pop('adminlevel', None)
@@ -153,8 +209,8 @@ class StatusQuoViewSet(FilterFlowViewSet):
                 queryset = queryset.annotate(destination_node=Subquery(subq.values('id')))
 
                 # append to other dimensions
-                levels.extend(['origin_area', 'destination_area'])
-                fields.extend(['origin_node', 'destination_node'])
+                level = ['origin_area', 'destination_area']
+                field = ['origin_node', 'destination_node']
             else:
                 # origin actor
                 queryset = queryset.annotate(origin_node=F('origin'))
@@ -162,13 +218,12 @@ class StatusQuoViewSet(FilterFlowViewSet):
                 queryset = queryset.annotate(destination_node=F('destination'))
 
                 # append to other dimensions
-                levels.extend(['origin_actor', 'destination_actor'])
-                fields.extend(['origin_node', 'destination_node'])
-        return queryset, levels, fields
+                level = ['origin_actor', 'destination_actor']
+                field = ['origin_node', 'destination_node']
+        return queryset, level, field
 
     @staticmethod
-    def format_space(space, queryset,
-                     levels, fields):
+    def format_space(queryset, space):
         # recover all areas of the selected
         # administrative level
         adminlevel = space.pop('adminlevel', None)
@@ -190,64 +245,14 @@ class StatusQuoViewSet(FilterFlowViewSet):
                     queryset = queryset.annotate(area=Subquery(subq.values('id')))
 
                     # append to other dimensions
-                    levels.append('area')
-                    fields.append('area')
+                    level = 'area'
+                    field = 'area'
                 else:
                     # annotate origin / destination id
                     field = field.split('__')[0] + '__id'
                     queryset = queryset.annotate(actor=F(field))
 
                     # append to other dimensions
-                    levels.append('actor')
-                    fields.append('actor')
-        return queryset, levels, fields
-
-    @staticmethod
-    def serialize_space(field, group, item):
-        # recover model instance
-        model, id = MODEL[field], group[field]
-        instance = model.objects.filter(id=id)[0]
-
-        if 'area' in field:
-            # serialize area
-            item.append(('areaId', instance.id))
-            item.append(('areaName', instance.name))
-        elif 'actor' in field:
-            # serialize actor
-            item.append(('actorId', instance.id))
-            item.append(('actorName', instance.company.identifier))
-            item.append(('lon', instance.geom.x))
-            item.append(('lat', instance.geom.y))
-
-    @staticmethod
-    def serialize_node(id, model):
-        # recover
-        node = model.objects.filter(id=id)[0]
-
-        # serialize area
-        item = {}
-        item['id'] = node.id
-
-        # serialize geometry
-        geom = node.geom
-        if geom.geom_type == 'Point':
-            item['name'] = node.company.name
-            item['lon'] = geom.x
-            item['lat'] = geom.y
-        else:
-            item['name'] = node.name
-            item['lon'] = geom.centroid.x
-            item['lat'] = geom.centroid.y
-        return item
-
-    @staticmethod
-    def serialize_hierarchy(field, group, item):
-        label, id = field.split('__')[-1], group[field]
-        item.append((label, id))
-
-        if label in PARENT.keys():
-            for parent in PARENT[label]:
-                model = MODEL[label]
-                instance = model.objects.filter(id=id)[0]
-                label, id = parent, getattr(instance, parent + '_id')
-                item.append((label, id))
+                    level = 'actor'
+                    field = 'actor'
+        return queryset, level, field
