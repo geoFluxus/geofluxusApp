@@ -357,7 +357,7 @@ define(['views/common/baseview',
                         });
 
                         newMonthOptionsHTML = '<option selected value="-1">All (' + filteredMonths.length + ')</option><option data-divider="true"></option>';
-                        filteredMonths.forEach(month => newMonthOptionsHTML += "<option value='" + month.attributes.id + "'>" + month.attributes.code.substring(2, 6) + " " + utils.returnMonthString(month.attributes.code.substring(0, 2)) + "</option>");
+                        filteredMonths.forEach(month => newMonthOptionsHTML += "<option value='" + month.attributes.id + "'>" + month.attributes.code.substring(2, 6) + " " + utils.toMonthString(month.attributes.code.substring(0, 2)) + "</option>");
                         $(_this.flows.monthSelect).html(newMonthOptionsHTML);
                         $(_this.flows.monthSelect).selectpicker("refresh");
 

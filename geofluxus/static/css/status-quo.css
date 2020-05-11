@@ -465,11 +465,12 @@ textarea.textarea-autosize.form-control-sm {
     border-top-left-radius: 1.5rem !important;
     padding: 0.5rem !important;
 }
+
 .d3plus-tooltip table {
     margin: 0.5rem !important;
 }
 
-.d3plus-tooltip-tbody > :first-child {
+.d3plus-tooltip-tbody> :first-child {
     border: none !important;
 }
 
@@ -712,6 +713,10 @@ textarea.textarea-autosize.form-control-sm {
 .flowMapToolTip,
 .d3-tip {
     font-family: 'Montserrat', sans-serif !important;
+}
+
+.flowMapToolTip {
+    padding: 1rem !important;
 }
 
 .d3-tip h1 {

@@ -75,9 +75,9 @@ define(['views/common/baseview',
                         ]
                     };
 
-                    flows = enrichFlows.transformToLinksAndNodes(this.options.flows, this.options.dimensions, this.filtersView);
+                    flows = this.transformToLinksAndNodes(this.options.flows, this.options.dimensions, this.filtersView);
 
-                   
+
                     this.SimpleSankey = new SimpleSankey({
                         el: this.options.el,
                         links: flows.links,
@@ -91,7 +91,156 @@ define(['views/common/baseview',
                     });
                 },
 
-                
+                transformToLinksAndNodes: function (flows, dimensions, filtersView) {
+                    let nodes = [],
+                        links = [];
+
+                    flows.forEach(function (flow, index) {
+                        let link = {};
+                        let originNode = {};
+                        let destinationNode = {};
+
+                        // Gather dimension and gran config:
+                        let gran1 = dimensions[0][1];
+                        let gran2 = dimensions[1] ? dimensions[1][1] : {};
+                        let dimStrings = [];
+                        dimensions.forEach(dim => dimStrings.push(dim[0]));
+
+                        // Data:
+
+                        let processGroups = filtersView.processgroups.models;
+                        let processes = filtersView.processes.models;
+
+                        // Set value for origin and destination of nodes:
+                        originNode.value = destinationNode.value = flow.amount;
+
+                        // Enrich nodes
+                        switch (dimensions.length) {
+                            case 1:
+                                // Later, only for Treatment method to Treatment method
+                                let processGroupObjectOrigin = processGroups.find(processGroup => processGroup.attributes.id == flow.origin.id);
+                                let processGroupObjectDestination = processGroups.find(processGroup => processGroup.attributes.id == flow.destination.id);
+
+                                break;
+                            case 2:
+                                // Econ dim1 > Treatment dim2
+                                if (dimStrings.includes("economicActivity")) {
+                                    let activityGroups = filtersView.activityGroups.models;
+                                    let activities = filtersView.activities.models;
+
+                                    switch (gran1) {
+                                        case "origin__activity__activitygroup":
+                                            let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.origin.id);
+                                            originNode.id = enrichFlows.returnCodePlusName(activityGroupObject);
+                                            break;
+                                        case "origin__activity":
+                                            let activityObject = activities.find(activity => activity.attributes.id == flow.origin.id);
+                                            originNode.id = enrichFlows.returnCodePlusName(activityObject);
+                                            break;
+                                    }
+
+                                    // Econ dim1 > Material dim2
+                                }
+                                if (dimStrings.includes("material")) {
+                                    let ewc2 = filtersView.wastes02.models;
+                                    let ewc4 = filtersView.wastes04.models;
+                                    let ewc6 = filtersView.wastes06.models;
+
+                                    if (dimStrings.includes("economicActivity")) {
+                                        granularity = gran2;
+                                    } else {
+                                        granularity = gran1;
+                                    }
+
+                                    // TO DO
+                                    // From Material >> Treatment method
+                                    // => Material is then the ORIGIN
+
+                                    switch (gran2) {
+                                        case "flowchain__waste06__waste04__waste02":
+                                            let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.flowchain.id);
+                                            destinationNode.id = enrichFlows.returnEwcCodePlusName(ewc2Object);
+                                            break;
+                                        case "flowchain__waste06__waste04":
+                                            let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.flowchain.id);
+                                            destinationNode.id = enrichFlows.returnEwcCodePlusName(ewc4Object);
+                                            break;
+                                        case "flowchain__waste06":
+                                            let ewc6Object = ewc6.find(ewc => ewc.attributes.id == flow.flowchain.id);
+                                            destinationNode.id = enrichFlows.returnEwcCodePlusName(ewc6Object);
+                                            break;
+                                    }
+
+                                }
+                                if (dimStrings.includes("treatmentMethod")) {
+                                    let granularity;
+                                    // Material dim2 > Treatment dim1
+                                    if (dimStrings.includes("economicActivity")) {
+                                        granularity = gran2;
+                                    } else {
+                                        granularity = gran1;
+                                    }
+
+                                    // Material dim2 > Treatment dim1
+                                    switch (granularity) {
+                                        case "destination__process__processgroup":
+                                            let processGroupDestinationObject = processGroups.find(processGroup => processGroup.attributes.id == flow.destination.id);
+                                            destinationNode.id = enrichFlows.returnCodePlusName(processGroupDestinationObject);
+                                            break;
+                                        case "destination__process":
+                                            let processDestinationObject = processes.find(process => process.attributes.id == flow.destination.id);
+                                            destinationNode.id = enrichFlows.returnCodePlusName(processDestinationObject);
+                                            break;
+                                        case "origin__process__processgroup":
+                                            let processGroupOriginObject = processGroups.find(processGroup => processGroup.attributes.id == flow.origin.id);
+                                            originNode.id = enrichFlows.returnCodePlusName(processGroupOriginObject);
+                                            break;
+                                        case "origin__process":
+                                            let processOriginObject = processes.find(process => process.attributes.id == flow.origin.id);
+                                            originNode.id = enrichFlows.returnCodePlusName(processOriginObject);
+                                            break;
+                                    }
+                                }
+                                break;
+                        }
+
+                        nodes.push(originNode, destinationNode)
+
+                        // LINKS
+                        link.source = originNode.id;
+                        link.target = destinationNode.id;
+                        link.value = flow.amount;
+
+                        links.push(link)
+
+                    }, flows);
+
+
+                    // Group the nodes by id and sum the values:                    
+                    let summed_by_type = _(nodes).reduce(function (mem, d) {
+                        mem[d.id] = (mem[d.id] || 0) + d.value
+                        return mem
+                    }, {})
+                    nodes = _(summed_by_type).map(function (v, k) {
+                        return {
+                            id: k,
+                            value: v
+                        }
+                    })
+
+
+                    console.log("Links:");
+                    console.log(links);
+                    console.log("Nodes:");
+                    console.log(nodes);
+
+                    return {
+                        links: links,
+                        nodes: nodes,
+                    }
+                },
+
+
                 returnLinkInfo: function (link) {
 
 

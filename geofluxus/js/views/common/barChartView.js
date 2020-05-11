@@ -478,7 +478,7 @@ define(['views/common/baseview',
                             }]);
                         }
 
-                        ////////////////////////////
+                        ///////////////////////////////
                         // Economic Activity & Material
                     } else if (dimStrings.includes("economicActivity") && dimStrings.includes("material")) {
 
