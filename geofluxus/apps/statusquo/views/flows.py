@@ -90,6 +90,10 @@ class StatusQuoViewSet(FilterFlowViewSet):
                 space_inv = Actor.objects.values('id',
                                                  'company__name',
                                                  'geom')
+            elif 'area' in level:
+                space_inv = Area.objects.values('id',
+                                                'name',
+                                                'geom')
 
         # workaround Django ORM bug
         # queryset = queryset.order_by()
@@ -131,6 +135,20 @@ class StatusQuoViewSet(FilterFlowViewSet):
                         flow_item.append(('actorName', actor['company__name']))
                         flow_item.append(('lon', actor['geom'].x))
                         flow_item.append(('lat', actor['geom'].y))
+                    continue
+                elif 'area' in level:
+                    area = next(x for x in space_inv if x['id'] == group[field])
+                    if format == 'flowmap':
+                        item = {}
+                        item['id'] = area['id']
+                        item['name'] = area['name']
+                        item['lon'] = area['geom'].centroid.x
+                        item['lat'] = area['geom'].centroid.y
+                        label = level.split('_')[0]
+                        flow_item.append((label, item))
+                    else:
+                        flow_item.append(('areaId', area['id']))
+                        flow_item.append(('areaName', area['name']))
                     continue
                 elif level == 'activity' and format != 'parallelsets':
                     activity = next(x for x in eco_inv if x['id'] == group[field])
@@ -225,41 +243,3 @@ class StatusQuoViewSet(FilterFlowViewSet):
                     level = 'actor'
                     field = 'actor'
         return queryset, level, field
-
-    # @staticmethod
-    # def serialize_space(field, group, item):
-    #     # recover model instance
-    #     model, id = MODEL[field], group[field]
-    #     instance = model.objects.filter(id=id)[0]
-    #
-    #     if 'area' in field:
-    #         # serialize area
-    #         item.append(('areaId', instance.id))
-    #         item.append(('areaName', instance.name))
-    #     elif 'actor' in field:
-    #         # serialize actor
-    #         item.append(('actorId', instance.id))
-    #         item.append(('actorName', instance.company.identifier))
-    #         item.append(('lon', instance.geom.x))
-    #         item.append(('lat', instance.geom.y))
-    #
-    # @staticmethod
-    # def serialize_node(id, model):
-    #     # recover
-    #     node = model.objects.filter(id=id)[0]
-    #
-    #     # serialize area
-    #     item = {}
-    #     item['id'] = node.id
-    #
-    #     # serialize geometry
-    #     geom = node.geom
-    #     if geom.geom_type == 'Point':
-    #         item['name'] = node.company.name
-    #         item['lon'] = geom.x
-    #         item['lat'] = geom.y
-    #     else:
-    #         item['name'] = node.name
-    #         item['lon'] = geom.centroid.x
-    #         item['lat'] = geom.centroid.y
-    #     return item
