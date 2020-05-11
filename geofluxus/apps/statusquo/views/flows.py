@@ -95,6 +95,12 @@ class StatusQuoViewSet(FilterFlowViewSet):
                                                 'name',
                                                 'geom')
 
+        if format == "parallelsets" and len(fields) == 1:
+            levels, fields = [], []
+            levels.extend(['processgroup', 'processgroup'])
+            fields.extend(['origin__process__processgroup',
+                           'destination__process__processgroup'])
+
         # workaround Django ORM bug
         # queryset = queryset.order_by()
 
@@ -105,6 +111,7 @@ class StatusQuoViewSet(FilterFlowViewSet):
                          .annotate(total=Sum('amount'))
 
         # serialize aggregated flow groups
+        import random
         for group in groups:
             # check for groups fields with null values!
             # these groups should be excluded entirely
@@ -125,16 +132,16 @@ class StatusQuoViewSet(FilterFlowViewSet):
                     if format == 'flowmap':
                         item = {}
                         item['id'] = actor['id']
-                        item['name'] = actor['company__name']
-                        item['lon'] = actor['geom'].x
-                        item['lat'] = actor['geom'].y
+                        item['name'] = 'anonymous' + str(random.randint(1, 1000000))
+                        item['lon'] = actor['geom'].x + random.randint(0, 10) * 0.01
+                        item['lat'] = actor['geom'].y + random.randint(0, 10) * 0.01
                         label = level.split('_')[0]
                         flow_item.append((label, item))
                     else:
                         flow_item.append(('actorId', actor['id']))
-                        flow_item.append(('actorName', actor['company__name']))
-                        flow_item.append(('lon', actor['geom'].x))
-                        flow_item.append(('lat', actor['geom'].y))
+                        flow_item.append(('actorName', 'anonymous' + str(random.randint(1, 1000000))))
+                        flow_item.append(('lon', actor['geom'].x + random.randint(0, 10) * 0.01))
+                        flow_item.append(('lat', actor['geom'].y + random.randint(0, 10) * 0.01))
                     continue
                 elif 'area' in level:
                     area = next(x for x in space_inv if x['id'] == group[field])
@@ -167,6 +174,12 @@ class StatusQuoViewSet(FilterFlowViewSet):
 
                 # format field
                 if format == 'parallelsets':
+                    if 'waste' in field:
+                        if any('origin' in f for f in fields):
+                            flow_item.append(('destination', {level: group[field]}))
+                        elif any('destination' in f for f in fields):
+                            flow_item.append(('origin', {level: group[field]}))
+                        continue
                     label = field.split('__')[0]
                     flow_item.append((label, {level: group[field]}))
                 else:
