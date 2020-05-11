@@ -23,6 +23,9 @@ define([
             new d3plus.Sankey()
                 .links(options.links)
                 .nodes(options.nodes)
+                .value(function value(d) {
+                    return d.value;
+                })
                 .nodePadding(5)
                 .tooltipConfig(options.tooltipConfig)
                 .legend(hasLegend)
