@@ -1027,20 +1027,20 @@ define(['views/common/baseview',
                                 this[index] = flow.attributes;
                             }, _this.flows);
 
-                            switch (_this.selectedDimensions.length) {
-                                case 1:
-                                    _this.render1Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
-                                    break;
-                                case 2:
-                                    if (selectedVizualisationString == "parallelsets") {
-                                        _this.renderParallelSets(_this.selectedDimensions, _this.flows);
-                                    } else {
+                            // Only Parallel Sets requires different processing: 
+                            if (selectedVizualisationString == "parallelsets") {
+                                _this.renderParallelSets(_this.selectedDimensions, _this.flows);
+                            } else {
+                                switch (_this.selectedDimensions.length) {
+                                    case 1:
+                                        _this.render1Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
+                                        break;
+                                    case 2:
                                         _this.render2Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
-                                    }
-                                    break;
-                                default:
-                                    // Nothing
+                                        break;
+                                }
                             }
+
 
                             _this.loader.deactivate();
 

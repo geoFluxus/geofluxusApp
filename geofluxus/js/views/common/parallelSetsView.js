@@ -117,9 +117,24 @@ define(['views/common/baseview',
                         // Enrich nodes
                         switch (dimensions.length) {
                             case 1:
-                                // Later, only for Treatment method to Treatment method
-                                let processGroupObjectOrigin = processGroups.find(processGroup => processGroup.attributes.id == flow.origin.id);
-                                let processGroupObjectDestination = processGroups.find(processGroup => processGroup.attributes.id == flow.destination.id);
+                                // Only for Treatment method to Treatment method
+
+                                // Gran == Treatment method group
+                                if (gran1.includes("group")) {
+                                    let processGroupDestinationObject = processGroups.find(processGroup => processGroup.attributes.id == flow.destination.processgroup);
+                                    destinationNode.id = enrichFlows.returnCodePlusName(processGroupDestinationObject) + " ";
+                                    let processGroupOriginObject = processGroups.find(processGroup => processGroup.attributes.id == flow.origin.processgroup);
+                                    originNode.id = enrichFlows.returnCodePlusName(processGroupOriginObject);
+                                    break;
+
+                                // Gran == Treatment method
+                                } else {
+                                    let processDestinationObject = processes.find(process => process.attributes.id == flow.destination.process);
+                                    destinationNode.id = enrichFlows.returnCodePlusName(processDestinationObject) + " ";
+                                    let processOriginObject = processes.find(process => process.attributes.id == flow.origin.process);
+                                    originNode.id = enrichFlows.returnCodePlusName(processOriginObject);
+
+                                }
 
                                 break;
                             case 2:
@@ -154,7 +169,7 @@ define(['views/common/baseview',
                                     let ewc6 = filtersView.wastes06.models;
 
                                     let materialOriginDestination = "";
-                                   
+
 
                                     // Econ dim1 > Material dim2
                                     if (dimStrings.includes("economicActivity")) {
