@@ -134,7 +134,7 @@ define(['views/common/baseview',
                                             originNode.id = enrichFlows.returnCodePlusName(activityGroupOriginObject);
                                             break;
                                         case "origin__activity":
-                                            let activityOriginObject = activities.find(activity => activity.attributes.id == flow.activity.id);
+                                            let activityOriginObject = activities.find(activity => activity.attributes.id == flow.origin.activity);
                                             originNode.id = enrichFlows.returnCodePlusName(activityOriginObject);
                                             break;
                                         case "destination__activity__activitygroup":
@@ -142,7 +142,7 @@ define(['views/common/baseview',
                                             destinationNode.id = enrichFlows.returnCodePlusName(activityGroupDestinationObject);
                                             break;
                                         case "destination__activity":
-                                            let activityDestinationObject = activities.find(activity => activity.attributes.id == flow.destination.id);
+                                            let activityDestinationObject = activities.find(activity => activity.attributes.id == flow.destination.activity);
                                             destinationNode.id = enrichFlows.returnCodePlusName(activityDestinationObject);
                                             break;
                                     }
