@@ -95,15 +95,21 @@ define(['views/common/baseview',
                     } else if (gran1 == "flowchain__month") {
                         x = ["yearMonthCode"];
 
+                        tooltipConfig.title = "Waste totals per month";
+
                         // Only for time
-                        if (dim1String.length == 1 && hasMultipleLines) {
+                        if (dimStrings.length == 1 && hasMultipleLines) {
                             groupBy = ["year"];
                             x = ["monthName"];
+
+                            tooltipConfig.tbody.push(["Month", function (d) {
+                                return d.monthName
+                            }]);
+                        } else {
+                            tooltipConfig.tbody.push(["Month", function (d) {
+                                return d.month
+                            }]);
                         }
-                        tooltipConfig.title = "Waste totals per month";
-                        tooltipConfig.tbody.push(["Month", function (d) {
-                            return d.month
-                        }]);
                     }
 
 
