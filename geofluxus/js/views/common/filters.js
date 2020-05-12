@@ -23,7 +23,7 @@ define(['views/common/baseview',
                 this.selectedAreasFlows = [];
 
                 this.template = options.template;
-                
+
                 this.activityGroups = new Collection([], {
                     apiTag: 'activitygroups'
                 });
@@ -123,11 +123,11 @@ define(['views/common/baseview',
                     months: this.months,
                 });
 
-               // Activate help icons
-               var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
-               $(popovers).popover({
-                   trigger: "focus"
-               });
+                // Activate help icons
+                var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
+                $(popovers).popover({
+                    trigger: "focus"
+                });
 
                 this.renderAreaSelectModal();
 
@@ -247,6 +247,51 @@ define(['views/common/baseview',
                     }
                 }
 
+                function filterEwcHazardous(event, clickedIndex, checked) {
+                    let showOnlyHazardous = $(_this.flows.hazardousSelect).val();
+
+                    switch (showOnlyHazardous) {
+                        case "both":
+                            $("#wastes02col").show();
+                            $("#wastes04col").hide();
+                            $(".chevronEwc06").show();
+                            $("#flows-waste06-label").css("position", "relative");
+                            $("#helpiconWaste06").removeClass("hazaIconPos");
+                            $("#wastes06col").hide();
+                            break;
+                        case "yes":
+                            showOnlyHazardous = true;
+                            $("#wastes02col").hide();
+                            $("#wastes04col").hide();
+
+                            break;
+                        case "no":
+                            showOnlyHazardous = false;
+                            $("#wastes02col").hide();
+                            $("#wastes04col").hide();
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (showOnlyHazardous != "both") {
+                        let filteredWastes06 = _this.wastes06.models.filter(function (waste06) {
+                            return waste06.attributes.hazardous == showOnlyHazardous;
+                        });
+
+                        // Fill selectPicker with filtered items, add to DOM, and refresh:
+                        newWastes06OptionsHTML = '<option selected value="-1">All (' + filteredWastes06.length + ')</option><option data-divider="true"></option>';
+                        filteredWastes06.forEach(waste06 => newWastes06OptionsHTML += "<option class='dropdown-item' value='" + waste06.attributes.id + "'>" + waste06.attributes.ewc_code + " " + waste06.attributes.ewc_name + (waste06.attributes.hazardous ? "*" : "") + "</option>");
+                        $(_this.flows.waste06Select).html(newWastes06OptionsHTML);
+                        $(_this.flows.waste06Select).selectpicker("refresh");
+
+                        $(".chevronEwc06").hide();
+                        $("#flows-waste06-label").css("position", "static");
+                        $("#helpiconWaste06").addClass("hazaIconPos");
+                        $("#wastes06col").fadeIn("fast");
+                    }
+                }
+
                 function filterEWC02to04(event, clickedIndex, checked) {
                     let selectedEWC02IDs = [];
                     let filteredWastes04 = [];
@@ -288,7 +333,7 @@ define(['views/common/baseview',
 
                         // Fill selectPicker with filtered items, add to DOM, and refresh:
                         newWastes06OptionsHTML = '<option selected value="-1">All (' + filteredWastes06.length + ')</option><option data-divider="true"></option>';
-                        filteredWastes06.forEach(waste06 => newWastes06OptionsHTML += "<option class='dropdown-item' value='" + waste06.attributes.id + "'>" + waste06.attributes.ewc_code + " " + waste06.attributes.ewc_name + "</option>");
+                        filteredWastes06.forEach(waste06 => newWastes06OptionsHTML += "<option class='dropdown-item' value='" + waste06.attributes.id + "'>" + waste06.attributes.ewc_code + " " + waste06.attributes.ewc_name + (waste06.attributes.hazardous ? "*" : "") + "</option>");
                         $(_this.flows.waste06Select).html(newWastes06OptionsHTML);
                         $(_this.flows.waste06Select).selectpicker("refresh");
 
@@ -312,7 +357,7 @@ define(['views/common/baseview',
                         });
 
                         newMonthOptionsHTML = '<option selected value="-1">All (' + filteredMonths.length + ')</option><option data-divider="true"></option>';
-                        filteredMonths.forEach(month => newMonthOptionsHTML += "<option value='" + month.attributes.id + "'>" + month.attributes.code.substring(2, 6) + " " + utils.returnMonthString(month.attributes.code.substring(0, 2)) + "</option>");
+                        filteredMonths.forEach(month => newMonthOptionsHTML += "<option value='" + month.attributes.id + "'>" + month.attributes.code.substring(2, 6) + " " + utils.toMonthString(month.attributes.code.substring(0, 2)) + "</option>");
                         $(_this.flows.monthSelect).html(newMonthOptionsHTML);
                         $(_this.flows.monthSelect).selectpicker("refresh");
 
@@ -377,14 +422,18 @@ define(['views/common/baseview',
                 $(this.flows.yearSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.yearSelect).on('changed.bs.select', filterMonths);
                 $(this.flows.monthSelect).on('changed.bs.select', multiCheck);
+
+                $(this.flows.hazardousSelect).on('changed.bs.select', filterEwcHazardous);
                 $(this.flows.waste02Select).on('changed.bs.select', multiCheck);
                 $(this.flows.waste02Select).on('changed.bs.select', filterEWC02to04);
                 $(this.flows.waste04Select).on('changed.bs.select', multiCheck);
                 $(this.flows.waste04Select).on('changed.bs.select', filterEWC04to06);
                 $(this.flows.waste06Select).on('changed.bs.select', multiCheck);
+
                 $(this.flows.materialSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.productSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.compositesSelect).on('changed.bs.select', multiCheck);
+
                 $(this.flows.cleanSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.mixedSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.directSelect).on('changed.bs.select', multiCheck);
@@ -838,7 +887,7 @@ define(['views/common/baseview',
                     flows: {},
                 }
 
-                 // ///////////////////////////////
+                // ///////////////////////////////
                 // ORIGIN
 
                 if (this.selectedAreasOrigin !== undefined &&
@@ -858,20 +907,20 @@ define(['views/common/baseview',
                 }
 
                 if (this.origin.role == "production") {
-                    if ($(this.origin.activitySelect).val() == '-1') {
-                        if ($(this.origin.activityGroupsSelect).val() != '-1') {
+                    if ($(this.origin.activityGroupsSelect).val() != '-1') {
+                        if ($(this.origin.activitySelect).val() == '-1') {
                             filterParams.flows['origin__activity__activitygroup__in'] = $(this.origin.activityGroupsSelect).val();
+                        } else {
+                            filterParams.flows['origin__activity__in'] = $(this.origin.activitySelect).val();
                         }
-                    } else {
-                        filterParams.flows['origin__activity__in'] = $(this.origin.activitySelect).val();
                     }
                 } else if (this.origin.role == "treatment") {
-                    if ($(this.origin.processSelect).val() == '-1') {
-                        if ($(this.origin.processGroupSelect).val() != '-1') {
+                    if ($(this.origin.processGroupSelect).val() != '-1') {
+                        if ($(this.origin.processSelect).val() == '-1') {
                             filterParams.flows['origin__process__processgroup__in'] = $(this.origin.processGroupSelect).val();
+                        } else {
+                            filterParams.flows['origin__process__in'] = $(this.origin.processSelect).val();
                         }
-                    } else {
-                        filterParams.flows['origin__process__in'] = $(this.origin.processSelect).val();
                     }
                 }
 
@@ -896,20 +945,20 @@ define(['views/common/baseview',
                 }
 
                 if (this.destination.role == "production") {
-                    if ($(this.destination.activitySelect).val() == '-1') {
-                        if ($(this.destination.activityGroupsSelect).val() != '-1') {
+                    if ($(this.destination.activityGroupsSelect).val() != '-1') {
+                        if ($(this.destination.activitySelect).val() == '-1') {
                             filterParams.flows['destination__activity__activitygroup__in'] = $(this.destination.activityGroupsSelect).val();
+                        } else {
+                            filterParams.flows['destination__activity__in'] = $(this.destination.activitySelect).val();
                         }
-                    } else {
-                        filterParams.flows['destination__activity__in'] = $(this.destination.activitySelect).val();
                     }
                 } else if (this.destination.role == "treatment") {
-                    if ($(this.destination.processSelect).val() == '-1') {
-                        if ($(this.destination.processGroupSelect).val() != '-1') {
+                    if ($(this.destination.processGroupSelect).val() != '-1') {
+                        if ($(this.destination.processSelect).val() == '-1') {
                             filterParams.flows['destination__process__processgroup__in'] = $(this.destination.processGroupSelect).val();
+                        } else {
+                            filterParams.flows['destination__process__in'] = $(this.destination.processSelect).val();
                         }
-                    } else {
-                        filterParams.flows['destination__process__in'] = $(this.destination.processSelect).val();
                     }
                 }
 

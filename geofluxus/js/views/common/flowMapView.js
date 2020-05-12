@@ -591,7 +591,7 @@ define(['underscore',
                     let fromToText = link.origin.name + ' &#10132; ' + link.destination.name + '<br>'
                     let dimensionText = "";
                     let dimensionValue = "";
-                    let amountText = d3plus.formatAbbreviate(link.amount, utils.returnD3plusFormatLocale()) + ' t/year';
+                    let amountText = d3plus.formatAbbreviate(link.amount, utils.returnD3plusFormatLocale()) + ' t';
                     let dimensionId;
 
                     switch (this.dim2[0]) {

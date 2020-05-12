@@ -94,11 +94,11 @@
 }
 
 #filterBlock .dropdown-menu {
-    max-width: 60rem;
+    max-width: 80vw;
 }
 
 #filterBlock .dropdown-menu .show {
-    max-width: 60rem;
+    max-width: 80vw;
     overflow-x: hidden;
     z-index: 1000;
 }
@@ -156,9 +156,12 @@ label[for="flows-waste06-select"] {
 #monthCol .labelHelpiconContainer,
 #wastes04col .labelHelpiconContainer,
 #wastes06col .labelHelpiconContainer {
-    left: -1.85em !important;
+    left: -1.85em;
 }
 
+.hazaIconPos {
+    left: -0.5rem !important;
+}
 
 .filterDoubleChevron {
     color: white;
@@ -337,6 +340,15 @@ label[for="flows-waste06-select"] {
     border-radius: 18px;
 }
 
+.viz-wrapper-div.parallelsets-wrapper {
+    background-color: #393939;
+}
+
+.parallelsets-container {
+    background-color: #393939;
+    border-radius: 18px;
+}
+
 
 /* Area Select Modal Styles */
 
@@ -412,16 +424,7 @@ textarea.textarea-autosize.form-control-sm {
     box-sizing: content-box !important;
 }
 
-/* flowmap tooltip */
 
-.d3plus-tooltip,
-.flowMapToolTip {
-    border: 1px solid black !important;
-    border-radius: 14px !important;
-    z-index: 99999;
-    min-width: 25rem;
-    max-width: 25rem;
-}
 
 .flowmap-legend-wrapper {
     width: 10rem !important;
@@ -446,15 +449,34 @@ textarea.textarea-autosize.form-control-sm {
 
 /* d3plus Tooltip */
 
-/* .d3plus-tooltip {
-    border: 1px solid black !important;
-    border-radius: 14px !important;
+.d3plus-tooltip,
+.flowMapToolTip {
+    background-color: rgb(139, 138, 138) !important;
+    border-radius: 1.5rem !important;
+    padding: 0 !important;
     z-index: 99999;
-} */
+    min-width: 15rem;
+    max-width: 25rem;
+}
+
 
 .d3plus-tooltip-title {
     font-family: 'Montserrat', sans-serif !important;
     text-align: center;
+    background-color: rgb(88, 88, 88);
+    color: white;
+    max-width: 30rem !important;
+    border-top-right-radius: 1.5rem !important;
+    border-top-left-radius: 1.5rem !important;
+    padding: 0.5rem !important;
+}
+
+.d3plus-tooltip table {
+    margin: 0.5rem !important;
+}
+
+.d3plus-tooltip-tbody> :first-child {
+    border: none !important;
 }
 
 .d3plus-tooltip-tbody tr td:first-child {
@@ -467,22 +489,11 @@ textarea.textarea-autosize.form-control-sm {
     text-align: start;
     padding-left: 0.5rem;
     padding-right: 1rem;
-    max-width: 18rem;
+    max-width: 30rem;
 }
 
 /* d3plus buttons */
 
-/* .d3plus-viz-controls-left {
-    position: relative;
-    z-index: 1;
-}
-
-
-
-.d3plus-viz-controls-container .d3plus-Form {
-    z-index: 1;
-    position: absolute;
-} */
 
 .d3plus-viz-controls-container {
     min-height: 100px;
@@ -501,6 +512,13 @@ textarea.textarea-autosize.form-control-sm {
     font-size: 14px;
     margin: 0px 5px;
 }
+
+.parallelsets-wrapper .d3plus-viz-controls-container .d3plus-Button {
+    left: -0.25rem;
+    top: 0;
+}
+
+
 
 .leaflet-control div label {
     color: black;
@@ -661,7 +679,6 @@ textarea.textarea-autosize.form-control-sm {
 /* CSS Tweaks for map control buttons only for Chrome	 */
 
 @media screen and (-webkit-min-device-pixel-ratio:0) {
-    .d3plus-zoom-control .zoom-control {}
 
     .viz-wrapper-div svg foreignObject {
         width: 42px !important;
@@ -701,6 +718,10 @@ textarea.textarea-autosize.form-control-sm {
 .flowMapToolTip,
 .d3-tip {
     font-family: 'Montserrat', sans-serif !important;
+}
+
+.flowMapToolTip {
+    padding: 1rem !important;
 }
 
 .d3-tip h1 {

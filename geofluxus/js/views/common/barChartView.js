@@ -73,8 +73,8 @@ define(['views/common/baseview',
                     let isActorLevel = false;
                     let tooltipConfig = {
                         tbody: [
-                            ["Waste (metric ton)", function (d) {
-                                return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                            ["Waste", function (d) {
+                                return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale()) + " t"
                             }]
                         ]
                     };
@@ -234,10 +234,6 @@ define(['views/common/baseview',
                             // Granularity = month:
                         } else if (gran1 == "flowchain__month") {
                             x = ["yearMonthCode"];
-                            if (hasMultipleLines) {
-                                groupBy = ["year"];
-                                x = ["monthName"];
-                            }
                             tooltipConfig.title = "Waste totals per month";
                             tooltipConfig.tbody.push(["Month", function (d) {
                                 return d.month
@@ -275,11 +271,7 @@ define(['views/common/baseview',
                             // Granularity = month:
                         } else if (gran1 == "flowchain__month") {
                             x = ["yearMonthCode"];
-                            if (hasMultipleLines) {
-                                groupBy = ["year"];
-                                x = ["monthName"];
-                            }
-
+                           
                             tooltipConfig.title = "Waste totals per month";
                             tooltipConfig.tbody.push(["Month", function (d) {
                                 return d.month
@@ -316,11 +308,6 @@ define(['views/common/baseview',
                             // Granularity = month:
                         } else if (gran1 == "flowchain__month") {
                             x = ["yearMonthCode"];
-                            if (hasMultipleLines) {
-                                groupBy = ["year"];
-                                x = ["monthName"];
-                            }
-
                             tooltipConfig.title = "Waste totals per month";
                             tooltipConfig.tbody.push(["Month", function (d) {
                                 return d.month
@@ -491,7 +478,7 @@ define(['views/common/baseview',
                             }]);
                         }
 
-                        ////////////////////////////
+                        ///////////////////////////////
                         // Economic Activity & Material
                     } else if (dimStrings.includes("economicActivity") && dimStrings.includes("material")) {
 

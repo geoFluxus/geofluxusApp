@@ -173,6 +173,10 @@ define(['views/common/baseview',
                 });
 
                 $(".dimensionToggle").change(function (event) {
+                    if (_this.resetInProgres) {
+                        return
+                    }
+
                     // //////////////////////////////////////////////////////
                     // Disable dimension toggles for max number of dimensions:
                     _this.checkedDimToggles = [];
@@ -209,39 +213,28 @@ define(['views/common/baseview',
                     // ///////////////////////////////////////////////////////////////////
                     // Show available visualizations based on selected dimension(s):
 
-                    console.log(_this.selectedDimensionStrings);
+                    //console.log(_this.selectedDimensionStrings);
 
                     switch (_this.checkedDimToggles.length) {
                         case 0: // No dimensions
-                            console.log("No dimensions");
-
-                            //$("#message-container-row").fadeIn();
+                            $("#message-container-row").fadeIn();
                             $(".viz-container").hide();
-
                             break;
                         case 1: // One dimension selected
-                            // Hide message if shown:
-                            //$("#message-container-row").hide();
-                            // Hide all viz option buttons:
                             $(".viz-selector-button").hide();
-                            // Show viz option container:
                             $(".viz-container").fadeIn();
 
                             // Disable legend by default:
                             //$("#display-legend").prop("checked", false);
-
-                            console.log("One dimension");
 
                             if (_this.selectedDimensionStrings.includes("time")) {
                                 $("#viz-piechart").parent().fadeIn();
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-treemap").parent().fadeIn();
                                 $("#viz-lineplot").parent().fadeIn();
-
                                 if ($(_this.dimensions.timeToggleGran).prop("checked")) {
                                     $("#viz-lineplotmultiple").parent().fadeIn();
                                 }
-
                             } else if (_this.selectedDimensionStrings.includes("space")) {
                                 $("#viz-piechart").parent().fadeIn();
                                 $("#viz-barchart").parent().fadeIn();
@@ -264,7 +257,7 @@ define(['views/common/baseview',
                                 $("#viz-piechart").parent().fadeIn();
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-treemap").parent().fadeIn();
-                                //$("#viz-parallelsets").parent().fadeIn();
+                                $("#viz-parallelsets").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("material")) {
                                 $("#viz-piechart").parent().fadeIn();
                                 $("#viz-barchart").parent().fadeIn();
@@ -280,7 +273,7 @@ define(['views/common/baseview',
                             // Enable legend by default:
                             //$("#display-legend").prop("checked", true);
 
-                            console.log("Two dimensions");
+                            //console.log("Two dimensions");
 
                             // Time & Space
                             if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("space")) {
@@ -328,18 +321,18 @@ define(['views/common/baseview',
                             } else if (_this.selectedDimensionStrings.includes("economicActivity") && _this.selectedDimensionStrings.includes("material")) {
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
-                                //$("#viz-parallelsets").parent().fadeIn();
+                                $("#viz-parallelsets").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("material") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
-                                //$("#viz-parallelsets").parent().fadeIn();
+                                $("#viz-parallelsets").parent().fadeIn();
                             }
                             break;
                         case 3: // Three dimensions:
                             // $(".viz-selector-button").hide();
                             // $(".viz-container").fadeIn();
 
-                            console.log("Three  dimensions");
+                            //console.log("Three  dimensions");
 
 
                             break;
@@ -350,8 +343,6 @@ define(['views/common/baseview',
                 });
 
 
-
-
                 // Disable origin/destination toggle for Space for Flowmap and Parallel Sets
                 $(".viz-selector-button").click(function (event) {
 
@@ -359,19 +350,13 @@ define(['views/common/baseview',
 
                     // At least two dimensions, and one is Space:
                     if ((_this.checkedDimToggles.length > 1) && _this.selectedDimensionStrings.includes("space") && clickedToggleHasFlowsFormat) {
-                        console.log("origDest-toggle-space disabled");
-
                         $("#origDest-toggle-space").bootstrapToggle('disable');
                         event.preventDefault();
                     } else {
-                        console.log("origDest-toggle-space enabled");
-
                         $("#origDest-toggle-space").bootstrapToggle('enable');
                         event.preventDefault();
                     }
                 });
-
-
 
                 $(_this.dimensions.spaceLevelGranSelect).change(function () {
                     let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
@@ -433,27 +418,27 @@ define(['views/common/baseview',
             //                });
             //            },
             //
-            postprocess: function (flows) {
-                var idx = 0;
-                flows.forEach(function (flow) {
-                    var origin = flow.get('origin');
-                    var destination = flow.get('destination');
+            // postprocess: function (flows) {
+            //     var idx = 0;
+            //     flows.forEach(function (flow) {
+            //         var origin = flow.get('origin');
+            //         var destination = flow.get('destination');
 
-                    // API aggregates flows and doesn't return an id. Generate internal ID to assign interactions:
-                    flow.set('id', idx);
-                    idx++;
+            //         // API aggregates flows and doesn't return an id. Generate internal ID to assign interactions:
+            //         flow.set('id', idx);
+            //         idx++;
 
-                    // Save original amounts to be able to swap amount with delta and back
-                    flow._amount = flow.get('amount');
+            //         // Save original amounts to be able to swap amount with delta and back
+            //         flow._amount = flow.get('amount');
 
-                    // Color:
-                    origin.color = utils.colorByName(origin.name);
-                    destination.color = utils.colorByName(destination.name);
-                })
+            //         // Color:
+            //         origin.color = utils.colorByName(origin.name);
+            //         destination.color = utils.colorByName(destination.name);
+            //     })
 
-                this.flows = flows;
-                this.draw();
-            },
+            //     this.flows = flows;
+            //     this.draw();
+            // },
 
             //            draw: function (displayLevel) {
             //                this.flowMem = {};
@@ -526,27 +511,31 @@ define(['views/common/baseview',
             //            },
 
             // Returns parameters for filtered post-fetching based on assigned filter
-            getFlowFilterParams: function () {
+            getFilterAndDimParams: function () {
 
                 // Prepare filters for request
                 let filterParams = this.filtersView.getFilterParams();
 
                 // ///////////////////////////////
-                // format
+                // Format
                 let selectedVizualisationString;
                 $('.viz-selector-button').each(function (index, value) {
                     if ($(this).hasClass("active")) {
                         selectedVizualisationString = $(this).attr("data-viz");
                     }
                 });
-                if (selectedVizualisationString.includes("flowmap") || selectedVizualisationString.includes("parallelsets")) {
-                    filterParams.format = selectedVizualisationString;
+
+                if (selectedVizualisationString) {
+                    if (selectedVizualisationString.includes("flowmap") || selectedVizualisationString.includes("parallelsets")) {
+                        filterParams.format = selectedVizualisationString;
+                    }
                 }
 
                 // ///////////////////////////////
                 // DIMENSIONS
                 filterParams.dimensions = {};
 
+                // Time
                 if ($(this.dimensions.timeToggle).prop("checked")) {
                     var timeFilter = 'flowchain__month',
                         gran = $(this.dimensions.timeToggleGran).prop("checked") ? 'month' : 'year';
@@ -556,6 +545,7 @@ define(['views/common/baseview',
                     filterParams.dimensions.time = timeFilter;
                 }
 
+                // Space
                 if ($(this.dimensions.spaceToggle).prop("checked")) {
                     let originOrDestination = $(this.dimensions.spaceOrigDest).prop("checked") ? 'destination__geom' : 'origin__geom',
                         gran = $('#dim-space-gran-select option:selected').val();
@@ -564,12 +554,14 @@ define(['views/common/baseview',
                     filterParams.dimensions.space.field = originOrDestination;
                 }
 
+                // Economic activity
                 if ($(this.dimensions.economicActivityToggle).prop("checked")) {
                     let originOrDestination = $(this.dimensions.economicActivityOrigDest).prop("checked") ? 'destination__' : 'origin__';
                     gran = $(this.dimensions.economicActivityToggleGran).prop("checked") ? 'activity' : 'activity__activitygroup',
                         filterParams.dimensions.economicActivity = originOrDestination + gran;
                 }
 
+                // Treatment method
                 if ($(this.dimensions.treatmentMethodToggle).prop("checked")) {
                     let originOrDestination = $(this.dimensions.treatmentMethodOrigDest).prop("checked") ? 'destination__' : 'origin__';
                     gran = $(this.dimensions.treatmentMethodToggleGran).prop("checked") ? 'process' : 'process__processgroup',
@@ -954,10 +946,6 @@ define(['views/common/baseview',
                     flows: flows,
                     flowsView: this,
                 });
-
-                //this.loader.deactivate();
-                //this.flowMapView.addFlows(flows);
-                //this.flowMapView.rerender(true);
             },
 
             renderCircularSankey: function (dimensions, flows) {
@@ -977,6 +965,7 @@ define(['views/common/baseview',
             closeAllVizViews: function () {
                 $(".viz-wrapper-div").fadeOut();
                 $(".viz-wrapper-div").html("")
+                $(".parallelsets-container").hide();
                 if (this.barChartView != null) this.barChartView.close();
                 if (this.pieChartView != null) this.pieChartView.close();
                 if (this.linePlotView != null) this.linePlotView.close();
@@ -985,15 +974,18 @@ define(['views/common/baseview',
                 if (this.coordinatePointMapView != null) this.coordinatePointMapView.close();
                 if (this.areaChartView != null) this.areaChartView.close();
                 if (this.flowMapView != null) this.flowMapView.close();
+                if (this.parallelSetsView != null) this.parallelSetsView.close();
             },
 
             // Fetch flows and calls options.success(flows) on success
             fetchFlows: function (options) {
                 let _this = this;
-                let filterParams = this.getFlowFilterParams();
+                let filterParams = this.getFilterAndDimParams();
                 let data = {};
                 let selectedVizualisationString;
                 this.selectedDimensions = Object.entries(filterParams.dimensions);
+
+                $('#apply-filters').popover('hide');
 
                 $('.viz-selector-button').each(function (index, value) {
                     if ($(this).hasClass("active")) {
@@ -1008,8 +1000,20 @@ define(['views/common/baseview',
                 // Reset all visualizations:
                 this.closeAllVizViews();
 
-                // Only fetch Flows if at least one dimension has been selected:
-                if (_this.selectedDimensions.length > 0) {
+                // No visualization has been selected, inform user:
+                if (!selectedVizualisationString || _this.selectedDimensions.length == 0) {
+
+                    let options = {
+                        template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-body"></div></div>',
+                        content: "Make sure to select at least one dimension and a visualization type!",
+                        trigger: "focus",
+                    }
+
+                    $('#apply-filters').popover(options);
+                    $('#apply-filters').popover('show');
+
+                    // Only fetch Flows if a visualization has been selected:
+                } else {
                     this.loader.activate();
 
                     flows.postfetch({
@@ -1044,6 +1048,7 @@ define(['views/common/baseview',
                                 }
                             }
 
+
                             _this.loader.deactivate();
 
                             if (options.success) {
@@ -1059,44 +1064,57 @@ define(['views/common/baseview',
                 }
             },
 
-            resetDimAndVizToDefault: function () {
+            resetDimAndVizToDefault: function (event) {
                 _this = this;
+                _this.resetInProgres = true;
 
                 // //////////////////////////////////
                 // Dimension controls:
+
                 $(_this.dimensions.timeToggle).bootstrapToggle('off');
-                $(_this.dimensions.timeToggleGran).bootstrapToggle('Year');
+                $(_this.dimensions.timeToggleGran).bootstrapToggle('off');
+                $("#gran-toggle-time-col").hide();
 
                 $(_this.dimensions.spaceToggle).bootstrapToggle('off');
                 $(_this.dimensions.spaceLevelGranSelect).val($('#dim-space-gran-select:first-child')[0].value);
                 $(_this.dimensions.spaceOrigDest).bootstrapToggle('off');
+                $("#gran-toggle-space-col").hide();
+                $("#origDest-toggle-space-col").hide();
 
                 $(_this.dimensions.economicActivityToggle).bootstrapToggle('off');
                 $(_this.dimensions.economicActivityToggleGran).bootstrapToggle('off');
                 $(_this.dimensions.economicActivityOrigDest).bootstrapToggle('off');
+                $("#gran-econ-activity-col").hide();
+                $("#origDest-toggle-econAct-col").hide();
 
                 $(_this.dimensions.treatmentMethodToggle).bootstrapToggle('off');
                 $(_this.dimensions.treatmentMethodToggleGran).bootstrapToggle('off');
                 $(_this.dimensions.treatmentMethodOrigDest).bootstrapToggle('off');
-
-                $("#gran-toggle-time-col").hide();
-                $("#gran-toggle-space-col").hide();
-                $("#gran-econ-activity-col").hide();
                 $("#gran-treatment-method-col").hide();
-                $("#gran-material-col").hide();
-
-                $("#origDest-toggle-space-col").hide();
-                $("#origDest-toggle-econAct-col").hide();
                 $("#origDest-toggle-treatment-col").hide();
 
+                $(_this.dimensions.materialToggle).bootstrapToggle('off');
+                $(".gran-radio-material-label").removeClass("active");
+                $($("#gran-radio-material")[0].children[0]).addClass("active");
+                $("#gran-material-col").hide();
+
+
+                // (Re)enable all toggles:
+                $('.bootstrapToggle').each(function (index, value) {
+                    $(this).bootstrapToggle('enable');
+                });
 
                 // //////////////////////////////////
                 // Vizualisation controls:
                 $(".viz-selector-button").removeClass("active");
 
+                // Hide all Viz options:
+                $(".viz-container").hide();
+
 
                 // Refresh all selectpickers:
                 $(".selectpicker").selectpicker('refresh');
+                _this.resetInProgres = false;
             },
 
         });

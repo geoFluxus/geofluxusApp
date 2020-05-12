@@ -22,7 +22,7 @@ module.exports = {
                 let monthObject = months.find(month => month.attributes.id == flow.month);
 
                 this[index].id = monthObject.attributes.id;
-                this[index].month = utils.returnMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
+                this[index].month = utils.toMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
                 this[index].monthName = this[index].month.substring(0, this[index].month.indexOf(' '));
                 this[index].yearMonthCode = parseInt(monthObject.attributes.code.substring(2, 6) + monthObject.attributes.code.substring(0, 2));
                 this[index].year = parseInt(monthObject.attributes.code.substring(2, 6));
@@ -44,21 +44,20 @@ module.exports = {
                 let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.activitygroup);
 
                 this[index].activityGroupCode = activityGroupObject.attributes.code;
-                this[index].activityGroupName = activityGroupObject.attributes.name[0].toUpperCase() + activityGroupObject.attributes.name.slice(1).toLowerCase();
+                this[index].activityGroupName = utils.capitalizeFirstLetter(activityGroupObject.attributes.name);
             }, flows);
 
             // Granularity: Activity
         } else if (granularity == "origin__activity" || granularity == "destination__activity") {
             flows.forEach(function (flow, index) {
-                let activityGroupName = "";
                 let activityObject = activities.find(activity => activity.attributes.id == flow.activity);
+                let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.activitygroup);
 
                 this[index].activityCode = activityObject.attributes.nace;
-                this[index].activityName = activityObject.attributes.name[0].toUpperCase() + activityObject.attributes.name.slice(1).toLowerCase();
+                this[index].activityName = utils.capitalizeFirstLetter(activityObject.attributes.name);
 
-                this[index].activityGroupCode = this[index].activityCode.substring(0, this[index].activityCode.indexOf('-'));
-                activityGroupName = activityGroups.find(activityGroup => activityGroup.attributes.code == this[index].activityGroupCode).attributes.name;
-                this[index].activityGroupName = activityGroupName[0].toUpperCase() + activityGroupName.slice(1).toLowerCase();
+                this[index].activityGroupCode = activityGroupObject.attributes.code;
+                this[index].activityGroupName = utils.capitalizeFirstLetter(activityGroupObject.attributes.name);
             }, flows);
         }
 
@@ -76,22 +75,21 @@ module.exports = {
                 let processGroupObject = processGroups.find(processGroup => processGroup.attributes.id == flow.processgroup);
 
                 this[index].processGroupCode = processGroupObject.attributes.code;
-                this[index].processGroupName = processGroupObject.attributes.name[0].toUpperCase() + processGroupObject.attributes.name.slice(1).toLowerCase();
+                this[index].processGroupName = utils.capitalizeFirstLetter(processGroupObject.attributes.name);
             }, flows);
 
             // Granularity: Treatment Method
         } else if (granularity == "origin__process" || granularity == "destination__process") {
 
             flows.forEach(function (flow, index) {
-                let processGroupName = "";
                 let processObject = processes.find(process => process.attributes.id == flow.process);
+                let processGroupObject = processGroups.find(processGroup => processGroup.attributes.id == flow.processgroup);
 
                 this[index].processCode = processObject.attributes.code;
-                this[index].processName = processObject.attributes.name[0].toUpperCase() + processObject.attributes.name.slice(1).toLowerCase();
+                this[index].processName = utils.capitalizeFirstLetter(processObject.attributes.name);
 
-                this[index].processGroupCode = processObject.attributes.code.substring(0, 1);
-                processGroupName = processGroups.find(processGroup => processGroup.attributes.code == this[index].processGroupCode).attributes.name;
-                this[index].processGroupName = processGroupName[0].toUpperCase() + processGroupName.slice(1).toLowerCase();
+                this[index].processGroupCode = processGroupObject.attributes.code;
+                this[index].processGroupName = utils.capitalizeFirstLetter(processGroupObject.attributes.name);
             }, flows);
         }
 
@@ -110,7 +108,7 @@ module.exports = {
                 let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.waste02);
 
                 this[index].ewc2Code = ewc2Object.attributes.ewc_code;
-                this[index].ewc2Name = ewc2Object.attributes.ewc_name[0].toUpperCase() + ewc2Object.attributes.ewc_name.slice(1).toLowerCase();
+                this[index].ewc2Name = utils.capitalizeFirstLetter(ewc2Object.attributes.ewc_name);
             }, flows);
 
             // ewc4
@@ -121,9 +119,9 @@ module.exports = {
                 let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.waste04);
 
                 this[index].ewc2Code = ewc2Object.attributes.ewc_code;
-                this[index].ewc2Name = ewc2Object.attributes.ewc_name[0].toUpperCase() + ewc2Object.attributes.ewc_name.slice(1).toLowerCase();
+                this[index].ewc2Name = utils.capitalizeFirstLetter(ewc2Object.attributes.ewc_name);
                 this[index].ewc4Code = ewc4Object.attributes.ewc_code;
-                this[index].ewc4Name = ewc4Object.attributes.ewc_name[0].toUpperCase() + ewc4Object.attributes.ewc_name.slice(1).toLowerCase();
+                this[index].ewc4Name = utils.capitalizeFirstLetter(ewc4Object.attributes.ewc_name);
             }, flows);
 
             // ewc6
@@ -134,15 +132,23 @@ module.exports = {
                 let ewc6Object = ewc6.find(ewc => ewc.attributes.id == flow.waste06);
 
                 this[index].ewc2Code = ewc2Object.attributes.ewc_code;
-                this[index].ewc2Name = ewc2Object.attributes.ewc_name[0].toUpperCase() + ewc2Object.attributes.ewc_name.slice(1).toLowerCase();
+                this[index].ewc2Name = utils.capitalizeFirstLetter(ewc2Object.attributes.ewc_name);
                 this[index].ewc4Code = ewc4Object.attributes.ewc_code;
-                this[index].ewc4Name = ewc4Object.attributes.ewc_name[0].toUpperCase() + ewc4Object.attributes.ewc_name.slice(1).toLowerCase();
+                this[index].ewc4Name = utils.capitalizeFirstLetter(ewc4Object.attributes.ewc_name);
                 this[index].ewc6Code = ewc6Object.attributes.ewc_code;
-                this[index].ewc6Name = ewc6Object.attributes.ewc_name[0].toUpperCase() + ewc6Object.attributes.ewc_name.slice(1).toLowerCase();
+                this[index].ewc6Name = utils.capitalizeFirstLetter(ewc6Object.attributes.ewc_name);
             }, flows);
-
         }
 
         return flows
+    },
+
+    returnCodePlusName: function (input) {
+        let codeString =  input.attributes.code ? input.attributes.code : input.attributes.nace;
+        return codeString + ". " + utils.capitalizeFirstLetter(input.attributes.name);
+    },
+
+    returnEwcCodePlusName: function(input){
+        return input.attributes.ewc_code + ". " + utils.capitalizeFirstLetter(input.attributes.ewc_name);
     },
 }
