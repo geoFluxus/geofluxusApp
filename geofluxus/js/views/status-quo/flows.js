@@ -526,8 +526,11 @@ define(['views/common/baseview',
                 });
 
                 if (selectedVizualisationString) {
-                    if (selectedVizualisationString.includes("flowmap") || selectedVizualisationString.includes("parallelsets")) {
-                        filterParams.format = selectedVizualisationString;
+                    if (["flowmap", "parallelsets", "circularsankey"].includes(selectedVizualisationString)) {
+                        let formatString = selectedVizualisationString;
+                        formatString = (formatString == "circularsankey")  ? "parallelsets" : formatString;
+                        
+                        filterParams.format = formatString;
                     }
                 }
 
