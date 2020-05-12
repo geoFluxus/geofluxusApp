@@ -96,10 +96,13 @@ class StatusQuoViewSet(FilterFlowViewSet):
                                                 'geom')
 
         if format == "parallelsets" and len(fields) == 1:
+            field = fields[0].replace('origin__', '')\
+                             .replace('destination__', '')
+            level = field.split('__')[-1]
             levels, fields = [], []
-            levels.extend(['processgroup', 'processgroup'])
-            fields.extend(['origin__process__processgroup',
-                           'destination__process__processgroup'])
+            levels.extend([level, level])
+            fields.extend(['origin__' + field,
+                           'destination__' + field])
 
         # workaround Django ORM bug
         # queryset = queryset.order_by()
@@ -132,14 +135,14 @@ class StatusQuoViewSet(FilterFlowViewSet):
                     if format == 'flowmap':
                         item = {}
                         item['id'] = actor['id']
-                        item['name'] = 'anonymous' + str(random.randint(1, 1000000))
+                        item['name'] = str(random.randint(1, 10**6))
                         item['lon'] = actor['geom'].x + random.randint(0, 10) * 0.01
                         item['lat'] = actor['geom'].y + random.randint(0, 10) * 0.01
                         label = level.split('_')[0]
                         flow_item.append((label, item))
                     else:
                         flow_item.append(('actorId', actor['id']))
-                        flow_item.append(('actorName', 'anonymous' + str(random.randint(1, 1000000))))
+                        flow_item.append(('actorName', str(random.randint(1, 10**6))))
                         flow_item.append(('lon', actor['geom'].x + random.randint(0, 10) * 0.01))
                         flow_item.append(('lat', actor['geom'].y + random.randint(0, 10) * 0.01))
                     continue
