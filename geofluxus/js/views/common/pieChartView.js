@@ -70,6 +70,13 @@ define(['views/common/baseview',
                         ]
                     };
 
+                    // var colorArray = utils.interpolateColors(flows.length);
+
+                    // flows.forEach(function (flow, index) {        
+                    //     this[index].color = colorArray[index];
+                    // }, flows);
+        
+
                     // Time 
                     if (dim1String == "time") {
                         // Granularity = year

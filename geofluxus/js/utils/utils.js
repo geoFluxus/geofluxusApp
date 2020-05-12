@@ -1,9 +1,9 @@
 var d3 = require('d3');
+var utils = require('utils/utils');
 
 //var color = "" //d3.scale.category20();
-
 var color = d3.scaleOrdinal(d3.schemeCategory10);
-var colorScale = d3.scaleSequential(d3.interpolateRdYlGn);
+var colorScale = d3.scaleSequential(d3.interpolateSpectral);
 
 
 module.exports = {
@@ -128,7 +128,7 @@ module.exports = {
         var colorArray = [];
 
         for (i = 0; i < dataLength; i++) {
-            colorPoint = calculatePoint(i, intervalSize, colorRangeInfo);
+            colorPoint = this.calculatePoint(i, intervalSize, colorRangeInfo);
             colorArray.push(colorScale(colorPoint));
         }
 

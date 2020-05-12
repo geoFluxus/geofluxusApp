@@ -33,6 +33,20 @@ define([
             }
 
             new d3plus.Plot()
+                .config({
+                    xConfig: {
+                        // title: "X - Axis",
+                        titleConfig: {
+                            fontColor: "white"
+                        },
+                    },
+                    yConfig: {
+                        // title: "Y - Axis",
+                        titleConfig: {
+                            fontColor: "white"
+                        }
+                    }
+                })
                 .tooltipConfig(options.tooltipConfig)
                 .data(options.data)
                 .groupBy(groupByValue)
@@ -41,9 +55,41 @@ define([
                 .baseline(0)
                 .discrete("x")
                 .xSort(xSort)
+                .color(function (d) {
+                    return d["color"];
+                })
                 .select(options.el)
                 .label(labelFunction)
                 .legend(hasLegend)
+                .xConfig({
+                    shapeConfig: {
+                        labelConfig: {
+                            fontColor: "white",
+                            // fontFamily: ["Montserrat", "sans-serif"]
+                        }
+                    }
+                })
+                .yConfig({
+                    shapeConfig: {
+                        labelConfig: {
+                            fontColor: "white",
+                            // fontFamily: ["Montserrat", "sans-serif"]
+                        }
+                    }
+                })
+                .shapeConfig({
+                    labelConfig: {
+                        fontFamily: ["Montserrat", "sans-serif"]
+                    }
+                })
+                .legendConfig({
+                    shapeConfig: {
+                        labelConfig: {
+                            fontColor: "white",
+                            fontFamily: ["Montserrat", "sans-serif"]
+                        }
+                    }
+                })
                 .shape("Bar")
                 .stacked(options.isStacked)
                 .downloadPosition("left")
