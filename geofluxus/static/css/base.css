@@ -1,3 +1,8 @@
+:root {
+    --primary: #97BEA9;
+    /* --primary-color-active:  */
+}
+
 a {
     color: white;
 }
@@ -28,12 +33,9 @@ body {
 
 
 
-
-
-
 .block {
     background-color: #393939;
-    border-radius: 22px;
+    border-radius: 30px;
     padding: 1.5rem;
     padding-bottom: 1rem;
     margin: 1.5rem;
@@ -41,7 +43,7 @@ body {
 
 .card {
     background-color: #252525 !important;
-    border-radius: 22px !important;
+    border-radius: 30px !important;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
 }
@@ -49,9 +51,6 @@ body {
 .card-body {
     padding-top: 0em !important;
 }
-
-
-
 
 
 
@@ -70,25 +69,6 @@ body {
 
 /* BORDER RADIUS */
 
-.btn {
-    border-radius: 18px;
-}
-
-.dropdown {
-    border-radius: 18px;
-}
-
-.dropdown-menu.show {
-    border-radius: 18px;
-}
-
-.dropdown-menu.show .bs-searchbox input {
-    border-radius: 18px !important;
-}
-
-.dropdown-content {
-    border-radius: 18px !important;
-}
 
 input {
     border-radius: 18px;
@@ -103,21 +83,54 @@ input {
     padding-left: 0.5rem;
 }
 
-
-.dropdown-item {
-    padding-left: 1rem;
-    padding-right: 1rem;
-}
-
-.dropdown-item.active {
-    background-color: grey !important;
-}
-
 /* BUTTON STYLES */
+
+.btn {
+    border-radius: 18px;
+}
 
 .btn-default {
     border-color: white;
     color: white;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    border-color: rgb(114, 145, 128);
+}
+
+.btn-primary.focus,
+.btn-primary:focus {
+    background-color: rgb(89, 155, 119) !important;
+    border-color: rgb(71, 109, 88) !important;
+    box-shadow: 0 0 0 .2rem rgba(112, 141, 125, .5);
+}
+
+
+.btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:not(:disabled):not(.disabled):active,
+.show>.btn-primary.dropdown-toggle {
+    background-color: rgb(89, 155, 119) !important;
+    border-color: rgb(71, 109, 88) !important;
+
+}
+
+.btn-primary:not(:disabled):not(.disabled).active:focus,
+.btn-primary:not(:disabled):not(.disabled):active:focus,
+.show>.btn-primary.dropdown-toggle:focus {
+    box-shadow: 0 0 0 .2rem rgba(112, 141, 125, .5);
+}
+
+.btn-primary:not(:disabled):not(.disabled).active.focus,
+.btn-primary:not(:disabled):not(.disabled):active.focus,
+.show>.btn-primary.dropdown-toggle:focus {
+    box-shadow: 0 0 0 .2rem rgba(112, 141, 125, .5);
+}
+
+
+.btn-primary.active {
+    background-color: rgb(112, 141, 125) !important;
+    border-color: rgb(114, 145, 128) !important;
 }
 
 .btn:hover {
@@ -132,6 +145,96 @@ input {
     border-color: primary;
     color: black;
 }
+
+
+
+
+/* Dropdown for Bootstrap Select */
+
+.dropdown-button {
+    border-color: black;
+    background-color: transparent;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    border-radius: 18px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    min-width: 160px;
+    border-radius: 18px !important;
+}
+
+.dropdown-content a {
+    color: white;
+    font-size: 16px;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: white;
+    color: black;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.bootstrap-select>.dropdown-toggle::after {
+    font-size: x-large;
+    margin-top: 0px;
+}
+
+.dropdown-menu.show {
+    border-radius: 18px;
+}
+
+.dropdown-menu.show .bs-searchbox input {
+    border-radius: 18px !important;
+}
+
+.dropdown-item {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.dropdown-item.active {
+    background-color: grey !important;
+}
+
+/* Popover Tooltips */
+
+.popover {
+    border-radius: 18px;
+    max-width: 350px;
+}
+
+.popover-header {
+    border-top-right-radius: 18px;
+    border-top-left-radius: 18px;
+    color: black;
+}
+
+.popover-body {
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+.popover-body span a {
+    color: black !important;
+    text-decoration: underline;
+}
+
+/* Helpicons to open popover tooltips */
 
 .buttonHelpiconContainer a {
     position: relative;
@@ -156,63 +259,6 @@ input {
     outline: none;
 }
 
-.dropdown-button {
-    border-color: black;
-    background-color: transparent;
-    font-size: 16px;
-    color: white;
-    cursor: pointer;
-}
-
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    /* background-color: black; */
-    min-width: 160px;
-}
-
-.dropdown-content a {
-    color: white;
-    font-size: 16px;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
-
-.dropdown-content a:hover {
-    background-color: white;
-    color: black;
-}
-
-.dropdown:hover .dropdown-content {
-    display: block;
-}
-
-.popover {
-    border-radius: 18px;
-    max-width: 350px;
-}
-
-.popover-header {
-    border-top-right-radius: 18px;
-    border-top-left-radius: 18px;
-    color: black;
-}
-
-.popover-body {
-    text-align: justify;
-    text-justify: inter-word;
-}
-
-.popover-body span a {
-    color: black !important;
-    text-decoration: underline;
-}
 
 /* SCROLLBAR STYLING */
 
@@ -242,8 +288,8 @@ input {
 }
 
 .modal-content {
-    box-shadow: 0px 0px 5px 3px rgba(255, 255, 255, 0.24);
-    background-color: #727171;
+    box-shadow: 0px 0px 5px 10px rgba(3, 3, 3, 0.4);
+    background-color: #585858;
     color: white;
     border-radius: 18px;
 }
@@ -269,8 +315,8 @@ input {
     height: 150px;
     border: 16px solid black;
     border-radius: 50%;
-    border-top: 16px solid white;
-    box-shadow: 0 0 20px white, inset 0 0 20px white;
+    border-top: 16px solid rgb(179, 178, 178);
+    box-shadow: 0 0 20px rgb(107, 106, 106), inset 0 0 15px rgb(151, 151, 151);
     -webkit-animation: spin 2s linear infinite;
     animation: spin 2s linear infinite;
 }

@@ -72,8 +72,8 @@ define(['views/common/baseview',
                     let hasMultipleLines = this.options.hasMultipleLines;
                     let tooltipConfig = {
                         tbody: [
-                            ["Waste (metric ton)", function (d) {
-                                return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                            ["Waste", function (d) {
+                                return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale()) + " t"
                             }]
                         ]
                     };
