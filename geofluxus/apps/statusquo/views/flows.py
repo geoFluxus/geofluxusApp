@@ -135,7 +135,7 @@ class StatusQuoViewSet(FilterFlowViewSet):
                     if format == 'flowmap':
                         item = {}
                         item['id'] = actor['id']
-                        item['name'] = str(random.randint(1, 10**6)) if anonymous else actor['company__name']
+                        item['name'] = 'company ' + str(random.randint(1, 10**6)) if anonymous else actor['company__name']
                         item['lon'] = actor['geom'].x + random.randint(0, 10) * 0.01 if anonymous \
                                       else actor['geom'].x
                         item['lat'] = actor['geom'].y + random.randint(0, 10) * 0.01 if anonymous \
@@ -145,7 +145,7 @@ class StatusQuoViewSet(FilterFlowViewSet):
                     else:
                         if anonymous:
                             flow_item.append(('actorId', actor['id']))
-                            flow_item.append(('actorName', str(random.randint(1, 10**6))))
+                            flow_item.append(('actorName', 'company ' + str(random.randint(1, 10**6))))
                             flow_item.append(('lon', actor['geom'].x + random.randint(0, 10) * 0.01))
                             flow_item.append(('lat', actor['geom'].y + random.randint(0, 10) * 0.01))
                         else:
