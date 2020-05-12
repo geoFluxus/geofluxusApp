@@ -475,7 +475,7 @@ define([
                     var rect = _this.overlay.getBoundingClientRect();
                     _this.tooltip.transition()
                         .duration(200)
-                        .style("opacity", 0.8);
+                        .style("opacity", 0.925);
                     _this.tooltip.html(label)
                         .style("left", (d3.event.pageX - rect.x - window.pageXOffset) + "px")
                         .style("top", (d3.event.pageY - rect.y - 28 - window.pageYOffset) + "px")
