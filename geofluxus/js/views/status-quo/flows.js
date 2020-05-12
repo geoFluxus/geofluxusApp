@@ -948,6 +948,20 @@ define(['views/common/baseview',
                 });
             },
 
+            renderParallelSets: function (dimensions, flows) {
+                if (this.parallelSetsView != null) this.parallelSetsView.close();
+
+                $(".parallelsets-container").show();
+                $(".parallelsets-wrapper").fadeIn();
+
+                this.parallelSetsView = new ParallelSetsView({
+                    el: ".parallelsets-wrapper",
+                    dimensions: dimensions,
+                    flows: flows,
+                    flowsView: this,
+                });
+            },
+
             renderCircularSankey: function (dimensions, flows) {
                 if (this.circularSankeyView != null) this.circularSankeyView.close();
 
