@@ -15,10 +15,6 @@ define(['views/common/baseview',
         'views/common/coordinatePointMapView',
         'views/common/areaChartView',
         'views/common/flowMapView',
-         'bootstrap',
-         'bootstrap-select',
-         'bootstrap-toggle',
-         'textarea-autosize',
     ],
     function (
         BaseView,
@@ -37,6 +33,8 @@ define(['views/common/baseview',
         CoordinatePointMapView,
         AreaChartView,
         FlowMapView,
+        ParallelSetsView,
+        CircularSankeyView,
     ) {
 
         var FlowsView = BaseView.extend({
@@ -322,7 +320,13 @@ define(['views/common/baseview',
                             } else if (_this.selectedDimensionStrings.includes("economicActivity") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
+<<<<<<< Updated upstream
                                 //$("#viz-parallelsets").parent().fadeIn();
+=======
+                                $("#viz-parallelsets").parent().fadeIn();
+
+                                $("#viz-circularsankey").parent().fadeIn();
+>>>>>>> Stashed changes
                             } else if (_this.selectedDimensionStrings.includes("economicActivity") && _this.selectedDimensionStrings.includes("material")) {
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
@@ -958,6 +962,19 @@ define(['views/common/baseview',
                 //this.flowMapView.rerender(true);
             },
 
+            renderCircularSankey: function (dimensions, flows) {
+                if (this.circularSankeyView != null) this.circularSankeyView.close();
+
+                $(".parallelsets-container").show();
+                $(".parallelsets-wrapper").fadeIn();
+
+                this.circularSankeyView = new CircularSankeyView({
+                    el: ".circularsankey-wrapper",
+                    dimensions: dimensions,
+                    flows: flows,
+                    flowsView: this,
+                });
+            },
 
             closeAllVizViews: function () {
                 $(".viz-wrapper-div").fadeOut();
@@ -1008,6 +1025,7 @@ define(['views/common/baseview',
                                 this[index] = flow.attributes;
                             }, _this.flows);
 
+<<<<<<< Updated upstream
                             switch (_this.selectedDimensions.length) {
                                 case 1:
                                     _this.render1Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
@@ -1017,12 +1035,30 @@ define(['views/common/baseview',
                                     break;
                                 default:
                                     // Nothing
+=======
+                            // Some visualizations require different processing: 
+                            if (["parallelsets", "circularsankey"].includes(selectedVizualisationString)) {
+                                switch (selectedVizualisationString) {
+                                    case "parallelsets":
+                                        _this.renderParallelSets(_this.selectedDimensions, _this.flows);
+                                        break;
+                                    case "circularsankey":
+                                        _this.renderCircularSankey(_this.selectedDimensions, _this.flows);
+                                        break;
+                                }
+                            } else {
+                                switch (_this.selectedDimensions.length) {
+                                    case 1:
+                                        _this.render1Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
+                                        break;
+                                    case 2:
+                                        _this.render2Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
+                                        break;
+                                }
+>>>>>>> Stashed changes
                             }
 
                             _this.loader.deactivate();
-
-                            //_this.postprocess(flows);
-                            //_this.renderSankeyMap();
 
                             if (options.success) {
                                 options.success(flows);

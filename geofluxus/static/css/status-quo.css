@@ -278,48 +278,53 @@ label[for="flows-waste06-select"] {
 }
 
 #span-viz-choroplethmap::before {
-    background-image: url('../img/viz-choropleth.svg');
+    background-image: url('../img/viz-icons/viz-choropleth.svg');
 }
 
 #span-viz-coordinatepointmap::before {
-    background-image: url('../img/viz-coordpoint.svg');
+    background-image: url('../img/viz-icons/viz-coordpoint.svg');
 }
 
 #span-viz-piechart::before {
-    background-image: url('../img/viz-piechart.svg');
+    background-image: url('../img/viz-icons/viz-piechart.svg');
 }
 
 #span-viz-barchart::before {
-    background-image: url('../img/viz-barchart.svg');
+    background-image: url('../img/viz-icons/viz-barchart.svg');
 }
 
 #span-viz-treemap::before {
-    background-image: url('../img/viz-treemap.svg');
+    background-image: url('../img/viz-icons/viz-treemap.svg');
 }
 
 #span-viz-lineplot::before {
-    background-image: url('../img/viz-lineplot.svg');
+    background-image: url('../img/viz-icons/viz-lineplot.svg');
 }
 
 
 #span-viz-lineplotmultiple::before {
-    background-image: url('../img/viz-lineplotmultiple.svg');
+    background-image: url('../img/viz-icons/viz-lineplotmultiple.svg');
 }
 
 #span-viz-areachart::before {
-    background-image: url('../img/viz-stackedareachart.svg');
+    background-image: url('../img/viz-icons/viz-stackedareachart.svg');
 }
 
 #span-viz-stackedbarchart::before {
-    background-image: url('../img/viz-stackedbarchart.svg');
-}
-
-#span-viz-flowmap::before {
-    background-image: url('../img/viz-flowmap.svg');
+    background-image: url('../img/viz-icons/viz-stackedbarchart.svg');
 }
 
 #span-viz-parallelsets::before {
-    background-image: url('../img/viz-parallelsets.svg');
+    background-image: url('../img/viz-icons/viz-parallelsets.svg');
+}
+
+#span-viz-circularsankey::before {
+    background-image: url('../img/viz-icons/viz-circularsankey.svg');
+}
+
+#span-viz-flowmap::before {
+    background-image: url('../img/viz-icons/viz-flowmap.svg');
+
 }
 
 /* VISUALISATION STYLES */
