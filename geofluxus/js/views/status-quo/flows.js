@@ -826,7 +826,7 @@ define(['views/common/baseview',
 
                 switch (selectedVizualisationString) {
                     case "lineplotmultiple":
-                        this.renderLinePlot(dimensions, flows);
+                        this.renderLinePlot(dimensions, flows, true);
                         break;
                     case "areachart":
                         this.renderAreaChart(dimensions, flows);

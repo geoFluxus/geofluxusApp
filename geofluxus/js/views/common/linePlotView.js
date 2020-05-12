@@ -57,11 +57,12 @@ define(['views/common/baseview',
                 render: function (data) {
                     let _this = this;
                     let flows = this.options.flows;
+                    let occurances = [];
 
                     let dim1String = this.options.dimensions[0][0];
                     let gran1 = this.options.dimensions[0][1];
                     // let dim2String = this.options.dimensions[1][0];
-                     let gran2 = this.options.dimensions[1] ? this.options.dimensions[1][1] : {};
+                    let gran2 = this.options.dimensions[1] ? this.options.dimensions[1][1] : {};
 
                     let dimStrings = [];
                     this.options.dimensions.forEach(dim => dimStrings.push(dim[0]));
@@ -78,6 +79,7 @@ define(['views/common/baseview',
                         ]
                     };
 
+
                     // /////////////////////////////
                     // 1D - Time dimension
 
@@ -92,7 +94,9 @@ define(['views/common/baseview',
                         // Granularity = month:
                     } else if (gran1 == "flowchain__month") {
                         x = ["yearMonthCode"];
-                        if (hasMultipleLines) {
+
+                        // Only for time
+                        if (dim1String.length == 1 && hasMultipleLines) {
                             groupBy = ["year"];
                             x = ["monthName"];
                         }
@@ -112,13 +116,45 @@ define(['views/common/baseview',
                             tooltipConfig.tbody.push(["Area", function (d) {
                                 return d.areaName
                             }]);
+
+
+                            // Get all unique occurences
+                            occurances = flows.map(x => x.areaName);
+                            occurances = _.unique(occurances);
+
+                            // Create array with unique colors:
+                            colorArray = utils.interpolateColors(occurances.length);
+
+                            // Create array with prop of areaName and prop of matching color:
+                            occurances.forEach(function (areaName, index) {
+                                this[index] = {
+                                    areaName: this[index],
+                                    color: colorArray[index],
+                                };
+                            }, occurances);
+                            console.log(occurances)
+
+
+                            // Asisgn a color for each areaName:
+                            flows.forEach(function (flow, index) {
+                                this[index].color = occurances.find(occ => occ.areaName == flow.areaName).color;
+                            }, flows);
+
+                            console.log(flows);
+
+
+
                         } else {
                             isActorLevel = true;
                             groupBy = ["actorId"];
                             tooltipConfig.tbody.push(["Company", function (d) {
                                 return d.actorName
                             }]);
+                            // Get all unique occurences
+                            occurances = flows.map(x => x.actorId);
                         }
+
+
 
                         // //////////////////////////////////////////
                         // 2D - Time & Economic Activity
@@ -153,7 +189,7 @@ define(['views/common/baseview',
                                 return d.processCode + " " + d.processName;
                             }]);
                         }
-                    
+
                         // //////////////////////////////////////////
                         // 2D - Time & Material
                     } else if (dimStrings.includes("material")) {
@@ -182,8 +218,8 @@ define(['views/common/baseview',
                                     return d.ewc4Code + " " + d.ewc4Name;
                                 }],
                                 ["EWC Entry", function (d) {
-                                return d.ewc6Code + " " + d.ewc6Name;
-                            }]);
+                                    return d.ewc6Code + " " + d.ewc6Name;
+                                }]);
                         }
                     }
 

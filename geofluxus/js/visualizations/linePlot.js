@@ -22,13 +22,18 @@ define([
             let groupByValue = options.groupBy ? options.groupBy : null;
             let shapeConfigValue = {
                 Line: {
-                    strokeWidth: 2,
+                    strokeWidth: 3,
                     curve: "catmullRom",
                 }
             };
 
             if (!options.groupBy) {
                 shapeConfigValue.Line.stroke = "red";
+            } else {
+                shapeConfigValue.Line.stroke =
+                    function (d) {
+                        return d.color
+                    }
             }
 
             let labelFunction = function (d) {
@@ -71,6 +76,13 @@ define([
                 .downloadButton(true)
                 .controlConfig({
                     text: "<i class='fas fa-camera' style='color: white'></i>",
+                })
+                .legendConfig({
+                    shapeConfig: {
+                        labelConfig: {
+                            fontColor: "white",
+                        }
+                    }
                 })
                 .controlPadding(0)
                 .select(options.el)
