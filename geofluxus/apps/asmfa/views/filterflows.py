@@ -28,6 +28,12 @@ class FilterFlowViewSet(PostGetViewMixin,
         filtered flows according to user selections
         '''
 
+        # anonymize
+        anonymous = False
+        user_groups = request.user.groups.values_list('name', flat=True)
+        if 'Demo' in user_groups:
+            anonymous = True
+
         # filter by query params
         queryset = self._filter(kwargs, query_params=request.query_params,
                                 SerializerClass=self.get_serializer_class())
@@ -62,7 +68,7 @@ class FilterFlowViewSet(PostGetViewMixin,
         # serialize data according to dimension
         dimensions = params.pop('dimensions', {})
         format = params.pop('format', None)
-        data = self.serialize(queryset, dimensions, format)
+        data = self.serialize(queryset, dimensions, format, anonymous)
         return Response(data)
 
     # filter chain classifications

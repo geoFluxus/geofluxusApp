@@ -10,7 +10,7 @@ from django.db.models import (OuterRef, Subquery, F, Sum)
 
 
 class StatusQuoViewSet(FilterFlowViewSet):
-    def serialize(self, queryset, dimensions, format):
+    def serialize(self, queryset, dimensions, format, anonymous):
         '''
         Serialize data into groups
         according to the requested dimensions
@@ -96,10 +96,13 @@ class StatusQuoViewSet(FilterFlowViewSet):
                                                 'geom')
 
         if format == "parallelsets" and len(fields) == 1:
+            field = fields[0].replace('origin__', '')\
+                             .replace('destination__', '')
+            level = field.split('__')[-1]
             levels, fields = [], []
-            levels.extend(['processgroup', 'processgroup'])
-            fields.extend(['origin__process__processgroup',
-                           'destination__process__processgroup'])
+            levels.extend([level, level])
+            fields.extend(['origin__' + field,
+                           'destination__' + field])
 
         # workaround Django ORM bug
         # queryset = queryset.order_by()
@@ -132,16 +135,24 @@ class StatusQuoViewSet(FilterFlowViewSet):
                     if format == 'flowmap':
                         item = {}
                         item['id'] = actor['id']
-                        item['name'] = 'anonymous' + str(random.randint(1, 1000000))
-                        item['lon'] = actor['geom'].x + random.randint(0, 10) * 0.01
-                        item['lat'] = actor['geom'].y + random.randint(0, 10) * 0.01
+                        item['name'] = 'company ' + str(random.randint(1, 10**6)) if anonymous else actor['company__name']
+                        item['lon'] = actor['geom'].x + random.randint(0, 10) * 0.01 if anonymous \
+                                      else actor['geom'].x
+                        item['lat'] = actor['geom'].y + random.randint(0, 10) * 0.01 if anonymous \
+                                      else actor['geom'].y
                         label = level.split('_')[0]
                         flow_item.append((label, item))
                     else:
-                        flow_item.append(('actorId', actor['id']))
-                        flow_item.append(('actorName', 'anonymous' + str(random.randint(1, 1000000))))
-                        flow_item.append(('lon', actor['geom'].x + random.randint(0, 10) * 0.01))
-                        flow_item.append(('lat', actor['geom'].y + random.randint(0, 10) * 0.01))
+                        if anonymous:
+                            flow_item.append(('actorId', actor['id']))
+                            flow_item.append(('actorName', 'company ' + str(random.randint(1, 10**6))))
+                            flow_item.append(('lon', actor['geom'].x + random.randint(0, 10) * 0.01))
+                            flow_item.append(('lat', actor['geom'].y + random.randint(0, 10) * 0.01))
+                        else:
+                            flow_item.append(('actorId', actor['id']))
+                            flow_item.append(('actorName', actor['company__name']))
+                            flow_item.append(('lon', actor['geom'].x))
+                            flow_item.append(('lat', actor['geom'].y))
                     continue
                 elif 'area' in level:
                     area = next(x for x in space_inv if x['id'] == group[field])

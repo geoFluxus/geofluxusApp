@@ -7,7 +7,8 @@ define(['views/common/baseview',
         'app-config',
         'save-svg-as-png',
         'file-saver',
-        'utils/utils'
+        'utils/utils',
+        'utils/enrichFlows',
     ],
 
     function (
@@ -21,6 +22,7 @@ define(['views/common/baseview',
         saveSvgAsPng,
         FileSaver,
         utils,
+        enrichFlows,
         Slider) {
 
         /**
@@ -58,113 +60,28 @@ define(['views/common/baseview',
                     let _this = this;
                     let flows = this.options.flows;
 
-                    let dim1String = this.options.dimensions[0][0];
-                    let gran1 = this.options.dimensions[0][1];
+                    this.filtersView = this.options.flowsView.filtersView;
 
-                    let groupBy;
+                    // let dim1String = this.options.dimensions[0][0];
+                    // let gran1 = this.options.dimensions[0][1];
+                    // let dim2String = this.options.dimensions[1][0];
+                    // let gran2 = this.options.dimensions[1] ? this.options.dimensions[1][1] : {};
+
                     let tooltipConfig = {
                         tbody: [
-                            ["Waste (metric ton)", function (d) {
-                                return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale())
+                            ["Waste", function (d) {
+                                return d3plus.formatAbbreviate(d["value"], utils.returnD3plusFormatLocale()) + " t"
                             }]
                         ]
                     };
 
-                    flows = this.transformToLinksAndNodes(this.options.flows);
+                    flows = this.transformToLinksAndNodes(this.options.flows, this.options.dimensions, this.filtersView);
 
-                    // // /////////////////////////////
-                    // // Time dimension
-                    // if (dim1String == "time") {
-                    //     // Granularity = year
-                    //     if (gran1 == "flowchain__month__year") {
-                    //         groupBy = ["year"];
-                    //         // Granularity = month:
-                    //     } else if (gran1 == "flowchain__month") {
-                    //         groupBy = ["year", "month"];
-                    //     }
 
-                    //     // Space dimension
-                    // } else if (dim1String == "space") {
-
-                    //     // Areas:
-                    //     if (!this.options.dimensions.isActorLevel) {
-                    //         groupBy = ["areaName"];
-                    //     } else {
-                    //         // Actor level
-                    //         groupBy = ["actorName"];
-                    //     }
-
-                    //     // Economic Activity dimension
-                    // } else if (dim1String == "economicActivity") {
-                    //     tooltipConfig.tbody.push(["Activity group", function (d) {
-                    //         return d.activityGroupCode + " " + d.activityGroupName;
-                    //     }]);
-
-                    //     // Granularity = Activity group
-                    //     if (gran1 == "origin__activity__activitygroup" || gran1 == "destination__activity__activitygroup") {
-                    //         groupBy = ["activityGroupCode"];
-                    //         // Granularity: Activity
-                    //     } else if (gran1 == "origin__activity" || gran1 == "destination__activity") {
-                    //         groupBy = ["activityGroupCode", "activityCode"];
-                    //         tooltipConfig.tbody.push(["Activity", function (d) {
-                    //             return d.activityCode + " " + d.activityName;
-                    //         }]);
-                    //     }
-
-                    //     // Treatment method dimension
-                    // } else if (dim1String == "treatmentMethod") {
-
-                    //     tooltipConfig.tbody.push(["Treatment method group", function (d) {
-                    //         return d.processGroupCode + " " + d.processGroupName;
-                    //     }]);
-
-                    //     if (gran1 == "origin__process__processgroup" || gran1 == "destination__process__processgroup") {
-                    //         groupBy = ["processGroupCode"];
-
-                    //         // Granularity: Treatment method
-                    //     } else if (gran1 == "origin__process" || gran1 == "destination__process") {
-                    //         groupBy = ["processGroupCode", "processCode"];
-                    //         tooltipConfig.tbody.push(["Treatment method", function (d) {
-                    //             return d.processCode + " " + d.processName;
-                    //         }]);
-                    //     }
-
-                    //     // Material
-                    // } else if (dim1String == "material") {
-                    //     tooltipConfig.tbody.push(["EWC Chapter", function (d) {
-                    //         return d.ewc2Code + " " + d.ewc2Name;
-                    //     }]);
-
-                    //     // ewc2
-                    //     if (gran1 == "flowchain__waste06__waste04__waste02") {
-                    //         groupBy = ["ewc2Code"];
-                    //         tooltipConfig.title = "Waste per EWC Chapter";
-                    //         // ewc4
-                    //     } else if (gran1 == "flowchain__waste06__waste04") {
-                    //         groupBy = ["ewc2Code", "ewc4Code"];
-                    //         tooltipConfig.title = "Waste per EWC Sub-Chapter";
-                    //         tooltipConfig.tbody.push(["EWC Sub-Chapter", function (d) {
-                    //             return d.ewc4Code + " " + d.ewc4Name;
-                    //         }]);
-                    //         // ewc6
-                    //     } else if (gran1 == "flowchain__waste06") {
-                    //         groupBy = ["ewc2Code", "ewc4Code", "ewc6Code"];
-                    //         tooltipConfig.title = "Waste per Entry";
-                    //         tooltipConfig.tbody.push(
-                    //             ["EWC Sub-Chapter", function (d) {
-                    //                 return d.ewc4Code + " " + d.ewc4Name;
-                    //             }],
-                    //             ["EWC Entry", function (d) {
-                    //                 return d.ewc6Code + " " + d.ewc6Name;
-                    //             }]);
-                    //     }
-                    // }
-
-                    // Create a new D3Plus TreeMap object which will be rendered in this.options.el:
                     this.SimpleSankey = new SimpleSankey({
                         el: this.options.el,
-                        data: flows,
-                        //groupBy: groupBy,
+                        links: flows.links,
+                        nodes: flows.nodes,
                         tooltipConfig: tooltipConfig,
                     });
 
@@ -174,48 +91,218 @@ define(['views/common/baseview',
                     });
                 },
 
-                transformToLinksAndNodes: function (flows) {
-                    var _this = this,
-                        nodes = [],
+                transformToLinksAndNodes: function (flows, dimensions, filtersView) {
+                    let nodes = [],
                         links = [];
 
                     flows.forEach(function (flow, index) {
-                        let originNode = flow.origin;
-                        let destinationNode = flow.destination
-                        let link = flow;
-                        let linkInfo = _this.returnLinkInfo(this[index]);
+                        let link = {};
+                        let originNode = {};
+                        let destinationNode = {};
 
-                        // NODES
-                        // Add the origin and destination to Nodes, and include amounts:
-                        originNode.value = flow.amount;
-                        originNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
-                        originNode.color = linkInfo.color;
+                        // Gather dimension and gran config:
+                        let gran1 = dimensions[0][1];
+                        let gran2 = dimensions[1] ? dimensions[1][1] : {};
+                        let dimStrings = [];
+                        dimensions.forEach(dim => dimStrings.push(dim[0]));
 
-                        destinationNode.value = flow.amount;
-                        destinationNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
-                        destinationNode.color = linkInfo.color;
+                        // Data:
+
+                        let processGroups = filtersView.processgroups.models;
+                        let processes = filtersView.processes.models;
+
+                        // Set value for origin and destination of nodes:
+                        originNode.value = destinationNode.value = flow.amount;
+
+                        // Enrich nodes
+                        switch (dimensions.length) {
+                            case 1:
+                                // Only for Treatment method to Treatment method
+
+                                // Gran == Treatment method group
+                                if (gran1.includes("group")) {
+                                    let processGroupDestinationObject = processGroups.find(processGroup => processGroup.attributes.id == flow.destination.processgroup);
+                                    destinationNode.id = enrichFlows.returnCodePlusName(processGroupDestinationObject) + " ";
+                                    let processGroupOriginObject = processGroups.find(processGroup => processGroup.attributes.id == flow.origin.processgroup);
+                                    originNode.id = enrichFlows.returnCodePlusName(processGroupOriginObject);
+                                    break;
+
+                                // Gran == Treatment method
+                                } else {
+                                    let processDestinationObject = processes.find(process => process.attributes.id == flow.destination.process);
+                                    destinationNode.id = enrichFlows.returnCodePlusName(processDestinationObject) + " ";
+                                    let processOriginObject = processes.find(process => process.attributes.id == flow.origin.process);
+                                    originNode.id = enrichFlows.returnCodePlusName(processOriginObject);
+
+                                }
+
+                                break;
+                            case 2:
+                                // Econ dim1 > Treatment dim2
+                                if (dimStrings.includes("economicActivity")) {
+                                    let activityGroups = filtersView.activityGroups.models;
+                                    let activities = filtersView.activities.models;
+
+                                    switch (gran1) {
+                                        case "origin__activity__activitygroup":
+                                            let activityGroupOriginObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.origin.activitygroup);
+                                            originNode.id = enrichFlows.returnCodePlusName(activityGroupOriginObject);
+                                            break;
+                                        case "origin__activity":
+                                            let activityOriginObject = activities.find(activity => activity.attributes.id == flow.origin.activity);
+                                            originNode.id = enrichFlows.returnCodePlusName(activityOriginObject);
+                                            break;
+                                        case "destination__activity__activitygroup":
+                                            let activityGroupDestinationObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.destination.activitygroup);
+                                            destinationNode.id = enrichFlows.returnCodePlusName(activityGroupDestinationObject);
+                                            break;
+                                        case "destination__activity":
+                                            let activityDestinationObject = activities.find(activity => activity.attributes.id == flow.destination.activity);
+                                            destinationNode.id = enrichFlows.returnCodePlusName(activityDestinationObject);
+                                            break;
+                                    }
+
+                                }
+                                if (dimStrings.includes("material")) {
+                                    let ewc2 = filtersView.wastes02.models;
+                                    let ewc4 = filtersView.wastes04.models;
+                                    let ewc6 = filtersView.wastes06.models;
+
+                                    let materialOriginDestination = "";
+
+
+                                    // Econ dim1 > Material dim2
+                                    if (dimStrings.includes("economicActivity")) {
+                                        // From econ to material
+                                        if (gran1.includes("origin")) {
+                                            switch (gran2) {
+                                                case "flowchain__waste06__waste04__waste02":
+                                                    let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.destination.waste02);
+                                                    destinationNode.id = enrichFlows.returnEwcCodePlusName(ewc2Object);
+                                                    break;
+                                                case "flowchain__waste06__waste04":
+                                                    let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.destination.waste04);
+                                                    destinationNode.id = enrichFlows.returnEwcCodePlusName(ewc4Object);
+                                                    break;
+                                                case "flowchain__waste06":
+                                                    let ewc6Object = ewc6.find(ewc => ewc.attributes.id == flow.destination.waste06);
+                                                    destinationNode.id = enrichFlows.returnEwcCodePlusName(ewc6Object);
+                                                    break;
+                                            }
+                                            // From material to econ
+                                        } else if (gran1.includes("destination")) {
+                                            switch (gran2) {
+                                                case "flowchain__waste06__waste04__waste02":
+                                                    let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.origin.waste02);
+                                                    originNode.id = enrichFlows.returnEwcCodePlusName(ewc2Object);
+                                                    break;
+                                                case "flowchain__waste06__waste04":
+                                                    let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.origin.waste04);
+                                                    originNode.id = enrichFlows.returnEwcCodePlusName(ewc4Object);
+                                                    break;
+                                                case "flowchain__waste06":
+                                                    let ewc6Object = ewc6.find(ewc => ewc.attributes.id == flow.origin.waste06);
+                                                    originNode.id = enrichFlows.returnEwcCodePlusName(ewc6Object);
+                                                    break;
+                                            }
+                                        }
+
+
+                                        // Material > Treatment method OR Treatment method > Material 
+                                    } else if (dimStrings.includes("treatmentMethod")) {
+
+                                        // From treatment to material
+                                        if (gran1.includes("origin")) {
+                                            switch (gran2) {
+                                                case "flowchain__waste06__waste04__waste02":
+                                                    let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.destination.waste02);
+                                                    destinationNode.id = enrichFlows.returnEwcCodePlusName(ewc2Object);
+                                                    break;
+                                                case "flowchain__waste06__waste04":
+                                                    let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.destination.waste04);
+                                                    destinationNode.id = enrichFlows.returnEwcCodePlusName(ewc4Object);
+                                                    break;
+                                                case "flowchain__waste06":
+                                                    let ewc6Object = ewc6.find(ewc => ewc.attributes.id == flow.destination.waste06);
+                                                    destinationNode.id = enrichFlows.returnEwcCodePlusName(ewc6Object);
+                                                    break;
+                                            }
+                                            // From material to treatment
+                                        } else if (gran1.includes("destination")) {
+                                            switch (gran2) {
+                                                case "flowchain__waste06__waste04__waste02":
+                                                    let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.origin.waste02);
+                                                    originNode.id = enrichFlows.returnEwcCodePlusName(ewc2Object);
+                                                    break;
+                                                case "flowchain__waste06__waste04":
+                                                    let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.origin.waste04);
+                                                    originNode.id = enrichFlows.returnEwcCodePlusName(ewc4Object);
+                                                    break;
+                                                case "flowchain__waste06":
+                                                    let ewc6Object = ewc6.find(ewc => ewc.attributes.id == flow.origin.waste06);
+                                                    originNode.id = enrichFlows.returnEwcCodePlusName(ewc6Object);
+                                                    break;
+                                            }
+                                        }
+                                    }
+
+
+                                }
+                                if (dimStrings.includes("treatmentMethod")) {
+                                    let granularity;
+                                    // Material dim2 > Treatment dim1
+                                    if (dimStrings.includes("economicActivity")) {
+                                        granularity = gran2;
+                                    } else {
+                                        granularity = gran1;
+                                    }
+
+                                    // Material dim2 > Treatment dim1
+                                    switch (granularity) {
+                                        case "destination__process__processgroup":
+                                            let processGroupDestinationObject = processGroups.find(processGroup => processGroup.attributes.id == flow.destination.processgroup);
+                                            destinationNode.id = enrichFlows.returnCodePlusName(processGroupDestinationObject);
+                                            break;
+                                        case "destination__process":
+                                            let processDestinationObject = processes.find(process => process.attributes.id == flow.destination.process);
+                                            destinationNode.id = enrichFlows.returnCodePlusName(processDestinationObject);
+                                            break;
+                                        case "origin__process__processgroup":
+                                            let processGroupOriginObject = processGroups.find(processGroup => processGroup.attributes.id == flow.origin.processgroup);
+                                            originNode.id = enrichFlows.returnCodePlusName(processGroupOriginObject);
+                                            break;
+                                        case "origin__process":
+                                            let processOriginObject = processes.find(process => process.attributes.id == flow.origin.process);
+                                            originNode.id = enrichFlows.returnCodePlusName(processOriginObject);
+                                            break;
+                                    }
+                                }
+                                break;
+                        }
 
                         nodes.push(originNode, destinationNode)
 
                         // LINKS
-                        link.source = this[index].origin.id;
-                        link.target = this[index].destination.id;
-                        link.value = this[index].amount;
-                       
-                        link.color = linkInfo.color;
-                        link.label = linkInfo.toolTipText;
+                        link.source = originNode.id;
+                        link.target = destinationNode.id;
+                        link.value = flow.amount;
 
                         links.push(link)
 
                     }, flows);
 
-                    nodes.forEach(function (node, index) {
-                        //this[index].color = utils.colorByName(this[index].name);
-                        //this[index].label = this[index].name;
-                        this[index].opacity = 0.8;
-                    }, nodes);
 
-
+                    // Group the nodes by id and sum the values:                    
+                    let summed_by_type = _(nodes).reduce(function (mem, d) {
+                        mem[d.id] = (mem[d.id] || 0) + d.value
+                        return mem
+                    }, {})
+                    nodes = _(summed_by_type).map(function (v, k) {
+                        return {
+                            id: k,
+                            value: v
+                        }
+                    })
 
 
                     console.log("Links:");
@@ -224,17 +311,13 @@ define(['views/common/baseview',
                     console.log(nodes);
 
                     return {
-                        flows: links,
+                        links: links,
                         nodes: nodes,
                     }
                 },
 
+
                 returnLinkInfo: function (link) {
-                    let fromToText = link.origin.name + ' &#10132; ' + link.destination.name + '<br>'
-                    let dimensionText = "";
-                    let dimensionValue = "";
-                    let amountText = d3plus.formatAbbreviate(link.amount, utils.returnD3plusFormatLocale()) + ' t/year';
-                    let dimensionId;
 
                     switch (this.dim2[0]) {
                         case "time":

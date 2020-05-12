@@ -142,4 +142,13 @@ module.exports = {
 
         return flows
     },
+
+    returnCodePlusName: function (input) {
+        let codeString =  input.attributes.code ? input.attributes.code : input.attributes.nace;
+        return codeString + ". " + utils.capitalizeFirstLetter(input.attributes.name);
+    },
+
+    returnEwcCodePlusName: function(input){
+        return input.attributes.ewc_code + ". " + utils.capitalizeFirstLetter(input.attributes.ewc_name);
+    },
 }

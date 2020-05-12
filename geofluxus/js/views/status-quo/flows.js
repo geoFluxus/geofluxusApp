@@ -219,35 +219,24 @@ define(['views/common/baseview',
 
                     switch (_this.checkedDimToggles.length) {
                         case 0: // No dimensions
-                            //console.log("No dimensions");
-
                             $("#message-container-row").fadeIn();
                             $(".viz-container").hide();
-
                             break;
                         case 1: // One dimension selected
-                            // Hide message if shown:
-                            //$("#message-container-row").hide();
-                            // Hide all viz option buttons:
                             $(".viz-selector-button").hide();
-                            // Show viz option container:
                             $(".viz-container").fadeIn();
 
                             // Disable legend by default:
                             //$("#display-legend").prop("checked", false);
-
-                            //console.log("One dimension");
 
                             if (_this.selectedDimensionStrings.includes("time")) {
                                 $("#viz-piechart").parent().fadeIn();
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-treemap").parent().fadeIn();
                                 $("#viz-lineplot").parent().fadeIn();
-
                                 if ($(_this.dimensions.timeToggleGran).prop("checked")) {
                                     $("#viz-lineplotmultiple").parent().fadeIn();
                                 }
-
                             } else if (_this.selectedDimensionStrings.includes("space")) {
                                 $("#viz-piechart").parent().fadeIn();
                                 $("#viz-barchart").parent().fadeIn();
@@ -845,10 +834,6 @@ define(['views/common/baseview',
                     case "flowmap":
                         this.renderFlowMap(dimensions, flows);
                         break;
-                    case "parallelsets":
-                        this.renderParallelSets(dimensions, flows);
-                        break;
-
                     default:
                         // Nothing
                 }
@@ -961,15 +946,12 @@ define(['views/common/baseview',
                     flows: flows,
                     flowsView: this,
                 });
-
-                //this.loader.deactivate();
-                //this.flowMapView.addFlows(flows);
-                //this.flowMapView.rerender(true);
             },
 
             renderParallelSets: function (dimensions, flows) {
                 if (this.parallelSetsView != null) this.parallelSetsView.close();
 
+                $(".parallelsets-container").show();
                 $(".parallelsets-wrapper").fadeIn();
 
                 this.parallelSetsView = new ParallelSetsView({
@@ -983,6 +965,7 @@ define(['views/common/baseview',
             closeAllVizViews: function () {
                 $(".viz-wrapper-div").fadeOut();
                 $(".viz-wrapper-div").html("")
+                $(".parallelsets-container").hide();
                 if (this.barChartView != null) this.barChartView.close();
                 if (this.pieChartView != null) this.pieChartView.close();
                 if (this.linePlotView != null) this.linePlotView.close();
@@ -991,6 +974,7 @@ define(['views/common/baseview',
                 if (this.coordinatePointMapView != null) this.coordinatePointMapView.close();
                 if (this.areaChartView != null) this.areaChartView.close();
                 if (this.flowMapView != null) this.flowMapView.close();
+                if (this.parallelSetsView != null) this.parallelSetsView.close();
             },
 
             // Fetch flows and calls options.success(flows) on success
@@ -1000,6 +984,8 @@ define(['views/common/baseview',
                 let data = {};
                 let selectedVizualisationString;
                 this.selectedDimensions = Object.entries(filterParams.dimensions);
+
+                $('#apply-filters').popover('hide');
 
                 $('.viz-selector-button').each(function (index, value) {
                     if ($(this).hasClass("active")) {
@@ -1014,13 +1000,12 @@ define(['views/common/baseview',
                 // Reset all visualizations:
                 this.closeAllVizViews();
 
-
                 // No visualization has been selected, inform user:
                 if (!selectedVizualisationString || _this.selectedDimensions.length == 0) {
 
                     let options = {
                         template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-body"></div></div>',
-                        content: "Make sure to select at least one dimension and a visualization!",
+                        content: "Make sure to select at least one dimension and a visualization type!",
                         trigger: "focus",
                     }
 
@@ -1042,16 +1027,20 @@ define(['views/common/baseview',
                                 this[index] = flow.attributes;
                             }, _this.flows);
 
-                            switch (_this.selectedDimensions.length) {
-                                case 1:
-                                    _this.render1Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
-                                    break;
-                                case 2:
-                                    _this.render2Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
-                                    break;
-                                default:
-                                    // Nothing
+                            // Only Parallel Sets requires different processing: 
+                            if (selectedVizualisationString == "parallelsets") {
+                                _this.renderParallelSets(_this.selectedDimensions, _this.flows);
+                            } else {
+                                switch (_this.selectedDimensions.length) {
+                                    case 1:
+                                        _this.render1Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
+                                        break;
+                                    case 2:
+                                        _this.render2Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
+                                        break;
+                                }
                             }
+
 
                             _this.loader.deactivate();
 
