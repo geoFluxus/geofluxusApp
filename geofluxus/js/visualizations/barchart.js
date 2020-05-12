@@ -32,6 +32,18 @@ define([
                 }
             }
 
+            let axisConfig = {
+                barConfig: {
+                    stroke: "white", // Axis color
+                },
+                shapeConfig: {
+                    stroke: "white", // Ticks on axis
+                    labelConfig: {
+                        fontColor: "white", // Labels on axis
+                    }
+                }
+            }
+
             new d3plus.Plot()
                 .config({
                     xConfig: {
@@ -61,32 +73,12 @@ define([
                 .select(options.el)
                 .label(labelFunction)
                 .legend(hasLegend)
-                .xConfig({
-                    shapeConfig: {
-                        labelConfig: {
-                            fontColor: "white",
-                            // fontFamily: ["Montserrat", "sans-serif"]
-                        }
-                    }
-                })
-                .yConfig({
-                    shapeConfig: {
-                        labelConfig: {
-                            fontColor: "white",
-                            // fontFamily: ["Montserrat", "sans-serif"]
-                        }
-                    }
-                })
-                .shapeConfig({
-                    labelConfig: {
-                        fontFamily: ["Montserrat", "sans-serif"]
-                    }
-                })
+                .xConfig(axisConfig)
+                .yConfig(axisConfig)
                 .legendConfig({
                     shapeConfig: {
                         labelConfig: {
                             fontColor: "white",
-                            fontFamily: ["Montserrat", "sans-serif"]
                         }
                     }
                 })

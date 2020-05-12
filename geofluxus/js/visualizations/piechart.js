@@ -32,12 +32,19 @@ define([
                 .legend(hasLegend)
                 .shapeConfig({
                     labelConfig: {
-                        fontFamily: "Montserrat",
-                        fontMax: 100
+                        fontFamily: ["Montserrat", "sans-serif"],
                     }
                 })
                 .color(function (d) {
                     return d["color"];
+                })
+                .legendConfig({
+                    shapeConfig: {
+                        labelConfig: {
+                            fontColor: "white",
+                            fontFamily: ["Montserrat", "sans-serif"]
+                        }
+                    }
                 })
                 .select(options.el)
                 .downloadPosition("left")

@@ -41,6 +41,18 @@ define([
                 }
             }
 
+            let axisConfig = {
+                barConfig: {
+                    stroke: "white", // Axis color
+                },
+                shapeConfig: {
+                    stroke: "white", // Ticks on axis
+                    labelConfig: {
+                        fontColor: "white", // Labels on axis
+                    }
+                }
+            }
+
             new d3plus.Plot()
                 .data(options.data)
                 .x(options.x)
@@ -50,6 +62,8 @@ define([
                 .groupBy(groupByValue)
                 .shape("Line")
                 .shapeConfig(shapeConfigValue)
+                .xConfig(axisConfig)
+                .yConfig(axisConfig)
                 .tooltipConfig(options.tooltipConfig)
                 .legend(hasLegend)
                 .label(labelFunction)

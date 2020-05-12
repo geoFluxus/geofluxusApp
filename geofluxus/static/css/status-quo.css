@@ -338,7 +338,11 @@ label[for="flows-waste06-select"] {
 
 .d3plus_label {
     fill: white;
-    font-family: Montserrat, sans-serif;
+    font-family: "Montserrat", sans-serif;
+}
+
+.d3plus-textBox text {
+    font-family: "Montserrat", sans-serif !important;
 }
 
 .viz-wrapper-div.parallelsets-wrapper {
