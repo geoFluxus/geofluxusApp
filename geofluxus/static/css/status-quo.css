@@ -251,8 +251,7 @@ label[for="flows-waste06-select"] {
 
 .viz-selector-button {
     border-radius: 18px !important;
-    margin-right: 1rem;
-    margin-bottom: 1rem !important;
+    margin: 0 0.5rem 1rem 0.5rem !important;
     min-width: 10rem;
     display: flex;
     max-width: 10rem;
