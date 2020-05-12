@@ -59,6 +59,7 @@
     "pdfjs-dist": "^2.0.943",
     "popper.js": "^1.16.1",
     "react": "16.3.0",
+    "react-dom": "^16.13.1",
     "react.backbone": "^0.9.2",
     "save-svg-as-png": "^1.4.6",
     "style-loader": "^0.21.0",

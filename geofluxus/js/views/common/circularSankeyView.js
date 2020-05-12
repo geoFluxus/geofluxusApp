@@ -7,7 +7,8 @@ define(['views/common/baseview',
         'file-saver',
         'utils/utils',
         'utils/enrichFlows',
-        'visualizations/circularSankey.jsx',
+        'visualizations/circularSankey',
+        'geofluxus-circular-sankey',
     ],
 
     function (
@@ -21,6 +22,7 @@ define(['views/common/baseview',
         utils,
         enrichFlows,
         CircularSankeyComponent,
+        CircularSankey,
         Slider) {
 
         /**
@@ -82,8 +84,8 @@ define(['views/common/baseview',
                     flows = this.transformToLinksAndNodes(this.options.flows, this.options.dimensions, this.filtersView);
 
 
-                    this.circularSankey = new CircularSankeyComponent({
-                        el: this.options.el,
+                    this.circularSankey = new CircularSankey({
+                        //el: this.options.el,
                         linksAndNodes: flows,
                     });
  
