@@ -7,7 +7,7 @@ define(['views/common/baseview',
         'file-saver',
         'utils/utils',
         'utils/enrichFlows',
-        'visualizations/circularSankey',
+        'visualizations/circularSankey.jsx',
         'geofluxus-circular-sankey',
     ],
 
