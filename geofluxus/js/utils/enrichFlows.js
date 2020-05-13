@@ -9,9 +9,9 @@ module.exports = {
         let years = filterFlowsView.years.models;
         let months = filterFlowsView.months.models;
 
-        
+
         if (granularity == "flowchain__month__year") {
-            
+
             // // Get all unique years
             // occurances = flows.map(x => x.year);
             // occurances = _.unique(occurances);
@@ -163,4 +163,29 @@ module.exports = {
     returnEwcCodePlusName: function (input) {
         return input.attributes.ewc_code + ". " + utils.capitalizeFirstLetter(input.attributes.ewc_name);
     },
+
+    assignColorsByProperty: function (flows, propertyName) {
+
+        // Get all unique occurences
+        occurances = flows.map(x => x[propertyName]);
+        occurances = _.unique(occurances);
+
+        // Create array with unique colors:
+        colorArray = utils.interpolateColors(occurances.length);
+
+        // Create array with prop of unique property and prop of matching color:
+        occurances.forEach(function (propertyName, index) {
+            this[index] = {
+                name: this[index],
+                color: colorArray[index],
+            };
+        }, occurances);
+
+        // Asisgn a color for each unique property:
+        flows.forEach(function (flow, index) {
+            this[index].color = occurances.find(occ => occ.name == flow[propertyName]).color;
+        }, flows);
+
+        return flows
+    }
 }

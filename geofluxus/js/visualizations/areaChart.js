@@ -21,6 +21,18 @@ define([
             let hasLegend = $("#display-legend").prop("checked");
             let xSort = options.xSort ? options.xSort : null;
 
+            let axisConfig = {
+                barConfig: {
+                    stroke: "white", // Axis color
+                },
+                shapeConfig: {
+                    stroke: "white", // Ticks on axis
+                    labelConfig: {
+                        fontColor: "white", // Labels on axis
+                    }
+                }
+            }
+
             new d3plus.AreaPlot()
                 .stacked(options.isStacked)
                 .tooltipConfig(options.tooltipConfig)
@@ -29,8 +41,13 @@ define([
                 .x(options.x)
                 .y("amount")
                 .baseline(0)
+                .color(function (d) {
+                    return d["color"];
+                })
                 .discrete("x")
                 .xSort(xSort)
+                .xConfig(axisConfig)
+                .yConfig(axisConfig)
                 .select(options.el)
                 .legend(hasLegend)
                 .downloadPosition("left")

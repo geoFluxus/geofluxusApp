@@ -27,10 +27,11 @@ define([
                 .groupBy(options.groupBy)
                 .sum("amount")
                 .legend(hasLegend)
-                .shapeConfig({
-                    labelConfig: {
-                        fontFamily: "Montserrat",
-                        fontMax: 100
+                .legendConfig({
+                    shapeConfig: {
+                        labelConfig: {
+                            fontColor: "white",
+                        }
                     }
                 })
                 .color(function (d) {

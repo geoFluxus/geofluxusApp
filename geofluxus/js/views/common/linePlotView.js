@@ -7,7 +7,8 @@ define(['views/common/baseview',
         'app-config',
         'save-svg-as-png',
         'file-saver',
-        'utils/utils'
+        'utils/utils',
+        'utils/enrichFlows',
     ],
 
     function (
@@ -21,6 +22,7 @@ define(['views/common/baseview',
         saveSvgAsPng,
         FileSaver,
         utils,
+        enrichFlows,
         Slider) {
 
         /**
@@ -123,36 +125,10 @@ define(['views/common/baseview',
                                 return d.areaName
                             }]);
 
-
-                            // Get all unique occurences
-                            occurances = flows.map(x => x.areaName);
-                            occurances = _.unique(occurances);
-
-                            // Create array with unique colors:
-                            colorArray = utils.interpolateColors(occurances.length);
-
-                            // Create array with prop of areaName and prop of matching color:
-                            occurances.forEach(function (areaName, index) {
-                                this[index] = {
-                                    areaName: this[index],
-                                    color: colorArray[index],
-                                };
-                            }, occurances);
-                            console.log(occurances)
-
-
-                            // Asisgn a color for each areaName:
-                            flows.forEach(function (flow, index) {
-                                this[index].color = occurances.find(occ => occ.areaName == flow.areaName).color;
-                            }, flows);
-
-                            console.log(flows);
-
-
-
                         } else {
                             isActorLevel = true;
                             groupBy = ["actorId"];
+
                             tooltipConfig.tbody.push(["Company", function (d) {
                                 return d.actorName
                             }]);
@@ -227,6 +203,11 @@ define(['views/common/baseview',
                                     return d.ewc6Code + " " + d.ewc6Name;
                                 }]);
                         }
+                    }
+
+                    // Assign colors by groupings:
+                    if (groupBy) {
+                        flows = enrichFlows.assignColorsByProperty(flows, groupBy)
                     }
 
                     // Create a new D3Plus linePlot object which will be rendered in this.options.el:

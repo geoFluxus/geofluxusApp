@@ -462,7 +462,9 @@ textarea.textarea-autosize.form-control-sm {
     min-width: 15rem;
     max-width: 25rem;
 }
-
+.d3plus-tooltip div {
+    font-family: "Montserrat", sans-serif !important;
+}
 
 .d3plus-tooltip-title {
     font-family: 'Montserrat', sans-serif !important;
@@ -496,8 +498,13 @@ textarea.textarea-autosize.form-control-sm {
     max-width: 30rem;
 }
 
-/* d3plus buttons */
+.d3plus-tooltip-footer {
+    margin: 0.5rem !important;
+    font-size: 10px !important;
+}
 
+
+/* d3plus buttons */
 
 .d3plus-viz-controls-container {
     min-height: 100px;

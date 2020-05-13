@@ -78,6 +78,8 @@ define(['views/common/baseview',
                     flows = this.transformToLinksAndNodes(this.options.flows, this.options.dimensions, this.filtersView);
 
 
+
+
                     this.SimpleSankey = new SimpleSankey({
                         el: this.options.el,
                         links: flows.links,
@@ -127,7 +129,7 @@ define(['views/common/baseview',
                                     originNode.id = enrichFlows.returnCodePlusName(processGroupOriginObject);
                                     break;
 
-                                // Gran == Treatment method
+                                    // Gran == Treatment method
                                 } else {
                                     let processDestinationObject = processes.find(process => process.attributes.id == flow.destination.process);
                                     destinationNode.id = enrichFlows.returnCodePlusName(processDestinationObject) + " ";
@@ -167,9 +169,6 @@ define(['views/common/baseview',
                                     let ewc2 = filtersView.wastes02.models;
                                     let ewc4 = filtersView.wastes04.models;
                                     let ewc6 = filtersView.wastes06.models;
-
-                                    let materialOriginDestination = "";
-
 
                                     // Econ dim1 > Material dim2
                                     if (dimStrings.includes("economicActivity")) {
@@ -300,10 +299,12 @@ define(['views/common/baseview',
                     nodes = _(summed_by_type).map(function (v, k) {
                         return {
                             id: k,
-                            value: v
+                            value: v,
                         }
                     })
 
+                    // Assign colors by id:
+                    nodes = enrichFlows.assignColorsByProperty(nodes, "id");
 
                     console.log("Links:");
                     console.log(links);
@@ -315,76 +316,6 @@ define(['views/common/baseview',
                         nodes: nodes,
                     }
                 },
-
-
-                returnLinkInfo: function (link) {
-
-                    switch (this.dim2[0]) {
-                        case "time":
-                            if (this.dim2[1] == "flowchain__month__year") {
-                                dimensionText = "Year";
-                                dimensionValue = link.year;
-                            } else if (this.dim2[1] == "flowchain__month") {
-                                dimensionText = "Month";
-                                dimensionValue = link.month;
-                            }
-                            break;
-                        case "economicActivity":
-                            if (this.dim2[1] == "origin__activity__activitygroup" || this.dim2[1] == "destination__activity__activitygroup") {
-                                dimensionText = "Activity group";
-                                dimensionId = link.activitygroup;
-                                dimensionValue = link.activityGroupCode + " " + link.activityGroupName;
-                            } else if (this.dim2[1] == "origin__activity" || this.dim2[1] == "destination__activity") {
-                                dimensionText = "Activity";
-                                dimensionId = link.activity;
-                                dimensionValue = link.activityCode + " " + link.activityName;
-                            }
-                            break;
-                        case "treatmentMethod":
-                            if (this.dim2[1] == "origin__process__processgroup" || this.dim2[1] == "destination__process__processgroup") {
-                                dimensionText = "Treatment method group";
-                                dimensionValue = link.processGroupCode + " " + link.processGroupName;
-                            } else if (this.dim2[1] == "origin__process" || this.dim2[1] == "destination__process") {
-                                dimensionText = "Treatment method";
-                                dimensionValue = link.processCode + " " + link.processName;
-                            }
-                            break;
-                        case "material":
-
-                            switch (this.dim2[1]) {
-                                case "flowchain__waste06__waste04__waste02":
-                                    dimensionText = "EWC Chapter";
-                                    dimensionValue = link.ewc2Code + " " + link.ewc2Name;
-                                    break;
-                                case "flowchain__waste06__waste04":
-                                    dimensionText = "EWC Sub-Chapter";
-                                    dimensionValue = link.ewc4Code + " " + link.ewc4Name;
-                                    break;
-                                case "flowchain__waste06":
-                                    dimensionText = "EWC Entry";
-                                    dimensionValue = link.ewc6Code + " " + link.ewc6Name;
-                                    break;
-                                default:
-                                    break;
-                            }
-
-                            break;
-                        default:
-                            break;
-                    }
-
-                    let description = '<br><b>' + dimensionText + ':</b> ';
-
-                    return {
-                        dimensionValue: dimensionValue,
-                        dimensionId: dimensionId,
-                        toolTipText: fromToText + description + dimensionValue + '<br><b>Amount: </b>' + amountText,
-                        amountText: amountText,
-                        color: utils.colorByName(dimensionValue),
-                    }
-
-                },
-
 
                 toggleFullscreen: function (event) {
                     $(this.el).toggleClass('fullscreen');

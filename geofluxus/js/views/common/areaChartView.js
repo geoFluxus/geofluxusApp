@@ -7,7 +7,8 @@ define(['views/common/baseview',
         'app-config',
         'save-svg-as-png',
         'file-saver',
-        'utils/utils'
+        'utils/utils',
+        'utils/enrichFlows'
     ],
 
     function (
@@ -21,6 +22,7 @@ define(['views/common/baseview',
         saveSvgAsPng,
         FileSaver,
         utils,
+        enrichFlows,
         Slider) {
 
         /**
@@ -179,7 +181,10 @@ define(['views/common/baseview',
                         }
                     }
 
-
+                    // Assign colors by groupings:
+                    if (groupBy) {
+                        flows = enrichFlows.assignColorsByProperty(flows, groupBy)
+                    }
 
                     // Create a new D3Plus AreaChart object which will be rendered in this.options.el:
                     this.areaChart = new AreaChart({

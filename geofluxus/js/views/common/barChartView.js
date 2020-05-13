@@ -7,7 +7,8 @@ define(['views/common/baseview',
         'app-config',
         'save-svg-as-png',
         'file-saver',
-        'utils/utils'
+        'utils/utils',
+        'utils/enrichFlows',
     ],
 
     function (
@@ -21,6 +22,7 @@ define(['views/common/baseview',
         saveSvgAsPng,
         FileSaver,
         utils,
+        enrichFlows,
         Slider) {
 
         /**
@@ -512,6 +514,11 @@ define(['views/common/baseview',
 
                     }
 
+
+                     // Assign colors by groupings:
+                     if (groupBy) {
+                        flows = enrichFlows.assignColorsByProperty(flows, groupBy);
+                    }
 
                     // Update xSort variable to store function if true:
                     if (xSort) {

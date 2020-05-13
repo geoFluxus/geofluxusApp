@@ -154,6 +154,11 @@ define(['views/common/baseview',
 
                     }
 
+                    // Assign colors by groupings:
+                    if (groupBy) {
+                        flows = enrichFlows.assignColorsByProperty(flows, groupBy);
+                    }
+
                     // Create a new D3Plus PieChart object which will be rendered in this.options.el:
                     this.pieChart = new PieChart({
                         el: this.options.el,

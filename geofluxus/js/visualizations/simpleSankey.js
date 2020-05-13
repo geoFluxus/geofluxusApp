@@ -35,6 +35,9 @@ define([
                         fontMax: 100
                     }
                 })
+                .color(function (d) {
+                    return d["color"];
+                })
                 .select(options.el)
                 .downloadPosition("left")
                 .downloadButton(true)

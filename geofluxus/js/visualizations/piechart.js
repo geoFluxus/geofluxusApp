@@ -30,11 +30,6 @@ define([
                     tooltipConfig: options.tooltipConfig,
                 })
                 .legend(hasLegend)
-                .shapeConfig({
-                    labelConfig: {
-                        fontFamily: ["Montserrat", "sans-serif"],
-                    }
-                })
                 .color(function (d) {
                     return d["color"];
                 })
@@ -42,7 +37,6 @@ define([
                     shapeConfig: {
                         labelConfig: {
                             fontColor: "white",
-                            fontFamily: ["Montserrat", "sans-serif"]
                         }
                     }
                 })
