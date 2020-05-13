@@ -59,6 +59,7 @@ define([
                         }
                     }
                 })
+                // .title(options.tooltipConfig.title)
                 .tooltipConfig(options.tooltipConfig)
                 .data(options.data)
                 .groupBy(groupByValue)

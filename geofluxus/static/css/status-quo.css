@@ -4,25 +4,6 @@
     padding-bottom: 10px;
 }
 
-/* .block {
-    background-color: #393939;
-    border-radius: 22px;
-    padding: 1.5rem;
-    padding-bottom: 1rem;
-    margin: 1.5rem;
-}
-
-.card {
-    background-color: #252525 !important;
-    border-radius: 22px !important;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.card-body {
-    padding-top: 0em !important;
-} */
-
 .card.bg-dark {
     overflow-y: visible;
     scrollbar-width: none;
@@ -328,9 +309,8 @@ label[for="flows-waste06-select"] {
 
 .viz-wrapper-div {
     display: none;
-    height: 700px;
+    height: 750px;
     min-width: 500px;
-    background-color: rgb(182, 182, 182);
     background-color: #393939;
     border-radius: 18px;
 }
@@ -462,6 +442,7 @@ textarea.textarea-autosize.form-control-sm {
     min-width: 15rem;
     max-width: 25rem;
 }
+
 .d3plus-tooltip div {
     font-family: "Montserrat", sans-serif !important;
 }
@@ -511,7 +492,7 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .d3plus-viz-controls-container .d3plus-Button {
-    background-color: #007bff;
+    background-color: var(--primary);
     border: none;
     position: relative;
     width: 32px;
@@ -672,7 +653,8 @@ textarea.textarea-autosize.form-control-sm {
     font-size: 28px !important;
     padding-top: 0.3rem !important;
     color: white !important;
-    background-color: #007bff !important;
+    background-color: var(--primary) !important;
+    opacity: 1 !important;
     border: none !important;
     user-select: none;
 }

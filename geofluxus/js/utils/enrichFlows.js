@@ -164,10 +164,17 @@ module.exports = {
         return input.attributes.ewc_code + ". " + utils.capitalizeFirstLetter(input.attributes.ewc_name);
     },
 
-    assignColorsByProperty: function (flows, propertyName) {
+    /**
+     * Assigns colors per unique @propertyName
+     * 
+     * @param {*} items: an array of items containing a property with name @propertyName
+     * @param {*} propertyName: the property by which colors will be assigned 
+     */
+
+    assignColorsByProperty: function (items, propertyName) {
 
         // Get all unique occurences
-        occurances = flows.map(x => x[propertyName]);
+        occurances = items.map(x => x[propertyName]);
         occurances = _.unique(occurances);
 
         // Create array with unique colors:
@@ -182,10 +189,10 @@ module.exports = {
         }, occurances);
 
         // Asisgn a color for each unique property:
-        flows.forEach(function (flow, index) {
-            this[index].color = occurances.find(occ => occ.name == flow[propertyName]).color;
-        }, flows);
+        items.forEach(function (item, index) {
+            this[index].color = occurances.find(occ => occ.name == item[propertyName]).color;
+        }, items);
 
-        return flows
+        return items
     }
 }

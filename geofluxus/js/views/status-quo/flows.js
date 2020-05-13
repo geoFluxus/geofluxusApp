@@ -645,11 +645,6 @@ define(['views/common/baseview',
                 let dimensionString = dimensions[0][0];
                 let granularity = dimensions[0][1];
 
-                // // Set custom colors:
-                // var colorArray = utils.interpolateColors(flows.length);
-                // flows.forEach(function (flow, index) {
-                //     this[index].color = colorArray[index];
-                // }, flows);
 
                 switch (dimensionString) {
                     case "time":

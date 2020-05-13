@@ -23,7 +23,21 @@ define([
                 .groupBy("actorId")
                 .colorScale("amount")
                 .colorScaleConfig({
-                    color: ["red", "orange", "yellow", "green", "blue"].reverse()
+                    color: ["rgb(158, 1, 66)", "rgb(240, 112, 74)", "rgb(254, 221, 141)", "rgb(224, 243, 160)", "rgb(105, 189, 169)"].reverse(),
+                    axisConfig: {
+                        barConfig: {
+                            stroke: "white"
+                        },
+                        shapeConfig: {
+                            labelConfig: {
+                                fontColor: "white"
+                            },
+                            stroke: "#979797"
+                        }
+                    },
+                    rectConfig: {
+                        stroke: "white"
+                    }
                 })
                 .label(function (d) {
                     return d.actorName;
@@ -34,6 +48,10 @@ define([
                 .pointSize(function (d) {
                     return d.amount;
                 })
+                .shapeConfig({
+                    hoverOpacity: 0.75,
+                })
+                .tileUrl("https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png")
                 .pointSizeMin(2)
                 .pointSizeMax(50)
                 .tooltipConfig(options.tooltipConfig)

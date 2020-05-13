@@ -26,15 +26,20 @@ define([
                 .value(function value(d) {
                     return d.value;
                 })
+                .label(
+                    function (d) {
+                        return d.id
+                    }
+                )
                 .nodePadding(5)
                 .tooltipConfig(options.tooltipConfig)
                 .legend(hasLegend)
-                .shapeConfig({
-                    labelConfig: {
-                        fontFamily: "Montserrat",
-                        fontMax: 100
-                    }
-                })
+                // .shapeConfig({
+                //     labelConfig: {
+                //         fontFamily: "Montserrat",
+                //         fontMax: 100
+                //     }
+                // })
                 .color(function (d) {
                     return d["color"];
                 })

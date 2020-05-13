@@ -7,7 +7,8 @@ define(['views/common/baseview',
         'app-config',
         'save-svg-as-png',
         'file-saver',
-        'utils/utils'
+        'utils/utils',
+        'utils/enrichFlows',
     ],
 
     function (
@@ -21,6 +22,7 @@ define(['views/common/baseview',
         saveSvgAsPng,
         FileSaver,
         utils,
+        enrichFlows,
         Slider) {
 
         /**
@@ -156,6 +158,11 @@ define(['views/common/baseview',
                                     return d.ewc6Code + " " + d.ewc6Name;
                                 }]);
                         }
+                    }
+
+                     // Assign colors by groupings:
+                     if (groupBy) {
+                        flows = enrichFlows.assignColorsByProperty(flows, groupBy[0])
                     }
 
                     // Create a new D3Plus TreeMap object which will be rendered in this.options.el:

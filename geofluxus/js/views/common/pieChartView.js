@@ -7,7 +7,8 @@ define(['views/common/baseview',
         'app-config',
         'save-svg-as-png',
         'file-saver',
-        'utils/utils'
+        'utils/utils',
+        'utils/enrichFlows',
     ],
 
     function (
@@ -21,6 +22,7 @@ define(['views/common/baseview',
         saveSvgAsPng,
         FileSaver,
         utils,
+        enrichFlows,
         Slider) {
 
         /**
@@ -73,7 +75,7 @@ define(['views/common/baseview',
                     // Time 
                     if (dim1String == "time") {
                         // Granularity = year
-                        if (gran1 == "flowchain__month__year") {
+                        if (gran1 == "flowchain__month__year") { 
                             groupBy = ["year"];
 
                             // Granularity = month:

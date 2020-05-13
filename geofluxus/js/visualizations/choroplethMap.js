@@ -27,11 +27,24 @@ define([
                 //     return ["02", "15", "43", "60", "66", "69", "72", "78"].indexOf(d.id) < 0;
                 // })
                 .colorScaleConfig({
-                    // color: ["red", "orange", "yellow", "green", "blue"]
-                    // color: ["green", "yellow", "red", ]
                     // scale: "jenks",
-                    color: ["red", "orange", "yellow", "green", "blue"].reverse()
+                    color: ["rgb(158, 1, 66)", "rgb(240, 112, 74)", "rgb(254, 221, 141)", "rgb(224, 243, 160)", "rgb(105, 189, 169)"].reverse(),
+                    axisConfig: {
+                        barConfig: {
+                            stroke: "white"
+                        },
+                        shapeConfig: {
+                            labelConfig: {
+                                fontColor: "white"
+                            },
+                            stroke: "#979797"
+                        }
+                    },
+                    rectConfig: {
+                        stroke: "white"
+                    }
                 })
+                .tileUrl("https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png")
                 .select(options.el)
                 .downloadPosition("left")
                 .downloadButton(true)
