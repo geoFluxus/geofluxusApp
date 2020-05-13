@@ -44,7 +44,7 @@ define(['views/common/baseview',
                         ReactDOM.render( < CircularSankey circularData = {
                                     this.options.circularData
                                 }
-                                />, $(this.options.el)); return this;
+                                />, document.getElementsByClassName(this.options.el)); return this;
 
                         // This works:
                         // ReactDOM.render(<p>Hello</p>, document.getElementById("circularsankey-wrapper")); return this;
