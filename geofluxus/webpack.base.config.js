@@ -88,20 +88,6 @@ module.exports = {
                 use: ['coffee-loader']
             },
             // TEST BABEL
-            // {
-            //     test: /\.(jsx)$/,
-            //     exclude: /(node_modules|bower_components)/,
-            //     resolve: {
-            //         extensions: [".jsx"]
-            //     },
-            //     use: {
-            //         loader: 'babel-loader',
-            //         options: {
-            //             "presets": ["@babel/preset-react"]
-            //         }
-            //     }
-            // }
-
             {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
@@ -112,7 +98,6 @@ module.exports = {
                     loader: "babel-loader"
                 }
             },
-
 
 
 
