@@ -958,7 +958,7 @@ define(['views/common/baseview',
             renderCircularSankey: function (dimensions, flows) {
                 if (this.circularSankeyView != null) this.circularSankeyView.close();
 
-                $(".circularsankey-wrapper").fadeIn();
+                $(".circularsankey-wrapper").show();
 
                 this.circularSankeyView = new CircularSankeyView({
                     el: ".circularsankey-wrapper",

@@ -85,8 +85,8 @@ define(['views/common/baseview',
 
 
                     this.circularSankey = new CircularSankeyComponent({
-                        //el: this.options.el,
-                        linksAndNodes: flows,
+                        el: this.options.el,
+                        circularData: flows,
                     });
  
                     // Smooth scroll to top of Viz

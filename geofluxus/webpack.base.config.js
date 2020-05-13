@@ -90,7 +90,6 @@ module.exports = {
             {
                 test: /\.m?js$/,
                 include: [
-                    //path.resolve(__dirname, "/geofluxus/js/visualizations")
                     path.resolve('./geofluxus/js/react/')
                 ],
                 exclude: /(node_modules|bower_components)/,

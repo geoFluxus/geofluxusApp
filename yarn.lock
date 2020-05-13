@@ -4409,10 +4409,10 @@ gensync@^1.0.0-beta.1:
   resolved "https://registry.yarnpkg.com/gensync/-/gensync-1.0.0-beta.1.tgz#58f4361ff987e5ff6e1e7a210827aa371eaac269"
   integrity sha512-r8EC6NO1sngH/zdD9fiRDLdcgnbayXah+mLgManTaIZJqEC1MZstmnox8KpnI2/fxQwrp5OpCOYWLp4rBl4Jcg==
 
-geofluxus-circular-sankey@^1.0.10:
-  version "1.0.10"
-  resolved "https://registry.yarnpkg.com/geofluxus-circular-sankey/-/geofluxus-circular-sankey-1.0.10.tgz#e43a571bcbbee5852f1c0cc3855f0818e5255fb2"
-  integrity sha512-x8Vp3TUCs8YRHX9ztmTV3bzhZapKmhs0YUuatRLRJwqud0RMfNrgzOGFkJ2fx1dMmQgTqadH/QbVvv+S9TPs1w==
+geofluxus-circular-sankey@^1.0.12:
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/geofluxus-circular-sankey/-/geofluxus-circular-sankey-1.0.12.tgz#6338b061d5472ca1813e41e68fe30c8a7effe6e3"
+  integrity sha512-ba7iZTBUcvwsFLMHcICeInEy4tJxBvN0x/lMfQXflcelpu2WEOkfznd76LYN85291RzYuJV4hOdXtl445lewHw==
   dependencies:
     webpack "^4.5.0"
 
