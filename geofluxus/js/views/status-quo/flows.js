@@ -34,7 +34,6 @@ define(['views/common/baseview',
         ChoroplethView,
         CoordinatePointMapView,
         AreaChartView,
-        FlowMapView,
         ParallelSetsView,
         CircularSankeyView,
     ) {
