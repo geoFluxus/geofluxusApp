@@ -5,8 +5,6 @@ define(['views/common/baseview',
         'collections/collection',
         'utils/utils',
         'utils/enrichFlows',
-        'views/common/flowsankey',
-        'views/common/flowsankeymap',
         'views/common/pieChartView',
         'views/common/barChartView',
         'views/common/linePlotView',
@@ -25,8 +23,6 @@ define(['views/common/baseview',
         Collection,
         utils,
         enrichFlows,
-        FlowSankeyView,
-        FlowMapView,
         PieChartView,
         BarChartView,
         LinePlotView,
@@ -34,6 +30,7 @@ define(['views/common/baseview',
         ChoroplethView,
         CoordinatePointMapView,
         AreaChartView,
+        FlowMapView,
         ParallelSetsView,
         CircularSankeyView,
     ) {
@@ -48,12 +45,6 @@ define(['views/common/baseview',
                 this.dimensions = {};
                 this.maxNumberOfDimensions = 2;
                 this.selectedDimensionStrings = [];
-
-                //_.bindAll(this, 'linkSelected');
-                //_.bindAll(this, 'linkDeselected');
-                // _.bindAll(this, 'nodeSelected');
-                // _.bindAll(this, 'nodeDeselected');
-                // _.bindAll(this, 'deselectAll');
 
                 this.areaLevels = new Collection([], {
                     apiTag: 'arealevels',
@@ -527,8 +518,8 @@ define(['views/common/baseview',
                 if (selectedVizualisationString) {
                     if (["flowmap", "parallelsets", "circularsankey"].includes(selectedVizualisationString)) {
                         let formatString = selectedVizualisationString;
-                        formatString = (formatString == "circularsankey")  ? "parallelsets" : formatString;
-                        
+                        formatString = (formatString == "circularsankey") ? "parallelsets" : formatString;
+
                         filterParams.format = formatString;
                     }
                 }
@@ -967,8 +958,7 @@ define(['views/common/baseview',
             renderCircularSankey: function (dimensions, flows) {
                 if (this.circularSankeyView != null) this.circularSankeyView.close();
 
-                $(".parallelsets-container").show();
-                $(".parallelsets-wrapper").fadeIn();
+                $(".circularsankey-wrapper").fadeIn();
 
                 this.circularSankeyView = new CircularSankeyView({
                     el: ".circularsankey-wrapper",

@@ -13,7 +13,8 @@ define(['views/common/baseview',
     'utils/utils',
     'utils/enrichFlows',
     'geofluxus-circular-sankey',
-    'react-dom'
+    'react',
+    'react-dom',
 ],
 
     function (
@@ -27,6 +28,7 @@ define(['views/common/baseview',
         utils,
         enrichFlows,
         CircularSankey,
+        React,
         ReactDOM,
         Slider) {
         /**
@@ -67,31 +69,3 @@ define(['views/common/baseview',
         return CircularSankeyComponentView;
     }
 );
-
-//var CircularSankeyComponent = {} 
-// var CircularSankeyComponent = React.createBackboneClass({
-//   render: function (options) {
-//     const pageMargins = {
-//       top: 50,
-//       left: 300,
-//       right: 50,
-//       bottom: 0
-//     }
-
-//     // return (
-//     //   <CircularSankey
-//     //     circularData={options.flows}
-//     //     width={900}
-//     //     height={1000}
-//     //     absolutePosition={pageMargins}
-//     //   />
-//     // )
-//   }
-// });
-
-// return new CircularSankey({
-//     circularData: options.flows
-// })
-
-// module.exports = CircularSankeyComponent;
-

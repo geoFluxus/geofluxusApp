@@ -89,13 +89,17 @@ module.exports = {
             },
             {
                 test: /\.m?js$/,
-                  exclude: /(node_modules|bower_components)/,
-                  use: {
+                include: [
+                    //path.resolve(__dirname, "/geofluxus/js/visualizations")
+                    path.resolve('./geofluxus/js/react/')
+                ],
+                exclude: /(node_modules|bower_components)/,
+                use: {
                     loader: 'babel-loader',
                     options: {
-                      presets: ['@babel/preset-env', '@babel/preset-react']
+                        presets: ['@babel/preset-env', '@babel/preset-react']
                     }
-                  }
+                }
             }
         ],
     },

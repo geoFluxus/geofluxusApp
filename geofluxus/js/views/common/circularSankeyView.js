@@ -7,7 +7,7 @@ define(['views/common/baseview',
         'file-saver',
         'utils/utils',
         'utils/enrichFlows',
-        'visualizations/circularSankey',
+        'react/circularSankey',
         'geofluxus-circular-sankey',
     ],
 
@@ -84,7 +84,7 @@ define(['views/common/baseview',
                     flows = this.transformToLinksAndNodes(this.options.flows, this.options.dimensions, this.filtersView);
 
 
-                    this.circularSankey = new CircularSankey({
+                    this.circularSankey = new CircularSankeyComponent({
                         //el: this.options.el,
                         linksAndNodes: flows,
                     });
