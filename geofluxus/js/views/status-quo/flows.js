@@ -51,6 +51,7 @@ define(['views/common/baseview',
                 this.dimensions = {};
                 this.maxNumberOfDimensions = 2;
                 this.selectedDimensionStrings = [];
+                this.selectedVizName = "";
 
                 //_.bindAll(this, 'linkSelected');
                 //_.bindAll(this, 'linkDeselected');
@@ -156,6 +157,12 @@ define(['views/common/baseview',
             addEventListeners: function () {
                 var _this = this;
 
+                $('.viz-selector-button').on("click", function (event) {
+                    _this.selectedVizName = $(this).attr("data-viz");
+                    event.preventDefault();
+                });
+
+
                 // Dimension toggles: ---------------------------
 
                 // Show alert if user clicks on disabled dimension toggle:
@@ -201,12 +208,12 @@ define(['views/common/baseview',
                     if (_this.maxNumberOfDimensions == _this.checkedDimToggles.length) {
                         // Disable the remaining unchecked toggles:
                         $(_this.uncheckedDimToggles).each(function (index, value) {
-                            this.bootstrapToggle('disable');
+                            $(this).bootstrapToggle('disable');
                         });
                     } else {
                         // (Re)enable the toggles:
                         $(_this.uncheckedDimToggles).each(function (index, value) {
-                            this.bootstrapToggle('enable');
+                            $(this).bootstrapToggle('enable');
                         });
                         $("#alertMaxDimensionsRow").fadeOut("fast");
                     }
@@ -340,20 +347,37 @@ define(['views/common/baseview',
                             // code block
                     }
 
+
+                    // TODO
+                    // if ($(".viz-selector-button.")) {
+
+                    // }
+
+
+
                 });
 
 
-                // Disable origin/destination toggle for Space for Flowmap and Parallel Sets
+                // Disable origin/destination toggle for Space Treatment method for Flowmap and Parallel Sets
                 $(".viz-selector-button").click(function (event) {
 
                     let clickedToggleHasFlowsFormat = $($(event.currentTarget)[0]).hasClass("hasFlowsFormat")
 
                     // At least two dimensions, and one is Space:
                     if ((_this.checkedDimToggles.length > 1) && _this.selectedDimensionStrings.includes("space") && clickedToggleHasFlowsFormat) {
-                        $("#origDest-toggle-space").bootstrapToggle('disable');
+                        $("#origDest-toggle-space").fadeOut();
                         event.preventDefault();
                     } else {
-                        $("#origDest-toggle-space").bootstrapToggle('enable');
+                        $("#origDest-toggle-space").fadeIn();
+                        event.preventDefault();
+                    }
+
+                    // At least two dimensions, and one is treatmentMethod:
+                    if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("treatmentMethod") && clickedToggleHasFlowsFormat) {
+                        $("#origDest-toggle-treatment-col").fadeOut();
+                        event.preventDefault();
+                    } else if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("treatmentMethod")) {
+                        $("#origDest-toggle-treatment-col").fadeIn();
                         event.preventDefault();
                     }
                 });
@@ -512,22 +536,16 @@ define(['views/common/baseview',
 
             // Returns parameters for filtered post-fetching based on assigned filter
             getFilterAndDimParams: function () {
+                var _this = this;
 
                 // Prepare filters for request
                 let filterParams = this.filtersView.getFilterParams();
 
                 // ///////////////////////////////
                 // Format
-                let selectedVizualisationString;
-                $('.viz-selector-button').each(function (index, value) {
-                    if ($(this).hasClass("active")) {
-                        selectedVizualisationString = $(this).attr("data-viz");
-                    }
-                });
-
-                if (selectedVizualisationString) {
-                    if (selectedVizualisationString.includes("flowmap") || selectedVizualisationString.includes("parallelsets")) {
-                        filterParams.format = selectedVizualisationString;
+                if (_this.selectedVizName) {
+                    if (_this.selectedVizName.includes("flowmap") || _this.selectedVizName.includes("parallelsets")) {
+                        filterParams.format = _this.selectedVizName;
                     }
                 }
 
@@ -639,7 +657,7 @@ define(['views/common/baseview',
             //     this.flowMapView.rerender();
             // },
 
-            render1Dvisualizations: function (dimensions, flows, selectedVizualisationString) {
+            render1Dvisualizations: function (dimensions, flows) {
                 let _this = this;
                 let filtersView = this.filtersView;
                 let dimensionString = dimensions[0][0];
@@ -670,7 +688,7 @@ define(['views/common/baseview',
                         // Nothing
                 }
 
-                switch (selectedVizualisationString) {
+                switch (_this.selectedVizName) {
                     case "piechart":
                         this.renderPieChart(dimensions, flows);
                         break;
@@ -728,7 +746,7 @@ define(['views/common/baseview',
                 console.log(flows);
             },
 
-            render2Dvisualizations: function (dimensions, flows, selectedVizualisationString) {
+            render2Dvisualizations: function (dimensions, flows) {
                 let _this = this;
                 let filtersView = this.filtersView;
                 let dimStrings = [];
@@ -819,7 +837,7 @@ define(['views/common/baseview',
                     flows = enrichFlows.enrichEWC(flows, filtersView, gran2);
                 }
 
-                switch (selectedVizualisationString) {
+                switch (_this.selectedVizName) {
                     case "lineplotmultiple":
                         this.renderLinePlot(dimensions, flows, true);
                         break;
@@ -980,43 +998,34 @@ define(['views/common/baseview',
 
             // Fetch flows and calls options.success(flows) on success
             fetchFlows: function (options) {
-                let _this = this;
+                var _this = this;
                 let filterParams = this.getFilterAndDimParams();
                 let data = {};
-                let selectedVizualisationString;
                 this.selectedDimensions = Object.entries(filterParams.dimensions);
-
-                $('#apply-filters').popover('hide');
-
-                $('.viz-selector-button').each(function (index, value) {
-                    if ($(this).hasClass("active")) {
-                        selectedVizualisationString = $(this).attr("data-viz");
-                    }
-                });
-
-                let flows = new Collection([], {
-                    apiTag: 'statusquoflows',
-                });
 
                 // Reset all visualizations:
                 this.closeAllVizViews();
 
+                $('#apply-filters').popover('hide');
+
                 // No visualization has been selected, inform user:
-                if (!selectedVizualisationString || _this.selectedDimensions.length == 0) {
+                if (_this.selectedVizName == "" || _this.selectedDimensions.length == 0) {
 
                     let options = {
                         template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-body"></div></div>',
                         content: "Make sure to select at least one dimension and a visualization type!",
                         trigger: "focus",
                     }
-
                     $('#apply-filters').popover(options);
                     $('#apply-filters').popover('show');
 
                     // Only fetch Flows if a visualization has been selected:
                 } else {
-                    this.loader.activate();
 
+                    this.loader.activate();
+                    let flows = new Collection([], {
+                        apiTag: 'statusquoflows',
+                    });
                     flows.postfetch({
                         data: data,
                         body: filterParams,
@@ -1029,15 +1038,15 @@ define(['views/common/baseview',
                             }, _this.flows);
 
                             // Only Parallel Sets requires different processing: 
-                            if (selectedVizualisationString == "parallelsets") {
+                            if (_this.selectedVizName == "parallelsets") {
                                 _this.renderParallelSets(_this.selectedDimensions, _this.flows);
                             } else {
                                 switch (_this.selectedDimensions.length) {
                                     case 1:
-                                        _this.render1Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
+                                        _this.render1Dvisualizations(_this.selectedDimensions, _this.flows);
                                         break;
                                     case 2:
-                                        _this.render2Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
+                                        _this.render2Dvisualizations(_this.selectedDimensions, _this.flows);
                                         break;
                                 }
                             }
