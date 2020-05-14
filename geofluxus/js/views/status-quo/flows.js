@@ -705,12 +705,15 @@ define(['views/common/baseview',
                         this.renderLinePlot(dimensions, flows, true);
                         break;
                     case "choroplethmap":
-                        // If level == actor:
+                        let occuringAreas = [];
+                        occuringAreas = flows.map(x => x.areaId);
+                        occuringAreas = _.unique(occuringAreas);
 
                         areas = new Collection([], {
                             apiTag: 'areas',
                             apiIds: [granularity.adminlevel]
                         });
+
 
                         areas.fetch({
                             success: function () {
@@ -722,7 +725,10 @@ define(['views/common/baseview',
                                     feature['type'] = 'Feature';
                                     feature['id'] = area.get('id')
                                     feature['geometry'] = area.get('geom')
-                                    features.push(feature)
+
+                                    if (occuringAreas.includes(feature.id)){
+                                        features.push(feature)
+                                    }
                                 })
 
                                 flows.forEach(function (flow, index) {
