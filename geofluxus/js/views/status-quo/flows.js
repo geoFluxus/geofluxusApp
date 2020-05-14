@@ -365,19 +365,19 @@ define(['views/common/baseview',
 
                     // At least two dimensions, and one is Space:
                     if ((_this.checkedDimToggles.length > 1) && _this.selectedDimensionStrings.includes("space") && clickedToggleHasFlowsFormat) {
-                        $("#origDest-toggle-space").fadeOut();
+                        $("#origDest-toggle-space").parent().fadeOut();
                         event.preventDefault();
                     } else {
-                        $("#origDest-toggle-space").fadeIn();
+                        $("#origDest-toggle-space").parent().fadeIn();
                         event.preventDefault();
                     }
 
                     // At least two dimensions, and one is treatmentMethod:
                     if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("treatmentMethod") && clickedToggleHasFlowsFormat) {
-                        $("#origDest-toggle-treatment-col").fadeOut();
+                        $("#origDest-toggle-treatment-col").parent().fadeOut();
                         event.preventDefault();
                     } else if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("treatmentMethod")) {
-                        $("#origDest-toggle-treatment-col").fadeIn();
+                        $("#origDest-toggle-treatment-col").parent().fadeIn();
                         event.preventDefault();
                     }
                 });
