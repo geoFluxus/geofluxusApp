@@ -126,17 +126,17 @@ define(['views/common/baseview',
                                 // Gran == Treatment method group
                                 if (gran1.includes("group")) {
                                     let processGroupDestinationObject = processGroups.find(processGroup => processGroup.attributes.id == flow.destination.processgroup);
-                                    destinationNode.name = enrichFlows.returnCodePlusName(processGroupDestinationObject) + " ";
+                                    destinationNode.id = enrichFlows.returnCodePlusName(processGroupDestinationObject) + " ";
                                     let processGroupOriginObject = processGroups.find(processGroup => processGroup.attributes.id == flow.origin.processgroup);
-                                    originNode.name = enrichFlows.returnCodePlusName(processGroupOriginObject);
+                                    originNode.id = enrichFlows.returnCodePlusName(processGroupOriginObject);
                                     break;
 
                                     // Gran == Treatment method
                                 } else {
                                     let processDestinationObject = processes.find(process => process.attributes.id == flow.destination.process);
-                                    destinationNode.name = enrichFlows.returnCodePlusName(processDestinationObject) + " ";
+                                    destinationNode.id = enrichFlows.returnCodePlusName(processDestinationObject) + " ";
                                     let processOriginObject = processes.find(process => process.attributes.id == flow.origin.process);
-                                    originNode.name = enrichFlows.returnCodePlusName(processOriginObject);
+                                    originNode.id = enrichFlows.returnCodePlusName(processOriginObject);
 
                                 }
 
@@ -150,19 +150,19 @@ define(['views/common/baseview',
                                     switch (gran1) {
                                         case "origin__activity__activitygroup":
                                             let activityGroupOriginObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.origin.activitygroup);
-                                            originNode.name = enrichFlows.returnCodePlusName(activityGroupOriginObject);
+                                            originNode.id = enrichFlows.returnCodePlusName(activityGroupOriginObject);
                                             break;
                                         case "origin__activity":
                                             let activityOriginObject = activities.find(activity => activity.attributes.id == flow.origin.activity);
-                                            originNode.name = enrichFlows.returnCodePlusName(activityOriginObject);
+                                            originNode.id = enrichFlows.returnCodePlusName(activityOriginObject);
                                             break;
                                         case "destination__activity__activitygroup":
                                             let activityGroupDestinationObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.destination.activitygroup);
-                                            destinationNode.name = enrichFlows.returnCodePlusName(activityGroupDestinationObject);
+                                            destinationNode.id = enrichFlows.returnCodePlusName(activityGroupDestinationObject);
                                             break;
                                         case "destination__activity":
                                             let activityDestinationObject = activities.find(activity => activity.attributes.id == flow.destination.activity);
-                                            destinationNode.name = enrichFlows.returnCodePlusName(activityDestinationObject);
+                                            destinationNode.id = enrichFlows.returnCodePlusName(activityDestinationObject);
                                             break;
                                     }
 
@@ -182,15 +182,15 @@ define(['views/common/baseview',
                                             switch (gran2) {
                                                 case "flowchain__waste06__waste04__waste02":
                                                     let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.destination.waste02);
-                                                    destinationNode.name = enrichFlows.returnEwcCodePlusName(ewc2Object);
+                                                    destinationNode.id = enrichFlows.returnEwcCodePlusName(ewc2Object);
                                                     break;
                                                 case "flowchain__waste06__waste04":
                                                     let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.destination.waste04);
-                                                    destinationNode.name = enrichFlows.returnEwcCodePlusName(ewc4Object);
+                                                    destinationNode.id = enrichFlows.returnEwcCodePlusName(ewc4Object);
                                                     break;
                                                 case "flowchain__waste06":
                                                     let ewc6Object = ewc6.find(ewc => ewc.attributes.id == flow.destination.waste06);
-                                                    destinationNode.name = enrichFlows.returnEwcCodePlusName(ewc6Object);
+                                                    destinationNode.id = enrichFlows.returnEwcCodePlusName(ewc6Object);
                                                     break;
                                             }
                                             // From material to econ
@@ -198,15 +198,15 @@ define(['views/common/baseview',
                                             switch (gran2) {
                                                 case "flowchain__waste06__waste04__waste02":
                                                     let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.origin.waste02);
-                                                    originNode.name = enrichFlows.returnEwcCodePlusName(ewc2Object);
+                                                    originNode.id = enrichFlows.returnEwcCodePlusName(ewc2Object);
                                                     break;
                                                 case "flowchain__waste06__waste04":
                                                     let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.origin.waste04);
-                                                    originNode.name = enrichFlows.returnEwcCodePlusName(ewc4Object);
+                                                    originNode.id = enrichFlows.returnEwcCodePlusName(ewc4Object);
                                                     break;
                                                 case "flowchain__waste06":
                                                     let ewc6Object = ewc6.find(ewc => ewc.attributes.id == flow.origin.waste06);
-                                                    originNode.name = enrichFlows.returnEwcCodePlusName(ewc6Object);
+                                                    originNode.id = enrichFlows.returnEwcCodePlusName(ewc6Object);
                                                     break;
                                             }
                                         }
@@ -220,15 +220,15 @@ define(['views/common/baseview',
                                             switch (gran2) {
                                                 case "flowchain__waste06__waste04__waste02":
                                                     let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.destination.waste02);
-                                                    destinationNode.name = enrichFlows.returnEwcCodePlusName(ewc2Object);
+                                                    destinationNode.id = enrichFlows.returnEwcCodePlusName(ewc2Object);
                                                     break;
                                                 case "flowchain__waste06__waste04":
                                                     let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.destination.waste04);
-                                                    destinationNode.name = enrichFlows.returnEwcCodePlusName(ewc4Object);
+                                                    destinationNode.id = enrichFlows.returnEwcCodePlusName(ewc4Object);
                                                     break;
                                                 case "flowchain__waste06":
                                                     let ewc6Object = ewc6.find(ewc => ewc.attributes.id == flow.destination.waste06);
-                                                    destinationNode.name = enrichFlows.returnEwcCodePlusName(ewc6Object);
+                                                    destinationNode.id = enrichFlows.returnEwcCodePlusName(ewc6Object);
                                                     break;
                                             }
                                             // From material to treatment
@@ -236,15 +236,15 @@ define(['views/common/baseview',
                                             switch (gran2) {
                                                 case "flowchain__waste06__waste04__waste02":
                                                     let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.origin.waste02);
-                                                    originNode.name = enrichFlows.returnEwcCodePlusName(ewc2Object);
+                                                    originNode.id = enrichFlows.returnEwcCodePlusName(ewc2Object);
                                                     break;
                                                 case "flowchain__waste06__waste04":
                                                     let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.origin.waste04);
-                                                    originNode.name = enrichFlows.returnEwcCodePlusName(ewc4Object);
+                                                    originNode.id = enrichFlows.returnEwcCodePlusName(ewc4Object);
                                                     break;
                                                 case "flowchain__waste06":
                                                     let ewc6Object = ewc6.find(ewc => ewc.attributes.id == flow.origin.waste06);
-                                                    originNode.name = enrichFlows.returnEwcCodePlusName(ewc6Object);
+                                                    originNode.id = enrichFlows.returnEwcCodePlusName(ewc6Object);
                                                     break;
                                             }
                                         }
@@ -265,19 +265,19 @@ define(['views/common/baseview',
                                     switch (granularity) {
                                         case "destination__process__processgroup":
                                             let processGroupDestinationObject = processGroups.find(processGroup => processGroup.attributes.id == flow.destination.processgroup);
-                                            destinationNode.name = enrichFlows.returnCodePlusName(processGroupDestinationObject);
+                                            destinationNode.id = enrichFlows.returnCodePlusName(processGroupDestinationObject);
                                             break;
                                         case "destination__process":
                                             let processDestinationObject = processes.find(process => process.attributes.id == flow.destination.process);
-                                            destinationNode.name = enrichFlows.returnCodePlusName(processDestinationObject);
+                                            destinationNode.id = enrichFlows.returnCodePlusName(processDestinationObject);
                                             break;
                                         case "origin__process__processgroup":
                                             let processGroupOriginObject = processGroups.find(processGroup => processGroup.attributes.id == flow.origin.processgroup);
-                                            originNode.name = enrichFlows.returnCodePlusName(processGroupOriginObject);
+                                            originNode.id = enrichFlows.returnCodePlusName(processGroupOriginObject);
                                             break;
                                         case "origin__process":
                                             let processOriginObject = processes.find(process => process.attributes.id == flow.origin.process);
-                                            originNode.name = enrichFlows.returnCodePlusName(processOriginObject);
+                                            originNode.id = enrichFlows.returnCodePlusName(processOriginObject);
                                             break;
                                     }
                                 }
@@ -287,8 +287,8 @@ define(['views/common/baseview',
                         nodes.push(originNode, destinationNode)
 
                         // LINKS
-                        link.source = originNode.name;
-                        link.target = destinationNode.name;
+                        link.source = originNode.id;
+                        link.target = destinationNode.id;
                         link.value = flow.amount;
 
                         links.push(link)
@@ -303,7 +303,7 @@ define(['views/common/baseview',
                     }, {})
                     nodes = _(summed_by_type).map(function (v, k) {
                         return {
-                            id: k,
+                            name: k,
                             value: v
                         }
                     })
