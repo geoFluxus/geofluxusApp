@@ -36,7 +36,8 @@ function(Session) {
         classifications:   '/api/classifications/',
         extradescriptions: '/api/extradescriptions/',
         routings:          '/api/routings/',
-        ways:              '/api/ways/'
+        ways:              '/api/ways/',
+        vehicles:          '/api/vehicles/'
     }
 
     return config;

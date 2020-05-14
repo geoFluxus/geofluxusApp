@@ -26,7 +26,8 @@ from geofluxus.apps.asmfa.views import (ActivityGroupViewSet,
                                         PublicationTypeViewSet,
                                         PublicationViewSet,
                                         RoutingViewSet,
-                                        WaysViewSet)
+                                        WaysViewSet,
+                                        VehicleViewSet)
 from geofluxus.apps.statusquo.views import (StatusQuoViewSet,)
 from geofluxus.apps.impact.views import (ImpactViewSet,)
 
@@ -43,6 +44,7 @@ router.register(r'allareas', AreaViewSet)
 
 # Network
 router.register(r'ways', WaysViewSet)
+router.register(r'vehicles', VehicleViewSet)
 
 # Nodes
 router.register(r'activitygroups', ActivityGroupViewSet)

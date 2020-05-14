@@ -24,7 +24,8 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          ExtraDescription,
                                          Routing,
                                          AdminLevel,
-                                         Area)
+                                         Area,
+                                         Vehicle)
 from geofluxus.apps.asmfa.serializers import (ActivityGroupSerializer,
                                               ActivitySerializer,
                                               CompanySerializer,
@@ -47,7 +48,8 @@ from geofluxus.apps.asmfa.serializers import (ActivityGroupSerializer,
                                               ExtraDescriptionSerializer,
                                               RoutingSerializer,
                                               AdminLevelSerializer,
-                                              AreaSerializer)
+                                              AreaSerializer,
+                                              VehicleSerializer)
 import pandas as pd
 from django.utils.translation import ugettext as _
 
@@ -465,3 +467,17 @@ class AreaCreateSerializer(BulkSerializerMixin,
 
     def get_queryset(self):
         return Area.objects.all()
+
+
+class VehicleCreateSerializer(BulkSerializerMixin,
+                              VehicleSerializer):
+    field_map = {
+        'name': 'name',
+        'min': 'min',
+        'max': 'max',
+        'co2': 'co2'
+    }
+    index_columns = ['name']
+
+    def get_queryset(self):
+        return Vehicle.objects.all()

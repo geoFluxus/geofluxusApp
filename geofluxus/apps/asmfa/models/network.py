@@ -12,3 +12,13 @@ class Ways(models.Model):
     class Meta:
         managed = False
         db_table = 'ways'
+
+
+class Vehicle(models.Model):
+    name = models.CharField(max_length=255)
+    min = models.FloatField()
+    max = models.FloatField()
+    co2 = models.FloatField()
+
+    def __str__(self):
+        return '{}'.format(self.name)
