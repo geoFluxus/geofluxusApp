@@ -9,6 +9,7 @@ define(['underscore',
         'visualizations/d3plus',
         'openlayers',
         'utils/utils',
+        'utils/enrichFlows',
         'leaflet',
         'leaflet-easyprint',
         'leaflet-fullscreen',
@@ -20,7 +21,7 @@ define(['underscore',
         'leaflet-fullscreen/dist/leaflet.fullscreen.css'
     ],
 
-    function (_, BaseView, Collection, GeoLocation, Flows, FlowMap, D3plusLegend, d3, d3plus, ol, utils, L) {
+    function (_, BaseView, Collection, GeoLocation, Flows, FlowMap, D3plusLegend, d3, d3plus, ol, utils, enrichFlows, L) {
 
         /**
          *
@@ -55,7 +56,7 @@ define(['underscore',
                     this.dimStrings = [];
                     this.options.dimensions.forEach(dim => this.dimStrings.push(dim[0]));
                     this.dim2 = this.options.dimensions.find(dim => dim[0] != "space");
-                    this.allDimensionValues = [];
+                    this.legendItems = [];
 
 
                     this.render();
@@ -270,7 +271,7 @@ define(['underscore',
                     });
                     this.legend = document.createElement('div');
                     this.legend.style.background = "rgba(255, 255, 255, 0.5)";
-                    //this.legend.style.visibility = 'hidden';
+                    this.legend.style.visibility = 'hidden';
 
                     this.legend.style.width = "10rem";
                     this.legend.style.height = "10rem";
@@ -320,29 +321,29 @@ define(['underscore',
                     var _this = this;
 
                     console.log("______ legend data _______")
-                    console.log(this.allDimensionValues);
+                    console.log(_this.legendItems);
 
                     this.d3plusLegend = new D3plusLegend({
                         el: ".flowmap-d3pluslegend-wrapper",
-                        data: _this.allDimensionValues,
+                        data: _this.legendItems,
                         flowMapView: _this,
-                        direction: "column",
-                        label: function (d) {
-                            return d.label.substring(0, 1);
-                        },
-                        shapeConfig: {
-                            fill: function (d) {
-                                return d.color;
-                            },
-                            height: 25,
-                            width: 25
-                        },
+                        // direction: "column",
+                        // label: function (d) {
+                        //     return d.label.substring(0, 1);
+                        // },
+                        // shapeConfig: {
+                        //     fill: function (d) {
+                        //         return d.color;
+                        //     },
+                        //     height: 25,
+                        //     width: 25
+                        // },
                     });
 
 
                     // //_this.legend = document.querySelector(".flowmap-legend-wrapper");
                     // _this.legend = new d3plus.Legend()
-                    //     .data(_this.allDimensionValues)
+                    //     .data(_this.legendItems)
                     //     // .shapeConfig({
                     //     //     fill: function (d) {
                     //     //         return d.color;
@@ -409,73 +410,6 @@ define(['underscore',
                     this.clusterGroupsDone = 0;
                 },
 
-                //        toggleClusters(){
-                //            var _this = this,
-                //                show = this.clusterCheck.checked;
-                //            // remove cluster layers from map
-                //            this.leafletMap.eachLayer(function (layer) {
-                //                if (layer !== _this.backgroundLayer)
-                //                    _this.leafletMap.removeLayer(layer);
-                //            });
-                //            this.clusterGroups = {};
-                //            // no clustering without data or clustering unchecked
-                //            if (!this.data || !show) return;
-                //            this.flowMap.clear();
-                //            var nodes = Object.values(_this.data.nodes),
-                //                rmax = 30;
-                //            var nClusterGroups = 0;
-                //                clusterPolygons = [];
-                //
-                //            function drawClusters(){
-                //                var data = _this.transformMarkerClusterData();
-                //                // remove old cluster layers
-                //                clusterPolygons.forEach(function(layer){
-                //                    _this.leafletMap.removeLayer(layer);
-                //                })
-                //                clusterPolygons = [];
-                //                _this.resetMapData(data, false);
-                //            }
-                //
-                //            // add cluster layers
-                //            nodes.forEach(function(node){
-                //                if (!node.group) return;
-                //                var clusterId = node.group.id,
-                //                    group = _this.clusterGroups[clusterId];
-                //                // create group if not existing
-                //                if (!group && node.group != null){
-                //                    var clusterGroup = new L.MarkerClusterGroup({
-                //                        maxClusterRadius: 2 * rmax,
-                //                        iconCreateFunction: function(cluster) {
-                //                            return L.divIcon({ iconSize: 0 });
-                //                        },
-                //                        animate: false
-                //                    });
-                //                    group = {
-                //                        color: node.group.color,
-                //                        label: node.group.name,
-                //                        instance: clusterGroup
-                //                    };
-                //                    _this.clusterGroups[clusterId] = group;
-                //                    _this.leafletMap.addLayer(clusterGroup);
-                //                    clusterGroup.on('animationend', function(){
-                //                        _this.clusterGroupsDone++;
-                //                        // all cluster animations are done -> transform data
-                //                        // according to current clustering
-                //                        if (_this.clusterGroupsDone === nClusterGroups){
-                //                            drawClusters();
-                //                        }
-                //                    })
-                //                    nClusterGroups++;
-                //                }
-                //                var marker = L.marker([node['lat'], node['lon']], {
-                //                    icon: L.divIcon({ iconSize: 0 }),
-                //                    opacity: 0
-                //                });
-                //                marker.id = node.id;
-                //                group.instance.addLayer(marker);
-                //            });
-                //            drawClusters();
-                //        },
 
                 resetMapData: function (data, zoomToFit) {
                     this.data = data;
@@ -492,7 +426,7 @@ define(['underscore',
                     this.flowMap.showFlows = (this.flowCheck.checked) ? true : false;
                     this.flowMap.dottedLines = (this.aniDotsRadio.checked) ? true : false;
 
-                    //this.updateLegend(data);
+                    this.updateLegend(data);
 
                     this.flowMap.toggleTag('actor', this.actorCheck.checked);
 
@@ -502,8 +436,6 @@ define(['underscore',
 
                 rerender: function (zoomToFit) {
                     var _this = this;
-
-                    //var data = _this.transformData(_this.flows);
 
                     var data = _this.transformToLinksAndNodes(_this.flows);
 
@@ -557,35 +489,6 @@ define(['underscore',
                         this.leafletMap = null;
                     }
                 },
-
-                // transformMarkerClusterData: function () {
-                //     var clusters = [];
-                //     Object.values(this.clusterGroups).forEach(function (clusterGroup) {
-                //         clusterGroup.instance._featureGroup.eachLayer(function (layer) {
-                //             if (layer instanceof L.MarkerCluster) {
-                //                 var point = layer.getLatLng(),
-                //                     cluster = {
-                //                         ids: [],
-                //                         color: clusterGroup.color,
-                //                         label: clusterGroup.label,
-                //                         lat: point.lat,
-                //                         lon: point.lng
-                //                     }
-                //                 layer.getAllChildMarkers().forEach(function (marker) {
-                //                     cluster.ids.push(marker.id);
-                //                 })
-                //                 clusters.push(cluster);
-                //             }
-                //         });
-                //     })
-                //     data = this.transformData(
-                //         this.flows, {
-                //             splitByComposition: this.materialCheck.checked,
-                //             clusters: clusters
-                //         }
-                //     );
-                //     return data;
-                // },
 
                 returnLinkInfo: function (link) {
                     let fromToText = link.origin.name + ' &#10132; ' + link.destination.name + '<br>'
@@ -655,7 +558,6 @@ define(['underscore',
                         dimensionId: dimensionId,
                         toolTipText: fromToText + description + dimensionValue + '<br><b>Amount: </b>' + amountText,
                         amountText: amountText,
-                        color: utils.colorByName(dimensionValue),
                     }
 
                 },
@@ -670,49 +572,49 @@ define(['underscore',
                         let destinationNode = flow.destination
                         let link = flow;
                         let linkInfo = _this.returnLinkInfo(this[index]);
+                        let opacityValue = 0.8;
 
                         // NODES
                         // Add the origin and destination to Nodes, and include amounts:
                         //originNode.value = flow.amount;
                         originNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
-                        originNode.color = linkInfo.color;
-
-                        //destinationNode.value = flow.amount;
+                        originNode.opacity = opacityValue
+                        // destinationNode.value = flow.amount;
                         // destinationNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
-                        // destinationNode.color = linkInfo.color;
+                        destinationNode.opacity = opacityValue
 
                         nodes.push(originNode, destinationNode)
-
-                        _this.allDimensionValues.push({
-                            label: linkInfo.dimensionValue,
-                            id: linkInfo.dimensionId,
-                            color: linkInfo.color,
-                        });
 
                         // LINKS
                         link.source = this[index].origin.id;
                         link.target = this[index].destination.id;
                         link.value = this[index].amount;
-                        // link.style = {
-                        //     nodeColor: utils.colorByName(this[index].origin.name),
-                        //     color: utils.colorByName(this[index].id),
-                        // };
-
-                        link.color = linkInfo.color;
+                        link.dimensionId = linkInfo.dimensionId;
                         link.label = linkInfo.toolTipText;
-
+                        link.dimensionValue = linkInfo.dimensionValue;
                         links.push(link)
 
                     }, flows);
 
-                    nodes.forEach(function (node, index) {
-                        //this[index].color = utils.colorByName(this[index].name);
-                        //this[index].label = this[index].name;
-                        this[index].opacity = 0.8;
-                    }, nodes);
+                    // Assign colors to links and nodes based on label-prop:
+                    links = enrichFlows.assignColorsByProperty(links, "activityGroupName");
+                    nodes = enrichFlows.assignColorsByProperty(nodes, "label");
+
+                    // Get all unique occurences for legend:
+                    links.forEach(link => {
+                        _this.legendItems.push({
+                            id: link.dimensionId,
+                            label: link.dimensionValue,
+                            color: link.color,
+                        })
+                    });
+
+                    _this.legendItems = _.unique(_this.legendItems, );
 
 
-
+                    // _this.legendItems = _.uniq(_this.legendItems, function(x){
+                    //     return x.dimensionValue;
+                    // });
 
                     console.log("Links:");
                     console.log(links);
@@ -725,308 +627,7 @@ define(['underscore',
                     }
                 },
 
-                /*
-                 * transform actors and flows to a json-representation
-                 * readable by the sankey-diagram
-                 *
-                 * options.splitByComposition - split flows by their compositions (aka materials) into seperate flows
-                 * options.clusters - array of objects with keys "lat", "lon" (location) and "ids" (array of actor ids that belong to that cluster)
-                 */
-                // transformData: function (flows, options) {
 
-                //     var _this = this,
-                //         options = options || {},
-                //         nodes = {},
-                //         links = [],
-                //         clusters = options.clusters || [],
-                //         splitByComposition = options.splitByComposition,
-                //         clusterMap = {},
-                //         pFlows = [],
-                //         warnings = [],
-                //         maxStock = 0;
-
-                //     var i = 0;
-
-                //     // clusters.forEach(function (cluster) {
-                //     //     var nNodes = cluster.ids.length,
-                //     //         clusterId = 'cluster' + i,
-                //     //         label = cluster.label + ' (' + nNodes + ' ' + 'actors' + ')';
-                //     //     var clusterNode = {
-                //     //         id: clusterId,
-                //     //         name: label,
-                //     //         label: label,
-                //     //         color: cluster.color,
-                //     //         opacity: 0.8,
-                //     //         lon: cluster.lon,
-                //     //         lat: cluster.lat,
-                //     //         radius: Math.min(25, 10 + nNodes / 3),
-                //     //         innerLabel: nNodes,
-                //     //         cluster: cluster,
-                //     //         tag: 'actor'
-                //     //     }
-                //     //     nodes[clusterId] = clusterNode;
-                //     //     i++;
-                //     //     cluster.ids.forEach(function (id) {
-                //     //         clusterMap[id] = clusterId;
-                //     //     })
-                //     // })
-
-                //     function transformNode(node) {
-                //         var id = node.id,
-                //             clusterId = clusterMap[id];
-
-                //         // node is clustered, take cluster as origin resp. destination
-                //         if (clusterId != null) return nodes[clusterId];
-
-                //         // already transformed
-                //         var transNode = nodes[id];
-                //         if (transNode) return transNode;
-
-                //         var name = node.name,
-                //             level = node.level;
-                //         code = node.code || node.nace || node.activity_nace;
-
-                //         if ((_this.anonymize) && (level === 'actor'))
-                //             name = 'Actor';
-                //         name += ' (' + code + ')';
-
-                //         if (!node.geom) {
-                //             var warning = 'Actor referenced by flow, but missing a location: ' + name;
-                //             warnings.push(warning);
-                //             return;
-                //         }
-                //         var coords = node.geom.coordinates;
-                //         transNode = {
-                //             id: id,
-                //             name: name,
-                //             label: name,
-                //             color: node.color,
-                //             opacity: 0.8,
-                //             group: node.group,
-                //             lon: coords[0].toFixed(4),
-                //             lat: coords[1].toFixed(4),
-                //             radius: 5,
-                //             tag: 'actor'
-                //         }
-                //         nodes[id] = transNode;
-                //         return transNode;
-                //     }
-
-                //     var aggMap = {};
-
-                //     function aggregate(flow, source, target) {
-                //         var key = flow.get('waste') + source.id,
-                //             is_stock = flow.get('stock');
-                //         if (!is_stock) key += '-' + target.id;
-                //         var mapped = aggMap[key];
-                //         // not mapped yet -> create mapped flow
-                //         if (!mapped) {
-                //             mapped = {
-                //                 id: key,
-                //                 source: source,
-                //                 target: target,
-                //                 waste: flow.get('waste'),
-                //                 amount: 1000,
-                //                 fractions: {},
-                //                 is_stock: is_stock
-                //             }
-                //             fractions = mapped.fractions;
-                //             flow.get('materials').forEach(function (material) {
-                //                 fractions[material.material] = Object.assign({}, material);
-                //             })
-                //             aggMap[key] = mapped;
-                //             pFlows.push(mapped);
-                //         }
-                //         // mapped -> add to mapped flow
-                //         else {
-                //             fractions = mapped.fractions;
-                //             flow.get('materials').forEach(function (material) {
-                //                 var mat = fractions[material.material];
-                //                 if (!mat) {
-                //                     mat = Object.assign({}, material);
-                //                     fractions[material.material] = mat;
-                //                 } else {
-                //                     mat.amount += material.amount;
-                //                 }
-                //             })
-                //             mapped.amount += flow.get('amount');
-                //         }
-                //     }
-                //     i = 0;
-                //     // add the flows that don't have to be aggregated, because origin and destination are not clustered
-                //     flows.forEach(function (flow) {
-                //         var origin = flow.origin;
-                //         var destination = flow.destination;
-                //         var amount = flow.amount;
-
-                //         origin.color = utils.colorByName(origin.name);
-                //         destination.color = utils.colorByName(destination.name);
-
-
-                //         var source = transformNode(origin);
-                //         var target = transformNode(destination);
-                //         // var source = transformNode(origin),
-                //         //     target = (!is_stock) ? transformNode(destination) : source; // set target to source in case of stocks just for convenience, doesn't matter
-
-
-                //         // one node might have no geom (in case of stocks same node) -> cannot shown on map
-                //         if (!source || !target) return;
-
-                //         // one node is clustered (in case of stocks same node) -> aggregate
-                //         if (source.cluster || target.cluster) {
-                //             aggregate(flow, source, target);
-                //         } else {
-                //             pFlows.push({
-                //                 id: flow.id || i,
-                //                 source: source,
-                //                 target: target,
-                //                 amount: amount,
-                //                 color: flow.color,
-                //                 //fractions: flow.get('materials'),
-                //                 //waste: flow.get('waste'),
-                //                 //process: flow.get('process'),
-                //                 description: flow.get('description')
-                //             });
-                //         }
-                //         i += 1;
-                //     })
-
-                //     var maxClusterStock = 0;
-                //     // posproc the aggregation (just dict to list)
-                //     Object.values(aggMap).forEach(function (flow) {
-                //         flow.fractions = Object.values(flow.fractions);
-                //         if (flow.is_stock)
-                //             maxClusterStock = Math.max(maxClusterStock, flow.amount)
-                //     })
-
-                //     function transformFlow(pFlow) {
-                //         var source = pFlow.source,
-                //             target = pFlow.target,
-                //             fractions = pFlow.fractions,
-                //             description = pFlow.description;
-
-                //         var descText = '<br><b>Description:</b> ';
-                //         description.forEach(function (d) {
-                //             descText += d + ', ';
-                //         })
-                //         descText = descText.substring(0, descText.length - 2);
-
-                //         var //wasteLabel = (pFlow.waste) ? gettext('Waste') : gettext('Product'),
-                //             //processLabel = gettext('Process') + ': ' + (pFlow.process || '-'),
-                //             totalAmount = pFlow.amount,
-                //             flowLabel = source.name + '&#10132; ' + target.name + '<br>' + descText;
-
-                //         // if (splitByComposition) {
-                //         //     var cl = [];
-                //         //     fractions.forEach(function (material) {
-                //         //         var amount = Math.round(material.amount),
-                //         //             label = flowLabel + '<br><b>Material: </b>' + material.name +
-                //         //             '<br><b>Amount: </b>' + _this.format(amount) + ' t/year',
-                //         //             color;
-                //         //         if (!uniqueMaterials[material.material]) {
-                //         //             color = utils.colorByName(material.name)
-                //         //             uniqueMaterials[material.material] = {
-                //         //                 color: color,
-                //         //                 name: material.name
-                //         //             };
-                //         //         } else
-                //         //             color = uniqueMaterials[material.material].color;
-                //         //         cl.push({
-                //         //             id: pFlow.id,
-                //         //             label: label,
-                //         //             source: source.id,
-                //         //             target: target.id,
-                //         //             value: Math.abs(amount),
-                //         //             material: material.material,
-                //         //             tag: material.material,
-                //         //             color: color
-                //         //         })
-                //         //     })
-                //         //     return cl;
-                //         // } else {
-                //         var label = flowLabel + '<br><b>Amount: </b>' + _this.format(totalAmount) + ' t/year';
-                //         return [{
-                //             id: pFlow.id,
-                //             label: label,
-                //             source: source.id,
-                //             target: target.id,
-                //             color: pFlow.color || source.color,
-                //             value: Math.abs(totalAmount)
-                //         }]
-                //         //}
-                //     }
-
-                //     // function transformStock(pFlow) {
-                //     //     var source = pFlow.source,
-                //     //         fractions = pFlow.fractions;
-
-                //     //     var wasteLabel = (pFlow.waste) ? 'Waste' : 'Product',
-                //     //         totalAmount = Math.round(pFlow.amount),
-                //     //         stockLabel = source.name + '<br>' + wasteLabel + ' ' + 'Stock';
-                //     //     if (splitByComposition) {
-                //     //         var cs = [];
-                //     //         fractions.forEach(function (material) {
-                //     //             var amount = Math.round(material.amount),
-                //     //                 label = stockLabel + '<br><b>Material: </b>' + material.name + '<br><b>Amount: </b>' + _this.format(amount) + ' t/year',
-                //     //                 color;
-                //     //             if (!uniqueMaterials[material.material]) {
-                //     //                 color = utils.colorByName(material.name)
-                //     //                 uniqueMaterials[material.material] = {
-                //     //                     color: color,
-                //     //                     name: material.name
-                //     //                 };
-                //     //             } else
-                //     //                 color = uniqueMaterials[material.material].color;
-                //     //             cs.push({
-                //     //                 id: 'stock' + pFlow.id,
-                //     //                 label: label,
-                //     //                 color: color,
-                //     //                 lon: source.lon,
-                //     //                 lat: source.lat,
-                //     //                 //radius: radius,
-                //     //                 value: Math.abs(amount),
-                //     //                 tag: material.material
-                //     //             })
-                //     //         })
-                //     //         return cs;
-                //     //     } else {
-                //     //         var label = stockLabel + '<br><b>Amount: </b>' + _this.format(totalAmount) + ' t/year';
-                //     //         var stock = [{
-                //     //             id: 'stock' + pFlow.id,
-                //     //             label: label,
-                //     //             color: source.color,
-                //     //             group: source.group,
-                //     //             lon: source.lon,
-                //     //             lat: source.lat,
-                //     //             opacity: 0.8,
-                //     //             //radius: radius,
-                //     //             value: Math.abs(totalAmount),
-                //     //             tag: 'stock'
-                //     //         }]
-                //     //         return stock;
-                //     //     }
-                //     // }
-
-                //     // var stocks = [];
-
-                //     // var uniqueMaterials = {};
-                //     // pFlows.forEach(function (pFlow) {
-                //     //     if (pFlow.amount == 0) return;
-                //     //     if (!pFlow.is_stock)
-                //     //         links = links.concat(transformFlow(pFlow));
-                //     //     else
-                //     //         stocks = stocks.concat(transformStock(pFlow));
-                //     // })
-
-
-                //     return {
-                //         flows: links,
-                //         nodes: Object.values(nodes),
-                //         //stocks: stocks,
-                //         //materials: uniqueMaterials,
-                //         //warnings: warnings
-                //     }
-                // },
 
                 close: function () {
                     this.clear();

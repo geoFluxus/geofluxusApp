@@ -348,8 +348,6 @@ define(['views/common/baseview',
                     }
 
 
-
-
                     let selectedVizHasFlowsFormat = $(".viz-selector-button.active").hasClass("hasFlowsFormat")
                     // At least two dimensions, and one is treatmentMethod:
                     if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("treatmentMethod") && selectedVizHasFlowsFormat) {
@@ -760,7 +758,7 @@ define(['views/common/baseview',
                         // Nothing
                 }
 
-                console.log(flows);
+                // console.log(flows);
             },
 
             render2Dvisualizations: function (dimensions, flows) {
@@ -776,8 +774,8 @@ define(['views/common/baseview',
                 // Array with dimension strings without Granularity:
                 dimensions.forEach(dim => dimStrings.push(dim[0]));
 
-                console.log("Dimensions");
-                console.log(dimStrings);
+                //console.log("Dimensions");
+                //console.log(dimStrings);
 
                 // Time & Space
                 if (dimStrings.includes("time") && dimStrings.includes("space")) {
@@ -874,7 +872,7 @@ define(['views/common/baseview',
                         // Nothing
                 }
 
-                console.log(flows);
+                // console.log(flows);
             },
 
             renderPieChart: function (dimensions, flows) {

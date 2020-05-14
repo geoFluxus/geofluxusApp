@@ -410,14 +410,12 @@ textarea.textarea-autosize.form-control-sm {
 
 
 
-.flowmap-legend-wrapper {
+/* .flowmap-legend-wrapper {
     width: 10rem !important;
     height: 10rem !important;
-}
+} */
 
-
-
-.flowmap-legend-wrapper .d3plus-Rect-group {
+/* .flowmap-legend-wrapper .d3plus-Rect-group {
     width: 10rem !important;
     height: 10rem !important;
 }
@@ -426,7 +424,7 @@ textarea.textarea-autosize.form-control-sm {
     display: inline-block !important;
     width: 100%;
     height: 100%;
-}
+} */
 
 
 
