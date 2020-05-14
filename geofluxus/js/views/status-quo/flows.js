@@ -348,12 +348,25 @@ define(['views/common/baseview',
                     }
 
 
-                    // TODO
-                    // if ($(".viz-selector-button.")) {
-
-                    // }
 
 
+                    let selectedVizHasFlowsFormat = $(".viz-selector-button.active").hasClass("hasFlowsFormat")
+                    // At least two dimensions, and one is treatmentMethod:
+                    if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("treatmentMethod") && selectedVizHasFlowsFormat) {
+                        $("#origDest-toggle-treatment").parent().fadeOut();
+                        event.preventDefault();
+                    } else {
+                        $("#origDest-toggle-treatment").parent().fadeIn();
+                        event.preventDefault();
+                    }
+
+                    if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("space") && !selectedVizHasFlowsFormat) {
+                        $("#origDest-toggle-space").parent().fadeOut();
+                        event.preventDefault();
+                    } else {
+                        $("#origDest-toggle-space").parent().fadeIn();
+                        event.preventDefault();
+                    }
 
                 });
 
@@ -374,10 +387,10 @@ define(['views/common/baseview',
 
                     // At least two dimensions, and one is treatmentMethod:
                     if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("treatmentMethod") && clickedToggleHasFlowsFormat) {
-                        $("#origDest-toggle-treatment-col").parent().fadeOut();
+                        $("#origDest-toggle-treatment").parent().fadeOut();
                         event.preventDefault();
-                    } else if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("treatmentMethod")) {
-                        $("#origDest-toggle-treatment-col").parent().fadeIn();
+                    } else {
+                        $("#origDest-toggle-treatment").parent().fadeIn();
                         event.preventDefault();
                     }
                 });
@@ -724,7 +737,7 @@ define(['views/common/baseview',
                                     feature['id'] = area.get('id')
                                     feature['geometry'] = area.get('geom')
 
-                                    if (occuringAreas.includes(feature.id)){
+                                    if (occuringAreas.includes(feature.id)) {
                                         features.push(feature)
                                     }
                                 })
