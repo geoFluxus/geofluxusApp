@@ -76,7 +76,7 @@ define([
                 .append("button")
                 .attr("class", "d3plus-Button export-csv")
                 .attr("type", "button")
-                .html('<i class="fas fa-file" style="color: white"></i>');
+                .html('<i class="fas fa-file" title="Export the data of this visualization as a CSV file." style="color: white"></i>');
         }
     }
     return TreeMap;

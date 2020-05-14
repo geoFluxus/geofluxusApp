@@ -713,8 +713,6 @@ define(['views/common/baseview',
                             apiTag: 'areas',
                             apiIds: [granularity.adminlevel]
                         });
-
-
                         areas.fetch({
                             success: function () {
                                 var geoJson = {};

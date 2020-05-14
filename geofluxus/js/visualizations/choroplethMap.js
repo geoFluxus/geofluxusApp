@@ -49,7 +49,7 @@ define([
                 .downloadPosition("left")
                 .downloadButton(true)
                 .controlConfig({
-                    text: "<i class='fas fa-camera' style='color: white'></i>",
+                    text: "<i class='fas fa-camera' title='Export this visualizations as a PNG file.' style='color: white'></i>",
                 })
                 .controlPadding(0)
                 .render(function () {
@@ -65,7 +65,7 @@ define([
                 .append("button")
                 .attr("class", "d3plus-Button fullscreen-toggle")
                 .attr("type", "button")
-                .html('<i class="fas fa-expand" style="color: white"></i>')
+                .html('<i class="fas fa-expand" title="View this visualizations in fullscreen mode." style="color: white"></i>')
                 .lower();
             // Check on hover over Viz if it still contains Fullscreen button, if not, readd:
             svg.on("mouseover", function () {
@@ -83,7 +83,7 @@ define([
                 .append("button")
                 .attr("class", "d3plus-Button export-csv")
                 .attr("type", "button")
-                .html('<i class="fas fa-file" style="color: white"></i>');
+                .html('<i class="fas fa-file" title="Export the data of this visualization as a CSV file." style="color: white"></i>');
         }
     }
     return ChoroplethMap;
