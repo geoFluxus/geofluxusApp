@@ -90,6 +90,7 @@ define(['underscore',
                     //$(this.el).html('<div class="flowmap-container d-block" style="width: 100%; height: 100%"></div>')
 
 
+
                     this.leafletMap = new L.Map(this.el.firstChild, {
                             center: center,
                             zoomSnap: 0.25,
@@ -350,12 +351,8 @@ define(['underscore',
                         label: function (d) {
                             return d.label.substring(0, 1);
                         },
-                        shapeConfig: {
-                            fill: function (d) {
-                                return d.color;
-                            },
-                            // height: 25,
-                            // width: 25
+                        shapeConfigFill: function (d) {
+                            return d.color;
                         },
                         height: 75,
                         width: "600",

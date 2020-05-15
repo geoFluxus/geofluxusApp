@@ -1052,25 +1052,26 @@ define(['views/common/baseview',
                                 this[index] = flow.attributes;
                             }, _this.flows);
 
-                            // Only Parallel Sets requires different processing: 
-                            if (_this.selectedVizName == "parallelsets") {
-                                _this.renderParallelSets(_this.selectedDimensions, _this.flows);
-                            } else {
-                                switch (_this.selectedDimensions.length) {
-                                    case 1:
-                                        _this.render1Dvisualizations(_this.selectedDimensions, _this.flows);
-                                        break;
-                                    case 2:
-                                        _this.render2Dvisualizations(_this.selectedDimensions, _this.flows);
-                                        break;
+
+                            try {
+                                // Only Parallel Sets requires different processing: 
+                                if (_this.selectedVizName == "parallelsets") {
+                                    _this.renderParallelSets(_this.selectedDimensions, _this.flows);
+                                } else {
+                                    switch (_this.selectedDimensions.length) {
+                                        case 1:
+                                            _this.render1Dvisualizations(_this.selectedDimensions, _this.flows);
+                                            break;
+                                        case 2:
+                                            _this.render2Dvisualizations(_this.selectedDimensions, _this.flows);
+                                            break;
+                                    }
                                 }
+                            } catch (renderError) {
+                                console.log("Error during rendering of visualization: " + renderError)
                             }
 
-
                             _this.loader.deactivate();
-
-                            //_this.postprocess(flows);
-                            //_this.renderSankeyMap();
 
                             if (options.success) {
                                 options.success(flows);
