@@ -407,14 +407,17 @@ textarea.textarea-autosize.form-control-sm {
     position: relative;
     bottom: 75px;
     z-index: 600;
-    border-radius: 18px;
+    /* border-top-left-radius: 18px; */
+    /* border-top-right-radius: 18px; */
+    border-bottom-left-radius: 18px;
+    border-bottom-right-radius: 18px;
+    background-color: rgba(255, 255, 255, 0.5);
 }
 
 .flowmap-d3pluslegend {
     height: 100%;
     width: 600px;
-    background-color: rgba(255, 255, 255, 0.5);
-    border-radius: 1rem;
+    border-radius: 18px;
     overflow: visible;
 }
 
@@ -648,6 +651,11 @@ textarea.textarea-autosize.form-control-sm {
     display: none;
 }
 
+.leaflet-bottom.leaflet-left {
+    position: absolute;
+    bottom: 85px;
+}
+
 .leaflet-control-custom-controls {
     margin: 0px !important;
     border-top-right-radius: 16px;
@@ -675,6 +683,7 @@ textarea.textarea-autosize.form-control-sm {
 .leaflet-control-attribution {
     margin-right: 0px !important;
     padding-right: 10px;
+    background: none !important;
 }
 
 /* .d3plus-zoom-controls */

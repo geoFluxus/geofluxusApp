@@ -277,25 +277,25 @@ define(['underscore',
 
 
                     // OLD LEGEND
-                    var legendControl = L.control({
-                        position: 'bottomright'
-                    });
-                    this.legend = document.createElement('svg');
+                    // var legendControl = L.control({
+                    //     position: 'bottomright'
+                    // });
+                    // this.legend = document.createElement('svg');
 
                     //this.legend.style.visibility = 'hidden';
 
                     // this.legend.style.width = "10rem";
                     // this.legend.style.height = "10rem";
-                    legendControl.onAdd = function () {
-                        return _this.legend;
-                    };
-                    legendControl.addTo(this.leafletMap);
-                    this.el.querySelector('.leaflet-right.leaflet-bottom').classList.add('leaflet-legend-center');
-                    this.el.querySelector('.leaflet-right.leaflet-bottom').firstChild.classList.add("flowmap-legend-wrapper");
+                    // legendControl.onAdd = function () {
+                    //     return _this.legend;
+                    // };
+                    // legendControl.addTo(this.leafletMap);
+                    //this.el.querySelector('.leaflet-right.leaflet-bottom').classList.add('leaflet-legend-center');
+                    //this.el.querySelector('.leaflet-right.leaflet-bottom').firstChild.classList.add("flowmap-legend-wrapper");
                     //this.el.querySelector('.leaflet-right.leaflet-bottom').firstChild.classList.add("flowmap-d3pluslegend");                    
 
-                    L.DomEvent.disableClickPropagation(this.legend);
-                    L.DomEvent.disableScrollPropagation(this.legend);
+                    // L.DomEvent.disableClickPropagation(this.legend);
+                    // L.DomEvent.disableScrollPropagation(this.legend);
 
 
 
