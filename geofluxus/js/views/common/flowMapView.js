@@ -79,10 +79,18 @@ define(['underscore',
                         attribution: '© OpenStreetMap, © CartoDB'
                     });
 
+                    var _this = this;
+
                     // Center of Netherlands
                     var center = [52.1326, 5.2913];
 
-                    this.leafletMap = new L.Map(this.el, {
+
+                    $(this.el).html('<div class="flowmap-container d-block" style="width: 100%; height: 100%"></div><div class="flowmap-d3pluslegend-wrapper text-center"><svg class="flowmap-d3pluslegend"></svg></div>')
+
+                    //$(this.el).html('<div class="flowmap-container d-block" style="width: 100%; height: 100%"></div>')
+
+
+                    this.leafletMap = new L.Map(this.el.firstChild, {
                             center: center,
                             zoomSnap: 0.25,
                             zoom: 10.5,
@@ -97,7 +105,8 @@ define(['underscore',
                     // //////////////////////
                     // Fullscreen button
                     this.leafletMap.addControl(new L.Control.Fullscreen({
-                        position: 'topleft'
+                        position: 'topleft',
+                        pseudoFullscreen: true,
                     }));
 
                     // //////////////////////
@@ -266,28 +275,38 @@ define(['underscore',
                     div.appendChild(aniDiv);
                     div.appendChild(aniToggleDiv);
 
+
+                    // OLD LEGEND
                     var legendControl = L.control({
                         position: 'bottomright'
                     });
-                    this.legend = document.createElement('div');
-                    this.legend.style.background = "rgba(255, 255, 255, 0.5)";
-                    this.legend.style.visibility = 'hidden';
+                    this.legend = document.createElement('svg');
 
-                    this.legend.style.width = "10rem";
-                    this.legend.style.height = "10rem";
+                    //this.legend.style.visibility = 'hidden';
+
+                    // this.legend.style.width = "10rem";
+                    // this.legend.style.height = "10rem";
                     legendControl.onAdd = function () {
                         return _this.legend;
                     };
                     legendControl.addTo(this.leafletMap);
-                    this.el.querySelector('.leaflet-right.leaflet-bottom').classList.add('leaflet-legend');
-
+                    this.el.querySelector('.leaflet-right.leaflet-bottom').classList.add('leaflet-legend-center');
                     this.el.querySelector('.leaflet-right.leaflet-bottom').firstChild.classList.add("flowmap-legend-wrapper");
-
-                    this.el.querySelector(".flowmap-legend-wrapper").style.width = "10rem";
-                    this.el.querySelector(".flowmap-legend-wrapper").style.height = "10rem";
+                    //this.el.querySelector('.leaflet-right.leaflet-bottom').firstChild.classList.add("flowmap-d3pluslegend");                    
 
                     L.DomEvent.disableClickPropagation(this.legend);
                     L.DomEvent.disableScrollPropagation(this.legend);
+
+
+
+                    // `fullscreenchange` Event that's fired when entering or exiting fullscreen.
+                    _this.leafletMap.on('fullscreenchange', function () {
+                        if (_this.leafletMap.isFullscreen()) {
+                            $(".flowmap-d3pluslegend-wrapper").addClass("flowmapLegendFullscreen");
+                        } else {
+                            $(".flowmap-d3pluslegend-wrapper").removeClass("flowmapLegendFullscreen");
+                        }
+                    });
 
 
                     // Smooth scroll to top of Viz
@@ -324,20 +343,23 @@ define(['underscore',
                     console.log(_this.legendItems);
 
                     this.d3plusLegend = new D3plusLegend({
-                        el: ".flowmap-d3pluslegend-wrapper",
+                        el: ".flowmap-d3pluslegend",
                         data: _this.legendItems,
                         flowMapView: _this,
-                        // direction: "column",
-                        // label: function (d) {
-                        //     return d.label.substring(0, 1);
-                        // },
-                        // shapeConfig: {
-                        //     fill: function (d) {
-                        //         return d.color;
-                        //     },
-                        //     height: 25,
-                        //     width: 25
-                        // },
+                        //direction: "column",
+                        label: function (d) {
+                            return d.label.substring(0, 1);
+                        },
+                        shapeConfig: {
+                            fill: function (d) {
+                                return d.color;
+                            },
+                            // height: 25,
+                            // width: 25
+                        },
+                        height: 75,
+                        width: "600",
+                        align: "center",
                     });
 
 
@@ -609,12 +631,7 @@ define(['underscore',
                         })
                     });
 
-                    _this.legendItems = _.unique(_this.legendItems, );
-
-
-                    // _this.legendItems = _.uniq(_this.legendItems, function(x){
-                    //     return x.dimensionValue;
-                    // });
+                    _this.legendItems = _.uniq(_this.legendItems, 'label');
 
                     console.log("Links:");
                     console.log(links);

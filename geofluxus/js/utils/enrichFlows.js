@@ -165,7 +165,7 @@ module.exports = {
     },
 
     /**
-     * Assigns colors per unique @propertyName
+     * Assigns colors per unique @propertyName for nominal data
      * 
      * @param {*} items: an array of items containing a property with name @propertyName
      * @param {*} propertyName: the property by which colors will be assigned 

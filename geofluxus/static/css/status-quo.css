@@ -310,7 +310,7 @@ label[for="flows-waste06-select"] {
 .viz-wrapper-div {
     display: none;
     height: 750px;
-    min-width: 500px;
+    min-width: 600px;
     background-color: #393939;
     border-radius: 18px;
 }
@@ -391,30 +391,64 @@ textarea.textarea-autosize.form-control-sm {
     min-height: 2rem;
 }
 
-
-.min-width-600px {
-    min-width: 550px;
+.leaflet-top,
+.leaflet-bottom {
+    z-index: 600;
 }
 
-/* SANKEY WRAPPER */
 
-.sankey-wrapper {
-    background-color: #a2a2a2;
-    border-radius: 3px;
+.flowmap-container {
+    border-radius: 18px;
+}
+
+.flowmap-d3pluslegend-wrapper {
     width: 100%;
-    min-height: 400px;
-    touch-action: none;
-    box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.3);
-    box-sizing: content-box !important;
+    height: 75px;
+    position: relative;
+    bottom: 75px;
+    z-index: 600;
+    border-radius: 18px;
 }
 
+.flowmap-d3pluslegend {
+    height: 100%;
+    width: 600px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 1rem;
+    overflow: visible;
+}
 
+.flowmapLegendFullscreen {
+    z-index: 100000 !important;
+    position: absolute;
+    bottom: -35px;
+}
 
-/* .flowmap-legend-wrapper {
-    width: 10rem !important;
-    height: 10rem !important;
+/* 
+.leaflet-legend-center {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 0;
+}
+
+.flowmap-legend-wrapper {
+    background-color: rgba(42, 27, 255, 0.5);
+    height: 5rem;
+    width: 100% !important;
+    max-width: 100%;
+    margin-bottom: 0px !important;
+    padding-bottom: 0px;
+    position: absolute;
+    bottom: 0;
+    margin: auto;
 } */
 
+
+/* .flowmap-legend-wrapper .d3plus-Legend {
+    display: block;
+    margin: 0 auto;
+}
+ */
 /* .flowmap-legend-wrapper .d3plus-Rect-group {
     width: 10rem !important;
     height: 10rem !important;
@@ -526,7 +560,7 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .flowmap-wrapper .leaflet-control-zoom a {
-    background-color: #007bff;
+    background-color: var(--primary);
     border: none;
     width: 32px;
     height: 32px;
@@ -577,8 +611,15 @@ textarea.textarea-autosize.form-control-sm {
     position: relative;
 }
 
+.leaflet-control-export button {
+    border-bottom-width: 0px;
+    border-right-width: 0px;
+    border-top-width: 0px;
+    border-left-width: 0px;
+}
+
 .leaflet-control-fullscreen a {
-    background-color: #007bff;
+    background-color: var(--primary);
     width: 32px;
     height: 32px;
     border-radius: 16px !important;
