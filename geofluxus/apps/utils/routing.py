@@ -4,23 +4,31 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.gis.geos.error import GEOSException
 
 # Database credentials
-USER = os.environ['USER']
-PASSWORD = os.environ['PASSWORD']
-HOST = os.environ['HOST']
-PORT = os.environ['PORT']
-MAIN = os.environ['MAIN']
-ROUTING = os.environ['ROUTING']
+# Flows
+FLOW_DB = os.environ['FLOW_DB']
+FLOW_USER = os.environ['FLOW_USER']
+FLOW_PASS = os.environ['FLOW_PASS']
+FLOW_HOST = os.environ['FLOW_HOST']
+FLOW_PORT = os.environ['FLOW_PORT']
+
+# Network
+NET_DB = os.environ['NET_DB']
+NET_USER = os.environ['NET_USER']
+NET_PASS = os.environ['NET_PASS']
+NET_HOST = os.environ['NET_HOST']
+NET_PORT = os.environ['NET_PORT']
+
 FILENAME = os.environ['FILENAME']
 
 
 # Establish connection
-def open_connection(database):
+def open_connection(cred):
     try:
-        connection = pg.connect(user=USER,
-                                password=PASSWORD,
-                                host=HOST,
-                                port=PORT,
-                                database=database)
+        connection = pg.connect(user=cred['user'],
+                                password=cred['password'],
+                                host=cred['host'],
+                                port=cred['port'],
+                                database=cred['database'])
         cursor = connection.cursor()
         print('Connection established...')
 
@@ -65,7 +73,14 @@ def validate(x):
 
 if __name__ == "__main__":
     # Establish connection to main database
-    con, cur = open_connection(MAIN)
+    credentials = {
+        'user': FLOW_USER,
+        'password': FLOW_PASS,
+        'host': FLOW_HOST,
+        'port': FLOW_PORT,
+        'database': FLOW_DB
+    }
+    con, cur = open_connection(credentials)
 
     # Fetch flows (distinct pairs!)
     query = \
@@ -77,7 +92,14 @@ if __name__ == "__main__":
     flows = fetch(cur, query)
 
     # Establish connection to routing
-    rcon, rcur = open_connection(ROUTING)
+    credentials = {
+        'user': NET_USER,
+        'password': NET_PASS,
+        'host': NET_HOST,
+        'port': NET_PORT,
+        'database': NET_DB
+    }
+    rcon, rcur = open_connection(credentials)
 
     f = open(FILENAME, 'w')
     f.write('origin;destination;wkt;seq\n')
@@ -88,7 +110,11 @@ if __name__ == "__main__":
         FROM asmfa_actor
         WHERE id = {id}
         '''
+    idx=0
+    print('TOTAL: ', len(flows))
     for flow in flows:
+        print(idx)
+        idx+=1
         # Fetch orig / dest geometry
         orig, dest = flow[0], flow[1]
 
@@ -321,7 +347,7 @@ if __name__ == "__main__":
             seq = '@'.join(seq)
 
             if geom:
-                print(geom.geom_type)
+                # print(geom.geom_type)
                 line = '{};{};{};{}\n'.format(orig_name,
                                               dest_name,
                                               wkt,

@@ -21,7 +21,6 @@ class FilterFlowViewSet(PostGetViewMixin,
     model = Flow
     queryset = Flow.objects.all()
 
-
     def post_get(self, request, **kwargs):
         '''
         Override response for listing
@@ -72,7 +71,8 @@ class FilterFlowViewSet(PostGetViewMixin,
         return Response(data)
 
     # filter chain classifications
-    def filter_classif(self, queryset, filter):
+    @staticmethod
+    def filter_classif(queryset, filter):
         '''
         Filter booleans with multiple selections
         '''
@@ -131,7 +131,8 @@ class FilterFlowViewSet(PostGetViewMixin,
         return queryset
 
     # spatial filtering
-    def filter_areas(self, queryset, filter):
+    @staticmethod
+    def filter_areas(queryset, filter):
         '''
         Filter chains with area filters
         (spatial filtering)
@@ -171,17 +172,10 @@ class FilterFlowViewSet(PostGetViewMixin,
         if area_ids:
             area = Area.objects.filter(id__in=area_ids).aggregate(area=Union('geom'))['area']
 
-            # annotate routings to flows
-            routings = Routing.objects
-            subq = routings.filter(Q(origin=OuterRef('origin')) &\
-                                   Q(destination=OuterRef('destination')))
-            queryset = queryset.annotate(routing=Subquery(subq.values('geom')))
-
             # filter flows:
             # 1) with origin / destination within area OR
             # 2) with routing intersecting the area
             queryset = queryset.filter((Q(origin__geom__within=area) \
                                         & Q(destination__geom__within=area)) |
-                                        Q(routing__intersects=area)
-                                       )
+                                        Q(routing__geom__intersects=area))
         return queryset

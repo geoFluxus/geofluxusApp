@@ -6,6 +6,7 @@ from geofluxus.apps.asmfa.models import (Waste06,
                                          Composite,
                                          Actor,
                                          Publication)
+from django.db.models import (Q, ExpressionWrapper, F, FloatField)
 from django.contrib.gis.db import models as gis
 
 
@@ -35,6 +36,85 @@ class FlowChain(models.Model):
         return self.identifier
 
 
+# Routing
+# Custom Routing Manager
+# updates flows on routing bulk upload
+class RoutingManager(models.Manager):
+    @staticmethod
+    def update_flows(created):
+        queryset = Flow.objects
+        for c in created:
+            # fetch all flows with origin / destination & update
+            flows = queryset.filter(Q(origin__id=c.origin.id) &\
+                                    Q(destination__id=c.destination.id))
+            flows.update(routing=c.pk)
+
+    def bulk_create(self, objs, **kwargs):
+        created = super(RoutingManager, self).bulk_create(objs, **kwargs)
+        self.update_flows(created)
+        return created
+
+
+class Routing(models.Model):
+    objects = RoutingManager()
+
+    origin = models.ForeignKey(Actor,
+                               on_delete=models.CASCADE,
+                               related_name='start')
+    destination = models.ForeignKey(Actor,
+                                    on_delete=models.CASCADE,
+                                    related_name='end')
+    geom = gis.GeometryField(null=True,
+                             blank=True)
+    seq = models.TextField(null=True)
+
+    def __str__(self):
+        return '{} : {}'.format(self.origin,
+                                self.destination)
+
+
+# Vehicle
+# Custom Vehicle Manager
+# updates flows on vehicle bulk upload
+class VehicleManager(models.Manager):
+    @staticmethod
+    def update_flows(created):
+        queryset = Flow.objects
+        # annotate amount/trips from chains to flows
+        # exclude flows with no trips
+        queryset = queryset.annotate(amount=F('flowchain__amount'),
+                                     trips=F('flowchain__trips')) \
+                           .exclude(trips=0)
+
+        # compute capacity
+        capacity = ExpressionWrapper((F('amount') / F('trips')),
+                                     output_field=FloatField())
+        queryset = queryset.annotate(capacity=capacity)
+
+        for c in created:
+            # fetch all flows with capacity & update
+            flows = queryset.filter(capacity__gte=c.min,
+                                    capacity__lte=c.max)
+            flows.update(vehicle=c.pk)
+
+    def bulk_create(self, objs, **kwargs):
+        created = super(VehicleManager, self).bulk_create(objs, **kwargs)
+        self.update_flows(created)
+        return created
+
+
+class Vehicle(models.Model):
+    objects = VehicleManager()
+
+    name = models.CharField(max_length=255)
+    min = models.FloatField()
+    max = models.FloatField()
+    co2 = models.FloatField()
+
+    def __str__(self):
+        return '{}'.format(self.name)
+
+
 # Flow
 class Flow(models.Model):
     flowchain = models.ForeignKey(FlowChain,
@@ -51,6 +131,14 @@ class Flow(models.Model):
                                    choices=role_choices)
     destination_role = models.CharField(max_length=255,
                                         choices=role_choices)
+    routing = models.ForeignKey(Routing,
+                                null=True,
+                                blank=True,
+                                on_delete=models.SET_NULL)
+    vehicle = models.ForeignKey(Vehicle,
+                                null=True,
+                                blank=True,
+                                on_delete=models.SET_NULL)
 
     def __str__(self):
         return "{} : {} -> {}".format(self.flowchain,
@@ -119,19 +207,3 @@ class ExtraDescription(models.Model):
         return '{} : {}'.format(self.flowchain,
                                 self.type)
 
-
-# Routing
-class Routing(models.Model):
-    origin = models.ForeignKey(Actor,
-                               on_delete=models.CASCADE,
-                               related_name='start')
-    destination = models.ForeignKey(Actor,
-                                    on_delete=models.CASCADE,
-                                    related_name='end')
-    geom = gis.GeometryField(null=True,
-                             blank=True)
-    seq = models.TextField(null=True)
-
-    def __str__(self):
-        return '{} : {}'.format(self.origin,
-                                self.destination)
