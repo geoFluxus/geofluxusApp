@@ -50,6 +50,13 @@ define([
                 .yConfig(axisConfig)
                 .select(options.el)
                 .legend(hasLegend)
+                .legendConfig({
+                    shapeConfig: {
+                        labelConfig: {
+                            fontColor: "white",
+                        }
+                    }
+                })
                 .downloadPosition("left")
                 .downloadButton(true)
                 .controlConfig({

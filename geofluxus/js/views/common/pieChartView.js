@@ -203,9 +203,6 @@ define(['views/common/baseview',
                     this.duration = 0;
 
                     this.createVizObject();
-
-                    //this.pieChart.legend(false).render();
-                    // event.stopImmediatePropagation();
                 },
 
                 exportCSV: function (event) {
