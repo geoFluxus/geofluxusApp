@@ -519,6 +519,7 @@ define(['views/common/d3plusVizView',
                         hasLegend: this.hasLegend,
                     });
                     this.scrollToVisualization();
+                    this.options.flowsView.loader.deactivate();
                 },
             });
         return BarChartView;

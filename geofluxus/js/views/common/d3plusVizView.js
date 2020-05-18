@@ -12,9 +12,7 @@ define(['views/common/baseview',
         FileSaver,
         utils,
     ) {
-
         /**
-         *
          * @author Evert Van Hirtum
          * @name module:views/D3plusVizView
          * @augments module:views/BaseView
@@ -34,7 +32,6 @@ define(['views/common/baseview',
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
                     _.bindAll(this, 'toggleLegend');
-
 
                     this.tooltipConfig = {
                         tbody: [

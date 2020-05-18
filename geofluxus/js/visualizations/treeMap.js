@@ -3,7 +3,6 @@ define([
     'visualizations/d3plus',
 ], function (D3plusViz, d3plus) {
     /**
-     *
      * TreeMap chart to display Flows data
      *
      * @author Evert Van Hirtum

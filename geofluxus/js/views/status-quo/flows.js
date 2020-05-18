@@ -1053,7 +1053,7 @@ define(['views/common/baseview',
                             }, _this.flows);
 
 
-                            try {
+                            //try {
                                 // Only Parallel Sets requires different processing: 
                                 if (_this.selectedVizName == "parallelsets") {
                                     _this.renderParallelSets(_this.selectedDimensions, _this.flows);
@@ -1067,11 +1067,11 @@ define(['views/common/baseview',
                                             break;
                                     }
                                 }
-                            } catch (renderError) {
-                                console.log("Error during rendering of visualization: " + renderError)
-                            }
+                            // } catch (renderError) {
+                            //     console.log("Error during rendering of visualization: " + renderError)
+                            // }
 
-                            _this.loader.deactivate();
+                            //_this.loader.deactivate();
 
                             if (options.success) {
                                 options.success(flows);

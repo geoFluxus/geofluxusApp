@@ -53,6 +53,7 @@ define(['views/common/baseview',
                         tooltipConfig: this.tooltipConfig,
                     });
                     this.scrollToVisualization();
+                    this.options.flowsView.loader.deactivate();
                 }
             });
         return CoordinatePointMapView;

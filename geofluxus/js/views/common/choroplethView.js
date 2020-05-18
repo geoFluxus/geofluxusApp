@@ -54,6 +54,7 @@ define(['views/common/d3plusVizView',
                         geoJson: this.options.geoJson,
                     });
                     this.scrollToVisualization();
+                    this.options.flowsView.loader.deactivate();
                 }
             });
         return ChoroplethView;

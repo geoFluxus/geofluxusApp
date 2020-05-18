@@ -1,4 +1,4 @@
-define(['views/common/D3plusVizView',
+define(['views/common/d3plusVizView',
         'underscore',
         'visualizations/linePlot',
         'utils/enrichFlows',
@@ -183,7 +183,6 @@ define(['views/common/D3plusVizView',
                  * Create a new D3Plus linePlot object which will be rendered in this.options.el:
                  */
                 render: function () {
-
                     this.linePlot = new LinePlot({
                         el: this.options.el,
                         data: this.flows,
@@ -194,6 +193,7 @@ define(['views/common/D3plusVizView',
                         hasLegend: this.hasLegend,
                     });
                     this.scrollToVisualization();
+                    this.options.flowsView.loader.deactivate();
                 }
             });
         return LinePlotView;

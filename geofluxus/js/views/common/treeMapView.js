@@ -34,6 +34,7 @@ define(['views/common/d3plusVizView',
                     _.bindAll(this, 'toggleLegend');
 
                     this.options = options;
+                    this.flows = this.options.flows;
 
                     let dim1String = this.options.dimensions[0][0];
                     let gran1 = this.options.dimensions[0][1];
@@ -155,6 +156,7 @@ define(['views/common/d3plusVizView',
                         hasLegend: this.hasLegend,
                     });
                     this.scrollToVisualization();
+                    this.options.flowsView.loader.deactivate();
                 }
             });
         return TreeMapView;

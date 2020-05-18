@@ -1,32 +1,16 @@
 define(['views/common/d3plusVizView',
         'underscore',
-        'd3',
-        'visualizations/d3plus',
         'visualizations/simpleSankey',
-        'collections/collection',
-        'app-config',
-        'save-svg-as-png',
-        'file-saver',
-        'utils/utils',
         'utils/enrichFlows',
     ],
 
     function (
         D3plusVizView,
         _,
-        d3,
-        d3plus,
         SimpleSankey,
-        Collection,
-        config,
-        saveSvgAsPng,
-        FileSaver,
-        utils,
-        enrichFlows,
-        Slider) {
+        enrichFlows) {
 
         /**
-         *
          * @author Evert Van Hirtum
          * @name module:views/ParallelSetsView
          * @augments module:views/D3plusVizView
@@ -71,6 +55,7 @@ define(['views/common/d3plusVizView',
                         tooltipConfig: this.tooltipConfig,
                     });
                     this.scrollToVisualization();
+                    this.options.flowsView.loader.deactivate();
                 },
 
                 /**
