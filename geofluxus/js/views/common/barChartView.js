@@ -1,37 +1,22 @@
-define(['views/common/baseview',
+define(['views/common/d3plusVizView',
         'underscore',
-        'd3',
-        'visualizations/d3plus',
         'visualizations/barchart',
-        'collections/collection',
-        'app-config',
-        'save-svg-as-png',
-        'file-saver',
-        'utils/utils',
         'utils/enrichFlows',
     ],
 
     function (
-        BaseView,
+        D3plusVizView,
         _,
-        d3,
-        d3plus,
         BarChart,
-        Collection,
-        config,
-        saveSvgAsPng,
-        FileSaver,
-        utils,
-        enrichFlows,
-        Slider) {
+        enrichFlows) {
 
         /**
          *
          * @author Evert Van Hirtum
          * @name module:views/BarChartView
-         * @augments module:views/BaseView
+         * @augments module:views/D3plusVizView
          */
-        var BarChartView = BaseView.extend(
+        var BarChartView = D3plusVizView.extend(
             /** @lends module:views/BarChartView.prototype */
             {
 
@@ -46,19 +31,10 @@ define(['views/common/baseview',
                     BarChartView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
+                    _.bindAll(this, 'toggleLegend');
+
                     this.options = options;
 
-                    this.render();
-                },
-
-                events: {
-                    'click .fullscreen-toggle': 'toggleFullscreen',
-                    'click .export-csv': 'exportCSV',
-                    'click .toggle-legend': 'toggleLegend',
-                },
-
-                render: function (data) {
-                    let _this = this;
                     let flows = this.options.flows;
 
                     this.hasLegend = true;
@@ -67,19 +43,10 @@ define(['views/common/baseview',
                     this.xSort = true;
                     this.isStacked = this.options.isStacked;
                     this.isActorLevel = false;
-                    this.tooltipConfig = {
-                        tbody: [
-                            ["Waste", function (d) {
-                                return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale()) + " t"
-                            }]
-                        ]
-                    };
 
                     let dim1String = this.options.dimensions[0][0];
                     let gran1 = this.options.dimensions[0][1];
-                    // let dim2String = this.options.dimensions[1][0];
                     let gran2 = this.options.dimensions[1] ? this.options.dimensions[1][1] : {};
-
                     let dimStrings = [];
                     this.options.dimensions.forEach(dim => dimStrings.push(dim[0]));
 
@@ -515,7 +482,6 @@ define(['views/common/baseview',
                         }
                     }
 
-
                     // Assign colors by groupings:
                     if (this.groupBy) {
                         this.flows = enrichFlows.assignColorsByProperty(flows, this.groupBy);
@@ -528,11 +494,19 @@ define(['views/common/baseview',
                         }
                     }
 
-                    this.createVizObject();
+                    this.render();
                 },
 
-                createVizObject: function () {
-                    // Create a new D3Plus BarChart object which will be rendered in this.options.el:
+                events: {
+                    'click .fullscreen-toggle': 'toggleFullscreen',
+                    'click .export-csv': 'exportCSV',
+                    'click .toggle-legend': 'toggleLegend',
+                },
+
+                /**
+                 * Create a new D3Plus BarChart object which will be rendered in this.options.el:
+                 */
+                render: function () {
                     this.barChart = new BarChart({
                         el: this.options.el,
                         data: this.flows,
@@ -544,53 +518,8 @@ define(['views/common/baseview',
                         isActorLevel: this.isActorLevelevel,
                         hasLegend: this.hasLegend,
                     });
-
-                    // Smooth scroll to top of Viz
-                    $("#apply-filters")[0].scrollIntoView({
-                        behavior: "smooth"
-                    });
+                    this.scrollToVisualization();
                 },
-
-                toggleLegend: function (event) {
-                    $(this.options.el).html("");
-                    this.hasLegend = !this.hasLegend;
-                    this.createVizObject();
-                },
-
-                toggleFullscreen: function (event) {
-                    $(this.el).toggleClass('fullscreen');
-                    event.stopImmediatePropagation();
-                    // Only scroll when going to normal view:
-                    if (!$(this.el).hasClass('fullscreen')) {
-                        $("#apply-filters")[0].scrollIntoView({
-                            behavior: "smooth"
-                        });
-                    }
-                    window.dispatchEvent(new Event('resize'));
-                },
-
-                exportCSV: function (event) {
-                    const items = this.options.flows;
-                    const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-                    const header = Object.keys(items[0])
-                    let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
-                    csv.unshift(header.join(','))
-                    csv = csv.join('\r\n')
-
-                    var blob = new Blob([csv], {
-                        type: "text/plain;charset=utf-8"
-                    });
-                    FileSaver.saveAs(blob, "data.csv");
-
-                    event.stopImmediatePropagation();
-                },
-
-                close: function () {
-                    this.undelegateEvents(); // remove click events
-                    this.unbind(); // Unbind all local event bindings
-                    $(this.options.el).html(""); //empty the DOM element
-                },
-
             });
         return BarChartView;
     }

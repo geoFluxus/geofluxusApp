@@ -1,27 +1,17 @@
 define(['views/common/baseview',
         'underscore',
-        'd3',
         'visualizations/d3plus',
-        'collections/collection',
-        'app-config',
-        'save-svg-as-png',
         'file-saver',
         'utils/utils',
-        'utils/enrichFlows',
     ],
 
     function (
         BaseView,
         _,
-        d3,
         d3plus,
-        Collection,
-        config,
-        saveSvgAsPng,
         FileSaver,
         utils,
-        enrichFlows,
-        Slider) {
+    ) {
 
         /**
          *
@@ -44,6 +34,15 @@ define(['views/common/baseview',
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
                     _.bindAll(this, 'toggleLegend');
+
+
+                    this.tooltipConfig = {
+                        tbody: [
+                            ["Waste", function (d) {
+                                return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale()) + " t"
+                            }]
+                        ]
+                    };
                 },
 
                 events: {
@@ -53,7 +52,13 @@ define(['views/common/baseview',
                 },
 
                 render: function () {
-                    
+
+                },
+
+                scrollToVisualization: function () {
+                    $("#apply-filters")[0].scrollIntoView({
+                        behavior: "smooth"
+                    });
                 },
 
                 toggleFullscreen: function (event) {
@@ -71,7 +76,7 @@ define(['views/common/baseview',
                 toggleLegend: function (event) {
                     $(this.options.el).html("");
                     this.hasLegend = !this.hasLegend;
-                    this.createVizObject();
+                    this.render();
                 },
 
                 exportCSV: function (event) {

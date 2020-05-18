@@ -1,20 +1,21 @@
 define([
-    'd3',
-    'd3-brush',
+    'visualizations/d3plusViz',
     'visualizations/d3plus',
-], function (d3, d3brush, d3plus) {
+], function (D3plusViz, d3plus) {
     /**
      *
      * Bar chart to display Flows data
      *
      * @author Evert Van Hirtum
      */
-    class BarChart {
+    class BarChart extends D3plusViz {
         /**
          * @param {Object} options          object containing all option values
          * @param {string} options.el       CSS Selector of the container element of the Pie Chart
          */
         constructor(options) {
+            super();
+
             let _this = this;
             var options = options || {};
 
@@ -78,41 +79,10 @@ define([
                 })
                 .controlPadding(0)
                 .render(function () {
-                    _this.addButtons();
+                    _this.addButtons({
+                        canHaveLegend: true,
+                    });
                 });
-        }
-
-        addButtons() {
-            let _this = this;
-            let svg = d3.select(".d3plus-viz");
-            svg.select(".d3plus-Form.d3plus-Form-Button")
-                .append("button")
-                .attr("type", "button")
-                .attr("class", "d3plus-Button fullscreen-toggle")
-                .attr("title", "View this visualizations in fullscreen mode.")
-                .html('<i class="fas fa-expand icon-fullscreen"></i>')
-
-            svg.select(".d3plus-Form.d3plus-Form-Button")
-                .append("button")
-                .attr("type", "button")
-                .attr("class", "d3plus-Button export-csv")
-                .attr("title", "Export the data of this visualization as a CSV file.")
-                .html('<i class="fas fa-file icon-export"></i>');
-
-            svg.select(".d3plus-Form.d3plus-Form-Button")
-                .append("button")
-                .attr("type", "button")
-                .attr("class", "d3plus-Button toggle-legend")
-                .attr("title", "Toggle the legend.")
-                .html('<i class="fas icon-toggle-legend"></i>');
-
-            // Check on hover over Viz if it still contains Fullscreen button, if not, readd:
-            svg.on("mouseover", function () {
-                let buttonFullscreen = d3.select(".fullscreen-toggle")
-                if (buttonFullscreen.empty()) {
-                    _this.addButtons();
-                }
-            })
         }
     }
     return BarChart;

@@ -1,32 +1,16 @@
-define(['views/common/D3plusVizView',
+define(['views/common/d3plusVizView',
         'underscore',
-        'd3',
-        'visualizations/d3plus',
         'visualizations/piechart',
-        'collections/collection',
-        'app-config',
-        'save-svg-as-png',
-        'file-saver',
-        'utils/utils',
         'utils/enrichFlows',
     ],
 
     function (
         D3plusVizView,
         _,
-        d3,
-        d3plus,
         PieChart,
-        Collection,
-        config,
-        saveSvgAsPng,
-        FileSaver,
-        utils,
-        enrichFlows,
-        Slider) {
+        enrichFlows) {
 
         /**
-         *
          * @author Evert Van Hirtum
          * @name module:views/PieChartView
          * @augments module:views/D3plusVizView
@@ -49,16 +33,7 @@ define(['views/common/D3plusVizView',
                     _.bindAll(this, 'toggleLegend');
 
                     this.options = options;
-                    this.render();
-                },
 
-                events: {
-                    'click .fullscreen-toggle': 'toggleFullscreen',
-                    'click .export-csv': 'exportCSV',
-                    'click .toggle-legend': 'toggleLegend',
-                },
-
-                render: function (data) {
                     let _this = this;
                     let flows = this.options.flows;
                     let dim1String = this.options.dimensions[0][0];
@@ -66,13 +41,6 @@ define(['views/common/D3plusVizView',
 
                     this.hasLegend = true;
                     this.groupBy = "";
-                    this.tooltipConfig = {
-                        tbody: [
-                            ["Waste", function (d) {
-                                return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale()) + " t"
-                            }]
-                        ]
-                    };
 
                     // Time 
                     if (dim1String == "time") {
@@ -161,11 +129,19 @@ define(['views/common/D3plusVizView',
                     // Assign colors by groupings:
                     this.flows = enrichFlows.assignColorsByProperty(flows, this.groupBy);
 
-                    this.createVizObject();
+                    this.render();
                 },
 
-                createVizObject: function () {
-                    // Create a new D3Plus PieChart object which will be rendered in this.options.el:
+                events: {
+                    'click .fullscreen-toggle': 'toggleFullscreen',
+                    'click .export-csv': 'exportCSV',
+                    'click .toggle-legend': 'toggleLegend',
+                },
+
+                /**
+                 * Create a new D3Plus PieChart object which will be rendered in this.options.el:
+                 */
+                render: function () {
                     this.pieChart = new PieChart({
                         el: this.options.el,
                         data: this.flows,
@@ -173,53 +149,8 @@ define(['views/common/D3plusVizView',
                         tooltipConfig: this.tooltipConfig,
                         hasLegend: this.hasLegend,
                     });
-
-                    // Smooth scroll to top of Viz
-                    $("#apply-filters")[0].scrollIntoView({
-                        behavior: "smooth"
-                    });
-                },
-
-                // toggleFullscreen: function (event) {
-                //     $(this.el).toggleClass('fullscreen');
-                //     // Only scroll when going to normal view:
-                //     if (!$(this.el).hasClass('fullscreen')) {
-                //         $("#apply-filters")[0].scrollIntoView({
-                //             behavior: "smooth"
-                //         });
-                //     }
-                //     window.dispatchEvent(new Event('resize'));
-                //     event.stopImmediatePropagation();
-                // },
-
-                // toggleLegend: function (event) {
-                //     $(this.options.el).html("");
-                //     this.hasLegend = !this.hasLegend;
-                //     this.createVizObject();
-                // },
-
-                // exportCSV: function (event) {
-                //     const items = this.options.flows;
-                //     const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-                //     const header = Object.keys(items[0])
-                //     let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
-                //     csv.unshift(header.join(','))
-                //     csv = csv.join('\r\n')
-
-                //     var blob = new Blob([csv], {
-                //         type: "text/plain;charset=utf-8"
-                //     });
-                //     FileSaver.saveAs(blob, "data.csv");
-
-                //     event.stopImmediatePropagation();
-                // },
-
-                // close: function () {
-                //     this.undelegateEvents(); // remove click events
-                //     this.unbind(); // Unbind all local event bindings
-                //     $(this.options.el).html(""); //empty the DOM element
-                // },
-
+                    this.scrollToVisualization();
+                }
             });
         return PieChartView;
     }

@@ -1,37 +1,22 @@
-define(['views/common/baseview',
+define(['views/common/D3plusVizView',
         'underscore',
-        'd3',
-        'visualizations/d3plus',
         'visualizations/linePlot',
-        'collections/collection',
-        'app-config',
-        'save-svg-as-png',
-        'file-saver',
-        'utils/utils',
         'utils/enrichFlows',
     ],
 
     function (
-        BaseView,
+        D3plusVizView,
         _,
-        d3,
-        d3plus,
         LinePlot,
-        Collection,
-        config,
-        saveSvgAsPng,
-        FileSaver,
-        utils,
-        enrichFlows,
-        Slider) {
+        enrichFlows) {
 
         /**
          *
          * @author Evert Van Hirtum
          * @name module:views/LinePlotView
-         * @augments module:views/BaseView
+         * @augments module:views/D3plusVizView
          */
-        var LinePlotView = BaseView.extend(
+        var LinePlotView = D3plusVizView.extend(
             /** @lends module:views/LinePlotView.prototype */
             {
                 /**
@@ -48,35 +33,14 @@ define(['views/common/baseview',
                     _.bindAll(this, 'toggleLegend');
 
                     this.options = options;
-                    this.render();
-                },
-
-                events: {
-                    'click .fullscreen-toggle': 'toggleFullscreen',
-                    'click .export-csv': 'exportCSV',
-                    'click .toggle-legend': 'toggleLegend',
-                },
-
-                render: function (data) {
-                    let _this = this;
-                    
                     this.flows = this.options.flows;
                     this.x = "";
                     this.groupBy = "";
                     this.isActorLevel = false;
                     this.hasLegend = true;
                     this.duration = [];
-                    this.tooltipConfig = {
-                        tbody: [
-                            ["Waste", function (d) {
-                                return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale()) + " t"
-                            }]
-                        ]
-                    };
 
-                    let dim1String = this.options.dimensions[0][0];
                     let gran1 = this.options.dimensions[0][1];
-                    // let dim2String = this.options.dimensions[1][0];
                     let gran2 = this.options.dimensions[1] ? this.options.dimensions[1][1] : {};
 
                     let dimStrings = [];
@@ -114,7 +78,6 @@ define(['views/common/baseview',
                             }]);
                         }
                     }
-
 
                     // //////////////////////////////////////////
                     // 2D - Time & Space
@@ -207,11 +170,20 @@ define(['views/common/baseview',
                         this.flows = enrichFlows.assignColorsByProperty(this.flows, this.groupBy)
                     }
 
-                    this.createVizObject();
+                    this.render();
                 },
 
-                createVizObject: function () {
-                    // Create a new D3Plus linePlot object which will be rendered in this.options.el:
+                events: {
+                    'click .fullscreen-toggle': 'toggleFullscreen',
+                    'click .export-csv': 'exportCSV',
+                    'click .toggle-legend': 'toggleLegend',
+                },
+
+                /**
+                 * Create a new D3Plus linePlot object which will be rendered in this.options.el:
+                 */
+                render: function () {
+
                     this.linePlot = new LinePlot({
                         el: this.options.el,
                         data: this.flows,
@@ -221,47 +193,8 @@ define(['views/common/baseview',
                         isActorLevel: this.isActorLevel,
                         hasLegend: this.hasLegend,
                     });
-
-                    // Smooth scroll to top of Viz
-                    $("#apply-filters")[0].scrollIntoView({
-                        behavior: "smooth"
-                    });
-                },
-
-                toggleFullscreen: function (event) {
-                    $(this.el).toggleClass('fullscreen');
-                    event.stopImmediatePropagation();
-                    // Only scroll when going to normal view:
-                    if (!$(this.el).hasClass('fullscreen')) {
-                        $("#apply-filters")[0].scrollIntoView({
-                            behavior: "smooth"
-                        });
-                    }
-                    window.dispatchEvent(new Event('resize'));
-                },
-
-                exportCSV: function (event) {
-                    const items = this.options.flows;
-                    const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-                    const header = Object.keys(items[0])
-                    let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
-                    csv.unshift(header.join(','))
-                    csv = csv.join('\r\n')
-
-                    var blob = new Blob([csv], {
-                        type: "text/plain;charset=utf-8"
-                    });
-                    FileSaver.saveAs(blob, "data.csv");
-
-                    event.stopImmediatePropagation();
-                },
-
-                close: function () {
-                    this.undelegateEvents(); // remove click events
-                    this.unbind(); // Unbind all local event bindings
-                    $(this.options.el).html(""); //empty the DOM element
-                },
-
+                    this.scrollToVisualization();
+                }
             });
         return LinePlotView;
     }

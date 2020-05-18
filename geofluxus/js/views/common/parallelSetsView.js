@@ -1,4 +1,4 @@
-define(['views/common/baseview',
+define(['views/common/d3plusVizView',
         'underscore',
         'd3',
         'visualizations/d3plus',
@@ -12,7 +12,7 @@ define(['views/common/baseview',
     ],
 
     function (
-        BaseView,
+        D3plusVizView,
         _,
         d3,
         d3plus,
@@ -29,9 +29,9 @@ define(['views/common/baseview',
          *
          * @author Evert Van Hirtum
          * @name module:views/ParallelSetsView
-         * @augments module:views/BaseView
+         * @augments module:views/D3plusVizView
          */
-        var ParallelSetsView = BaseView.extend(
+        var ParallelSetsView = D3plusVizView.extend(
             /** @lends module:views/ParallelSetsView.prototype */
             {
 
@@ -48,6 +48,10 @@ define(['views/common/baseview',
                     _.bindAll(this, 'exportCSV');
 
                     this.options = options;
+
+                    this.filtersView = this.options.flowsView.filtersView;
+                    this.flows = this.transformToLinksAndNodes(this.options.flows, this.options.dimensions, this.filtersView);
+
                     this.render();
                 },
 
@@ -56,43 +60,26 @@ define(['views/common/baseview',
                     'click .export-csv': 'exportCSV',
                 },
 
-                render: function (data) {
-                    let _this = this;
-                    let flows = this.options.flows;
-
-                    this.filtersView = this.options.flowsView.filtersView;
-
-                    // let dim1String = this.options.dimensions[0][0];
-                    // let gran1 = this.options.dimensions[0][1];
-                    // let dim2String = this.options.dimensions[1][0];
-                    // let gran2 = this.options.dimensions[1] ? this.options.dimensions[1][1] : {};
-
-                    let tooltipConfig = {
-                        tbody: [
-                            ["Waste", function (d) {
-                                return d3plus.formatAbbreviate(d["value"], utils.returnD3plusFormatLocale()) + " t"
-                            }]
-                        ]
-                    };
-
-                    flows = this.transformToLinksAndNodes(this.options.flows, this.options.dimensions, this.filtersView);
-
-
-
-
+                /**
+                 * Create a new D3Plus SimpleSankey object which will be rendered in this.options.el:
+                 */
+                render: function () {
                     this.SimpleSankey = new SimpleSankey({
                         el: this.options.el,
-                        links: flows.links,
-                        nodes: flows.nodes,
-                        tooltipConfig: tooltipConfig,
+                        links: this.flows.links,
+                        nodes: this.flows.nodes,
+                        tooltipConfig: this.tooltipConfig,
                     });
-
-                    // Smooth scroll to top of Viz
-                    $("#apply-filters")[0].scrollIntoView({
-                        behavior: "smooth"
-                    });
+                    this.scrollToVisualization();
                 },
 
+                /**
+                 * Takes flows-data in origin/destination format and outputs it according to supplied dimensions into links and nodes format
+                 * 
+                 * @param {array} flows Array of flows containing origin and destination attributes
+                 * @param {object} dimensions object containing dimension information
+                 * @param {object} filtersView Backbone.js filtersView
+                 */
                 transformToLinksAndNodes: function (flows, dimensions, filtersView) {
                     let nodes = [],
                         links = [];
@@ -135,7 +122,6 @@ define(['views/common/baseview',
                                     destinationNode.id = enrichFlows.returnCodePlusName(processDestinationObject) + " ";
                                     let processOriginObject = processes.find(process => process.attributes.id == flow.origin.process);
                                     originNode.id = enrichFlows.returnCodePlusName(processOriginObject);
-
                                 }
 
                                 break;
@@ -315,42 +301,7 @@ define(['views/common/baseview',
                         links: links,
                         nodes: nodes,
                     }
-                },
-
-                toggleFullscreen: function (event) {
-                    $(this.el).toggleClass('fullscreen');
-                    event.stopImmediatePropagation();
-                    // Only scroll when going to normal view:
-                    if (!$(this.el).hasClass('fullscreen')) {
-                        $("#apply-filters")[0].scrollIntoView({
-                            behavior: "smooth"
-                        });
-                    }
-                    window.dispatchEvent(new Event('resize'));
-                },
-
-                exportCSV: function (event) {
-                    const items = this.options.flows;
-                    const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-                    const header = Object.keys(items[0])
-                    let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
-                    csv.unshift(header.join(','))
-                    csv = csv.join('\r\n')
-
-                    var blob = new Blob([csv], {
-                        type: "text/plain;charset=utf-8"
-                    });
-                    FileSaver.saveAs(blob, "data.csv");
-
-                    event.stopImmediatePropagation();
-                },
-
-                close: function () {
-                    this.undelegateEvents(); // remove click events
-                    this.unbind(); // Unbind all local event bindings
-                    $(this.options.el).html(""); //empty the DOM element
-                },
-
+                }
             });
         return ParallelSetsView;
     }
