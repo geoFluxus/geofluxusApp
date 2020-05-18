@@ -67,6 +67,7 @@ class Routing(models.Model):
     geom = gis.GeometryField(null=True,
                              blank=True)
     seq = models.TextField(null=True)
+    distance = models.FloatField(default=0)
 
     def __str__(self):
         return '{} : {}'.format(self.origin,

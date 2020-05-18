@@ -147,7 +147,8 @@ class RoutingSerializer(HyperlinkedModelSerializer):
                   'origin',
                   'destination',
                   'geom',
-                  'seq')
+                  'seq',
+                  'distance')
 
 
 class RoutingListSerializer(RoutingSerializer):
@@ -156,4 +157,5 @@ class RoutingListSerializer(RoutingSerializer):
                   'origin',
                   'destination',
                   'geom',
-                  'seq')
+                  'seq',
+                  'distance')
