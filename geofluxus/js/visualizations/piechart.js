@@ -44,7 +44,7 @@ define([
                 .downloadPosition("left")
                 .downloadButton(true)
                 .controlConfig({
-                    text: "<i class='fas fa-camera icon-save-image' title='Export this visualizations as a PNG file.'></i>",
+                    text: this.exportPngIconHtml,
                 })
                 .controlPadding(0)
                 .render(function () {

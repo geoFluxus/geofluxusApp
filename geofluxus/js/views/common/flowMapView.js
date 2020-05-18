@@ -129,6 +129,7 @@ define(['underscore',
 
                     exportDiv.classList.add("leaflet-control-export");
                     exportImgBtn.classList.add('fas', 'fa-camera', 'btn', 'btn-primary', 'inverted');
+                    exportImgBtn.title = "Export this visualization as a PNG file.";
                     exportImgBtn.style.height = "32px";
                     exportImgBtn.style.width = "32px";
                     exportImgBtn.style.padding = "0px";
@@ -316,8 +317,7 @@ define(['underscore',
                             behavior: "smooth"
                         });
                     }, 500);
-
-
+                    this.options.flowsView.loader.deactivate();
                 },
 
                 toggleLight() {
@@ -337,7 +337,7 @@ define(['underscore',
                     }
                 },
 
-                updateLegend(data) {
+                updateLegend() {
                     var _this = this;
 
                     console.log("______ legend data _______")
@@ -349,7 +349,8 @@ define(['underscore',
                         flowMapView: _this,
                         //direction: "column",
                         label: function (d) {
-                            return d.label.substring(0, 1);
+                            //return d.label.substring(0, 1);
+                            return d.label;
                         },
                         shapeConfigFill: function (d) {
                             return d.color;
@@ -520,10 +521,10 @@ define(['underscore',
                         case "time":
                             if (this.dim2[1] == "flowchain__month__year") {
                                 dimensionText = "Year";
-                                dimensionValue = link.year;
+                                dimensionId = dimensionValue = link.year;
                             } else if (this.dim2[1] == "flowchain__month") {
                                 dimensionText = "Month";
-                                dimensionValue = link.month;
+                                dimensionId = dimensionValue = link.month;
                             }
                             break;
                         case "economicActivity":
@@ -573,7 +574,7 @@ define(['underscore',
                     let description = '<br><b>' + dimensionText + ':</b> ';
 
                     return {
-                        dimensionValue: dimensionValue,
+                        dimensionValue: dimensionValue.toString(),
                         dimensionId: dimensionId,
                         toolTipText: fromToText + description + dimensionValue + '<br><b>Amount: </b>' + amountText,
                         amountText: amountText,
@@ -585,6 +586,8 @@ define(['underscore',
                     var _this = this,
                         nodes = [],
                         links = [];
+
+                    var dimensionAttributeName = ""
 
                     flows.forEach(function (flow, index) {
                         let originNode = flow.origin;
@@ -613,10 +616,11 @@ define(['underscore',
                         link.dimensionValue = linkInfo.dimensionValue;
                         links.push(link)
 
+                        dimensionAttributeName = linkInfo.dimensionId;
                     }, flows);
 
                     // Assign colors to links and nodes based on label-prop:
-                    links = enrichFlows.assignColorsByProperty(links, "activityGroupName");
+                    links = enrichFlows.assignColorsByProperty(links, dimensionAttributeName);
                     nodes = enrichFlows.assignColorsByProperty(nodes, "label");
 
                     // Get all unique occurences for legend:

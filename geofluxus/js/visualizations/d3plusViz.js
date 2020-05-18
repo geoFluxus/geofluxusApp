@@ -9,7 +9,7 @@ define([
         /**
          */
         constructor() {
-
+            this.exportPngIconHtml = "<i class='fas fa-camera icon-save-image' title='Export this visualization as a PNG file.'></i>"
         }
 
         addButtons({canHaveLegend}) {
@@ -22,7 +22,7 @@ define([
             svg.select(".d3plus-Form.d3plus-Form-Button")
                 .append("button")
                 .attr("class", "d3plus-Button fullscreen-toggle")
-                .attr("title", "View this visualizations in fullscreen mode.")
+                .attr("title", "View this visualization in fullscreen mode.")
                 .attr("type", "button")
                 .html('<i class="fas fa-expand icon-fullscreen"></i>')
 
