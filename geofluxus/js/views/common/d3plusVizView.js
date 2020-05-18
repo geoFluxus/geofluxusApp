@@ -76,6 +76,15 @@ define(['views/common/baseview',
                     this.render();
                 },
 
+                toggleDarkMode: function () {
+                    $(this.options.el).html("");
+                    this.isDarkMode = !this.isDarkMode;
+
+                    $(".viz-wrapper-div").toggleClass("lightMode");
+
+                    this.render();
+                },
+
                 exportCSV: function (event) {
                     const items = this.options.flows;
                     const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here

@@ -14,10 +14,17 @@ define([
          * @param {string} options.el       CSS Selector of the container element of the Pie Chart
          */
         constructor(options) {
-            super();
+            super(options);
 
             let _this = this;
             var options = options || {};
+
+            
+            // if (this.isDarkMode) {
+            //     this.elementColor = white
+            // } else {
+            //     this.elementColor = black;
+            // }
 
             new d3plus.Pie()
                 .config({
@@ -36,7 +43,7 @@ define([
                 .legendConfig({
                     shapeConfig: {
                         labelConfig: {
-                            fontColor: "white",
+                            fontColor: this.elementColor,
                         }
                     }
                 })

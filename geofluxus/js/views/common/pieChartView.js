@@ -34,11 +34,12 @@ define(['views/common/d3plusVizView',
 
                     this.options = options;
                     this.flows = this.options.flows;
+                    this.hasLegend = true;
+                    this.isDarkMode = true;
 
                     let dim1String = this.options.dimensions[0][0];
                     let gran1 = this.options.dimensions[0][1];
 
-                    this.hasLegend = true;
                     this.groupBy = "";
 
                     // Time 
@@ -135,6 +136,7 @@ define(['views/common/d3plusVizView',
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
                     'click .toggle-legend': 'toggleLegend',
+                    'click .toggle-nightmode': 'toggleDarkMode',                    
                 },
 
                 /**
@@ -147,6 +149,7 @@ define(['views/common/d3plusVizView',
                         groupBy: this.groupBy,
                         tooltipConfig: this.tooltipConfig,
                         hasLegend: this.hasLegend,
+                        isDarkMode: this.isDarkMode,
                     });
                     this.scrollToVisualization();
                     this.options.flowsView.loader.deactivate();

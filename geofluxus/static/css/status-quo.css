@@ -315,6 +315,12 @@ label[for="flows-waste06-select"] {
     border-radius: 18px;
 }
 
+.lightMode {
+    background-color: #dfdfdf;
+    transition: background-color 0.5s ease;
+}
+
+
 .d3plus_label {
     fill: white;
     font-family: "Montserrat", sans-serif;
@@ -519,6 +525,16 @@ textarea.textarea-autosize.form-control-sm {
 
 .icon-toggle-legend {
     background-image: url("../img/legend.svg");
+    background-position: center center;
+    background-size: contain;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin-bottom: 2px;
+}
+
+.icon-toggle-nightmode {
+    background-image: url("../img/nightmode.svg");
     background-position: center center;
     background-size: contain;
     width: 16px;

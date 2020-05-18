@@ -8,14 +8,23 @@ define([
     class D3plusViz {
         /**
          */
-        constructor() {
+        constructor(options) {
             this.exportPngIconHtml = "<i class='fas fa-camera icon-save-image' title='Export this visualization as a PNG file.'></i>"
+
+            if (options.isDarkMode) {
+                this.elementColor = "white"
+            } else {
+                this.elementColor = "black";
+            }
+
         }
 
-        addButtons({canHaveLegend}) {
+        addButtons({
+            canHaveLegend
+        }) {
             var options = {
                 canHaveLegend: canHaveLegend,
-              }
+            }
 
             let _this = this;
             let svg = d3.select(".d3plus-viz");
@@ -32,6 +41,13 @@ define([
                 .attr("title", "Export the data of this visualization as a CSV file.")
                 .attr("type", "button")
                 .html('<i class="fas fa-file icon-export"></i>');
+
+            svg.select(".d3plus-Form.d3plus-Form-Button")
+                .append("button")
+                .attr("class", "d3plus-Button toggle-nightmode")
+                .attr("title", "Toggle light or dark mode.")
+                .attr("type", "button")
+                .html('<i class="fas fa-file icon-toggle-nightmode"></i>');
 
             if (options.canHaveLegend) {
                 svg.select(".d3plus-Form.d3plus-Form-Button")
