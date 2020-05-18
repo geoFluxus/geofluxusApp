@@ -37,7 +37,7 @@ define([
                 svg.select(".d3plus-Form.d3plus-Form-Button")
                     .append("button")
                     .attr("class", "d3plus-Button toggle-legend")
-                    .attr("title", "Toggle the legend.")
+                    .attr("title", "Toggle the legend on or off.")
                     .attr("type", "button")
                     .html('<i class="fas icon-toggle-legend"></i>');
             }

@@ -133,5 +133,19 @@ module.exports = {
         }
 
         return colorArray;
+    },
+
+    /**
+     * Cuts off a string at a given index
+     * 
+     * @param {string} string The string to be shortened
+     * @param {integer} cutOffPoint The desired amount of characters of the original string to be returned
+     */
+    textEllipsis: function (string, cutOffPoint) {
+        cutOffPoint ? cutOffPoint : 10;
+        if (string.length > cutOffPoint)
+            return string.substring(0, cutOffPoint) + '...';
+        else
+            return string;
     }
 }

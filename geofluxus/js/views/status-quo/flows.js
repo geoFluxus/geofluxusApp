@@ -3,10 +3,7 @@ define(['views/common/baseview',
         'underscore',
         'views/common/filters',
         'collections/collection',
-        'utils/utils',
         'utils/enrichFlows',
-        'views/common/flowsankey',
-        'views/common/flowsankeymap',
         'views/common/pieChartView',
         'views/common/barChartView',
         'views/common/linePlotView',
@@ -26,10 +23,7 @@ define(['views/common/baseview',
         _,
         FiltersView,
         Collection,
-        utils,
         enrichFlows,
-        FlowSankeyView,
-        FlowMapView,
         PieChartView,
         BarChartView,
         LinePlotView,
@@ -42,8 +36,6 @@ define(['views/common/baseview',
     ) {
 
         var FlowsView = BaseView.extend({
-
-            // Initialization
             initialize: function (options) {
                 var _this = this;
                 FlowsView.__super__.initialize.apply(this, [options]);

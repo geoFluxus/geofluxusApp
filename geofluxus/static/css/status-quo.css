@@ -403,9 +403,9 @@ textarea.textarea-autosize.form-control-sm {
 
 .flowmap-d3pluslegend-wrapper {
     width: 100%;
-    height: 75px;
+    height: 100px;
+    bottom: 100px;
     position: relative;
-    bottom: 75px;
     z-index: 600;
     /* border-top-left-radius: 18px; */
     /* border-top-right-radius: 18px; */
@@ -415,10 +415,14 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .flowmap-d3pluslegend {
-    height: 100%;
+    height: 100px;
     width: 600px;
     border-radius: 18px;
     overflow: visible;
+}
+
+.flowmap-d3pluslegend g {
+    height: 100px !important;
 }
 
 .flowmapLegendFullscreen {
@@ -426,44 +430,6 @@ textarea.textarea-autosize.form-control-sm {
     position: absolute;
     bottom: -35px;
 }
-
-/* 
-.leaflet-legend-center {
-    width: 100%;
-    max-width: 100%;
-    margin-bottom: 0;
-}
-
-.flowmap-legend-wrapper {
-    background-color: rgba(42, 27, 255, 0.5);
-    height: 5rem;
-    width: 100% !important;
-    max-width: 100%;
-    margin-bottom: 0px !important;
-    padding-bottom: 0px;
-    position: absolute;
-    bottom: 0;
-    margin: auto;
-} */
-
-
-/* .flowmap-legend-wrapper .d3plus-Legend {
-    display: block;
-    margin: 0 auto;
-}
- */
-/* .flowmap-legend-wrapper .d3plus-Rect-group {
-    width: 10rem !important;
-    height: 10rem !important;
-}
-
-.flowmap-legend-wrapper .d3plus-Legend {
-    display: inline-block !important;
-    width: 100%;
-    height: 100%;
-} */
-
-
 
 
 /* d3plus Tooltip */
@@ -546,7 +512,7 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .icon-fullscreen,
-.icon-export, 
+.icon-export,
 .icon-save-image {
     color: white;
 }
@@ -571,7 +537,7 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .leaflet-control-zoom {
-    top: 80px !important;
+    top: 140px !important;
     border: none !important;
     margin: 0 !important;
 }
@@ -602,7 +568,7 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .leaflet-control-fullscreen,
-.leaflet-control-export {
+.leaflet-control-custom-buttons {
     margin-left: 5px !important;
     position: absolute;
     border: none !important;
@@ -614,26 +580,32 @@ textarea.textarea-autosize.form-control-sm {
     border-radius: 16px !important;
 }
 
-.leaflet-control-export {
-    top: 34px;
-}
-
-.leaflet-control-export button::before {
-    right: 0.5px;
-    position: relative;
-}
-
-.leaflet-control-export button::before {
-    right: 0.5px;
-    position: relative;
-}
-
-.leaflet-control-export button {
-    border-bottom-width: 0px;
-    border-right-width: 0px;
+.leaflet-control-custom-buttons button {
+    border-width: 0px !important;
+    /* border-right-width: 0px;
     border-top-width: 0px;
-    border-left-width: 0px;
+    border-left-width: 0px; */
+    height: 32px;
+    width: 32px;
+    text-align: center;
+    padding: 0px;
+    margin-bottom: 0.3rem !important;
 }
+
+.leaflet-control-custom-buttons {
+    top: 36px;
+}
+
+.leaflet-control-export button::before {
+    right: 0.5px;
+    position: relative;
+}
+
+.leaflet-control-export button::before {
+    right: 0.5px;
+    position: relative;
+}
+
 
 .leaflet-control-fullscreen a {
     background-color: var(--primary);
@@ -658,11 +630,6 @@ textarea.textarea-autosize.form-control-sm {
 .leaflet-control-fullscreen a:hover {
     background-color: grey !important;
     border-color: grey !important;
-}
-
-
-.leaflet-control-easyPrint {
-    display: none;
 }
 
 .leaflet-bottom.leaflet-left {

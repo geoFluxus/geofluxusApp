@@ -80,6 +80,7 @@ define(['underscore',
                     });
 
                     var _this = this;
+                    this.hasLegend = true;
 
                     // Center of Netherlands
                     var center = [52.1326, 5.2913];
@@ -89,8 +90,6 @@ define(['underscore',
 
                     //$(this.el).html('<div class="flowmap-container d-block" style="width: 100%; height: 100%"></div>')
 
-
-
                     this.leafletMap = new L.Map(this.el.firstChild, {
                             center: center,
                             zoomSnap: 0.25,
@@ -99,8 +98,6 @@ define(['underscore',
                             maxZoom: 25
                         })
                         .addLayer(this.backgroundLayer);
-
-
                     this.flowMap = new FlowMap(this.leafletMap);
 
                     // //////////////////////
@@ -117,35 +114,54 @@ define(['underscore',
                         filename: 'flowmap',
                         exportOnly: true,
                         hideControlContainer: true,
-                        sizeModes: ['A4Landscape']
+                        sizeModes: ['A4Landscape'],
                     }));
                     this.leafletMap.on("zoomend", this.zoomed);
 
-                    var exportControls = L.control({
-                            position: 'topleft'
-                        }),
-                        exportDiv = document.createElement('div'),
-                        exportImgBtn = document.createElement('button');
 
-                    exportDiv.classList.add("leaflet-control-export");
+                    // Custom controls top left
+                    var topLefControls = L.control({
+                        position: 'topleft'
+                    })
+                    var topLeftControlDiv = document.createElement('div')
+                    var exportImgBtn = document.createElement('button');
+                    var legendToggleBtn = document.createElement('button');
+                    
+                    // Actual export PNG button:
+                    topLeftControlDiv.classList.add("leaflet-control-custom-buttons");
                     exportImgBtn.classList.add('fas', 'fa-camera', 'btn', 'btn-primary', 'inverted');
                     exportImgBtn.title = "Export this visualization as a PNG file.";
-                    exportImgBtn.style.height = "32px";
-                    exportImgBtn.style.width = "32px";
-                    exportImgBtn.style.padding = "0px";
-                    exportDiv.appendChild(exportImgBtn);
-                    exportControls.onAdd = function (map) {
-                        return exportDiv;
+                    
+                    // Legend toggle:
+                    legendToggleBtn.classList.add("btn", "btn-primary", "toggle-legend")
+                    legendToggleBtn.title = "Toggle the legend on or off."
+                    legendToggleBtn.innerHTML = '<i class="fas icon-toggle-legend"></i>';
+
+
+
+                    topLeftControlDiv.appendChild(exportImgBtn);
+                    topLeftControlDiv.appendChild(legendToggleBtn);
+
+
+                    topLefControls.onAdd = function (map) {
+                        return topLeftControlDiv;
                     };
-                    exportControls.addTo(this.leafletMap);
+                    topLefControls.addTo(this.leafletMap);
+
+                    legendToggleBtn.addEventListener('click', function () {
+                        _this.toggleLegend();
+                    })
+
+
                     // easyprint is not customizable enough (buttons, remove menu etc.) and not touch friendly
-                    // workaround: hide it and pass on clicks (actually strange, but easyprint was still easiest to use export plugin out there)
+                    // Workaround: hide and pass on click (actually strange, but easyprint was still easiest to use export plugin out there)
                     var easyprintCtrl = this.el.querySelector('.leaflet-control-easyPrint'),
                         easyprintCsBtn = this.el.querySelector('.easyPrintHolder .A4Landscape');
-                    easyprintCtrl.style.visibility = 'hidden';
+                    easyprintCtrl.style.display = 'none';
                     exportImgBtn.addEventListener('click', function () {
                         easyprintCsBtn.click();
                     })
+
 
                     // //////////////////////
                     // Custom controls
@@ -337,92 +353,38 @@ define(['underscore',
                     }
                 },
 
+                toggleLegend(){
+                    this.hasLegend = !this.hasLegend;
+                    this.updateLegend();
+                },
+
                 updateLegend() {
-                    var _this = this;
 
-                    console.log("______ legend data _______")
-                    console.log(_this.legendItems);
+                    if (this.hasLegend) {
+                        var _this = this;
 
-                    this.d3plusLegend = new D3plusLegend({
-                        el: ".flowmap-d3pluslegend",
-                        data: _this.legendItems,
-                        flowMapView: _this,
-                        //direction: "column",
-                        label: function (d) {
-                            //return d.label.substring(0, 1);
-                            return d.label;
-                        },
-                        shapeConfigFill: function (d) {
-                            return d.color;
-                        },
-                        height: 75,
-                        width: "600",
-                        align: "center",
-                    });
-
-
-                    // //_this.legend = document.querySelector(".flowmap-legend-wrapper");
-                    // _this.legend = new d3plus.Legend()
-                    //     .data(_this.legendItems)
-                    //     // .shapeConfig({
-                    //     //     fill: function (d) {
-                    //     //         return d.color;
-                    //     //     },
-                    //     //     height: 25,
-                    //     //     width: 25
-                    //     // })
-                    //     .direction("column")
-                    //     .label(function (d) {
-                    //         return d.label;
-                    //     })
-                    //     .height(200)
-                    //     .width(200)
-                    //     .select(_this.legend)
-                    //     //.select(".flowmap-legend-wrapper")
-                    //     .render();
-
-
-                    // var data = data || this.data,
-                    //     _this = this;
-                    // this.legend.innerHTML = '';
-                    // var materials = data.materials;
-                    // // ToDo_this.lightCheck.checked: inefficient, done too often for just toggling visibility
-                    // Object.keys(materials).forEach(function (matId) {
-                    //     var material = materials[matId],
-                    //         color = material.color,
-                    //         div = document.createElement('div'),
-                    //         text = document.createElement('div'),
-                    //         check = document.createElement('input'),
-                    //         colorDiv = document.createElement('div');
-                    //     div.style.height = '30px';
-                    //     div.style.cursor = 'pointer';
-                    //     text.innerHTML = material.name;
-                    //     text.style.fontSize = '1.3em';
-                    //     text.style.overflow = 'hidden';
-                    //     text.style.lightSpace = 'nowrap';
-                    //     text.style.textOverflow = 'ellipsis';
-                    //     colorDiv.style.width = '25px';
-                    //     colorDiv.style.height = '100%';
-                    //     colorDiv.style.textAlign = 'center';
-                    //     colorDiv.style.background = color;
-                    //     colorDiv.style.float = 'left';
-                    //     colorDiv.style.paddingTop = '5px';
-                    //     check.type = 'checkbox';
-                    //     check.checked = _this.showMaterials[matId] === true;
-                    //     check.style.transform = 'scale(1.7)';
-                    //     check.style.pointerEvents = 'none';
-                    //     div.appendChild(colorDiv);
-                    //     div.appendChild(text);
-                    //     colorDiv.appendChild(check);
-                    //     _this.legend.appendChild(div);
-                    //     div.addEventListener('click', function () {
-                    //         check.checked = !check.checked;
-                    //         _this.showMaterials[matId] = check.checked;
-                    //         _this.flowMap.toggleTag(matId, check.checked);
-                    //         _this.rerender();
-                    //     })
-                    //     _this.flowMap.toggleTag(matId, check.checked)
-                    // });
+                        $(".flowmap-d3pluslegend-wrapper").fadeIn();
+    
+                        console.log("______ legend data _______")
+                        console.log(_this.legendItems);
+    
+                        this.d3plusLegend = new D3plusLegend({
+                            el: ".flowmap-d3pluslegend",
+                            data: _this.legendItems,
+                            flowMapView: _this,
+                            label: function (d) {
+                                return utils.textEllipsis(d.label, 10);
+                            },
+                            shapeConfigFill: function (d) {
+                                return d.color;
+                            },
+                            height: 100,
+                            width: "600",
+                            align: "center",
+                        });
+                    } else {
+                        $(".flowmap-d3pluslegend-wrapper").fadeOut();
+                    }
                 },
 
                 zoomed: function () {
@@ -446,7 +408,7 @@ define(['underscore',
                     this.flowMap.showFlows = (this.flowCheck.checked) ? true : false;
                     this.flowMap.dottedLines = (this.aniDotsRadio.checked) ? true : false;
 
-                    this.updateLegend(data);
+                    this.updateLegend();
 
                     this.flowMap.toggleTag('actor', this.actorCheck.checked);
 
@@ -541,8 +503,10 @@ define(['underscore',
                         case "treatmentMethod":
                             if (this.dim2[1] == "origin__process__processgroup" || this.dim2[1] == "destination__process__processgroup") {
                                 dimensionText = "Treatment method group";
+                                dimensionId = link.processgroup;
                                 dimensionValue = link.processGroupCode + " " + link.processGroupName;
                             } else if (this.dim2[1] == "origin__process" || this.dim2[1] == "destination__process") {
+                                dimensionId = link.process
                                 dimensionText = "Treatment method";
                                 dimensionValue = link.processCode + " " + link.processName;
                             }
@@ -551,23 +515,22 @@ define(['underscore',
 
                             switch (this.dim2[1]) {
                                 case "flowchain__waste06__waste04__waste02":
+                                    dimensionId = link.waste02;
                                     dimensionText = "EWC Chapter";
                                     dimensionValue = link.ewc2Code + " " + link.ewc2Name;
                                     break;
                                 case "flowchain__waste06__waste04":
+                                    dimensionId = link.waste04;
                                     dimensionText = "EWC Sub-Chapter";
                                     dimensionValue = link.ewc4Code + " " + link.ewc4Name;
                                     break;
                                 case "flowchain__waste06":
+                                    dimensionId = link.waste06;
                                     dimensionText = "EWC Entry";
                                     dimensionValue = link.ewc6Code + " " + link.ewc6Name;
                                     break;
-                                default:
-                                    break;
                             }
 
-                            break;
-                        default:
                             break;
                     }
 
@@ -587,7 +550,7 @@ define(['underscore',
                         nodes = [],
                         links = [];
 
-                    var dimensionAttributeName = ""
+                    //var dimensionAttributeName = ""
 
                     flows.forEach(function (flow, index) {
                         let originNode = flow.origin;
@@ -616,11 +579,11 @@ define(['underscore',
                         link.dimensionValue = linkInfo.dimensionValue;
                         links.push(link)
 
-                        dimensionAttributeName = linkInfo.dimensionId;
+                        //dimensionAttributeName = linkInfo.dimensionId;
                     }, flows);
 
                     // Assign colors to links and nodes based on label-prop:
-                    links = enrichFlows.assignColorsByProperty(links, dimensionAttributeName);
+                    links = enrichFlows.assignColorsByProperty(links, "dimensionId");
                     nodes = enrichFlows.assignColorsByProperty(nodes, "label");
 
                     // Get all unique occurences for legend:
