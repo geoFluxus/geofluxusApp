@@ -87,7 +87,15 @@ class StatusQuoViewSet(FilterFlowViewSet):
 
             # create inventory to recover actors
             if 'actor' in level:
-                space_inv = Actor.objects.values('id',
+                if isinstance(field, list):
+                    actors = list()
+                    for f in field:
+                        ext = list(queryset.values_list(f, flat=True).distinct())
+                        actors.extend(ext)
+                else:
+                    actors = queryset.values_list(field, flat=True).distinct()
+                space_inv = Actor.objects.filter(id__in=actors)\
+                                         .values('id',
                                                  'company__name',
                                                  'geom')
             elif 'area' in level:
