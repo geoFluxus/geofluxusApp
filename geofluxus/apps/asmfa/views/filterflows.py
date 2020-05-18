@@ -172,10 +172,16 @@ class FilterFlowViewSet(PostGetViewMixin,
         if area_ids:
             area = Area.objects.filter(id__in=area_ids).aggregate(area=Union('geom'))['area']
 
+            # select routings & check if they intersect the area
+            ids = queryset.values_list('routing__id', flat=True).distinct()
+            routings = Routing.objects.filter(id__in=ids)\
+                                      .filter(geom__intersects=area)\
+                                      .values_list('id', flat=True)
+
             # filter flows:
             # 1) with origin / destination within area OR
             # 2) with routing intersecting the area
             queryset = queryset.filter((Q(origin__geom__within=area) \
                                         & Q(destination__geom__within=area)) |
-                                        Q(routing__geom__intersects=area))
+                                        Q(routing__id__in=routings))
         return queryset
