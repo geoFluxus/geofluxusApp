@@ -51,7 +51,7 @@ class ProcessGroupViewSet(PostGetViewMixin,
                           ModelPermissionViewSet):
     queryset = ProcessGroup.objects.order_by('id')
     pagination_class = UnlimitedResultsSetPagination
-    serializer_class =  ProcessGroupSerializer
+    serializer_class = ProcessGroupSerializer
     serializers = {
         'list': ProcessGroupListSerializer,
         'create': ProcessGroupCreateSerializer

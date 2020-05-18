@@ -25,7 +25,7 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Publication,
                                          PublicationType,
                                          Routing,
-                                         Ways)
+                                         Vehicle)
 from django.contrib.admin import ModelAdmin, TabularInline
 from django.contrib.gis.admin import GeoModelAdmin
 from django.db.models.functions import Lower
@@ -203,3 +203,4 @@ admin.site.register(Area, AreaAdmin)
 admin.site.register(Publication)
 admin.site.register(PublicationType)
 admin.site.register(Routing, GeoModelAdmin)
+admin.site.register(Vehicle)

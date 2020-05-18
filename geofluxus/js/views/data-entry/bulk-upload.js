@@ -52,7 +52,8 @@ var BulkUploadView = BaseView.extend({
             ['extradescriptions', 'Extra Descriptions'],
             ['arealevels', 'Admin levels'],
             ['allareas', 'Areas'],
-            ['routings', 'Routings']
+            ['routings', 'Routings'],
+            ['vehicles', 'Vehicles']
         ]
 
         function renderRow(up, col){
@@ -148,12 +149,16 @@ var BulkUploadView = BaseView.extend({
             },
             error: function (res) {
                 if (res.responseJSON) {
-                    msg = res.responseJSON.message;
-                    var url = res.responseJSON.file_url;
-                    if (url){
-                        msg += '<br><a href='+url+' style="color: rgb(255,0,0)">' +
-                               '<span class="far fa-file-alt" style="margin-right: 2px;">' +
-                               '</span><strong>Download here</strong></a>';
+                    var msg = res.responseJSON.message;
+                    if (msg) {
+                        var url = res.responseJSON.file_url;
+                        if (url){
+                            msg += '<br><a href='+url+' style="color: rgb(255,0,0)">' +
+                                   '<span class="far fa-file-alt" style="margin-right: 2px;">' +
+                                   '</span><strong>Download here</strong></a>';
+                        }
+                    } else {
+                        msg = JSON.stringify(res.responseJSON)
                     }
                 } else {
                     msg = res.responseText;
