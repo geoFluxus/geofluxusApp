@@ -150,6 +150,7 @@ define(['underscore',
 
                     legendToggleBtn.addEventListener('click', function () {
                         _this.toggleLegend();
+                        event.preventDefault();
                     })
 
 
@@ -160,6 +161,7 @@ define(['underscore',
                     easyprintCtrl.style.display = 'none';
                     exportImgBtn.addEventListener('click', function () {
                         easyprintCsBtn.click();
+                        event.preventDefault();
                     })
 
 
@@ -173,7 +175,7 @@ define(['underscore',
                     this.flowCheck = document.createElement('input');
                     this.lightCheck = document.createElement('input');
                     this.flowCheck.checked = true;
-                    this.lightCheck.checked = true;
+                    this.lightCheck.checked = false;
 
                     var div = document.createElement('div'),
                         aniLabel = document.createElement('label'),
