@@ -1,26 +1,49 @@
 from geofluxus.apps.asmfa.views import FilterFlowViewSet
-from geofluxus.apps.asmfa.models import (Routing, Ways)
 from collections import OrderedDict
-from django.db.models import (Q, OuterRef, Subquery, F)
+from django.db.models import (F, FloatField, Sum,
+                              ExpressionWrapper,)
+from django.contrib.gis.db.models.functions import Length
 from django.db import connections
 
 
 class ImpactViewSet(FilterFlowViewSet):
-    def serialize(self, queryset, dimensions, format):
+    def serialize(self, queryset, dimensions, format, anonymous):
         '''
         Serialize data into groups
         according to the requested dimensions
         '''
         data = []
 
-        # annotate info from chains to flows
+        # EMISSIONS
+        # annotate amount from chains to flows
+        # exclude flows with no trips
         queryset = queryset.annotate(amount=F('flowchain__amount'))
 
-        # annotate routing sequence
-        routings = Routing.objects
-        subq = routings.filter(Q(origin=OuterRef('origin')) & \
-                               Q(destination=OuterRef('destination')))
-        queryset = queryset.annotate(sequence=Subquery(subq.values('seq')))
+        # based on vehicle, annotate emissions to flows
+        queryset = queryset.filter(vehicle__id__isnull=False)\
+                           .annotate(co2=F('vehicle__co2'))
+
+        # annotate routing distance
+        # exclude flows with no routing
+        queryset = queryset.filter(routing__id__isnull=False)\
+                           .annotate(distance=Length('routing__geom'))
+
+        # compute emissions
+        emission = ExpressionWrapper((F('amount') * F('distance') * F('co2') / 10**9),
+                                     output_field=FloatField())
+        queryset = queryset.annotate(emission=emission)
+
+        # aggregate emissions
+        total = queryset.aggregate(total=Sum('emission'))['total']
+
+        # MAP
+        # annotate amount from chains to flows
+        queryset = queryset.annotate(amount=F('flowchain__amount'))
+
+        # annotate routing seq
+        # exclude flows with no routing
+        queryset = queryset.filter(routing__id__isnull=False) \
+                           .annotate(sequence=F('routing__seq'))
 
         # load ways with flows
         ways = {}

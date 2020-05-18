@@ -59,6 +59,8 @@ class FlowSerializer(HyperlinkedModelSerializer):
     flowchain = PrimaryKeyRelatedField(read_only=True)
     origin = PrimaryKeyRelatedField(read_only=True)
     destination = PrimaryKeyRelatedField(read_only=True)
+    routing = PrimaryKeyRelatedField(read_only=True)
+    vehicle = PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Flow
@@ -68,7 +70,9 @@ class FlowSerializer(HyperlinkedModelSerializer):
                   'origin',
                   'destination',
                   'origin_role',
-                  'destination_role')
+                  'destination_role',
+                  'routing',
+                  'vehicle')
 
 
 class FlowListSerializer(FlowSerializer):
@@ -78,7 +82,9 @@ class FlowListSerializer(FlowSerializer):
                   'origin',
                   'destination',
                   'origin_role',
-                  'destination_role')
+                  'destination_role',
+                  'routing',
+                  'vehicle')
 
 
 # Classification
