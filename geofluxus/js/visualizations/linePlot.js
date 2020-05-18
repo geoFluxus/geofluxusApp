@@ -18,7 +18,6 @@ define([
             let _this = this;
             var options = options || {};
 
-            let hasLegend = $("#display-legend").prop("checked");
             let groupByValue = options.groupBy ? options.groupBy : null;
             let shapeConfigValue = {
                 Line: {
@@ -70,12 +69,13 @@ define([
                 .xConfig(axisConfig)
                 .yConfig(axisConfig)
                 .tooltipConfig(options.tooltipConfig)
-                .legend(hasLegend)
+                .duration(0)
+                .legend(options.hasLegend)
                 .label(labelFunction)
                 .downloadPosition("left")
                 .downloadButton(true)
                 .controlConfig({
-                    text: "<i class='fas fa-camera' title='Export this visualizations as a PNG file.' style='color: white'></i>",
+                    text: "<i class='fas fa-camera icon-save-image' title='Export this visualizations as a PNG file.'></i>",
                 })
                 .legendConfig({
                     shapeConfig: {
@@ -87,36 +87,41 @@ define([
                 .controlPadding(0)
                 .select(options.el)
                 .render(function () {
-                    _this.addExportCsvButton();
-                    _this.addFullScreenToggle();
+                    _this.addButtons();
                 });
         }
 
-        addFullScreenToggle() {
+        addButtons() {
             let _this = this;
             let svg = d3.select(".d3plus-viz");
             svg.select(".d3plus-Form.d3plus-Form-Button")
                 .append("button")
                 .attr("class", "d3plus-Button fullscreen-toggle")
+                .attr("title", "View this visualizations in fullscreen mode.")
                 .attr("type", "button")
-                .html('<i class="fas fa-expand"  title="View this visualizations in fullscreen mode." style="color: white"></i>')
-                .lower();
+                .html('<i class="fas fa-expand icon-fullscreen"></i>')
+
+            svg.select(".d3plus-Form.d3plus-Form-Button")
+                .append("button")
+                .attr("class", "d3plus-Button export-csv")
+                .attr("title", "Export the data of this visualization as a CSV file.")
+                .attr("type", "button")
+                .html('<i class="fas fa-file icon-export"></i>');
+
+            svg.select(".d3plus-Form.d3plus-Form-Button")
+                .append("button")
+                .attr("class", "d3plus-Button toggle-legend")
+                .attr("title", "Toggle the legend.")
+                .attr("type", "button")
+                .html('<i class="fas icon-toggle-legend"></i>');
+
             // Check on hover over Viz if it still contains Fullscreen button, if not, readd:
             svg.on("mouseover", function () {
                 let buttonFullscreen = d3.select(".fullscreen-toggle")
                 if (buttonFullscreen.empty()) {
-                    _this.addExportCsvButton();
-                    _this.addFullScreenToggle();
+                    _this.addButtons();
                 }
             })
-        }
-        addExportCsvButton() {
-            let svg = d3.select(".d3plus-viz");
-            svg.select(".d3plus-Form.d3plus-Form-Button")
-                .append("button")
-                .attr("class", "d3plus-Button export-csv")
-                .attr("type", "button")
-                .html('<i class="fas fa-file" title="Export the data of this visualization as a CSV file." style="color: white"></i>');
         }
     }
     return LinePlot;

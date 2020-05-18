@@ -1,4 +1,4 @@
-define(['views/common/baseview',
+define(['views/common/D3plusVizView',
         'underscore',
         'd3',
         'visualizations/d3plus',
@@ -12,7 +12,7 @@ define(['views/common/baseview',
     ],
 
     function (
-        BaseView,
+        D3plusVizView,
         _,
         d3,
         d3plus,
@@ -29,9 +29,9 @@ define(['views/common/baseview',
          *
          * @author Evert Van Hirtum
          * @name module:views/PieChartView
-         * @augments module:views/BaseView
+         * @augments module:views/D3plusVizView
          */
-        var PieChartView = BaseView.extend(
+        var PieChartView = D3plusVizView.extend(
             /** @lends module:views/PieChartView.prototype */
             {
 
@@ -46,9 +46,9 @@ define(['views/common/baseview',
                     PieChartView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
+                    _.bindAll(this, 'toggleLegend');
 
                     this.options = options;
-
                     this.render();
                 },
 
@@ -65,7 +65,6 @@ define(['views/common/baseview',
                     let gran1 = this.options.dimensions[0][1];
 
                     this.hasLegend = true;
-                    this.duration = [];
                     this.groupBy = "";
                     this.tooltipConfig = {
                         tbody: [
@@ -160,9 +159,7 @@ define(['views/common/baseview',
                     }
 
                     // Assign colors by groupings:
-                    //if (this.groupBy) {
                     this.flows = enrichFlows.assignColorsByProperty(flows, this.groupBy);
-                    //}
 
                     this.createVizObject();
                 },
@@ -175,7 +172,6 @@ define(['views/common/baseview',
                         groupBy: this.groupBy,
                         tooltipConfig: this.tooltipConfig,
                         hasLegend: this.hasLegend,
-                        duration: this.duration,
                     });
 
                     // Smooth scroll to top of Viz
@@ -184,48 +180,45 @@ define(['views/common/baseview',
                     });
                 },
 
-                toggleFullscreen: function (event) {
-                    $(this.el).toggleClass('fullscreen');
-                    // Only scroll when going to normal view:
-                    if (!$(this.el).hasClass('fullscreen')) {
-                        $("#apply-filters")[0].scrollIntoView({
-                            behavior: "smooth"
-                        });
-                    }
-                    window.dispatchEvent(new Event('resize'));
-                    event.stopImmediatePropagation();
-                },
+                // toggleFullscreen: function (event) {
+                //     $(this.el).toggleClass('fullscreen');
+                //     // Only scroll when going to normal view:
+                //     if (!$(this.el).hasClass('fullscreen')) {
+                //         $("#apply-filters")[0].scrollIntoView({
+                //             behavior: "smooth"
+                //         });
+                //     }
+                //     window.dispatchEvent(new Event('resize'));
+                //     event.stopImmediatePropagation();
+                // },
 
-                toggleLegend: function (event) {
+                // toggleLegend: function (event) {
+                //     $(this.options.el).html("");
+                //     this.hasLegend = !this.hasLegend;
+                //     this.createVizObject();
+                // },
 
-                    $(this.options.el).html("");
-                    this.hasLegend = !this.hasLegend;
-                    this.duration = 0;
+                // exportCSV: function (event) {
+                //     const items = this.options.flows;
+                //     const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
+                //     const header = Object.keys(items[0])
+                //     let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+                //     csv.unshift(header.join(','))
+                //     csv = csv.join('\r\n')
 
-                    this.createVizObject();
-                },
+                //     var blob = new Blob([csv], {
+                //         type: "text/plain;charset=utf-8"
+                //     });
+                //     FileSaver.saveAs(blob, "data.csv");
 
-                exportCSV: function (event) {
-                    const items = this.options.flows;
-                    const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-                    const header = Object.keys(items[0])
-                    let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
-                    csv.unshift(header.join(','))
-                    csv = csv.join('\r\n')
+                //     event.stopImmediatePropagation();
+                // },
 
-                    var blob = new Blob([csv], {
-                        type: "text/plain;charset=utf-8"
-                    });
-                    FileSaver.saveAs(blob, "data.csv");
-
-                    event.stopImmediatePropagation();
-                },
-
-                close: function () {
-                    this.undelegateEvents(); // remove click events
-                    this.unbind(); // Unbind all local event bindings
-                    $(this.options.el).html(""); //empty the DOM element
-                },
+                // close: function () {
+                //     this.undelegateEvents(); // remove click events
+                //     this.unbind(); // Unbind all local event bindings
+                //     $(this.options.el).html(""); //empty the DOM element
+                // },
 
             });
         return PieChartView;

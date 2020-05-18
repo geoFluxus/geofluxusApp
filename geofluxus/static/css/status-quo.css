@@ -545,6 +545,12 @@ textarea.textarea-autosize.form-control-sm {
     top: 0;
 }
 
+.icon-fullscreen,
+.icon-export, 
+.icon-save-image {
+    color: white;
+}
+
 .icon-toggle-legend {
     background-image: url("../img/legend.svg");
     background-position: center center;
