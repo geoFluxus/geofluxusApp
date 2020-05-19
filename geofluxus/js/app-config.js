@@ -14,7 +14,6 @@ function(Session) {
         arealevels:        '/api/levels/',
         allareas:          '/api/allareas/',
         areas:             '/api/levels/{0}/areas/',
-        topojson:          '/api/levels/{0}/topojson',
         activitygroups:    '/api/activitygroups/',
         activities:        '/api/activities/',
         companies:         '/api/companies/',

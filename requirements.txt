@@ -18,5 +18,4 @@ pytz==2019.3
 Shapely==1.7.0
 six==1.13.0
 sqlparse==0.3.0
-topojson==1.0rc8
 xlrd==1.2.0

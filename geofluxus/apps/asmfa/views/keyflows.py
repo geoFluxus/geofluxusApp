@@ -2,9 +2,7 @@ from geofluxus.apps.utils.views import (UnlimitedResultsSetPagination)
 from geofluxus.apps.utils.views import (PostGetViewMixin,
                                         ViewSetMixin,
                                         ModelPermissionViewSet)
-from geofluxus.apps.asmfa.models import (ProcessGroup,
-                                         Process,
-                                         Waste02,
+from geofluxus.apps.asmfa.models import (Waste02,
                                          Waste04,
                                          Waste06,
                                          Material,
@@ -12,9 +10,7 @@ from geofluxus.apps.asmfa.models import (ProcessGroup,
                                          Composite,
                                          Year,
                                          Month)
-from geofluxus.apps.asmfa.serializers import (ProcessGroupSerializer,
-                                              ProcessSerializer,
-                                              Waste02Serializer,
+from geofluxus.apps.asmfa.serializers import (Waste02Serializer,
                                               Waste04Serializer,
                                               Waste06Serializer,
                                               MaterialSerializer,
@@ -22,9 +18,7 @@ from geofluxus.apps.asmfa.serializers import (ProcessGroupSerializer,
                                               CompositeSerializer,
                                               YearSerializer,
                                               MonthSerializer)
-from geofluxus.apps.asmfa.serializers import (ProcessGroupListSerializer,
-                                              ProcessListSerializer,
-                                              Waste02ListSerializer,
+from geofluxus.apps.asmfa.serializers import (Waste02ListSerializer,
                                               Waste04ListSerializer,
                                               Waste06ListSerializer,
                                               MaterialListSerializer,
@@ -32,9 +26,7 @@ from geofluxus.apps.asmfa.serializers import (ProcessGroupListSerializer,
                                               CompositeListSerializer,
                                               YearListSerializer,
                                               MonthListSerializer)
-from geofluxus.apps.asmfa.serializers import (ProcessGroupCreateSerializer,
-                                              ProcessCreateSerializer,
-                                              Waste02CreateSerializer,
+from geofluxus.apps.asmfa.serializers import (Waste02CreateSerializer,
                                               Waste04CreateSerializer,
                                               Waste06CreateSerializer,
                                               MaterialCreateSerializer,
@@ -42,47 +34,7 @@ from geofluxus.apps.asmfa.serializers import (ProcessGroupCreateSerializer,
                                               CompositeCreateSerializer,
                                               YearCreateSerializer,
                                               MonthCreateSerializer)
-from django.db.models import Count, Value, IntegerField
-
-
-# Process group
-class ProcessGroupViewSet(PostGetViewMixin,
-                          ViewSetMixin,
-                          ModelPermissionViewSet):
-    queryset = ProcessGroup.objects.order_by('id')
-    pagination_class = UnlimitedResultsSetPagination
-    serializer_class = ProcessGroupSerializer
-    serializers = {
-        'list': ProcessGroupListSerializer,
-        'create': ProcessGroupCreateSerializer
-    }
-
-    def get_queryset(self):
-        queryset = ProcessGroup.objects
-        queryset = queryset.annotate(
-            flow_count=Value(0, output_field=IntegerField())
-        )
-        return queryset.order_by('id')
-
-
-# Process
-class ProcessViewSet(PostGetViewMixin,
-                     ViewSetMixin,
-                     ModelPermissionViewSet):
-    queryset = Process.objects.order_by('id')
-    pagination_class = UnlimitedResultsSetPagination
-    serializer_class = ProcessSerializer
-    serializers = {
-        'list': ProcessListSerializer,
-        'create': ProcessCreateSerializer
-    }
-
-    def get_queryset(self):
-        queryset = Process.objects
-        queryset = queryset.annotate(
-            flow_count=Value(0, output_field=IntegerField())
-        )
-        return queryset.order_by('id')
+from django.db.models import Count
 
 
 # Waste02

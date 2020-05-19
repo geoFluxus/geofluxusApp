@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.gis.db import models as gis
-from geofluxus.apps.asmfa.models import (Publication,
-                                         Process)
+from geofluxus.apps.asmfa.models import (Publication)
 
 
 # Activity group
@@ -22,6 +21,26 @@ class Activity(models.Model):
 
     def __str__(self):
         return '{} - {}'.format(self.nace, self.name)
+
+
+# Process group
+class ProcessGroup(models.Model):
+    name = models.CharField(max_length=255)
+    code = models.CharField(max_length=255)
+
+    def __str__(self):
+        return '{} - {}'.format(self.code, self.name)
+
+
+# Process
+class Process(models.Model):
+    name = models.CharField(max_length=255)
+    code = models.CharField(max_length=255)
+    processgroup = models.ForeignKey(ProcessGroup,
+                                     on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{} - {}'.format(self.code, self.name)
 
 
 # Company

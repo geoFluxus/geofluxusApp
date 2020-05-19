@@ -1,6 +1,5 @@
 from rest_framework.serializers import (HyperlinkedModelSerializer,
-                                        PrimaryKeyRelatedField,
-                                        CharField)
+                                        PrimaryKeyRelatedField)
 from geofluxus.apps.asmfa.models import (PublicationType,
                                          Publication)
 

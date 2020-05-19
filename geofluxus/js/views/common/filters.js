@@ -931,7 +931,7 @@ define(['views/common/baseview',
                 if (this.selectedAreasDestination !== undefined &&
                     this.selectedAreasDestination.length > 0) {
                     filterParams.destination.selectedAreas = [];
-                    filter.selectedAreasDestination.forEach(function (area) {
+                    this.selectedAreasDestination.forEach(function (area) {
                         filterParams.destination.selectedAreas.push(area.id);
                     });
                 }

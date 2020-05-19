@@ -642,7 +642,7 @@ div.fullscreen {
     bottom: 5%;
     background: rgba(255, 255, 255, 0.1);
     width: 350px;
-    height: 150px;
+    height: 75px;
 }
 
 #legend:hover {
