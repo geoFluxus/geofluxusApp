@@ -58,6 +58,7 @@ define(['underscore',
                     this.dim2 = this.options.dimensions.find(dim => dim[0] != "space");
                     this.legendItems = [];
 
+                    this.isActorLevel = this.options.dimensions.isActorLevel;
 
                     this.render();
 
@@ -103,7 +104,15 @@ define(['underscore',
                             maxZoom: 25
                         })
                         .addLayer(this.backgroundLayer);
-                    this.flowMap = new FlowMap(this.leafletMap);
+
+                    // If the flows are aggregated by geographic region, increase the maximum flow width:
+                    if (!this.isActorLevel) {
+                        this.maxFlowWidth = 200;
+                    }
+
+                    this.flowMap = new FlowMap(this.leafletMap, {
+                        maxFlowWidth: this.maxFlowWidth
+                    });
 
                     this.flowMap.showFlows = true;
                     this.flowMap.showNodes = false;
@@ -220,132 +229,134 @@ define(['underscore',
 
                     // //////////////////////
                     // Custom controls
-                    var customControls = L.control({
-                        position: 'bottomleft'
-                    });
-                    this.animationCheck = document.createElement('input');
-                    this.actorCheck = document.createElement('input');
-                    this.flowCheck = document.createElement('input');
+                    // var customControls = L.control({
+                    //     position: 'bottomleft'
+                    // });
+                    //this.animationCheck = document.createElement('input');
+                    //this.actorCheck = document.createElement('input');
+                    //this.flowCheck = document.createElement('input');
                     //this.lightCheck = document.createElement('input');
-                    this.flowCheck.checked = true;
+                    //this.flowCheck.checked = true;
                     //this.lightCheck.checked = false;
 
-                    var div = document.createElement('div'),
-                        aniLabel = document.createElement('label'),
-                        actorLabel = document.createElement('label'),
-                        flowLabel = document.createElement('label');
-                    //lightLabel = document.createElement('label'),
+                    // var div = document.createElement('div'),
+                    //     aniLabel = document.createElement('label'),
+                    //     actorLabel = document.createElement('label'),
+                    //     flowLabel = document.createElement('label');
+                    // //lightLabel = document.createElement('label'),
 
-                    div.classList.add("leaflet-control-custom-controls");
-                    aniLabel.innerHTML = 'Animate';
-                    actorLabel.innerHTML = 'Actors';
-                    flowLabel.innerHTML = 'Flows';
-                    //lightLabel.innerHTML = 'Light / Dark';
+                    // div.classList.add("leaflet-control-custom-controls");
+                    // aniLabel.innerHTML = 'Animate';
+                    // actorLabel.innerHTML = 'Actors';
+                    // flowLabel.innerHTML = 'Flows';
+                    // //lightLabel.innerHTML = 'Light / Dark';
 
-                    [
-                        this.animationCheck, this.actorCheck,
-                        this.flowCheck, //this.lightCheck
-                    ].forEach(function (checkbox) {
-                        checkbox.type = "checkbox";
-                        checkbox.style.transform = "scale(2)";
-                        checkbox.style.pointerEvents = "none";
-                        checkbox.style.marginRight = "10px";
-                    })
+                    // [
+                    //     this.animationCheck, this.actorCheck,
+                    //     this.flowCheck, //this.lightCheck
+                    // ].forEach(function (checkbox) {
+                    //     checkbox.type = "checkbox";
+                    //     checkbox.style.transform = "scale(2)";
+                    //     checkbox.style.pointerEvents = "none";
+                    //     checkbox.style.marginRight = "10px";
+                    // })
 
-                    div.style.background = "rgba(255, 255, 255, 0.5)";
-                    div.style.padding = "10px";
-                    div.style.cursor = "pointer";
+                    // div.style.background = "rgba(255, 255, 255, 0.5)";
+                    // div.style.padding = "10px";
+                    // div.style.cursor = "pointer";
 
-                    var actorDiv = document.createElement('div'),
-                        flowDiv = document.createElement('div'),
-                        aniDiv = document.createElement('div'),
-                        aniCheckWrap = document.createElement('div'),
-                        aniToggleDiv = document.createElement('div');
-                    //lightDiv = document.createElement('div')
+                    // var actorDiv = document.createElement('div'),
+                    //     flowDiv = document.createElement('div')
+                    //     //aniDiv = document.createElement('div'),
+                    //     //aniCheckWrap = document.createElement('div'),
+                    //     //aniToggleDiv = document.createElement('div');
+                    // //lightDiv = document.createElement('div')
 
-                    actorDiv.appendChild(this.actorCheck);
-                    actorDiv.appendChild(actorLabel);
-                    actorDiv.style.cursor = 'pointer';
-                    flowDiv.appendChild(this.flowCheck);
-                    flowDiv.appendChild(flowLabel);
-                    flowDiv.style.cursor = 'pointer';
+                    // actorDiv.appendChild(this.actorCheck);
+                    // actorDiv.appendChild(actorLabel);
+                    // actorDiv.style.cursor = 'pointer';
+
+
+                    // flowDiv.appendChild(this.flowCheck);
+                    // flowDiv.appendChild(flowLabel);
+                    // flowDiv.style.cursor = 'pointer';
                     // lightDiv.appendChild(this.lightCheck);
                     // lightDiv.appendChild(lightLabel);
                     // lightDiv.style.cursor = 'pointer';
-                    aniCheckWrap.appendChild(this.animationCheck);
-                    aniCheckWrap.appendChild(aniLabel);
-                    aniDiv.appendChild(aniCheckWrap);
-                    aniCheckWrap.style.cursor = 'pointer';
+                    // aniCheckWrap.appendChild(this.animationCheck);
+                    // aniCheckWrap.appendChild(aniLabel);
+                    // aniDiv.appendChild(aniCheckWrap);
+                    // aniCheckWrap.style.cursor = 'pointer';
 
-                    var aniLinesLabel = document.createElement('label'),
-                        aniDotsLabel = document.createElement('label');
+                    // var aniLinesLabel = document.createElement('label'),
+                    //     aniDotsLabel = document.createElement('label');
 
-                    aniLinesLabel.classList.add("flowmap-anim-radio-label");
-                    aniDotsLabel.classList.add("flowmap-anim-radio-label");
+                    // aniLinesLabel.classList.add("flowmap-anim-radio-label");
+                    // aniDotsLabel.classList.add("flowmap-anim-radio-label");
 
-                    this.aniLinesRadio = document.createElement('input');
-                    this.aniDotsRadio = document.createElement('input');
-                    this.aniLinesRadio.type = 'radio';
-                    this.aniDotsRadio.type = 'radio';
-                    this.aniLinesRadio.name = 'animation';
-                    this.aniDotsRadio.name = 'animation';
-                    this.aniLinesRadio.style.transform = 'scale(1.5)';
-                    this.aniLinesRadio.style.marginLeft = '5px';
-                    this.aniDotsRadio.style.transform = 'scale(1.5)';
-                    this.aniDotsRadio.style.marginLeft = '5px';
+                    // this.aniLinesRadio = document.createElement('input');
+                    // this.aniDotsRadio = document.createElement('input');
+                    // this.aniLinesRadio.type = 'radio';
+                    // this.aniDotsRadio.type = 'radio';
+                    // this.aniLinesRadio.name = 'animation';
+                    // this.aniDotsRadio.name = 'animation';
+                    // this.aniLinesRadio.style.transform = 'scale(1.5)';
+                    // this.aniLinesRadio.style.marginLeft = '5px';
+                    // this.aniDotsRadio.style.transform = 'scale(1.5)';
+                    // this.aniDotsRadio.style.marginLeft = '5px';
 
-                    this.aniLinesRadio.checked = true;
+                    //this.aniLinesRadio.checked = true;
 
                     // aniCheckWrap.style.float = 'left';
                     // aniCheckWrap.style.marginRight = '5px';
                     // aniToggleDiv.style.float = 'left';
                     // aniLinesLabel.style.marginRight = '3px';
 
-                    aniLinesLabel.innerHTML = '<span>Lines</span>';
-                    aniDotsLabel.innerHTML = '<span>Dots</span>';
-                    aniLinesLabel.appendChild(this.aniLinesRadio);
-                    aniDotsLabel.appendChild(this.aniDotsRadio);
-                    aniToggleDiv.appendChild(aniLinesLabel);
-                    aniToggleDiv.appendChild(aniDotsLabel);
+                    // aniLinesLabel.innerHTML = '<span>Lines</span>';
+                    // aniDotsLabel.innerHTML = '<span>Dots</span>';
+                    // aniLinesLabel.appendChild(this.aniLinesRadio);
+                    // aniDotsLabel.appendChild(this.aniDotsRadio);
+                    // aniToggleDiv.appendChild(aniLinesLabel);
+                    // aniToggleDiv.appendChild(aniDotsLabel);
 
-                    aniToggleDiv.classList.add("aniToggleDiv");
+                    //aniToggleDiv.classList.add("aniToggleDiv");
 
-                    customControls.onAdd = function (map) {
-                        return div;
-                    };
-                    customControls.addTo(this.leafletMap);
+                    // customControls.onAdd = function (map) {
+                    //     return div;
+                    // };
+                    // customControls.addTo(this.leafletMap);
 
-                    flowDiv.addEventListener("click", function () {
-                        _this.flowCheck.checked = !_this.flowCheck.checked;
-                        _this.rerender();
-                    });
+                    // flowDiv.addEventListener("click", function () {
+                    //     _this.flowCheck.checked = !_this.flowCheck.checked;
+                    //     _this.rerender();
+                    // });
 
-                    actorDiv.addEventListener("click", function () {
-                        _this.actorCheck.checked = !_this.actorCheck.checked;
-                        //if (_this.actorCheck.checked) _this.stockCheck.checked = false;
-                        _this.rerender();
-                    });
+                    // actorDiv.addEventListener("click", function () {
+                    //     _this.actorCheck.checked = !_this.actorCheck.checked;
+                    //     //if (_this.actorCheck.checked) _this.stockCheck.checked = false;
+                    //     _this.rerender();
+                    // });
                     // lightDiv.addEventListener("click", function () {
                     //     _this.lightCheck.checked = !_this.lightCheck.checked;
                     //     _this.rerender();
                     // });
-                    aniCheckWrap.addEventListener("click", function () {
-                        _this.animationCheck.checked = !_this.animationCheck.checked;
-                        _this.flowMap.toggleAnimation(_this.animationCheck.checked);
-                    });
-                    aniToggleDiv.addEventListener("click", function () {
-                        if (_this.aniDotsRadio.checked)
-                            _this.aniLinesRadio.checked = true;
-                        else
-                            _this.aniDotsRadio.checked = true;
-                        _this.rerender();
-                    });
+                    // aniCheckWrap.addEventListener("click", function () {
+                    //     _this.animationCheck.checked = !_this.animationCheck.checked;
+                    //     _this.flowMap.toggleAnimation(_this.animationCheck.checked);
+                    // });
+                    // aniToggleDiv.addEventListener("click", function () {
+                    //     if (_this.aniDotsRadio.checked)
+                    //         _this.aniLinesRadio.checked = true;
+                    //     else
+                    //         _this.aniDotsRadio.checked = true;
+                    //     _this.rerender();
+                    // });
 
-                    //div.appendChild(actorDiv);
-                    //div.appendChild(flowDiv);
-                    //div.appendChild(lightDiv);
-                    div.appendChild(aniDiv);
-                    div.appendChild(aniToggleDiv);
+                    // //div.appendChild(actorDiv);
+                    // //div.appendChild(flowDiv);
+                    // //div.appendChild(lightDiv);
+                    // //div.appendChild(aniDiv);
+                    // //div.appendChild(aniToggleDiv);
 
                     // L.DomEvent.disableClickPropagation(this.legend);
                     // L.DomEvent.disableScrollPropagation(this.legend);
@@ -472,7 +483,7 @@ define(['underscore',
 
                     this.updateLegend();
 
-                    this.flowMap.toggleTag('actor', this.actorCheck.checked);
+                    //this.flowMap.toggleTag('actor', this.actorCheck.checked);
 
                     this.flowMap.resetView();
                     if (zoomToFit) this.flowMap.zoomToFit();

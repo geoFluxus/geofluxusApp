@@ -75,7 +75,7 @@ define([
 
             // get zoom level after each zoom activity
             this.initialZoom = this.map.getZoom();
-            this.maxFlowWidth = 50;
+            this.maxFlowWidth = options.maxFlowWidth || 50;
             this.minFlowWidth = 1;
             this.maxScale = 2;
 
