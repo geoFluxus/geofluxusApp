@@ -111,14 +111,6 @@ label[for="flows-waste06-select"] {
     left: -1.3em;
 }
 
-/* 
-.originContainerActivity .buttonHelpiconContainer,
-.destinationContainerActivity .buttonHelpiconContainer {
-    position: relative;
-    top: -0.1rem;
-    left: 0.1rem;
-} */
-
 .labelHelpiconContainer {
     position: relative;
     display: inline-block;
@@ -534,7 +526,8 @@ textarea.textarea-autosize.form-control-sm {
 .icon-toggle-legend,
 .icon-toggle-darkmode,
 .icon-toggle-flowmap-flows,
-.icon-toggle-flowmap-nodes {
+.icon-toggle-flowmap-nodes,
+.icon-toggle-flowmap-animation {
     background-position: center center;
     background-size: contain;
     width: 16px;
@@ -559,8 +552,14 @@ textarea.textarea-autosize.form-control-sm {
 
 .icon-toggle-flowmap-nodes {
     background-image: url("../img/flowmap-nodes.svg");
+    width: 20px;
+    height: 20px;
 }
-
+.icon-toggle-flowmap-animation {
+    background-image: url("../img/flowmap-animation.svg");
+    width: 20px;
+    height: 20px;
+}
 
 .leaflet-control div label {
     color: black;
@@ -572,7 +571,7 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .leaflet-control-zoom {
-    top: 250px !important;
+    top: 262px !important;
     border: none !important;
     margin: 0 !important;
 }

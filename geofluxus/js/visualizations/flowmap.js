@@ -122,7 +122,7 @@ define([
         clear() {
             this.g.selectAll("*").remove();
 
-        
+
             this.nodesData = {};
             this.nodesPos = {};
             this.flowsData = {};
@@ -189,7 +189,7 @@ define([
         draw() {
             var _this = this;
             this.g.selectAll("*").remove();
-            
+
             // this.g.selectAll("*")
             //     .transition()
             //     .duration(250)
@@ -298,10 +298,10 @@ define([
             var maxNodeRadius = calcRadius(this.maxNodeValue);
             var scaleFactor = (maxNodeRadius > 60) ? 60 / maxNodeRadius : 1
 
-            if (_this.showNodes){
+            if (_this.showNodes) {
                 // use addpoint for each node in nodesDataFlow
                 Object.values(_this.nodesPos).forEach(function (nodes) {
-    
+
                     // ignore hidden nodes
                     var nodesToShow = [];
                     nodes.forEach(function (node) {
@@ -309,27 +309,33 @@ define([
                     })
                     // no visible nodes
                     if (nodesToShow.length === 0) return;
-    
+
                     var first = nodesToShow[0];
                     var x = _this.projection([first.lon, first.lat])[0],
                         y = _this.projection([first.lon, first.lat])[1];
-                    // only one node at this position
+
+                    // Only one node at this position
                     if (nodesToShow.length === 1) {
                         if (_this.hideTags[first.tag]) return;
                         // calculate radius by value, if radius is not given
                         var radius = Math.max(5, first.radius || calcRadius(first.value));
                         _this.addPoint(x, y, first.label, first.innerLabel, first.color, radius, first.opacity);
+
                     } else {
-                        // multiple nodes at same position -> piechart
+                        // Multiple nodes at same position -> create Piechart
                         var data = [],
                             label = '',
                             radius = 0,
                             total = 0;
-    
+
                         nodesToShow.forEach(function (node) {
                             total += node.value;
                             radius += node.radius || 0;
-                            label += node.label + '<br><br>';
+                            label += node.label + '<br>';
+
+                            //label = 
+
+
                             data.push({
                                 'color': node.color,
                                 'value': node.value || 1,
@@ -337,6 +343,8 @@ define([
                             })
                         })
                         radius = Math.max(5, (radius + calcRadius(total)) * scaleFactor);
+
+
                         _this.addPieChart(x, y, label, radius, data)
                     }
                 });
@@ -390,6 +398,10 @@ define([
                         .duration(200)
                         .style("opacity", 0.9);
                     _this.tooltip.html(label)
+
+                        //_this.tooltip.html(d.data.label)
+
+
                         .style("left", (d3.event.pageX - rect.x - window.pageXOffset) + "px")
                         .style("top", (d3.event.pageY - rect.y - 28 - window.pageYOffset) + "px")
                     //d3.select(this).style("fill-opacity", 1);
@@ -512,9 +524,11 @@ define([
         }
 
         toggleAnimation(on) {
-            if (on != null) this.animate = on;
-            //this.g.selectAll('path').classed('flowline', this.animate);
+            if (on != null) {
+                this.animate = on;
+            }
             this.draw();
+            //this.g.selectAll('path').classed('flowline', this.animate);
         }
 
         toggleTag(tag, on) {

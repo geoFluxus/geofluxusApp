@@ -89,7 +89,9 @@ define(['underscore',
                     var _this = this;
                     this.hasLegend = true;
                     this.isDarkMode = true;
-
+                    this.animationOn = false;
+                    this.animationLines = true;
+                    this.animationDots = false;
 
                     //$(this.el).html('<div class="flowmap-container d-block" style="width: 100%; height: 100%"></div>')
 
@@ -162,12 +164,18 @@ define(['underscore',
                     showNodesToggleBtn.title = "Toggle the nodes on or off."
                     showNodesToggleBtn.innerHTML = '<i class="fas icon-toggle-flowmap-nodes"></i>';
 
+                    // Animation toggle
+                    var animationToggleBtn = document.createElement('button');
+                    animationToggleBtn.classList.add("btn", "btn-primary", "toggle-animation")
+                    animationToggleBtn.title = "Toggle the animation of the flows."
+                    animationToggleBtn.innerHTML = '<i class="fas icon-toggle-flowmap-animation"></i>';
+
                     topLeftControlDiv.appendChild(exportImgBtn);
                     topLeftControlDiv.appendChild(legendToggleBtn);
                     topLeftControlDiv.appendChild(darkmodeToggleBtn);
                     topLeftControlDiv.appendChild(showFlowsToggleBtn);
                     topLeftControlDiv.appendChild(showNodesToggleBtn);
-
+                    topLeftControlDiv.appendChild(animationToggleBtn);
 
                     topLefControls.onAdd = function (map) {
                         return topLeftControlDiv;
@@ -191,6 +199,10 @@ define(['underscore',
                     showNodesToggleBtn.addEventListener('click', function () {
                         _this.flowMap.showNodes = !_this.flowMap.showNodes;
                         _this.rerender();
+                        event.preventDefault();
+                    })
+                    animationToggleBtn.addEventListener('click', function () {
+                        _this.toggleAnimation();
                         event.preventDefault();
                     })
 
@@ -329,34 +341,14 @@ define(['underscore',
                         _this.rerender();
                     });
 
-                    div.appendChild(actorDiv);
-                    div.appendChild(flowDiv);
+                    //div.appendChild(actorDiv);
+                    //div.appendChild(flowDiv);
                     //div.appendChild(lightDiv);
                     div.appendChild(aniDiv);
                     div.appendChild(aniToggleDiv);
 
-
-                    // OLD LEGEND
-                    // var legendControl = L.control({
-                    //     position: 'bottomright'
-                    // });
-                    // this.legend = document.createElement('svg');
-
-                    //this.legend.style.visibility = 'hidden';
-
-                    // this.legend.style.width = "10rem";
-                    // this.legend.style.height = "10rem";
-                    // legendControl.onAdd = function () {
-                    //     return _this.legend;
-                    // };
-                    // legendControl.addTo(this.leafletMap);
-                    //this.el.querySelector('.leaflet-right.leaflet-bottom').classList.add('leaflet-legend-center');
-                    //this.el.querySelector('.leaflet-right.leaflet-bottom').firstChild.classList.add("flowmap-legend-wrapper");
-                    //this.el.querySelector('.leaflet-right.leaflet-bottom').firstChild.classList.add("flowmap-d3pluslegend");                    
-
                     // L.DomEvent.disableClickPropagation(this.legend);
                     // L.DomEvent.disableScrollPropagation(this.legend);
-
 
 
                     // `fullscreenchange` Event that's fired when entering or exiting fullscreen.
@@ -388,9 +380,7 @@ define(['underscore',
 
                     this.updateLegend();
                     this.leafletMap.removeLayer(this.backgroundLayer);
-
                     this.backgroundLayer.setUrl(this.tileUrl + this.tileType + this.tileSuffix)
-
                     this.leafletMap.addLayer(this.backgroundLayer);
                 },
 
@@ -399,8 +389,36 @@ define(['underscore',
                     this.updateLegend();
                 },
 
-                updateLegend() {
+                toggleAnimation() {
+                    var _this = this;
 
+                    // If animation is off, turn it on and set to lines:
+                    if (_this.animationOn == false) {
+                        _this.animationOn = true;
+
+                        _this.flowMap.dottedLines = false;
+                        _this.flowMap.toggleAnimation(true);
+
+                        _this.animationLines = true;
+                        _this.animationDots = false;
+
+                        // If animation is on, and type == lines, set to dots:
+                    } else if (_this.animationOn && _this.animationLines) {
+                        _this.animationLines = false;
+                        _this.animationDots = true;
+
+                        _this.flowMap.dottedLines = true;
+                        _this.flowMap.toggleAnimation(true);
+
+                        // If animation is on, and type == dots, turn off:
+                    } else if (_this.animationOn && _this.animationDots) {
+                        _this.flowMap.toggleAnimation(false);
+                        _this.animationOn = false;
+                    }
+                    _this.rerender();
+                },
+
+                updateLegend() {
                     if (this.hasLegend) {
                         var _this = this;
 
@@ -441,7 +459,7 @@ define(['underscore',
 
                     this.flowMap.addNodes(data.nodes);
 
-                    if (this.flowMap.showFlows){
+                    if (this.flowMap.showFlows) {
                         this.flowMap.addFlows(data.flows);
                     }
 
@@ -450,7 +468,7 @@ define(['underscore',
 
                     //this.flowMap.showNodes = (this.actorCheck.checked) ? true : false;
                     //this.flowMap.showFlows = (this.flowCheck.checked) ? true : false;
-                    this.flowMap.dottedLines = (this.aniDotsRadio.checked) ? true : false;
+                    //this.flowMap.dottedLines = (this.aniDotsRadio.checked) ? true : false;
 
                     this.updateLegend();
 
@@ -601,17 +619,21 @@ define(['underscore',
                         let destinationNode = flow.destination
                         let link = flow;
                         let linkInfo = _this.returnLinkInfo(this[index]);
-                        let opacityValue = 0.8;
+                        let nodeOpacity = 1;
 
                         // NODES
                         // Add the origin and destination to Nodes, and include amounts:
                         originNode.value = flow.amount;
                         originNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
-                        originNode.opacity = opacityValue
-                        
+                        originNode.dimensionValue = linkInfo.dimensionValue;
+                        originNode.amountText = linkInfo.amountText
+                        originNode.opacity = nodeOpacity;
+
                         destinationNode.value = flow.amount;
-                        // destinationNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
-                        destinationNode.opacity = opacityValue
+                        destinationNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
+                        destinationNode.dimensionValue = linkInfo.dimensionValue;
+                        destinationNode.amountText = linkInfo.amountText
+                        destinationNode.opacity = nodeOpacity;
 
                         nodes.push(originNode, destinationNode)
 
@@ -630,6 +652,8 @@ define(['underscore',
                     // Assign colors to links and nodes based on label-prop:
                     links = enrichFlows.assignColorsByProperty(links, "dimensionId");
                     nodes = enrichFlows.assignColorsByProperty(nodes, "label");
+
+                    nodes = _.sortBy(nodes, 'value').reverse();
 
                     // Get all unique occurences for legend:
                     links.forEach(link => {
