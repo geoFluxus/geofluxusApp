@@ -18,8 +18,17 @@ define([
             let _this = this;
             var options = options || {};
 
+            if (options.isDarkMode) {
+                this.elementColor = "white"
+            } else {
+                this.elementColor = "black";
+            }
+
             var shapeConfig = {
                 fill: options.shapeConfigFill,
+                labelConfig: {
+                    fontColor: this.elementColor,
+                }
             };
             // shapeConfig.hoverStyle = this.renderHover();
 

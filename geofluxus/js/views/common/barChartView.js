@@ -32,12 +32,14 @@ define(['views/common/d3plusVizView',
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
                     _.bindAll(this, 'toggleLegend');
+                    _.bindAll(this, 'toggleDarkMode');
 
                     this.options = options;
-
                     let flows = this.options.flows;
-
+                    this.canHaveLegend = true;
                     this.hasLegend = true;
+                    this.isDarkMode = true;
+
                     this.groupBy = "";
                     this.x = "";
                     this.xSort = true;
@@ -501,6 +503,7 @@ define(['views/common/d3plusVizView',
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
                     'click .toggle-legend': 'toggleLegend',
+                    'click .toggle-darkmode': 'toggleDarkMode',
                 },
 
                 /**
@@ -517,6 +520,8 @@ define(['views/common/d3plusVizView',
                         isStacked: this.isStacked,
                         isActorLevel: this.isActorLevelevel,
                         hasLegend: this.hasLegend,
+                        canHaveLegend: this.canHaveLegend,
+                        isDarkMode: this.isDarkMode,
                     });
                     this.scrollToVisualization();
                     this.options.flowsView.loader.deactivate();

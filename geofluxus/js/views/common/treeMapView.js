@@ -33,12 +33,14 @@ define(['views/common/d3plusVizView',
                     _.bindAll(this, 'exportCSV');
                     _.bindAll(this, 'toggleLegend');
 
+                    this.hasLegend = true;
+                    this.canHaveLegend = true;
+
                     this.options = options;
                     this.flows = this.options.flows;
 
                     let dim1String = this.options.dimensions[0][0];
                     let gran1 = this.options.dimensions[0][1];
-                    this.hasLegend = true;
 
                     this.groupBy = "";
 
@@ -153,6 +155,7 @@ define(['views/common/d3plusVizView',
                         data: this.flows,
                         groupBy: this.groupBy,
                         tooltipConfig: this.tooltipConfig,
+                        canHaveLegend: this.canHaveLegend,
                         hasLegend: this.hasLegend,
                     });
                     this.scrollToVisualization();

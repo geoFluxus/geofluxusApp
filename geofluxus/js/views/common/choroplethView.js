@@ -28,6 +28,10 @@ define(['views/common/d3plusVizView',
                     ChoroplethView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
+                    _.bindAll(this, 'toggleDarkMode');
+
+                    this.isDarkMode = true;
+                    this.canHaveLegend = false;
 
                     this.options = options;
                     this.flows = this.options.flows;
@@ -41,6 +45,7 @@ define(['views/common/d3plusVizView',
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
+                    'click .toggle-darkmode': 'toggleDarkMode',
                 },
 
                 /**
@@ -51,7 +56,9 @@ define(['views/common/d3plusVizView',
                         el: this.options.el,
                         data: this.flows,
                         tooltipConfig: this.tooltipConfig,
+                        canHaveLegend: this.canHaveLegend,
                         geoJson: this.options.geoJson,
+                        isDarkMode: this.isDarkMode,
                     });
                     this.scrollToVisualization();
                     this.options.flowsView.loader.deactivate();

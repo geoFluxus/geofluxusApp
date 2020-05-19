@@ -313,6 +313,7 @@ label[for="flows-waste06-select"] {
     min-width: 600px;
     background-color: #393939;
     border-radius: 18px;
+    transition: background-color 0.5s ease;
 }
 
 .lightMode {
@@ -405,6 +406,7 @@ textarea.textarea-autosize.form-control-sm {
 
 .flowmap-container {
     border-radius: 18px;
+    background-color: #393939 !important;
 }
 
 .flowmap-d3pluslegend-wrapper {
@@ -433,8 +435,10 @@ textarea.textarea-autosize.form-control-sm {
 
 .flowmapLegendFullscreen {
     z-index: 100000 !important;
-    position: absolute;
-    bottom: -35px;
+    bottom: 0;
+    position: fixed;
+    left: 0;
+    border-radius: 0px !important;
 }
 
 
@@ -523,8 +527,10 @@ textarea.textarea-autosize.form-control-sm {
     color: white;
 }
 
-.icon-toggle-legend {
-    background-image: url("../img/legend.svg");
+.icon-toggle-legend,
+.icon-toggle-darkmode,
+.icon-toggle-flowmap-flows,
+.icon-toggle-flowmap-dots {
     background-position: center center;
     background-size: contain;
     width: 16px;
@@ -533,15 +539,24 @@ textarea.textarea-autosize.form-control-sm {
     margin-bottom: 2px;
 }
 
-.icon-toggle-nightmode {
-    background-image: url("../img/nightmode.svg");
-    background-position: center center;
-    background-size: contain;
-    width: 16px;
-    height: 16px;
-    vertical-align: middle;
-    margin-bottom: 2px;
+.icon-toggle-legend {
+    background-image: url("../img/legend.svg");
 }
+
+.icon-toggle-darkmode {
+    background-image: url("../img/nightmode.svg");
+}
+
+.icon-toggle-flowmap-flows {
+    width: 20px;
+    height: 20px;
+    background-image: url("../img/flowmap-flows.svg");
+}
+
+.icon-toggle-flowmap-dots {
+    background-image: url("../img/flowmap-dots.svg");
+}
+
 
 .leaflet-control div label {
     color: black;
@@ -553,7 +568,7 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .leaflet-control-zoom {
-    top: 140px !important;
+    top: 250px !important;
     border: none !important;
     margin: 0 !important;
 }

@@ -14,10 +14,18 @@ define([
          * @param {string} options.el       CSS Selector of the container element of the CoordinatePointMap
          */
         constructor(options) {
-            super();
+            super(options);
 
             let _this = this;
             var options = options || {};
+
+            let tileType = ""
+            if (options.isDarkMode) {
+                tileType = "dark_all"
+            } else {
+                tileType = "light_all"                
+            }
+            this.tileUrl = "https://cartodb-basemaps-{s}.global.ssl.fastly.net/" + tileType + "/{z}/{x}/{y}.png"
 
             new geomap.Geomap()
                 .data(options.data)
@@ -27,17 +35,17 @@ define([
                     color: ["rgb(158, 1, 66)", "rgb(240, 112, 74)", "rgb(254, 221, 141)", "rgb(224, 243, 160)", "rgb(105, 189, 169)"].reverse(),
                     axisConfig: {
                         barConfig: {
-                            stroke: "white"
+                            stroke: this.elementColor
                         },
                         shapeConfig: {
                             labelConfig: {
-                                fontColor: "white"
+                                fontColor: this.elementColor
                             },
-                            stroke: "#979797"
+                            stroke: this.elementColor,
                         }
                     },
                     rectConfig: {
-                        stroke: "white"
+                        stroke: this.elementColor
                     }
                 })
                 .label(function (d) {
@@ -52,7 +60,7 @@ define([
                 .shapeConfig({
                     hoverOpacity: 0.75,
                 })
-                .tileUrl("https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png")
+                .tileUrl(this.tileUrl)
                 .pointSizeMin(2)
                 .pointSizeMax(50)
                 .tooltipConfig(options.tooltipConfig)
@@ -65,9 +73,7 @@ define([
                 .controlPadding(0)
                 .duration(0)
                 .render(function () {
-                    _this.addButtons({
-                        canHaveLegend: false
-                    });
+                    _this.addButtons();
                 });
         }
     }

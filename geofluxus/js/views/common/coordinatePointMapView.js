@@ -1,22 +1,21 @@
-define(['views/common/baseview',
+define(['views/common/d3plusVizView',
         'underscore',
         'visualizations/coordinatePointMap',
     ],
 
     function (
-        BaseView,
+        D3plusVizView,
         _,
         CoordinatePointMap) {
 
         /**
          * @author Evert Van Hirtum
          * @name module:views/CoordinatePointMapView
-         * @augments module:views/BaseView
+         * @augments module:views/D3plusVizView
          */
-        var CoordinatePointMapView = BaseView.extend(
+        var CoordinatePointMapView = D3plusVizView.extend(
             /** @lends module:views/CoordinatePointMapView.prototype */
             {
-
                 /**
                  * @param {Object} options
                  * @param {HTMLElement} options.el  element the view will be rendered in
@@ -28,6 +27,10 @@ define(['views/common/baseview',
                     CoordinatePointMapView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
+                    _.bindAll(this, 'toggleDarkMode');
+
+                    this.isDarkMode = true;
+                    this.canHaveLegend = false;
 
                     this.options = options;
                     this.flows = this.options.flows;
@@ -41,6 +44,7 @@ define(['views/common/baseview',
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
+                    'click .toggle-darkmode': 'toggleDarkMode',
                 },
 
                 /**
@@ -51,6 +55,8 @@ define(['views/common/baseview',
                         el: this.options.el,
                         data: this.flows,
                         tooltipConfig: this.tooltipConfig,
+                        isDarkMode: this.isDarkMode,
+                        canHaveLegend: this.canHaveLegend,
                     });
                     this.scrollToVisualization();
                     this.options.flowsView.loader.deactivate();

@@ -989,6 +989,7 @@ define(['views/common/baseview',
             },
 
             closeAllVizViews: function () {
+                $(".viz-wrapper-div").removeClass("lightMode");
                 $(".viz-wrapper-div").fadeOut();
                 $(".viz-wrapper-div").html("")
                 $(".parallelsets-container").hide();

@@ -14,21 +14,21 @@ define([
          * @param {string} options.el       CSS Selector of the container element of the viz
          */
         constructor(options) {
-            super();
+
+            super(options);
 
             let _this = this;
-
             var options = options || {};
-            var canHaveLegend = true;
+            this.canHaveLegend = options.canHaveLegend;
 
             let groupByValue = options.groupBy ? options.groupBy : null;
 
-            if(!options.groupBy){
-                canHaveLegend = false;
-            }
+            // // Don't show legend if there is no grouping:
+            // if(!options.groupBy){
+            //     this.canHaveLegend = false;
+            // }
 
-
-            let shapeConfigValue = {
+            this.shapeConfigValue = {
                 Line: {
                     strokeWidth: 3,
                     curve: "catmullRom",
@@ -36,15 +36,15 @@ define([
             };
 
             if (!options.groupBy) {
-                shapeConfigValue.Line.stroke = "red";
+                this.shapeConfigValue.Line.stroke = "red";
             } else {
-                shapeConfigValue.Line.stroke =
+                this.shapeConfigValue.Line.stroke =
                     function (d) {
                         return d.color
                     }
             }
 
-            let labelFunction = function (d) {
+            this.labelConfig = function (d) {
                 if (options.isActorLevel) {
                     return d.actorName
                 } else if (groupByValue) {
@@ -54,14 +54,14 @@ define([
                 }
             }
 
-            let axisConfig = {
+            this.axisConfig = {
                 barConfig: {
-                    stroke: "white", // Axis color
+                    stroke: this.elementColor, // Axis color
                 },
                 shapeConfig: {
-                    stroke: "white", // Ticks on axis
+                    stroke: this.elementColor, // Ticks on axis
                     labelConfig: {
-                        fontColor: "white", // Labels on axis
+                        fontColor: this.elementColor, // Labels on axis
                     }
                 }
             }
@@ -74,13 +74,13 @@ define([
                 .discrete("x")
                 .groupBy(groupByValue)
                 .shape("Line")
-                .shapeConfig(shapeConfigValue)
-                .xConfig(axisConfig)
-                .yConfig(axisConfig)
+                .shapeConfig(this.shapeConfigValue)
+                .xConfig(this.axisConfig)
+                .yConfig(this.axisConfig)
                 .tooltipConfig(options.tooltipConfig)
                 .duration(0)
                 .legend(options.hasLegend)
-                .label(labelFunction)
+                .label(this.labelConfig)
                 .downloadPosition("left")
                 .downloadButton(true)
                 .controlConfig({
@@ -89,51 +89,16 @@ define([
                 .legendConfig({
                     shapeConfig: {
                         labelConfig: {
-                            fontColor: "white",
+                            fontColor: this.elementColor,
                         }
                     }
                 })
                 .controlPadding(0)
                 .select(options.el)
                 .render(function () {
-                    _this.addButtons({
-                        canHaveLegend: canHaveLegend,
-                    });
+                    _this.addButtons();
                 });
         }
-
-        // addButtons() {
-        //     let _this = this;
-        //     let svg = d3.select(".d3plus-viz");
-        //     svg.select(".d3plus-Form.d3plus-Form-Button")
-        //         .append("button")
-        //         .attr("class", "d3plus-Button fullscreen-toggle")
-        //         .attr("title", "View this visualizations in fullscreen mode.")
-        //         .attr("type", "button")
-        //         .html('<i class="fas fa-expand icon-fullscreen"></i>')
-
-        //     svg.select(".d3plus-Form.d3plus-Form-Button")
-        //         .append("button")
-        //         .attr("class", "d3plus-Button export-csv")
-        //         .attr("title", "Export the data of this visualization as a CSV file.")
-        //         .attr("type", "button")
-        //         .html('<i class="fas fa-file icon-export"></i>');
-
-        //     svg.select(".d3plus-Form.d3plus-Form-Button")
-        //         .append("button")
-        //         .attr("class", "d3plus-Button toggle-legend")
-        //         .attr("title", "Toggle the legend.")
-        //         .attr("type", "button")
-        //         .html('<i class="fas icon-toggle-legend"></i>');
-
-        //     // Check on hover over Viz if it still contains Fullscreen button, if not, readd:
-        //     svg.on("mouseover", function () {
-        //         let buttonFullscreen = d3.select(".fullscreen-toggle")
-        //         if (buttonFullscreen.empty()) {
-        //             _this.addButtons();
-        //         }
-        //     })
-        // }
     }
     return LinePlot;
 });

@@ -19,13 +19,6 @@ define([
             let _this = this;
             var options = options || {};
 
-            
-            // if (this.isDarkMode) {
-            //     this.elementColor = white
-            // } else {
-            //     this.elementColor = black;
-            // }
-
             new d3plus.Pie()
                 .config({
                     data: options.data,
@@ -54,10 +47,9 @@ define([
                     text: this.exportPngIconHtml,
                 })
                 .controlPadding(0)
+                .loadingHTML(this.loadingHTML)
                 .render(function () {
-                    _this.addButtons({
-                        canHaveLegend: true,
-                    });
+                    _this.addButtons();
                 });
         }
     }

@@ -31,14 +31,17 @@ define(['views/common/d3plusVizView',
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
                     _.bindAll(this, 'toggleLegend');
+                    _.bindAll(this, 'toggleDarkMode');
+
+                    this.isDarkMode = true;
+                    this.canHaveLegend = true;
+                    this.hasLegend = true;
 
                     this.options = options;
                     this.flows = this.options.flows;
                     this.x = "";
                     this.groupBy = "";
                     this.isActorLevel = false;
-                    this.hasLegend = true;
-                    this.duration = [];
 
                     let gran1 = this.options.dimensions[0][1];
                     let gran2 = this.options.dimensions[1] ? this.options.dimensions[1][1] : {};
@@ -177,12 +180,19 @@ define(['views/common/d3plusVizView',
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
                     'click .toggle-legend': 'toggleLegend',
+                    'click .toggle-darkmode': 'toggleDarkMode',
                 },
 
                 /**
                  * Create a new D3Plus linePlot object which will be rendered in this.options.el:
                  */
                 render: function () {
+
+                    // Don't show legend if there is no grouping:
+                    if (this.groupBy.length	< 1) {
+                        this.canHaveLegend = false;
+                    }
+
                     this.linePlot = new LinePlot({
                         el: this.options.el,
                         data: this.flows,
@@ -190,7 +200,9 @@ define(['views/common/d3plusVizView',
                         x: this.x,
                         tooltipConfig: this.tooltipConfig,
                         isActorLevel: this.isActorLevel,
+                        canHaveLegend: this.canHaveLegend,
                         hasLegend: this.hasLegend,
+                        isDarkMode: this.isDarkMode,
                     });
                     this.scrollToVisualization();
                     this.options.flowsView.loader.deactivate();

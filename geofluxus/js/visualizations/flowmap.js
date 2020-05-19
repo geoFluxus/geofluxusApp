@@ -95,6 +95,7 @@ define([
         // fit svg layer to map
         resetView() {
             this.svg.node().style.visibility = 'visible';
+
             var svgPos = this.resetBbox();
             if (!svgPos) return;
             var topLeft = svgPos[0];
@@ -120,6 +121,8 @@ define([
         // remove all prev. drawn flows and nodes
         clear() {
             this.g.selectAll("*").remove();
+
+        
             this.nodesData = {};
             this.nodesPos = {};
             this.flowsData = {};
@@ -185,6 +188,14 @@ define([
 
         draw() {
             this.g.selectAll("*").remove();
+            
+            // this.g.selectAll("*")
+            //     .transition()
+            //     .duration(250)
+            //     .attr("stroke-opacity", 0)
+            //     .remove();
+
+
             // remember scope of 'this' as context for functions with different scope
             var _this = this,
                 scale = Math.min(this.scale(), this.maxScale);

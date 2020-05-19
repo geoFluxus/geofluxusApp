@@ -31,6 +31,7 @@ define(['views/common/d3plusVizView',
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
 
+                    this.canHaveLegend = false;
                     this.options = options;
 
                     this.filtersView = this.options.flowsView.filtersView;
@@ -53,6 +54,7 @@ define(['views/common/d3plusVizView',
                         links: this.flows.links,
                         nodes: this.flows.nodes,
                         tooltipConfig: this.tooltipConfig,
+                        canHaveLegend: this.canHaveLegend,
                     });
                     this.scrollToVisualization();
                     this.options.flowsView.loader.deactivate();

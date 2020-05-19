@@ -14,18 +14,18 @@ define([
          * @param {string} options.el       CSS Selector of the container element of the Area Chart
          */
         constructor(options) {
-            super();
+            super(options);
 
             let _this = this;
             var options = options || {};
             let axisConfig = {
                 barConfig: {
-                    stroke: "white", // Axis color
+                    stroke: this.elementColor, // Axis color
                 },
                 shapeConfig: {
-                    stroke: "white", // Ticks on axis
+                    stroke: this.elementColor, // Ticks on axis
                     labelConfig: {
-                        fontColor: "white", // Labels on axis
+                        fontColor: this.elementColor, // Labels on axis
                     }
                 }
             }
@@ -50,7 +50,7 @@ define([
                 .legendConfig({
                     shapeConfig: {
                         labelConfig: {
-                            fontColor: "white",
+                            fontColor: this.elementColor,
                         }
                     }
                 })
@@ -61,9 +61,7 @@ define([
                 })
                 .controlPadding(0)
                 .render(function () {
-                    _this.addButtons({
-                        canHaveLegend: true,
-                    });
+                    _this.addButtons();
                 });
         }
     }

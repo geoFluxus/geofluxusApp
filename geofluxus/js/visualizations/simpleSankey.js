@@ -44,9 +44,7 @@ define([
                 })
                 .controlPadding(0)
                 .render(function () {
-                    _this.addButtons({
-                        canHaveLegend: false,
-                    });
+                    _this.addButtons();
                 });
         }
     }

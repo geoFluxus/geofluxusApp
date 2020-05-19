@@ -31,9 +31,12 @@ define(['views/common/d3plusVizView',
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
                     _.bindAll(this, 'toggleLegend');
+                    _.bindAll(this, 'toggleDarkMode');
 
                     this.options = options;
                     this.flows = this.options.flows;
+
+                    this.canHaveLegend = true;
                     this.hasLegend = true;
                     this.isDarkMode = true;
 
@@ -136,7 +139,7 @@ define(['views/common/d3plusVizView',
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
                     'click .toggle-legend': 'toggleLegend',
-                    'click .toggle-nightmode': 'toggleDarkMode',                    
+                    'click .toggle-darkmode': 'toggleDarkMode',                    
                 },
 
                 /**
@@ -148,6 +151,7 @@ define(['views/common/d3plusVizView',
                         data: this.flows,
                         groupBy: this.groupBy,
                         tooltipConfig: this.tooltipConfig,
+                        canHaveLegend: this.canHaveLegend,
                         hasLegend: this.hasLegend,
                         isDarkMode: this.isDarkMode,
                     });

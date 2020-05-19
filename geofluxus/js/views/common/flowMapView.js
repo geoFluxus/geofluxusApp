@@ -75,23 +75,26 @@ define(['underscore',
                  */
                 render: function () {
                     //this.backgroundLayer = new L.TileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png");
-                    this.backgroundLayer = new L.TileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+
+                    this.tileUrl = "https://cartodb-basemaps-{s}.global.ssl.fastly.net/"
+                    this.tileType = "dark_all"
+                    this.tileSuffix = "/{z}/{x}/{y}.png"
+
+                    this.backgroundLayer = new L.TileLayer(this.tileUrl + this.tileType + this.tileSuffix, {
                         attribution: '© OpenStreetMap, © CartoDB'
                     });
 
+                    $(this.el).html('<div class="flowmap-container d-block" style="width: 100%; height: 100%"></div><div class="flowmap-d3pluslegend-wrapper text-center"><svg class="flowmap-d3pluslegend"></svg></div>')
+
                     var _this = this;
                     this.hasLegend = true;
+                    this.isDarkMode = true;
 
-                    // Center of Netherlands
-                    var center = [52.1326, 5.2913];
-
-
-                    $(this.el).html('<div class="flowmap-container d-block" style="width: 100%; height: 100%"></div><div class="flowmap-d3pluslegend-wrapper text-center"><svg class="flowmap-d3pluslegend"></svg></div>')
 
                     //$(this.el).html('<div class="flowmap-container d-block" style="width: 100%; height: 100%"></div>')
 
                     this.leafletMap = new L.Map(this.el.firstChild, {
-                            center: center,
+                            center: [52.1326, 5.2913], // Center of Netherlands
                             zoomSnap: 0.25,
                             zoom: 10.5,
                             minZoom: 5,
@@ -99,6 +102,10 @@ define(['underscore',
                         })
                         .addLayer(this.backgroundLayer);
                     this.flowMap = new FlowMap(this.leafletMap);
+
+                    this.flowMap.showFlows = true;
+                    this.flowMap.showNodes = false;
+
 
                     // //////////////////////
                     // Fullscreen button
@@ -124,23 +131,37 @@ define(['underscore',
                         position: 'topleft'
                     })
                     var topLeftControlDiv = document.createElement('div')
-                    var exportImgBtn = document.createElement('button');
-                    var legendToggleBtn = document.createElement('button');
-                    
-                    // Actual export PNG button:
                     topLeftControlDiv.classList.add("leaflet-control-custom-buttons");
+
+                    // Actual export PNG button:
+                    var exportImgBtn = document.createElement('button');
                     exportImgBtn.classList.add('fas', 'fa-camera', 'btn', 'btn-primary', 'inverted');
                     exportImgBtn.title = "Export this visualization as a PNG file.";
-                    
+
                     // Legend toggle:
+                    var legendToggleBtn = document.createElement('button');
                     legendToggleBtn.classList.add("btn", "btn-primary", "toggle-legend")
                     legendToggleBtn.title = "Toggle the legend on or off."
                     legendToggleBtn.innerHTML = '<i class="fas icon-toggle-legend"></i>';
+
+                    // Dark mode toggle
+                    var darkmodeToggleBtn = document.createElement('button');
+                    darkmodeToggleBtn.classList.add("btn", "btn-primary", "toggle-darkmode")
+                    darkmodeToggleBtn.title = "Toggle light or dark mode."
+                    darkmodeToggleBtn.innerHTML = '<i class="fas icon-toggle-darkmode"></i>';
+
+                    // Flows toggle
+                    var showFlowsToggleBtn = document.createElement('button');
+                    showFlowsToggleBtn.classList.add("btn", "btn-primary", "toggle-flows")
+                    showFlowsToggleBtn.title = "Toggle the flows on or off."
+                    showFlowsToggleBtn.innerHTML = '<i class="fas icon-toggle-flowmap-flows"></i>';
 
 
 
                     topLeftControlDiv.appendChild(exportImgBtn);
                     topLeftControlDiv.appendChild(legendToggleBtn);
+                    topLeftControlDiv.appendChild(darkmodeToggleBtn);
+                    topLeftControlDiv.appendChild(showFlowsToggleBtn);
 
 
                     topLefControls.onAdd = function (map) {
@@ -150,6 +171,16 @@ define(['underscore',
 
                     legendToggleBtn.addEventListener('click', function () {
                         _this.toggleLegend();
+                        event.preventDefault();
+                    })
+                    darkmodeToggleBtn.addEventListener('click', function () {
+                        _this.isDarkMode = !_this.isDarkMode;
+                        _this.rerender();
+                        event.preventDefault();
+                    })
+                    showFlowsToggleBtn.addEventListener('click', function () {
+                        _this.flowMap.showFlows = !_this.flowMap.showFlows;
+                        _this.rerender();
                         event.preventDefault();
                     })
 
@@ -173,26 +204,25 @@ define(['underscore',
                     this.animationCheck = document.createElement('input');
                     this.actorCheck = document.createElement('input');
                     this.flowCheck = document.createElement('input');
-                    this.lightCheck = document.createElement('input');
+                    //this.lightCheck = document.createElement('input');
                     this.flowCheck.checked = true;
-                    this.lightCheck.checked = false;
+                    //this.lightCheck.checked = false;
 
                     var div = document.createElement('div'),
                         aniLabel = document.createElement('label'),
                         actorLabel = document.createElement('label'),
-                        flowLabel = document.createElement('label'),
-                        lightLabel = document.createElement('label'),
-                        _this = this;
+                        flowLabel = document.createElement('label');
+                    //lightLabel = document.createElement('label'),
 
                     div.classList.add("leaflet-control-custom-controls");
                     aniLabel.innerHTML = 'Animate';
                     actorLabel.innerHTML = 'Actors';
                     flowLabel.innerHTML = 'Flows';
-                    lightLabel.innerHTML = 'Light / Dark';
+                    //lightLabel.innerHTML = 'Light / Dark';
 
                     [
                         this.animationCheck, this.actorCheck,
-                        this.flowCheck, this.lightCheck
+                        this.flowCheck, //this.lightCheck
                     ].forEach(function (checkbox) {
                         checkbox.type = "checkbox";
                         checkbox.style.transform = "scale(2)";
@@ -208,8 +238,8 @@ define(['underscore',
                         flowDiv = document.createElement('div'),
                         aniDiv = document.createElement('div'),
                         aniCheckWrap = document.createElement('div'),
-                        aniToggleDiv = document.createElement('div'),
-                        lightDiv = document.createElement('div');
+                        aniToggleDiv = document.createElement('div');
+                    //lightDiv = document.createElement('div')
 
                     actorDiv.appendChild(this.actorCheck);
                     actorDiv.appendChild(actorLabel);
@@ -217,9 +247,9 @@ define(['underscore',
                     flowDiv.appendChild(this.flowCheck);
                     flowDiv.appendChild(flowLabel);
                     flowDiv.style.cursor = 'pointer';
-                    lightDiv.appendChild(this.lightCheck);
-                    lightDiv.appendChild(lightLabel);
-                    lightDiv.style.cursor = 'pointer';
+                    // lightDiv.appendChild(this.lightCheck);
+                    // lightDiv.appendChild(lightLabel);
+                    // lightDiv.style.cursor = 'pointer';
                     aniCheckWrap.appendChild(this.animationCheck);
                     aniCheckWrap.appendChild(aniLabel);
                     aniDiv.appendChild(aniCheckWrap);
@@ -273,10 +303,10 @@ define(['underscore',
                         //if (_this.actorCheck.checked) _this.stockCheck.checked = false;
                         _this.rerender();
                     });
-                    lightDiv.addEventListener("click", function () {
-                        _this.lightCheck.checked = !_this.lightCheck.checked;
-                        _this.rerender();
-                    });
+                    // lightDiv.addEventListener("click", function () {
+                    //     _this.lightCheck.checked = !_this.lightCheck.checked;
+                    //     _this.rerender();
+                    // });
                     aniCheckWrap.addEventListener("click", function () {
                         _this.animationCheck.checked = !_this.animationCheck.checked;
                         _this.flowMap.toggleAnimation(_this.animationCheck.checked);
@@ -291,7 +321,7 @@ define(['underscore',
 
                     div.appendChild(actorDiv);
                     div.appendChild(flowDiv);
-                    div.appendChild(lightDiv);
+                    //div.appendChild(lightDiv);
                     div.appendChild(aniDiv);
                     div.appendChild(aniToggleDiv);
 
@@ -340,22 +370,19 @@ define(['underscore',
 
                 toggleLight() {
                     var _this = this;
-                    var darkBack = new L.TileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
-                        attribution: '© OpenStreetMap, © CartoDB'
-                    });
-                    var lightBack = new L.TileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
-                        attribution: '© OpenStreetMap, © CartoDB'
-                    });
-                    this.leafletMap.removeLayer(this.backgroundLayer);
-                    var checked = _this.lightCheck.checked;
-                    if (checked) {
-                        this.leafletMap.addLayer(lightBack);
+                    if (this.isDarkMode) {
+                        this.tileType = "dark_all"
                     } else {
-                        this.leafletMap.addLayer(darkBack);
+                        this.tileType = "light_all"
                     }
+                    this.leafletMap.removeLayer(this.backgroundLayer);
+
+                    this.backgroundLayer.setUrl(this.tileUrl + this.tileType + this.tileSuffix)
+
+                    this.leafletMap.addLayer(this.backgroundLayer);
                 },
 
-                toggleLegend(){
+                toggleLegend() {
                     this.hasLegend = !this.hasLegend;
                     this.updateLegend();
                 },
@@ -366,10 +393,10 @@ define(['underscore',
                         var _this = this;
 
                         $(".flowmap-d3pluslegend-wrapper").fadeIn();
-    
+
                         console.log("______ legend data _______")
                         console.log(_this.legendItems);
-    
+
                         this.d3plusLegend = new D3plusLegend({
                             el: ".flowmap-d3pluslegend",
                             data: _this.legendItems,
@@ -383,6 +410,7 @@ define(['underscore',
                             height: 100,
                             width: "600",
                             align: "center",
+                            isDarkMode: _this.isDarkMode,
                         });
                     } else {
                         $(".flowmap-d3pluslegend-wrapper").fadeOut();
@@ -398,16 +426,18 @@ define(['underscore',
                 resetMapData: function (data, zoomToFit) {
                     this.data = data;
                     this.flowMap.clear();
+
                     this.flowMap.addNodes(data.nodes);
 
-                    if (this.flowCheck.checked)
+                    if (this.flowMap.showFlows){
                         this.flowMap.addFlows(data.flows);
+                    }
 
                     this.flowMap.showNodes = true;
-                    this.flowMap.showFlows = true;
+                    //this.flowMap.showFlows = true;
 
                     this.flowMap.showNodes = (this.actorCheck.checked) ? true : false;
-                    this.flowMap.showFlows = (this.flowCheck.checked) ? true : false;
+                    //this.flowMap.showFlows = (this.flowCheck.checked) ? true : false;
                     this.flowMap.dottedLines = (this.aniDotsRadio.checked) ? true : false;
 
                     this.updateLegend();

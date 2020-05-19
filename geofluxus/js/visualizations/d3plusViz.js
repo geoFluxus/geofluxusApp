@@ -9,7 +9,13 @@ define([
         /**
          */
         constructor(options) {
+            this.options = options;
             this.exportPngIconHtml = "<i class='fas fa-camera icon-save-image' title='Export this visualization as a PNG file.'></i>"
+            this.loadingHTML = "";
+
+            // `<div style="left: 50%; top: 50%; position: absolute; transform: translate(-50%, -50%); font-family: 'Montserrat', sans-serif;">
+            //   <strong>Loading Visualization</strong>
+            // </div>`;
 
             if (options.isDarkMode) {
                 this.elementColor = "white"
@@ -19,13 +25,7 @@ define([
 
         }
 
-        addButtons({
-            canHaveLegend
-        }) {
-            var options = {
-                canHaveLegend: canHaveLegend,
-            }
-
+        addButtons() {
             let _this = this;
             let svg = d3.select(".d3plus-viz");
             svg.select(".d3plus-Form.d3plus-Form-Button")
@@ -44,12 +44,12 @@ define([
 
             svg.select(".d3plus-Form.d3plus-Form-Button")
                 .append("button")
-                .attr("class", "d3plus-Button toggle-nightmode")
+                .attr("class", "d3plus-Button toggle-darkmode")
                 .attr("title", "Toggle light or dark mode.")
                 .attr("type", "button")
-                .html('<i class="fas fa-file icon-toggle-nightmode"></i>');
+                .html('<i class="fas icon-toggle-darkmode"></i>');
 
-            if (options.canHaveLegend) {
+            if (this.options.canHaveLegend) {
                 svg.select(".d3plus-Form.d3plus-Form-Button")
                     .append("button")
                     .attr("class", "d3plus-Button toggle-legend")
@@ -62,7 +62,7 @@ define([
             svg.on("mouseover", function () {
                 let buttonFullscreen = d3.select(".fullscreen-toggle")
                 if (buttonFullscreen.empty()) {
-                    _this.addButtons(options);
+                    _this.addButtons();
                 }
             })
         }
