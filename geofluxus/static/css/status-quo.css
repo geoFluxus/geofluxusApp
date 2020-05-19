@@ -454,6 +454,10 @@ textarea.textarea-autosize.form-control-sm {
     max-width: 25rem;
 }
 
+.flowMapToolTip {
+    max-width: 35rem;
+}
+
 .d3plus-tooltip div {
     font-family: "Montserrat", sans-serif !important;
 }
@@ -530,7 +534,7 @@ textarea.textarea-autosize.form-control-sm {
 .icon-toggle-legend,
 .icon-toggle-darkmode,
 .icon-toggle-flowmap-flows,
-.icon-toggle-flowmap-dots {
+.icon-toggle-flowmap-nodes {
     background-position: center center;
     background-size: contain;
     width: 16px;
@@ -553,8 +557,8 @@ textarea.textarea-autosize.form-control-sm {
     background-image: url("../img/flowmap-flows.svg");
 }
 
-.icon-toggle-flowmap-dots {
-    background-image: url("../img/flowmap-dots.svg");
+.icon-toggle-flowmap-nodes {
+    background-image: url("../img/flowmap-nodes.svg");
 }
 
 

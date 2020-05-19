@@ -156,12 +156,17 @@ define(['underscore',
                     showFlowsToggleBtn.title = "Toggle the flows on or off."
                     showFlowsToggleBtn.innerHTML = '<i class="fas icon-toggle-flowmap-flows"></i>';
 
-
+                    // Flows toggle
+                    var showNodesToggleBtn = document.createElement('button');
+                    showNodesToggleBtn.classList.add("btn", "btn-primary", "toggle-nodes")
+                    showNodesToggleBtn.title = "Toggle the nodes on or off."
+                    showNodesToggleBtn.innerHTML = '<i class="fas icon-toggle-flowmap-nodes"></i>';
 
                     topLeftControlDiv.appendChild(exportImgBtn);
                     topLeftControlDiv.appendChild(legendToggleBtn);
                     topLeftControlDiv.appendChild(darkmodeToggleBtn);
                     topLeftControlDiv.appendChild(showFlowsToggleBtn);
+                    topLeftControlDiv.appendChild(showNodesToggleBtn);
 
 
                     topLefControls.onAdd = function (map) {
@@ -175,11 +180,16 @@ define(['underscore',
                     })
                     darkmodeToggleBtn.addEventListener('click', function () {
                         _this.isDarkMode = !_this.isDarkMode;
-                        _this.rerender();
+                        _this.toggleLight();
                         event.preventDefault();
                     })
                     showFlowsToggleBtn.addEventListener('click', function () {
                         _this.flowMap.showFlows = !_this.flowMap.showFlows;
+                        _this.rerender();
+                        event.preventDefault();
+                    })
+                    showNodesToggleBtn.addEventListener('click', function () {
+                        _this.flowMap.showNodes = !_this.flowMap.showNodes;
                         _this.rerender();
                         event.preventDefault();
                     })
@@ -375,6 +385,8 @@ define(['underscore',
                     } else {
                         this.tileType = "light_all"
                     }
+
+                    this.updateLegend();
                     this.leafletMap.removeLayer(this.backgroundLayer);
 
                     this.backgroundLayer.setUrl(this.tileUrl + this.tileType + this.tileSuffix)
@@ -433,10 +445,10 @@ define(['underscore',
                         this.flowMap.addFlows(data.flows);
                     }
 
-                    this.flowMap.showNodes = true;
+                    //this.flowMap.showNodes = true;
                     //this.flowMap.showFlows = true;
 
-                    this.flowMap.showNodes = (this.actorCheck.checked) ? true : false;
+                    //this.flowMap.showNodes = (this.actorCheck.checked) ? true : false;
                     //this.flowMap.showFlows = (this.flowCheck.checked) ? true : false;
                     this.flowMap.dottedLines = (this.aniDotsRadio.checked) ? true : false;
 
@@ -461,7 +473,7 @@ define(['underscore',
                         _this.alert(msg);
                     }
                     _this.resetMapData(data, zoomToFit);
-                    _this.toggleLight();
+                    //_this.toggleLight();
                 },
 
                 /*
@@ -593,10 +605,11 @@ define(['underscore',
 
                         // NODES
                         // Add the origin and destination to Nodes, and include amounts:
-                        //originNode.value = flow.amount;
+                        originNode.value = flow.amount;
                         originNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
                         originNode.opacity = opacityValue
-                        // destinationNode.value = flow.amount;
+                        
+                        destinationNode.value = flow.amount;
                         // destinationNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
                         destinationNode.opacity = opacityValue
 

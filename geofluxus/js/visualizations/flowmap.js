@@ -187,6 +187,7 @@ define([
         }
 
         draw() {
+            var _this = this;
             this.g.selectAll("*").remove();
             
             // this.g.selectAll("*")
@@ -297,47 +298,49 @@ define([
             var maxNodeRadius = calcRadius(this.maxNodeValue);
             var scaleFactor = (maxNodeRadius > 60) ? 60 / maxNodeRadius : 1
 
-            // use addpoint for each node in nodesDataFlow
-            Object.values(_this.nodesPos).forEach(function (nodes) {
-
-                // ignore hidden nodes
-                var nodesToShow = [];
-                nodes.forEach(function (node) {
-                    if (!_this.hideTags[node.tag]) nodesToShow.push(node);
-                })
-                // no visible nodes
-                if (nodesToShow.length === 0) return;
-
-                var first = nodesToShow[0];
-                var x = _this.projection([first.lon, first.lat])[0],
-                    y = _this.projection([first.lon, first.lat])[1];
-                // only one node at this position
-                if (nodesToShow.length === 1) {
-                    if (_this.hideTags[first.tag]) return;
-                    // calculate radius by value, if radius is not given
-                    var radius = Math.max(5, first.radius || calcRadius(first.value));
-                    _this.addPoint(x, y, first.label, first.innerLabel, first.color, radius, first.opacity);
-                } else {
-                    // multiple nodes at same position -> piechart
-                    var data = [],
-                        label = '',
-                        radius = 0,
-                        total = 0;
-
-                    nodesToShow.forEach(function (node) {
-                        total += node.value;
-                        radius += node.radius || 0;
-                        label += node.label + '<br><br>';
-                        data.push({
-                            'color': node.color,
-                            'value': node.value || 1,
-                            'opacity': node.opacity
-                        })
+            if (_this.showNodes){
+                // use addpoint for each node in nodesDataFlow
+                Object.values(_this.nodesPos).forEach(function (nodes) {
+    
+                    // ignore hidden nodes
+                    var nodesToShow = [];
+                    nodes.forEach(function (node) {
+                        if (!_this.hideTags[node.tag]) nodesToShow.push(node);
                     })
-                    radius = Math.max(5, (radius + calcRadius(total)) * scaleFactor);
-                    _this.addPieChart(x, y, label, radius, data)
-                }
-            });
+                    // no visible nodes
+                    if (nodesToShow.length === 0) return;
+    
+                    var first = nodesToShow[0];
+                    var x = _this.projection([first.lon, first.lat])[0],
+                        y = _this.projection([first.lon, first.lat])[1];
+                    // only one node at this position
+                    if (nodesToShow.length === 1) {
+                        if (_this.hideTags[first.tag]) return;
+                        // calculate radius by value, if radius is not given
+                        var radius = Math.max(5, first.radius || calcRadius(first.value));
+                        _this.addPoint(x, y, first.label, first.innerLabel, first.color, radius, first.opacity);
+                    } else {
+                        // multiple nodes at same position -> piechart
+                        var data = [],
+                            label = '',
+                            radius = 0,
+                            total = 0;
+    
+                        nodesToShow.forEach(function (node) {
+                            total += node.value;
+                            radius += node.radius || 0;
+                            label += node.label + '<br><br>';
+                            data.push({
+                                'color': node.color,
+                                'value': node.value || 1,
+                                'opacity': node.opacity
+                            })
+                        })
+                        radius = Math.max(5, (radius + calcRadius(total)) * scaleFactor);
+                        _this.addPieChart(x, y, label, radius, data)
+                    }
+                });
+            }
         }
 
         scale() {
