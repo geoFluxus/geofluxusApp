@@ -507,7 +507,7 @@ define(['underscore',
                         // Add the origin and destination to Nodes, and include amounts:
                         originNode.value = flow.amount;
                         //originNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
-                        originNode.label = originNode.name;
+                        // originNode.label = originNode.name;
                         originNode.dimensionValue = linkInfo.dimensionValue;
                         originNode.dimensionText = linkInfo.dimensionText;
                         originNode.amountText = linkInfo.amountText
@@ -517,11 +517,14 @@ define(['underscore',
 
                         destinationNode.value = flow.amount;
                         //destinationNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
-                        destinationNode.label = destinationNode.name;
+                        // destinationNode.label = destinationNode.name;
                         destinationNode.dimensionValue = linkInfo.dimensionValue;
                         destinationNode.dimensionText = linkInfo.dimensionText;
                         destinationNode.amountText = linkInfo.amountText
                         destinationNode.opacity = nodeOpacity;
+
+                        originNode.destination = destinationNode;
+                        destinationNode.origin = originNode;
 
                         nodes.push(originNode, destinationNode)
 
@@ -544,7 +547,7 @@ define(['underscore',
 
                     // Assign colors to links and nodes based on label-prop:
                     links = enrichFlows.assignColorsByProperty(links, "dimensionId");
-                    nodes = enrichFlows.assignColorsByProperty(nodes, "label");
+                    nodes = enrichFlows.assignColorsByProperty(nodes, "dimensionValue");
 
                     nodes = _.sortBy(nodes, 'value').reverse();
 

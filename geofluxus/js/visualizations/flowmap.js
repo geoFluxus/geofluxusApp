@@ -30,8 +30,12 @@
 
 
 define([
-    'd3', 'topojson', 'd3-queue', 'leaflet'
-], function (d3, topojson, d3queue, L) {
+    'underscore',
+    'd3',
+    'topojson',
+    'd3-queue',
+    'leaflet'
+], function (_, d3, topojson, d3queue, L) {
 
     class FlowMap {
 
@@ -332,18 +336,12 @@ define([
                             label += node.label + '<br>';
 
                             //label = 
-
-
-                            data.push({
-                                'color': node.color,
-                                'value': node.value || 1,
-                                'opacity': node.opacity
-                            })
+                            data.push(node)
                         })
                         radius = Math.max(5, (radius + calcRadius(total)) * scaleFactor);
 
 
-                        _this.addPieChart(x, y, label, radius, data)
+                        _this.addPieChart(x, y, radius, data)
                     }
                 });
             }
@@ -357,7 +355,7 @@ define([
         }
 
         // draw pie chart at given position
-        addPieChart(x, y, label, radius, data) {
+        addPieChart(x, y, radius, data) {
             var _this = this;
 
             var pie = d3.pie().value(function (d) {
@@ -395,11 +393,7 @@ define([
                     _this.tooltip.transition()
                         .duration(200)
                         .style("opacity", 0.9);
-                    _this.tooltip.html(label)
-
-                        //_this.tooltip.html(d.data.label)
-
-
+                    _this.tooltip.html(_this.getPieChartTooltipString(d.data))
                         .style("left", (d3.event.pageX - rect.x - window.pageXOffset) + "px")
                         .style("top", (d3.event.pageY - rect.y - 28 - window.pageYOffset) + "px")
                     //d3.select(this).style("fill-opacity", 1);
@@ -499,6 +493,50 @@ define([
                 </table>
             </div>`
         }
+
+        getPieChartTooltipString(nodesData) {
+            let fromString = "";
+            let toString = ""
+
+            let isOrigin = _.has(nodesData, 'destination');
+            if (isOrigin){
+                fromString = nodesData.name;
+                toString = nodesData.destination.name;
+            } else {
+                fromString = nodesData.origin.name;
+                toString = nodesData.name;
+            }
+
+            return `<div class="d3plus-tooltip flowMapToolTip" x-placement="top">
+                <div class="d3plus-tooltip-title">
+                    ` + nodesData.name + `
+                </div>
+                <div class="d3plus-tooltip-body">
+                </div>
+                <table class="d3plus-tooltip-table">
+                    <thead class="d3plus-tooltip-thead"></thead>
+                    <tbody class="d3plus-tooltip-tbody">
+                        <tr>
+                            <td>From</td>
+                            <td>` + fromString + `</td>
+                        </tr>
+                        <tr>
+                            <td>To</td>
+                            <td>` + toString + `</td>
+                        </tr>
+                        <tr>
+                            <td>Waste</td>
+                            <td>` + nodesData.amountText + `</td>
+                        </tr>
+                        <tr>
+                            <td>` + nodesData.dimensionText + `</td>
+                            <td>` + nodesData.dimensionValue + `</td>
+                        </tr>                        
+                    </tbody>
+                </table>
+            </div>`
+        }
+
 
         // function to draw actual paths for the directed quantity flows
         drawPath(points, flow, color, strokeWidth, options) {
