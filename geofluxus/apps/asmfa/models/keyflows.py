@@ -1,26 +1,6 @@
 from django.db import models
 
 
-# Process group
-class ProcessGroup(models.Model):
-    name = models.CharField(max_length=255)
-    code = models.CharField(max_length=255)
-
-    def __str__(self):
-        return '{} - {}'.format(self.code, self.name)
-
-
-# Process
-class Process(models.Model):
-    name = models.CharField(max_length=255)
-    code = models.CharField(max_length=255)
-    processgroup = models.ForeignKey(ProcessGroup,
-                                     on_delete=models.CASCADE)
-
-    def __str__(self):
-        return '{} - {}'.format(self.code, self.name)
-
-
 # Waste02 (2-digit EWC code)
 class Waste02(models.Model):
     ewc_name = models.CharField(max_length=255)

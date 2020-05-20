@@ -6,22 +6,56 @@ from geofluxus.apps.asmfa.models import (FlowChain,
                                          Flow,
                                          Classification,
                                          ExtraDescription,
-                                         Routing)
+                                         Routing,
+                                         Vehicle)
 from geofluxus.apps.asmfa.serializers import (FlowChainSerializer,
                                               FlowSerializer,
                                               ClassificationSerializer,
                                               ExtraDescriptionSerializer,
-                                              RoutingSerializer)
+                                              RoutingSerializer,
+                                              VehicleSerializer)
 from geofluxus.apps.asmfa.serializers import (FlowChainListSerializer,
                                               FlowListSerializer,
                                               ClassificationListSerializer,
                                               ExtraDescriptionListSerializer,
-                                              RoutingListSerializer)
+                                              RoutingListSerializer,
+                                              VehicleListSerializer)
 from geofluxus.apps.asmfa.serializers import (FlowChainCreateSerializer,
                                               FlowCreateSerializer,
                                               ClassificationCreateSerializer,
                                               ExtraDescriptionCreateSerializer,
-                                              RoutingCreateSerializer)
+                                              RoutingCreateSerializer,
+                                              VehicleCreateSerializer)
+
+
+# Routing
+class RoutingViewSet(PostGetViewMixin,
+                     ViewSetMixin,
+                     ModelPermissionViewSet):
+    queryset = Routing.objects.order_by('id')
+    pagination_class = UnlimitedResultsSetPagination
+    serializer_class = RoutingSerializer
+    serializers = {
+        'list': RoutingListSerializer,
+        'create': RoutingCreateSerializer
+    }
+
+    def get_queryset(self):
+        queryset = Routing.objects.order_by('id')
+        return queryset
+
+
+# Vehicle
+class VehicleViewSet(PostGetViewMixin,
+                     ViewSetMixin,
+                     ModelPermissionViewSet):
+    queryset = Vehicle.objects.order_by('id')
+    pagination_class = UnlimitedResultsSetPagination
+    serializer_class = VehicleSerializer
+    serializers = {
+        'list': VehicleListSerializer,
+        'create': VehicleCreateSerializer
+    }
 
 
 # FlowChain
@@ -89,21 +123,4 @@ class ExtraDescriptionViewSet(PostGetViewMixin,
 
     def get_queryset(self):
         queryset = ExtraDescription.objects.order_by('id')
-        return queryset
-
-
-# Routing
-class RoutingViewSet(PostGetViewMixin,
-                     ViewSetMixin,
-                     ModelPermissionViewSet):
-    queryset = Routing.objects.order_by('id')
-    pagination_class = UnlimitedResultsSetPagination
-    serializer_class = RoutingSerializer
-    serializers = {
-        'list': RoutingListSerializer,
-        'create': RoutingCreateSerializer
-    }
-
-    def get_queryset(self):
-        queryset = Routing.objects.order_by('id')
         return queryset

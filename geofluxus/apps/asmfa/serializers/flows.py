@@ -4,11 +4,59 @@ from geofluxus.apps.asmfa.models import (FlowChain,
                                          Flow,
                                          Classification,
                                          ExtraDescription,
-                                         Routing)
+                                         Routing,
+                                         Vehicle)
 from geofluxus.apps.asmfa.serializers import (MaterialSerializer,
                                               ProductSerializer,
                                               CompositeSerializer)
 from rest_framework_gis.serializers import (GeometryField)
+
+
+# Routing
+class RoutingSerializer(HyperlinkedModelSerializer):
+    origin = PrimaryKeyRelatedField(read_only=True)
+    destination = PrimaryKeyRelatedField(read_only=True)
+    geom = GeometryField()
+
+    class Meta:
+        model = Routing
+        geo_field = 'geom'
+        fields = ('url',
+                  'id',
+                  'origin',
+                  'destination',
+                  'geom',
+                  'seq',
+                  'distance')
+
+
+class RoutingListSerializer(RoutingSerializer):
+    class Meta(RoutingSerializer.Meta):
+        fields = ('id',
+                  'origin',
+                  'destination',
+                  'geom',
+                  'seq',
+                  'distance')
+
+# Vehicle
+class VehicleSerializer(HyperlinkedModelSerializer):
+    class Meta:
+        model = Vehicle
+        fields = ('id',
+                  'name',
+                  'min',
+                  'max',
+                  'co2')
+
+
+class VehicleListSerializer(VehicleSerializer):
+    class Meta(VehicleSerializer.Meta):
+        fields = ('id',
+                  'name',
+                  'min',
+                  'max',
+                  'co2')
 
 
 # FlowChain
@@ -131,31 +179,3 @@ class ExtraDescriptionListSerializer(ExtraDescriptionSerializer):
                   'flowchain',
                   'type',
                   'description')
-
-
-# Routing
-class RoutingSerializer(HyperlinkedModelSerializer):
-    origin = PrimaryKeyRelatedField(read_only=True)
-    destination = PrimaryKeyRelatedField(read_only=True)
-    geom = GeometryField()
-
-    class Meta:
-        model = Routing
-        geo_field = 'geom'
-        fields = ('url',
-                  'id',
-                  'origin',
-                  'destination',
-                  'geom',
-                  'seq',
-                  'distance')
-
-
-class RoutingListSerializer(RoutingSerializer):
-    class Meta(RoutingSerializer.Meta):
-        fields = ('id',
-                  'origin',
-                  'destination',
-                  'geom',
-                  'seq',
-                  'distance')

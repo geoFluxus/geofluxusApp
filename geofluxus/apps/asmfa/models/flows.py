@@ -6,34 +6,9 @@ from geofluxus.apps.asmfa.models import (Waste06,
                                          Composite,
                                          Actor,
                                          Publication)
-from django.db.models import (Q, ExpressionWrapper, F, FloatField)
+from django.db.models import (Q, ExpressionWrapper, F, FloatField,
+                              OuterRef, Subquery)
 from django.contrib.gis.db import models as gis
-
-
-# FlowChain
-class FlowChain(models.Model):
-    identifier = models.CharField(max_length=255)
-    route = models.BooleanField()
-    collector = models.BooleanField()
-    description = models.TextField()
-    amount = models.DecimalField(max_digits=12, decimal_places=3)
-    trips = models.IntegerField()
-    month = models.ForeignKey(Month,
-                              on_delete=models.CASCADE)
-    waste06 = models.ForeignKey(Waste06,
-                                on_delete=models.CASCADE)
-    materials = models.ManyToManyField(Material,
-                                       through='MaterialInChain')
-    products = models.ManyToManyField(Product,
-                                      through='ProductInChain')
-    composites = models.ManyToManyField(Composite,
-                                        through='CompositeInChain')
-    publication = models.ForeignKey(Publication,
-                                    null=True, blank=True,
-                                    on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.identifier
 
 
 # Routing
@@ -116,8 +91,58 @@ class Vehicle(models.Model):
         return '{}'.format(self.name)
 
 
+# FlowChain
+class FlowChain(models.Model):
+    identifier = models.CharField(max_length=255)
+    route = models.BooleanField()
+    collector = models.BooleanField()
+    description = models.TextField()
+    amount = models.DecimalField(max_digits=12, decimal_places=3)
+    trips = models.IntegerField()
+    month = models.ForeignKey(Month,
+                              on_delete=models.CASCADE)
+    waste06 = models.ForeignKey(Waste06,
+                                on_delete=models.CASCADE)
+    materials = models.ManyToManyField(Material,
+                                       through='MaterialInChain')
+    products = models.ManyToManyField(Product,
+                                      through='ProductInChain')
+    composites = models.ManyToManyField(Composite,
+                                        through='CompositeInChain')
+    publication = models.ForeignKey(Publication,
+                                    null=True, blank=True,
+                                    on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.identifier
+
+
 # Flow
+# Custom Flow Manager
+# updates flows on bulk upload with routing/vehicle
+class FlowManager(models.Manager):
+    @staticmethod
+    def update_flows(created):
+        # retrieve created flows as queryset
+        ids = [c.id for c in created]
+        queryset = Flow.objects.filter(id__in=ids)
+
+        # retrieve routings
+        routing = Routing.objects.filter(Q(origin__id=OuterRef('origin__id')) &\
+                                         Q(destination__id=OuterRef('destination__id')))
+
+        # update flows
+        queryset = queryset.annotate(rid=Subquery(routing.values('id')))
+        queryset.update(routing=F('rid'))
+
+    def bulk_create(self, objs, **kwargs):
+        created = super(FlowManager, self).bulk_create(objs, **kwargs)
+        self.update_flows(created)
+        return created
+
 class Flow(models.Model):
+    objects = FlowManager()
+
     flowchain = models.ForeignKey(FlowChain,
                                   on_delete=models.CASCADE)
     origin = models.ForeignKey(Actor,

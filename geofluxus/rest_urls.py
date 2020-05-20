@@ -22,7 +22,6 @@ from geofluxus.apps.asmfa.views import (ActivityGroupViewSet,
                                         AdminLevelViewSet,
                                         AreaViewSet,
                                         AreaInLevelViewSet,
-                                        TopoJSONViewSet,
                                         PublicationTypeViewSet,
                                         PublicationViewSet,
                                         RoutingViewSet,
@@ -76,7 +75,6 @@ router.register(r'routings', RoutingViewSet)
 # Areas in Level
 level_router = NestedSimpleRouter(router, r'levels', lookup='level')
 level_router.register(r'areas', AreaInLevelViewSet)
-level_router.register(r'topojson', TopoJSONViewSet)
 
 urlpatterns = [
     url(r'^', include(router.urls)),

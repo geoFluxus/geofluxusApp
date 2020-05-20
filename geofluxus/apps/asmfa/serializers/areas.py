@@ -62,9 +62,3 @@ class AreaListSerializer(AreaSerializer):
                   'parent_area',
                   'inhabitants',
                   'publication')
-
-
-class TopoJSONSerializer(AreaSerializer):
-    class Meta(AreaSerializer.Meta):
-        fields = ('id',
-                  'geom')
