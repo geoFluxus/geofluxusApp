@@ -2,7 +2,9 @@ define(['views/common/d3plusVizView',
         'underscore',
         'visualizations/simpleSankey',
         'utils/enrichFlows',
-        'd3'
+        'd3',
+        'visualizations/d3plus',
+        'utils/utils',
     ],
 
     function (
@@ -10,7 +12,9 @@ define(['views/common/d3plusVizView',
         _,
         SimpleSankey,
         enrichFlows,
-        d3) {
+        d3,
+        d3plus,
+        utils) {
 
         /**
          * @author Evert Van Hirtum
@@ -40,6 +44,14 @@ define(['views/common/d3plusVizView',
 
                     this.filtersView = this.options.flowsView.filtersView;
                     this.flows = this.transformToLinksAndNodes(this.options.flows, this.options.dimensions, this.filtersView);
+
+                    this.tooltipConfig = {
+                        tbody: [
+                            ["Waste", function (d) {
+                                return d3plus.formatAbbreviate(d["value"], utils.returnD3plusFormatLocale()) + " t"
+                            }]
+                        ]
+                    };
 
                     this.render();
                 },
