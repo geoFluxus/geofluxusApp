@@ -188,8 +188,9 @@ define([
 
         draw() {
             var _this = this;
+            var scale = Math.min(this.scale(), this.maxScale);
+            
             this.g.selectAll("*").remove();
-
             // this.g.selectAll("*")
             //     .transition()
             //     .duration(250)
@@ -197,9 +198,6 @@ define([
             //     .remove();
 
 
-            // remember scope of 'this' as context for functions with different scope
-            var _this = this,
-                scale = Math.min(this.scale(), this.maxScale);
 
             // define data to use for drawPath and drawTotalPath as well as nodes data depending on flows
             for (var linkId in this.flowsData) {

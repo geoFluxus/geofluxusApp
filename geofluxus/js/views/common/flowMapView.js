@@ -48,7 +48,7 @@ define(['underscore',
                  */
                 initialize: function (options) {
                     FlowMapView.__super__.initialize.apply(this, [options]);
-                    _.bindAll(this, 'zoomed');
+                    //_.bindAll(this, 'zoomed');
 
                     this.options = options;
                     this.flows = this.options.flows;
@@ -111,12 +111,10 @@ define(['underscore',
                     }
 
                     this.flowMap = new FlowMap(this.leafletMap, {
-                        maxFlowWidth: this.maxFlowWidth
+                        maxFlowWidth: this.maxFlowWidth,
                     });
-
                     this.flowMap.showFlows = true;
                     this.flowMap.showNodes = false;
-
 
                     // //////////////////////
                     // Fullscreen button
@@ -134,7 +132,27 @@ define(['underscore',
                         hideControlContainer: true,
                         sizeModes: ['A4Landscape'],
                     }));
-                    this.leafletMap.on("zoomend", this.zoomed);
+
+                    // Event fired when zooming stops:
+                    //this.leafletMap.on("zoomend", this.zoomed);
+
+
+
+                    // Add reset button to map to refocus on original position:
+
+                    var resetViewBtn = document.createElement('a');
+                    //resetViewBtn.classList.add("btn", "btn-primary", "btn-reset-view")
+                    resetViewBtn.classList.add("btn-reset-view")
+                    resetViewBtn.title = "Reset the map to the original position."
+                    resetViewBtn.innerHTML = '<i class="fas fa-undo"></i>';
+                    $(".leaflet-control-zoom.leaflet-bar.leaflet-control").prepend(resetViewBtn);
+                    resetViewBtn.addEventListener('click', function (event) {
+                        // _this.toggleAnimation();
+                        _this.flowMap.zoomToFit();
+                        console.log("reset map view");
+                        event.preventDefault(event);
+                    })
+
 
 
                     // Custom controls top left
@@ -191,26 +209,26 @@ define(['underscore',
                     };
                     topLefControls.addTo(this.leafletMap);
 
-                    legendToggleBtn.addEventListener('click', function () {
+                    legendToggleBtn.addEventListener('click', function (event) {
                         _this.toggleLegend();
                         event.preventDefault();
                     })
-                    darkmodeToggleBtn.addEventListener('click', function () {
+                    darkmodeToggleBtn.addEventListener('click', function (event) {
                         _this.isDarkMode = !_this.isDarkMode;
                         _this.toggleLight();
                         event.preventDefault();
                     })
-                    showFlowsToggleBtn.addEventListener('click', function () {
+                    showFlowsToggleBtn.addEventListener('click', function (event) {
                         _this.flowMap.showFlows = !_this.flowMap.showFlows;
                         _this.rerender();
                         event.preventDefault();
                     })
-                    showNodesToggleBtn.addEventListener('click', function () {
+                    showNodesToggleBtn.addEventListener('click', function (event) {
                         _this.flowMap.showNodes = !_this.flowMap.showNodes;
                         _this.rerender();
                         event.preventDefault();
                     })
-                    animationToggleBtn.addEventListener('click', function () {
+                    animationToggleBtn.addEventListener('click', function (event) {
                         _this.toggleAnimation();
                         event.preventDefault();
                     })
@@ -221,148 +239,18 @@ define(['underscore',
                     var easyprintCtrl = this.el.querySelector('.leaflet-control-easyPrint'),
                         easyprintCsBtn = this.el.querySelector('.easyPrintHolder .A4Landscape');
                     easyprintCtrl.style.display = 'none';
-                    exportImgBtn.addEventListener('click', function () {
+                    exportImgBtn.addEventListener('click', function (event) {
                         easyprintCsBtn.click();
                         event.preventDefault();
                     })
 
 
-                    // //////////////////////
-                    // Custom controls
-                    // var customControls = L.control({
-                    //     position: 'bottomleft'
-                    // });
-                    //this.animationCheck = document.createElement('input');
-                    //this.actorCheck = document.createElement('input');
-                    //this.flowCheck = document.createElement('input');
-                    //this.lightCheck = document.createElement('input');
-                    //this.flowCheck.checked = true;
-                    //this.lightCheck.checked = false;
-
-                    // var div = document.createElement('div'),
-                    //     aniLabel = document.createElement('label'),
-                    //     actorLabel = document.createElement('label'),
-                    //     flowLabel = document.createElement('label');
-                    // //lightLabel = document.createElement('label'),
-
-                    // div.classList.add("leaflet-control-custom-controls");
-                    // aniLabel.innerHTML = 'Animate';
-                    // actorLabel.innerHTML = 'Actors';
-                    // flowLabel.innerHTML = 'Flows';
-                    // //lightLabel.innerHTML = 'Light / Dark';
-
-                    // [
-                    //     this.animationCheck, this.actorCheck,
-                    //     this.flowCheck, //this.lightCheck
-                    // ].forEach(function (checkbox) {
-                    //     checkbox.type = "checkbox";
-                    //     checkbox.style.transform = "scale(2)";
-                    //     checkbox.style.pointerEvents = "none";
-                    //     checkbox.style.marginRight = "10px";
-                    // })
-
-                    // div.style.background = "rgba(255, 255, 255, 0.5)";
-                    // div.style.padding = "10px";
-                    // div.style.cursor = "pointer";
-
-                    // var actorDiv = document.createElement('div'),
-                    //     flowDiv = document.createElement('div')
-                    //     //aniDiv = document.createElement('div'),
-                    //     //aniCheckWrap = document.createElement('div'),
-                    //     //aniToggleDiv = document.createElement('div');
-                    // //lightDiv = document.createElement('div')
-
-                    // actorDiv.appendChild(this.actorCheck);
-                    // actorDiv.appendChild(actorLabel);
-                    // actorDiv.style.cursor = 'pointer';
-
-
-                    // flowDiv.appendChild(this.flowCheck);
-                    // flowDiv.appendChild(flowLabel);
-                    // flowDiv.style.cursor = 'pointer';
-                    // lightDiv.appendChild(this.lightCheck);
-                    // lightDiv.appendChild(lightLabel);
-                    // lightDiv.style.cursor = 'pointer';
-                    // aniCheckWrap.appendChild(this.animationCheck);
-                    // aniCheckWrap.appendChild(aniLabel);
-                    // aniDiv.appendChild(aniCheckWrap);
-                    // aniCheckWrap.style.cursor = 'pointer';
-
-                    // var aniLinesLabel = document.createElement('label'),
-                    //     aniDotsLabel = document.createElement('label');
-
-                    // aniLinesLabel.classList.add("flowmap-anim-radio-label");
-                    // aniDotsLabel.classList.add("flowmap-anim-radio-label");
-
-                    // this.aniLinesRadio = document.createElement('input');
-                    // this.aniDotsRadio = document.createElement('input');
-                    // this.aniLinesRadio.type = 'radio';
-                    // this.aniDotsRadio.type = 'radio';
-                    // this.aniLinesRadio.name = 'animation';
-                    // this.aniDotsRadio.name = 'animation';
-                    // this.aniLinesRadio.style.transform = 'scale(1.5)';
-                    // this.aniLinesRadio.style.marginLeft = '5px';
-                    // this.aniDotsRadio.style.transform = 'scale(1.5)';
-                    // this.aniDotsRadio.style.marginLeft = '5px';
-
-                    //this.aniLinesRadio.checked = true;
-
-                    // aniCheckWrap.style.float = 'left';
-                    // aniCheckWrap.style.marginRight = '5px';
-                    // aniToggleDiv.style.float = 'left';
-                    // aniLinesLabel.style.marginRight = '3px';
-
-                    // aniLinesLabel.innerHTML = '<span>Lines</span>';
-                    // aniDotsLabel.innerHTML = '<span>Dots</span>';
-                    // aniLinesLabel.appendChild(this.aniLinesRadio);
-                    // aniDotsLabel.appendChild(this.aniDotsRadio);
-                    // aniToggleDiv.appendChild(aniLinesLabel);
-                    // aniToggleDiv.appendChild(aniDotsLabel);
-
-                    //aniToggleDiv.classList.add("aniToggleDiv");
-
-                    // customControls.onAdd = function (map) {
-                    //     return div;
-                    // };
-                    // customControls.addTo(this.leafletMap);
-
-                    // flowDiv.addEventListener("click", function () {
-                    //     _this.flowCheck.checked = !_this.flowCheck.checked;
-                    //     _this.rerender();
-                    // });
-
-                    // actorDiv.addEventListener("click", function () {
-                    //     _this.actorCheck.checked = !_this.actorCheck.checked;
-                    //     //if (_this.actorCheck.checked) _this.stockCheck.checked = false;
-                    //     _this.rerender();
-                    // });
-                    // lightDiv.addEventListener("click", function () {
-                    //     _this.lightCheck.checked = !_this.lightCheck.checked;
-                    //     _this.rerender();
-                    // });
-                    // aniCheckWrap.addEventListener("click", function () {
-                    //     _this.animationCheck.checked = !_this.animationCheck.checked;
-                    //     _this.flowMap.toggleAnimation(_this.animationCheck.checked);
-                    // });
-                    // aniToggleDiv.addEventListener("click", function () {
-                    //     if (_this.aniDotsRadio.checked)
-                    //         _this.aniLinesRadio.checked = true;
-                    //     else
-                    //         _this.aniDotsRadio.checked = true;
-                    //     _this.rerender();
-                    // });
-
-                    // //div.appendChild(actorDiv);
-                    // //div.appendChild(flowDiv);
-                    // //div.appendChild(lightDiv);
-                    // //div.appendChild(aniDiv);
-                    // //div.appendChild(aniToggleDiv);
-
+                    // Check this later for other buttons:
                     // L.DomEvent.disableClickPropagation(this.legend);
                     // L.DomEvent.disableScrollPropagation(this.legend);
 
 
-                    // `fullscreenchange` Event that's fired when entering or exiting fullscreen.
+                    // When user sets map to fullscreen, also change legend:
                     _this.leafletMap.on('fullscreenchange', function () {
                         if (_this.leafletMap.isFullscreen()) {
                             $(".flowmap-d3pluslegend-wrapper").addClass("flowmapLegendFullscreen");
@@ -372,7 +260,7 @@ define(['underscore',
                     });
 
 
-                    // Smooth scroll to top of Viz
+                    // Smooth scroll to top of Viz after rendering
                     setTimeout(() => {
                         $("#apply-filters")[0].scrollIntoView({
                             behavior: "smooth"
@@ -458,11 +346,10 @@ define(['underscore',
                     }
                 },
 
-                zoomed: function () {
-                    // zoomend always is triggered before clustering is done -> reset clusters
-                    this.clusterGroupsDone = 0;
-                },
-
+                // zoomed: function () {
+                //     // zoomend always is triggered before clustering is done -> reset clusters
+                //     this.clusterGroupsDone = 0;
+                // },
 
                 resetMapData: function (data, zoomToFit) {
                     this.data = data;
@@ -473,13 +360,6 @@ define(['underscore',
                     if (this.flowMap.showFlows) {
                         this.flowMap.addFlows(data.flows);
                     }
-
-                    //this.flowMap.showNodes = true;
-                    //this.flowMap.showFlows = true;
-
-                    //this.flowMap.showNodes = (this.actorCheck.checked) ? true : false;
-                    //this.flowMap.showFlows = (this.flowCheck.checked) ? true : false;
-                    //this.flowMap.dottedLines = (this.aniDotsRadio.checked) ? true : false;
 
                     this.updateLegend();
 
@@ -494,15 +374,7 @@ define(['underscore',
 
                     var data = _this.transformToLinksAndNodes(_this.flows);
 
-                    if (_this.displayWarnings && data.warnings.length > 0) {
-                        var msg = '';
-                        data.warnings.forEach(function (warning) {
-                            msg += warning + '<br>';
-                        })
-                        _this.alert(msg);
-                    }
                     _this.resetMapData(data, zoomToFit);
-                    //_this.toggleLight();
                 },
 
                 /*
@@ -623,8 +495,6 @@ define(['underscore',
                         nodes = [],
                         links = [];
 
-                    //var dimensionAttributeName = ""
-
                     flows.forEach(function (flow, index) {
                         let originNode = flow.origin;
                         let destinationNode = flow.destination
@@ -657,7 +527,6 @@ define(['underscore',
                         link.dimensionValue = linkInfo.dimensionValue;
                         links.push(link)
 
-                        //dimensionAttributeName = linkInfo.dimensionId;
                     }, flows);
 
                     // Assign colors to links and nodes based on label-prop:
@@ -687,8 +556,6 @@ define(['underscore',
                         nodes: nodes,
                     }
                 },
-
-
 
                 close: function () {
                     this.clear();
