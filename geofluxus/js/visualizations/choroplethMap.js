@@ -1,22 +1,31 @@
 define([
-    'd3',
-    'd3-brush',
+    'visualizations/d3plusViz',
     'visualizations/geomap.js',
-], function (d3, d3brush, geomap) {
+], function (D3plusViz, geomap) {
     /**
      *
      * ChoroplethMap chart to display Flows data
      *
      * @author Evert Van Hirtum
      */
-    class ChoroplethMap {
+    class ChoroplethMap extends D3plusViz {
         /**
          * @param {Object} options          object containing all option values
          * @param {string} options.el       CSS Selector of the container element of the ChoroplethMap
          */
         constructor(options) {
+            super(options);
+
             let _this = this;
             var options = options || {};
+
+            let tileType = ""
+            if (options.isDarkMode) {
+                tileType = "dark_all"
+            } else {
+                tileType = "light_all"
+            }
+            this.tileUrl = "https://cartodb-basemaps-{s}.global.ssl.fastly.net/" + tileType + "/{z}/{x}/{y}.png"
 
             new geomap.Geomap()
                 .data(options.data)
@@ -27,50 +36,36 @@ define([
                 //     return ["02", "15", "43", "60", "66", "69", "72", "78"].indexOf(d.id) < 0;
                 // })
                 .colorScaleConfig({
-                    // color: ["red", "orange", "yellow", "green", "blue"]
-                    // color: ["green", "yellow", "red", ]
                     // scale: "jenks",
-                    color: ["red", "orange", "yellow", "green", "blue"].reverse()
+                    color: ["rgb(158, 1, 66)", "rgb(240, 112, 74)", "rgb(254, 221, 141)", "rgb(224, 243, 160)", "rgb(105, 189, 169)"].reverse(),
+                    axisConfig: {
+                        barConfig: {
+                            stroke: this.elementColor
+                        },
+                        shapeConfig: {
+                            labelConfig: {
+                                fontColor: this.elementColor
+                            },
+                            stroke: this.elementColor
+                        }
+                    },
+                    rectConfig: {
+                        stroke: this.elementColor
+                    }
                 })
+                .tileUrl(this.tileUrl)
                 .select(options.el)
                 .downloadPosition("left")
                 .downloadButton(true)
                 .controlConfig({
-                    text: "<i class='fas fa-camera' style='color: white'></i>",
+                    text: this.exportPngIconHtml,
                 })
                 .controlPadding(0)
+                .duration(0)
+                .loadingHTML(this.loadingHTML)
                 .render(function () {
-                    _this.addExportCsvButton();
-                    _this.addFullScreenToggle();
+                    _this.addButtons();
                 });
-        }
-
-        addFullScreenToggle() {
-            let _this = this;
-            let svg = d3.select(".d3plus-viz");
-            svg.select(".d3plus-Form.d3plus-Form-Button")
-                .append("button")
-                .attr("class", "d3plus-Button fullscreen-toggle")
-                .attr("type", "button")
-                .html('<i class="fas fa-expand" style="color: white"></i>')
-                .lower();
-            // Check on hover over Viz if it still contains Fullscreen button, if not, readd:
-            svg.on("mouseover", function () {
-                let buttonFullscreen = d3.select(".fullscreen-toggle")
-                if (buttonFullscreen.empty()) {
-                    _this.addExportCsvButton();
-                    _this.addFullScreenToggle();
-                }
-            })
-        }
-
-        addExportCsvButton() {
-            let svg = d3.select(".d3plus-viz");
-            svg.select(".d3plus-Form.d3plus-Form-Button")
-                .append("button")
-                .attr("class", "d3plus-Button export-csv")
-                .attr("type", "button")
-                .html('<i class="fas fa-file" style="color: white"></i>');
         }
     }
     return ChoroplethMap;

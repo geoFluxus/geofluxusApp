@@ -75,7 +75,7 @@ define([
 
             // get zoom level after each zoom activity
             this.initialZoom = this.map.getZoom();
-            this.maxFlowWidth = 50;
+            this.maxFlowWidth = options.maxFlowWidth || 50;
             this.minFlowWidth = 1;
             this.maxScale = 2;
 
@@ -95,6 +95,7 @@ define([
         // fit svg layer to map
         resetView() {
             this.svg.node().style.visibility = 'visible';
+
             var svgPos = this.resetBbox();
             if (!svgPos) return;
             var topLeft = svgPos[0];
@@ -120,6 +121,8 @@ define([
         // remove all prev. drawn flows and nodes
         clear() {
             this.g.selectAll("*").remove();
+
+
             this.nodesData = {};
             this.nodesPos = {};
             this.flowsData = {};
@@ -184,10 +187,17 @@ define([
         }
 
         draw() {
+            var _this = this;
+            var scale = Math.min(this.scale(), this.maxScale);
+            
             this.g.selectAll("*").remove();
-            // remember scope of 'this' as context for functions with different scope
-            var _this = this,
-                scale = Math.min(this.scale(), this.maxScale);
+            // this.g.selectAll("*")
+            //     .transition()
+            //     .duration(250)
+            //     .attr("stroke-opacity", 0)
+            //     .remove();
+
+
 
             // define data to use for drawPath and drawTotalPath as well as nodes data depending on flows
             for (var linkId in this.flowsData) {
@@ -264,14 +274,14 @@ define([
                         }
                     ];
                     var path = _this.drawPath(
-                        coords, flow.label, flow.color, strokeWidth, options
+                        coords, flow, flow.color, strokeWidth, options
                     );
                     // workaround for mouseover very thin lines
                     // put invisible line on top (with mouseover)
                     if (!_this.animate && strokeWidth < 7) {
                         options.opacity = 0;
                         var bufferedPath = _this.drawPath(
-                            coords, flow.label, flow.color, 7, options
+                            coords, flow, flow.color, 7, options
                         );
                     }
 
@@ -286,47 +296,57 @@ define([
             var maxNodeRadius = calcRadius(this.maxNodeValue);
             var scaleFactor = (maxNodeRadius > 60) ? 60 / maxNodeRadius : 1
 
-            // use addpoint for each node in nodesDataFlow
-            Object.values(_this.nodesPos).forEach(function (nodes) {
+            if (_this.showNodes) {
+                // use addpoint for each node in nodesDataFlow
+                Object.values(_this.nodesPos).forEach(function (nodes) {
 
-                // ignore hidden nodes
-                var nodesToShow = [];
-                nodes.forEach(function (node) {
-                    if (!_this.hideTags[node.tag]) nodesToShow.push(node);
-                })
-                // no visible nodes
-                if (nodesToShow.length === 0) return;
-
-                var first = nodesToShow[0];
-                var x = _this.projection([first.lon, first.lat])[0],
-                    y = _this.projection([first.lon, first.lat])[1];
-                // only one node at this position
-                if (nodesToShow.length === 1) {
-                    if (_this.hideTags[first.tag]) return;
-                    // calculate radius by value, if radius is not given
-                    var radius = Math.max(5, first.radius || calcRadius(first.value));
-                    _this.addPoint(x, y, first.label, first.innerLabel, first.color, radius, first.opacity);
-                } else {
-                    // multiple nodes at same position -> piechart
-                    var data = [],
-                        label = '',
-                        radius = 0,
-                        total = 0;
-
-                    nodesToShow.forEach(function (node) {
-                        total += node.value;
-                        radius += node.radius || 0;
-                        label += node.label + '<br><br>';
-                        data.push({
-                            'color': node.color,
-                            'value': node.value || 1,
-                            'opacity': node.opacity
-                        })
+                    // ignore hidden nodes
+                    var nodesToShow = [];
+                    nodes.forEach(function (node) {
+                        if (!_this.hideTags[node.tag]) nodesToShow.push(node);
                     })
-                    radius = Math.max(5, (radius + calcRadius(total)) * scaleFactor);
-                    _this.addPieChart(x, y, label, radius, data)
-                }
-            });
+                    // no visible nodes
+                    if (nodesToShow.length === 0) return;
+
+                    var first = nodesToShow[0];
+                    var x = _this.projection([first.lon, first.lat])[0],
+                        y = _this.projection([first.lon, first.lat])[1];
+
+                    // Only one node at this position
+                    if (nodesToShow.length === 1) {
+                        if (_this.hideTags[first.tag]) return;
+                        // calculate radius by value, if radius is not given
+                        var radius = Math.max(5, first.radius || calcRadius(first.value));
+                        _this.addPoint(x, y, first, first.innerLabel, first.color, radius, first.opacity);
+
+                    } else {
+                        // Multiple nodes at same position -> create Piechart
+                        var data = [],
+                            label = '',
+                            radius = 0,
+                            total = 0;
+
+                        nodesToShow.forEach(function (node) {
+                            total += node.value;
+                            radius += node.radius || 0;
+                            label += node.label + '<br>';
+
+                            //label = 
+
+
+                            data.push({
+                                'color': node.color,
+                                'value': node.value || 1,
+                                'opacity': node.opacity
+                            })
+                        })
+                        radius = Math.max(5, (radius + calcRadius(total)) * scaleFactor);
+
+
+                        _this.addPieChart(x, y, label, radius, data)
+                    }
+                });
+            }
         }
 
         scale() {
@@ -376,6 +396,10 @@ define([
                         .duration(200)
                         .style("opacity", 0.9);
                     _this.tooltip.html(label)
+
+                        //_this.tooltip.html(d.data.label)
+
+
                         .style("left", (d3.event.pageX - rect.x - window.pageXOffset) + "px")
                         .style("top", (d3.event.pageY - rect.y - 28 - window.pageYOffset) + "px")
                     //d3.select(this).style("fill-opacity", 1);
@@ -389,11 +413,8 @@ define([
         }
 
         //function to add source nodes to the map
-        addPoint(x, y, label, innerLabel, color, radius, opacity) {
+        addPoint(x, y, node, innerLabel, color, radius, opacity) {
             var _this = this;
-
-
-            //radius = 5;
 
             var point = this.g.append("g").attr("class", "node");
             point.append("circle")
@@ -410,7 +431,7 @@ define([
                     _this.tooltip.transition()
                         .duration(200)
                         .style("opacity", 0.9);
-                    _this.tooltip.html(label)
+                    _this.tooltip.html(_this.getPointTooltipString(node))
                         .style("left", (d3.event.pageX - rect.x - window.pageXOffset) + "px")
                         .style("top", (d3.event.pageY - rect.y - 28 - window.pageYOffset) + "px");
                     d3.select(this).style("fill-opacity", 1);
@@ -421,17 +442,66 @@ define([
                         .style("opacity", 0)
                     d3.select(this).style("fill-opacity", opacity);
                 });
-            point.append("text")
-                .attr("x", x)
-                .attr("y", y + 5)
-                .attr("text-anchor", "middle")
-                .style("font-size", "14px")
-                .attr('fill', 'white')
-                .text(innerLabel || "");
+
+            // Show names of nodes in text on map:
+            //     innerLabel = node.name;
+            // point.append("text")
+            //     .attr("x", x)
+            //     .attr("y", y + 5)
+            //     .attr("text-anchor", "middle")
+            //     .style("font-size", "14px")
+            //     .attr('fill', 'white')
+            //     .text(innerLabel || "");
+        }
+
+        getPointTooltipString(input) {
+            return `<div class="d3plus-tooltip flowMapToolTip" x-placement="top">
+                <div class="d3plus-tooltip-title">
+                    ` + input.name + `
+                </div>
+                <div class="d3plus-tooltip-body">
+                </div>
+                <table class="d3plus-tooltip-table">
+                    <thead class="d3plus-tooltip-thead"></thead>
+                    <tbody class="d3plus-tooltip-tbody">
+                        <tr>
+                            <td>Waste</td>
+                            <td>` + input.amountText + `</td>
+                        </tr>
+                        <tr>
+                            <td>` + input.dimensionText + `</td>
+                            <td>` + input.dimensionValue + `</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>`
+        }
+
+        getLinkTooltipString(flow) {
+            return `<div class="d3plus-tooltip flowMapToolTip" x-placement="top">
+                <div class="d3plus-tooltip-title">
+                    ` + flow.sourceName + ' &#10132; ' + flow.targetName + `
+                </div>
+                <div class="d3plus-tooltip-body">
+                </div>
+                <table class="d3plus-tooltip-table">
+                    <thead class="d3plus-tooltip-thead"></thead>
+                    <tbody class="d3plus-tooltip-tbody">
+                        <tr>
+                            <td>Waste</td>
+                            <td>` + flow.amountText + `</td>
+                        </tr>
+                        <tr>
+                            <td>` + flow.dimensionText + `</td>
+                            <td>` + flow.dimensionValue + `</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>`
         }
 
         // function to draw actual paths for the directed quantity flows
-        drawPath(points, label, color, strokeWidth, options) {
+        drawPath(points, flow, color, strokeWidth, options) {
             var _this = this,
                 options = options || {};
             //var line = d3.svg.line()
@@ -475,8 +545,8 @@ define([
                     var rect = _this.overlay.getBoundingClientRect();
                     _this.tooltip.transition()
                         .duration(200)
-                        .style("opacity", 0.8);
-                    _this.tooltip.html(label)
+                        .style("opacity", 0.925);
+                    _this.tooltip.html(_this.getLinkTooltipString(flow))
                         .style("left", (d3.event.pageX - rect.x - window.pageXOffset) + "px")
                         .style("top", (d3.event.pageY - rect.y - 28 - window.pageYOffset) + "px")
                     path.attr("stroke-opacity", 1)
@@ -498,9 +568,11 @@ define([
         }
 
         toggleAnimation(on) {
-            if (on != null) this.animate = on;
-            //this.g.selectAll('path').classed('flowline', this.animate);
+            if (on != null) {
+                this.animate = on;
+            }
             this.draw();
+            //this.g.selectAll('path').classed('flowline', this.animate);
         }
 
         toggleTag(tag, on) {

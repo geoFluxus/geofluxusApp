@@ -1,5 +1,7 @@
 var _ = require('underscore');
 var utils = require('utils/utils');
+var colorArray = [];
+let occurances = []
 
 module.exports = {
 
@@ -7,12 +9,22 @@ module.exports = {
         let years = filterFlowsView.years.models;
         let months = filterFlowsView.months.models;
 
+
         if (granularity == "flowchain__month__year") {
+
+            // // Get all unique years
+            // occurances = flows.map(x => x.year);
+            // occurances = _.unique(occurances);
+
+            // // Create array with unique colors:
+            // colorArray = utils.interpolateColors(occurances.length);
+
             flows.forEach(function (flow, index) {
                 let yearObject = years.find(year => year.attributes.id == flow.year);
 
                 this[index].id = this[index].year;
                 this[index].year = parseInt(yearObject.attributes.code);
+                //this[index].color = colorArray[index];
             }, flows);
 
             flows = _.sortBy(flows, 'year');
@@ -144,11 +156,43 @@ module.exports = {
     },
 
     returnCodePlusName: function (input) {
-        let codeString =  input.attributes.code ? input.attributes.code : input.attributes.nace;
+        let codeString = input.attributes.code ? input.attributes.code : input.attributes.nace;
         return codeString + ". " + utils.capitalizeFirstLetter(input.attributes.name);
     },
 
-    returnEwcCodePlusName: function(input){
+    returnEwcCodePlusName: function (input) {
         return input.attributes.ewc_code + ". " + utils.capitalizeFirstLetter(input.attributes.ewc_name);
     },
+
+    /**
+     * Assigns colors per unique @propertyName for nominal data
+     * 
+     * @param {*} items: an array of items containing a property with name @propertyName
+     * @param {*} propertyName: the property by which colors will be assigned 
+     */
+
+    assignColorsByProperty: function (items, propertyName) {
+
+        // Get all unique occurences
+        occurances = items.map(x => x[propertyName]);
+        occurances = _.unique(occurances);
+
+        // Create array with unique colors:
+        colorArray = utils.interpolateColors(occurances.length);
+
+        // Create array with prop of unique property and prop of matching color:
+        occurances.forEach(function (propertyName, index) {
+            this[index] = {
+                name: this[index],
+                color: colorArray[index],
+            };
+        }, occurances);
+
+        // Asisgn a color for each unique property:
+        items.forEach(function (item, index) {
+            this[index].color = occurances.find(occ => occ.name == item[propertyName]).color;
+        }, items);
+
+        return items
+    }
 }

@@ -1,0 +1,17 @@
+<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+ <metadata>image/svg+xmlOpenclipart</metadata>
+
+ <g>
+  <title>background</title>
+  <rect x="-1" y="-1" width="62" height="62" id="canvas_background" fill="none"/>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <path id="path841" d="m26.86918,10.6279l25.46989,0" fill="none" stroke-width="5.4601" stroke-linecap="round" stroke="white" stroke-linejoin="round"/>
+  <path id="rect1717" d="m6.2436,4.6875l8.7674,0c0.862,0 1.556,0.694 1.556,1.5561l0,8.7674c0,0.862 -0.694,1.556 -1.556,1.556l-8.7674,0c-0.8621,0 -1.5561,-0.694 -1.5561,-1.556l0,-8.7674c0,-0.8621 0.694,-1.5561 1.5561,-1.5561z" fill="#9e0142" stroke-width="3.125" stroke-linecap="round" stroke="#9e0142" fill-rule="evenodd" stroke-linejoin="round"/>
+  <path id="path1729" d="m26.86918,30l20.88962,0" fill="none" stroke-width="5.4601" stroke-linecap="round" stroke="white" stroke-linejoin="round"/>
+  <path id="rect1732" d="m6.2436,24.06l8.7674,0c0.862,0 1.556,0.694 1.556,1.556l0,8.768c0,0.862 -0.694,1.556 -1.556,1.556l-8.7674,0c-0.8621,0 -1.5561,-0.694 -1.5561,-1.556l0,-8.768c0,-0.862 0.694,-1.556 1.5561,-1.556z" fill="#fdbe70" stroke-width="3.125" stroke-linecap="round" stroke="#fdbe70" fill-rule="evenodd" stroke-linejoin="round"/>
+  <path id="path1735" d="m26.86918,49.373l27.50594,0" fill="none" stroke-width="5.4601" stroke-linecap="round" stroke="white" stroke-linejoin="round"/>
+  <path id="rect1738" d="m6.2436,43.433l8.7674,0c0.862,0 1.556,0.694 1.556,1.556l0,8.767c0,0.862 -0.694,1.556 -1.556,1.556l-8.7674,0c-0.8621,0 -1.5561,-0.694 -1.5561,-1.556l0,-8.767c0,-0.862 0.694,-1.556 1.5561,-1.556z" fill="#bee5a0" stroke-width="3.125" stroke-linecap="round" stroke="#bee5a0" fill-rule="evenodd" stroke-linejoin="round"/>
+ </g>
+</svg>

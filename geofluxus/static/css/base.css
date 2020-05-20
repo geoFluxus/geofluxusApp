@@ -1,10 +1,11 @@
 :root {
     --primary: #97BEA9;
-    /* --primary-color-active:  */
+    --primary-border: rgb(114, 145, 128);
+    --font-color: white
 }
 
 a {
-    color: white;
+    color: var(--font-color);
 }
 
 p {
@@ -96,7 +97,7 @@ input {
 
 .btn-primary {
     background-color: var(--primary);
-    border-color: rgb(114, 145, 128);
+    border-color: var(--primary-border);
 }
 
 .btn-primary.focus,
@@ -130,7 +131,7 @@ input {
 
 .btn-primary.active {
     background-color: rgb(112, 141, 125) !important;
-    border-color: rgb(114, 145, 128) !important;
+    border-color: var(--primary-border) !important;
 }
 
 .btn:hover {

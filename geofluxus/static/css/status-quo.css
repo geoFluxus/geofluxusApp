@@ -4,25 +4,6 @@
     padding-bottom: 10px;
 }
 
-/* .block {
-    background-color: #393939;
-    border-radius: 22px;
-    padding: 1.5rem;
-    padding-bottom: 1rem;
-    margin: 1.5rem;
-}
-
-.card {
-    background-color: #252525 !important;
-    border-radius: 22px !important;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.card-body {
-    padding-top: 0em !important;
-} */
-
 .card.bg-dark {
     overflow-y: visible;
     scrollbar-width: none;
@@ -129,14 +110,6 @@ label[for="flows-waste06-select"] {
     position: relative;
     left: -1.3em;
 }
-
-/* 
-.originContainerActivity .buttonHelpiconContainer,
-.destinationContainerActivity .buttonHelpiconContainer {
-    position: relative;
-    top: -0.1rem;
-    left: 0.1rem;
-} */
 
 .labelHelpiconContainer {
     position: relative;
@@ -251,8 +224,7 @@ label[for="flows-waste06-select"] {
 
 .viz-selector-button {
     border-radius: 18px !important;
-    margin-right: 1rem;
-    margin-bottom: 1rem !important;
+    margin: 0 0.5rem 1rem 0.5rem !important;
     min-width: 10rem;
     display: flex;
     max-width: 10rem;
@@ -329,10 +301,26 @@ label[for="flows-waste06-select"] {
 
 .viz-wrapper-div {
     display: none;
-    height: 700px;
-    min-width: 500px;
-    background-color: rgb(182, 182, 182);
+    height: 750px;
+    min-width: 600px;
+    background-color: #393939;
     border-radius: 18px;
+    transition: background-color 0.5s ease;
+}
+
+.lightMode {
+    background-color: #dfdfdf !important;
+    transition: background-color 0.5s ease;
+}
+
+
+.d3plus_label {
+    fill: white;
+    font-family: "Montserrat", sans-serif;
+}
+
+.d3plus-textBox text {
+    font-family: "Montserrat", sans-serif !important;
 }
 
 .viz-wrapper-div.parallelsets-wrapper {
@@ -402,44 +390,48 @@ textarea.textarea-autosize.form-control-sm {
     min-height: 2rem;
 }
 
-
-.min-width-600px {
-    min-width: 550px;
+.leaflet-top,
+.leaflet-bottom {
+    z-index: 600;
 }
 
-/* SANKEY WRAPPER */
 
-.sankey-wrapper {
-    background-color: #a2a2a2;
-    border-radius: 3px;
+.flowmap-container {
+    border-radius: 18px;
+    background-color: #393939 !important;
+}
+
+.flowmap-d3pluslegend-wrapper {
     width: 100%;
-    min-height: 400px;
-    touch-action: none;
-    box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.3);
-    box-sizing: content-box !important;
+    height: 100px;
+    bottom: 100px;
+    position: relative;
+    z-index: 600;
+    /* border-top-left-radius: 18px; */
+    /* border-top-right-radius: 18px; */
+    border-bottom-left-radius: 18px;
+    border-bottom-right-radius: 18px;
+    background-color: rgba(255, 255, 255, 0.5);
 }
 
-
-
-.flowmap-legend-wrapper {
-    width: 10rem !important;
-    height: 10rem !important;
+.flowmap-d3pluslegend {
+    height: 100px;
+    width: 800px;
+    border-radius: 18px;
+    overflow: visible;
 }
 
-
-
-.flowmap-legend-wrapper .d3plus-Rect-group {
-    width: 10rem !important;
-    height: 10rem !important;
+.flowmap-d3pluslegend g {
+    height: 100px !important;
 }
 
-.flowmap-legend-wrapper .d3plus-Legend {
-    display: inline-block !important;
-    width: 100%;
-    height: 100%;
+.flowmapLegendFullscreen {
+    z-index: 100000 !important;
+    bottom: 0;
+    position: fixed;
+    left: 0;
+    border-radius: 0px !important;
 }
-
-
 
 
 /* d3plus Tooltip */
@@ -454,6 +446,17 @@ textarea.textarea-autosize.form-control-sm {
     max-width: 25rem;
 }
 
+.flowMapToolTip {
+   width: 22rem !important;
+}
+
+.flowMapToolTip * {
+    font-size: small;
+}
+
+.d3plus-tooltip div {
+    font-family: "Montserrat", sans-serif !important;
+}
 
 .d3plus-tooltip-title {
     font-family: 'Montserrat', sans-serif !important;
@@ -487,15 +490,20 @@ textarea.textarea-autosize.form-control-sm {
     max-width: 30rem;
 }
 
-/* d3plus buttons */
+.d3plus-tooltip-footer {
+    margin: 0.5rem !important;
+    font-size: 10px !important;
+}
 
+
+/* d3plus buttons */
 
 .d3plus-viz-controls-container {
     min-height: 100px;
 }
 
 .d3plus-viz-controls-container .d3plus-Button {
-    background-color: #007bff;
+    background-color: var(--primary);
     border: none;
     position: relative;
     width: 32px;
@@ -504,7 +512,7 @@ textarea.textarea-autosize.form-control-sm {
     top: 5px;
     color: transparent;
     margin-bottom: 5px !important;
-    font-size: 14px;
+    font-size: 16px !important;
     margin: 0px 5px;
 }
 
@@ -513,7 +521,52 @@ textarea.textarea-autosize.form-control-sm {
     top: 0;
 }
 
+.icon-fullscreen,
+.icon-export,
+.icon-save-image {
+    color: white;
+}
 
+.icon-toggle-legend,
+.icon-toggle-darkmode,
+.icon-toggle-flowmap-flows,
+.icon-toggle-flowmap-nodes,
+.icon-toggle-flowmap-animation {
+    background-position: center center;
+    background-size: contain;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin-bottom: 2px;
+}
+
+.icon-toggle-legend {
+    background-image: url("../img/legend.svg");
+}
+
+.icon-toggle-darkmode {
+    background-image: url("../img/nightmode.svg");
+}
+
+.icon-toggle-flowmap-flows {
+    width: 24px;
+    height: 24px;
+    margin-top: 2.5px;
+    background-image: url("../img/flowmap-flows.svg");
+}
+
+.icon-toggle-flowmap-nodes {
+    background-image: url("../img/flowmap-nodes.svg");
+    width: 24px;
+    height: 24px;
+    margin-top: 2.5px;
+}
+
+.icon-toggle-flowmap-animation {
+    background-image: url("../img/flowmap-animation.svg");
+    width: 20px;
+    height: 20px;
+}
 
 .leaflet-control div label {
     color: black;
@@ -525,13 +578,13 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .leaflet-control-zoom {
-    top: 80px !important;
+    top: 262px !important;
     border: none !important;
     margin: 0 !important;
 }
 
 .flowmap-wrapper .leaflet-control-zoom a {
-    background-color: #007bff;
+    background-color: var(--primary);
     border: none;
     width: 32px;
     height: 32px;
@@ -540,14 +593,29 @@ textarea.textarea-autosize.form-control-sm {
     margin: 0px 5px;
 }
 
-.leaflet-control-zoom-in {
+.leaflet-control-zoom a:hover {
+    background-color: grey;
+    border-color: grey;
+}
+
+.leaflet-control-zoom a:first-child {
     border-top-left-radius: 16px !important;
     border-top-right-radius: 16px !important;
 }
 
-.leaflet-control-zoom-out {
+.leaflet-control-zoom a:last-child {
     border-bottom-left-radius: 16px !important;
     border-bottom-right-radius: 16px !important;
+}
+
+.leaflet-control-zoom .btn-reset-view {
+    cursor: pointer;
+}
+
+.leaflet-control-zoom .btn-reset-view i {
+    font-size: medium;
+    bottom: 0.1rem;
+    position: relative;
 }
 
 .leaflet-control-fullscreen a {
@@ -556,7 +624,7 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .leaflet-control-fullscreen,
-.leaflet-control-export {
+.leaflet-control-custom-buttons {
     margin-left: 5px !important;
     position: absolute;
     border: none !important;
@@ -568,8 +636,17 @@ textarea.textarea-autosize.form-control-sm {
     border-radius: 16px !important;
 }
 
-.leaflet-control-export {
-    top: 34px;
+.leaflet-control-custom-buttons button {
+    border-width: 0px !important;
+    height: 32px;
+    width: 32px;
+    text-align: center;
+    padding: 0px;
+    margin-bottom: 0.3rem !important;
+}
+
+.leaflet-control-custom-buttons {
+    top: 36px;
 }
 
 .leaflet-control-export button::before {
@@ -581,9 +658,10 @@ textarea.textarea-autosize.form-control-sm {
     right: 0.5px;
     position: relative;
 }
+
 
 .leaflet-control-fullscreen a {
-    background-color: #007bff;
+    background-color: var(--primary);
     width: 32px;
     height: 32px;
     border-radius: 16px !important;
@@ -607,9 +685,9 @@ textarea.textarea-autosize.form-control-sm {
     border-color: grey !important;
 }
 
-
-.leaflet-control-easyPrint {
-    display: none;
+.leaflet-bottom.leaflet-left {
+    position: absolute;
+    bottom: 110px;
 }
 
 .leaflet-control-custom-controls {
@@ -639,6 +717,7 @@ textarea.textarea-autosize.form-control-sm {
 .leaflet-control-attribution {
     margin-right: 0px !important;
     padding-right: 10px;
+    background: none !important;
 }
 
 /* .d3plus-zoom-controls */
@@ -656,7 +735,8 @@ textarea.textarea-autosize.form-control-sm {
     font-size: 28px !important;
     padding-top: 0.3rem !important;
     color: white !important;
-    background-color: #007bff !important;
+    background-color: var(--primary) !important;
+    opacity: 1 !important;
     border: none !important;
     user-select: none;
 }
@@ -713,10 +793,6 @@ textarea.textarea-autosize.form-control-sm {
 .flowMapToolTip,
 .d3-tip {
     font-family: 'Montserrat', sans-serif !important;
-}
-
-.flowMapToolTip {
-    padding: 1rem !important;
 }
 
 .d3-tip h1 {

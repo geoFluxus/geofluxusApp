@@ -1,37 +1,23 @@
-define(['views/common/baseview',
+define(['views/common/d3plusVizView',
         'underscore',
-        'd3',
-        'visualizations/d3plus',
         'visualizations/simpleSankey',
-        'collections/collection',
-        'app-config',
-        'save-svg-as-png',
-        'file-saver',
-        'utils/utils',
         'utils/enrichFlows',
+        'd3'
     ],
 
     function (
-        BaseView,
+        D3plusVizView,
         _,
-        d3,
-        d3plus,
         SimpleSankey,
-        Collection,
-        config,
-        saveSvgAsPng,
-        FileSaver,
-        utils,
         enrichFlows,
-        Slider) {
+        d3) {
 
         /**
-         *
          * @author Evert Van Hirtum
          * @name module:views/ParallelSetsView
-         * @augments module:views/BaseView
+         * @augments module:views/D3plusVizView
          */
-        var ParallelSetsView = BaseView.extend(
+        var ParallelSetsView = D3plusVizView.extend(
             /** @lends module:views/ParallelSetsView.prototype */
             {
 
@@ -46,51 +32,62 @@ define(['views/common/baseview',
                     ParallelSetsView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
+                    _.bindAll(this, 'toggleDarkMode');
 
+                    this.canHaveLegend = false;
+                    this.isDarkMode = true;
                     this.options = options;
+
+                    this.filtersView = this.options.flowsView.filtersView;
+                    this.flows = this.transformToLinksAndNodes(this.options.flows, this.options.dimensions, this.filtersView);
+
                     this.render();
                 },
 
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
+                    'click .toggle-darkmode': 'toggleDarkMode',                    
                 },
 
-                render: function (data) {
-                    let _this = this;
-                    let flows = this.options.flows;
-
-                    this.filtersView = this.options.flowsView.filtersView;
-
-                    // let dim1String = this.options.dimensions[0][0];
-                    // let gran1 = this.options.dimensions[0][1];
-                    // let dim2String = this.options.dimensions[1][0];
-                    // let gran2 = this.options.dimensions[1] ? this.options.dimensions[1][1] : {};
-
-                    let tooltipConfig = {
-                        tbody: [
-                            ["Waste", function (d) {
-                                return d3plus.formatAbbreviate(d["value"], utils.returnD3plusFormatLocale()) + " t"
-                            }]
-                        ]
-                    };
-
-                    flows = this.transformToLinksAndNodes(this.options.flows, this.options.dimensions, this.filtersView);
-
-
+                /**
+                 * Create a new D3Plus SimpleSankey object which will be rendered in this.options.el:
+                 */
+                render: function () {
                     this.SimpleSankey = new SimpleSankey({
                         el: this.options.el,
-                        links: flows.links,
-                        nodes: flows.nodes,
-                        tooltipConfig: tooltipConfig,
+                        links: this.flows.links,
+                        nodes: this.flows.nodes,
+                        tooltipConfig: this.tooltipConfig,
+                        canHaveLegend: this.canHaveLegend,
+                        isDarkMode: this.isDarkMode,
                     });
-
-                    // Smooth scroll to top of Viz
-                    $("#apply-filters")[0].scrollIntoView({
-                        behavior: "smooth"
-                    });
+                    this.scrollToVisualization();
+                    this.options.flowsView.loader.deactivate();
                 },
 
+                toggleDarkMode: function() {
+                    this.isDarkMode = !this.isDarkMode;
+
+                    if (this.isDarkMode) {
+                        d3.selectAll(".d3plus-Links .d3plus-Path")
+                        .attr("stroke", "#DBDBDB")
+                    } else {
+                            d3.selectAll(".d3plus-Links .d3plus-Path")
+                        .attr("stroke", "#393939")
+                    }
+
+                    $(".viz-wrapper-div").toggleClass("lightMode");
+                    $(".parallelsets-container").toggleClass("lightMode");
+                },
+
+                /**
+                 * Takes flows-data in origin/destination format and outputs it according to supplied dimensions into links and nodes format
+                 * 
+                 * @param {array} flows Array of flows containing origin and destination attributes
+                 * @param {object} dimensions object containing dimension information
+                 * @param {object} filtersView Backbone.js filtersView
+                 */
                 transformToLinksAndNodes: function (flows, dimensions, filtersView) {
                     let nodes = [],
                         links = [];
@@ -125,17 +122,13 @@ define(['views/common/baseview',
                                     destinationNode.id = enrichFlows.returnCodePlusName(processGroupDestinationObject) + " ";
                                     let processGroupOriginObject = processGroups.find(processGroup => processGroup.attributes.id == flow.origin.processgroup);
                                     originNode.id = enrichFlows.returnCodePlusName(processGroupOriginObject);
-                                    break;
-
-                                // Gran == Treatment method
+                                    // Gran == Treatment method
                                 } else {
                                     let processDestinationObject = processes.find(process => process.attributes.id == flow.destination.process);
                                     destinationNode.id = enrichFlows.returnCodePlusName(processDestinationObject) + " ";
                                     let processOriginObject = processes.find(process => process.attributes.id == flow.origin.process);
                                     originNode.id = enrichFlows.returnCodePlusName(processOriginObject);
-
                                 }
-
                                 break;
                             case 2:
                                 // Econ dim1 > Treatment dim2
@@ -167,9 +160,6 @@ define(['views/common/baseview',
                                     let ewc2 = filtersView.wastes02.models;
                                     let ewc4 = filtersView.wastes04.models;
                                     let ewc6 = filtersView.wastes06.models;
-
-                                    let materialOriginDestination = "";
-
 
                                     // Econ dim1 > Material dim2
                                     if (dimStrings.includes("economicActivity")) {
@@ -300,10 +290,12 @@ define(['views/common/baseview',
                     nodes = _(summed_by_type).map(function (v, k) {
                         return {
                             id: k,
-                            value: v
+                            value: v,
                         }
                     })
 
+                    // Assign colors by id:
+                    nodes = enrichFlows.assignColorsByProperty(nodes, "id");
 
                     console.log("Links:");
                     console.log(links);
@@ -314,112 +306,7 @@ define(['views/common/baseview',
                         links: links,
                         nodes: nodes,
                     }
-                },
-
-
-                returnLinkInfo: function (link) {
-
-                    switch (this.dim2[0]) {
-                        case "time":
-                            if (this.dim2[1] == "flowchain__month__year") {
-                                dimensionText = "Year";
-                                dimensionValue = link.year;
-                            } else if (this.dim2[1] == "flowchain__month") {
-                                dimensionText = "Month";
-                                dimensionValue = link.month;
-                            }
-                            break;
-                        case "economicActivity":
-                            if (this.dim2[1] == "origin__activity__activitygroup" || this.dim2[1] == "destination__activity__activitygroup") {
-                                dimensionText = "Activity group";
-                                dimensionId = link.activitygroup;
-                                dimensionValue = link.activityGroupCode + " " + link.activityGroupName;
-                            } else if (this.dim2[1] == "origin__activity" || this.dim2[1] == "destination__activity") {
-                                dimensionText = "Activity";
-                                dimensionId = link.activity;
-                                dimensionValue = link.activityCode + " " + link.activityName;
-                            }
-                            break;
-                        case "treatmentMethod":
-                            if (this.dim2[1] == "origin__process__processgroup" || this.dim2[1] == "destination__process__processgroup") {
-                                dimensionText = "Treatment method group";
-                                dimensionValue = link.processGroupCode + " " + link.processGroupName;
-                            } else if (this.dim2[1] == "origin__process" || this.dim2[1] == "destination__process") {
-                                dimensionText = "Treatment method";
-                                dimensionValue = link.processCode + " " + link.processName;
-                            }
-                            break;
-                        case "material":
-
-                            switch (this.dim2[1]) {
-                                case "flowchain__waste06__waste04__waste02":
-                                    dimensionText = "EWC Chapter";
-                                    dimensionValue = link.ewc2Code + " " + link.ewc2Name;
-                                    break;
-                                case "flowchain__waste06__waste04":
-                                    dimensionText = "EWC Sub-Chapter";
-                                    dimensionValue = link.ewc4Code + " " + link.ewc4Name;
-                                    break;
-                                case "flowchain__waste06":
-                                    dimensionText = "EWC Entry";
-                                    dimensionValue = link.ewc6Code + " " + link.ewc6Name;
-                                    break;
-                                default:
-                                    break;
-                            }
-
-                            break;
-                        default:
-                            break;
-                    }
-
-                    let description = '<br><b>' + dimensionText + ':</b> ';
-
-                    return {
-                        dimensionValue: dimensionValue,
-                        dimensionId: dimensionId,
-                        toolTipText: fromToText + description + dimensionValue + '<br><b>Amount: </b>' + amountText,
-                        amountText: amountText,
-                        color: utils.colorByName(dimensionValue),
-                    }
-
-                },
-
-
-                toggleFullscreen: function (event) {
-                    $(this.el).toggleClass('fullscreen');
-                    event.stopImmediatePropagation();
-                    // Only scroll when going to normal view:
-                    if (!$(this.el).hasClass('fullscreen')) {
-                        $("#apply-filters")[0].scrollIntoView({
-                            behavior: "smooth"
-                        });
-                    }
-                    window.dispatchEvent(new Event('resize'));
-                },
-
-                exportCSV: function (event) {
-                    const items = this.options.flows;
-                    const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-                    const header = Object.keys(items[0])
-                    let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
-                    csv.unshift(header.join(','))
-                    csv = csv.join('\r\n')
-
-                    var blob = new Blob([csv], {
-                        type: "text/plain;charset=utf-8"
-                    });
-                    FileSaver.saveAs(blob, "data.csv");
-
-                    event.stopImmediatePropagation();
-                },
-
-                close: function () {
-                    this.undelegateEvents(); // remove click events
-                    this.unbind(); // Unbind all local event bindings
-                    $(this.options.el).html(""); //empty the DOM element
-                },
-
+                }
             });
         return ParallelSetsView;
     }
