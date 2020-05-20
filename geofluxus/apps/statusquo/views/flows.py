@@ -133,6 +133,14 @@ class StatusQuoViewSet(FilterFlowViewSet):
                     break
             if has_null: continue
 
+            # remove flows with same origin / destination
+            if format == 'flowmap':
+                if 'origin_area' in group and \
+                   'destination_area' in group:
+                    origin = group['origin_area']
+                    destination = group['destination_area']
+                    if origin == destination: continue
+
             # for the dimensions, return the id
             # to recover any info in the frontend
             flow_item = [('amount', group['total'])]
@@ -221,24 +229,24 @@ class StatusQuoViewSet(FilterFlowViewSet):
             if areas.count() != 0:
                 # origin area
                 subq = areas.filter(geom__contains=OuterRef('origin__geom'))
-                queryset = queryset.annotate(origin_node=Subquery(subq.values('id')))
+                queryset = queryset.annotate(origin_area=Subquery(subq.values('id')))
 
                 # destination area
                 subq = areas.filter(geom__contains=OuterRef('destination__geom'))
-                queryset = queryset.annotate(destination_node=Subquery(subq.values('id')))
+                queryset = queryset.annotate(destination_area=Subquery(subq.values('id')))
 
                 # append to other dimensions
                 level = ['origin_area', 'destination_area']
-                field = ['origin_node', 'destination_node']
+                field = ['origin_area', 'destination_area']
             else:
                 # origin actor
-                queryset = queryset.annotate(origin_node=F('origin'))
+                queryset = queryset.annotate(origin_actor=F('origin'))
                 # destination actor
-                queryset = queryset.annotate(destination_node=F('destination'))
+                queryset = queryset.annotate(destination_actor=F('destination'))
 
                 # append to other dimensions
                 level = ['origin_actor', 'destination_actor']
-                field = ['origin_node', 'destination_node']
+                field = ['origin_actor', 'destination_actor']
         return queryset, level, field
 
     @staticmethod
