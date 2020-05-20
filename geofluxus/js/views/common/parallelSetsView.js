@@ -122,8 +122,6 @@ define(['views/common/d3plusVizView',
                                     destinationNode.id = enrichFlows.returnCodePlusName(processGroupDestinationObject) + " ";
                                     let processGroupOriginObject = processGroups.find(processGroup => processGroup.attributes.id == flow.origin.processgroup);
                                     originNode.id = enrichFlows.returnCodePlusName(processGroupOriginObject);
-                                    break;
-
                                     // Gran == Treatment method
                                 } else {
                                     let processDestinationObject = processes.find(process => process.attributes.id == flow.destination.process);
@@ -131,7 +129,6 @@ define(['views/common/d3plusVizView',
                                     let processOriginObject = processes.find(process => process.attributes.id == flow.origin.process);
                                     originNode.id = enrichFlows.returnCodePlusName(processOriginObject);
                                 }
-
                                 break;
                             case 2:
                                 // Econ dim1 > Treatment dim2

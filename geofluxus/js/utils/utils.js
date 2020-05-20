@@ -33,7 +33,7 @@ module.exports = {
                 div.removeChild(loaderDiv);
                 div.removeChild(backdropDiv);
             } catch (err) {
-                console.log(err.message)
+                //console.log(err.message)
             }
         }
     },
