@@ -72,6 +72,7 @@ define([
                 })
                 .controlPadding(0)
                 .duration(0)
+                .loadingHTML(this.loadingHTML)
                 .render(function () {
                     _this.addButtons();
                 });

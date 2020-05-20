@@ -2,13 +2,15 @@ define(['views/common/d3plusVizView',
         'underscore',
         'visualizations/simpleSankey',
         'utils/enrichFlows',
+        'd3'
     ],
 
     function (
         D3plusVizView,
         _,
         SimpleSankey,
-        enrichFlows) {
+        enrichFlows,
+        d3) {
 
         /**
          * @author Evert Van Hirtum
@@ -30,8 +32,10 @@ define(['views/common/d3plusVizView',
                     ParallelSetsView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
+                    _.bindAll(this, 'toggleDarkMode');
 
                     this.canHaveLegend = false;
+                    this.isDarkMode = true;
                     this.options = options;
 
                     this.filtersView = this.options.flowsView.filtersView;
@@ -43,6 +47,7 @@ define(['views/common/d3plusVizView',
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
+                    'click .toggle-darkmode': 'toggleDarkMode',                    
                 },
 
                 /**
@@ -55,9 +60,25 @@ define(['views/common/d3plusVizView',
                         nodes: this.flows.nodes,
                         tooltipConfig: this.tooltipConfig,
                         canHaveLegend: this.canHaveLegend,
+                        isDarkMode: this.isDarkMode,
                     });
                     this.scrollToVisualization();
                     this.options.flowsView.loader.deactivate();
+                },
+
+                toggleDarkMode: function() {
+                    this.isDarkMode = !this.isDarkMode;
+
+                    if (this.isDarkMode) {
+                        d3.selectAll(".d3plus-Links .d3plus-Path")
+                        .attr("stroke", "#DBDBDB")
+                    } else {
+                            d3.selectAll(".d3plus-Links .d3plus-Path")
+                        .attr("stroke", "#393939")
+                    }
+
+                    $(".viz-wrapper-div").toggleClass("lightMode");
+                    $(".parallelsets-container").toggleClass("lightMode");
                 },
 
                 /**

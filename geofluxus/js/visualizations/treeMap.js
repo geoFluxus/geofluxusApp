@@ -13,7 +13,7 @@ define([
          * @param {string} options.el       CSS Selector of the container element of the TreeMap
          */
         constructor(options) {
-            super();
+            super(options);
 
             let _this = this;
             var options = options || {};
@@ -29,7 +29,7 @@ define([
                 .legendConfig({
                     shapeConfig: {
                         labelConfig: {
-                            fontColor: "white",
+                            fontColor: this.elementColor,
                         }
                     }
                 })
@@ -43,6 +43,7 @@ define([
                     text: this.exportPngIconHtml,
                 })
                 .controlPadding(0)
+                .loadingHTML(this.loadingHTML)
                 .render(function () {
                     _this.addButtons();
                 });

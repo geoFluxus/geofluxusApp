@@ -309,7 +309,7 @@ label[for="flows-waste06-select"] {
 }
 
 .lightMode {
-    background-color: #dfdfdf;
+    background-color: #dfdfdf !important;
     transition: background-color 0.5s ease;
 }
 

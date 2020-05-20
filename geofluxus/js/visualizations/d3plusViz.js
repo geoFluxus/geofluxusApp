@@ -11,11 +11,10 @@ define([
         constructor(options) {
             this.options = options;
             this.exportPngIconHtml = "<i class='fas fa-camera icon-save-image' title='Export this visualization as a PNG file.'></i>"
-            this.loadingHTML = "";
-
-            // `<div style="left: 50%; top: 50%; position: absolute; transform: translate(-50%, -50%); font-family: 'Montserrat', sans-serif;">
-            //   <strong>Loading Visualization</strong>
-            // </div>`;
+            this.loadingHTML =
+                `<div style="left: 50%; top: 50%; position: absolute; transform: translate(-50%, -50%); font-family: 'Montserrat', sans-serif;">
+                  <strong>Loading Visualization</strong>
+                </div>`;
 
             if (options.isDarkMode) {
                 this.elementColor = "white"

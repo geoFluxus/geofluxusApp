@@ -14,7 +14,7 @@ define([
          * @param {string} options.el       CSS Selector of the container element of the Simple Sankey
          */
         constructor(options) {
-            super();
+            super(options);
 
             let _this = this;
             var options = options || {};

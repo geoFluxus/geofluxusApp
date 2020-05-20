@@ -95,6 +95,7 @@ define([
                 })
                 .controlPadding(0)
                 .select(options.el)
+                .loadingHTML(this.loadingHTML)
                 .render(function () {
                     _this.addButtons();
                 });

@@ -60,6 +60,7 @@ define([
                     text: this.exportPngIconHtml,
                 })
                 .controlPadding(0)
+                .loadingHTML(this.loadingHTML)
                 .render(function () {
                     _this.addButtons();
                 });

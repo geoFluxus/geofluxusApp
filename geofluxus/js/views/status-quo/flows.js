@@ -319,7 +319,7 @@ define(['views/common/baseview',
                             // code block
                     }
 
-
+                    // If the selected visualization type is hasFlowsFormat, and dimension == treatment method, hide origin/destination toggle:
                     let selectedVizHasFlowsFormat = $(".viz-selector-button.active").hasClass("hasFlowsFormat")
                     // At least two dimensions, and one is treatmentMethod:
                     if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("treatmentMethod") && selectedVizHasFlowsFormat) {
@@ -330,15 +330,15 @@ define(['views/common/baseview',
                         event.preventDefault();
                     }
 
+                    // If the selected visualization type is NOT hasFlowsFormat, and dimension == space, show origin/destination toggle:
                     if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("space") && !selectedVizHasFlowsFormat) {
                         $("#origDest-toggle-space").parent().fadeIn();
                         event.preventDefault();
-                    } 
-                    
-                    if (_this.selectedDimensionStrings.includes("space") && selectedVizHasFlowsFormat){
-                        $("#origDest-toggle-space").parent().fadeOut();
                     }
-                    else {
+                    // If the selected visualization type is hasFlowsFormat, and dimension == space, hide origin/destination toggle:                    
+                    if (_this.selectedDimensionStrings.includes("space") && selectedVizHasFlowsFormat) {
+                        $("#origDest-toggle-space").parent().fadeOut();
+                    } else {
                         $("#origDest-toggle-space").parent().fadeIn();
                         event.preventDefault();
                     }
@@ -1044,13 +1044,10 @@ define(['views/common/baseview',
                                 }
                             } catch (renderError) {
                                 console.log("Error during rendering of visualization: " + renderError)
+                                _this.loader.deactivate();
                             }
 
                             //_this.loader.deactivate();
-
-                            // if (options.success) {
-                            //     options.success(flows);
-                            // }
                         },
                         error: function (error) {
                             _this.loader.deactivate();
@@ -1059,6 +1056,10 @@ define(['views/common/baseview',
                         }
                     });
                 }
+                // Automatically remove popover:
+                setTimeout(() => {
+                    $('#apply-filters').popover('dispose');
+                }, 3000);
             },
 
             resetDimAndVizToDefault: function (event) {
