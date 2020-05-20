@@ -447,7 +447,7 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .flowMapToolTip {
-    max-width: 40rem !important;
+   width: 22rem !important;
 }
 
 .flowMapToolTip * {
