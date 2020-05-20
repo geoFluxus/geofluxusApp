@@ -193,7 +193,7 @@ define([
         draw() {
             var _this = this;
             var scale = Math.min(this.scale(), this.maxScale);
-            
+
             this.g.selectAll("*").remove();
             // this.g.selectAll("*")
             //     .transition()
@@ -397,11 +397,25 @@ define([
                         .style("left", (d3.event.pageX - rect.x - window.pageXOffset) + "px")
                         .style("top", (d3.event.pageY - rect.y - 28 - window.pageYOffset) + "px")
                     //d3.select(this).style("fill-opacity", 1);
+
+                    d3.select(this).transition()
+                        .duration(200)
+                        .style("stroke-width", "5px");
+
+                    
+
+
                 })
                 .on("mouseout", function (d) {
                     _this.tooltip.transition()
                         .duration(500)
                         .style("opacity", 0)
+
+
+                    d3.select(this).transition()
+                        .duration(200)
+                        .style("stroke-width", "1px");
+
                     //d3.select(this).style("fill-opacity", d.data.opacity || 1);
                 });
         }
@@ -499,7 +513,7 @@ define([
             let toString = ""
 
             let isOrigin = _.has(nodesData, 'destination');
-            if (isOrigin){
+            if (isOrigin) {
                 fromString = nodesData.name;
                 toString = nodesData.destination.name;
             } else {
