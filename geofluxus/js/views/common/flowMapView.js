@@ -107,7 +107,7 @@ define(['underscore',
 
                     // If the flows are aggregated by geographic region, increase the maximum flow width:
                     if (!this.isActorLevel) {
-                        this.maxFlowWidth = 200;
+                        this.maxFlowWidth = 50;
                     }
 
                     this.flowMap = new FlowMap(this.leafletMap, {
