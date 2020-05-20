@@ -45,12 +45,6 @@ define(['views/common/baseview',
                 this.selectedDimensionStrings = [];
                 this.selectedVizName = "";
 
-                //_.bindAll(this, 'linkSelected');
-                //_.bindAll(this, 'linkDeselected');
-                // _.bindAll(this, 'nodeSelected');
-                // _.bindAll(this, 'nodeDeselected');
-                // _.bindAll(this, 'deselectAll');
-
                 this.areaLevels = new Collection([], {
                     apiTag: 'arealevels',
                     comparator: "level",
@@ -85,25 +79,17 @@ define(['views/common/baseview',
                     trigger: "focus"
                 });
 
-                // this.sankeyWrapper = this.el.querySelector('.sankey-wrapper');
-                // this.sankeyWrapper.addEventListener('linkSelected', this.linkSelected);
-                // this.sankeyWrapper.addEventListener('linkDeselected', this.linkDeselected);
-                // this.sankeyWrapper.addEventListener('nodeSelected', this.nodeSelected);
-                // this.sankeyWrapper.addEventListener('nodeDeselected', this.nodeDeselected);
-                // this.sankeyWrapper.addEventListener('allDeselected', this.deselectAll);
-
-                // Render flow filters
+                // Render flow filters:
                 this.renderFiltersView();
 
+                // Dimension and granularity controls:
                 this.initializeControls();
 
                 this.addEventListeners();
             },
 
             renderFiltersView: function () {
-                var el = this.el.querySelector('#filter-content'),
-                    _this = this;
-
+                var el = this.el.querySelector('#filter-content');
                 this.filtersView = new FiltersView({
                     el: el,
                     template: 'filter-template',
@@ -111,7 +97,6 @@ define(['views/common/baseview',
             },
 
             initializeControls: function () {
-
                 // Dimension controls:
                 this.dimensions.timeToggle = this.el.querySelector('#dim-toggle-time');
                 $(this.dimensions.timeToggle).bootstrapToggle();
@@ -141,9 +126,6 @@ define(['views/common/baseview',
 
                 this.dimensions.materialToggle = this.el.querySelector('#dim-toggle-material');
                 $(this.dimensions.materialToggle).bootstrapToggle();
-
-                // this.dimensions.logisticsToggle = this.el.querySelector('#dim-toggle-logistics');
-                // $(this.dimensions.logisticsToggle).bootstrapToggle();
             },
 
             addEventListeners: function () {
@@ -154,12 +136,10 @@ define(['views/common/baseview',
                     event.preventDefault();
                 });
 
-
                 // Dimension toggles: ---------------------------
 
                 // Show alert if user clicks on disabled dimension toggle:
                 $("#dimensionsCard .toggle.btn").on("click", function (event) {
-
                     let clickedToggle = $($(event.currentTarget)[0]);
                     let isDimensionToggle = $(clickedToggle[0].children[0]).hasClass("dimensionToggle");
 
@@ -351,9 +331,14 @@ define(['views/common/baseview',
                     }
 
                     if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("space") && !selectedVizHasFlowsFormat) {
-                        $("#origDest-toggle-space").parent().fadeOut();
+                        $("#origDest-toggle-space").parent().fadeIn();
                         event.preventDefault();
-                    } else {
+                    } 
+                    
+                    if (_this.selectedDimensionStrings.includes("space") && selectedVizHasFlowsFormat){
+                        $("#origDest-toggle-space").parent().fadeOut();
+                    }
+                    else {
                         $("#origDest-toggle-space").parent().fadeIn();
                         event.preventDefault();
                     }
@@ -1013,8 +998,7 @@ define(['views/common/baseview',
 
                 // Reset all visualizations:
                 this.closeAllVizViews();
-
-                $('#apply-filters').popover('hide');
+                $('#apply-filters').popover('dispose');
 
                 // No visualization has been selected, inform user:
                 if (_this.selectedVizName == "" || _this.selectedDimensions.length == 0) {
@@ -1038,15 +1022,13 @@ define(['views/common/baseview',
                         data: data,
                         body: filterParams,
                         success: function (response) {
-
                             _this.flows = flows.models;
 
                             _this.flows.forEach(function (flow, index) {
                                 this[index] = flow.attributes;
                             }, _this.flows);
 
-
-                            //try {
+                            try {
                                 // Only Parallel Sets requires different processing: 
                                 if (_this.selectedVizName == "parallelsets") {
                                     _this.renderParallelSets(_this.selectedDimensions, _this.flows);
@@ -1060,15 +1042,15 @@ define(['views/common/baseview',
                                             break;
                                     }
                                 }
-                            // } catch (renderError) {
-                            //     console.log("Error during rendering of visualization: " + renderError)
-                            // }
+                            } catch (renderError) {
+                                console.log("Error during rendering of visualization: " + renderError)
+                            }
 
                             //_this.loader.deactivate();
 
-                            if (options.success) {
-                                options.success(flows);
-                            }
+                            // if (options.success) {
+                            //     options.success(flows);
+                            // }
                         },
                         error: function (error) {
                             _this.loader.deactivate();
