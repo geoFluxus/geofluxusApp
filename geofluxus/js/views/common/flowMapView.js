@@ -145,7 +145,7 @@ define(['underscore',
                     resetViewBtn.classList.add("btn-reset-view")
                     resetViewBtn.title = "Reset the map to the original position."
                     resetViewBtn.innerHTML = '<i class="fas fa-undo"></i>';
-                    $(".leaflet-control-zoom.leaflet-bar.leaflet-control").prepend(resetViewBtn);
+                    $(".leaflet-control-zoom.leaflet-bar.leaflet-control").append(resetViewBtn);
                     resetViewBtn.addEventListener('click', function (event) {
                         // _this.toggleAnimation();
                         _this.flowMap.zoomToFit();
@@ -337,7 +337,7 @@ define(['underscore',
                                 return d.color;
                             },
                             height: 100,
-                            width: "600",
+                            width: "800",
                             align: "center",
                             isDarkMode: _this.isDarkMode,
                         });
@@ -486,6 +486,7 @@ define(['underscore',
                         dimensionId: dimensionId,
                         toolTipText: fromToText + description + dimensionValue + '<br><b>Amount: </b>' + amountText,
                         amountText: amountText,
+                        dimensionText: dimensionText,
                     }
 
                 },
@@ -505,25 +506,37 @@ define(['underscore',
                         // NODES
                         // Add the origin and destination to Nodes, and include amounts:
                         originNode.value = flow.amount;
-                        originNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
+                        //originNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
+                        originNode.label = originNode.name;
                         originNode.dimensionValue = linkInfo.dimensionValue;
+                        originNode.dimensionText = linkInfo.dimensionText;
                         originNode.amountText = linkInfo.amountText
                         originNode.opacity = nodeOpacity;
 
+                       
+
                         destinationNode.value = flow.amount;
-                        destinationNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
+                        //destinationNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
+                        destinationNode.label = destinationNode.name;
                         destinationNode.dimensionValue = linkInfo.dimensionValue;
+                        destinationNode.dimensionText = linkInfo.dimensionText;
                         destinationNode.amountText = linkInfo.amountText
                         destinationNode.opacity = nodeOpacity;
 
                         nodes.push(originNode, destinationNode)
 
                         // LINKS
-                        link.source = this[index].origin.id;
-                        link.target = this[index].destination.id;
-                        link.value = this[index].amount;
+                        link.source = originNode.id;
+                        link.sourceName = originNode.name;
+                        link.target = destinationNode.id;
+                        link.targetName = destinationNode.name;
+
+                        link.value = flow.amount;
                         link.dimensionId = linkInfo.dimensionId;
-                        link.label = linkInfo.toolTipText;
+                        
+                        //link.label = linkInfo.toolTipText;
+                        link.amountText = linkInfo.amountText;
+                        link.dimensionText = linkInfo.dimensionText;
                         link.dimensionValue = linkInfo.dimensionValue;
                         links.push(link)
 

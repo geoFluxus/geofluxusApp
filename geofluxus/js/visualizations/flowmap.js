@@ -274,14 +274,14 @@ define([
                         }
                     ];
                     var path = _this.drawPath(
-                        coords, flow.label, flow.color, strokeWidth, options
+                        coords, flow, flow.color, strokeWidth, options
                     );
                     // workaround for mouseover very thin lines
                     // put invisible line on top (with mouseover)
                     if (!_this.animate && strokeWidth < 7) {
                         options.opacity = 0;
                         var bufferedPath = _this.drawPath(
-                            coords, flow.label, flow.color, 7, options
+                            coords, flow, flow.color, 7, options
                         );
                     }
 
@@ -317,7 +317,7 @@ define([
                         if (_this.hideTags[first.tag]) return;
                         // calculate radius by value, if radius is not given
                         var radius = Math.max(5, first.radius || calcRadius(first.value));
-                        _this.addPoint(x, y, first.label, first.innerLabel, first.color, radius, first.opacity);
+                        _this.addPoint(x, y, first, first.innerLabel, first.color, radius, first.opacity);
 
                     } else {
                         // Multiple nodes at same position -> create Piechart
@@ -413,11 +413,8 @@ define([
         }
 
         //function to add source nodes to the map
-        addPoint(x, y, label, innerLabel, color, radius, opacity) {
+        addPoint(x, y, node, innerLabel, color, radius, opacity) {
             var _this = this;
-
-
-            //radius = 5;
 
             var point = this.g.append("g").attr("class", "node");
             point.append("circle")
@@ -434,7 +431,7 @@ define([
                     _this.tooltip.transition()
                         .duration(200)
                         .style("opacity", 0.9);
-                    _this.tooltip.html(label)
+                    _this.tooltip.html(_this.getPointTooltipString(node))
                         .style("left", (d3.event.pageX - rect.x - window.pageXOffset) + "px")
                         .style("top", (d3.event.pageY - rect.y - 28 - window.pageYOffset) + "px");
                     d3.select(this).style("fill-opacity", 1);
@@ -445,17 +442,66 @@ define([
                         .style("opacity", 0)
                     d3.select(this).style("fill-opacity", opacity);
                 });
-            point.append("text")
-                .attr("x", x)
-                .attr("y", y + 5)
-                .attr("text-anchor", "middle")
-                .style("font-size", "14px")
-                .attr('fill', 'white')
-                .text(innerLabel || "");
+
+            // Show names of nodes in text on map:
+            //     innerLabel = node.name;
+            // point.append("text")
+            //     .attr("x", x)
+            //     .attr("y", y + 5)
+            //     .attr("text-anchor", "middle")
+            //     .style("font-size", "14px")
+            //     .attr('fill', 'white')
+            //     .text(innerLabel || "");
+        }
+
+        getPointTooltipString(input) {
+            return `<div class="d3plus-tooltip flowMapToolTip" x-placement="top">
+                <div class="d3plus-tooltip-title">
+                    ` + input.name + `
+                </div>
+                <div class="d3plus-tooltip-body">
+                </div>
+                <table class="d3plus-tooltip-table">
+                    <thead class="d3plus-tooltip-thead"></thead>
+                    <tbody class="d3plus-tooltip-tbody">
+                        <tr>
+                            <td>Waste</td>
+                            <td>` + input.amountText + `</td>
+                        </tr>
+                        <tr>
+                            <td>` + input.dimensionText + `</td>
+                            <td>` + input.dimensionValue + `</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>`
+        }
+
+        getLinkTooltipString(flow) {
+            return `<div class="d3plus-tooltip flowMapToolTip" x-placement="top">
+                <div class="d3plus-tooltip-title">
+                    ` + flow.sourceName + ' &#10132; ' + flow.targetName + `
+                </div>
+                <div class="d3plus-tooltip-body">
+                </div>
+                <table class="d3plus-tooltip-table">
+                    <thead class="d3plus-tooltip-thead"></thead>
+                    <tbody class="d3plus-tooltip-tbody">
+                        <tr>
+                            <td>Waste</td>
+                            <td>` + flow.amountText + `</td>
+                        </tr>
+                        <tr>
+                            <td>` + flow.dimensionText + `</td>
+                            <td>` + flow.dimensionValue + `</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>`
         }
 
         // function to draw actual paths for the directed quantity flows
-        drawPath(points, label, color, strokeWidth, options) {
+        drawPath(points, flow, color, strokeWidth, options) {
             var _this = this,
                 options = options || {};
             //var line = d3.svg.line()
@@ -500,7 +546,7 @@ define([
                     _this.tooltip.transition()
                         .duration(200)
                         .style("opacity", 0.925);
-                    _this.tooltip.html(label)
+                    _this.tooltip.html(_this.getLinkTooltipString(flow))
                         .style("left", (d3.event.pageX - rect.x - window.pageXOffset) + "px")
                         .style("top", (d3.event.pageY - rect.y - 28 - window.pageYOffset) + "px")
                     path.attr("stroke-opacity", 1)

@@ -416,7 +416,7 @@ textarea.textarea-autosize.form-control-sm {
 
 .flowmap-d3pluslegend {
     height: 100px;
-    width: 600px;
+    width: 800px;
     border-radius: 18px;
     overflow: visible;
 }
@@ -447,7 +447,11 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .flowMapToolTip {
-    max-width: 35rem;
+    max-width: 40rem !important;
+}
+
+.flowMapToolTip * {
+    font-size: small;
 }
 
 .d3plus-tooltip div {
@@ -545,16 +549,19 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .icon-toggle-flowmap-flows {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
+    margin-top: 2.5px;
     background-image: url("../img/flowmap-flows.svg");
 }
 
 .icon-toggle-flowmap-nodes {
     background-image: url("../img/flowmap-nodes.svg");
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
+    margin-top: 2.5px;
 }
+
 .icon-toggle-flowmap-animation {
     background-image: url("../img/flowmap-animation.svg");
     width: 20px;
@@ -607,6 +614,8 @@ textarea.textarea-autosize.form-control-sm {
 
 .leaflet-control-zoom .btn-reset-view i {
     font-size: medium;
+    bottom: 0.1rem;
+    position: relative;
 }
 
 .leaflet-control-fullscreen a {
@@ -784,10 +793,6 @@ textarea.textarea-autosize.form-control-sm {
 .flowMapToolTip,
 .d3-tip {
     font-family: 'Montserrat', sans-serif !important;
-}
-
-.flowMapToolTip {
-    padding: 1rem !important;
 }
 
 .d3-tip h1 {
