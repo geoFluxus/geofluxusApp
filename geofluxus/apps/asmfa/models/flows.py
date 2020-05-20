@@ -9,6 +9,7 @@ from geofluxus.apps.asmfa.models import (Waste06,
 from django.db.models import (Q, ExpressionWrapper, F, FloatField,
                               OuterRef, Subquery)
 from django.contrib.gis.db import models as gis
+from django.contrib.gis.db.models.functions import Length
 
 
 # Routing
@@ -17,6 +18,11 @@ from django.contrib.gis.db import models as gis
 class RoutingManager(models.Manager):
     @staticmethod
     def update_flows(created):
+        # compute distance
+        ids = [c.id for c in created]
+        routings = Routing.objects.filter(id__in=ids)
+        routings.update(distance=Length(F('geom')))
+
         queryset = Flow.objects
         for c in created:
             # fetch all flows with origin / destination & update
