@@ -51,8 +51,8 @@ class Routing(models.Model):
     distance = models.FloatField(default=0)
 
     def __str__(self):
-        return '{} : {}'.format(self.origin,
-                                self.destination)
+        return '{} -> {}'.format(self.origin,
+                                 self.destination)
 
 
 # Vehicle
@@ -176,7 +176,6 @@ class Flow(models.Model):
         return "{} : {} -> {}".format(self.flowchain,
                                       self.origin,
                                       self.destination)
-
 
 # MaterialInChain
 class MaterialInChain(models.Model):

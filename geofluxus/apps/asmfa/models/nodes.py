@@ -19,6 +19,9 @@ class Activity(models.Model):
     activitygroup = models.ForeignKey(ActivityGroup,
                                       on_delete=models.CASCADE)
 
+    class Meta:
+        verbose_name_plural = 'activities'
+
     def __str__(self):
         return '{} - {}'.format(self.nace, self.name)
 
@@ -39,6 +42,9 @@ class Process(models.Model):
     processgroup = models.ForeignKey(ProcessGroup,
                                      on_delete=models.CASCADE)
 
+    class Meta:
+        verbose_name_plural = 'processes'
+
     def __str__(self):
         return '{} - {}'.format(self.code, self.name)
 
@@ -47,6 +53,9 @@ class Process(models.Model):
 class Company(models.Model):
     name = models.CharField(max_length=255)
     identifier = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name_plural = 'companies'
 
     def __str__(self):
         return self.name
