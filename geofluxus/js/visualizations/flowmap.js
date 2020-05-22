@@ -67,7 +67,7 @@ define([
             this.path = d3.geoPath().projection(transform);
 
             // Tooltip
-            this.tooltip = d3.select(options.toolTipContainer)
+            this.tooltip = d3.select("body")
                 .append("div")
                 .attr("class", "flowMapToolTipContainer")
                 .style("opacity", 0);
@@ -107,6 +107,7 @@ define([
         }
 
         resetBbox(bbox) {
+            console.log(bbox)
             if (bbox) this.bbox = bbox;
             if (!this.bbox) return;
             var topLeft = this.projection(this.bbox[0]),
@@ -133,8 +134,8 @@ define([
         addNodes(nodes) {
             var _this = this,
                 // boundingbox
-                topLeft = [10000, 0],
-                bottomRight = [0, 10000];
+                topLeft = [3, 54],
+                bottomRight = [8, 50];
             nodes.forEach(function (node) {
                 // collect nodes with same position
                 var pos = node.lat + '-' + node.lon;
@@ -397,8 +398,8 @@ define([
                 })
                 .on("mousemove", function () {
                     _this.tooltip
-                        .style("top", (d3.event.pageY - 1600) + "px")
-                        .style("left", (d3.event.pageX - 220) + "px")
+                        .style('top', (d3.event.pageY - _this.tooltip.node().getBoundingClientRect().height) + 'px')
+                        .style('left', (d3.event.pageX - (_this.tooltip.node().getBoundingClientRect().width / 2)) + 'px');
                 })
                 .on("mouseout", function (d) {
                     // Fade out tooltip
@@ -444,8 +445,8 @@ define([
                 })
                 .on("mousemove", function () {
                     _this.tooltip
-                        .style("top", (d3.event.pageY - 1551) + "px")
-                        .style("left", (d3.event.pageX - 210) + "px")
+                        .style('top', (d3.event.pageY - _this.tooltip.node().getBoundingClientRect().height) + 'px')
+                        .style('left', (d3.event.pageX - (_this.tooltip.node().getBoundingClientRect().width / 2)) + 'px');
                 })
                 .on("mouseout", function (d) {
                     _this.tooltip.transition()
@@ -602,6 +603,7 @@ define([
                     d3.select(this).style("cursor", "pointer");
                     // Hover effect for path:
                     path.attr("stroke-opacity", 1)
+
                     // Show and fill tooltip:  
                     _this.tooltip
                         .html(_this.getLinkTooltipString(flow))
@@ -611,8 +613,8 @@ define([
                 })
                 .on("mousemove", function () {
                     _this.tooltip
-                        .style("left", (d3.mouse(this)[0] - 170) + "px")
-                        .style("top", (d3.mouse(this)[1] - 100) + "px")
+                        .style('top', (d3.event.pageY - _this.tooltip.node().getBoundingClientRect().height) + 'px')
+                        .style('left', (d3.event.pageX - (_this.tooltip.node().getBoundingClientRect().width / 2)) + 'px');
                 })
                 .on("mouseout", function () {
                     _this.tooltip.transition()

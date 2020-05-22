@@ -266,7 +266,9 @@ define(['underscore',
                     // Smooth scroll to top of Viz after rendering
                     setTimeout(() => {
                         $("#apply-filters")[0].scrollIntoView({
-                            behavior: "smooth"
+                            behavior: "smooth",
+                            block: "start",
+                            inline: "nearest"
                         });
                     }, 500);
                     this.options.flowsView.loader.deactivate();
@@ -543,7 +545,7 @@ define(['underscore',
 
                         link.value = flow.amount;
                         link.dimensionId = linkInfo.dimensionId;
-                        
+
                         //link.label = linkInfo.toolTipText;
                         link.amountText = linkInfo.amountText;
                         link.dimensionText = linkInfo.dimensionText;

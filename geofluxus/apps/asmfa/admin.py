@@ -1,22 +1,26 @@
 from django.contrib import admin
+from django.contrib.admin import ModelAdmin, TabularInline
+from django.contrib.gis.admin import GeoModelAdmin
+from django.db.models.functions import Lower
+from django.apps import apps
 from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Activity,
+                                         ProcessGroup,
+                                         Process,
                                          Company,
                                          Actor,
-                                         Process,
-                                         ProcessGroup,
                                          Waste02,
                                          Waste04,
                                          Waste06,
+                                         Material,
+                                         Product,
+                                         Composite,
                                          Year,
                                          Month,
-                                         Material,
-                                         MaterialInChain,
-                                         Product,
-                                         ProductInChain,
-                                         Composite,
-                                         CompositeInChain,
                                          FlowChain,
+                                         MaterialInChain,
+                                         ProductInChain,
+                                         CompositeInChain,
                                          Flow,
                                          Classification,
                                          ExtraDescription,
@@ -26,119 +30,114 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          PublicationType,
                                          Routing,
                                          Vehicle)
-from django.contrib.admin import ModelAdmin, TabularInline
-from django.contrib.gis.admin import GeoModelAdmin
-from django.db.models.functions import Lower
 
 
-# Register your models here.
-# Activity Group
-class ActivityGroupAdmin(ModelAdmin):
-    search_fields = ['code']
+# Custom Admin
+# supports non-geo and geo models
+class CustomAdmin(GeoModelAdmin):
+    # minimum pagination for faster loading
+    list_per_page = 10
+
+    def __init__(self, model, admin_site):
+        super().__init__(model, admin_site)
+        self.get_raw_id_fields()
+
+    # avoid loading all instances of foreign key models
+    # as dropdown lists in admin site
+    def get_raw_id_fields(self):
+        foreign_keys = []
+        fields = self.model._meta.fields
+        for field in fields:
+            if field.get_internal_type() == 'ForeignKey':
+                foreign_keys.append(field.name)
+        self.raw_id_fields = tuple(foreign_keys)
 
     def get_ordering(self, request):
-        return ['code']
-admin.site.register(ActivityGroup, ActivityGroupAdmin)
+        return self.search_fields
+
+
+# Activity Group
+@admin.register(ActivityGroup)
+class ActivityGroupAdmin(CustomAdmin):
+    search_fields = ['code']
+
 
 # Activity
-class ActivityAdmin(ModelAdmin):
+@admin.register(Activity)
+class ActivityAdmin(CustomAdmin):
     search_fields = ['nace']
 
-    def get_ordering(self, request):
-        return ['nace']
-admin.site.register(Activity, ActivityAdmin)
-
-# Company
-class CompanyAdmin(ModelAdmin):
-    search_fields = ['name']
-
-    def get_ordering(self, request):
-        return [Lower('name')]
-admin.site.register(Company, CompanyAdmin)
-
-# Actor
-class ActorAdmin(GeoModelAdmin):
-    search_fields = ['identifier']
-
-    def get_ordering(self, request):
-        return [Lower('identifier')]
-admin.site.register(Actor, ActorAdmin)
 
 # ProcessGroup
-class ProgressGroupAdmin(ModelAdmin):
+@admin.register(ProcessGroup)
+class ProcessGroupAdmin(CustomAdmin):
     search_fields = ['code']
 
-    def get_ordering(self, request):
-        return ['code']
-admin.site.register(ProcessGroup, ProgressGroupAdmin)
 
 # Process
-class ProgressAdmin(ModelAdmin):
+@admin.register(Process)
+class ProgressAdmin(CustomAdmin):
     search_fields = ['code']
 
-    def get_ordering(self, request):
-        return ['code']
-admin.site.register(Process, ProgressGroupAdmin)
+
+# Company
+@admin.register(Company)
+class CompanyAdmin(CustomAdmin):
+    search_fields = ['name']
+
+# Actor
+@admin.register(Actor)
+class ActorAdmin(CustomAdmin):
+    search_fields = ['identifier']
+
 
 # Waste02
-class Waste02Admin(ModelAdmin):
+@admin.register(Waste02)
+class Waste02Admin(CustomAdmin):
     search_fields = ['ewc_code', 'ewc_name']
 
-    def get_ordering(self, request):
-        return ['ewc_code']
-admin.site.register(Waste02, Waste02Admin)
 
 # Waste04
-class Waste04Admin(ModelAdmin):
+@admin.register(Waste04)
+class Waste04Admin(CustomAdmin):
     search_fields = ['ewc_code', 'ewc_name']
 
-    def get_ordering(self, request):
-        return ['ewc_code']
-admin.site.register(Waste04, Waste04Admin)
 
 # Waste06
-class Waste06Admin(ModelAdmin):
+@admin.register(Waste06)
+class Waste06Admin(CustomAdmin):
     search_fields = ['ewc_code', 'ewc_name']
 
-    def get_ordering(self, request):
-        return ['ewc_code']
-admin.site.register(Waste06, Waste06Admin)
 
 # Material
-class MaterialAdmin(ModelAdmin):
+@admin.register(Material)
+class MaterialAdmin(CustomAdmin):
     search_fields = ['name']
 
-    def get_ordering(self, request):
-        return [Lower('name')]
-admin.site.register(Material, MaterialAdmin)
 
 # Product
-class ProductAdmin(ModelAdmin):
+@admin.register(Product)
+class ProductAdmin(CustomAdmin):
     search_fields = ['name']
 
-    def get_ordering(self, request):
-        return [Lower('name')]
-admin.site.register(Product, ProductAdmin)
 
 # Composite
-class CompositeAdmin(ModelAdmin):
+@admin.register(Composite)
+class CompositeAdmin(CustomAdmin):
     search_fields = ['name']
 
-    def get_ordering(self, request):
-        return [Lower('name')]
-admin.site.register(Composite, CompositeAdmin)
 
 # Year
-class YearAdmin(ModelAdmin):
-    def get_ordering(self, request):
-        return ['code']
-admin.site.register(Year, YearAdmin)
+@admin.register(Year)
+class YearAdmin(CustomAdmin):
+    search_fields = ['code']
+
 
 # Month
-class MonthAdmin(ModelAdmin):
-    def get_ordering(self, request):
-        return ['year__code', 'code']
-admin.site.register(Month, MonthAdmin)
+@admin.register(Month)
+class MonthAdmin(CustomAdmin):
+    search_fields = ['year__code', 'code']
+
 
 # Flowchain
 class MaterialInChainInline(TabularInline):
@@ -150,57 +149,54 @@ class ProductInChainInline(TabularInline):
 class CompositeInChainInline(TabularInline):
     model = CompositeInChain
 
-class FlowChainAdmin(ModelAdmin):
+@admin.register(FlowChain)
+class FlowChainAdmin(CustomAdmin):
     inlines = (MaterialInChainInline,
                ProductInChainInline,
                CompositeInChainInline)
     search_fields = ['identifier']
 
-    def get_ordering(self, request):
-        return [Lower('identifier')]
-admin.site.register(FlowChain, FlowChainAdmin)
 
 # Flow
-class FlowAdmin(ModelAdmin):
+@admin.register(Flow)
+class FlowAdmin(CustomAdmin):
     search_fields = ['flowchain__identifier']
 
-    def get_ordering(self, request):
-        return [Lower('flowchain__identifier')]
-admin.site.register(Flow, FlowAdmin)
 
 # Classification
-class ClassificationAdmin(ModelAdmin):
+@admin.register(Classification)
+class ClassificationAdmin(CustomAdmin):
     search_fields = ['flowchain__identifier']
 
-    def get_ordering(self, request):
-        return [Lower('flowchain__identifier')]
-admin.site.register(Classification, ClassificationAdmin)
 
 # ExtraDescription
-class ExtraDescriptionAdmin(ModelAdmin):
+@admin.register(ExtraDescription)
+class ExtraDescriptionAdmin(CustomAdmin):
     search_fields = ['flowchain__identifier']
 
-    def get_ordering(self, request):
-        return [Lower('flowchain__identifier')]
-admin.site.register(ExtraDescription, ExtraDescriptionAdmin)
 
 # AdminLevel
-class AdminLevelAdmin(ModelAdmin):
+@admin.register(AdminLevel)
+class AdminLevelAdmin(CustomAdmin):
     search_fields = ['name']
 
-    def get_ordering(self, request):
-        return [Lower('name')]
-admin.site.register(AdminLevel, AdminLevelAdmin)
 
 # Area
-class AreaAdmin(GeoModelAdmin):
+@admin.register(Area)
+class AreaAdmin(CustomAdmin):
     search_fields = ['name']
 
-    def get_ordering(self, request):
-        return[Lower('name')]
-admin.site.register(Area, AreaAdmin)
 
-admin.site.register(Publication)
-admin.site.register(PublicationType)
-admin.site.register(Routing, GeoModelAdmin)
-admin.site.register(Vehicle)
+admin.site.register(Publication, CustomAdmin)
+admin.site.register(PublicationType, CustomAdmin)
+
+# Routing
+@admin.register(Routing)
+class RoutingAdmin(CustomAdmin):
+    search_fields = ['origin__identifier',
+                     'destination__identifier']
+
+# Vehicle
+@admin.register(Vehicle)
+class VehicleAdmin(CustomAdmin):
+    search_fields = ['name']
