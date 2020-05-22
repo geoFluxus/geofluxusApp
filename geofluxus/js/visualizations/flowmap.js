@@ -109,6 +109,7 @@ define([
         }
 
         resetBbox(bbox) {
+            console.log(bbox)
             if (bbox) this.bbox = bbox;
             if (!this.bbox) return;
             var topLeft = this.projection(this.bbox[0]),
@@ -136,8 +137,8 @@ define([
         addNodes(nodes) {
             var _this = this,
                 // boundingbox
-                topLeft = [10000, 0],
-                bottomRight = [0, 10000];
+                topLeft = [3, 54],
+                bottomRight = [8, 50];
             nodes.forEach(function (node) {
                 // collect nodes with same position
                 var pos = node.lat + '-' + node.lon;
