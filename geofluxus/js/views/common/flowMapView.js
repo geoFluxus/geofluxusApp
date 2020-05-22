@@ -524,12 +524,14 @@ define(['underscore',
                         originNode.dimensionText = linkInfo.dimensionText;
                         originNode.amountText = linkInfo.amountText
                         originNode.opacity = nodeOpacity;
+                        originNode.displayNode = _this.dimensionIsOrigin;
 
                         destinationNode.value = flow.amount;
                         destinationNode.dimensionValue = linkInfo.dimensionValue;
                         destinationNode.dimensionText = linkInfo.dimensionText;
                         destinationNode.amountText = linkInfo.amountText
                         destinationNode.opacity = nodeOpacity;
+                        destinationNode.displayNode = !_this.dimensionIsOrigin;
 
                         // Store info of source/destination as prop:
                         originNode.destination = destinationNode;

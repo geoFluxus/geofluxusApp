@@ -318,7 +318,11 @@ define([
                         if (_this.hideTags[first.tag]) return;
                         // calculate radius by value, if radius is not given
                         var radius = Math.max(3, first.radius || calcRadius(first.value));
-                        _this.addPoint(x, y, first, first.color, radius, first.opacity);
+
+                        // Only show node if displayNode == true
+                        if (first.displayNode) {
+                            _this.addPoint(x, y, first, first.color, radius, first.opacity);
+                        }
 
                     } else {
                         // Multiple nodes at same position -> create Piechart
@@ -327,9 +331,12 @@ define([
                             total = 0;
 
                         nodesToShow.forEach(function (node) {
-                            total += node.value;
-                            radius += node.radius || 0;
-                            data.push(node)
+                            // Only show node if displayNode == true
+                            if (node.displayNode) {
+                                total += node.value;
+                                radius += node.radius || 0;
+                                data.push(node)
+                            }
                         })
                         radius = Math.max(3, (radius + calcRadius(total)) * scaleFactor);
 
