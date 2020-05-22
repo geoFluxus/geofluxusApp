@@ -398,8 +398,8 @@ define([
                 })
                 .on("mousemove", function () {
                     _this.tooltip
-                        .style("top", (d3.event.pageY - 1600) + "px")
-                        .style("left", (d3.event.pageX - 220) + "px")
+                        .style('top', (d3.event.pageY - _this.tooltip.node().getBoundingClientRect().height) + 'px')
+                        .style('left', (d3.event.pageX - (_this.tooltip.node().getBoundingClientRect().width / 2)) + 'px');
                 })
                 .on("mouseout", function (d) {
                     // Fade out tooltip
@@ -445,8 +445,8 @@ define([
                 })
                 .on("mousemove", function () {
                     _this.tooltip
-                        .style("top", (d3.event.pageY - 1551) + "px")
-                        .style("left", (d3.event.pageX - 210) + "px")
+                        .style('top', (d3.event.pageY - _this.tooltip.node().getBoundingClientRect().height) + 'px')
+                        .style('left', (d3.event.pageX - (_this.tooltip.node().getBoundingClientRect().width / 2)) + 'px');
                 })
                 .on("mouseout", function (d) {
                     _this.tooltip.transition()
@@ -613,14 +613,8 @@ define([
                 })
                 .on("mousemove", function () {
                     _this.tooltip
-                        // .style("top", (d3.mouse(this)[1] - 100) + "px")
-                        // .style("left", (d3.mouse(this)[0] - 170) + "px")
-                        .style('top', (d3.event.pageY - 100) + 'px')
-                        .style('left', (d3.event.pageX - 180 )+ 'px');
-                        
-                        console.log("Top: d3.mouse(this)[1]", d3.mouse(this)[1])
-                        console.log("Top: d3.event.pageY", d3.event.pageY)
-
+                        .style('top', (d3.event.pageY - _this.tooltip.node().getBoundingClientRect().height) + 'px')
+                        .style('left', (d3.event.pageX - (_this.tooltip.node().getBoundingClientRect().width / 2)) + 'px');
                 })
                 .on("mouseout", function () {
                     _this.tooltip.transition()
