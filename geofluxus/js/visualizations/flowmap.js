@@ -59,19 +59,17 @@ define([
                 this.stream.point(point.x, point.y);
             }
 
-            // var transform = d3.geo.transform({point: projectPoint}); // old version of D3
             var transform = d3.geoTransform({
                 point: projectPoint
             });
 
             this.overlay = map.getPanes().overlayPane;
-            //this.path = d3.geo.path().projection(transform);  // old version of D3
             this.path = d3.geoPath().projection(transform);
 
-            // tooltip
-            this.tooltip = d3.select(this.overlay)
+            // Tooltip
+            this.tooltip = d3.select(options.toolTipContainer)
                 .append("div")
-                .attr("class", "flowMapToolTip")
+                .attr("class", "flowMapToolTipContainer")
                 .style("opacity", 0);
 
             this.svg = d3.select(this.overlay).append("svg");
@@ -96,7 +94,7 @@ define([
             this.hideTags = {};
         }
 
-        // fit svg layer to map
+        // Fit svg layer to map
         resetView() {
             this.svg.node().style.visibility = 'visible';
 
@@ -126,7 +124,6 @@ define([
         // remove all prev. drawn flows and nodes
         clear() {
             this.g.selectAll("*").remove();
-
 
             this.nodesData = {};
             this.nodesPos = {};
@@ -194,7 +191,7 @@ define([
         draw() {
             var _this = this;
             var scale = Math.min(this.scale(), this.maxScale);
-            
+
             this.g.selectAll("*").remove();
             // this.g.selectAll("*")
             //     .transition()
@@ -226,7 +223,7 @@ define([
                         console.log('Warning: missing actor for flow');
                         return;
                     }
-                    // smaller dots for animation
+                    // Smaller dots for animation
                     var maxFlowWidth = (_this.animate && _this.dottedLines) ? 20 : _this.maxFlowWidth,
                         minFlowWidth = (_this.animate && _this.dottedLines) ? 2 : _this.minFlowWidth,
                         normFactor = maxFlowWidth / _this.maxFlowValue;
@@ -251,7 +248,7 @@ define([
                         if (_this.dottedLines) {
                             var dashLength = 0,
                                 dashGaps = strokeWidth * 3;
-                            // the smaller the flow value the bigger the gaps
+                            // The smaller the flow value, the bigger the gaps
                             dashGaps += 50 - 50 * flow.value / _this.maxFlowValue;
                             var offset = Math.floor(Math.random() * dashGaps);
                             dash = {
@@ -281,8 +278,7 @@ define([
                     var path = _this.drawPath(
                         coords, flow, flow.color, strokeWidth, options
                     );
-                    // workaround for mouseover very thin lines
-                    // put invisible line on top (with mouseover)
+                    // Workaround for mouseover very thin lines: put invisible line on top (with mouseover)
                     if (!_this.animate && strokeWidth < 7) {
                         options.opacity = 0;
                         var bufferedPath = _this.drawPath(
@@ -296,7 +292,7 @@ define([
             };
 
             function calcRadius(value) {
-                return 5 + 50 * Math.pow(value / _this.totalNodeValue, 0.5);
+                return 3 + 50 * Math.pow(value / _this.totalNodeValue, 0.5);
             }
             var maxNodeRadius = calcRadius(this.maxNodeValue);
             var scaleFactor = (maxNodeRadius > 60) ? 60 / maxNodeRadius : 1
@@ -321,25 +317,21 @@ define([
                     if (nodesToShow.length === 1) {
                         if (_this.hideTags[first.tag]) return;
                         // calculate radius by value, if radius is not given
-                        var radius = Math.max(5, first.radius || calcRadius(first.value));
-                        _this.addPoint(x, y, first, first.innerLabel, first.color, radius, first.opacity);
+                        var radius = Math.max(3, first.radius || calcRadius(first.value));
+                        _this.addPoint(x, y, first, first.color, radius, first.opacity);
 
                     } else {
                         // Multiple nodes at same position -> create Piechart
                         var data = [],
-                            label = '',
                             radius = 0,
                             total = 0;
 
                         nodesToShow.forEach(function (node) {
                             total += node.value;
                             radius += node.radius || 0;
-                            label += node.label + '<br>';
-
-                            //label = 
                             data.push(node)
                         })
-                        radius = Math.max(5, (radius + calcRadius(total)) * scaleFactor);
+                        radius = Math.max(3, (radius + calcRadius(total)) * scaleFactor);
 
 
                         _this.addPieChart(x, y, radius, data)
@@ -390,25 +382,42 @@ define([
                 .style("pointer-events", 'all')
                 .on("mouseover", function (d) {
                     d3.select(this).style("cursor", "pointer");
-                    var rect = _this.overlay.getBoundingClientRect();
-                    _this.tooltip.transition()
+
+                    // On hover over Pie slice, highlight slice border:
+                    d3.select(this).transition()
                         .duration(200)
-                        .style("opacity", 0.9);
-                    _this.tooltip.html(_this.getPieChartTooltipString(d.data))
-                        .style("left", (d3.event.pageX - rect.x - window.pageXOffset) + "px")
-                        .style("top", (d3.event.pageY - rect.y - 28 - window.pageYOffset) + "px")
-                    //d3.select(this).style("fill-opacity", 1);
+                        .style("stroke-width", "5px");
+
+                    // Fill and show tooltip:
+                    _this.tooltip
+                        .html(_this.getPieChartTooltipString(d.data))
+                        .transition()
+                        .duration(200)
+                        .style("opacity", 0.925)
+
+                })
+                .on("mousemove", function () {
+                    _this.tooltip
+                        .style("top", (d3.event.pageY - 1600) + "px")
+                        .style("left", (d3.event.pageX - 220) + "px")
                 })
                 .on("mouseout", function (d) {
+                    // Fade out tooltip
                     _this.tooltip.transition()
                         .duration(500)
                         .style("opacity", 0)
+
+                    // Reset hover effect for Pie slice:
+                    d3.select(this).transition()
+                        .duration(200)
+                        .style("stroke-width", "1px");
+
                     //d3.select(this).style("fill-opacity", d.data.opacity || 1);
                 });
         }
 
         //function to add source nodes to the map
-        addPoint(x, y, node, innerLabel, color, radius, opacity) {
+        addPoint(x, y, node, color, radius, opacity) {
             var _this = this;
 
             var point = this.g.append("g").attr("class", "node");
@@ -422,20 +431,31 @@ define([
                 .style("stroke-width", 1)
                 .on("mouseover", function (d) {
                     d3.select(this).style("cursor", "pointer");
-                    var rect = _this.overlay.getBoundingClientRect();
-                    _this.tooltip.transition()
+
+                    // On hover over Point, highlight border:
+                    d3.select(this).transition()
                         .duration(200)
-                        .style("opacity", 0.9);
-                    _this.tooltip.html(_this.getPointTooltipString(node))
-                        .style("left", (d3.event.pageX - rect.x - window.pageXOffset) + "px")
-                        .style("top", (d3.event.pageY - rect.y - 28 - window.pageYOffset) + "px");
-                    d3.select(this).style("fill-opacity", 1);
+                        .style("stroke-width", "5px");
+
+                    _this.tooltip
+                        .html(_this.getPointTooltipString(node))
+                        .transition()
+                        .duration(200)
+                        .style("opacity", 0.925);
+                })
+                .on("mousemove", function () {
+                    _this.tooltip
+                        .style("top", (d3.event.pageY - 1551) + "px")
+                        .style("left", (d3.event.pageX - 210) + "px")
                 })
                 .on("mouseout", function (d) {
                     _this.tooltip.transition()
                         .duration(500)
                         .style("opacity", 0)
-                    d3.select(this).style("fill-opacity", opacity);
+
+                    d3.select(this).transition()
+                        .duration(200)
+                        .style("stroke-width", "1px");
                 });
 
             // Show names of nodes in text on map:
@@ -450,7 +470,7 @@ define([
         }
 
         getPointTooltipString(input) {
-            return `<div class="d3plus-tooltip flowMapToolTip" x-placement="top">
+            return `<div class="d3plus-tooltip flowMapToolTip pointToolTIp" x-placement="top">
                 <div class="d3plus-tooltip-title">
                     ` + input.name + `
                 </div>
@@ -458,7 +478,7 @@ define([
                 </div>
                 <table class="d3plus-tooltip-table">
                     <thead class="d3plus-tooltip-thead"></thead>
-                    <tbody class="d3plus-tooltip-tbody">
+                    <tbody class="d3plus-tooltip-tbody style='display: block; padding-bottom: 0.5rem;'">
                         <tr>
                             <td>Waste</td>
                             <td>` + input.amountText + `</td>
@@ -473,7 +493,7 @@ define([
         }
 
         getLinkTooltipString(flow) {
-            return `<div class="d3plus-tooltip flowMapToolTip" x-placement="top">
+            return `<div class="d3plus-tooltip flowMapToolTip linkToolTip" x-placement="top">
                 <div class="d3plus-tooltip-title">
                     ` + flow.sourceName + ' &#10132; ' + flow.targetName + `
                 </div>
@@ -500,7 +520,7 @@ define([
             let toString = ""
 
             let isOrigin = _.has(nodesData, 'destination');
-            if (isOrigin){
+            if (isOrigin) {
                 fromString = nodesData.name;
                 toString = nodesData.destination.name;
             } else {
@@ -508,7 +528,7 @@ define([
                 toString = nodesData.name;
             }
 
-            return `<div class="d3plus-tooltip flowMapToolTip" x-placement="top">
+            return `<div class="d3plus-tooltip flowMapToolTip pieChartTooltip" x-placement="top">
                 <div class="d3plus-tooltip-title">
                     ` + nodesData.name + `
                 </div>
@@ -581,14 +601,19 @@ define([
                 .on("mouseover", function () {
                     d3.select(this).node().parentNode.appendChild(this);
                     d3.select(this).style("cursor", "pointer");
-                    var rect = _this.overlay.getBoundingClientRect();
-                    _this.tooltip.transition()
+                    // Hover effect for path:
+                    path.attr("stroke-opacity", 1)
+                    // Show and fill tooltip:  
+                    _this.tooltip
+                        .html(_this.getLinkTooltipString(flow))
+                        .transition()
                         .duration(200)
                         .style("opacity", 0.925);
-                    _this.tooltip.html(_this.getLinkTooltipString(flow))
-                        .style("left", (d3.event.pageX - rect.x - window.pageXOffset) + "px")
-                        .style("top", (d3.event.pageY - rect.y - 28 - window.pageYOffset) + "px")
-                    path.attr("stroke-opacity", 1)
+                })
+                .on("mousemove", function () {
+                    _this.tooltip
+                        .style("left", (d3.mouse(this)[0] - 170) + "px")
+                        .style("top", (d3.mouse(this)[1] - 100) + "px")
                 })
                 .on("mouseout", function () {
                     _this.tooltip.transition()
@@ -598,6 +623,8 @@ define([
                 })
                 .classed('flow', true)
                 .classed('animated', options.animate);
+
+
             if (options.dash) {
                 var dash = options.dash;
                 path.attr("stroke-dasharray", [dash.length, dash.gap].join(','));

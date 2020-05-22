@@ -633,9 +633,9 @@
                             </div>
                             <select name="flows-hazardous-select" id="flows-hazardous-select"
                                 class="form-control form-control-sm selectpicker">
-                                <option value='both'>ignore</option>
-                                <option value='no'>not hazardous</option>
-                                <option value='yes'>hazardous</option>
+                                <option value='both'>Ignore</option>
+                                <option value='no'>Not hazardous</option>
+                                <option value='yes'>Hazardous</option>
                             </select>
                         </div>
                     </div>
@@ -722,7 +722,7 @@
                                 <option selected value="-1">All (<%= materials.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% materials.forEach(function(material){ %>
-                                <option value="<%= material.id %>"> <%= material.get('name')[0].toUpperCase() +
+                                <option value="<%= material.id %>"><%= material.get('name')[0].toUpperCase() +
                                     material.get('name').slice(1) %>
                                 </option>
                                 <% }); %>
@@ -736,7 +736,7 @@
                                 <option selected value="-1">All (<%= products.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% products.forEach(function(product){ %>
-                                <option value="<%= product.id %>"><%= product.get('name') %></option>
+                                <option value="<%= product.id %>"><%= product.get('name')[0].toUpperCase() + product.get('name').slice(1) %></option>
                                 <% }); %>
                             </select>
                         </div>
@@ -748,7 +748,7 @@
                                 <option selected value="-1">All (<%= composites.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% composites.forEach(function(composite){ %>
-                                <option value="<%= composite.id %>"><%= composite.get('name') %></option>
+                                <option value="<%= composite.id %>"><%= composite.get('name')[0].toUpperCase() + composite.get('name').slice(1) %></option>
                                 <% }); %>
                             </select>
                         </div>
@@ -770,9 +770,9 @@
                             </div>
                             <select name="flows-route-select" id="flows-route-select"
                                 class="form-control form-control-sm selectpicker">
-                                <option value='both'>ignore</option>
-                                <option value='no'>not route</option>
-                                <option value='yes'>route</option>
+                                <option value='both'>Ignore</option>
+                                <option value='no'>Not route</option>
+                                <option value='yes'>Route</option>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -789,9 +789,9 @@
                             </div>
                             <select name="flows-collector-select" id="flows-collector-select"
                                 class="form-control form-control-sm selectpicker">
-                                <option value='both'>ignore</option>
-                                <option value='no'>not collector</option>
-                                <option value='yes'>collector</option>
+                                <option value='both'>Ignore</option>
+                                <option value='no'>Not collector</option>
+                                <option value='yes'>Collector</option>
                             </select>
                         </div>
                     </div>
@@ -800,44 +800,44 @@
                             <label>Clean</label>
                             <select name="flows-clean-select" class="form-control form-control-sm selectpicker" multiple
                                 style="resize: vertical;">
-                                <option selected value='-1'>ignore</option>
+                                <option selected value='-1'>Ignore</option>
                                 <option data-divider="true"></option>
-                                <option value='unknown'>unknown</option>
-                                <option value='no'>not clean</option>
-                                <option value='yes'>clean</option>
+                                <option value='unknown'>Unknown</option>
+                                <option value='no'>Not clean</option>
+                                <option value='yes'>Clean</option>
                             </select>
                         </div>
                         <div class="col-md-3">
                             <label>Mixed</label>
                             <select name="flows-mixed-select" class="form-control form-control-sm selectpicker" multiple
                                 style="resize: vertical;">
-                                <option selected value='-1'>ignore</option>
+                                <option selected value='-1'>Ignore</option>
                                 <option data-divider="true"></option>
-                                <option value='unknown'>unknown</option>
-                                <option value='no'>not mixed</option>
-                                <option value='yes'>mixed</option>
+                                <option value='unknown'>Unknown</option>
+                                <option value='no'>Not mixed</option>
+                                <option value='yes'>Mixed</option>
                             </select>
                         </div>
                         <div class="col-md-3">
                             <label>Direct use</label>
                             <select name="flows-direct-select" class="form-control form-control-sm selectpicker"
                                 multiple style="resize: vertical;">
-                                <option selected value='-1'>ignore</option>
+                                <option selected value='-1'>Ignore</option>
                                 <option data-divider="true"></option>
-                                <option value='unknown'>unknown</option>
-                                <option value='no'>not direct</option>
-                                <option value='yes'>direct</option>
+                                <option value='unknown'>Unknown</option>
+                                <option value='no'>Not direct</option>
+                                <option value='yes'>Direct</option>
                             </select>
                         </div>
                         <div class="col-md-3">
                             <label>Composite</label>
                             <select name="flows-iscomposite-select" class="form-control form-control-sm selectpicker"
                                 multiple style="resize: vertical;">
-                                <option selected value='-1'>ignore</option>
+                                <option selected value='-1'>Ignore</option>
                                 <option data-divider="true"></option>
-                                <option value='unknown'>unknown</option>
-                                <option value='no'>product</option>
-                                <option value='yes'>composite</option>
+                                <option value='unknown'>Unknown</option>
+                                <option value='no'>Product</option>
+                                <option value='yes'>Composite</option>
                             </select>
                         </div>
                     </div>

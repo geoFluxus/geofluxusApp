@@ -447,12 +447,18 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .flowMapToolTip {
-   width: 22rem !important;
+    width: 22rem !important;
 }
 
 .flowMapToolTip * {
     font-size: small;
 }
+
+.flowMapToolTip .d3plus-tooltip-table {
+    display: block;
+    padding-bottom: 0.5rem;
+}
+
 
 .d3plus-tooltip div {
     font-family: "Montserrat", sans-serif !important;
