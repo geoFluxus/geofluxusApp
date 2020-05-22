@@ -8,7 +8,7 @@
     stroke-width: 0.5px;
 }
 
-div.flowMapToolTip {
+.flowMapToolTipContainer {
     position: absolute;
     text-align: left;
     width: auto;
@@ -16,11 +16,12 @@ div.flowMapToolTip {
     padding: 4px;
     font: 14px sans-serif;
     color: #111111;
-    background: #fff;
+    background: transparent;
     border: 0px;
     border-radius: 0px;
     pointer-events: none;
     z-index: 99999;
+    display: block;
 }
 
 .flow {
