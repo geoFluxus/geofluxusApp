@@ -44,6 +44,7 @@ define([
             this.map = map;
             var _this = this;
 
+            this.areas = options.areas || {};
             this.showNodes = options.showNodes || false;
             this.showFlows = options.showFlows || false;
             this.width = options.width || this.map.offsetWidth;
@@ -107,7 +108,6 @@ define([
         }
 
         resetBbox(bbox) {
-            console.log(bbox)
             if (bbox) this.bbox = bbox;
             if (!this.bbox) return;
             var topLeft = this.projection(this.bbox[0]),
@@ -188,6 +188,19 @@ define([
             //this.minFlowValue = Math.min(...totalValues);
         }
 
+        drawAreas() {
+            var _this = this;
+
+            this.areas.forEach(function(area) {
+                var polygon = L.polygon(area).addTo(_this.map);
+                polygon.setStyle({
+                    fillColor: "none",
+                    weight: 2,
+                    color: "red"
+                });
+            })
+        }
+
         draw() {
             var _this = this;
             var scale = Math.min(this.scale(), this.maxScale);
@@ -198,8 +211,6 @@ define([
             //     .duration(250)
             //     .attr("stroke-opacity", 0)
             //     .remove();
-
-
 
             // define data to use for drawPath and drawTotalPath as well as nodes data depending on flows
             for (var linkId in this.flowsData) {
@@ -338,6 +349,8 @@ define([
                     }
                 });
             }
+
+            this.drawAreas();
         }
 
         scale() {

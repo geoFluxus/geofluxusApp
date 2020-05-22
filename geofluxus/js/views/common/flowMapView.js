@@ -50,6 +50,7 @@ define(['underscore',
                     FlowMapView.__super__.initialize.apply(this, [options]);
                     //_.bindAll(this, 'zoomed');
 
+                    var _this = this;
                     this.options = options;
                     this.flows = this.options.flows;
 
@@ -58,12 +59,21 @@ define(['underscore',
                     this.dim2 = this.options.dimensions.find(dim => dim[0] != "space");
                     this.legendItems = [];
 
+                    this.adminLevel = this.options.dimensions.find(dim => dim[0] == "space")[1].adminlevel;
+
                     this.isActorLevel = this.options.dimensions.isActorLevel;
 
-                    this.render();
+                    this.areas = new Collection([], {
+                        apiTag: 'areas',
+                        apiIds: [this.adminLevel]
+                    });
 
-                    this.rerender(true);
+                    var promises = [this.areas.fetch()];
 
+                    Promise.all(promises).then(function () {
+                        _this.render();
+                        _this.rerender(true);
+                    })
                 },
 
                 /*
@@ -110,9 +120,34 @@ define(['underscore',
                         this.maxFlowWidth = 50;
                     }
 
+                    // recover area geometry
+                    // reverse coordinate ordering for Leaflet
+                    var areas = [];
+                    this.areas.forEach(function(area) {
+                        var geom = area.get('geom').coordinates,
+                            reverse = [];
+
+                        // multipolygon
+                        for (const multipolygon of geom) {
+                            multi = [];
+                            // polygon
+                            for (const polygon of multipolygon) {
+                                pol = [];
+                                // point
+                                for (const point of polygon) {
+                                    pol.push(point.reverse());
+                                }
+                                multi.push(pol)
+                            }
+                            reverse.push(multi)
+                        }
+                        areas.push(reverse)
+                    })
+
                     this.flowMap = new FlowMap(this.leafletMap, {
                         maxFlowWidth: this.maxFlowWidth,
                         toolTipContainer: this.el,
+                        areas: areas
                     });
                     this.flowMap.showFlows = true;
                     this.flowMap.showNodes = false;
@@ -270,6 +305,16 @@ define(['underscore',
                         });
                     }, 500);
                     this.options.flowsView.loader.deactivate();
+                },
+
+                prepareAreas(areas) {
+                    var _this = this,
+                        polygons = [];
+                    areas.forEach(function(area) {
+                        var polygon = area.get('geom').coordinates;
+                        polygons.push(polygon);
+                    })
+                    return polygons;
                 },
 
                 toggleLight() {
