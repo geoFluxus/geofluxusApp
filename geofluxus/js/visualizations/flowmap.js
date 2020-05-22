@@ -59,17 +59,15 @@ define([
                 this.stream.point(point.x, point.y);
             }
 
-            // var transform = d3.geo.transform({point: projectPoint}); // old version of D3
             var transform = d3.geoTransform({
                 point: projectPoint
             });
 
             this.overlay = map.getPanes().overlayPane;
-            //this.path = d3.geo.path().projection(transform);  // old version of D3
             this.path = d3.geoPath().projection(transform);
 
-            // tooltip
-            this.tooltip = d3.select(this.overlay)
+            // Tooltip
+            this.tooltip = d3.select(options.toolTipContainer)
                 .append("div")
                 .attr("class", "flowMapToolTip")
                 .style("opacity", 0);
@@ -96,7 +94,7 @@ define([
             this.hideTags = {};
         }
 
-        // fit svg layer to map
+        // Fit svg layer to map
         resetView() {
             this.svg.node().style.visibility = 'visible';
 
@@ -225,7 +223,7 @@ define([
                         console.log('Warning: missing actor for flow');
                         return;
                     }
-                    // smaller dots for animation
+                    // Smaller dots for animation
                     var maxFlowWidth = (_this.animate && _this.dottedLines) ? 20 : _this.maxFlowWidth,
                         minFlowWidth = (_this.animate && _this.dottedLines) ? 2 : _this.minFlowWidth,
                         normFactor = maxFlowWidth / _this.maxFlowValue;
@@ -250,7 +248,7 @@ define([
                         if (_this.dottedLines) {
                             var dashLength = 0,
                                 dashGaps = strokeWidth * 3;
-                            // the smaller the flow value the bigger the gaps
+                            // The smaller the flow value, the bigger the gaps
                             dashGaps += 50 - 50 * flow.value / _this.maxFlowValue;
                             var offset = Math.floor(Math.random() * dashGaps);
                             dash = {
@@ -280,8 +278,7 @@ define([
                     var path = _this.drawPath(
                         coords, flow, flow.color, strokeWidth, options
                     );
-                    // workaround for mouseover very thin lines
-                    // put invisible line on top (with mouseover)
+                    // Workaround for mouseover very thin lines: put invisible line on top (with mouseover)
                     if (!_this.animate && strokeWidth < 7) {
                         options.opacity = 0;
                         var bufferedPath = _this.drawPath(
@@ -402,7 +399,7 @@ define([
                         .duration(200)
                         .style("stroke-width", "5px");
 
-                    
+
 
 
                 })

@@ -112,6 +112,7 @@ define(['underscore',
 
                     this.flowMap = new FlowMap(this.leafletMap, {
                         maxFlowWidth: this.maxFlowWidth,
+                        toolTipContainer: this.el,
                     });
                     this.flowMap.showFlows = true;
                     this.flowMap.showNodes = false;
