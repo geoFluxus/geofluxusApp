@@ -54,7 +54,9 @@ define(['views/common/baseview',
 
                 scrollToVisualization: function () {
                     $("#apply-filters")[0].scrollIntoView({
-                        behavior: "smooth"
+                        behavior: "smooth",
+                        block: "start",
+                        inline: "nearest",
                     });
                 },
 
