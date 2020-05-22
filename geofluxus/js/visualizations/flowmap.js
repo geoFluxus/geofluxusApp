@@ -67,7 +67,7 @@ define([
             this.path = d3.geoPath().projection(transform);
 
             // Tooltip
-            this.tooltip = d3.select(options.toolTipContainer)
+            this.tooltip = d3.select("body")
                 .append("div")
                 .attr("class", "flowMapToolTipContainer")
                 .style("opacity", 0);
@@ -603,6 +603,7 @@ define([
                     d3.select(this).style("cursor", "pointer");
                     // Hover effect for path:
                     path.attr("stroke-opacity", 1)
+
                     // Show and fill tooltip:  
                     _this.tooltip
                         .html(_this.getLinkTooltipString(flow))
@@ -612,8 +613,14 @@ define([
                 })
                 .on("mousemove", function () {
                     _this.tooltip
-                        .style("left", (d3.mouse(this)[0] - 170) + "px")
-                        .style("top", (d3.mouse(this)[1] - 100) + "px")
+                        // .style("top", (d3.mouse(this)[1] - 100) + "px")
+                        // .style("left", (d3.mouse(this)[0] - 170) + "px")
+                        .style('top', (d3.event.pageY - 100) + 'px')
+                        .style('left', (d3.event.pageX - 180 )+ 'px');
+                        
+                        console.log("Top: d3.mouse(this)[1]", d3.mouse(this)[1])
+                        console.log("Top: d3.event.pageY", d3.event.pageY)
+
                 })
                 .on("mouseout", function () {
                     _this.tooltip.transition()
