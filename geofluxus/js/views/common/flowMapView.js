@@ -122,10 +122,20 @@ define(['underscore',
 
                     // recover area geometry
                     // reverse coordinate ordering for Leaflet
+                    var areaIds = new Set();
+                    this.flows.forEach(function(flow) {
+                        areaIds.add(flow.origin.id);
+                        areaIds.add(flow.destination.id);
+                    })
+                    console.log(areaIds);
+
                     var areas = [];
                     this.areas.forEach(function(area) {
-                        var geom = area.get('geom').coordinates;
-                        areas.push(geom);
+                        var id = area.get('id'),
+                            geom = area.get('geom').coordinates;
+                        if (areaIds.has(id)) {
+                            areas.push(geom);
+                        }
                     })
 
                     this.flowMap = new FlowMap(this.leafletMap, {
@@ -289,16 +299,6 @@ define(['underscore',
                         });
                     }, 500);
                     this.options.flowsView.loader.deactivate();
-                },
-
-                prepareAreas(areas) {
-                    var _this = this,
-                        polygons = [];
-                    areas.forEach(function(area) {
-                        var polygon = area.get('geom').coordinates;
-                        polygons.push(polygon);
-                    })
-                    return polygons;
                 },
 
                 toggleLight() {
