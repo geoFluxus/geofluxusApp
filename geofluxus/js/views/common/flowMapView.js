@@ -124,24 +124,8 @@ define(['underscore',
                     // reverse coordinate ordering for Leaflet
                     var areas = [];
                     this.areas.forEach(function(area) {
-                        var geom = area.get('geom').coordinates,
-                            reverse = [];
-
-                        // multipolygon
-                        for (const multipolygon of geom) {
-                            multi = [];
-                            // polygon
-                            for (const polygon of multipolygon) {
-                                pol = [];
-                                // point
-                                for (const point of polygon) {
-                                    pol.push(point.reverse());
-                                }
-                                multi.push(pol)
-                            }
-                            reverse.push(multi)
-                        }
-                        areas.push(reverse)
+                        var geom = area.get('geom').coordinates;
+                        areas.push(geom);
                     })
 
                     this.flowMap = new FlowMap(this.leafletMap, {

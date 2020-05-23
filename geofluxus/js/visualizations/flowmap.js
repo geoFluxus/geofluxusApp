@@ -44,7 +44,6 @@ define([
             this.map = map;
             var _this = this;
 
-            this.areas = options.areas || {};
             this.showNodes = options.showNodes || false;
             this.showFlows = options.showFlows || false;
             this.width = options.width || this.map.offsetWidth;
@@ -59,6 +58,21 @@ define([
                 var coords = _this.projection([x, y]);
                 this.stream.point(point.x, point.y);
             }
+
+            function projectAreas(areas) {
+                for (const area of areas) {
+                    for (const multipolygon of area) {
+                        for (const polygon of multipolygon) {
+                            for (const point of polygon) {
+                                point.reverse();
+                            }
+                        }
+                    }
+                }
+                return areas;
+            }
+
+            this.areas = options.areas ? projectAreas(options.areas) : [];
 
             var transform = d3.geoTransform({
                 point: projectPoint
