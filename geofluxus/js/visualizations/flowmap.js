@@ -46,6 +46,11 @@ define([
 
             this.showNodes = options.showNodes || false;
             this.showFlows = options.showFlows || false;
+
+            this.showAreas = options.showAreas || false;
+            this.showAreaBorders = options.showAreaBorders || false;
+            this.showAreaFilled = options.showAreaFilled || false;
+
             this.width = options.width || this.map.offsetWidth;
             this.bbox = options.bbox;
             this.height = options.height || this.width / 1.5;
@@ -204,18 +209,31 @@ define([
 
         drawAreas() {
             var _this = this;
+            var areaStyling = {};
 
             _this.map.createPane('areas');
             _this.map.getPane('areas').style.zIndex = 200;
 
-            this.areas.forEach(function(area) {
-                L.polygon(area, {
+            if (this.showAreaBorders) {
+                areaStyling = {
                     pane: 'areas',
                     fillColor: 'none',
                     fillOpacity: 0.1,
                     weight: 0.5,
-                    color: 'red',
-                }).addTo(_this.map);
+                    color: '#97BEA9',
+                }
+            } else if (this.showAreaFilled) {
+                areaStyling = {
+                    pane: 'areas',
+                    fillColor: "#97BEA9",
+                    fillOpacity: 0.1,
+                    weight: 0.5,
+                    color: '#97BEA9',
+                }
+            }
+
+            this.areas.forEach(function (area) {
+                L.polygon(area, areaStyling).addTo(_this.map);
             })
         }
 
@@ -368,14 +386,14 @@ define([
                             }
                         })
                         radius = Math.max(3, (radius + calcRadius(total)) * scaleFactor);
-
-
                         _this.addPieChart(x, y, radius, data)
                     }
                 });
             }
 
-            this.drawAreas();
+            if (this.showAreas) {
+                this.drawAreas();
+            }
         }
 
         scale() {
@@ -385,7 +403,7 @@ define([
             return scale;
         }
 
-        // draw pie chart at given position
+        // Draws a pie chart at given position
         addPieChart(x, y, radius, data) {
             var _this = this;
 
@@ -454,7 +472,7 @@ define([
                 });
         }
 
-        //function to add source nodes to the map
+        // Add source nodes to the map
         addPoint(x, y, node, color, radius, opacity) {
             var _this = this;
 
@@ -596,8 +614,7 @@ define([
             </div>`
         }
 
-
-        // function to draw actual paths for the directed quantity flows
+        // Draw actual paths for the directed quantity flows
         drawPath(points, flow, color, strokeWidth, options) {
             var _this = this,
                 options = options || {};

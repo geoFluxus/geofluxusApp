@@ -535,7 +535,8 @@ textarea.textarea-autosize.form-control-sm {
 .icon-toggle-darkmode,
 .icon-toggle-flowmap-flows,
 .icon-toggle-flowmap-nodes,
-.icon-toggle-flowmap-animation {
+.icon-toggle-flowmap-animation,
+.icon-toggle-flowmap-areas {
     background-position: center center;
     background-size: contain;
     width: 16px;
@@ -572,6 +573,13 @@ textarea.textarea-autosize.form-control-sm {
     height: 20px;
 }
 
+.icon-toggle-flowmap-areas {
+    background-image: url("../img/flowmap-areas.svg");
+    width: 24px;
+    height: 24px;
+    margin-top: 2.5px;
+}
+
 .leaflet-control div label {
     color: black;
 }
@@ -582,7 +590,7 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .leaflet-control-zoom {
-    top: 262px !important;
+    top: 300px !important;
     border: none !important;
     margin: 0 !important;
 }
