@@ -59,6 +59,21 @@ define([
                 this.stream.point(point.x, point.y);
             }
 
+            function projectAreas(areas) {
+                for (const area of areas) {
+                    for (const multipolygon of area) {
+                        for (const polygon of multipolygon) {
+                            for (const point of polygon) {
+                                point.reverse();
+                            }
+                        }
+                    }
+                }
+                return areas;
+            }
+
+            this.areas = options.areas ? projectAreas(options.areas) : [];
+
             var transform = d3.geoTransform({
                 point: projectPoint
             });
@@ -107,7 +122,6 @@ define([
         }
 
         resetBbox(bbox) {
-            console.log(bbox)
             if (bbox) this.bbox = bbox;
             if (!this.bbox) return;
             var topLeft = this.projection(this.bbox[0]),
@@ -188,6 +202,23 @@ define([
             //this.minFlowValue = Math.min(...totalValues);
         }
 
+        drawAreas() {
+            var _this = this;
+
+            _this.map.createPane('areas');
+            _this.map.getPane('areas').style.zIndex = 200;
+
+            this.areas.forEach(function(area) {
+                L.polygon(area, {
+                    pane: 'areas',
+                    fillColor: 'none',
+                    fillOpacity: 0.1,
+                    weight: 0.5,
+                    color: 'red',
+                }).addTo(_this.map);
+            })
+        }
+
         draw() {
             var _this = this;
             var scale = Math.min(this.scale(), this.maxScale);
@@ -198,8 +229,6 @@ define([
             //     .duration(250)
             //     .attr("stroke-opacity", 0)
             //     .remove();
-
-
 
             // define data to use for drawPath and drawTotalPath as well as nodes data depending on flows
             for (var linkId in this.flowsData) {
@@ -345,6 +374,8 @@ define([
                     }
                 });
             }
+
+            this.drawAreas();
         }
 
         scale() {

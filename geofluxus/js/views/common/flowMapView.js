@@ -50,6 +50,7 @@ define(['underscore',
                     FlowMapView.__super__.initialize.apply(this, [options]);
                     //_.bindAll(this, 'zoomed');
 
+                    var _this = this;
                     this.options = options;
                     this.flows = this.options.flows;
 
@@ -59,13 +60,20 @@ define(['underscore',
                     this.legendItems = [];
 
                     this.dimensionIsOrigin;
-
+                    this.adminLevel = this.options.dimensions.find(dim => dim[0] == "space")[1].adminlevel;
                     this.isActorLevel = this.options.dimensions.isActorLevel;
 
-                    this.render();
+                    this.areas = new Collection([], {
+                        apiTag: 'areas',
+                        apiIds: [this.adminLevel]
+                    });
 
-                    this.rerender(true);
+                    var promises = [this.areas.fetch()];
 
+                    Promise.all(promises).then(function () {
+                        _this.render();
+                        _this.rerender(true);
+                    })
                 },
 
                 /*
@@ -112,9 +120,27 @@ define(['underscore',
                         this.maxFlowWidth = 50;
                     }
 
+                    // filter areas
+                    var areaIds = new Set();
+                    this.flows.forEach(function(flow) {
+                        areaIds.add(flow.origin.id);
+                        areaIds.add(flow.destination.id);
+                    })
+
+                    // retrieve area geometry
+                    var areas = [];
+                    this.areas.forEach(function(area) {
+                        var id = area.get('id'),
+                            geom = area.get('geom').coordinates;
+                        if (areaIds.has(id)) {
+                            areas.push(geom);
+                        }
+                    })
+
                     this.flowMap = new FlowMap(this.leafletMap, {
                         maxFlowWidth: this.maxFlowWidth,
                         toolTipContainer: this.el,
+                        areas: areas
                     });
                     this.flowMap.showFlows = true;
                     this.flowMap.showNodes = false;

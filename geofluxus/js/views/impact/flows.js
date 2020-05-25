@@ -392,7 +392,7 @@ define(['views/common/baseview',
                 ways.forEach(function(way) {
                     var id = way.get('id'),
                         coords = way.get('the_geom').coordinates,
-                        type = way.get('the_geom').type.toLowerCase();
+                        type = way.get('the_geom').type.toLowerCase(),
                         amount = amounts[id];
                     _this.routingMap.addGeometry(coords, {
                         projection: 'EPSG:4326', layername: 'ways',

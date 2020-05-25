@@ -22,17 +22,22 @@ function(ol, turf)
             this.layers = {};
             var initlayers = [];
 
+            var cartodb = new ol.Attribution({html : '© <a style="color:blue" href="http://cartodb.com/attributions">CartoDB</a>'}),
+                openlayers = new ol.Attribution({html : '© <a style="color:blue" href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'});
+
             // blank map
             if (options.renderOSM != false){
                 var source = new ol.source.OSM({crossOrigin: 'anonymous'});
                 if (options.source == 'light') {
                     source = new ol.source.XYZ({
-                        url: 'https://cartodb-basemaps-{a-d}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'
+                        url: 'https://cartodb-basemaps-{a-d}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png',
+                        attributions: [openlayers, cartodb]
                     })
                 }
                 else if (options.source == 'dark') {
                     source = new ol.source.XYZ({
-                        url: 'https://cartodb-basemaps-{a-d}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png'
+                        url: 'https://cartodb-basemaps-{a-d}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
+                        attributions: [openlayers, cartodb]
                     })
                 }
                 var background = new ol.layer.Tile({
@@ -47,7 +52,7 @@ function(ol, turf)
             var basicLayer = new ol.layer.Vector({ source: new ol.source.Vector() });
             initlayers.push(basicLayer);
 
-            var controls = ol.control.defaults({attribution: false })
+            var controls = ol.control.defaults({attribution: true })
                                      .extend([new ol.control.FullScreen({source: options.el})]);
 
             var interactOptions = {
