@@ -226,7 +226,7 @@ define(['underscore',
                     if (!this.isActorLevel) {
                         var showAreasToggleBtn = document.createElement('button');
                         showAreasToggleBtn.classList.add("btn", "btn-primary", "toggle-areas")
-                        showAreasToggleBtn.title = "Toggle the nodes on or off."
+                        showAreasToggleBtn.title = "Toggle the areas on or off."
                         showAreasToggleBtn.innerHTML = '<i class="fas icon-toggle-flowmap-areas"></i>';
                     }
 

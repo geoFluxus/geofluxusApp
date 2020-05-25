@@ -214,27 +214,30 @@ define([
             _this.map.createPane('areas');
             _this.map.getPane('areas').style.zIndex = 200;
 
-            if (this.showAreaBorders) {
-                areaStyling = {
-                    pane: 'areas',
-                    fillColor: 'none',
-                    fillOpacity: 0.1,
-                    weight: 0.5,
-                    color: '#97BEA9',
+            if (!this.showAreas) {
+                _this.map._panes.areas.remove();
+            } else {
+                if (this.showAreaBorders) {
+                    areaStyling = {
+                        pane: 'areas',
+                        fillColor: 'none',
+                        fillOpacity: 0.1,
+                        weight: 0.5,
+                        color: 'rgb(114, 145, 128)',
+                    }
+                } else if (this.showAreaFilled) {
+                    areaStyling = {
+                        pane: 'areas',
+                        fillColor: "#97BEA9",
+                        fillOpacity: 0.1,
+                        weight: 0.5,
+                        color: 'rgb(114, 145, 128)',
+                    }
                 }
-            } else if (this.showAreaFilled) {
-                areaStyling = {
-                    pane: 'areas',
-                    fillColor: "#97BEA9",
-                    fillOpacity: 0.1,
-                    weight: 0.5,
-                    color: '#97BEA9',
-                }
+                this.areas.forEach(function (area) {
+                    L.polygon(area, areaStyling).addTo(_this.map);
+                })
             }
-
-            this.areas.forEach(function (area) {
-                L.polygon(area, areaStyling).addTo(_this.map);
-            })
         }
 
         draw() {
@@ -391,9 +394,7 @@ define([
                 });
             }
 
-            if (this.showAreas) {
-                this.drawAreas();
-            }
+            this.drawAreas();
         }
 
         scale() {
