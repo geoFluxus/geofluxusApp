@@ -131,7 +131,6 @@ define(['underscore',
                     var areas = [];
                     this.areas.forEach(function(area) {
                         var id = area.get('id'),
-                            name = area.get('area'),
                             geom = area.get('geom').coordinates;
                         if (areaIds.has(id)) {
                             areas.push(geom);
