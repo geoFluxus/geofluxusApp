@@ -9,6 +9,7 @@ define(['underscore',
         'visualizations/d3plus',
         'openlayers',
         'utils/utils',
+        'utils/enrichFlows',
         'leaflet',
         'leaflet-easyprint',
         'leaflet-fullscreen',
@@ -20,7 +21,7 @@ define(['underscore',
         'leaflet-fullscreen/dist/leaflet.fullscreen.css'
     ],
 
-    function (_, BaseView, Collection, GeoLocation, Flows, FlowMap, D3plusLegend, d3, d3plus, ol, utils, L) {
+    function (_, BaseView, Collection, GeoLocation, Flows, FlowMap, D3plusLegend, d3, d3plus, ol, utils, enrichFlows, L) {
 
         /**
          *
@@ -47,21 +48,31 @@ define(['underscore',
                  */
                 initialize: function (options) {
                     FlowMapView.__super__.initialize.apply(this, [options]);
-                    _.bindAll(this, 'zoomed');
 
+                    var _this = this;
                     this.options = options;
                     this.flows = this.options.flows;
 
                     this.dimStrings = [];
                     this.options.dimensions.forEach(dim => this.dimStrings.push(dim[0]));
                     this.dim2 = this.options.dimensions.find(dim => dim[0] != "space");
-                    this.allDimensionValues = [];
+                    this.legendItems = [];
 
+                    this.dimensionIsOrigin;
+                    this.adminLevel = this.options.dimensions.find(dim => dim[0] == "space")[1].adminlevel;
+                    this.isActorLevel = this.options.dimensions.isActorLevel;
 
-                    this.render();
+                    this.areas = new Collection([], {
+                        apiTag: 'areas',
+                        apiIds: [this.adminLevel]
+                    });
 
-                    this.rerender(true);
+                    var promises = [this.areas.fetch()];
 
+                    Promise.all(promises).then(function () {
+                        _this.render();
+                        _this.rerender(true);
+                    })
                 },
 
                 /*
@@ -73,16 +84,24 @@ define(['underscore',
                  * render the view
                  */
                 render: function () {
-                    //this.backgroundLayer = new L.TileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png");
-                    this.backgroundLayer = new L.TileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
-                        attribution: '© OpenStreetMap, © CartoDB'
+                    this.tileUrl = "https://cartodb-basemaps-{s}.global.ssl.fastly.net/"
+                    this.tileType = "dark_all"
+                    this.tileSuffix = "/{z}/{x}/{y}.png"
+                    this.backgroundLayer = new L.TileLayer(this.tileUrl + this.tileType + this.tileSuffix, {
+                        attribution: '© <a style="color:#0078A8" href="http://cartodb.com/attributions">CartoDB</a>'
                     });
+                    this.el.style.display = 'block';
+                    $(this.el).html('<div class="flowmap-container d-block" style="width: 100%; height: 100%"></div><div class="flowmap-d3pluslegend-wrapper text-center"><svg class="flowmap-d3pluslegend"></svg></div>')
 
-                    // Center of Netherlands
-                    var center = [52.1326, 5.2913];
+                    var _this = this;
+                    this.hasLegend = true;
+                    this.isDarkMode = true;
+                    this.animationOn = false;
+                    this.animationLines = true;
+                    this.animationDots = false;
 
-                    this.leafletMap = new L.Map(this.el, {
-                            center: center,
+                    this.leafletMap = new L.Map(this.el.firstChild, {
+                            center: [52.1326, 5.2913], // Center of Netherlands
                             zoomSnap: 0.25,
                             zoom: 10.5,
                             minZoom: 5,
@@ -90,438 +109,332 @@ define(['underscore',
                         })
                         .addLayer(this.backgroundLayer);
 
+                    // If the flows are aggregated by geographic region, increase the maximum flow width:
+                    if (!this.isActorLevel) {
+                        this.maxFlowWidth = 50;
+                    }
 
-                    this.flowMap = new FlowMap(this.leafletMap);
+                    // Filter areas
+                    var areaIds = new Set();
+                    this.flows.forEach(function (flow) {
+                        areaIds.add(flow.origin.id);
+                        areaIds.add(flow.destination.id);
+                    })
+
+                    // Retrieve area geometry
+                    var areas = [];
+                    this.areas.forEach(function (area) {
+
+                        let newArea = {
+                            id: area.get('id'),
+                            name: area.get('name'),
+                            geom: area.get('geom').coordinates,
+                        }
+                        if (areaIds.has(newArea.id)) {
+                            areas.push(newArea);
+                        }
+                    })
+
+                    // Instantiate Flowmap object:
+                    this.flowMap = new FlowMap(this.leafletMap, {
+                        maxFlowWidth: this.maxFlowWidth,
+                        toolTipContainer: this.el,
+                        areas: areas
+                    });
+                    this.flowMap.showFlows = true;
+                    this.flowMap.showNodes = false;
+
+                    this.flowMap.showAreas = false;
+                    this.flowMap.showAreaBorders = false;
+                    this.flowMap.showAreaFilled = false;
+
+                    if (!this.isActorLevel) {
+                        this.flowMap.showAreas = true;
+                        this.flowMap.showAreaBorders = true;                            
+                    }
 
                     // //////////////////////
+                    // Leaflet buttons
+
                     // Fullscreen button
                     this.leafletMap.addControl(new L.Control.Fullscreen({
-                        position: 'topleft'
+                        position: 'topleft',
+                        pseudoFullscreen: true,
                     }));
 
-                    // //////////////////////
-                    // Export PNG button
+                    // Event fired when zooming stops:
+                    //this.leafletMap.on("zoomend", this.zoomed);
+
+                    // Add reset button to map to refocus on original position:
+                    var resetViewBtn = document.createElement('a');
+                    resetViewBtn.classList.add("btn-reset-view")
+                    resetViewBtn.title = "Reset the map to the original position."
+                    resetViewBtn.innerHTML = '<i class="fas fa-undo"></i>';
+                    $(".leaflet-control-zoom.leaflet-bar.leaflet-control").append(resetViewBtn);
+                    resetViewBtn.addEventListener('click', function (event) {
+                        _this.flowMap.zoomToFit();
+                        event.preventDefault(event);
+                    })
+
+                    // /////////////////////////////////////
+                    // Custom, non-leaflet controls top left
+                    var topLefControls = L.control({
+                        position: 'topleft'
+                    })
+                    var topLeftControlDiv = document.createElement('div')
+                    topLeftControlDiv.classList.add("leaflet-control-custom-buttons");
+
+                    // Actual export PNG button:
+                    var exportImgBtn = document.createElement('button');
+                    exportImgBtn.classList.add('fas', 'fa-camera', 'btn', 'btn-primary', 'inverted');
+                    exportImgBtn.title = "Export this visualization as a PNG file.";
+
+                    // HIDDEN Leaflet easyPrint button
                     this.leafletMap.addControl(new L.easyPrint({
                         position: 'topleft',
                         filename: 'flowmap',
                         exportOnly: true,
                         hideControlContainer: true,
-                        sizeModes: ['A4Landscape']
+                        sizeModes: ['A4Landscape'],
                     }));
-                    this.leafletMap.on("zoomend", this.zoomed);
-
-                    var exportControls = L.control({
-                            position: 'topleft'
-                        }),
-                        exportDiv = document.createElement('div'),
-                        exportImgBtn = document.createElement('button');
-
-                    exportDiv.classList.add("leaflet-control-export");
-                    exportImgBtn.classList.add('fas', 'fa-camera', 'btn', 'btn-primary', 'inverted');
-                    exportImgBtn.style.height = "32px";
-                    exportImgBtn.style.width = "32px";
-                    exportImgBtn.style.padding = "0px";
-                    exportDiv.appendChild(exportImgBtn);
-                    exportControls.onAdd = function (map) {
-                        return exportDiv;
-                    };
-                    exportControls.addTo(this.leafletMap);
-                    // easyprint is not customizable enough (buttons, remove menu etc.) and not touch friendly
-                    // workaround: hide it and pass on clicks (actually strange, but easyprint was still easiest to use export plugin out there)
+                    // Easyprint is not customizable enough (buttons, remove menu etc.) and not touch friendly
+                    // Workaround: hide and pass on click (actually strange, but easyprint was still easiest to use export plugin out there)
                     var easyprintCtrl = this.el.querySelector('.leaflet-control-easyPrint'),
                         easyprintCsBtn = this.el.querySelector('.easyPrintHolder .A4Landscape');
-                    easyprintCtrl.style.visibility = 'hidden';
-                    exportImgBtn.addEventListener('click', function () {
+                    easyprintCtrl.style.display = 'none';
+                    exportImgBtn.addEventListener('click', function (event) {
                         easyprintCsBtn.click();
+                        event.preventDefault();
                     })
 
-                    // //////////////////////
-                    // Custom controls
-                    var customControls = L.control({
-                        position: 'bottomleft'
-                    });
-                    this.animationCheck = document.createElement('input');
-                    this.actorCheck = document.createElement('input');
-                    this.flowCheck = document.createElement('input');
-                    this.lightCheck = document.createElement('input');
-                    this.flowCheck.checked = true;
-                    this.lightCheck.checked = true;
+                    // Legend toggle:
+                    var legendToggleBtn = document.createElement('button');
+                    legendToggleBtn.classList.add("btn", "btn-primary", "toggle-legend")
+                    legendToggleBtn.title = "Toggle the legend on or off."
+                    legendToggleBtn.innerHTML = '<i class="fas icon-toggle-legend"></i>';
 
-                    var div = document.createElement('div'),
-                        aniLabel = document.createElement('label'),
-                        actorLabel = document.createElement('label'),
-                        flowLabel = document.createElement('label'),
-                        lightLabel = document.createElement('label'),
-                        _this = this;
+                    // Dark mode toggle
+                    var darkmodeToggleBtn = document.createElement('button');
+                    darkmodeToggleBtn.classList.add("btn", "btn-primary", "toggle-darkmode")
+                    darkmodeToggleBtn.title = "Toggle light or dark mode."
+                    darkmodeToggleBtn.innerHTML = '<i class="fas icon-toggle-darkmode"></i>';
 
-                    div.classList.add("leaflet-control-custom-controls");
-                    aniLabel.innerHTML = 'Animate';
-                    actorLabel.innerHTML = 'Actors';
-                    flowLabel.innerHTML = 'Flows';
-                    lightLabel.innerHTML = 'Light / Dark';
+                    // Flows toggle
+                    var showFlowsToggleBtn = document.createElement('button');
+                    showFlowsToggleBtn.classList.add("btn", "btn-primary", "toggle-flows")
+                    showFlowsToggleBtn.title = "Toggle the flows on or off."
+                    showFlowsToggleBtn.innerHTML = '<i class="fas icon-toggle-flowmap-flows"></i>';
 
-                    [
-                        this.animationCheck, this.actorCheck,
-                        this.flowCheck, this.lightCheck
-                    ].forEach(function (checkbox) {
-                        checkbox.type = "checkbox";
-                        checkbox.style.transform = "scale(2)";
-                        checkbox.style.pointerEvents = "none";
-                        checkbox.style.marginRight = "10px";
+                    // Nodes toggle
+                    var showNodesToggleBtn = document.createElement('button');
+                    showNodesToggleBtn.classList.add("btn", "btn-primary", "toggle-nodes")
+                    showNodesToggleBtn.title = "Toggle the nodes on or off."
+                    showNodesToggleBtn.innerHTML = '<i class="fas icon-toggle-flowmap-nodes"></i>';
+
+                    // Areas toggle
+                    if (!this.isActorLevel) {
+                        var showAreasToggleBtn = document.createElement('button');
+                        showAreasToggleBtn.classList.add("btn", "btn-primary", "toggle-areas")
+                        showAreasToggleBtn.title = "Toggle the areas on or off."
+                        showAreasToggleBtn.innerHTML = '<i class="fas icon-toggle-flowmap-areas"></i>';
+                    }
+
+                    // Animation toggle
+                    var animationToggleBtn = document.createElement('button');
+                    animationToggleBtn.classList.add("btn", "btn-primary", "toggle-animation")
+                    animationToggleBtn.title = "Toggle the animation of the flows."
+                    animationToggleBtn.innerHTML = '<i class="fas icon-toggle-flowmap-animation"></i>';
+
+                    topLeftControlDiv.appendChild(exportImgBtn);
+                    topLeftControlDiv.appendChild(legendToggleBtn);
+                    topLeftControlDiv.appendChild(darkmodeToggleBtn);
+                    topLeftControlDiv.appendChild(showFlowsToggleBtn);
+                    topLeftControlDiv.appendChild(showNodesToggleBtn);
+                    topLeftControlDiv.appendChild(animationToggleBtn);
+                    if (!this.isActorLevel) {
+                        topLeftControlDiv.appendChild(showAreasToggleBtn);
+                    }
+
+                    topLefControls.onAdd = function (map) {
+                        return topLeftControlDiv;
+                    };
+                    topLefControls.addTo(this.leafletMap);
+
+                    // Event listeners for custom buttons
+                    legendToggleBtn.addEventListener('click', function (event) {
+                        _this.toggleLegend();
+                    })
+                    darkmodeToggleBtn.addEventListener('click', function (event) {
+                        _this.isDarkMode = !_this.isDarkMode;
+                        _this.toggleLight();
+                        event.preventDefault();
+                    })
+                    showFlowsToggleBtn.addEventListener('click', function (event) {
+                        _this.flowMap.showFlows = !_this.flowMap.showFlows;
+                        _this.rerender();
+                        event.preventDefault();
+                    })
+                    showNodesToggleBtn.addEventListener('click', function (event) {
+                        _this.flowMap.showNodes = !_this.flowMap.showNodes;
+                        _this.rerender();
+                        event.preventDefault();
+                    })
+                    if (!this.isActorLevel) {
+                        showAreasToggleBtn.addEventListener('click', function (event) {
+                            _this.toggleAreas();
+                            event.preventDefault();
+                        })
+                    }
+                    animationToggleBtn.addEventListener('click', function (event) {
+                        _this.toggleAnimation();
+                        event.preventDefault();
                     })
 
-                    div.style.background = "rgba(255, 255, 255, 0.5)";
-                    div.style.padding = "10px";
-                    div.style.cursor = "pointer";
 
-                    var actorDiv = document.createElement('div'),
-                        flowDiv = document.createElement('div'),
-                        aniDiv = document.createElement('div'),
-                        aniCheckWrap = document.createElement('div'),
-                        aniToggleDiv = document.createElement('div'),
-                        lightDiv = document.createElement('div');
-
-                    actorDiv.appendChild(this.actorCheck);
-                    actorDiv.appendChild(actorLabel);
-                    actorDiv.style.cursor = 'pointer';
-                    flowDiv.appendChild(this.flowCheck);
-                    flowDiv.appendChild(flowLabel);
-                    flowDiv.style.cursor = 'pointer';
-                    lightDiv.appendChild(this.lightCheck);
-                    lightDiv.appendChild(lightLabel);
-                    lightDiv.style.cursor = 'pointer';
-                    aniCheckWrap.appendChild(this.animationCheck);
-                    aniCheckWrap.appendChild(aniLabel);
-                    aniDiv.appendChild(aniCheckWrap);
-                    aniCheckWrap.style.cursor = 'pointer';
-
-                    var aniLinesLabel = document.createElement('label'),
-                        aniDotsLabel = document.createElement('label');
-
-                    aniLinesLabel.classList.add("flowmap-anim-radio-label");
-                    aniDotsLabel.classList.add("flowmap-anim-radio-label");
-
-                    this.aniLinesRadio = document.createElement('input');
-                    this.aniDotsRadio = document.createElement('input');
-                    this.aniLinesRadio.type = 'radio';
-                    this.aniDotsRadio.type = 'radio';
-                    this.aniLinesRadio.name = 'animation';
-                    this.aniDotsRadio.name = 'animation';
-                    this.aniLinesRadio.style.transform = 'scale(1.5)';
-                    this.aniLinesRadio.style.marginLeft = '5px';
-                    this.aniDotsRadio.style.transform = 'scale(1.5)';
-                    this.aniDotsRadio.style.marginLeft = '5px';
-
-                    this.aniLinesRadio.checked = true;
-
-                    // aniCheckWrap.style.float = 'left';
-                    // aniCheckWrap.style.marginRight = '5px';
-                    // aniToggleDiv.style.float = 'left';
-                    // aniLinesLabel.style.marginRight = '3px';
-
-                    aniLinesLabel.innerHTML = '<span>Lines</span>';
-                    aniDotsLabel.innerHTML = '<span>Dots</span>';
-                    aniLinesLabel.appendChild(this.aniLinesRadio);
-                    aniDotsLabel.appendChild(this.aniDotsRadio);
-                    aniToggleDiv.appendChild(aniLinesLabel);
-                    aniToggleDiv.appendChild(aniDotsLabel);
-
-                    aniToggleDiv.classList.add("aniToggleDiv");
-
-                    customControls.onAdd = function (map) {
-                        return div;
-                    };
-                    customControls.addTo(this.leafletMap);
-
-                    flowDiv.addEventListener("click", function () {
-                        _this.flowCheck.checked = !_this.flowCheck.checked;
-                        _this.rerender();
+                    // Prevent event propagation on button clicks:
+                    L.DomEvent.disableClickPropagation(document.querySelector(".leaflet-top.leaflet-left"));
+                    L.DomEvent.disableClickPropagation(document.querySelector(".leaflet-control-fullscreen.leaflet-bar.leaflet-control"));
+                    
+                    // When user sets map to fullscreen, also change legend:
+                    _this.leafletMap.on('fullscreenchange', function () {
+                        if (_this.leafletMap.isFullscreen()) {
+                            $(".flowmap-d3pluslegend-wrapper").addClass("flowmapLegendFullscreen");
+                        } else {
+                            $(".flowmap-d3pluslegend-wrapper").removeClass("flowmapLegendFullscreen");
+                        }
                     });
 
-                    actorDiv.addEventListener("click", function () {
-                        _this.actorCheck.checked = !_this.actorCheck.checked;
-                        //if (_this.actorCheck.checked) _this.stockCheck.checked = false;
-                        _this.rerender();
-                    });
-                    lightDiv.addEventListener("click", function () {
-                        _this.lightCheck.checked = !_this.lightCheck.checked;
-                        _this.rerender();
-                    });
-                    aniCheckWrap.addEventListener("click", function () {
-                        _this.animationCheck.checked = !_this.animationCheck.checked;
-                        _this.flowMap.toggleAnimation(_this.animationCheck.checked);
-                    });
-                    aniToggleDiv.addEventListener("click", function () {
-                        if (_this.aniDotsRadio.checked)
-                            _this.aniLinesRadio.checked = true;
-                        else
-                            _this.aniDotsRadio.checked = true;
-                        _this.rerender();
-                    });
-
-                    div.appendChild(actorDiv);
-                    div.appendChild(flowDiv);
-                    div.appendChild(lightDiv);
-                    div.appendChild(aniDiv);
-                    div.appendChild(aniToggleDiv);
-
-                    var legendControl = L.control({
-                        position: 'bottomright'
-                    });
-                    this.legend = document.createElement('div');
-                    this.legend.style.background = "rgba(255, 255, 255, 0.5)";
-                    //this.legend.style.visibility = 'hidden';
-
-                    this.legend.style.width = "10rem";
-                    this.legend.style.height = "10rem";
-                    legendControl.onAdd = function () {
-                        return _this.legend;
-                    };
-                    legendControl.addTo(this.leafletMap);
-                    this.el.querySelector('.leaflet-right.leaflet-bottom').classList.add('leaflet-legend');
-
-                    this.el.querySelector('.leaflet-right.leaflet-bottom').firstChild.classList.add("flowmap-legend-wrapper");
-
-                    this.el.querySelector(".flowmap-legend-wrapper").style.width = "10rem";
-                    this.el.querySelector(".flowmap-legend-wrapper").style.height = "10rem";
-
-                    L.DomEvent.disableClickPropagation(this.legend);
-                    L.DomEvent.disableScrollPropagation(this.legend);
-
-
-                    // Smooth scroll to top of Viz
+                    // Smooth scroll to top of Viz after rendering
                     setTimeout(() => {
                         $("#apply-filters")[0].scrollIntoView({
-                            behavior: "smooth"
+                            behavior: "smooth",
+                            block: "start",
+                            inline: "nearest"
                         });
                     }, 500);
-
-
+                    this.options.flowsView.loader.deactivate();
                 },
 
                 toggleLight() {
-                    var _this = this;
-                    var darkBack = new L.TileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
-                        attribution: '© OpenStreetMap, © CartoDB'
-                    });
-                    var lightBack = new L.TileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
-                        attribution: '© OpenStreetMap, © CartoDB'
-                    });
-                    this.leafletMap.removeLayer(this.backgroundLayer);
-                    var checked = _this.lightCheck.checked;
-                    if (checked) {
-                        this.leafletMap.addLayer(lightBack);
+                    if (this.isDarkMode) {
+                        this.tileType = "dark_all"
                     } else {
-                        this.leafletMap.addLayer(darkBack);
+                        this.tileType = "light_all"
+                    }
+
+                    this.updateLegend();
+                    this.leafletMap.removeLayer(this.backgroundLayer);
+                    this.backgroundLayer.setUrl(this.tileUrl + this.tileType + this.tileSuffix)
+                    this.leafletMap.addLayer(this.backgroundLayer);
+                },
+
+                toggleLegend() {
+                    this.hasLegend = !this.hasLegend;
+                    this.updateLegend();
+                },
+
+                toggleAnimation() {
+                    var _this = this;
+                    // If animation is off, turn it on and set to lines:
+                    if (_this.animationOn == false) {
+                        _this.animationOn = true;
+
+                        _this.flowMap.dottedLines = false;
+                        _this.flowMap.toggleAnimation(true);
+
+                        _this.animationLines = true;
+                        _this.animationDots = false;
+
+                        // If animation is on, and type == lines, set to dots:
+                    } else if (_this.animationOn && _this.animationLines) {
+                        _this.animationLines = false;
+                        _this.animationDots = true;
+
+                        _this.flowMap.dottedLines = true;
+                        _this.flowMap.toggleAnimation(true);
+
+                        // If animation is on, and type == dots, turn off:
+                    } else if (_this.animationOn && _this.animationDots) {
+                        _this.flowMap.toggleAnimation(false);
+                        _this.animationOn = false;
+                    }
+                    _this.rerender();
+                },
+
+                toggleAreas() {
+                    // If showAreas is off, turn on and show borders:
+                    if (this.flowMap.showAreas == false) {
+                        this.flowMap.showAreas = true;
+                        this.flowMap.showAreaBorders = true;
+
+                        // If showAreas is on, and type == borders, set to filled:
+                    } else if (this.flowMap.showAreas && this.flowMap.showAreaBorders) {
+                        this.flowMap.showAreaBorders = false;
+                        this.flowMap.showAreaFilled = true;
+
+                        // If animation is on, and type == dots, turn off:
+                    } else if (this.flowMap.showAreas && this.flowMap.showAreaFilled) {
+                        this.flowMap.showAreas = false;
+                        this.flowMap.showAreaBorders = false;
+                        this.flowMap.showAreaFilled = false;
+                    }
+                    this.rerender();
+                },
+
+                updateLegend() {
+                    if (this.hasLegend) {
+                        var _this = this;
+
+                        $(".flowmap-d3pluslegend-wrapper").fadeIn();
+
+                        // console.log("______ legend data _______")
+                        // console.log(_this.legendItems);
+
+                        this.d3plusLegend = new D3plusLegend({
+                            el: ".flowmap-d3pluslegend",
+                            data: _this.legendItems,
+                            flowMapView: _this,
+                            label: function (d) {
+                                return utils.textEllipsis(d.label, 10);
+                            },
+                            shapeConfigFill: function (d) {
+                                return d.color;
+                            },
+                            height: 100,
+                            width: "800",
+                            align: "center",
+                            isDarkMode: _this.isDarkMode,
+                        });
+                    } else {
+                        $(".flowmap-d3pluslegend-wrapper").fadeOut();
                     }
                 },
 
-                updateLegend(data) {
+                rerender: function (zoomToFit) {
                     var _this = this;
 
-                    console.log("______ legend data _______")
-                    console.log(this.allDimensionValues);
+                    var data = _this.transformToLinksAndNodes(_this.flows);
 
-                    this.d3plusLegend = new D3plusLegend({
-                        el: ".flowmap-d3pluslegend-wrapper",
-                        data: _this.allDimensionValues,
-                        flowMapView: _this,
-                        direction: "column",
-                        label: function (d) {
-                            return d.label.substring(0, 1);
-                        },
-                        shapeConfig: {
-                            fill: function (d) {
-                                return d.color;
-                            },
-                            height: 25,
-                            width: 25
-                        },
-                    });
-
-
-                    // //_this.legend = document.querySelector(".flowmap-legend-wrapper");
-                    // _this.legend = new d3plus.Legend()
-                    //     .data(_this.allDimensionValues)
-                    //     // .shapeConfig({
-                    //     //     fill: function (d) {
-                    //     //         return d.color;
-                    //     //     },
-                    //     //     height: 25,
-                    //     //     width: 25
-                    //     // })
-                    //     .direction("column")
-                    //     .label(function (d) {
-                    //         return d.label;
-                    //     })
-                    //     .height(200)
-                    //     .width(200)
-                    //     .select(_this.legend)
-                    //     //.select(".flowmap-legend-wrapper")
-                    //     .render();
-
-
-                    // var data = data || this.data,
-                    //     _this = this;
-                    // this.legend.innerHTML = '';
-                    // var materials = data.materials;
-                    // // ToDo_this.lightCheck.checked: inefficient, done too often for just toggling visibility
-                    // Object.keys(materials).forEach(function (matId) {
-                    //     var material = materials[matId],
-                    //         color = material.color,
-                    //         div = document.createElement('div'),
-                    //         text = document.createElement('div'),
-                    //         check = document.createElement('input'),
-                    //         colorDiv = document.createElement('div');
-                    //     div.style.height = '30px';
-                    //     div.style.cursor = 'pointer';
-                    //     text.innerHTML = material.name;
-                    //     text.style.fontSize = '1.3em';
-                    //     text.style.overflow = 'hidden';
-                    //     text.style.lightSpace = 'nowrap';
-                    //     text.style.textOverflow = 'ellipsis';
-                    //     colorDiv.style.width = '25px';
-                    //     colorDiv.style.height = '100%';
-                    //     colorDiv.style.textAlign = 'center';
-                    //     colorDiv.style.background = color;
-                    //     colorDiv.style.float = 'left';
-                    //     colorDiv.style.paddingTop = '5px';
-                    //     check.type = 'checkbox';
-                    //     check.checked = _this.showMaterials[matId] === true;
-                    //     check.style.transform = 'scale(1.7)';
-                    //     check.style.pointerEvents = 'none';
-                    //     div.appendChild(colorDiv);
-                    //     div.appendChild(text);
-                    //     colorDiv.appendChild(check);
-                    //     _this.legend.appendChild(div);
-                    //     div.addEventListener('click', function () {
-                    //         check.checked = !check.checked;
-                    //         _this.showMaterials[matId] = check.checked;
-                    //         _this.flowMap.toggleTag(matId, check.checked);
-                    //         _this.rerender();
-                    //     })
-                    //     _this.flowMap.toggleTag(matId, check.checked)
-                    // });
+                    _this.resetMapData(data, zoomToFit);
                 },
-
-                zoomed: function () {
-                    // zoomend always is triggered before clustering is done -> reset clusters
-                    this.clusterGroupsDone = 0;
-                },
-
-                //        toggleClusters(){
-                //            var _this = this,
-                //                show = this.clusterCheck.checked;
-                //            // remove cluster layers from map
-                //            this.leafletMap.eachLayer(function (layer) {
-                //                if (layer !== _this.backgroundLayer)
-                //                    _this.leafletMap.removeLayer(layer);
-                //            });
-                //            this.clusterGroups = {};
-                //            // no clustering without data or clustering unchecked
-                //            if (!this.data || !show) return;
-                //            this.flowMap.clear();
-                //            var nodes = Object.values(_this.data.nodes),
-                //                rmax = 30;
-                //            var nClusterGroups = 0;
-                //                clusterPolygons = [];
-                //
-                //            function drawClusters(){
-                //                var data = _this.transformMarkerClusterData();
-                //                // remove old cluster layers
-                //                clusterPolygons.forEach(function(layer){
-                //                    _this.leafletMap.removeLayer(layer);
-                //                })
-                //                clusterPolygons = [];
-                //                _this.resetMapData(data, false);
-                //            }
-                //
-                //            // add cluster layers
-                //            nodes.forEach(function(node){
-                //                if (!node.group) return;
-                //                var clusterId = node.group.id,
-                //                    group = _this.clusterGroups[clusterId];
-                //                // create group if not existing
-                //                if (!group && node.group != null){
-                //                    var clusterGroup = new L.MarkerClusterGroup({
-                //                        maxClusterRadius: 2 * rmax,
-                //                        iconCreateFunction: function(cluster) {
-                //                            return L.divIcon({ iconSize: 0 });
-                //                        },
-                //                        animate: false
-                //                    });
-                //                    group = {
-                //                        color: node.group.color,
-                //                        label: node.group.name,
-                //                        instance: clusterGroup
-                //                    };
-                //                    _this.clusterGroups[clusterId] = group;
-                //                    _this.leafletMap.addLayer(clusterGroup);
-                //                    clusterGroup.on('animationend', function(){
-                //                        _this.clusterGroupsDone++;
-                //                        // all cluster animations are done -> transform data
-                //                        // according to current clustering
-                //                        if (_this.clusterGroupsDone === nClusterGroups){
-                //                            drawClusters();
-                //                        }
-                //                    })
-                //                    nClusterGroups++;
-                //                }
-                //                var marker = L.marker([node['lat'], node['lon']], {
-                //                    icon: L.divIcon({ iconSize: 0 }),
-                //                    opacity: 0
-                //                });
-                //                marker.id = node.id;
-                //                group.instance.addLayer(marker);
-                //            });
-                //            drawClusters();
-                //        },
 
                 resetMapData: function (data, zoomToFit) {
                     this.data = data;
                     this.flowMap.clear();
                     this.flowMap.addNodes(data.nodes);
 
-                    if (this.flowCheck.checked)
+                    if (this.flowMap.showFlows) {
                         this.flowMap.addFlows(data.flows);
-
-                    this.flowMap.showNodes = true;
-                    this.flowMap.showFlows = true;
-
-                    this.flowMap.showNodes = (this.actorCheck.checked) ? true : false;
-                    this.flowMap.showFlows = (this.flowCheck.checked) ? true : false;
-                    this.flowMap.dottedLines = (this.aniDotsRadio.checked) ? true : false;
-
-                    //this.updateLegend(data);
-
-                    this.flowMap.toggleTag('actor', this.actorCheck.checked);
-
-                    this.flowMap.resetView();
-                    if (zoomToFit) this.flowMap.zoomToFit();
-                },
-
-                rerender: function (zoomToFit) {
-                    var _this = this;
-
-                    //var data = _this.transformData(_this.flows);
-
-                    var data = _this.transformToLinksAndNodes(_this.flows);
-
-                    if (_this.displayWarnings && data.warnings.length > 0) {
-                        var msg = '';
-                        data.warnings.forEach(function (warning) {
-                            msg += warning + '<br>';
-                        })
-                        _this.alert(msg);
                     }
-                    _this.resetMapData(data, zoomToFit);
-                    _this.toggleLight();
+
+                    this.updateLegend();
+                    this.flowMap.resetView();
+                    
+                    if (zoomToFit) {
+                        this.flowMap.zoomToFit();
+                    }
                 },
 
-                /*
-                additional to the usual attributes the flow should have the attribute
-                'color'
-                */
                 addFlows: function (flows) {
                     var _this = this;
                     flows = (flows.forEach != null) ? flows : [flows];
@@ -530,20 +443,7 @@ define(['underscore',
                     })
                 },
 
-                getFlows: function () {
-                    return this.flows.models;
-                },
-
-                removeFlows: function (flows) {
-                    var flows = (flows instanceof Array) ? flows : [flows];
-                    this.flows.remove(flows);
-                },
-
                 clear: function () {
-                    //this.flows.reset();
-                    //this.legend.innerHTML = '';
-                    //this.clusterGroups = {};
-                    //this.data = null;
                     if (this.flowMap) {
                         this.flowMap.clear();
                         this.el = "";
@@ -558,35 +458,6 @@ define(['underscore',
                     }
                 },
 
-                // transformMarkerClusterData: function () {
-                //     var clusters = [];
-                //     Object.values(this.clusterGroups).forEach(function (clusterGroup) {
-                //         clusterGroup.instance._featureGroup.eachLayer(function (layer) {
-                //             if (layer instanceof L.MarkerCluster) {
-                //                 var point = layer.getLatLng(),
-                //                     cluster = {
-                //                         ids: [],
-                //                         color: clusterGroup.color,
-                //                         label: clusterGroup.label,
-                //                         lat: point.lat,
-                //                         lon: point.lng
-                //                     }
-                //                 layer.getAllChildMarkers().forEach(function (marker) {
-                //                     cluster.ids.push(marker.id);
-                //                 })
-                //                 clusters.push(cluster);
-                //             }
-                //         });
-                //     })
-                //     data = this.transformData(
-                //         this.flows, {
-                //             splitByComposition: this.materialCheck.checked,
-                //             clusters: clusters
-                //         }
-                //     );
-                //     return data;
-                // },
-
                 returnLinkInfo: function (link) {
                     let fromToText = link.origin.name + ' &#10132; ' + link.destination.name + '<br>'
                     let dimensionText = "";
@@ -598,10 +469,10 @@ define(['underscore',
                         case "time":
                             if (this.dim2[1] == "flowchain__month__year") {
                                 dimensionText = "Year";
-                                dimensionValue = link.year;
+                                dimensionId = dimensionValue = link.year;
                             } else if (this.dim2[1] == "flowchain__month") {
                                 dimensionText = "Month";
-                                dimensionValue = link.month;
+                                dimensionId = dimensionValue = link.month;
                             }
                             break;
                         case "economicActivity":
@@ -616,10 +487,13 @@ define(['underscore',
                             }
                             break;
                         case "treatmentMethod":
+
                             if (this.dim2[1] == "origin__process__processgroup" || this.dim2[1] == "destination__process__processgroup") {
                                 dimensionText = "Treatment method group";
+                                dimensionId = link.processgroup;
                                 dimensionValue = link.processGroupCode + " " + link.processGroupName;
                             } else if (this.dim2[1] == "origin__process" || this.dim2[1] == "destination__process") {
+                                dimensionId = link.process
                                 dimensionText = "Treatment method";
                                 dimensionValue = link.processCode + " " + link.processName;
                             }
@@ -628,34 +502,33 @@ define(['underscore',
 
                             switch (this.dim2[1]) {
                                 case "flowchain__waste06__waste04__waste02":
+                                    dimensionId = link.waste02;
                                     dimensionText = "EWC Chapter";
                                     dimensionValue = link.ewc2Code + " " + link.ewc2Name;
                                     break;
                                 case "flowchain__waste06__waste04":
+                                    dimensionId = link.waste04;
                                     dimensionText = "EWC Sub-Chapter";
                                     dimensionValue = link.ewc4Code + " " + link.ewc4Name;
                                     break;
                                 case "flowchain__waste06":
+                                    dimensionId = link.waste06;
                                     dimensionText = "EWC Entry";
                                     dimensionValue = link.ewc6Code + " " + link.ewc6Name;
                                     break;
-                                default:
-                                    break;
                             }
 
-                            break;
-                        default:
                             break;
                     }
 
                     let description = '<br><b>' + dimensionText + ':</b> ';
 
                     return {
-                        dimensionValue: dimensionValue,
+                        dimensionValue: dimensionValue.toString(),
                         dimensionId: dimensionId,
                         toolTipText: fromToText + description + dimensionValue + '<br><b>Amount: </b>' + amountText,
                         amountText: amountText,
-                        color: utils.colorByName(dimensionValue),
+                        dimensionText: dimensionText,
                     }
 
                 },
@@ -665,59 +538,78 @@ define(['underscore',
                         nodes = [],
                         links = [];
 
+                    if (this.dim2[1].includes("origin")) {
+                        this.dimensionIsOrigin = true;
+                    } else {
+                        this.dimensionIsOrigin = false;
+                    }
+
                     flows.forEach(function (flow, index) {
                         let originNode = flow.origin;
                         let destinationNode = flow.destination
                         let link = flow;
                         let linkInfo = _this.returnLinkInfo(this[index]);
+                        let nodeOpacity = 1;
 
                         // NODES
                         // Add the origin and destination to Nodes, and include amounts:
-                        //originNode.value = flow.amount;
-                        originNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
-                        originNode.color = linkInfo.color;
+                        originNode.value = flow.amount;
+                        originNode.dimensionValue = linkInfo.dimensionValue;
+                        originNode.dimensionText = linkInfo.dimensionText;
+                        originNode.amountText = linkInfo.amountText
+                        originNode.opacity = nodeOpacity;
+                        originNode.displayNode = _this.dimensionIsOrigin;
 
-                        //destinationNode.value = flow.amount;
-                        // destinationNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
-                        // destinationNode.color = linkInfo.color;
+                        destinationNode.value = flow.amount;
+                        destinationNode.dimensionValue = linkInfo.dimensionValue;
+                        destinationNode.dimensionText = linkInfo.dimensionText;
+                        destinationNode.amountText = linkInfo.amountText
+                        destinationNode.opacity = nodeOpacity;
+                        destinationNode.displayNode = !_this.dimensionIsOrigin;
+
+                        // Store info of source/destination as prop:
+                        originNode.destination = destinationNode;
+                        destinationNode.origin = originNode;
 
                         nodes.push(originNode, destinationNode)
 
-                        _this.allDimensionValues.push({
-                            label: linkInfo.dimensionValue,
-                            id: linkInfo.dimensionId,
-                            color: linkInfo.color,
-                        });
-
                         // LINKS
-                        link.source = this[index].origin.id;
-                        link.target = this[index].destination.id;
-                        link.value = this[index].amount;
-                        // link.style = {
-                        //     nodeColor: utils.colorByName(this[index].origin.name),
-                        //     color: utils.colorByName(this[index].id),
-                        // };
+                        link.source = originNode.id;
+                        link.sourceName = originNode.name;
+                        link.target = destinationNode.id;
+                        link.targetName = destinationNode.name;
 
-                        link.color = linkInfo.color;
-                        link.label = linkInfo.toolTipText;
+                        link.value = flow.amount;
+                        link.dimensionId = linkInfo.dimensionId;
 
+                        //link.label = linkInfo.toolTipText;
+                        link.amountText = linkInfo.amountText;
+                        link.dimensionText = linkInfo.dimensionText;
+                        link.dimensionValue = linkInfo.dimensionValue;
                         links.push(link)
-
                     }, flows);
 
-                    nodes.forEach(function (node, index) {
-                        //this[index].color = utils.colorByName(this[index].name);
-                        //this[index].label = this[index].name;
-                        this[index].opacity = 0.8;
-                    }, nodes);
+                    // Assign colors to links and nodes based on label-prop:
+                    links = enrichFlows.assignColorsByProperty(links, "dimensionId");
+                    nodes = enrichFlows.assignColorsByProperty(nodes, "dimensionValue");
 
+                    nodes = _.sortBy(nodes, 'value').reverse();
 
+                    // Get all unique occurences for legend:
+                    links.forEach(link => {
+                        _this.legendItems.push({
+                            id: link.dimensionId,
+                            label: link.dimensionValue,
+                            color: link.color,
+                        })
+                    });
 
+                    _this.legendItems = _.uniq(_this.legendItems, 'label');
 
-                    console.log("Links:");
-                    console.log(links);
-                    console.log("Nodes:");
-                    console.log(nodes);
+                    // console.log("Links:");
+                    // console.log(links);
+                    // console.log("Nodes:");
+                    // console.log(nodes);
 
                     return {
                         flows: links,
@@ -725,307 +617,9 @@ define(['underscore',
                     }
                 },
 
-                /*
-                 * transform actors and flows to a json-representation
-                 * readable by the sankey-diagram
-                 *
-                 * options.splitByComposition - split flows by their compositions (aka materials) into seperate flows
-                 * options.clusters - array of objects with keys "lat", "lon" (location) and "ids" (array of actor ids that belong to that cluster)
-                 */
-                // transformData: function (flows, options) {
-
-                //     var _this = this,
-                //         options = options || {},
-                //         nodes = {},
-                //         links = [],
-                //         clusters = options.clusters || [],
-                //         splitByComposition = options.splitByComposition,
-                //         clusterMap = {},
-                //         pFlows = [],
-                //         warnings = [],
-                //         maxStock = 0;
-
-                //     var i = 0;
-
-                //     // clusters.forEach(function (cluster) {
-                //     //     var nNodes = cluster.ids.length,
-                //     //         clusterId = 'cluster' + i,
-                //     //         label = cluster.label + ' (' + nNodes + ' ' + 'actors' + ')';
-                //     //     var clusterNode = {
-                //     //         id: clusterId,
-                //     //         name: label,
-                //     //         label: label,
-                //     //         color: cluster.color,
-                //     //         opacity: 0.8,
-                //     //         lon: cluster.lon,
-                //     //         lat: cluster.lat,
-                //     //         radius: Math.min(25, 10 + nNodes / 3),
-                //     //         innerLabel: nNodes,
-                //     //         cluster: cluster,
-                //     //         tag: 'actor'
-                //     //     }
-                //     //     nodes[clusterId] = clusterNode;
-                //     //     i++;
-                //     //     cluster.ids.forEach(function (id) {
-                //     //         clusterMap[id] = clusterId;
-                //     //     })
-                //     // })
-
-                //     function transformNode(node) {
-                //         var id = node.id,
-                //             clusterId = clusterMap[id];
-
-                //         // node is clustered, take cluster as origin resp. destination
-                //         if (clusterId != null) return nodes[clusterId];
-
-                //         // already transformed
-                //         var transNode = nodes[id];
-                //         if (transNode) return transNode;
-
-                //         var name = node.name,
-                //             level = node.level;
-                //         code = node.code || node.nace || node.activity_nace;
-
-                //         if ((_this.anonymize) && (level === 'actor'))
-                //             name = 'Actor';
-                //         name += ' (' + code + ')';
-
-                //         if (!node.geom) {
-                //             var warning = 'Actor referenced by flow, but missing a location: ' + name;
-                //             warnings.push(warning);
-                //             return;
-                //         }
-                //         var coords = node.geom.coordinates;
-                //         transNode = {
-                //             id: id,
-                //             name: name,
-                //             label: name,
-                //             color: node.color,
-                //             opacity: 0.8,
-                //             group: node.group,
-                //             lon: coords[0].toFixed(4),
-                //             lat: coords[1].toFixed(4),
-                //             radius: 5,
-                //             tag: 'actor'
-                //         }
-                //         nodes[id] = transNode;
-                //         return transNode;
-                //     }
-
-                //     var aggMap = {};
-
-                //     function aggregate(flow, source, target) {
-                //         var key = flow.get('waste') + source.id,
-                //             is_stock = flow.get('stock');
-                //         if (!is_stock) key += '-' + target.id;
-                //         var mapped = aggMap[key];
-                //         // not mapped yet -> create mapped flow
-                //         if (!mapped) {
-                //             mapped = {
-                //                 id: key,
-                //                 source: source,
-                //                 target: target,
-                //                 waste: flow.get('waste'),
-                //                 amount: 1000,
-                //                 fractions: {},
-                //                 is_stock: is_stock
-                //             }
-                //             fractions = mapped.fractions;
-                //             flow.get('materials').forEach(function (material) {
-                //                 fractions[material.material] = Object.assign({}, material);
-                //             })
-                //             aggMap[key] = mapped;
-                //             pFlows.push(mapped);
-                //         }
-                //         // mapped -> add to mapped flow
-                //         else {
-                //             fractions = mapped.fractions;
-                //             flow.get('materials').forEach(function (material) {
-                //                 var mat = fractions[material.material];
-                //                 if (!mat) {
-                //                     mat = Object.assign({}, material);
-                //                     fractions[material.material] = mat;
-                //                 } else {
-                //                     mat.amount += material.amount;
-                //                 }
-                //             })
-                //             mapped.amount += flow.get('amount');
-                //         }
-                //     }
-                //     i = 0;
-                //     // add the flows that don't have to be aggregated, because origin and destination are not clustered
-                //     flows.forEach(function (flow) {
-                //         var origin = flow.origin;
-                //         var destination = flow.destination;
-                //         var amount = flow.amount;
-
-                //         origin.color = utils.colorByName(origin.name);
-                //         destination.color = utils.colorByName(destination.name);
-
-
-                //         var source = transformNode(origin);
-                //         var target = transformNode(destination);
-                //         // var source = transformNode(origin),
-                //         //     target = (!is_stock) ? transformNode(destination) : source; // set target to source in case of stocks just for convenience, doesn't matter
-
-
-                //         // one node might have no geom (in case of stocks same node) -> cannot shown on map
-                //         if (!source || !target) return;
-
-                //         // one node is clustered (in case of stocks same node) -> aggregate
-                //         if (source.cluster || target.cluster) {
-                //             aggregate(flow, source, target);
-                //         } else {
-                //             pFlows.push({
-                //                 id: flow.id || i,
-                //                 source: source,
-                //                 target: target,
-                //                 amount: amount,
-                //                 color: flow.color,
-                //                 //fractions: flow.get('materials'),
-                //                 //waste: flow.get('waste'),
-                //                 //process: flow.get('process'),
-                //                 description: flow.get('description')
-                //             });
-                //         }
-                //         i += 1;
-                //     })
-
-                //     var maxClusterStock = 0;
-                //     // posproc the aggregation (just dict to list)
-                //     Object.values(aggMap).forEach(function (flow) {
-                //         flow.fractions = Object.values(flow.fractions);
-                //         if (flow.is_stock)
-                //             maxClusterStock = Math.max(maxClusterStock, flow.amount)
-                //     })
-
-                //     function transformFlow(pFlow) {
-                //         var source = pFlow.source,
-                //             target = pFlow.target,
-                //             fractions = pFlow.fractions,
-                //             description = pFlow.description;
-
-                //         var descText = '<br><b>Description:</b> ';
-                //         description.forEach(function (d) {
-                //             descText += d + ', ';
-                //         })
-                //         descText = descText.substring(0, descText.length - 2);
-
-                //         var //wasteLabel = (pFlow.waste) ? gettext('Waste') : gettext('Product'),
-                //             //processLabel = gettext('Process') + ': ' + (pFlow.process || '-'),
-                //             totalAmount = pFlow.amount,
-                //             flowLabel = source.name + '&#10132; ' + target.name + '<br>' + descText;
-
-                //         // if (splitByComposition) {
-                //         //     var cl = [];
-                //         //     fractions.forEach(function (material) {
-                //         //         var amount = Math.round(material.amount),
-                //         //             label = flowLabel + '<br><b>Material: </b>' + material.name +
-                //         //             '<br><b>Amount: </b>' + _this.format(amount) + ' t/year',
-                //         //             color;
-                //         //         if (!uniqueMaterials[material.material]) {
-                //         //             color = utils.colorByName(material.name)
-                //         //             uniqueMaterials[material.material] = {
-                //         //                 color: color,
-                //         //                 name: material.name
-                //         //             };
-                //         //         } else
-                //         //             color = uniqueMaterials[material.material].color;
-                //         //         cl.push({
-                //         //             id: pFlow.id,
-                //         //             label: label,
-                //         //             source: source.id,
-                //         //             target: target.id,
-                //         //             value: Math.abs(amount),
-                //         //             material: material.material,
-                //         //             tag: material.material,
-                //         //             color: color
-                //         //         })
-                //         //     })
-                //         //     return cl;
-                //         // } else {
-                //         var label = flowLabel + '<br><b>Amount: </b>' + _this.format(totalAmount) + ' t/year';
-                //         return [{
-                //             id: pFlow.id,
-                //             label: label,
-                //             source: source.id,
-                //             target: target.id,
-                //             color: pFlow.color || source.color,
-                //             value: Math.abs(totalAmount)
-                //         }]
-                //         //}
-                //     }
-
-                //     // function transformStock(pFlow) {
-                //     //     var source = pFlow.source,
-                //     //         fractions = pFlow.fractions;
-
-                //     //     var wasteLabel = (pFlow.waste) ? 'Waste' : 'Product',
-                //     //         totalAmount = Math.round(pFlow.amount),
-                //     //         stockLabel = source.name + '<br>' + wasteLabel + ' ' + 'Stock';
-                //     //     if (splitByComposition) {
-                //     //         var cs = [];
-                //     //         fractions.forEach(function (material) {
-                //     //             var amount = Math.round(material.amount),
-                //     //                 label = stockLabel + '<br><b>Material: </b>' + material.name + '<br><b>Amount: </b>' + _this.format(amount) + ' t/year',
-                //     //                 color;
-                //     //             if (!uniqueMaterials[material.material]) {
-                //     //                 color = utils.colorByName(material.name)
-                //     //                 uniqueMaterials[material.material] = {
-                //     //                     color: color,
-                //     //                     name: material.name
-                //     //                 };
-                //     //             } else
-                //     //                 color = uniqueMaterials[material.material].color;
-                //     //             cs.push({
-                //     //                 id: 'stock' + pFlow.id,
-                //     //                 label: label,
-                //     //                 color: color,
-                //     //                 lon: source.lon,
-                //     //                 lat: source.lat,
-                //     //                 //radius: radius,
-                //     //                 value: Math.abs(amount),
-                //     //                 tag: material.material
-                //     //             })
-                //     //         })
-                //     //         return cs;
-                //     //     } else {
-                //     //         var label = stockLabel + '<br><b>Amount: </b>' + _this.format(totalAmount) + ' t/year';
-                //     //         var stock = [{
-                //     //             id: 'stock' + pFlow.id,
-                //     //             label: label,
-                //     //             color: source.color,
-                //     //             group: source.group,
-                //     //             lon: source.lon,
-                //     //             lat: source.lat,
-                //     //             opacity: 0.8,
-                //     //             //radius: radius,
-                //     //             value: Math.abs(totalAmount),
-                //     //             tag: 'stock'
-                //     //         }]
-                //     //         return stock;
-                //     //     }
-                //     // }
-
-                //     // var stocks = [];
-
-                //     // var uniqueMaterials = {};
-                //     // pFlows.forEach(function (pFlow) {
-                //     //     if (pFlow.amount == 0) return;
-                //     //     if (!pFlow.is_stock)
-                //     //         links = links.concat(transformFlow(pFlow));
-                //     //     else
-                //     //         stocks = stocks.concat(transformStock(pFlow));
-                //     // })
-
-
-                //     return {
-                //         flows: links,
-                //         nodes: Object.values(nodes),
-                //         //stocks: stocks,
-                //         //materials: uniqueMaterials,
-                //         //warnings: warnings
-                //     }
+                // zoomed: function () {
+                //     // zoomend always is triggered before clustering is done -> reset clusters
+                //     this.clusterGroupsDone = 0;
                 // },
 
                 close: function () {

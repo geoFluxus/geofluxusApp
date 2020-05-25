@@ -4,6 +4,8 @@ from rest_framework.serializers import (HyperlinkedModelSerializer,
 from rest_framework_gis.serializers import (GeometryField)
 from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Activity,
+                                         ProcessGroup,
+                                         Process,
                                          Company,
                                          Actor)
 
@@ -50,6 +52,50 @@ class ActivityListSerializer(ActivitySerializer):
                   'name',
                   'nace',
                   'activitygroup',
+                  'flow_count')
+
+
+# Process group
+class ProcessGroupSerializer(HyperlinkedModelSerializer):
+    flow_count = IntegerField(read_only=True)
+
+    class Meta:
+        model = ProcessGroup
+        fields = ('url',
+                  'id',
+                  'name',
+                  'code',
+                  'flow_count')
+
+class ProcessGroupListSerializer(ProcessGroupSerializer):
+    class Meta(ProcessGroupSerializer.Meta):
+        fields = ('id',
+                  'name',
+                  'code',
+                  'flow_count')
+
+
+# Process
+class ProcessSerializer(HyperlinkedModelSerializer):
+    processgroup = PrimaryKeyRelatedField(read_only=True)
+    flow_count = IntegerField(read_only=True)
+
+    class Meta:
+        model = Process
+        fields = ('url',
+                  'id',
+                  'name',
+                  'code',
+                  'processgroup',
+                  'flow_count')
+
+
+class ProcessListSerializer(ProcessSerializer):
+    class Meta(ProcessSerializer.Meta):
+        fields = ('id',
+                  'name',
+                  'code',
+                  'processgroup',
                   'flow_count')
 
 

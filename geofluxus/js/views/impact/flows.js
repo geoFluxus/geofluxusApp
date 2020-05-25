@@ -368,19 +368,10 @@ define(['views/common/baseview',
 
                 // prettify scale intervals
                 function prettify(val) {
-                    if (val <= 5) {
-                        return Math.round(val / 5) * 5;
-                    }
-                    else if (val > 5 && val <= 100) {
-                        return Math.round(val / 10) * 10;
-                    }
-                    else if (val > 100 && val <= 1000) {
-                        return Math.round(val / 100) * 100;
-                    }
-                    else if (val > 1000 && val <= 10000) {
-                        return Math.round(val / 1000) * 1000;
-                    }
-                    return val;
+                    var int = ~~(val)
+                        digits = int.toString().length - 1
+                        base = 10 ** digits;
+                    return Math.round(val / base) * base;
                 }
                 var values = [];
                 Object.values(quantile.quantiles()).forEach(function(val) {
@@ -401,7 +392,7 @@ define(['views/common/baseview',
                 ways.forEach(function(way) {
                     var id = way.get('id'),
                         coords = way.get('the_geom').coordinates,
-                        type = way.get('the_geom').type.toLowerCase();
+                        type = way.get('the_geom').type.toLowerCase(),
                         amount = amounts[id];
                     _this.routingMap.addGeometry(coords, {
                         projection: 'EPSG:4326', layername: 'ways',
@@ -432,10 +423,10 @@ define(['views/common/baseview',
                 });
                 this.routingMap.map.addControl(controlPanel);
 
-                var title = document.createElement('div');
-                title.style.margin = "5%";
-                title.innerHTML = '<h4 style="text-align: center;">Legend</h4>'
-                legend.appendChild(title);
+//                var title = document.createElement('div');
+//                title.style.margin = "5%";
+//                title.innerHTML = '<h4 style="text-align: center;">Legend</h4>'
+//                legend.appendChild(title);
 
                 // add color scale to legend
                 var width = height = 30;
@@ -457,7 +448,7 @@ define(['views/common/baseview',
                                  .data(values)
                                  .enter()
                                  .append('text')
-                                 .text(function (d) { return `${d}`; })
+                                 .text(function (d) { return d >= 1000 ? `${(d/1000)}K` : `${d}`;})
                                  .attr("x", function(d, i) { return i * width; })
                                  .attr('y', 2 * height)
                                  .attr('fill', 'white')

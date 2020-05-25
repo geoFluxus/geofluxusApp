@@ -22,17 +22,22 @@ function(ol, turf)
             this.layers = {};
             var initlayers = [];
 
+            var cartodb = new ol.Attribution({html : '© <a style="color:#0078A8" href="http://cartodb.com/attributions">CartoDB</a>'}),
+                openlayers = new ol.Attribution({html : '© <a style="color:#0078A8" href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'});
+
             // blank map
             if (options.renderOSM != false){
                 var source = new ol.source.OSM({crossOrigin: 'anonymous'});
                 if (options.source == 'light') {
                     source = new ol.source.XYZ({
-                        url: 'https://cartodb-basemaps-{a-d}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'
+                        url: 'https://cartodb-basemaps-{a-d}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png',
+                        attributions: [cartodb]
                     })
                 }
                 else if (options.source == 'dark') {
                     source = new ol.source.XYZ({
-                        url: 'https://cartodb-basemaps-{a-d}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png'
+                        url: 'https://cartodb-basemaps-{a-d}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
+                        attributions: [cartodb]
                     })
                 }
                 var background = new ol.layer.Tile({
@@ -47,7 +52,7 @@ function(ol, turf)
             var basicLayer = new ol.layer.Vector({ source: new ol.source.Vector() });
             initlayers.push(basicLayer);
 
-            var controls = ol.control.defaults({attribution: false })
+            var controls = ol.control.defaults({attribution: true })
                                      .extend([new ol.control.FullScreen({source: options.el})]);
 
             var interactOptions = {
@@ -106,11 +111,13 @@ function(ol, turf)
                 if (feature && feature.get('tooltip')) {
                     overlay.setPosition(evt.coordinate);
                     tooltip.innerHTML = feature.get('tooltip');
-                    tooltip.style.display = '';
+                    tooltip.style.display = 'block';
                     tooltip.style.color = 'black';
-                    tooltip.style.borderRadius = '10px';
-                    tooltip.style.padding = '10px';
-                    tooltip.style.font = '14px sans-serif';
+                    tooltip.style.backgroundColor = 'rgb(139, 138, 138)';
+                    tooltip.style.opacity = '0.8';
+                    tooltip.style.borderRadius = '1.5rem';
+                    tooltip.style.padding = '0.75rem';
+                    tooltip.style.font = 'small Montserrat, sans-serif';
                 }
                 else tooltip.style.display = 'none';
             };

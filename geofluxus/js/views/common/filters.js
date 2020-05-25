@@ -49,13 +49,16 @@ define(['views/common/baseview',
                     apiTag: 'wastes06'
                 });
                 this.materials = new Collection([], {
-                    apiTag: 'materials'
+                    apiTag: 'materials',
+                    comparator: 'name',
                 });
                 this.products = new Collection([], {
-                    apiTag: 'products'
+                    apiTag: 'products',
+                    comparator: 'name',
                 });
                 this.composites = new Collection([], {
-                    apiTag: 'composites'
+                    apiTag: 'composites',
+                    comparator: 'name',
                 });
                 this.areaLevels = new Collection([], {
                     apiTag: 'arealevels',
@@ -931,7 +934,7 @@ define(['views/common/baseview',
                 if (this.selectedAreasDestination !== undefined &&
                     this.selectedAreasDestination.length > 0) {
                     filterParams.destination.selectedAreas = [];
-                    filter.selectedAreasDestination.forEach(function (area) {
+                    this.selectedAreasDestination.forEach(function (area) {
                         filterParams.destination.selectedAreas.push(area.id);
                     });
                 }

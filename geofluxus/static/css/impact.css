@@ -316,10 +316,6 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 
-.min-width-600px {
-    min-width: 550px;
-}
-
 /* SANKEY WRAPPER */
 
 .sankey-wrapper {
@@ -642,7 +638,7 @@ div.fullscreen {
     bottom: 5%;
     background: rgba(255, 255, 255, 0.1);
     width: 350px;
-    height: 150px;
+    height: 75px;
 }
 
 #legend:hover {
