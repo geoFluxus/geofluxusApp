@@ -88,7 +88,7 @@ define(['underscore',
                     this.tileType = "dark_all"
                     this.tileSuffix = "/{z}/{x}/{y}.png"
                     this.backgroundLayer = new L.TileLayer(this.tileUrl + this.tileType + this.tileSuffix, {
-                        attribution: '© OpenStreetMap, © CartoDB'
+                        attribution: '© <a style="color:#0078A8" href="http://cartodb.com/attributions">CartoDB</a>'
                     });
 
                     $(this.el).html('<div class="flowmap-container d-block" style="width: 100%; height: 100%"></div><div class="flowmap-d3pluslegend-wrapper text-center"><svg class="flowmap-d3pluslegend"></svg></div>')

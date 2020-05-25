@@ -392,7 +392,7 @@ textarea.textarea-autosize.form-control-sm {
 
 .leaflet-top,
 .leaflet-bottom {
-    z-index: 600;
+    z-index: 1000;
 }
 
 
@@ -744,6 +744,8 @@ textarea.textarea-autosize.form-control-sm {
     margin-right: 0px !important;
     padding-right: 10px;
     background: none !important;
+    position: relative;
+    z-index: 601;
 }
 
 /* .d3plus-zoom-controls */

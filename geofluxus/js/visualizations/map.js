@@ -22,8 +22,8 @@ function(ol, turf)
             this.layers = {};
             var initlayers = [];
 
-            var cartodb = new ol.Attribution({html : '© <a style="color:blue" href="http://cartodb.com/attributions">CartoDB</a>'}),
-                openlayers = new ol.Attribution({html : '© <a style="color:blue" href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'});
+            var cartodb = new ol.Attribution({html : '© <a style="color:#0078A8" href="http://cartodb.com/attributions">CartoDB</a>'}),
+                openlayers = new ol.Attribution({html : '© <a style="color:#0078A8" href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'});
 
             // blank map
             if (options.renderOSM != false){
@@ -31,13 +31,13 @@ function(ol, turf)
                 if (options.source == 'light') {
                     source = new ol.source.XYZ({
                         url: 'https://cartodb-basemaps-{a-d}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png',
-                        attributions: [openlayers, cartodb]
+                        attributions: [cartodb]
                     })
                 }
                 else if (options.source == 'dark') {
                     source = new ol.source.XYZ({
                         url: 'https://cartodb-basemaps-{a-d}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
-                        attributions: [openlayers, cartodb]
+                        attributions: [cartodb]
                     })
                 }
                 var background = new ol.layer.Tile({
