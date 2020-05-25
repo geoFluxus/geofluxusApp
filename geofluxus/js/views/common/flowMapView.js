@@ -124,10 +124,14 @@ define(['underscore',
                     // Retrieve area geometry
                     var areas = [];
                     this.areas.forEach(function (area) {
-                        var id = area.get('id'),
-                            geom = area.get('geom').coordinates;
-                        if (areaIds.has(id)) {
-                            areas.push(geom);
+
+                        let newArea = {
+                            id: area.get('id'),
+                            name: area.get('name'),
+                            geom: area.get('geom').coordinates,
+                        }
+                        if (areaIds.has(newArea.id)) {
+                            areas.push(newArea);
                         }
                     })
 
@@ -143,6 +147,11 @@ define(['underscore',
                     this.flowMap.showAreas = false;
                     this.flowMap.showAreaBorders = false;
                     this.flowMap.showAreaFilled = false;
+
+                    if (!this.isActorLevel) {
+                        this.flowMap.showAreas = true;
+                        this.flowMap.showAreaBorders = true;                            
+                    }
 
                     // //////////////////////
                     // Leaflet buttons
@@ -310,7 +319,6 @@ define(['underscore',
                 },
 
                 toggleLight() {
-                    var _this = this;
                     if (this.isDarkMode) {
                         this.tileType = "dark_all"
                     } else {
@@ -357,25 +365,23 @@ define(['underscore',
                 },
 
                 toggleAreas() {
-                    var _this = this;
-
                     // If showAreas is off, turn on and show borders:
-                    if (_this.flowMap.showAreas == false) {
-                        _this.flowMap.showAreas = true;
-                        _this.flowMap.showAreaBorders = true;
+                    if (this.flowMap.showAreas == false) {
+                        this.flowMap.showAreas = true;
+                        this.flowMap.showAreaBorders = true;
 
                         // If showAreas is on, and type == borders, set to filled:
-                    } else if (_this.flowMap.showAreas && _this.flowMap.showAreaBorders) {
-                        _this.flowMap.showAreaBorders = false;
-                        _this.flowMap.showAreaFilled = true;
+                    } else if (this.flowMap.showAreas && this.flowMap.showAreaBorders) {
+                        this.flowMap.showAreaBorders = false;
+                        this.flowMap.showAreaFilled = true;
 
                         // If animation is on, and type == dots, turn off:
-                    } else if (_this.flowMap.showAreas && _this.flowMap.showAreaFilled) {
-                        _this.flowMap.showAreas = false;
-                        _this.flowMap.showAreaBorders = false;
-                        _this.flowMap.showAreaFilled = false;
+                    } else if (this.flowMap.showAreas && this.flowMap.showAreaFilled) {
+                        this.flowMap.showAreas = false;
+                        this.flowMap.showAreaBorders = false;
+                        this.flowMap.showAreaFilled = false;
                     }
-                    _this.rerender();
+                    this.rerender();
                 },
 
                 updateLegend() {
@@ -384,8 +390,8 @@ define(['underscore',
 
                         $(".flowmap-d3pluslegend-wrapper").fadeIn();
 
-                        console.log("______ legend data _______")
-                        console.log(_this.legendItems);
+                        // console.log("______ legend data _______")
+                        // console.log(_this.legendItems);
 
                         this.d3plusLegend = new D3plusLegend({
                             el: ".flowmap-d3pluslegend",
@@ -419,10 +425,17 @@ define(['underscore',
                     this.data = data;
                     this.flowMap.clear();
                     this.flowMap.addNodes(data.nodes);
-                    this.flowMap.addFlows(data.flows);
+
+                    if (this.flowMap.showFlows) {
+                        this.flowMap.addFlows(data.flows);
+                    }
+
                     this.updateLegend();
                     this.flowMap.resetView();
-                    if (zoomToFit) this.flowMap.zoomToFit();
+                    
+                    if (zoomToFit) {
+                        this.flowMap.zoomToFit();
+                    }
                 },
 
                 addFlows: function (flows) {
@@ -533,8 +546,6 @@ define(['underscore',
                     } else {
                         this.dimensionIsOrigin = false;
                     }
-                    console.log("this.dimensionIsOrigin: ", this.dimensionIsOrigin)
-
 
                     flows.forEach(function (flow, index) {
                         let originNode = flow.origin;
@@ -598,10 +609,10 @@ define(['underscore',
 
                     _this.legendItems = _.uniq(_this.legendItems, 'label');
 
-                    console.log("Links:");
-                    console.log(links);
-                    console.log("Nodes:");
-                    console.log(nodes);
+                    // console.log("Links:");
+                    // console.log(links);
+                    // console.log("Nodes:");
+                    // console.log(nodes);
 
                     return {
                         flows: links,

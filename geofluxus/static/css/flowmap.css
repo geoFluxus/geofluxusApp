@@ -26,6 +26,8 @@
 
 .flow {
     /*stroke-linecap: round;*/
+    z-index: 999999 !important;
+    position: relative;
 }
 
 .animated.flow {

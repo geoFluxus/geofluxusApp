@@ -409,7 +409,7 @@ textarea.textarea-autosize.form-control-sm {
     z-index: 600;
     border-bottom-left-radius: 18px;
     border-bottom-right-radius: 18px;
-    background-color: rgba(255, 255, 255, 0.5);
+    /* background-color: rgba(255, 255, 255, 0.5); */
 }
 
 .flowmap-d3pluslegend {
@@ -442,6 +442,16 @@ textarea.textarea-autosize.form-control-sm {
     z-index: 99999;
     min-width: 15rem;
     max-width: 25rem;
+}
+
+.leaflet-tooltip {
+    background-color: rgb(139, 138, 138) !important;
+    border-radius: 1.5rem !important;
+    padding: 0.75rem;
+    border-color: transparent;
+    color: black;
+    font-family: "Montserrat", sans-serif;
+    font-weight: normal;
 }
 
 .flowMapToolTip {
@@ -603,6 +613,10 @@ textarea.textarea-autosize.form-control-sm {
     color: white;
     font-size: 22px;
     margin: 0px 5px;
+}
+
+.flowmap-container .leaflet-tooltip {
+    z-index: 999999;
 }
 
 .leaflet-control-zoom a:hover {
