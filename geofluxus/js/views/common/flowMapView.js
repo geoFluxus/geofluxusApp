@@ -59,8 +59,8 @@ define(['underscore',
                     this.dim2 = this.options.dimensions.find(dim => dim[0] != "space");
                     this.legendItems = [];
 
+                    this.dimensionIsOrigin;
                     this.adminLevel = this.options.dimensions.find(dim => dim[0] == "space")[1].adminlevel;
-
                     this.isActorLevel = this.options.dimensions.isActorLevel;
 
                     this.areas = new Collection([], {
@@ -477,6 +477,7 @@ define(['underscore',
                             }
                             break;
                         case "treatmentMethod":
+
                             if (this.dim2[1] == "origin__process__processgroup" || this.dim2[1] == "destination__process__processgroup") {
                                 dimensionText = "Treatment method group";
                                 dimensionId = link.processgroup;
@@ -527,6 +528,14 @@ define(['underscore',
                         nodes = [],
                         links = [];
 
+                    if (this.dim2[1].includes("origin")) {
+                        this.dimensionIsOrigin = true;
+                    } else {
+                        this.dimensionIsOrigin = false;
+                    }
+                    console.log("this.dimensionIsOrigin: ", this.dimensionIsOrigin)
+
+
                     flows.forEach(function (flow, index) {
                         let originNode = flow.origin;
                         let destinationNode = flow.destination
@@ -537,23 +546,20 @@ define(['underscore',
                         // NODES
                         // Add the origin and destination to Nodes, and include amounts:
                         originNode.value = flow.amount;
-                        //originNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
-                        // originNode.label = originNode.name;
                         originNode.dimensionValue = linkInfo.dimensionValue;
                         originNode.dimensionText = linkInfo.dimensionText;
                         originNode.amountText = linkInfo.amountText
                         originNode.opacity = nodeOpacity;
-
-
+                        originNode.displayNode = _this.dimensionIsOrigin;
 
                         destinationNode.value = flow.amount;
-                        //destinationNode.label = linkInfo.amountText + " " + linkInfo.dimensionValue;
-                        // destinationNode.label = destinationNode.name;
                         destinationNode.dimensionValue = linkInfo.dimensionValue;
                         destinationNode.dimensionText = linkInfo.dimensionText;
                         destinationNode.amountText = linkInfo.amountText
                         destinationNode.opacity = nodeOpacity;
+                        destinationNode.displayNode = !_this.dimensionIsOrigin;
 
+                        // Store info of source/destination as prop:
                         originNode.destination = destinationNode;
                         destinationNode.origin = originNode;
 
@@ -573,7 +579,6 @@ define(['underscore',
                         link.dimensionText = linkInfo.dimensionText;
                         link.dimensionValue = linkInfo.dimensionValue;
                         links.push(link)
-
                     }, flows);
 
                     // Assign colors to links and nodes based on label-prop:

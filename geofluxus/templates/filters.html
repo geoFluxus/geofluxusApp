@@ -715,8 +715,17 @@
                     <h5 class="flowFilterSubtitle">Contents</h5>
                     <div class="row">
                         <div class="col-md-3">
-                            <label>Materials</label>
-                            <select name="flows-material-select" multiple
+                            <label for="flows-material-select">Materials</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Materials"
+                                    data-html="true" tabindex="0" data-content="Filter the flows based on their material content. 
+                                    Selecting one or more materials will return all flows containing the selected material(s), 
+                                    meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows 
+                                    consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting 
+                                    to only include non-mixed material flows.">
+                                </a>
+                            </div>
+                            <select id="flows-material-select" name="flows-material-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
                                 <option selected value="-1">All (<%= materials.count %>)</option>
@@ -730,6 +739,12 @@
                         </div>
                         <div class="col-md-3">
                             <label>Products</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Products"
+                                    data-html="true" tabindex="0" data-content="The Products filter allows for the filtering of materials 
+                                    which are considered directly reusable.">
+                                </a>
+                            </div>
                             <select name="flows-product-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
@@ -742,6 +757,14 @@
                         </div>
                         <div class="col-md-3">
                             <label>Composites</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Composites"
+                                    data-html="true" tabindex="0" data-content="The Composites filter allows for the filtering of 
+                                    waste flows consisting of more than two materials that are not directly usable. These flows 
+                                    will require an additional processing step in order to separate the individual materials 
+                                    making up the composite.">
+                                </a>
+                            </div>
                             <select name="flows-composites-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
@@ -755,6 +778,81 @@
                     </div>
 
                     <h5 class="flowFilterSubtitle">Characteristics</h5>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="flows-clean-select">Clean</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Clean"
+                                    data-html="true" tabindex="0" data-content="The Clean filter indicates the extent to which a 
+                                    flow is expected to be contaminated with another substance. ‘Mono’ streams are considered 
+                                    clean streams since they consist of one material and are not contaminated, i.e. clean.">
+                                </a>
+                            </div>
+                            <select id="flows-clean-select" name="flows-clean-select" class="form-control form-control-sm selectpicker" multiple
+                                style="resize: vertical;">
+                                <option selected value='-1'>Ignore</option>
+                                <option data-divider="true"></option>
+                                <option value='unknown'>Unknown</option>
+                                <option value='no'>Not clean</option>
+                                <option value='yes'>Clean</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="flows-mixed-select">Mixed</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Mixed"
+                                    data-html="true" tabindex="0" data-content="The Mixed category indicates whether the flow 
+                                    contains two or more materials. A mixed flow could consist of two or more clean materials 
+                                    (masonry and concrete rubble, f.e.), but also two materials of which one is an identified 
+                                    pollutant (soil containing mineral oil, f.e.). All non-clean flows are by definition mixed, 
+                                    indicating they contain two or more materials.">
+                                </a>
+                            </div>
+                            <select id="flows-mixed-select" name="flows-mixed-select" class="form-control form-control-sm selectpicker" multiple
+                                style="resize: vertical;">
+                                <option selected value='-1'>Ignore</option>
+                                <option data-divider="true"></option>
+                                <option value='unknown'>Unknown</option>
+                                <option value='no'>Not mixed</option>
+                                <option value='yes'>Mixed</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="flows-direct-select">Direct use</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Direct use"
+                                    data-html="true" tabindex="0" data-content="The Direct use filter indicates whether 
+                                    a flow is (expected to be) directly reusable in its current form and no additional 
+                                    processing is required. ">
+                                </a>
+                            </div>
+                            <select id="flows-direct-select" name="flows-direct-select" class="form-control form-control-sm selectpicker"
+                                multiple style="resize: vertical;">
+                                <option selected value='-1'>Ignore</option>
+                                <option data-divider="true"></option>
+                                <option value='unknown'>Unknown</option>
+                                <option value='no'>Not direct</option>
+                                <option value='yes'>Direct</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="flows-iscomposite-select">Composite</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Composite"
+                                    data-html="true" tabindex="0" data-content="The Composite filter indicates whether a flow contains a 
+                                    known composite consisting of two or more materials.">
+                                </a>
+                            </div>
+                            <select id="flows-iscomposite-select" name="flows-iscomposite-select" class="form-control form-control-sm selectpicker"
+                                multiple style="resize: vertical;">
+                                <option selected value='-1'>Ignore</option>
+                                <option data-divider="true"></option>
+                                <option value='unknown'>Unknown</option>
+                                <option value='no'>Product</option>
+                                <option value='yes'>Composite</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-3">
                             <label for="flows-route-select">Route</label>
@@ -795,52 +893,8 @@
                             </select>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <label>Clean</label>
-                            <select name="flows-clean-select" class="form-control form-control-sm selectpicker" multiple
-                                style="resize: vertical;">
-                                <option selected value='-1'>Ignore</option>
-                                <option data-divider="true"></option>
-                                <option value='unknown'>Unknown</option>
-                                <option value='no'>Not clean</option>
-                                <option value='yes'>Clean</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label>Mixed</label>
-                            <select name="flows-mixed-select" class="form-control form-control-sm selectpicker" multiple
-                                style="resize: vertical;">
-                                <option selected value='-1'>Ignore</option>
-                                <option data-divider="true"></option>
-                                <option value='unknown'>Unknown</option>
-                                <option value='no'>Not mixed</option>
-                                <option value='yes'>Mixed</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label>Direct use</label>
-                            <select name="flows-direct-select" class="form-control form-control-sm selectpicker"
-                                multiple style="resize: vertical;">
-                                <option selected value='-1'>Ignore</option>
-                                <option data-divider="true"></option>
-                                <option value='unknown'>Unknown</option>
-                                <option value='no'>Not direct</option>
-                                <option value='yes'>Direct</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label>Composite</label>
-                            <select name="flows-iscomposite-select" class="form-control form-control-sm selectpicker"
-                                multiple style="resize: vertical;">
-                                <option selected value='-1'>Ignore</option>
-                                <option data-divider="true"></option>
-                                <option value='unknown'>Unknown</option>
-                                <option value='no'>Product</option>
-                                <option value='yes'>Composite</option>
-                            </select>
-                        </div>
-                    </div>
+                    
+
                 </div>
             </div>
 
