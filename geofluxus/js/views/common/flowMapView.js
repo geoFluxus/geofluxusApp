@@ -263,7 +263,6 @@ define(['underscore',
                     // Event listeners for custom buttons
                     legendToggleBtn.addEventListener('click', function (event) {
                         _this.toggleLegend();
-                        event.preventDefault();
                     })
                     darkmodeToggleBtn.addEventListener('click', function (event) {
                         _this.isDarkMode = !_this.isDarkMode;
@@ -292,11 +291,10 @@ define(['underscore',
                     })
 
 
-                    // Check this later for other buttons:
-                    // L.DomEvent.disableClickPropagation(this.legend);
-                    // L.DomEvent.disableScrollPropagation(this.legend);
-
-
+                    // Prevent event propagation on button clicks:
+                    L.DomEvent.disableClickPropagation(document.querySelector(".leaflet-top.leaflet-left"));
+                    L.DomEvent.disableClickPropagation(document.querySelector(".leaflet-control-fullscreen.leaflet-bar.leaflet-control"));
+                    
                     // When user sets map to fullscreen, also change legend:
                     _this.leafletMap.on('fullscreenchange', function () {
                         if (_this.leafletMap.isFullscreen()) {
@@ -305,7 +303,6 @@ define(['underscore',
                             $(".flowmap-d3pluslegend-wrapper").removeClass("flowmapLegendFullscreen");
                         }
                     });
-
 
                     // Smooth scroll to top of Viz after rendering
                     setTimeout(() => {
