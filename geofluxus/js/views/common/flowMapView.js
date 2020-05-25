@@ -120,18 +120,18 @@ define(['underscore',
                         this.maxFlowWidth = 50;
                     }
 
-                    // recover area geometry
-                    // reverse coordinate ordering for Leaflet
+                    // filter areas
                     var areaIds = new Set();
                     this.flows.forEach(function(flow) {
                         areaIds.add(flow.origin.id);
                         areaIds.add(flow.destination.id);
                     })
-                    console.log(areaIds);
 
+                    // retrieve area geometry
                     var areas = [];
                     this.areas.forEach(function(area) {
                         var id = area.get('id'),
+                            name = area.get('area'),
                             geom = area.get('geom').coordinates;
                         if (areaIds.has(id)) {
                             areas.push(geom);

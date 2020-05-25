@@ -205,13 +205,17 @@ define([
         drawAreas() {
             var _this = this;
 
+            _this.map.createPane('areas');
+            _this.map.getPane('areas').style.zIndex = 200;
+
             this.areas.forEach(function(area) {
-                var polygon = L.polygon(area).addTo(_this.map);
-                polygon.setStyle({
-                    fillColor: "none",
-                    weight: 2,
-                    color: "red"
-                });
+                L.polygon(area, {
+                    pane: 'areas',
+                    fillColor: 'none',
+                    fillOpacity: 0.1,
+                    weight: 0.5,
+                    color: 'red',
+                }).addTo(_this.map);
             })
         }
 
