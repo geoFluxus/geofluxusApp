@@ -96,35 +96,21 @@ define(['views/common/baseview',
             },
 
             initializeControls: function () {
-                // Dimension controls:
                 this.dimensions.timeToggle = this.el.querySelector('#dim-toggle-time');
-                $(this.dimensions.timeToggle).bootstrapToggle();
                 this.dimensions.timeToggleGran = this.el.querySelector('#gran-toggle-time');
-                $(this.dimensions.timeToggleGran).bootstrapToggle();
-
                 this.dimensions.spaceToggle = this.el.querySelector('#dim-toggle-space');
-                $(this.dimensions.spaceToggle).bootstrapToggle();
                 this.dimensions.spaceLevelGranSelect = this.el.querySelector('#dim-space-gran-select');
-                $(this.dimensions.spaceLevelGranSelect).selectpicker();
                 this.dimensions.spaceOrigDest = this.el.querySelector('#origDest-toggle-space');
-                $(this.dimensions.spaceOrigDest).bootstrapToggle();
-
                 this.dimensions.economicActivityToggle = this.el.querySelector('#dim-toggle-economic-activity');
-                $(this.dimensions.economicActivityToggle).bootstrapToggle();
                 this.dimensions.economicActivityToggleGran = this.el.querySelector('#gran-toggle-econ-activity');
-                $(this.dimensions.economicActivityToggleGran).bootstrapToggle();
                 this.dimensions.economicActivityOrigDest = this.el.querySelector('#origDest-toggle-econAct');
-                $(this.dimensions.economicActivityOrigDest).bootstrapToggle();
-
                 this.dimensions.treatmentMethodToggle = this.el.querySelector('#dim-toggle-treatment-method');
-                $(this.dimensions.treatmentMethodToggle).bootstrapToggle();
                 this.dimensions.treatmentMethodToggleGran = this.el.querySelector('#gran-toggle-treatment-method');
-                $(this.dimensions.treatmentMethodToggleGran).bootstrapToggle();
                 this.dimensions.treatmentMethodOrigDest = this.el.querySelector('#origDest-toggle-treatment');
-                $(this.dimensions.treatmentMethodOrigDest).bootstrapToggle();
-
                 this.dimensions.materialToggle = this.el.querySelector('#dim-toggle-material');
-                $(this.dimensions.materialToggle).bootstrapToggle();
+                
+                $(this.dimensions.spaceLevelGranSelect).selectpicker();
+                $(".bootstrapToggle").bootstrapToggle();
             },
 
             addEventListeners: function () {
