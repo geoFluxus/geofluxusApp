@@ -91,10 +91,6 @@
                         Origin
                     </button>
                 </h4>
-                <!--                <a  float="left" class="help-icon fas fa-question-circle" data-toggle="popover" title="Activities and Actors Filter"-->
-                <!--                   data-html="true" tabindex="0"-->
-                <!--                   data-content='Filter the flows between activity groups, activities and actors'>-->
-                <!--                </a>-->
             </div>
 
             <div id="collapseOriginBlock" class="collapse show" aria-labelledby="card-header-collapse-origin"
@@ -145,7 +141,7 @@
                                 <div class="checkbox in-or-out-container">
                                     <input name="in-or-out-origin" id="origin-area-in-or-out" type="checkbox"
                                         data-height="24" data-toggle="toggle" data-on="outside" data-off="within"
-                                        class="in-out-toggle">
+                                        class="in-out-toggle bootstrapToggle">
                                     <label style="display: inline-block;">the selected area(s).</label>
                                 </div>
                             </div>
@@ -374,7 +370,7 @@
                                 <div class="checkbox in-or-out-container">
                                     <input name="in-or-out-destination" id="destination-area-in-or-out" type="checkbox"
                                         data-height="24" data-toggle="toggle" data-on="outside" data-off="within"
-                                        class="in-out-toggle">
+                                        class="in-out-toggle bootstrapToggle">
                                     <label style="display: inline-block;">the selected area(s).</label>
                                 </div>
                             </div>
@@ -943,7 +939,7 @@
                 <div class='row' style="padding-top: 0px">
                     <div class="col">
                         <label for="area-level-select" class="input-label" style="margin-top: .5rem; margin-right: 10px;">Geographic level:</label>
-                        <select name="area-level-select" id="area-level-select" class="form-control form-control-sm" style="max-width: 350px;">
+                        <select name="area-level-select" id="area-level-select" class="form-control form-control-sm selectpicker" style="max-width: 350px;">
                             <% levels.forEach(function(level) { %>
                                 <% if (level.get('level') != "1000") %>
                                     <option value="<%= level.id %>"><%= level.get('name') %></option>
