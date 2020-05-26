@@ -12,11 +12,15 @@ class UserFilterSerializer(HyperlinkedModelSerializer):
         fields = ('url',
                   'id',
                   'user',
-                  'filter')
+                  'name',
+                  'filter',
+                  'date')
 
 
 class UserFilterListSerializer(UserFilterSerializer):
     class Meta(UserFilterSerializer.Meta):
         fields = ('id',
                   'user',
-                  'filter')
+                  'name',
+                  'filter',
+                  'date')

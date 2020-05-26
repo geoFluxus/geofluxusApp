@@ -39,6 +39,7 @@ class RoutingListSerializer(RoutingSerializer):
                   'seq',
                   'distance')
 
+
 # Vehicle
 class VehicleSerializer(HyperlinkedModelSerializer):
     class Meta:

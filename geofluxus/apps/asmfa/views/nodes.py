@@ -101,13 +101,6 @@ class ProcessViewSet(PostGetViewMixin,
         'create': ProcessCreateSerializer
     }
 
-    def get_queryset(self):
-        queryset = Process.objects
-        queryset = queryset.annotate(
-            flow_count=Value(0, output_field=IntegerField())
-        )
-        return queryset.order_by('id')
-
 
 # Company
 class CompanyViewSet(PostGetViewMixin,
@@ -121,10 +114,6 @@ class CompanyViewSet(PostGetViewMixin,
         'create': CompanyCreateSerializer
     }
 
-    def get_queryset(self):
-        queryset = Company.objects.order_by('id')
-        return queryset
-
 
 # Actor
 class ActorViewSet(PostGetViewMixin,
@@ -137,10 +126,3 @@ class ActorViewSet(PostGetViewMixin,
         'list': ActorListSerializer,
         'create': ActorCreateSerializer
     }
-
-    def get_queryset(self):
-        queryset = Actor.objects
-        queryset = queryset.annotate(
-            flow_count=Count('outputs', distinct=True) +
-                       Count('inputs', distinct=True))
-        return queryset.order_by('id')

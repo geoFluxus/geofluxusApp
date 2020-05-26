@@ -40,10 +40,6 @@ class RoutingViewSet(PostGetViewMixin,
         'create': RoutingCreateSerializer
     }
 
-    def get_queryset(self):
-        queryset = Routing.objects.order_by('id')
-        return queryset
-
 
 # Vehicle
 class VehicleViewSet(PostGetViewMixin,
@@ -70,10 +66,6 @@ class FlowChainViewSet(PostGetViewMixin,
         'create': FlowChainCreateSerializer
     }
 
-    def get_queryset(self):
-        queryset = FlowChain.objects.order_by('id')
-        return queryset
-
 
 # Flow
 class FlowViewSet(PostGetViewMixin,
@@ -86,10 +78,6 @@ class FlowViewSet(PostGetViewMixin,
         'list': FlowListSerializer,
         'create': FlowCreateSerializer
     }
-
-    def get_queryset(self):
-        queryset = Flow.objects.order_by('id')
-        return queryset
 
 
 # Classification
@@ -104,10 +92,6 @@ class ClassificationViewSet(PostGetViewMixin,
         'create': ClassificationCreateSerializer
     }
 
-    def get_queryset(self):
-        queryset = Classification.objects.order_by('id')
-        return queryset
-
 
 # ExtraDescription
 class ExtraDescriptionViewSet(PostGetViewMixin,
@@ -120,7 +104,3 @@ class ExtraDescriptionViewSet(PostGetViewMixin,
         'list': ExtraDescriptionListSerializer,
         'create': ExtraDescriptionCreateSerializer
     }
-
-    def get_queryset(self):
-        queryset = ExtraDescription.objects.order_by('id')
-        return queryset

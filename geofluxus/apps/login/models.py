@@ -6,4 +6,9 @@ from django.contrib.auth.models import User
 class UserFilter(models.Model):
     user = models.ForeignKey(User,
                              on_delete=models.CASCADE)
+    name = models.CharField(max_length=255,
+                            blank=True,
+                            null=True)
     filter = models.TextField()
+    date = models.DateTimeField(blank=True,
+                                null=True)

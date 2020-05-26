@@ -24,10 +24,6 @@ class PublicationTypeViewSet(PostGetViewMixin,
         'create': PublicationTypeCreateSerializer
     }
 
-    def get_queryset(self):
-        queryset = PublicationType.objects.order_by('id')
-        return queryset
-
 
 # Publication
 class PublicationViewSet(PostGetViewMixin,
@@ -40,7 +36,3 @@ class PublicationViewSet(PostGetViewMixin,
         'list': PublicationListSerializer,
         'create': PublicationCreateSerializer
     }
-
-    def get_queryset(self):
-        queryset = Publication.objects.order_by('id')
-        return queryset
