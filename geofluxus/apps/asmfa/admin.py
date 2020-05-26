@@ -1,8 +1,6 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin, TabularInline
 from django.contrib.gis.admin import GeoModelAdmin
-from django.db.models.functions import Lower
-from django.apps import apps
 from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Activity,
                                          ProcessGroup,

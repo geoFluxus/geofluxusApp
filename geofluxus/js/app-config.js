@@ -36,7 +36,8 @@ function(Session) {
         extradescriptions: '/api/extradescriptions/',
         routings:          '/api/routings/',
         ways:              '/api/ways/',
-        vehicles:          '/api/vehicles/'
+        vehicles:          '/api/vehicles/',
+        filters:           '/api/filters/'
     }
 
     return config;
