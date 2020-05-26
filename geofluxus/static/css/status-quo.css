@@ -392,7 +392,7 @@ textarea.textarea-autosize.form-control-sm {
 
 .leaflet-top,
 .leaflet-bottom {
-    z-index: 600;
+    z-index: 1000;
 }
 
 
@@ -409,7 +409,7 @@ textarea.textarea-autosize.form-control-sm {
     z-index: 600;
     border-bottom-left-radius: 18px;
     border-bottom-right-radius: 18px;
-    background-color: rgba(255, 255, 255, 0.5);
+    /* background-color: rgba(255, 255, 255, 0.5); */
 }
 
 .flowmap-d3pluslegend {
@@ -442,6 +442,16 @@ textarea.textarea-autosize.form-control-sm {
     z-index: 99999;
     min-width: 15rem;
     max-width: 25rem;
+}
+
+.leaflet-tooltip {
+    background-color: rgb(139, 138, 138) !important;
+    border-radius: 1.5rem !important;
+    padding: 0.75rem;
+    border-color: transparent;
+    color: black;
+    font-family: "Montserrat", sans-serif;
+    font-weight: normal;
 }
 
 .flowMapToolTip {
@@ -535,7 +545,8 @@ textarea.textarea-autosize.form-control-sm {
 .icon-toggle-darkmode,
 .icon-toggle-flowmap-flows,
 .icon-toggle-flowmap-nodes,
-.icon-toggle-flowmap-animation {
+.icon-toggle-flowmap-animation,
+.icon-toggle-flowmap-areas {
     background-position: center center;
     background-size: contain;
     width: 16px;
@@ -572,6 +583,13 @@ textarea.textarea-autosize.form-control-sm {
     height: 20px;
 }
 
+.icon-toggle-flowmap-areas {
+    background-image: url("../img/flowmap-areas.svg");
+    width: 24px;
+    height: 24px;
+    margin-top: 2.5px;
+}
+
 .leaflet-control div label {
     color: black;
 }
@@ -582,7 +600,7 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .leaflet-control-zoom {
-    top: 262px !important;
+    top: 300px !important;
     border: none !important;
     margin: 0 !important;
 }
@@ -595,6 +613,10 @@ textarea.textarea-autosize.form-control-sm {
     color: white;
     font-size: 22px;
     margin: 0px 5px;
+}
+
+.flowmap-container .leaflet-tooltip {
+    z-index: 999999;
 }
 
 .leaflet-control-zoom a:hover {
@@ -722,6 +744,8 @@ textarea.textarea-autosize.form-control-sm {
     margin-right: 0px !important;
     padding-right: 10px;
     background: none !important;
+    position: relative;
+    z-index: 601;
 }
 
 /* .d3plus-zoom-controls */

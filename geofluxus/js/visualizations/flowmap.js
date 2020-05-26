@@ -46,6 +46,14 @@ define([
 
             this.showNodes = options.showNodes || false;
             this.showFlows = options.showFlows || false;
+
+            this.polygons = [];
+
+            this.showAreas = options.showAreas || false;
+            this.showAreaBorders = options.showAreaBorders || false;
+            this.showAreaFilled = options.showAreaFilled || false;
+
+
             this.width = options.width || this.map.offsetWidth;
             this.bbox = options.bbox;
             this.height = options.height || this.width / 1.5;
@@ -60,15 +68,15 @@ define([
             }
 
             function projectAreas(areas) {
-                for (const area of areas) {
-                    for (const multipolygon of area) {
+                areas.forEach(area => {
+                    for (const multipolygon of area.geom) {
                         for (const polygon of multipolygon) {
                             for (const point of polygon) {
                                 point.reverse();
                             }
                         }
                     }
-                }
+                });
                 return areas;
             }
 
@@ -89,6 +97,13 @@ define([
 
             this.svg = d3.select(this.overlay).append("svg");
             this.g = this.svg.append("g").attr("class", "leaflet-zoom-hide");
+
+
+            //this.svg = d3.select(this.overlay).append("svg");
+            // this.svg = L.svg().addTo(this.map)._container;
+            // this.svg = d3.select('.leaflet-zoom-animated');
+            // this.g = this.svg.append("g").attr("class", "leaflet-zoom-hide");
+
 
             // get zoom level after each zoom activity
             this.initialZoom = this.map.getZoom();
@@ -204,22 +219,51 @@ define([
 
         drawAreas() {
             var _this = this;
+            var areaStyling = {};
 
-            _this.map.createPane('areas');
-            _this.map.getPane('areas').style.zIndex = 200;
+            this.g.selectAll(".leaflet-interactive").remove()
 
-            this.areas.forEach(function(area) {
-                L.polygon(area, {
-                    pane: 'areas',
-                    fillColor: 'none',
-                    fillOpacity: 0.1,
-                    weight: 0.5,
-                    color: 'red',
-                }).addTo(_this.map);
-            })
+            if (this.showAreas) {
+                if (this.showAreaBorders) {
+                    areaStyling = {
+                        pane: 'overlayPane',
+                        fillColor: 'transparent',
+                        weight: 0.5,
+                        color: 'rgb(114, 145, 128)',
+                    }
+                } else if (this.showAreaFilled) {
+                    areaStyling = {
+                        pane: 'overlayPane',
+                        fillColor: "rgba(151,190,169, 0.5)",
+                        weight: 0.5,
+                        color: 'rgb(114, 145, 128)',
+                    }
+                }
+                this.areas.forEach(function (area) {
+                    let polygon = L.polygon(area.geom, areaStyling)
+                        .bindTooltip(area.name, {
+                            direction: "center",
+                            offset: L.point(0, 25), 
+                            sticky: true // If true, the tooltip will follow the mouse instead of being fixed at the feature center.
+                        })
+
+                    _this.polygons.push(polygon)
+                    polygon.addTo(_this.map);
+                })
+
+                // Leaflet adds the area elements to a separate SVG elemen => Select all areas using D3 and move them to the same SVG element as the flows, and put them first so they appear in the back
+                let leafletPolygons = d3.selectAll(".leaflet-pane.leaflet-overlay-pane .leaflet-zoom-animated g path");
+                leafletPolygons.each(function (d, i) {
+                    let removed = d3.select(this).remove();
+                    d3.select(".leaflet-pane.leaflet-overlay-pane svg g").append(function () {
+                        return removed.node();
+                    }).lower();
+                });
+            }
         }
 
         draw() {
+
             var _this = this;
             var scale = Math.min(this.scale(), this.maxScale);
 
@@ -229,6 +273,10 @@ define([
             //     .duration(250)
             //     .attr("stroke-opacity", 0)
             //     .remove();
+
+
+            this.drawAreas();
+
 
             // define data to use for drawPath and drawTotalPath as well as nodes data depending on flows
             for (var linkId in this.flowsData) {
@@ -368,14 +416,10 @@ define([
                             }
                         })
                         radius = Math.max(3, (radius + calcRadius(total)) * scaleFactor);
-
-
                         _this.addPieChart(x, y, radius, data)
                     }
                 });
             }
-
-            this.drawAreas();
         }
 
         scale() {
@@ -385,7 +429,7 @@ define([
             return scale;
         }
 
-        // draw pie chart at given position
+        // Draws a pie chart at given position
         addPieChart(x, y, radius, data) {
             var _this = this;
 
@@ -454,7 +498,7 @@ define([
                 });
         }
 
-        //function to add source nodes to the map
+        // Add source nodes to the map
         addPoint(x, y, node, color, radius, opacity) {
             var _this = this;
 
@@ -596,12 +640,10 @@ define([
             </div>`
         }
 
-
-        // function to draw actual paths for the directed quantity flows
+        // Draw actual paths for the directed quantity flows
         drawPath(points, flow, color, strokeWidth, options) {
             var _this = this,
                 options = options || {};
-            //var line = d3.svg.line()
 
             var line = d3.line()
                 .x(function (d) {

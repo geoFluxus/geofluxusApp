@@ -48,7 +48,6 @@ define(['underscore',
                  */
                 initialize: function (options) {
                     FlowMapView.__super__.initialize.apply(this, [options]);
-                    //_.bindAll(this, 'zoomed');
 
                     var _this = this;
                     this.options = options;
@@ -85,16 +84,13 @@ define(['underscore',
                  * render the view
                  */
                 render: function () {
-                    //this.backgroundLayer = new L.TileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png");
-
                     this.tileUrl = "https://cartodb-basemaps-{s}.global.ssl.fastly.net/"
                     this.tileType = "dark_all"
                     this.tileSuffix = "/{z}/{x}/{y}.png"
-
                     this.backgroundLayer = new L.TileLayer(this.tileUrl + this.tileType + this.tileSuffix, {
-                        attribution: '© OpenStreetMap, © CartoDB'
+                        attribution: '© <a style="color:#0078A8" href="http://cartodb.com/attributions">CartoDB</a>'
                     });
-
+                    this.el.style.display = 'block';
                     $(this.el).html('<div class="flowmap-container d-block" style="width: 100%; height: 100%"></div><div class="flowmap-d3pluslegend-wrapper text-center"><svg class="flowmap-d3pluslegend"></svg></div>')
 
                     var _this = this;
@@ -103,8 +99,6 @@ define(['underscore',
                     this.animationOn = false;
                     this.animationLines = true;
                     this.animationDots = false;
-
-                    //$(this.el).html('<div class="flowmap-container d-block" style="width: 100%; height: 100%"></div>')
 
                     this.leafletMap = new L.Map(this.el.firstChild, {
                             center: [52.1326, 5.2913], // Center of Netherlands
@@ -120,23 +114,28 @@ define(['underscore',
                         this.maxFlowWidth = 50;
                     }
 
-                    // filter areas
+                    // Filter areas
                     var areaIds = new Set();
-                    this.flows.forEach(function(flow) {
+                    this.flows.forEach(function (flow) {
                         areaIds.add(flow.origin.id);
                         areaIds.add(flow.destination.id);
                     })
 
-                    // retrieve area geometry
+                    // Retrieve area geometry
                     var areas = [];
-                    this.areas.forEach(function(area) {
-                        var id = area.get('id'),
-                            geom = area.get('geom').coordinates;
-                        if (areaIds.has(id)) {
-                            areas.push(geom);
+                    this.areas.forEach(function (area) {
+
+                        let newArea = {
+                            id: area.get('id'),
+                            name: area.get('name'),
+                            geom: area.get('geom').coordinates,
+                        }
+                        if (areaIds.has(newArea.id)) {
+                            areas.push(newArea);
                         }
                     })
 
+                    // Instantiate Flowmap object:
                     this.flowMap = new FlowMap(this.leafletMap, {
                         maxFlowWidth: this.maxFlowWidth,
                         toolTipContainer: this.el,
@@ -145,46 +144,40 @@ define(['underscore',
                     this.flowMap.showFlows = true;
                     this.flowMap.showNodes = false;
 
+                    this.flowMap.showAreas = false;
+                    this.flowMap.showAreaBorders = false;
+                    this.flowMap.showAreaFilled = false;
+
+                    if (!this.isActorLevel) {
+                        this.flowMap.showAreas = true;
+                        this.flowMap.showAreaBorders = true;                            
+                    }
+
                     // //////////////////////
+                    // Leaflet buttons
+
                     // Fullscreen button
                     this.leafletMap.addControl(new L.Control.Fullscreen({
                         position: 'topleft',
                         pseudoFullscreen: true,
                     }));
 
-                    // //////////////////////
-                    // Export PNG button
-                    this.leafletMap.addControl(new L.easyPrint({
-                        position: 'topleft',
-                        filename: 'flowmap',
-                        exportOnly: true,
-                        hideControlContainer: true,
-                        sizeModes: ['A4Landscape'],
-                    }));
-
                     // Event fired when zooming stops:
                     //this.leafletMap.on("zoomend", this.zoomed);
 
-
-
                     // Add reset button to map to refocus on original position:
-
                     var resetViewBtn = document.createElement('a');
-                    //resetViewBtn.classList.add("btn", "btn-primary", "btn-reset-view")
                     resetViewBtn.classList.add("btn-reset-view")
                     resetViewBtn.title = "Reset the map to the original position."
                     resetViewBtn.innerHTML = '<i class="fas fa-undo"></i>';
                     $(".leaflet-control-zoom.leaflet-bar.leaflet-control").append(resetViewBtn);
                     resetViewBtn.addEventListener('click', function (event) {
-                        // _this.toggleAnimation();
                         _this.flowMap.zoomToFit();
-                        console.log("reset map view");
                         event.preventDefault(event);
                     })
 
-
-
-                    // Custom controls top left
+                    // /////////////////////////////////////
+                    // Custom, non-leaflet controls top left
                     var topLefControls = L.control({
                         position: 'topleft'
                     })
@@ -195,6 +188,24 @@ define(['underscore',
                     var exportImgBtn = document.createElement('button');
                     exportImgBtn.classList.add('fas', 'fa-camera', 'btn', 'btn-primary', 'inverted');
                     exportImgBtn.title = "Export this visualization as a PNG file.";
+
+                    // HIDDEN Leaflet easyPrint button
+                    this.leafletMap.addControl(new L.easyPrint({
+                        position: 'topleft',
+                        filename: 'flowmap',
+                        exportOnly: true,
+                        hideControlContainer: true,
+                        sizeModes: ['A4Landscape'],
+                    }));
+                    // Easyprint is not customizable enough (buttons, remove menu etc.) and not touch friendly
+                    // Workaround: hide and pass on click (actually strange, but easyprint was still easiest to use export plugin out there)
+                    var easyprintCtrl = this.el.querySelector('.leaflet-control-easyPrint'),
+                        easyprintCsBtn = this.el.querySelector('.easyPrintHolder .A4Landscape');
+                    easyprintCtrl.style.display = 'none';
+                    exportImgBtn.addEventListener('click', function (event) {
+                        easyprintCsBtn.click();
+                        event.preventDefault();
+                    })
 
                     // Legend toggle:
                     var legendToggleBtn = document.createElement('button');
@@ -214,11 +225,19 @@ define(['underscore',
                     showFlowsToggleBtn.title = "Toggle the flows on or off."
                     showFlowsToggleBtn.innerHTML = '<i class="fas icon-toggle-flowmap-flows"></i>';
 
-                    // Flows toggle
+                    // Nodes toggle
                     var showNodesToggleBtn = document.createElement('button');
                     showNodesToggleBtn.classList.add("btn", "btn-primary", "toggle-nodes")
                     showNodesToggleBtn.title = "Toggle the nodes on or off."
                     showNodesToggleBtn.innerHTML = '<i class="fas icon-toggle-flowmap-nodes"></i>';
+
+                    // Areas toggle
+                    if (!this.isActorLevel) {
+                        var showAreasToggleBtn = document.createElement('button');
+                        showAreasToggleBtn.classList.add("btn", "btn-primary", "toggle-areas")
+                        showAreasToggleBtn.title = "Toggle the areas on or off."
+                        showAreasToggleBtn.innerHTML = '<i class="fas icon-toggle-flowmap-areas"></i>';
+                    }
 
                     // Animation toggle
                     var animationToggleBtn = document.createElement('button');
@@ -232,15 +251,18 @@ define(['underscore',
                     topLeftControlDiv.appendChild(showFlowsToggleBtn);
                     topLeftControlDiv.appendChild(showNodesToggleBtn);
                     topLeftControlDiv.appendChild(animationToggleBtn);
+                    if (!this.isActorLevel) {
+                        topLeftControlDiv.appendChild(showAreasToggleBtn);
+                    }
 
                     topLefControls.onAdd = function (map) {
                         return topLeftControlDiv;
                     };
                     topLefControls.addTo(this.leafletMap);
 
+                    // Event listeners for custom buttons
                     legendToggleBtn.addEventListener('click', function (event) {
                         _this.toggleLegend();
-                        event.preventDefault();
                     })
                     darkmodeToggleBtn.addEventListener('click', function (event) {
                         _this.isDarkMode = !_this.isDarkMode;
@@ -257,28 +279,22 @@ define(['underscore',
                         _this.rerender();
                         event.preventDefault();
                     })
+                    if (!this.isActorLevel) {
+                        showAreasToggleBtn.addEventListener('click', function (event) {
+                            _this.toggleAreas();
+                            event.preventDefault();
+                        })
+                    }
                     animationToggleBtn.addEventListener('click', function (event) {
                         _this.toggleAnimation();
                         event.preventDefault();
                     })
 
 
-                    // easyprint is not customizable enough (buttons, remove menu etc.) and not touch friendly
-                    // Workaround: hide and pass on click (actually strange, but easyprint was still easiest to use export plugin out there)
-                    var easyprintCtrl = this.el.querySelector('.leaflet-control-easyPrint'),
-                        easyprintCsBtn = this.el.querySelector('.easyPrintHolder .A4Landscape');
-                    easyprintCtrl.style.display = 'none';
-                    exportImgBtn.addEventListener('click', function (event) {
-                        easyprintCsBtn.click();
-                        event.preventDefault();
-                    })
-
-
-                    // Check this later for other buttons:
-                    // L.DomEvent.disableClickPropagation(this.legend);
-                    // L.DomEvent.disableScrollPropagation(this.legend);
-
-
+                    // Prevent event propagation on button clicks:
+                    L.DomEvent.disableClickPropagation(document.querySelector(".leaflet-top.leaflet-left"));
+                    L.DomEvent.disableClickPropagation(document.querySelector(".leaflet-control-fullscreen.leaflet-bar.leaflet-control"));
+                    
                     // When user sets map to fullscreen, also change legend:
                     _this.leafletMap.on('fullscreenchange', function () {
                         if (_this.leafletMap.isFullscreen()) {
@@ -287,7 +303,6 @@ define(['underscore',
                             $(".flowmap-d3pluslegend-wrapper").removeClass("flowmapLegendFullscreen");
                         }
                     });
-
 
                     // Smooth scroll to top of Viz after rendering
                     setTimeout(() => {
@@ -301,7 +316,6 @@ define(['underscore',
                 },
 
                 toggleLight() {
-                    var _this = this;
                     if (this.isDarkMode) {
                         this.tileType = "dark_all"
                     } else {
@@ -321,7 +335,6 @@ define(['underscore',
 
                 toggleAnimation() {
                     var _this = this;
-
                     // If animation is off, turn it on and set to lines:
                     if (_this.animationOn == false) {
                         _this.animationOn = true;
@@ -348,14 +361,34 @@ define(['underscore',
                     _this.rerender();
                 },
 
+                toggleAreas() {
+                    // If showAreas is off, turn on and show borders:
+                    if (this.flowMap.showAreas == false) {
+                        this.flowMap.showAreas = true;
+                        this.flowMap.showAreaBorders = true;
+
+                        // If showAreas is on, and type == borders, set to filled:
+                    } else if (this.flowMap.showAreas && this.flowMap.showAreaBorders) {
+                        this.flowMap.showAreaBorders = false;
+                        this.flowMap.showAreaFilled = true;
+
+                        // If animation is on, and type == dots, turn off:
+                    } else if (this.flowMap.showAreas && this.flowMap.showAreaFilled) {
+                        this.flowMap.showAreas = false;
+                        this.flowMap.showAreaBorders = false;
+                        this.flowMap.showAreaFilled = false;
+                    }
+                    this.rerender();
+                },
+
                 updateLegend() {
                     if (this.hasLegend) {
                         var _this = this;
 
                         $(".flowmap-d3pluslegend-wrapper").fadeIn();
 
-                        console.log("______ legend data _______")
-                        console.log(_this.legendItems);
+                        // console.log("______ legend data _______")
+                        // console.log(_this.legendItems);
 
                         this.d3plusLegend = new D3plusLegend({
                             el: ".flowmap-d3pluslegend",
@@ -377,29 +410,6 @@ define(['underscore',
                     }
                 },
 
-                // zoomed: function () {
-                //     // zoomend always is triggered before clustering is done -> reset clusters
-                //     this.clusterGroupsDone = 0;
-                // },
-
-                resetMapData: function (data, zoomToFit) {
-                    this.data = data;
-                    this.flowMap.clear();
-
-                    this.flowMap.addNodes(data.nodes);
-
-                    if (this.flowMap.showFlows) {
-                        this.flowMap.addFlows(data.flows);
-                    }
-
-                    this.updateLegend();
-
-                    //this.flowMap.toggleTag('actor', this.actorCheck.checked);
-
-                    this.flowMap.resetView();
-                    if (zoomToFit) this.flowMap.zoomToFit();
-                },
-
                 rerender: function (zoomToFit) {
                     var _this = this;
 
@@ -408,10 +418,23 @@ define(['underscore',
                     _this.resetMapData(data, zoomToFit);
                 },
 
-                /*
-                additional to the usual attributes the flow should have the attribute
-                'color'
-                */
+                resetMapData: function (data, zoomToFit) {
+                    this.data = data;
+                    this.flowMap.clear();
+                    this.flowMap.addNodes(data.nodes);
+
+                    if (this.flowMap.showFlows) {
+                        this.flowMap.addFlows(data.flows);
+                    }
+
+                    this.updateLegend();
+                    this.flowMap.resetView();
+                    
+                    if (zoomToFit) {
+                        this.flowMap.zoomToFit();
+                    }
+                },
+
                 addFlows: function (flows) {
                     var _this = this;
                     flows = (flows.forEach != null) ? flows : [flows];
@@ -420,20 +443,7 @@ define(['underscore',
                     })
                 },
 
-                getFlows: function () {
-                    return this.flows.models;
-                },
-
-                removeFlows: function (flows) {
-                    var flows = (flows instanceof Array) ? flows : [flows];
-                    this.flows.remove(flows);
-                },
-
                 clear: function () {
-                    //this.flows.reset();
-                    //this.legend.innerHTML = '';
-                    //this.clusterGroups = {};
-                    //this.data = null;
                     if (this.flowMap) {
                         this.flowMap.clear();
                         this.el = "";
@@ -533,8 +543,6 @@ define(['underscore',
                     } else {
                         this.dimensionIsOrigin = false;
                     }
-                    console.log("this.dimensionIsOrigin: ", this.dimensionIsOrigin)
-
 
                     flows.forEach(function (flow, index) {
                         let originNode = flow.origin;
@@ -598,16 +606,21 @@ define(['underscore',
 
                     _this.legendItems = _.uniq(_this.legendItems, 'label');
 
-                    console.log("Links:");
-                    console.log(links);
-                    console.log("Nodes:");
-                    console.log(nodes);
+                    // console.log("Links:");
+                    // console.log(links);
+                    // console.log("Nodes:");
+                    // console.log(nodes);
 
                     return {
                         flows: links,
                         nodes: nodes,
                     }
                 },
+
+                // zoomed: function () {
+                //     // zoomend always is triggered before clustering is done -> reset clusters
+                //     this.clusterGroupsDone = 0;
+                // },
 
                 close: function () {
                     this.clear();
