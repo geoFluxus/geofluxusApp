@@ -237,6 +237,10 @@ input {
     background-color: grey !important;
 }
 
+.form-control-sm {
+    border-radius: 18px;
+}
+
 /* Popover Tooltips */
 
 .popover {
@@ -259,6 +263,7 @@ input {
     color: black !important;
     text-decoration: underline;
 }
+
 
 /* Helpicons to open popover tooltips */
 
@@ -317,7 +322,7 @@ input {
     box-shadow: 0px 0px 5px 10px rgba(3, 3, 3, 0.4);
     background-color: #585858;
     color: white;
-    border-radius: 18px;
+    border-radius: 24px;
 }
 
 .modal-header {
@@ -331,6 +336,27 @@ input {
 .modal-backdrop {
     background-color: rgba(0, 0, 0, .3);
 }
+
+.modal .close {
+    color: white;
+    font-size: 38px;
+    padding: 0 !important;
+    margin: 0 !important;
+    margin-right: -0.25em !important;
+    transition-property: transform;
+    transition-duration: 0.4s;
+    -webkit-transition-property: -webkit-transform;
+    -webkit-transition-duration: 0.4s;
+    -ms-transition-property: -ms-transform;
+    -ms-transition-duration: 0.4s;
+}
+
+.modal .close:hover {
+    transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+}
+
 
 .loader {
     position: fixed;
@@ -348,8 +374,8 @@ input {
 }
 
 #navbarID {
-    transition: top 0.3s;
     /* Transition effect when sliding down (and up) */
+    transition: top 0.3s;
 }
 
 @-webkit-keyframes spin {
