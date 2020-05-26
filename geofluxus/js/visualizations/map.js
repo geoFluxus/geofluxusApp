@@ -111,11 +111,13 @@ function(ol, turf)
                 if (feature && feature.get('tooltip')) {
                     overlay.setPosition(evt.coordinate);
                     tooltip.innerHTML = feature.get('tooltip');
-                    tooltip.style.display = '';
+                    tooltip.style.display = 'block';
                     tooltip.style.color = 'black';
-                    tooltip.style.borderRadius = '10px';
-                    tooltip.style.padding = '10px';
-                    tooltip.style.font = '14px sans-serif';
+                    tooltip.style.backgroundColor = 'rgb(139, 138, 138)';
+                    tooltip.style.opacity = '0.8';
+                    tooltip.style.borderRadius = '1.5rem';
+                    tooltip.style.padding = '0.75rem';
+                    tooltip.style.font = 'small Montserrat, sans-serif';
                 }
                 else tooltip.style.display = 'none';
             };
