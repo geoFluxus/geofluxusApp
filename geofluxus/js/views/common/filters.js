@@ -102,6 +102,7 @@ define(['views/common/baseview',
                 'change select[name="area-level-select"]': 'changeAreaLevel',
                 'click #reset-filters': 'resetFiltersToDefault',
                 'click .clear-areas-button': 'clearAreas',
+                'click #view-saved-filters' : 'showSavedFiltersModal',
             },
 
             // Rendering
@@ -132,6 +133,7 @@ define(['views/common/baseview',
                     trigger: "focus"
                 });
 
+                this.renderSavedFiltersModal();
                 this.renderAreaSelectModal();
 
                 this.initializeControls();
@@ -444,95 +446,60 @@ define(['views/common/baseview',
             },
 
             initializeControls: function () {
-
-                // ///////////////////////////////////////////////
                 // Origin-controls:
                 this.origin.inOrOut = this.el.querySelector('#origin-area-in-or-out');
-                $(this.origin.inOrOut).bootstrapToggle();
-
                 this.origin.activityGroupsSelect = this.el.querySelector('select[name="origin-activitygroup-select"]');
-                $(this.origin.activityGroupsSelect).selectpicker();
-
                 this.origin.activitySelect = this.el.querySelector('select[name="origin-activity-select"]');
-                $(this.origin.activitySelect).selectpicker();
-
                 this.origin.processGroupSelect = this.el.querySelector('select[name="origin-processGroup-select"]');
-                $(this.origin.processGroupSelect).selectpicker();
-
                 this.origin.processSelect = this.el.querySelector('select[name="origin-process-select"]');
-                $(this.origin.processSelect).selectpicker();
 
-                // ///////////////////////////////////////////////
                 // Destination-controls:
                 this.destination.inOrOut = this.el.querySelector('#destination-area-in-or-out');
-                $(this.destination.inOrOut).bootstrapToggle();
-
                 this.destination.activityGroupsSelect = this.el.querySelector('select[name="destination-activitygroup-select"]');
-                $(this.destination.activityGroupsSelect).selectpicker();
-
                 this.destination.activitySelect = this.el.querySelector('select[name="destination-activity-select"]');
-                $(this.destination.activitySelect).selectpicker();
-
                 this.destination.processGroupSelect = this.el.querySelector('select[name="destination-processGroup-select"]');
-                $(this.destination.processGroupSelect).selectpicker();
-
                 this.destination.processSelect = this.el.querySelector('select[name="destination-process-select"]');
-                $(this.destination.processSelect).selectpicker();
 
-
-                // ///////////////////////////////////////////////
                 // Flows-controls:
                 this.flows.yearSelect = this.el.querySelector('select[name="flows-year-select"]');
-                $(this.flows.yearSelect).selectpicker();
-
                 this.flows.monthSelect = this.el.querySelector('select[name="flows-month-select"]');
-                $(this.flows.monthSelect).selectpicker();
-
                 this.flows.waste02Select = this.el.querySelector('select[name="flows-waste02-select"]');
-                $(this.flows.waste02Select).selectpicker();
-
                 this.flows.waste04Select = this.el.querySelector('select[name="flows-waste04-select"]');
-                $(this.flows.waste04Select).selectpicker();
-
                 this.flows.waste06Select = this.el.querySelector('select[name="flows-waste06-select"]');
-                $(this.flows.waste06Select).selectpicker();
 
                 this.flows.materialSelect = this.el.querySelector('select[name="flows-material-select"]');
-                $(this.flows.materialSelect).selectpicker();
-
                 this.flows.productSelect = this.el.querySelector('select[name="flows-product-select"]');
-                $(this.flows.productSelect).selectpicker();
-
                 this.flows.compositesSelect = this.el.querySelector('select[name="flows-composites-select"]');
-                $(this.flows.compositesSelect).selectpicker();
-
                 this.flows.routeSelect = this.el.querySelector('select[name="flows-route-select"]');
-                $(this.flows.routeSelect).selectpicker();
-
                 this.flows.collectorSelect = this.el.querySelector('select[name="flows-collector-select"]');
-                $(this.flows.collectorSelect).selectpicker();
-
                 this.flows.hazardousSelect = this.el.querySelector('select[name="flows-hazardous-select"]');
-                $(this.flows.hazardousSelect).selectpicker();
-
                 this.flows.cleanSelect = this.el.querySelector('select[name="flows-clean-select"]');
-                $(this.flows.cleanSelect).selectpicker();
-
                 this.flows.mixedSelect = this.el.querySelector('select[name="flows-mixed-select"]');
-                $(this.flows.mixedSelect).selectpicker();
-
                 this.flows.directSelect = this.el.querySelector('select[name="flows-direct-select"]');
-                $(this.flows.directSelect).selectpicker();
-
                 this.flows.isCompositeSelect = this.el.querySelector('select[name="flows-iscomposite-select"]');
-                $(this.flows.isCompositeSelect).selectpicker();
-
-                //Area select modal
                 this.areaLevelSelect = this.el.querySelector('#area-level-select');
-                $(this.areaLevelSelect).selectpicker();
+
+                // Initialize all bootstrapToggles:
+                $(".bootstrapToggle").bootstrapToggle();
+
+                // Initialize all selectpickers:
+                $(".selectpicker").selectpicker();
 
                 // Initialize all textarea-autoresize components:
                 $(".selections").textareaAutoSize();
+            },
+
+            renderSavedFiltersModal: function () {
+                var _this = this;
+
+                this.savedFiltersModal = this.el.querySelector('.saved-filters.modal');
+                html = document.getElementById('saved-filters-modal-template').innerHTML;
+                template = _.template(html);
+                this.savedFiltersModal.innerHTML = template({
+                    //savedFilters: this.savedFilters
+                });
+
+
             },
 
             renderAreaSelectModal: function () {
@@ -554,12 +521,12 @@ define(['views/common/baseview',
                 this.areaLevelSelect = this.el.querySelector('select[name="area-level-select"]');
                 this.areaMap.addLayer(
                     'areas', {
-                        stroke: 'rgb(100, 150, 250)',
-                        fill: 'rgba(100, 150, 250, 0.5)',
+                        stroke: 'rgb(114, 145, 128)',
+                        fill: 'rgba(121, 209, 161, 0.25)',
                         select: {
                             selectable: true,
-                            stroke: 'rgb(230, 230, 0)',
-                            fill: 'rgba(230, 230, 0, 0.5)',
+                            stroke: 'rgb(196, 255, 223)',
+                            fill: 'rgba(89, 155, 119, 0.6)',
                             onChange: function (areaFeats) {
                                 var levelId = _this.areaLevelSelect.value;
                                 var labels = [];
@@ -713,12 +680,13 @@ define(['views/common/baseview',
                 }
             },
 
+            showSavedFiltersModal(event) {
+                $(this.savedFiltersModal).modal('show');
+            },
+
             showAreaSelection: function (event) {
                 var _this = this;
                 var labelStringArray = [];
-
-                // Clear all the selected features from the areaMap:
-                //_this.areaMap.removeSelectedFeatures('areas');
 
                 // Used to determine which 'Select area'-button the user has pressed, either 'origin', 'flows', or 'destination': 
                 _this.areaMap.block = $(event.currentTarget).data('area-select-block');
@@ -871,7 +839,6 @@ define(['views/common/baseview',
                 $(_this.flows.mixedSelect).val("-1");
                 $(_this.flows.directSelect).val("-1");
                 $(_this.flows.isCompositeSelect).val("-1");
-
 
 
                 // Empty all textareas:

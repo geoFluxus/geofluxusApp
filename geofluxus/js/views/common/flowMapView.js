@@ -267,29 +267,23 @@ define(['underscore',
                     darkmodeToggleBtn.addEventListener('click', function (event) {
                         _this.isDarkMode = !_this.isDarkMode;
                         _this.toggleLight();
-                        event.preventDefault();
                     })
                     showFlowsToggleBtn.addEventListener('click', function (event) {
                         _this.flowMap.showFlows = !_this.flowMap.showFlows;
                         _this.rerender();
-                        event.preventDefault();
                     })
                     showNodesToggleBtn.addEventListener('click', function (event) {
                         _this.flowMap.showNodes = !_this.flowMap.showNodes;
                         _this.rerender();
-                        event.preventDefault();
                     })
                     if (!this.isActorLevel) {
                         showAreasToggleBtn.addEventListener('click', function (event) {
                             _this.toggleAreas();
-                            event.preventDefault();
                         })
                     }
                     animationToggleBtn.addEventListener('click', function (event) {
                         _this.toggleAnimation();
-                        event.preventDefault();
                     })
-
 
                     // Prevent event propagation on button clicks:
                     L.DomEvent.disableClickPropagation(document.querySelector(".leaflet-top.leaflet-left"));
