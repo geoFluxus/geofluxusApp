@@ -67,7 +67,17 @@
 
     <div class="block accordion" id="filterBlock">
 
-        <h4 class="pb-2 pl-3">Step 1: Filter the flows</h4>
+        <div class="row justify-content-between">
+            <h4 class="pb-1 pl-3">Step 1: Filter the flows</h4>
+
+            <div>
+                <button id='save-filters' class="btn btn-outline-primary" title="Save the current filter configuration."
+                    style="height: 38px; width: 10em">SAVE</button>
+
+                <button id='view-saved-filters' class="btn btn-outline-primary" title="View and set a saved filter configuration."
+                    style="height: 38px; width: 10em">VIEW SAVED</button>
+            </div>
+        </div>
 
         <!-- ORIGIN CONTROLS -->
         <div class="card bg-dark">
@@ -81,10 +91,6 @@
                         Origin
                     </button>
                 </h4>
-                <!--                <a  float="left" class="help-icon fas fa-question-circle" data-toggle="popover" title="Activities and Actors Filter"-->
-                <!--                   data-html="true" tabindex="0"-->
-                <!--                   data-content='Filter the flows between activity groups, activities and actors'>-->
-                <!--                </a>-->
             </div>
 
             <div id="collapseOriginBlock" class="collapse show" aria-labelledby="card-header-collapse-origin"
@@ -93,7 +99,8 @@
                     <div class="row">
                         <div class="col-md-10">
 
-                            <label for="area-select-button-origin">Limit the <strong>origin</strong> of the waste flows to geographic
+                            <label for="area-select-button-origin">Limit the <strong>origin</strong> of the waste flows
+                                to geographic
                                 areas:</label>
 
                             <div class="d-block">
@@ -134,7 +141,7 @@
                                 <div class="checkbox in-or-out-container">
                                     <input name="in-or-out-origin" id="origin-area-in-or-out" type="checkbox"
                                         data-height="24" data-toggle="toggle" data-on="outside" data-off="within"
-                                        class="in-out-toggle">
+                                        class="in-out-toggle bootstrapToggle">
                                     <label style="display: inline-block;">the selected area(s).</label>
                                 </div>
                             </div>
@@ -320,7 +327,8 @@
                     <div class="row">
                         <div class="col-md-10">
 
-                            <label for="area-select-button-destination">Limit the <strong>destination</strong> of the waste flows to
+                            <label for="area-select-button-destination">Limit the <strong>destination</strong> of the
+                                waste flows to
                                 geographic areas:</label>
 
                             <div class="d-block">
@@ -362,7 +370,7 @@
                                 <div class="checkbox in-or-out-container">
                                     <input name="in-or-out-destination" id="destination-area-in-or-out" type="checkbox"
                                         data-height="24" data-toggle="toggle" data-on="outside" data-off="within"
-                                        class="in-out-toggle">
+                                        class="in-out-toggle bootstrapToggle">
                                     <label style="display: inline-block;">the selected area(s).</label>
                                 </div>
                             </div>
@@ -524,7 +532,8 @@
         </div>
 
         <!-- FLOWS CONTROLS -->
-        <div class="card bg-dark" style="border-bottom-left-radius: 30px !important; border-bottom-right-radius: 30px !important">
+        <div class="card bg-dark"
+            style="border-bottom-left-radius: 30px !important; border-bottom-right-radius: 30px !important">
             <div class="card-header" id="card-header-collapse-flows">
                 <h4 class="mb-1">
                     <button class="btn btn-link collapsed collapsingHeaderButton" id="btn-collapse-header-flows"
@@ -751,7 +760,8 @@
                                 <option selected value="-1">All (<%= products.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% products.forEach(function(product){ %>
-                                <option value="<%= product.id %>"><%= product.get('name')[0].toUpperCase() + product.get('name').slice(1) %></option>
+                                <option value="<%= product.id %>">
+                                    <%= product.get('name')[0].toUpperCase() + product.get('name').slice(1) %></option>
                                 <% }); %>
                             </select>
                         </div>
@@ -771,7 +781,9 @@
                                 <option selected value="-1">All (<%= composites.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% composites.forEach(function(composite){ %>
-                                <option value="<%= composite.id %>"><%= composite.get('name')[0].toUpperCase() + composite.get('name').slice(1) %></option>
+                                <option value="<%= composite.id %>">
+                                    <%= composite.get('name')[0].toUpperCase() + composite.get('name').slice(1) %>
+                                </option>
                                 <% }); %>
                             </select>
                         </div>
@@ -783,13 +795,14 @@
                             <label for="flows-clean-select">Clean</label>
                             <div class="labelHelpiconContainer">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Clean"
-                                    data-html="true" tabindex="0" data-content="The Clean filter indicates the extent to which a 
+                                    data-html="true" tabindex="0"
+                                    data-content="The Clean filter indicates the extent to which a 
                                     flow is expected to be contaminated with another substance. ‘Mono’ streams are considered 
                                     clean streams since they consist of one material and are not contaminated, i.e. clean.">
                                 </a>
                             </div>
-                            <select id="flows-clean-select" name="flows-clean-select" class="form-control form-control-sm selectpicker" multiple
-                                style="resize: vertical;">
+                            <select id="flows-clean-select" name="flows-clean-select"
+                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
                                 <option selected value='-1'>Ignore</option>
                                 <option data-divider="true"></option>
                                 <option value='unknown'>Unknown</option>
@@ -808,8 +821,8 @@
                                     indicating they contain two or more materials.">
                                 </a>
                             </div>
-                            <select id="flows-mixed-select" name="flows-mixed-select" class="form-control form-control-sm selectpicker" multiple
-                                style="resize: vertical;">
+                            <select id="flows-mixed-select" name="flows-mixed-select"
+                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
                                 <option selected value='-1'>Ignore</option>
                                 <option data-divider="true"></option>
                                 <option value='unknown'>Unknown</option>
@@ -826,8 +839,8 @@
                                     processing is required. ">
                                 </a>
                             </div>
-                            <select id="flows-direct-select" name="flows-direct-select" class="form-control form-control-sm selectpicker"
-                                multiple style="resize: vertical;">
+                            <select id="flows-direct-select" name="flows-direct-select"
+                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
                                 <option selected value='-1'>Ignore</option>
                                 <option data-divider="true"></option>
                                 <option value='unknown'>Unknown</option>
@@ -843,8 +856,8 @@
                                     known composite consisting of two or more materials.">
                                 </a>
                             </div>
-                            <select id="flows-iscomposite-select" name="flows-iscomposite-select" class="form-control form-control-sm selectpicker"
-                                multiple style="resize: vertical;">
+                            <select id="flows-iscomposite-select" name="flows-iscomposite-select"
+                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
                                 <option selected value='-1'>Ignore</option>
                                 <option data-divider="true"></option>
                                 <option value='unknown'>Unknown</option>
@@ -893,7 +906,7 @@
                             </select>
                         </div>
                     </div>
-                    
+
 
                 </div>
             </div>
@@ -901,7 +914,7 @@
         </div>
 
         <div class="row mt-1">
-            <button id='reset-filters' class="btn btn-secondary resetButton" title="Reset all the filters">Reset
+            <button id='reset-filters' class="btn btn-secondary resetButton" title="Reset all the filters">RESET
             </button>
         </div>
 
@@ -910,8 +923,46 @@
 
     <!--Area selection-->
     <div class="area-filter modal fade" role="dialog"></div>
+    
+    <!-- Saved filter modal-->
+    <div class="saved-filters modal fade" role="dialog"></div>
 </script>
 
+<!-- Saved filter modal-->
+<script type="text/template" id="saved-filters-modal-template">
+    <div class="modal-dialog modal-lg">
+        <!-- Modal content-->
+        <div class="modal-content col-md-12">
+            <div class="modal-header pb-0">
+                <h4 class="modal-title">Saved filters</h4>
+                <button type="button" class="close" data-dismiss="modal" style="color: white;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class='row pt-0'>
+                    <div class="col">
+                        <label for="area-level-select" class="input-label" style="margin-top: .5rem; margin-right: 10px;">Geographic level:</label>
+                        <select name="area-level-select" id="area-level-select" class="form-control form-control-sm selectpicker" style="max-width: 350px;">
+                        
+                        </select>
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class='areaModalMapRow map' style=""></div>
+                </div>
+                <div class='row' style="padding-top: 0px">
+                    <div class="col">
+                        <label for="areaSelectionsModalTextarea">Selected areas:</label>
+                        <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsModalTextarea" style="width: 100%" type="text" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn cancel btn-secondary" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary confirm" data-dismiss="modal" aria-hidden="true">OK</button>
+            </div>
+        </div>
+    </div>
+</script>
 
 <!--Area selection-->
 <script type="text/template" id="area-select-modal-template">
@@ -926,7 +977,7 @@
                 <div class='row' style="padding-top: 0px">
                     <div class="col">
                         <label for="area-level-select" class="input-label" style="margin-top: .5rem; margin-right: 10px;">Geographic level:</label>
-                        <select name="area-level-select" id="area-level-select" class="form-control form-control-sm" style="max-width: 350px;">
+                        <select name="area-level-select" id="area-level-select" class="form-control form-control-sm selectpicker" style="max-width: 350px;">
                             <% levels.forEach(function(level) { %>
                                 <% if (level.get('level') != "1000") %>
                                     <option value="<%= level.id %>"><%= level.get('name') %></option>
