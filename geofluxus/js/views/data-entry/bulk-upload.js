@@ -44,8 +44,6 @@ var BulkUploadView = BaseView.extend({
             ['materials', 'Materials'],
             ['products', 'Products'],
             ['composites', 'Composites'],
-            ['years', 'Years'],
-            ['months', 'Months'],
             ['flowchains', 'Flow Chains'],
             ['allflows', 'Flows'],
             ['classifications', 'Classifications'],

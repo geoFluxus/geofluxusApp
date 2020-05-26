@@ -12,28 +12,23 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
 
 # Activity group
 class ActivityGroupSerializer(HyperlinkedModelSerializer):
-    flow_count = IntegerField(read_only=True)
-
     class Meta:
         model = ActivityGroup
         fields = ('url',
                   'id',
                   'name',
-                  'code',
-                  'flow_count')
+                  'code',)
 
 
 class ActivityGroupListSerializer(ActivityGroupSerializer):
     class Meta(ActivityGroupSerializer.Meta):
         fields = ('id',
                   'name',
-                  'code',
-                  'flow_count')
+                  'code',)
 
 
 # Activity
 class ActivitySerializer(HyperlinkedModelSerializer):
-    flow_count = IntegerField(read_only=True)
     activitygroup = PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
@@ -42,8 +37,7 @@ class ActivitySerializer(HyperlinkedModelSerializer):
                   'id',
                   'name',
                   'nace',
-                  'activitygroup',
-                  'flow_count')
+                  'activitygroup',)
 
 
 class ActivityListSerializer(ActivitySerializer):
@@ -51,34 +45,29 @@ class ActivityListSerializer(ActivitySerializer):
         fields = ('id',
                   'name',
                   'nace',
-                  'activitygroup',
-                  'flow_count')
+                  'activitygroup')
 
 
 # Process group
 class ProcessGroupSerializer(HyperlinkedModelSerializer):
-    flow_count = IntegerField(read_only=True)
 
     class Meta:
         model = ProcessGroup
         fields = ('url',
                   'id',
                   'name',
-                  'code',
-                  'flow_count')
+                  'code',)
 
 class ProcessGroupListSerializer(ProcessGroupSerializer):
     class Meta(ProcessGroupSerializer.Meta):
         fields = ('id',
                   'name',
-                  'code',
-                  'flow_count')
+                  'code',)
 
 
 # Process
 class ProcessSerializer(HyperlinkedModelSerializer):
     processgroup = PrimaryKeyRelatedField(read_only=True)
-    flow_count = IntegerField(read_only=True)
 
     class Meta:
         model = Process
@@ -86,8 +75,7 @@ class ProcessSerializer(HyperlinkedModelSerializer):
                   'id',
                   'name',
                   'code',
-                  'processgroup',
-                  'flow_count')
+                  'processgroup',)
 
 
 class ProcessListSerializer(ProcessSerializer):
@@ -95,8 +83,7 @@ class ProcessListSerializer(ProcessSerializer):
         fields = ('id',
                   'name',
                   'code',
-                  'processgroup',
-                  'flow_count')
+                  'processgroup',)
 
 
 # Company
@@ -124,7 +111,6 @@ class ActorSerializer(HyperlinkedModelSerializer):
     process = PrimaryKeyRelatedField(read_only=True)
     company = PrimaryKeyRelatedField(read_only=True)
     publication = PrimaryKeyRelatedField(read_only=True)
-    flow_count = IntegerField(read_only=True)
 
     class Meta:
         model = Actor
@@ -140,8 +126,7 @@ class ActorSerializer(HyperlinkedModelSerializer):
                   'address',
                   'city',
                   'country',
-                  'publication',
-                  'flow_count')
+                  'publication',)
 
 
 class ActorListSerializer(ActorSerializer):
@@ -156,5 +141,4 @@ class ActorListSerializer(ActorSerializer):
                   'address',
                   'city',
                   'country',
-                  'publication',
-                  'flow_count')
+                  'publication',)

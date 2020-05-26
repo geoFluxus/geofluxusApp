@@ -25,10 +25,6 @@ class AdminLevelViewSet(PostGetViewMixin,
         'create': AdminLevelCreateSerializer
     }
 
-    def get_queryset(self):
-        queryset = AdminLevel.objects.order_by('id')
-        return queryset
-
 
 # Area
 class AreaViewSet(PostGetViewMixin,
@@ -41,10 +37,6 @@ class AreaViewSet(PostGetViewMixin,
         'list': AreaListSerializer,
         'create': AreaCreateSerializer
     }
-
-    def get_queryset(self):
-        queryset = Area.objects.order_by('id')
-        return queryset
 
 
 # AreaInLevel
