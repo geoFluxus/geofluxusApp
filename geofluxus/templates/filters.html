@@ -940,30 +940,41 @@
             </div>
             <div class="modal-body">
                 
-                <div class='row pt-0'>
+                <div class='row pt-3'>
                     <div class="col">
-                        <label for="exampleInputEmail1">Email address</label>
-                        <input type="email" class="form-control-sm" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-                    
-                        <button id='new-filter-config' class="btn btn-primary" title="Create a new filter configuration">NEW</button>
-        
-                    </div>
-                </div>
-                
-                <div class='row pt-0'>
-                    <div class="col">
-                        <label for="saved-filters-select" class="input-label" style="margin-top: .5rem; margin-right: 10px;">Saved filters:</label>
-                        <select name="saved-filters-select" id="saved-filters-select" class="form-control form-control-sm selectpicker" style="max-width: 350px;">
-                        
+                        <!-- <label for="saved-filters-select" class="input-label">Saved filters:</label> -->
+                        <select name="saved-filters-select"
+                                id="saved-filters-select"
+                                class="form-control form-control-sm selectpicker"
+                                style="max-width: 350px;"
+                                data-none-selected-text="No saved filters found.">
                         </select>
                     </div>
                 </div>
-                <div class='row pt-0'>
+                
+                <div class='row pt-2'>
+                    <div class="col d-flex justify-content-between">
+                        <button id='delete-filter-config' class="btn btn-secondary" title="Delete the selected filter configuration" style="width: 5.5rem">Delete</button>
+                        
+                        <div>
+                            <button id='edit-filter-config' class="btn btn-outline-primary" title="Edit the selected filter configuration" style="width: 5.5rem">Edit</button>
+                            <button id='new-filter-config' class="btn btn-primary" title="Create a new filter configuration" style="width: 5.5rem">New</button>
+                        </div>
+                    </div>
+                </div>
+                <div class='row pt-3'>
+                    <div class="col d-flex">                       
+                        <input type="text" class="form-control-sm w-75" id="filter-name" placeholder="Filter name" style="height: 38px; border: none;">
+                        <button id='save-filter-name' class="btn btn-primary w-25" title="Save the filter name">Save</button>
+
+                    </div>
+                </div>
+                <!-- <div class='row pt-0'>
                     <div class="col">
                         <label for="areaSelectionsModalTextarea">Selected areas:</label>
                         <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsModalTextarea" style="width: 100%" type="text" readonly></textarea>
                     </div>
-                </div>
+                </div> -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn cancel btn-secondary" data-dismiss="modal">Cancel</button>
@@ -978,14 +989,14 @@
     <div class="modal-dialog modal-lg">
         <!-- Modal content-->
         <div class="modal-content col-md-12">
-            <div class="modal-header" style="padding-bottom: 0px">
+            <div class="modal-header pb-0">
                 <h4 class="modal-title">Select areas</h4>
                 <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-                <div class='row' style="padding-top: 0px">
+                <div class='row pt-1'>
                     <div class="col">
-                        <label for="area-level-select" class="input-label" style="margin-top: .5rem; margin-right: 10px;">Geographic level:</label>
+                        <label for="area-level-select" class="input-label">Geographic level:</label>
                         <select name="area-level-select" id="area-level-select" class="form-control form-control-sm selectpicker" style="max-width: 350px;">
                             <% levels.forEach(function(level) { %>
                                 <% if (level.get('level') != "1000") %>
@@ -995,9 +1006,9 @@
                     </div>
                 </div>
                 <div class='row'>
-                    <div class='areaModalMapRow map' style=""></div>
+                    <div class='areaModalMapRow map'></div>
                 </div>
-                <div class='row' style="padding-top: 0px">
+                <div class='row pt-0'>
                     <div class="col">
                         <label for="areaSelectionsModalTextarea">Selected areas:</label>
                         <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsModalTextarea" style="width: 100%" type="text" readonly></textarea>

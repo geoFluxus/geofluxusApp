@@ -330,7 +330,9 @@ input {
 }
 
 .modal-footer {
-    border-top: 0 none;
+    border-color: gray;
+    padding-right: 0px;
+    margin-right: -0.5rem;
 }
 
 .modal-backdrop {
@@ -357,6 +359,9 @@ input {
     -ms-transform: rotate(180deg);
 }
 
+.modal-footer button {
+    width: 5rem;
+}
 
 .loader {
     position: fixed;

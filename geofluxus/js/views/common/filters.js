@@ -72,6 +72,10 @@ define(['views/common/baseview',
                     apiTag: 'months'
                 });
 
+                this.savedFilters = new Collection([], {
+                    apiTag: 'filters'
+                });
+
                 this.areas = {};
 
                 this.loader.activate();
@@ -89,6 +93,7 @@ define(['views/common/baseview',
                     this.areaLevels.fetch(),
                     this.years.fetch(),
                     this.months.fetch(),
+                    this.savedFilters.fetch(),
                 ];
                 Promise.all(promises).then(function () {
                     _this.loader.deactivate();
@@ -496,7 +501,7 @@ define(['views/common/baseview',
                 html = document.getElementById('saved-filters-modal-template').innerHTML;
                 template = _.template(html);
                 this.savedFiltersModal.innerHTML = template({
-                    //savedFilters: this.savedFilters
+                    savedFilters: this.savedFilters
                 });
 
 
