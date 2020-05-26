@@ -34,7 +34,6 @@ define(['views/common/baseview',
         FlowMapView,
         ParallelSetsView,
     ) {
-
         var FlowsView = BaseView.extend({
             initialize: function (options) {
                 var _this = this;
@@ -194,8 +193,6 @@ define(['views/common/baseview',
                     // ///////////////////////////////////////////////////////////////////
                     // Show available visualizations based on selected dimension(s):
 
-                    //console.log(_this.selectedDimensionStrings);
-
                     switch (_this.checkedDimToggles.length) {
                         case 0: // No dimensions
                             $("#message-container-row").fadeIn();
@@ -204,9 +201,6 @@ define(['views/common/baseview',
                         case 1: // One dimension selected
                             $(".viz-selector-button").hide();
                             $(".viz-container").fadeIn();
-
-                            // Disable legend by default:
-                            //$("#display-legend").prop("checked", false);
 
                             if (_this.selectedDimensionStrings.includes("time")) {
                                 $("#viz-piechart").parent().fadeIn();
@@ -247,14 +241,8 @@ define(['views/common/baseview',
                             break;
 
                         case 2: // Two dimensions:
-                            //$("#message-container-row").hide();
                             $(".viz-selector-button").hide();
                             $(".viz-container").fadeIn();
-
-                            // Enable legend by default:
-                            //$("#display-legend").prop("checked", true);
-
-                            //console.log("Two dimensions");
 
                             // Time & Space
                             if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("space")) {
@@ -342,9 +330,7 @@ define(['views/common/baseview',
                         $("#origDest-toggle-space").parent().fadeIn();
                         event.preventDefault();
                     }
-
                 });
-
 
                 // Disable origin/destination toggle for Space Treatment method for Flowmap and Parallel Sets
                 $(".viz-selector-button").click(function (event) {
@@ -396,7 +382,6 @@ define(['views/common/baseview',
                     }
                 });
 
-
                 // Show granularity on toggle change:
                 $("#dim-toggle-time").change(function () {
                     $("#gran-toggle-time-col").fadeToggle();
@@ -417,110 +402,6 @@ define(['views/common/baseview',
                     $("#gran-material-col").fadeToggle();
                 });
             },
-            //
-            //            // Render the empty Sankey Map
-            //            renderSankeyMap: function () {
-            //                this.flowMapView = new FlowMapView({
-            //                    el: this.el.querySelector('#flow-map'),
-            //                    //caseStudy: this.caseStudy,
-            //                    //keyflowId: this.keyflowId,
-            //                    //materials: this.materials,
-            //                    //displayWarnings: this.displayWarnings,
-            //                    //anonymize: this.filter.get('anonymize')
-            //                });
-            //            },
-            //
-            // postprocess: function (flows) {
-            //     var idx = 0;
-            //     flows.forEach(function (flow) {
-            //         var origin = flow.get('origin');
-            //         var destination = flow.get('destination');
-
-            //         // API aggregates flows and doesn't return an id. Generate internal ID to assign interactions:
-            //         flow.set('id', idx);
-            //         idx++;
-
-            //         // Save original amounts to be able to swap amount with delta and back
-            //         flow._amount = flow.get('amount');
-
-            //         // Color:
-            //         origin.color = utils.colorByName(origin.name);
-            //         destination.color = utils.colorByName(destination.name);
-            //     })
-
-            //     this.flows = flows;
-            //     this.draw();
-            // },
-
-            //            draw: function (displayLevel) {
-            //                this.flowMem = {};
-            //                if (this.flowMapView != null) this.flowMapView.clear();
-            //                if (this.flowSankeyView != null) this.flowSankeyView.close();
-            //                var displayLevel = displayLevel || 'activitygroup';
-            //
-            //                this.nodeLevel = displayLevel.toLowerCase();
-            //
-            //                var el = this.el.querySelector('.sankey-wrapper');;
-            //                var _this = this;
-            //                //var showDelta = this.modDisplaySelect.value === 'delta',
-            //
-            //                // function listFlows() {
-            //                //var flowTable = _this.el.querySelector('#flow_table');
-            //                // flowTable.innerHTML = '<strong>FLOW MATERIALS</strong>';
-            //                //var modDisplay = _this.modDisplaySelect.value,
-            //                //flows = (modDisplay == 'statusquo') ? _this.flows : (modDisplay == 'strategy') ? _this.strategyFlows : _this.deltaFlows;
-            //                //flows.forEach(function(flow) {
-            //                //var name = flow.get("materials")[0].name;
-            //                // var div = document.createElement("div");
-            //                // if (flowTable.innerHTML.indexOf(name) === -1) {
-            //                // div.innerHTML = name;
-            //                //  flowTable.appendChild(div);
-            //                //}
-            //                // });
-            //                // }
-            //
-            //                function drawSankey() {
-            //                    // override value and color
-            //                    _this.flows.models.forEach(function (flow) {
-            //                        var amount = flow._amount;
-            //                        var description = flow.description;
-            //                        flow.set('amount', amount);
-            //                        flow.set('description', description);
-            //                        //flow.color = (!showDelta) ? null : (amount > 0) ? '#23FE01' : 'red';
-            //                        // var materials = flow.get('materials');
-            //                        // materials.forEach(function(material){
-            //                        // material.amount = material._amount;
-            //                        // })
-            //                        // flow.set('materials', materials);
-            //                    });
-            //                    _this.flowSankeyView = new FlowSankeyView({
-            //                        el: el,
-            //                        width: el.clientWidth,
-            //                        //width: el.clientWidth - 10,
-            //                        flows: _this.flows.models,
-            //                        height: 600,
-            //                        originLevel: displayLevel,
-            //                        destinationLevel: displayLevel,
-            //                        //anonymize: _this.filter.get('anonymize'),
-            //                        //showRelativeComposition: !showDelta,
-            //                        //forceSignum: showDelta
-            //                    })
-            //                }
-            //                // no need to fetch flows if display level didn't change from last time
-            //                if (this.displayLevel != displayLevel) {
-            //                    this.fetchFlows({
-            //                        displayLevel: displayLevel,
-            //                        success: function (flows) {
-            //                            _this.flows = flows;
-            //                            //drawSankey();
-            //                        }
-            //                    })
-            //                } else {
-            //                    //listFlows();
-            //                    drawSankey();
-            //                }
-            //                this.displayLevel = displayLevel;
-            //            },
 
             // Returns parameters for filtered post-fetching based on assigned filter
             getFilterAndDimParams: function () {
@@ -588,62 +469,6 @@ define(['views/common/baseview',
                 console.log(filterParams);
                 return filterParams;
             },
-
-            linkSelected: function (e) {
-                console.log("Link selected: ", e);
-                // only actors atm
-                var data = e.detail,
-                    _this = this,
-                    showDelta = this.modDisplaySelect.value === 'delta';
-
-                if (showDelta) return;
-
-                if (!Array.isArray(data)) data = [data];
-                var promises = [];
-                this.loader.activate();
-                data.forEach(function (d) {
-
-                    // display level actor
-                    if (_this.nodeLevel === 'actor') {
-                        _this.flowMapView.addFlows(d);
-                    }
-                    // display level activity or group
-                    else {
-                        promises.push(_this.addGroupedActors(d));
-                    }
-                })
-
-                function render() {
-                    _this.flowMapView.rerender(true);
-                    _this.loader.deactivate();
-                }
-                if (promises.length > 0) {
-                    Promise.all(promises).then(render)
-                } else {
-                    render();
-                }
-
-            },
-
-            // linkDeselected: function (e) {
-            //     // only actors atm
-            //     var flow = e.detail,
-            //         flows = [],
-            //         nodes = [];
-            //     if (this.nodeLevel === 'actor') {
-            //         nodes = [data.origin, data.destination];
-            //         flows = flow;
-            //     } else {
-            //         var mapFlows = this.flowMapView.getFlows();
-            //         mapFlows.forEach(function (mapFlow) {
-            //             if (mapFlow.parent === flow.id) {
-            //                 flows.push(mapFlow);
-            //             }
-            //         })
-            //     };
-            //     this.flowMapView.removeFlows(flows);
-            //     this.flowMapView.rerender();
-            // },
 
             render1Dvisualizations: function (dimensions, flows) {
                 let _this = this;
@@ -1096,7 +921,6 @@ define(['views/common/baseview',
                 $($("#gran-radio-material")[0].children[0]).addClass("active");
                 $("#gran-material-col").hide();
 
-
                 // (Re)enable all toggles:
                 $('.bootstrapToggle').each(function (index, value) {
                     $(this).bootstrapToggle('enable');
@@ -1108,7 +932,6 @@ define(['views/common/baseview',
 
                 // Hide all Viz options:
                 $(".viz-container").hide();
-
 
                 // Refresh all selectpickers:
                 $(".selectpicker").selectpicker('refresh');

@@ -285,7 +285,6 @@ define(['underscore',
                         _this.toggleAnimation();
                     })
 
-
                     // Prevent event propagation on button clicks:
                     L.DomEvent.disableClickPropagation(document.querySelector(".leaflet-top.leaflet-left"));
                     L.DomEvent.disableClickPropagation(document.querySelector(".leaflet-control-fullscreen.leaflet-bar.leaflet-control"));
