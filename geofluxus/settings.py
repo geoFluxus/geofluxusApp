@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'webpack_loader',
     'rest_framework',
     'geofluxus.apps.asmfa',
+    'geofluxus.apps.login',
     'django.contrib.gis',
     'django.contrib.admin',
     'django.contrib.auth',

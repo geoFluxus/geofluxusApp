@@ -27,6 +27,7 @@ from geofluxus.apps.asmfa.views import (ActivityGroupViewSet,
                                         RoutingViewSet,
                                         WaysViewSet,
                                         VehicleViewSet)
+from geofluxus.apps.login.views import (UserFilterViewSet)
 from geofluxus.apps.statusquo.views import (StatusQuoViewSet,)
 from geofluxus.apps.impact.views import (ImpactViewSet,)
 
@@ -71,6 +72,9 @@ router.register(r'impactflows', ImpactViewSet)
 router.register(r'classifications', ClassificationViewSet)
 router.register(r'extradescriptions', ExtraDescriptionViewSet)
 router.register(r'routings', RoutingViewSet)
+
+# Login
+router.register(r'filters', UserFilterViewSet)
 
 # Areas in Level
 level_router = NestedSimpleRouter(router, r'levels', lookup='level')
