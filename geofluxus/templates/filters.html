@@ -923,8 +923,46 @@
 
     <!--Area selection-->
     <div class="area-filter modal fade" role="dialog"></div>
+    
+    <!-- Saved filter modal-->
+    <div class="saved-filters modal fade" role="dialog"></div>
 </script>
 
+<!-- Saved filter modal-->
+<script type="text/template" id="saved-filters-modal-template">
+    <div class="modal-dialog modal-lg">
+        <!-- Modal content-->
+        <div class="modal-content col-md-12">
+            <div class="modal-header pb-0">
+                <h4 class="modal-title">Saved filters</h4>
+                <button type="button" class="close" data-dismiss="modal" style="color: white;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class='row pt-0'>
+                    <div class="col">
+                        <label for="area-level-select" class="input-label" style="margin-top: .5rem; margin-right: 10px;">Geographic level:</label>
+                        <select name="area-level-select" id="area-level-select" class="form-control form-control-sm selectpicker" style="max-width: 350px;">
+                        
+                        </select>
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class='areaModalMapRow map' style=""></div>
+                </div>
+                <div class='row' style="padding-top: 0px">
+                    <div class="col">
+                        <label for="areaSelectionsModalTextarea">Selected areas:</label>
+                        <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsModalTextarea" style="width: 100%" type="text" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn cancel btn-secondary" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary confirm" data-dismiss="modal" aria-hidden="true">OK</button>
+            </div>
+        </div>
+    </div>
+</script>
 
 <!--Area selection-->
 <script type="text/template" id="area-select-modal-template">

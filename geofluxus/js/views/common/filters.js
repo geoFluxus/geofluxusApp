@@ -102,6 +102,7 @@ define(['views/common/baseview',
                 'change select[name="area-level-select"]': 'changeAreaLevel',
                 'click #reset-filters': 'resetFiltersToDefault',
                 'click .clear-areas-button': 'clearAreas',
+                'click #view-saved-filters' : 'showSavedFiltersModal',
             },
 
             // Rendering
@@ -132,6 +133,7 @@ define(['views/common/baseview',
                     trigger: "focus"
                 });
 
+                this.renderSavedFiltersModal();
                 this.renderAreaSelectModal();
 
                 this.initializeControls();
@@ -450,21 +452,21 @@ define(['views/common/baseview',
                 this.origin.activitySelect = this.el.querySelector('select[name="origin-activity-select"]');
                 this.origin.processGroupSelect = this.el.querySelector('select[name="origin-processGroup-select"]');
                 this.origin.processSelect = this.el.querySelector('select[name="origin-process-select"]');
-                
+
                 // Destination-controls:
                 this.destination.inOrOut = this.el.querySelector('#destination-area-in-or-out');
                 this.destination.activityGroupsSelect = this.el.querySelector('select[name="destination-activitygroup-select"]');
                 this.destination.activitySelect = this.el.querySelector('select[name="destination-activity-select"]');
                 this.destination.processGroupSelect = this.el.querySelector('select[name="destination-processGroup-select"]');
                 this.destination.processSelect = this.el.querySelector('select[name="destination-process-select"]');
-                
+
                 // Flows-controls:
                 this.flows.yearSelect = this.el.querySelector('select[name="flows-year-select"]');
                 this.flows.monthSelect = this.el.querySelector('select[name="flows-month-select"]');
                 this.flows.waste02Select = this.el.querySelector('select[name="flows-waste02-select"]');
                 this.flows.waste04Select = this.el.querySelector('select[name="flows-waste04-select"]');
                 this.flows.waste06Select = this.el.querySelector('select[name="flows-waste06-select"]');
-                
+
                 this.flows.materialSelect = this.el.querySelector('select[name="flows-material-select"]');
                 this.flows.productSelect = this.el.querySelector('select[name="flows-product-select"]');
                 this.flows.compositesSelect = this.el.querySelector('select[name="flows-composites-select"]');
@@ -479,12 +481,25 @@ define(['views/common/baseview',
 
                 // Initialize all bootstrapToggles:
                 $(".bootstrapToggle").bootstrapToggle();
-                
+
                 // Initialize all selectpickers:
                 $(".selectpicker").selectpicker();
 
                 // Initialize all textarea-autoresize components:
                 $(".selections").textareaAutoSize();
+            },
+
+            renderSavedFiltersModal: function () {
+                var _this = this;
+
+                this.savedFiltersModal = this.el.querySelector('.saved-filters.modal');
+                html = document.getElementById('saved-filters-modal-template').innerHTML;
+                template = _.template(html);
+                this.savedFiltersModal.innerHTML = template({
+                    //savedFilters: this.savedFilters
+                });
+
+
             },
 
             renderAreaSelectModal: function () {
@@ -665,12 +680,13 @@ define(['views/common/baseview',
                 }
             },
 
+            showSavedFiltersModal(event) {
+                $(this.savedFiltersModal).modal('show');
+            },
+
             showAreaSelection: function (event) {
                 var _this = this;
                 var labelStringArray = [];
-
-                // Clear all the selected features from the areaMap:
-                //_this.areaMap.removeSelectedFeatures('areas');
 
                 // Used to determine which 'Select area'-button the user has pressed, either 'origin', 'flows', or 'destination': 
                 _this.areaMap.block = $(event.currentTarget).data('area-select-block');
