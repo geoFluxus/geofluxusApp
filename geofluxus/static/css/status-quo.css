@@ -68,6 +68,7 @@
 .collapsingHeaderButton:focus {
     background-color: inherit;
     color: white;
+    box-shadow: none !important;
 }
 
 .flowFilterSubtitle {

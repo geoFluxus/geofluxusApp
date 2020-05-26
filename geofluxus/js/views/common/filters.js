@@ -554,12 +554,14 @@ define(['views/common/baseview',
                 this.areaLevelSelect = this.el.querySelector('select[name="area-level-select"]');
                 this.areaMap.addLayer(
                     'areas', {
-                        stroke: 'rgb(100, 150, 250)',
-                        fill: 'rgba(100, 150, 250, 0.5)',
+                        stroke: 'rgb(114, 145, 128)',
+                        fill: 'rgba(121, 209, 161, 0.25)',
                         select: {
                             selectable: true,
-                            stroke: 'rgb(230, 230, 0)',
-                            fill: 'rgba(230, 230, 0, 0.5)',
+                            // stroke: 'rgb(230, 230, 0)',
+                            // fill: 'rgba(230, 230, 0, 0.5)',
+                            stroke: 'rgb(196, 255, 223)',
+                            fill: 'rgba(89, 155, 119, 0.6)',
                             onChange: function (areaFeats) {
                                 var levelId = _this.areaLevelSelect.value;
                                 var labels = [];
@@ -871,7 +873,6 @@ define(['views/common/baseview',
                 $(_this.flows.mixedSelect).val("-1");
                 $(_this.flows.directSelect).val("-1");
                 $(_this.flows.isCompositeSelect).val("-1");
-
 
 
                 // Empty all textareas:

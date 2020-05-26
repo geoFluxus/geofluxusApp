@@ -67,7 +67,17 @@
 
     <div class="block accordion" id="filterBlock">
 
-        <h4 class="pb-2 pl-3">Step 1: Filter the flows</h4>
+        <div class="row justify-content-between">
+            <h4 class="pb-1 pl-3">Step 1: Filter the flows</h4>
+
+            <div>
+                <button id='save-filters' class="btn btn-outline-primary" title="Save the current filter configuration."
+                    style="height: 38px; width: 10em">SAVE</button>
+
+                <button id='view-saved-filters' class="btn btn-outline-primary" title="View and set a saved filter configuration."
+                    style="height: 38px; width: 10em">VIEW SAVED</button>
+            </div>
+        </div>
 
         <!-- ORIGIN CONTROLS -->
         <div class="card bg-dark">
@@ -93,7 +103,8 @@
                     <div class="row">
                         <div class="col-md-10">
 
-                            <label for="area-select-button-origin">Limit the <strong>origin</strong> of the waste flows to geographic
+                            <label for="area-select-button-origin">Limit the <strong>origin</strong> of the waste flows
+                                to geographic
                                 areas:</label>
 
                             <div class="d-block">
@@ -320,7 +331,8 @@
                     <div class="row">
                         <div class="col-md-10">
 
-                            <label for="area-select-button-destination">Limit the <strong>destination</strong> of the waste flows to
+                            <label for="area-select-button-destination">Limit the <strong>destination</strong> of the
+                                waste flows to
                                 geographic areas:</label>
 
                             <div class="d-block">
@@ -524,7 +536,8 @@
         </div>
 
         <!-- FLOWS CONTROLS -->
-        <div class="card bg-dark" style="border-bottom-left-radius: 30px !important; border-bottom-right-radius: 30px !important">
+        <div class="card bg-dark"
+            style="border-bottom-left-radius: 30px !important; border-bottom-right-radius: 30px !important">
             <div class="card-header" id="card-header-collapse-flows">
                 <h4 class="mb-1">
                     <button class="btn btn-link collapsed collapsingHeaderButton" id="btn-collapse-header-flows"
@@ -751,7 +764,8 @@
                                 <option selected value="-1">All (<%= products.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% products.forEach(function(product){ %>
-                                <option value="<%= product.id %>"><%= product.get('name')[0].toUpperCase() + product.get('name').slice(1) %></option>
+                                <option value="<%= product.id %>">
+                                    <%= product.get('name')[0].toUpperCase() + product.get('name').slice(1) %></option>
                                 <% }); %>
                             </select>
                         </div>
@@ -771,7 +785,9 @@
                                 <option selected value="-1">All (<%= composites.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% composites.forEach(function(composite){ %>
-                                <option value="<%= composite.id %>"><%= composite.get('name')[0].toUpperCase() + composite.get('name').slice(1) %></option>
+                                <option value="<%= composite.id %>">
+                                    <%= composite.get('name')[0].toUpperCase() + composite.get('name').slice(1) %>
+                                </option>
                                 <% }); %>
                             </select>
                         </div>
@@ -783,13 +799,14 @@
                             <label for="flows-clean-select">Clean</label>
                             <div class="labelHelpiconContainer">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Clean"
-                                    data-html="true" tabindex="0" data-content="The Clean filter indicates the extent to which a 
+                                    data-html="true" tabindex="0"
+                                    data-content="The Clean filter indicates the extent to which a 
                                     flow is expected to be contaminated with another substance. ‘Mono’ streams are considered 
                                     clean streams since they consist of one material and are not contaminated, i.e. clean.">
                                 </a>
                             </div>
-                            <select id="flows-clean-select" name="flows-clean-select" class="form-control form-control-sm selectpicker" multiple
-                                style="resize: vertical;">
+                            <select id="flows-clean-select" name="flows-clean-select"
+                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
                                 <option selected value='-1'>Ignore</option>
                                 <option data-divider="true"></option>
                                 <option value='unknown'>Unknown</option>
@@ -808,8 +825,8 @@
                                     indicating they contain two or more materials.">
                                 </a>
                             </div>
-                            <select id="flows-mixed-select" name="flows-mixed-select" class="form-control form-control-sm selectpicker" multiple
-                                style="resize: vertical;">
+                            <select id="flows-mixed-select" name="flows-mixed-select"
+                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
                                 <option selected value='-1'>Ignore</option>
                                 <option data-divider="true"></option>
                                 <option value='unknown'>Unknown</option>
@@ -826,8 +843,8 @@
                                     processing is required. ">
                                 </a>
                             </div>
-                            <select id="flows-direct-select" name="flows-direct-select" class="form-control form-control-sm selectpicker"
-                                multiple style="resize: vertical;">
+                            <select id="flows-direct-select" name="flows-direct-select"
+                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
                                 <option selected value='-1'>Ignore</option>
                                 <option data-divider="true"></option>
                                 <option value='unknown'>Unknown</option>
@@ -843,8 +860,8 @@
                                     known composite consisting of two or more materials.">
                                 </a>
                             </div>
-                            <select id="flows-iscomposite-select" name="flows-iscomposite-select" class="form-control form-control-sm selectpicker"
-                                multiple style="resize: vertical;">
+                            <select id="flows-iscomposite-select" name="flows-iscomposite-select"
+                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
                                 <option selected value='-1'>Ignore</option>
                                 <option data-divider="true"></option>
                                 <option value='unknown'>Unknown</option>
@@ -893,7 +910,7 @@
                             </select>
                         </div>
                     </div>
-                    
+
 
                 </div>
             </div>
@@ -901,7 +918,7 @@
         </div>
 
         <div class="row mt-1">
-            <button id='reset-filters' class="btn btn-secondary resetButton" title="Reset all the filters">Reset
+            <button id='reset-filters' class="btn btn-secondary resetButton" title="Reset all the filters">RESET
             </button>
         </div>
 
