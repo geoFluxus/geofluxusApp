@@ -51,22 +51,46 @@ class UserFilterViewSet(PostGetViewMixin,
             except json.decoder.JSONDecodeError:
                 params[key] = value
 
-        # retrieve filter name & user
-        name = params.pop('name', None)
+        # retrieve filter action & user
+        action = params.pop('action', None)
         user_id = self.request.user.id
         user = User.objects.filter(id=user_id)[0]
 
         # create new user filter
-        names = UserFilter.objects.filter(user__id=user_id)\
-                                  .values_list('name', flat=True)
-        if name in names:
-            return Response('Warning: Name exists!')
-        else:
-            new = UserFilter(user=user,
-                             name=name,
-                             filter=str(params),
-                             date=timezone.now())
-            new.save()
+        if action == 'create':
+            # retrieve filter name
+            name = params.pop('name', None)
+
+            # collect all filter names for user (should be unique)
+            names = UserFilter.objects.filter(user__id=user_id)\
+                                      .values_list('name', flat=True)
+
+            # if name does not exist, create
+            if name in names:
+                return Response('Warning: Name exists!')
+            else:
+                new = UserFilter(user=user,
+                                 name=name,
+                                 filter=str(params),
+                                 date=timezone.now())
+                new.save()
+        elif action == 'update':
+            # retrieve filter id
+            id = params.pop('id', None)
+
+            # retrieve filter id
+            filter = UserFilter.objects.filter(user__id=user.id) \
+                                       .filter(id=id)
+            filter.update(filter=str(params),
+                          date=timezone.now())
+        elif action == 'delete':
+            # retrieve filter id
+            id = params.pop('id', None)
+
+            # find user filter by name (should be unique)
+            filter = UserFilter.objects.filter(user__id=user.id)\
+                                       .filter(id=id)
+            filter.delete()
 
         # fetch all user filters
         filters = UserFilter.objects.filter(user__id=user_id)\
