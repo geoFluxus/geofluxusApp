@@ -505,8 +505,6 @@ define(['views/common/baseview',
                 this.savedFiltersModal.innerHTML = template({
                     savedFilters: this.savedFilters
                 });
-
-
             },
 
             renderAreaSelectModal: function () {
@@ -707,11 +705,15 @@ define(['views/common/baseview',
                 $(this.savedFiltersModal).modal('show');
             },
 
-            saveNewFilter: function () {
+            saveNewFilter: function (event) {
                 var _this = this;
                 let newFilterName = $("#new-filter-name-input").val();
+                let newFilterForm = $(".newMode.needs-validation")[0]
+                let formIsValid = newFilterForm.checkValidity()
 
-                if (newFilterName.length > 0) {
+                console.log(formIsValid);
+
+                if (formIsValid) {
                     let newFilterParams = _this.getFilterParams();
 
                     newFilterParams.name = newFilterName;
@@ -722,12 +724,18 @@ define(['views/common/baseview',
                         body: newFilterParams,
                         success: function (response) {
                             console.log("Postfetch success: ", response)
+                            $("#newFilterAdded").fadeIn("fast");
                         },
                         error: function (error) {
                             console.log(error);
                         }
                     });
+
                 }
+                newFilterForm.classList.add('was-validated');
+
+                event.preventDefault();
+                event.stopPropagation();
             },
 
             showAreaSelection: function (event) {
