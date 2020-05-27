@@ -39,7 +39,7 @@ class UserFilterViewSet(PostGetViewMixin,
         # check current user and retrieve filters
         user_id = self.request.user.id
         queryset = UserFilter.objects.filter(user__id=user_id)\
-                                     .order_by('id')
+                                     .order_by('-date')
         return queryset
 
     def post_get(self, request, **kwargs):
@@ -94,7 +94,7 @@ class UserFilterViewSet(PostGetViewMixin,
 
         # fetch all user filters
         filters = UserFilter.objects.filter(user__id=user_id)\
-                                    .order_by('date')
+                                    .order_by('-date')
         data = UserFilterSerializer(filters, many=True, context={'request': request}).data
         return Response(data)
 
