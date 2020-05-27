@@ -111,6 +111,9 @@ define(['views/common/baseview',
                 'click .openSavedFilterModal': 'showSavedFiltersModal',
                 'click #new-filter-name-btn': 'saveNewFilter',
                 'click #delete-filter-config': 'showConfirmModal',
+                'click #update-filter-config': "updateFilterConfig",
+                "click #edit-filter-name": "showFilterEdit",
+                "click #save-filter-name": "updateFilterName",
             },
 
             // Rendering
@@ -491,7 +494,7 @@ define(['views/common/baseview',
 
                 // Saved filter configs
                 this.filterConfigSelect = this.el.querySelector('select[name="saved-filters-select"]');
-                
+
                 // Initialize all bootstrapToggles:
                 $(".bootstrapToggle").bootstrapToggle();
 
@@ -511,7 +514,7 @@ define(['views/common/baseview',
                 });
             },
 
-            renderConfirmModal: function() {
+            renderConfirmModal: function () {
                 var _this = this;
                 this.confirmationModal = $('#confirmation-modal')[0];
                 html = document.getElementById('delete-modal-template').innerHTML;
@@ -522,7 +525,7 @@ define(['views/common/baseview',
                     message: "Are you sure you want to delete the selected filter configuration?"
                 });
 
-                $("#modal-confirm-btn").click(function(){
+                $("#modal-confirm-btn").click(function () {
                     _this.deleteFilterConfig();
                 })
             },
@@ -752,21 +755,18 @@ define(['views/common/baseview',
                             console.log(error);
                         }
                     });
-
                 }
                 newFilterForm.classList.add('was-validated');
-
                 event.preventDefault();
                 event.stopPropagation();
             },
 
-            deleteFilterConfig: function(event) {
-
-                console.log("Id of filter config to delete: ", $(this.filterConfigSelect).val());
-
+            deleteFilterConfig: function (event) {
+                var _this = this;
                 let idToDelete = $(this.filterConfigSelect).val();
 
-                //let filterToBeDeleted = this.savedFilters.find(filter => filter.attributes.id == idToDelete);
+                console.log("Id of filter config to delete: ", idToDelete);
+
                 _this.savedFilters.postfetch({
                     data: {},
                     body: {
@@ -780,10 +780,83 @@ define(['views/common/baseview',
                         console.log(error);
                     }
                 });
+                event.preventDefault();
+                event.stopPropagation();
             },
-            
-            showConfirmModal: function(event){
+
+            updateFilterConfig: function (event) {
+                var _this = this;
+                let idToUpdate = $(this.filterConfigSelect).val();
+
+                console.log("Id of filter config to update: ", idToUpdate);
+
+                _this.savedFilters.postfetch({
+                    data: {},
+                    body: {
+                        action: "update",
+                        id: idToUpdate,
+                        filter: _this.getFilterParams(),
+                    },
+                    success: function (response) {
+                        console.log("Postfetch update config success: ", response.models)
+
+
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+                event.preventDefault();
+                event.stopPropagation();
+            },
+
+            updateFilterName: function (event) {
+                var _this = this;
+                let idToUpdate = $(this.filterConfigSelect).val();
+
+                let newFilterName = $("#update-filter-name").val();
+
+                let savedFilterForm = $(".savedMode.needs-validation")[0];
+                let formIsValid = savedFilterForm.checkValidity()
+
+                if (formIsValid) {
+                    console.log("Id of filter config to rename: ", idToUpdate);
+
+                    _this.savedFilters.postfetch({
+                        data: {},
+                        body: {
+                            action: "update",
+                            id: idToUpdate,
+                            name: newFilterName,
+                        },
+                        success: function (response) {
+                            console.log("Postfetch update name success: ", response.models)
+                        },
+                        error: function (error) {
+                            console.log(error);
+                        }
+                    });
+                }
+                savedFilterForm.classList.add('was-validated');
+                event.preventDefault();
+                event.stopPropagation();
+            },
+
+            showConfirmModal: function (event) {
                 $(this.confirmationModal).modal('show');
+                event.preventDefault();
+                event.stopPropagation();
+            },
+
+            showFilterEdit: function (event) {
+                let idToUpdate = $(this.filterConfigSelect).val();
+                let oldFilterName = this.savedFilters.find(filter => filter.attributes.id == idToUpdate).get("name");
+
+                $("#update-filter-name").val(oldFilterName);
+
+                $(".filterEdit").fadeIn("fast");
+                event.preventDefault();
+                event.stopPropagation();
             },
 
             showSavedFiltersModal(event) {

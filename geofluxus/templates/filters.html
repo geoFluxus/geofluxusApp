@@ -911,7 +911,7 @@
                     </div>
                 </form>
                 
-                <div class="savedMode">
+                <form class="savedMode needs-validation" novalidate>
                     
                     <div class='row pt-3 savedMode'>
                         <div class="col">
@@ -936,13 +936,23 @@
                         </div>
                     </div>
     
-                    <div class='row pt-4 pb-2 mb-4'>
-                        <div class="col d-flex">                       
-                            <input type="text" class="form-control-sm w-100" maxlength="255" id="filter-name" placeholder="Filter name" style="height: 38px; border: none; padding-left: 1rem;">
-                            <button id='save-filter-name' class="btn btn-primary" style="width: 6.65rem; margin-left: 4px;" title="Save the filter name">Save</button>
+                    <div class='row pt-4 pb-2 mb-4 filterEdit' style="display: none;">
+                        <div class="col d-flex">
+
+                            <div class="form-group w-100">
+                                <input type="text" class="form-control-sm w-100" maxlength="255" id="update-filter-name" placeholder="Filter name" style="height: 38px; border: none; padding-left: 1rem;" required>
+                                <div class="invalid-feedback w-100 text-center mt-4">Please fill in a filter name.</div>
+                                <small id="filterNameUpdated" class="form-text text-white w-100 text-center mt-4" style="display: none;">Filter name has been updated!</small>
+                            </div>
+
+                            <button id='save-filter-name'
+                                    type="submit"
+                                    class="btn btn-primary"
+                                    style="width: 6.65rem; height: 38px; margin-left: 4px;"
+                                    title="Save the filter name">Save</button>
                         </div>
                     </div>
-                </div>
+                </form>
 
 
             </div>
