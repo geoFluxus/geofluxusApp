@@ -75,10 +75,18 @@ define(['views/common/baseview',
 
                 this.savedFilters = new Collection([], {
                     apiTag: 'filters',
-                    comparator: function (savedFilter) {
-                        return -savedFilter.get("date");
-                    },
+                    // comparator: function (savedFilter) {
+                    //     return -savedFilter.get("date");
+                    // },
+                    comparator: function (a, b) {
+                        a = new Date(a.date);
+                        b = new Date(b.dateModified);
+                        return a>b ? -1 : a<b ? 1 : 0;
+                    }
+
                 });
+
+
 
                 this.areas = {};
 
