@@ -114,6 +114,7 @@ define(['views/common/baseview',
                 'click #update-filter-config': "updateFilterConfig",
                 "click #edit-filter-name": "showFilterEdit",
                 "click #save-filter-name": "updateFilterName",
+                "click #load-filter-config": "loadFilterConfiguration",
             },
 
             // Rendering
@@ -708,11 +709,49 @@ define(['views/common/baseview',
                 }
             },
 
+            loadFilterConfiguration: function(event){
+                let selectedFilterConfig = $(this.filterConfigSelect).val();
+                let configToLoad = this.savedFilters.find(filter => filter.attributes.id == selectedFilterConfig).get("filter");
+
+                let origin = configToLoad.origin;
+                let destination = configToLoad.destination;
+                let flows = configToLoad.flows;
+
+                //_.has(x, 'key');
+                if (_.has(origin, 'selectedAreas')) {
+                    // set origin areas
+                }
+
+                if (_.has(origin, 'role')) {
+
+                    $("#origin-role-radio-production").parent().removeClass("active");
+                    $("#origin-role-radio-both").parent().removeClass("active");
+                    $("#origin-role-radio-treatment").parent().removeClass("active");
+
+                    // set origin role
+                    switch (origin.role) {
+                        case "production":
+                            $("#origin-role-radio-production").parent().addClass("active");
+                            break;
+                        case "both":
+                            $("#origin-role-radio-both").parent().addClass("active");
+                            break;
+                        case "treatment":
+                            $("#origin-role-radio-treatment").parent().addClass("active");
+                            break;
+                    }
+
+                }
+                
+                event.preventDefault();
+                event.stopPropagation();
+            },
+
             saveNewFilter: function (event) {
                 var _this = this;
                 let newFilterName = $("#new-filter-name-input").val();
-                let newFilterForm = $(".newMode.needs-validation")[0]
-                let formIsValid = newFilterForm.checkValidity()
+                let newFilterForm = $(".newMode.needs-validation")[0];
+                let formIsValid = newFilterForm.checkValidity();
 
                 console.log(formIsValid);
 
