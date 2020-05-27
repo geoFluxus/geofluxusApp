@@ -1,69 +1,5 @@
 <!--Filters-->
 <script type="text/template" id="filter-template">
-    <!--    <div id="filterViewContainer">-->
-    <!--        <div class="card bg-dark">-->
-    <!--            <div class="card-header" id="ch-filterViews">-->
-    <!--                <h4 class="mb-0 panel-title">-->
-    <!--                    <button class="btn btn-link collapsingHeaderButton collapsed" id="btn-filterViews"-->
-    <!--                            data-toggle="collapse" data-target="#collapseFilterViews" aria-expanded="false"-->
-    <!--                            aria-controls="collapseFilterViews" data-parent="#filterViewContainer">-->
-    <!--                        <i class="fa fa-chevron-down pull-right"></i>-->
-    <!--                        Saved Filters-->
-    <!--                    </button>-->
-    <!--                </h4>-->
-    <!--            </div>-->
-    <!--            <div id="collapseFilterViews" class="collapse" data-parent="#filterViewContainer">-->
-    <!--                <div class="card-body">-->
-    <!--                    <div class="row">-->
-    <!--                        <div class="col-sm">-->
-    <!--                            <div class="row">-->
-    <!--                                <select name="filter" class="form-control form-control-sm">-->
-    <!--                                    <option value="none">No saved filters found.</option>-->
-    <!--                                </select>-->
-    <!--                            </div>-->
-    <!--                        </div>-->
-    <!--                        <div class="col-sm">-->
-    <!--                            <div class="row">-->
-    <!--                                <button class="btn btn-primary btn-sm" title="Edit filter"-->
-    <!--                                        style="margin-right: 10px; width: 6em;"-->
-    <!--                                        id="edit-flowfilter-button">Edit-->
-    <!--                                </button>-->
-    <!--                                <button class="btn btn-primary btn-sm" title="Create filter"-->
-    <!--                                        style="margin-right: 10px; width: 6em;"-->
-    <!--                                        id="new-flowfilter-button">New-->
-    <!--                                </button>-->
-    <!--                                <button class="btn btn-warning btn-sm" title="Delete filter"-->
-    <!--                                        style="background-color: red; color:white; border: red; width: 6em;"-->
-    <!--                                        id="delete-flowfilter-button">Delete-->
-    <!--                                </button>-->
-    <!--                            </div>-->
-    <!--                        </div>-->
-    <!--                    </div>-->
-    <!--                    <div class="row" id="filter-attributes">-->
-    <!--                        <div class="col-sm">-->
-    <!--                            <div class="row">-->
-    <!--                                <input class="form-control form-control-sm" id="filterName" name="filterName"-->
-    <!--                                       placeholder="Name">-->
-    <!--                            </div>-->
-    <!--                            <div class="row">-->
-    <!--                                <input class="form-control form-control-sm" id="filterDescription"-->
-    <!--                                       name='filterDescription'-->
-    <!--                                       placeholder="Description">-->
-    <!--                            </div>-->
-    <!--                        </div>-->
-    <!--                        <div class="col-sm">-->
-    <!--                            <div class="row">-->
-    <!--                                <button id='upload-flowfilter-button' title="Save filter"-->
-    <!--                                        class="btn btn-sm btn-danger btn-upload">-->
-    <!--                                    <span class="fas fa-arrow-circle-up" style="margin-right:10px;"></span>Save Changes-->
-    <!--                                </button>-->
-    <!--                            </div>-->
-    <!--                        </div>-->
-    <!--                    </div>-->
-    <!--                </div>-->
-    <!--            </div>-->
-    <!--        </div>-->
-    <!--    </div>-->
 
     <div class="block accordion" id="filterBlock">
 
@@ -71,12 +7,19 @@
             <h4 class="pb-1 pl-3">Step 1: Filter the flows</h4>
 
             <div>
-                <button id='save-filters' class="btn btn-outline-primary" title="Save the current filter configuration."
-                    style="height: 38px; width: 10em">SAVE</button>
+                <button
+                    id='view-saved-filters'
+                    class="btn btn-outline-primary openSavedFilterModal"
+                    data-filter-modal-mode="savedMode"
+                    title="View and set a saved filter configuration."
+                    style="height: 38px; width: 6em">SAVED</button>
 
-                <button id='view-saved-filters' class="btn btn-outline-primary"
-                    title="View and set a saved filter configuration." style="height: 38px; width: 10em">VIEW
-                    SAVED</button>
+                <button
+                    id='save-filters'
+                    class="btn btn-outline-primary openSavedFilterModal"
+                    data-filter-modal-mode="newMode"
+                    title="Save the current filter configuration."
+                    style="height: 38px; width: 6em">NEW</button>
             </div>
         </div>
 
@@ -931,53 +874,62 @@
 
 <!-- Saved filter modal-->
 <script type="text/template" id="saved-filters-modal-template">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg" style="max-width: 500px">
         <!-- Modal content-->
-        <div class="modal-content col-md-12">
-            <div class="modal-header pb-0">
-                <h4 class="modal-title">Saved filters</h4>
+        <div class="modal-content col-md-12 pt-1">
+            <div class="modal-header pt-2 pb-1">
+                <h4 class="modal-title savedMode">Edit and load saved filters</h4>
+                <h4 class="modal-title newMode">Save this set of filters</h4>
                 <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-                
-                <div class='row pt-3'>
-                    <div class="col">
-                        <!-- <label for="saved-filters-select" class="input-label">Saved filters:</label> -->
-                        <select name="saved-filters-select"
-                                id="saved-filters-select"
-                                class="form-control form-control-sm selectpicker"
-                                style="max-width: 350px;"
-                                data-none-selected-text="No saved filters found.">
-                        </select>
-                    </div>
-                </div>
-                
-                <div class='row pt-2'>
-                    <div class="col d-flex justify-content-between">
-                        <button id='delete-filter-config' class="btn btn-secondary" title="Delete the selected filter configuration" style="width: 5.5rem">Delete</button>
-                        
-                        <div>
-                            <button id='edit-filter-config' class="btn btn-outline-primary" title="Edit the selected filter configuration" style="width: 5.5rem">Edit</button>
-                            <button id='new-filter-config' class="btn btn-primary" title="Create a new filter configuration" style="width: 5.5rem">New</button>
+
+                <div class="newMode">
+                    <div class='row pt-4 pb-2 mb-4'>
+                        <div class="col d-flex">                       
+                            <input type="text" class="form-control-sm w-100" maxlength="255" id="new-filter-name-input" placeholder="Filter name" style="height: 38px; border: none; padding-left: 1rem;">
+                            <button id='new-filter-name-btn' class="btn btn-primary" style="width: 6.65rem; margin-left: 4px;" title="Save the filter name">Save</button>
                         </div>
                     </div>
                 </div>
-                <div class='row pt-3'>
-                    <div class="col d-flex">                       
-                        <input type="text" class="form-control-sm w-75" id="filter-name" placeholder="Filter name" style="height: 38px; border: none;">
-                        <button id='save-filter-name' class="btn btn-primary w-25" title="Save the filter name">Save</button>
-
+                
+                <div class="savedMode">
+                    
+                    <div class='row pt-3 savedMode'>
+                        <div class="col">
+                            <select name="saved-filters-select"
+                                    id="saved-filters-select"
+                                    class="form-control selectpicker"
+                                    style="max-width: 350px;"
+                                    data-none-selected-text="No saved filters found.">
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class='row pt-2 pb-2 savedMode'>
+                        <!-- <div class="col d-flex justify-content-between"> -->
+                        <div class="col d-flex">
+                            <button id='delete-filter-config' class="btn btn-secondary" title="Delete the selected filter configuration" style="width: 5.5rem">Delete</button>
+                            
+                            <div>
+                                <button id='edit-filter-config' class="btn btn-primary" title="Edit the selected filter configuration" style="width: 5.5rem">Edit</button>
+                                <!-- <button id='new-filter-config' class="btn btn-primary" title="Create a new filter configuration" style="width: 5.5rem">New</button> -->
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class='row pt-4 pb-2 mb-4'>
+                        <div class="col d-flex">                       
+                            <input type="text" class="form-control-sm w-100" maxlength="255" id="filter-name" placeholder="Filter name" style="height: 38px; border: none; padding-left: 1rem;">
+                            <button id='save-filter-name' class="btn btn-primary" style="width: 6.65rem; margin-left: 4px;" title="Save the filter name">Save</button>
+                        </div>
                     </div>
                 </div>
-                <!-- <div class='row pt-0'>
-                    <div class="col">
-                        <label for="areaSelectionsModalTextarea">Selected areas:</label>
-                        <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsModalTextarea" style="width: 100%" type="text" readonly></textarea>
-                    </div>
-                </div> -->
+
+
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn cancel btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn cancel btn-secondary savedMode" data-dismiss="modal">Cancel</button>
                 <button class="btn btn-primary confirm" data-dismiss="modal" aria-hidden="true">OK</button>
             </div>
         </div>
@@ -988,8 +940,8 @@
 <script type="text/template" id="area-select-modal-template">
     <div class="modal-dialog modal-lg">
         <!-- Modal content-->
-        <div class="modal-content col-md-12">
-            <div class="modal-header pb-0">
+        <div class="modal-content col-md-12 pt-1">
+            <div class="modal-header pt-2 pb-1">
                 <h4 class="modal-title">Select areas</h4>
                 <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times"></i></button>
             </div>
@@ -1016,7 +968,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn cancel btn-secondary" data-dismiss="modal">Cancel</button>
+                <!-- <button type="button" class="btn cancel btn-secondary" data-dismiss="modal">Cancel</button> -->
                 <button class="btn btn-primary confirm" data-dismiss="modal" aria-hidden="true">OK</button>
             </div>
         </div>

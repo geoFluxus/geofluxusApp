@@ -359,6 +359,10 @@ input {
     -ms-transform: rotate(180deg);
 }
 
+.modal .close:focus {
+    outline: none;
+}
+
 .modal-footer button {
     width: 5rem;
 }
