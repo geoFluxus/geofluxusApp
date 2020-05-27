@@ -4,9 +4,12 @@ from geofluxus.apps.utils.views import (UnlimitedResultsSetPagination)
 from geofluxus.apps.utils.views import (PostGetViewMixin,
                                         ViewSetMixin,
                                         ModelPermissionViewSet)
-from geofluxus.apps.login.models import (UserFilter)
+from geofluxus.apps.login.models import (User, UserFilter)
 from geofluxus.apps.login.serializers import (UserFilterSerializer)
 from geofluxus.apps.login.serializers import (UserFilterListSerializer)
+import json
+from django.utils import timezone
+from rest_framework.response import Response
 
 
 # Login/Logout
@@ -34,7 +37,42 @@ class UserFilterViewSet(PostGetViewMixin,
 
     def get_queryset(self):
         # check current user and retrieve filters
-        id = self.request.user.id
-        queryset = UserFilter.objects.filter(user__id=id)\
+        user_id = self.request.user.id
+        queryset = UserFilter.objects.filter(user__id=user_id)\
                                      .order_by('id')
         return queryset
+
+    def post_get(self, request, **kwargs):
+        # retrieve filters
+        params = {}
+        for key, value in request.data.items():
+            try:
+                params[key] = json.loads(value)
+            except json.decoder.JSONDecodeError:
+                params[key] = value
+
+        # retrieve filter name & user
+        name = params.pop('name', None)
+        user_id = self.request.user.id
+        user = User.objects.filter(id=user_id)[0]
+
+        # create new user filter
+        names = UserFilter.objects.filter(user__id=user_id)\
+                                  .values_list('name', flat=True)
+        if name in names:
+            return Response('Warning: Name exists!')
+        else:
+            new = UserFilter(user=user,
+                             name=name,
+                             filter=str(params),
+                             date=timezone.now())
+            new.save()
+
+        # fetch all user filters
+        filters = UserFilter.objects.filter(user__id=user_id)\
+                                    .order_by('-date')
+        data = UserFilterSerializer(filters, many=True, context={'request': request}).data
+        return Response(data)
+
+
+
