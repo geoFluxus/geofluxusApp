@@ -94,7 +94,7 @@ class UserFilterViewSet(PostGetViewMixin,
 
         # fetch all user filters
         filters = UserFilter.objects.filter(user__id=user_id)\
-                                    .order_by('-date')
+                                    .order_by('date')
         data = UserFilterSerializer(filters, many=True, context={'request': request}).data
         return Response(data)
 
