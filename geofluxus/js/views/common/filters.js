@@ -709,7 +709,7 @@ define(['views/common/baseview',
                 }
             },
 
-            loadFilterConfiguration: function(event){
+            loadFilterConfiguration: function (event) {
                 let selectedFilterConfig = $(this.filterConfigSelect).val();
                 let configToLoad = this.savedFilters.find(filter => filter.attributes.id == selectedFilterConfig).get("filter");
 
@@ -717,32 +717,40 @@ define(['views/common/baseview',
                 let destination = configToLoad.destination;
                 let flows = configToLoad.flows;
 
-                //_.has(x, 'key');
+                // ///////////////////////////////
+                // Origin filters:
                 if (_.has(origin, 'selectedAreas')) {
                     // set origin areas
                 }
 
-                if (_.has(origin, 'role')) {
+                if (_.has(flows, 'origin_role')) {
 
                     $("#origin-role-radio-production").parent().removeClass("active");
                     $("#origin-role-radio-both").parent().removeClass("active");
                     $("#origin-role-radio-treatment").parent().removeClass("active");
 
                     // set origin role
-                    switch (origin.role) {
+                    switch (flows.origin_role) {
                         case "production":
-                            $("#origin-role-radio-production").parent().addClass("active");
+                            $($("#origin-role-radio-production").parent()[0]).addClass("active")
                             break;
                         case "both":
-                            $("#origin-role-radio-both").parent().addClass("active");
+                            $($("#origin-role-radio-both").parent()[0]).addClass("active")
                             break;
                         case "treatment":
-                            $("#origin-role-radio-treatment").parent().addClass("active");
+                            $($("#origin-role-radio-treatment").parent()[0]).addClass("active")
                             break;
                     }
 
                 }
-                
+
+                // ///////////////////////////////
+                // Destination filters:
+
+
+                // ///////////////////////////////
+                // Flows filters:
+
                 event.preventDefault();
                 event.stopPropagation();
             },
