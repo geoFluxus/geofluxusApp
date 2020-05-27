@@ -21,6 +21,7 @@ define(['views/common/baseview',
                 this.selectedAreasOrigin = [];
                 this.selectedAreasDestination = [];
                 this.selectedAreasFlows = [];
+                this.savedFiltersModal = "";
 
                 this.template = options.template;
 
@@ -72,6 +73,10 @@ define(['views/common/baseview',
                     apiTag: 'months'
                 });
 
+                this.savedFilters = new Collection([], {
+                    apiTag: 'filters'
+                });
+
                 this.areas = {};
 
                 this.loader.activate();
@@ -89,6 +94,7 @@ define(['views/common/baseview',
                     this.areaLevels.fetch(),
                     this.years.fetch(),
                     this.months.fetch(),
+                    this.savedFilters.fetch(),
                 ];
                 Promise.all(promises).then(function () {
                     _this.loader.deactivate();
@@ -102,7 +108,8 @@ define(['views/common/baseview',
                 'change select[name="area-level-select"]': 'changeAreaLevel',
                 'click #reset-filters': 'resetFiltersToDefault',
                 'click .clear-areas-button': 'clearAreas',
-                'click #view-saved-filters' : 'showSavedFiltersModal',
+                'click .openSavedFilterModal': 'showSavedFiltersModal',
+                'click #new-filter-name-btn': 'saveNewFilter'
             },
 
             // Rendering
@@ -496,7 +503,7 @@ define(['views/common/baseview',
                 html = document.getElementById('saved-filters-modal-template').innerHTML;
                 template = _.template(html);
                 this.savedFiltersModal.innerHTML = template({
-                    //savedFilters: this.savedFilters
+                    savedFilters: this.savedFilters
                 });
 
 
@@ -681,7 +688,46 @@ define(['views/common/baseview',
             },
 
             showSavedFiltersModal(event) {
+                var _this = this;
+
+                _this.savedFiltersModal.mode = $(event.currentTarget).data('filter-modal-mode');
+
+                switch (_this.savedFiltersModal.mode) {
+                    case "savedMode":
+                        $(".newMode").hide();
+                        $(".savedMode").show();
+
+
+                        break;
+                    case "newMode":
+                        $(".savedMode").hide();
+                        $(".newMode").show();
+                        break;
+                }
                 $(this.savedFiltersModal).modal('show');
+            },
+
+            saveNewFilter: function () {
+                var _this = this;
+                let newFilterName = $("#new-filter-name-input").val();
+
+                if (newFilterName.length > 0) {
+                    let newFilterParams = _this.getFilterParams();
+
+                    newFilterParams.name = newFilterName;
+                    console.log("New filter saved: ", newFilterName);
+
+                    _this.savedFilters.postfetch({
+                        data: {},
+                        body: newFilterParams,
+                        success: function (response) {
+                            console.log("Postfetch success: ", response)
+                        },
+                        error: function (error) {
+                            console.log(error);
+                        }
+                    });
+                }
             },
 
             showAreaSelection: function (event) {
