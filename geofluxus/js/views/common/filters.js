@@ -74,7 +74,10 @@ define(['views/common/baseview',
                 });
 
                 this.savedFilters = new Collection([], {
-                    apiTag: 'filters'
+                    apiTag: 'filters',
+                    comparator: function (savedFilter) {
+                        return -savedFilter.get("date");
+                    },
                 });
 
                 this.areas = {};
@@ -507,12 +510,35 @@ define(['views/common/baseview',
             },
 
             renderSavedFiltersModal: function () {
+                var _this = this;
+
                 this.savedFiltersModal = this.el.querySelector('.saved-filters.modal');
                 html = document.getElementById('saved-filters-modal-template').innerHTML;
                 template = _.template(html);
                 this.savedFiltersModal.innerHTML = template({
-                    savedFilters: this.savedFilters
+                    savedFilters: this.savedFilters,
                 });
+
+                $('.saved-filters.modal').on('hide.bs.modal', function (e) {
+                    console.log("saved filters modal hidden");
+
+                    switch (_this.savedFiltersModal.mode) {
+                        case "savedMode":
+
+                            break;
+                        case "newMode":
+                            $("#newFilterAdded").hide();
+                            $("#new-filter-name-input").val("");
+                            $(".invalid-feedback").hide();
+                            $("#new-filter-name-input").attr("readonly", false);
+
+                            let newFilterForm = $("form.newMode")[0];
+                            newFilterForm.classList.remove('was-validated');
+                            newFilterForm.classList.add('needs-validation')
+
+                            break;
+                    }
+                })
             },
 
             renderConfirmModal: function () {
@@ -709,6 +735,14 @@ define(['views/common/baseview',
                 }
             },
 
+            reloadFilterSelectPicker: function (response) {
+                let newSavedFiltersHtml = "";
+                this.savedFilters = response;
+                this.savedFilters.forEach(filter => newSavedFiltersHtml += "<option class='dropdown-item' value='" + filter.attributes.id + "'>" + filter.attributes.name + "</option>");
+                $(this.filterConfigSelect).html(newSavedFiltersHtml);
+                $(this.filterConfigSelect).selectpicker("refresh");
+            },
+
             loadFilterConfiguration: function (event) {
                 let selectedFilterConfig = $(this.filterConfigSelect).val();
                 let configToLoad = this.savedFilters.find(filter => filter.attributes.id == selectedFilterConfig).get("filter");
@@ -758,24 +792,10 @@ define(['views/common/baseview',
             saveNewFilter: function (event) {
                 var _this = this;
                 let newFilterName = $("#new-filter-name-input").val();
-                let newFilterForm = $(".newMode.needs-validation")[0];
+                let newFilterForm = $("form.newMode")[0];
                 let formIsValid = newFilterForm.checkValidity();
 
                 console.log(formIsValid);
-
-                // body = {
-                //     action: {create, update, delete} 
-                //     create: name, filterParams
-                //     update: id, name, filterparams
-                //     delete: id
-                // }
-
-                // body {
-                //     action: create / update / delete
-                //     filterparams
-                //     name
-                //     id
-                // }
 
                 if (formIsValid) {
                     let newFilterParams = _this.getFilterParams();
@@ -796,6 +816,8 @@ define(['views/common/baseview',
 
                             $("#new-filter-name-input").attr("readonly", true);
 
+                            _this.reloadFilterSelectPicker(response);
+
                             console.log("_this.savedFilters: ", _this.savedFilters);
                         },
                         error: function (error) {
@@ -808,7 +830,7 @@ define(['views/common/baseview',
                 event.stopPropagation();
             },
 
-            deleteFilterConfig: function (event) {
+            deleteFilterConfig: function () {
                 var _this = this;
                 let idToDelete = $(this.filterConfigSelect).val();
 
@@ -822,13 +844,17 @@ define(['views/common/baseview',
                     },
                     success: function (response) {
                         console.log("Postfetch delete success: ", response.models)
+                        _this.savedFilters = response;
+                        _this.reloadFilterSelectPicker(response);
+
+
                     },
                     error: function (error) {
                         console.log(error);
                     }
                 });
-                event.preventDefault();
-                event.stopPropagation();
+                // event.preventDefault();
+                // event.stopPropagation();
             },
 
             updateFilterConfig: function (event) {
