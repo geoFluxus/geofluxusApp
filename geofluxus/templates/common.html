@@ -21,3 +21,24 @@
     </div>
   </div>
 </script>
+
+<!-- template for confirmation modal -->
+<script type="text/template" id="delete-modal-template">
+  <div class="modal-dialog">
+    <div class="modal-content col-md-12 pt-1">
+      <div class="modal-header pt-2 pb-1">
+        <h4 class="modal-title"><span class="sub-icon fas fa-exclamation-triangle" style="margin-right: 15px;"></span><%= title %></h4>
+        <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div class="modal-body pt-4 pb-4" style="text-align: center; font-size: normal">
+        <%= message %>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" id="modal-confirm-btn" class="btn btn-warning" data-dismiss="modal"><%= confirmButtonText %></button>
+      </div>
+    </div>
+  </div>
+</script>

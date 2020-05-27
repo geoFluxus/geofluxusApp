@@ -878,7 +878,7 @@
         <!-- Modal content-->
         <div class="modal-content col-md-12 pt-1">
             <div class="modal-header pt-2 pb-1">
-                <h4 class="modal-title savedMode">Edit and load saved filters</h4>
+                <h4 class="modal-title savedMode">Saved filters</h4>
                 <h4 class="modal-title newMode">Save this set of filters</h4>
                 <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times"></i></button>
             </div>
@@ -920,19 +920,19 @@
                                     class="form-control selectpicker"
                                     style="max-width: 350px;"
                                     data-none-selected-text="No saved filters found.">
+                                    <% savedFilters.forEach(function(savedFilter) { %>
+                                            <option value="<%= savedFilter.id %>"><%= savedFilter.get('name') %></option>
+                                    <% }) %>
                             </select>
                         </div>
                     </div>
                     
                     <div class='row pt-2 pb-2 savedMode'>
-                        <!-- <div class="col d-flex justify-content-between"> -->
-                        <div class="col d-flex">
-                            <button id='delete-filter-config' class="btn btn-secondary" title="Delete the selected filter configuration" style="width: 5.5rem">Delete</button>
-                            
-                            <div>
-                                <button id='edit-filter-config' class="btn btn-primary" title="Edit the selected filter configuration" style="width: 5.5rem">Edit</button>
-                                <!-- <button id='new-filter-config' class="btn btn-primary" title="Create a new filter configuration" style="width: 5.5rem">New</button> -->
-                            </div>
+                        <div class="col d-flex justify-content-between">
+                            <button id='delete-filter-config' class="btn btn-sm btn-secondary w-25" title="Delete the selected filter configuration.">Delete</button>
+                            <button id='edit-filter-name' class="btn btn-sm btn-secondary w-25" title="Edit the name of the selected filter configuration.">Edit</button>
+                            <button id='update-filter-config' class="btn btn-sm btn-secondary w-25" title="Update this filter with the current filter configuration.">Update</button>
+                            <button id='load-filter-config' class="btn btn-sm btn-primary w-25" title="Load the selected filter configuration.">Load</button>
                         </div>
                     </div>
     
