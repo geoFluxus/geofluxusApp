@@ -111,16 +111,16 @@ function(PageableCollection, _, Model, config) {
         },
 
         // function to compare models by the preset attribute (id per default) whenever you call sort
-        comparator: function(model) {
-            return model.get(this.comparatorAttr);
-        },
+//        comparator: function(model) {
+//            return model.get(this.comparatorAttr);
+//        },
 
         initialize: function (models, options) {
             var options = options || {};
             this.baseurl = options.url;
             this.apiTag = options.apiTag;
             this.apiIds = options.apiIds || options.apiIDs;
-            this.comparatorAttr = options.comparator || 'id';
+//            this.comparatorAttr = options.comparator || 'id';
         },
 
         model: Model
