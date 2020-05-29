@@ -72,7 +72,7 @@ class UserFilterViewSet(PostGetViewMixin,
                 filter = params.pop('filter', None)
                 new = UserFilter(user=user,
                                  name=name,
-                                 filter=filter,
+                                 filter=json.dumps(filter),
                                  date=timezone.now())
                 new.save()
         elif action == 'update':
@@ -89,7 +89,7 @@ class UserFilterViewSet(PostGetViewMixin,
 
             # update filter params
             filterParams = params.pop('filter', None)
-            if filterParams: filter.update(filter=filterParams)
+            if filterParams: filter.update(filter=json.dumps(filterParams))
 
             # update date
             filter.update(date=timezone.now())
