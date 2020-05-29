@@ -134,8 +134,6 @@ define(['views/common/baseview',
                     months: this.months,
                 });
 
-                console.log("Saved filters on render: ", this.savedFilters.models);
-
                 // Activate help icons
                 var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
                 $(popovers).popover({
@@ -1100,6 +1098,7 @@ define(['views/common/baseview',
 
                 $("#origin-role-radio label input").removeAttr("checked");
                 $("#origin-role-radio-both").attr("checked", true);
+                _this.origin.role = "both";
 
                 $(_this.origin.activityGroupsSelect).val('-1');
                 $(_this.origin.activitySelect).html(allActivitiesOptionsHTML);
@@ -1118,6 +1117,10 @@ define(['views/common/baseview',
                 $("#destination-role-radio-production").parent().removeClass("active");
                 $("#destination-role-radio-both").parent().addClass("active")
                 $("#destination-role-radio-treatment").parent().removeClass("active");
+
+                $("#destination-role-radio label input").removeAttr("checked");
+                $("#destination-role-radio-both").attr("checked", true);
+                _this.destination.role = "both";
 
                 $(_this.destination.activityGroupsSelect).val('-1');
                 $(_this.destination.activitySelect).html(allActivitiesOptionsHTML);
