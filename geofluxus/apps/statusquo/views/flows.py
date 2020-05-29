@@ -7,7 +7,7 @@ from geofluxus.apps.asmfa.models import (Area,
                                          Waste06,
                                          Actor)
 from collections import OrderedDict
-from django.db.models import (OuterRef, Subquery, F, Sum)
+from django.db.models import (OuterRef, Subquery, F, Sum, Q)
 
 
 class StatusQuoViewSet(FilterFlowViewSet):
@@ -231,13 +231,14 @@ class StatusQuoViewSet(FilterFlowViewSet):
             if areas.count() != 0:
                 # origin area
                 # exclude origins with LOWER admin level!
-                queryset = queryset.exclude(origin__area__adminlevel__level__lt=admin.level)
-                queryset = queryset.annotate(origin_area=F('origin__area'))
+                filter = 'area__parent_area__adminlevel__level__lt'
+                queryset = queryset.exclude(Q(**{('origin__' + filter): admin.level}))
+                queryset = queryset.annotate(origin_area=F('origin__area__parent_area'))
 
                 # destination area
                 # exclude destinations with LOWER admin level!
-                queryset = queryset.exclude(destination__area__adminlevel__level__lt=admin.level)
-                queryset = queryset.annotate(destination_area=F('destination__area'))
+                queryset = queryset.exclude(Q(**{('destination__' + filter): admin.level}))
+                queryset = queryset.annotate(destination_area=F('destination__area__parent_area'))
 
                 # append to other dimensions
                 level = ['origin_area', 'destination_area']
