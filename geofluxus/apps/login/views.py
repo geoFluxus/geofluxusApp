@@ -69,9 +69,10 @@ class UserFilterViewSet(PostGetViewMixin,
             if name in names:
                 return Response('Warning: Name exists!')
             else:
+                filter = params.pop('filter', None)
                 new = UserFilter(user=user,
                                  name=name,
-                                 filter=str(params),
+                                 filter=filter,
                                  date=timezone.now())
                 new.save()
         elif action == 'update':
