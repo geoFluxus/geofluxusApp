@@ -7,7 +7,7 @@ from geofluxus.apps.asmfa.models import (Area,
                                          Waste06,
                                          Actor)
 from collections import OrderedDict
-from django.db.models import (OuterRef, Subquery, F, Sum, Q)
+from django.db.models import (OuterRef, Subquery, F, Sum, Q, Case, When, IntegerField)
 
 
 class StatusQuoViewSet(FilterFlowViewSet):
@@ -224,30 +224,40 @@ class StatusQuoViewSet(FilterFlowViewSet):
         id = space.pop('adminlevel', None)
         if id:
             areas = Area.objects.filter(adminlevel=id)
-            admin = AdminLevel.objects.filter(id=id)[0]
+            admin = AdminLevel.objects.filter(id=id)[0].level
 
             # Actor level is the only one
             # with no areas!
             if areas.count() != 0:
-                # origin area
-                # exclude origins with LOWER admin level!
-                filter = 'area__parent_area__adminlevel__level__lt'
-                queryset = queryset.exclude(Q(**{('origin__' + filter): admin.level}))
-                queryset = queryset.annotate(origin_area=F('origin__area__parent_area'))
+                # annotate origin / destination areas
+                # exclude origins / destinations with LOWER admin level!
+                filter = 'area__adminlevel__level__lt'
+                queryset = queryset.exclude(Q(**{('origin__' + filter): admin}) |\
+                                            Q(**{('destination__' + filter): admin}))
 
-                # destination area
-                # exclude destinations with LOWER admin level!
-                queryset = queryset.exclude(Q(**{('destination__' + filter): admin.level}))
-                queryset = queryset.annotate(destination_area=F('destination__area__parent_area'))
+                queryset = queryset.annotate(
+                    origin_area=Case(
+                        When(origin__area__adminlevel__level=admin, then=F('origin__area')),
+                        When(origin__area__parent_area__adminlevel__level=admin, then=F('origin__area__parent_area')),
+                        When(origin__area__parent_area__parent_area__adminlevel__level=admin, then=F('origin__area__parent_area__parent_area')),
+                        output_field=IntegerField()
+                    ),
+                    destination_area=Case(
+                        When(destination__area__adminlevel__level=admin, then=F('destination__area')),
+                        When(destination__area__parent_area__adminlevel__level=admin, then=F('destination__area__parent_area')),
+                        When(destination__area__parent_area__parent_area__adminlevel__level=admin,
+                             then=F('destination__area__parent_area__parent_area')),
+                        output_field=IntegerField()
+                    )
+                )
 
                 # append to other dimensions
                 level = ['origin_area', 'destination_area']
                 field = ['origin_area', 'destination_area']
             else:
-                # origin actor
-                queryset = queryset.annotate(origin_actor=F('origin'))
-                # destination actor
-                queryset = queryset.annotate(destination_actor=F('destination'))
+                # annotate origin / destination actor
+                queryset = queryset.annotate(origin_actor=F('origin'),
+                                             destination_actor=F('destination'))
 
                 # append to other dimensions
                 level = ['origin_actor', 'destination_actor']
