@@ -78,11 +78,20 @@ class UserFilterViewSet(PostGetViewMixin,
             # retrieve filter id
             id = params.pop('id', None)
 
-            # retrieve filter id
+            # retrieve filter
             filter = UserFilter.objects.filter(user__id=user.id) \
                                        .filter(id=id)
-            filter.update(filter=str(params),
-                          date=timezone.now())
+
+            # update name
+            name = params.pop('name', None)
+            if name: filter.update(name=name)
+
+            # update filter params
+            filterParams = params.pop('filter', None)
+            if filterParams: filter.update(filter=filterParams)
+
+            # update date
+            filter.update(date=timezone.now())
         elif action == 'delete':
             # retrieve filter id
             id = params.pop('id', None)
@@ -95,7 +104,9 @@ class UserFilterViewSet(PostGetViewMixin,
         # fetch all user filters
         filters = UserFilter.objects.filter(user__id=user_id)\
                                     .order_by('-date')
-        data = UserFilterSerializer(filters, many=True, context={'request': request}).data
+        data = UserFilterSerializer(filters,
+                                    many=True,
+                                    context={'request': request}).data
         return Response(data)
 
 
