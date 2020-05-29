@@ -756,9 +756,7 @@ define(['views/common/baseview',
                 let newSavedFiltersHtml = "";
                 this.savedFilters = response;
 
-
-                console.log("Saved filters on reloadFilterSelectPicker: ", this.savedFilters.models);
-
+                //console.log("Saved filters on reloadFilterSelectPicker: ", this.savedFilters.models);
 
                 let filterArray = this.savedFilters.models;
                 filterArray.sort(function (a, b) {
@@ -768,7 +766,7 @@ define(['views/common/baseview',
                 filterArray.forEach(filter => newSavedFiltersHtml += "<option class='dropdown-item' value='" + filter.attributes.id + "'>" + filter.attributes.name + "</option>");
                 $(this.filterConfigSelect).html(newSavedFiltersHtml);
 
-                console.log(newSavedFiltersHtml);
+                //console.log(newSavedFiltersHtml);
 
                 $(this.filterConfigSelect).selectpicker("refresh");
             },
