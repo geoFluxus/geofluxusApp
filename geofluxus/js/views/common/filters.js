@@ -74,8 +74,18 @@ define(['views/common/baseview',
                 });
 
                 this.savedFilters = new Collection([], {
-                    apiTag: 'filters'
+                    apiTag: 'filters',
+                    // comparator: function (savedFilter) {
+                    //     return -savedFilter.get("date");
+                    // },
+                    comparator: function (a, b) {
+                        a = a.date;
+                        b = b.date;
+                        return a > b ? -1 : a < b ? 1 : 0;
+                    }
                 });
+
+
 
                 this.areas = {};
 
@@ -138,6 +148,8 @@ define(['views/common/baseview',
                     years: this.years,
                     months: this.months,
                 });
+
+                console.log("Saved filters on render: ", this.savedFilters.models);
 
                 // Activate help icons
                 var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
@@ -457,6 +469,13 @@ define(['views/common/baseview',
                 $(this.flows.mixedSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.directSelect).on('changed.bs.select', multiCheck);
                 $(this.flows.isCompositeSelect).on('changed.bs.select', multiCheck);
+
+
+                // Hide the .filterEdit container when the selected filter changes:
+                $(this.filterConfigSelect).on('changed.bs.select', function () {
+                    $(".filterEdit").fadeOut();
+                    console.log("selected filter changed")
+                });
             },
 
             initializeControls: function () {
@@ -507,12 +526,36 @@ define(['views/common/baseview',
             },
 
             renderSavedFiltersModal: function () {
+                var _this = this;
+                let form;
+
                 this.savedFiltersModal = this.el.querySelector('.saved-filters.modal');
                 html = document.getElementById('saved-filters-modal-template').innerHTML;
                 template = _.template(html);
                 this.savedFiltersModal.innerHTML = template({
-                    savedFilters: this.savedFilters
+                    savedFilters: this.savedFilters,
                 });
+
+                $('.saved-filters.modal').on('hide.bs.modal', function (e) {
+                    switch (_this.savedFiltersModal.mode) {
+                        case "savedMode":
+                            form = $("form.savedMode")[0];
+                            $(".filterEdit").hide();
+                            $(".update-filter-name").val("");
+                            $(".filterEdit .invalid-feedback").hide();
+                            $(".filterEdit #filterNameUpdated").hide();
+                            break;
+                        case "newMode":
+                            form = $("form.newMode")[0];
+                            $("#newFilterAdded").hide();
+                            $("#new-filter-name-input").val("");
+                            $(".invalid-feedback").hide();
+                            $("#new-filter-name-input").attr("readonly", false);
+                            break;
+                    }
+                    form.classList.remove('was-validated');
+                    form.classList.add('needs-validation');
+                })
             },
 
             renderConfirmModal: function () {
@@ -709,7 +752,30 @@ define(['views/common/baseview',
                 }
             },
 
+            reloadFilterSelectPicker: function (response) {
+                let newSavedFiltersHtml = "";
+                this.savedFilters = response;
+
+
+                console.log("Saved filters on reloadFilterSelectPicker: ", this.savedFilters.models);
+
+
+                let filterArray = this.savedFilters.models;
+                filterArray.sort(function (a, b) {
+                    return (a.attributes.date < b.attributes.date) ? 1 : ((a.attributes.date > b.attributes.date) ? -1 : 0);
+                });
+
+                filterArray.forEach(filter => newSavedFiltersHtml += "<option class='dropdown-item' value='" + filter.attributes.id + "'>" + filter.attributes.name + "</option>");
+                $(this.filterConfigSelect).html(newSavedFiltersHtml);
+
+                console.log(newSavedFiltersHtml);
+
+                $(this.filterConfigSelect).selectpicker("refresh");
+            },
+
             loadFilterConfiguration: function (event) {
+                $(".filterEdit").fadeOut();
+
                 let selectedFilterConfig = $(this.filterConfigSelect).val();
                 let configToLoad = this.savedFilters.find(filter => filter.attributes.id == selectedFilterConfig).get("filter");
 
@@ -758,24 +824,10 @@ define(['views/common/baseview',
             saveNewFilter: function (event) {
                 var _this = this;
                 let newFilterName = $("#new-filter-name-input").val();
-                let newFilterForm = $(".newMode.needs-validation")[0];
+                let newFilterForm = $("form.newMode")[0];
                 let formIsValid = newFilterForm.checkValidity();
 
                 console.log(formIsValid);
-
-                // body = {
-                //     action: {create, update, delete} 
-                //     create: name, filterParams
-                //     update: id, name, filterparams
-                //     delete: id
-                // }
-
-                // body {
-                //     action: create / update / delete
-                //     filterparams
-                //     name
-                //     id
-                // }
 
                 if (formIsValid) {
                     let newFilterParams = _this.getFilterParams();
@@ -793,10 +845,9 @@ define(['views/common/baseview',
                         success: function (response) {
                             console.log("Postfetch create success: ", response.models)
                             $("#newFilterAdded").fadeIn("fast");
-
                             $("#new-filter-name-input").attr("readonly", true);
 
-                            console.log("_this.savedFilters: ", _this.savedFilters);
+                            _this.reloadFilterSelectPicker(response);
                         },
                         error: function (error) {
                             console.log(error);
@@ -808,7 +859,7 @@ define(['views/common/baseview',
                 event.stopPropagation();
             },
 
-            deleteFilterConfig: function (event) {
+            deleteFilterConfig: function () {
                 var _this = this;
                 let idToDelete = $(this.filterConfigSelect).val();
 
@@ -822,13 +873,17 @@ define(['views/common/baseview',
                     },
                     success: function (response) {
                         console.log("Postfetch delete success: ", response.models)
+                        _this.savedFilters = response;
+                        _this.reloadFilterSelectPicker(response);
+
+
                     },
                     error: function (error) {
                         console.log(error);
                     }
                 });
-                event.preventDefault();
-                event.stopPropagation();
+                // event.preventDefault();
+                // event.stopPropagation();
             },
 
             updateFilterConfig: function (event) {
@@ -846,8 +901,7 @@ define(['views/common/baseview',
                     },
                     success: function (response) {
                         console.log("Postfetch update config success: ", response.models)
-
-
+                        _this.reloadFilterSelectPicker(response);
                     },
                     error: function (error) {
                         console.log(error);
@@ -877,7 +931,16 @@ define(['views/common/baseview',
                             name: newFilterName,
                         },
                         success: function (response) {
-                            console.log("Postfetch update name success: ", response.models)
+                            console.log("Postfetch update name success: ", response.models);
+
+                            $("#filterNameUpdated").fadeIn("fast");
+                            $("#update-filter-name").attr("readonly", true);
+
+                            _this.reloadFilterSelectPicker(response);
+
+                            setTimeout(() => {
+                                $(".filterEdit").fadeOut();
+                            }, 2500);
                         },
                         error: function (error) {
                             console.log(error);
@@ -890,6 +953,7 @@ define(['views/common/baseview',
             },
 
             showConfirmModal: function (event) {
+                $(".filterEdit").fadeOut();
                 $(this.confirmationModal).modal('show');
                 event.preventDefault();
                 event.stopPropagation();
@@ -898,10 +962,20 @@ define(['views/common/baseview',
             showFilterEdit: function (event) {
                 let idToUpdate = $(this.filterConfigSelect).val();
                 let oldFilterName = this.savedFilters.find(filter => filter.attributes.id == idToUpdate).get("name");
+                let form = $("form.savedMode")[0];
+
+                // Hide if shown:
+                $("#filterNameUpdated").hide();
+                $(".update-filter-name").val("");
+                $(".filterEdit .invalid-feedback").hide();
+                $(".filterEdit #filterNameUpdated").hide();
+
+                form.classList.remove('was-validated');
+                form.classList.add('needs-validation');
 
                 $("#update-filter-name").val(oldFilterName);
-
                 $(".filterEdit").fadeIn("fast");
+                $("#update-filter-name").attr("readonly", false);
                 event.preventDefault();
                 event.stopPropagation();
             },
