@@ -4,10 +4,11 @@ define(['views/common/baseview',
         'visualizations/map',
         'openlayers',
         'utils/utils',
+        'utils/filterUtils',
         'bootstrap',
     ],
 
-    function (BaseView, _, Collection, Map, ol, utils) {
+    function (BaseView, _, Collection, Map, ol, utils, filterUtils) {
 
         var FiltersView = BaseView.extend({
             initialize: function (options) {
@@ -195,7 +196,7 @@ define(['views/common/baseview',
                     }
 
                     // Get the array with ID's of the selected activityGroup(s) from the .selectpicker:
-                    selectedActivityGroupIDs = $(activityGroupsSelect).val()
+                    selectedActivityGroupIDs = $(activityGroupsSelect).val();
 
                     // If no activity groups are selected, reset the activity filter to again show all activities:
                     if (selectedActivityGroupIDs.length == 0 || selectedActivityGroupIDs[0] == "-1") {
@@ -207,11 +208,13 @@ define(['views/common/baseview',
                             return selectedActivityGroupIDs.includes(activity.attributes.activitygroup.toString())
                         });
 
-                        // Fill selectPicker with filtered activities, add to DOM, and refresh:
-                        newActivityOptionsHTML = '<option selected value="-1">All (' + filteredActivities.length + ')</option><option data-divider="true"></option>';
-                        filteredActivities.forEach(activity => newActivityOptionsHTML += "<option value='" + activity.attributes.id + "'>" + activity.attributes.nace + " " + activity.attributes.name + "</option>");
-                        $(activitySelect).html(newActivityOptionsHTML);
-                        $(activitySelect).selectpicker("refresh");
+                        // // Fill selectPicker with filtered activities, add to DOM, and refresh:
+                        // newActivityOptionsHTML = '<option selected value="-1">All (' + filteredActivities.length + ')</option><option data-divider="true"></option>';
+                        // filteredActivities.forEach(activity => newActivityOptionsHTML += "<option value='" + activity.attributes.id + "'>" + activity.attributes.nace + " " + activity.attributes.name + "</option>");
+                        // $(activitySelect).html(newActivityOptionsHTML);
+                        // $(activitySelect).selectpicker("refresh");
+
+                        filterUtils.fillSelectPicker("activity", activitySelect, filteredActivities);
 
                         activitySelectContainer.fadeIn("fast");
                     }
@@ -457,8 +460,20 @@ define(['views/common/baseview',
                 // Hide the .filterEdit container when the selected filter changes:
                 $(this.filterConfigSelect).on('changed.bs.select', function () {
                     $(".filterEdit").fadeOut();
-                    console.log("selected filter changed")
                 });
+
+                // Select text in input on focus:
+                var focusedElement;
+                $(document).on('focus', 'input', function () {
+                    if (focusedElement == this) return; //already focused, return so user can now place cursor at specific point in input.
+                    focusedElement = this;
+                    setTimeout(function () {
+                        focusedElement.select();
+                    }, 50); //select all text in any field on focus for easy re-entry. Delay sightly to allow focus to "stick" before selecting.
+                });
+                $(document).on('blur', 'input', function () {
+                    focusedElement = null;
+                })
             },
 
             initializeControls: function () {
@@ -738,23 +753,14 @@ define(['views/common/baseview',
             reloadFilterSelectPicker: function (response) {
                 let newSavedFiltersHtml = "";
                 this.savedFilters = response;
-
-                //console.log("Saved filters on reloadFilterSelectPicker: ", this.savedFilters.models);
-
                 let filterArray = this.savedFilters.models;
-                // filterArray.sort(function (a, b) {
-                //     return (a.attributes.date < b.attributes.date) ? 1 : ((a.attributes.date > b.attributes.date) ? -1 : 0);
-                // });
-
                 filterArray.forEach(filter => newSavedFiltersHtml += "<option class='dropdown-item' value='" + filter.attributes.id + "'>" + filter.attributes.name + "</option>");
                 $(this.filterConfigSelect).html(newSavedFiltersHtml);
-
-                //console.log(newSavedFiltersHtml);
-
                 $(this.filterConfigSelect).selectpicker("refresh");
             },
 
             loadFilterConfiguration: function (event) {
+                var _this = this;
                 $(".filterEdit").fadeOut();
 
                 let selectedFilterConfig = $(this.filterConfigSelect).val();
@@ -776,6 +782,8 @@ define(['views/common/baseview',
                     $("#origin-role-radio-both").parent().removeClass("active");
                     $("#origin-role-radio-treatment").parent().removeClass("active");
 
+                    _this.origin.role = flows.origin_role;
+
                     // set origin role
                     switch (flows.origin_role) {
                         case "production":
@@ -788,8 +796,20 @@ define(['views/common/baseview',
                             $($("#origin-role-radio-treatment").parent()[0]).addClass("active")
                             break;
                     }
-
                 }
+
+                if (_.has(flows, 'origin__activity__activitygroup__in')) {
+
+
+                    $(_this.origin.activityGroupsSelect).selectpicker('val', flows.origin__activity__activitygroup__in);
+                    $(_this.origin.activityGroupsSelect).selectpicker("refresh");
+
+                    // filteredItems = _this.activityGroups.models.filter(function (ag) {
+                    //     return _this.origin.activityGroupsSelect.includes(ag.attributes.activitygroup.toString())
+                    // });
+                    // filterUtils.fillSelectPicker("activity", _this.origin.activityGroupsSelect, filteredItems);
+                }
+
 
                 // ///////////////////////////////
                 // Destination filters:
@@ -806,22 +826,18 @@ define(['views/common/baseview',
                 var _this = this;
                 let newFilterName = $("#new-filter-name-input").val();
                 let newFilterForm = $("form.newMode")[0];
+                newFilterForm.classList.remove('was-validated');
+                newFilterForm.classList.add('needs-validation');
+
                 let formIsValid = newFilterForm.checkValidity();
 
-                console.log(formIsValid);
-
                 if (formIsValid) {
-                    let newFilterParams = _this.getFilterParams();
-
-                    newFilterParams.name = newFilterName;
-                    console.log("New filter saved: ", newFilterName);
-
                     _this.savedFilters.postfetch({
                         data: {},
                         body: {
                             action: "create",
                             name: newFilterName,
-                            filter: newFilterParams,
+                            filter: _this.getFilterParams(),
                         },
                         success: function (response) {
                             console.log("Postfetch create success: ", response.models)
@@ -869,7 +885,7 @@ define(['views/common/baseview',
                 var _this = this;
                 let idToUpdate = $(this.filterConfigSelect).val();
 
-                console.log("Id of filter config to update: ", idToUpdate);
+                $(".filterEdit").fadeOut();
 
                 _this.savedFilters.postfetch({
                     data: {},
@@ -933,7 +949,7 @@ define(['views/common/baseview',
                 event.stopPropagation();
             },
 
-            hideFilterNameInput: function(event) {
+            hideFilterNameInput: function (event) {
                 $(".filterEdit").fadeOut();
                 event.preventDefault();
                 event.stopPropagation();
@@ -956,7 +972,7 @@ define(['views/common/baseview',
                 if (!idToUpdate) {
                     return false;
                 }
-                
+
                 let oldFilterName = this.savedFilters.find(filter => filter.attributes.id == idToUpdate).get("name");
                 let form = $("form.savedMode")[0];
 
@@ -1394,7 +1410,6 @@ define(['views/common/baseview',
             },
 
             close: function () {
-                //        if (this.flowsView) this.flowsView.close();
                 FiltersView.__super__.close.call(this);
             }
 
