@@ -1,5 +1,6 @@
 from geofluxus.apps.asmfa.views import FilterFlowViewSet
 from geofluxus.apps.asmfa.models import (Area,
+                                         AdminLevel,
                                          Activity,
                                          Process,
                                          Waste04,
@@ -220,21 +221,23 @@ class StatusQuoViewSet(FilterFlowViewSet):
     def format_flows(queryset, space):
         # recover all areas of the selected
         # administrative level
-        adminlevel = space.pop('adminlevel', None)
-        if adminlevel:
-            areas = Area.objects.filter(adminlevel=adminlevel)
+        id = space.pop('adminlevel', None)
+        if id:
+            areas = Area.objects.filter(adminlevel=id)
+            admin = AdminLevel.objects.filter(id=id)[0]
 
             # Actor level is the only one
             # with no areas!
             if areas.count() != 0:
                 # origin area
-                # subq = areas.filter(geom__contains=OuterRef('origin__geom'))
-                queryset = queryset.annotate(parent=F('origin__area__parent_area'))
-                print(queryset.values_list('parent', flat=True))
+                # exclude origins with LOWER admin level!
+                queryset = queryset.exclude(origin__area__adminlevel__level__lt=admin.level)
+                queryset = queryset.annotate(origin_area=F('origin__area'))
 
                 # destination area
-                # subq = areas.filter(geom__contains=OuterRef('destination__geom'))
-                queryset = queryset.filter(destination__area__parent_area__adminlevel=adminlevel).annotate(destination_area=F('destination__area'))
+                # exclude destinations with LOWER admin level!
+                queryset = queryset.exclude(destination__area__adminlevel__level__lt=admin.level)
+                queryset = queryset.annotate(destination_area=F('destination__area'))
 
                 # append to other dimensions
                 level = ['origin_area', 'destination_area']

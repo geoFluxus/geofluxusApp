@@ -58,7 +58,9 @@ class AreaManager(models.Manager):
         for c in created:
             # fetch all actors within area
             actors = queryset.filter(geom__within=c.geom)
-            actors = actors.exclude(area__adminlevel__gte=c.adminlevel)
+
+            # do not update actors with HIGHER admin level!
+            actors = actors.exclude(area__adminlevel__level__gte=c.adminlevel.level)
             actors.update(area=c.pk)
 
     # update actor on area bulk upload
