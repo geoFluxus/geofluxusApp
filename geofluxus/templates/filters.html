@@ -158,8 +158,7 @@
                                 <option selected value="-1">All (<%= activityGroups.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% activityGroups.forEach(function(activitygroup){ %>
-                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>
-                                    <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
+                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>. <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
                                 </option>
                                 <% }); %>
                             </select>
@@ -214,8 +213,7 @@
                                 <option selected value="-1">All (<%= processgroups.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% processgroups.forEach(function(process){ %>
-                                <option value="<%= process.id %>"><%= process.get('code') %>
-                                    <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
+                                <option value="<%= process.id %>"><%= process.get('code') %>. <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
                                 </option>
                                 <% }); %>
                             </select>
@@ -387,8 +385,7 @@
                                 <option selected value="-1">All (<%= activityGroups.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% activityGroups.forEach(function(activitygroup){ %>
-                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>
-                                    <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
+                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>. <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
                                 </option>
                                 <% }); %>
                             </select>
@@ -441,8 +438,7 @@
                                 <option selected value="-1">All (<%= processgroups.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% processgroups.forEach(function(process){ %>
-                                <option value="<%= process.id %>"><%= process.get('code') %>
-                                    <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
+                                <option value="<%= process.id %>"><%= process.get('code') %>. <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
                                 </option>
                                 <% }); %>
                             </select>

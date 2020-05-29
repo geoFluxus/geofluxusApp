@@ -176,11 +176,8 @@ define(['views/common/baseview',
 
                 function filterActivities(event, clickedIndex, checked) {
                     let eventTargetID = event.target.id;
-
                     let selectedActivityGroupIDs = [];
                     let filteredActivities = [];
-                    let newActivityOptionsHTML = "";
-
                     let activityGroupsSelect;
                     let activitySelect;
                     let activitySelectContainer;
@@ -207,26 +204,15 @@ define(['views/common/baseview',
                         filteredActivities = _this.activities.models.filter(function (activity) {
                             return selectedActivityGroupIDs.includes(activity.attributes.activitygroup.toString())
                         });
-
-                        // // Fill selectPicker with filtered activities, add to DOM, and refresh:
-                        // newActivityOptionsHTML = '<option selected value="-1">All (' + filteredActivities.length + ')</option><option data-divider="true"></option>';
-                        // filteredActivities.forEach(activity => newActivityOptionsHTML += "<option value='" + activity.attributes.id + "'>" + activity.attributes.nace + " " + activity.attributes.name + "</option>");
-                        // $(activitySelect).html(newActivityOptionsHTML);
-                        // $(activitySelect).selectpicker("refresh");
-
                         filterUtils.fillSelectPicker("activity", activitySelect, filteredActivities);
-
                         activitySelectContainer.fadeIn("fast");
                     }
                 }
 
                 function filterTreatmentMethods(event, clickedIndex, checked) {
                     let eventTargetID = event.target.id;
-
                     let selectedProcessGroupIDs = [];
                     let filteredProcesses = [];
-                    let newProcessOptionsHTML = "";
-
                     let processGroupSelect;
                     let processSelect;
                     let processSelectContainer;
@@ -242,7 +228,7 @@ define(['views/common/baseview',
                     }
 
                     // Get the array with ID's of the selected treatment method group(s) from the .selectpicker:
-                    selectedProcessGroupIDs = $(processGroupSelect).val()
+                    selectedProcessGroupIDs = $(processGroupSelect).val();
 
                     // If no process groups are selected, reset filter:
                     if (selectedProcessGroupIDs.length == 0 || selectedProcessGroupIDs[0] == "-1") {
@@ -253,13 +239,7 @@ define(['views/common/baseview',
                         filteredProcesses = _this.processes.models.filter(function (process) {
                             return selectedProcessGroupIDs.includes(process.attributes.processgroup.toString())
                         });
-
-                        // Fill selectPicker with filtered items, add to DOM, and refresh:
-                        newProcessOptionsHTML = '<option selected value="-1">All (' + filteredProcesses.length + ')</option><option data-divider="true"></option>';
-                        filteredProcesses.forEach(process => newProcessOptionsHTML += "<option value='" + process.attributes.id + "'>" + process.attributes.code + " " + process.attributes.name + "</option>");
-                        $(processSelect).html(newProcessOptionsHTML);
-                        $(processSelect).selectpicker("refresh");
-
+                        filterUtils.fillSelectPicker("treatmentMethod", processSelect, filteredProcesses);
                         processSelectContainer.fadeIn("fast");
                     }
                 }
@@ -296,12 +276,7 @@ define(['views/common/baseview',
                             return waste06.attributes.hazardous == showOnlyHazardous;
                         });
 
-                        // Fill selectPicker with filtered items, add to DOM, and refresh:
-                        newWastes06OptionsHTML = '<option selected value="-1">All (' + filteredWastes06.length + ')</option><option data-divider="true"></option>';
-                        filteredWastes06.forEach(waste06 => newWastes06OptionsHTML += "<option class='dropdown-item' value='" + waste06.attributes.id + "'>" + waste06.attributes.ewc_code + " " + waste06.attributes.ewc_name + (waste06.attributes.hazardous ? "*" : "") + "</option>");
-                        $(_this.flows.waste06Select).html(newWastes06OptionsHTML);
-                        $(_this.flows.waste06Select).selectpicker("refresh");
-
+                        filterUtils.fillSelectPicker("waste06", _this.flows.waste06Select, filteredWastes06);
                         $(".chevronEwc06").hide();
                         $("#flows-waste06-label").css("position", "static");
                         $("#helpiconWaste06").addClass("hazaIconPos");
@@ -310,36 +285,22 @@ define(['views/common/baseview',
                 }
 
                 function filterEWC02to04(event, clickedIndex, checked) {
-                    let selectedEWC02IDs = [];
                     let filteredWastes04 = [];
-                    let newWastes04OptionsHTML = "";
-
-                    selectedEWC02IDs = $(_this.flows.waste02Select).val()
-
+                    let selectedEWC02IDs = $(_this.flows.waste02Select).val();
                     if (selectedEWC02IDs.length == 0 || selectedEWC02IDs[0] == "-1") {
                         $("#wastes04col").fadeOut("fast");
-
                     } else {
                         filteredWastes04 = _this.wastes04.models.filter(function (waste04) {
                             return selectedEWC02IDs.includes(waste04.attributes.waste02.toString())
                         });
-
-                        newWastes04OptionsHTML = '<option selected value="-1">All (' + filteredWastes04.length + ')</option><option data-divider="true"></option>';
-                        filteredWastes04.forEach(waste04 => newWastes04OptionsHTML += "<option value='" + waste04.attributes.id + "'>" + waste04.attributes.ewc_code + " " + waste04.attributes.ewc_name + "</option>");
-                        $(_this.flows.waste04Select).html(newWastes04OptionsHTML);
-                        $(_this.flows.waste04Select).selectpicker("refresh");
-
+                        filterUtils.fillSelectPicker("waste04", _this.flows.waste04Select, filteredWastes04);
                         $("#wastes04col").fadeIn("fast");
                     }
                 }
 
                 function filterEWC04to06() {
-                    let selectedEWC04IDs = [];
                     let filteredWastes06 = [];
-                    let newWastes06OptionsHTML = "";
-
-                    selectedEWC04IDs = $(_this.flows.waste04Select).val()
-
+                    let selectedEWC04IDs = $(_this.flows.waste04Select).val();
                     if (selectedEWC04IDs.length == 0 || selectedEWC04IDs[0] == "-1") {
                         $("#wastes06col").fadeOut("fast");
 
@@ -347,37 +308,21 @@ define(['views/common/baseview',
                         filteredWastes06 = _this.wastes06.models.filter(function (waste06) {
                             return selectedEWC04IDs.includes(waste06.attributes.waste04.toString())
                         });
-
-                        // Fill selectPicker with filtered items, add to DOM, and refresh:
-                        newWastes06OptionsHTML = '<option selected value="-1">All (' + filteredWastes06.length + ')</option><option data-divider="true"></option>';
-                        filteredWastes06.forEach(waste06 => newWastes06OptionsHTML += "<option class='dropdown-item' value='" + waste06.attributes.id + "'>" + waste06.attributes.ewc_code + " " + waste06.attributes.ewc_name + (waste06.attributes.hazardous ? "*" : "") + "</option>");
-                        $(_this.flows.waste06Select).html(newWastes06OptionsHTML);
-                        $(_this.flows.waste06Select).selectpicker("refresh");
-
+                        filterUtils.fillSelectPicker("waste06", _this.flows.waste06Select, filteredWastes06);
                         $("#wastes06col").fadeIn("fast");
                     }
                 }
 
                 function filterMonths() {
-                    let selectedYearIDs = [];
                     let filteredMonths = [];
-                    let newMonthOptionsHTML = "";
-
-                    selectedYearIDs = $(_this.flows.yearSelect).val()
-
+                    let selectedYearIDs = $(_this.flows.yearSelect).val();
                     if (selectedYearIDs.length == 0 || selectedYearIDs[0] == "-1") {
                         $("#monthCol").fadeOut("fast");
-
                     } else {
                         filteredMonths = _this.months.models.filter(function (month) {
                             return selectedYearIDs.includes(month.attributes.year.toString())
                         });
-
-                        newMonthOptionsHTML = '<option selected value="-1">All (' + filteredMonths.length + ')</option><option data-divider="true"></option>';
-                        filteredMonths.forEach(month => newMonthOptionsHTML += "<option value='" + month.attributes.id + "'>" + month.attributes.code.substring(2, 6) + " " + utils.toMonthString(month.attributes.code.substring(0, 2)) + "</option>");
-                        $(_this.flows.monthSelect).html(newMonthOptionsHTML);
-                        $(_this.flows.monthSelect).selectpicker("refresh");
-
+                        filterUtils.fillSelectPicker("month", _this.flows.monthSelect, filteredMonths);
                         $("#monthCol").fadeIn("fast");
                     }
                 }
@@ -468,7 +413,11 @@ define(['views/common/baseview',
                     if (focusedElement == this) return; //already focused, return so user can now place cursor at specific point in input.
                     focusedElement = this;
                     setTimeout(function () {
-                        focusedElement.select();
+                        try {
+                            focusedElement.select();
+                        } catch (error) {
+
+                        }
                     }, 50); //select all text in any field on focus for easy re-entry. Delay sightly to allow focus to "stick" before selecting.
                 });
                 $(document).on('blur', 'input', function () {
@@ -783,31 +732,32 @@ define(['views/common/baseview',
                     $("#origin-role-radio-treatment").parent().removeClass("active");
 
                     _this.origin.role = flows.origin_role;
-
                     // set origin role
                     switch (flows.origin_role) {
                         case "production":
                             $($("#origin-role-radio-production").parent()[0]).addClass("active")
+                            $(".originContainerTreatmentMethod").hide();
+                            $(".originContainerActivity").fadeIn();
                             break;
                         case "both":
                             $($("#origin-role-radio-both").parent()[0]).addClass("active")
+                            $(".originContainerActivity").fadeOut();
+                            $(".originContainerTreatmentMethod").fadeOut();
                             break;
                         case "treatment":
                             $($("#origin-role-radio-treatment").parent()[0]).addClass("active")
+                            $(".originContainerActivity").hide();
+                            $(".originContainerTreatmentMethod").fadeIn();
                             break;
                     }
                 }
 
                 if (_.has(flows, 'origin__activity__activitygroup__in')) {
-
-
                     $(_this.origin.activityGroupsSelect).selectpicker('val', flows.origin__activity__activitygroup__in);
                     $(_this.origin.activityGroupsSelect).selectpicker("refresh");
 
-                    // filteredItems = _this.activityGroups.models.filter(function (ag) {
-                    //     return _this.origin.activityGroupsSelect.includes(ag.attributes.activitygroup.toString())
-                    // });
-                    // filterUtils.fillSelectPicker("activity", _this.origin.activityGroupsSelect, filteredItems);
+
+                    // add activities here as well
                 }
 
 
