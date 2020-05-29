@@ -125,6 +125,7 @@ define(['views/common/baseview',
                 "click #edit-filter-name": "showFilterEdit",
                 "click #save-filter-name": "updateFilterName",
                 "click #load-filter-config": "loadFilterConfiguration",
+                "click .hide-filter-name-button": "hideFilterNameInput",
             },
 
             // Rendering
@@ -882,8 +883,6 @@ define(['views/common/baseview',
                         console.log(error);
                     }
                 });
-                // event.preventDefault();
-                // event.stopPropagation();
             },
 
             updateFilterConfig: function (event) {
@@ -933,6 +932,8 @@ define(['views/common/baseview',
                         success: function (response) {
                             console.log("Postfetch update name success: ", response.models);
 
+                            $("#update-filter-name").hide();
+
                             $("#filterNameUpdated").fadeIn("fast");
                             $("#update-filter-name").attr("readonly", true);
 
@@ -952,7 +953,18 @@ define(['views/common/baseview',
                 event.stopPropagation();
             },
 
+            hideFilterNameInput: function(event) {
+                $(".filterEdit").fadeOut();
+                event.preventDefault();
+                event.stopPropagation();
+            },
+
             showConfirmModal: function (event) {
+                let idToUpdate = $(this.filterConfigSelect).val();
+                if (!idToUpdate) {
+                    return false;
+                }
+
                 $(".filterEdit").fadeOut();
                 $(this.confirmationModal).modal('show');
                 event.preventDefault();
@@ -961,6 +973,10 @@ define(['views/common/baseview',
 
             showFilterEdit: function (event) {
                 let idToUpdate = $(this.filterConfigSelect).val();
+                if (!idToUpdate) {
+                    return false;
+                }
+                
                 let oldFilterName = this.savedFilters.find(filter => filter.attributes.id == idToUpdate).get("name");
                 let form = $("form.savedMode")[0];
 
@@ -1099,6 +1115,9 @@ define(['views/common/baseview',
                 $("#origin-role-radio-production").parent().removeClass("active");
                 $("#origin-role-radio-both").parent().addClass("active")
                 $("#origin-role-radio-treatment").parent().removeClass("active");
+
+                $("#origin-role-radio label input").removeAttr("checked");
+                $("#origin-role-radio-both").attr("checked", true);
 
                 $(_this.origin.activityGroupsSelect).val('-1');
                 $(_this.origin.activitySelect).html(allActivitiesOptionsHTML);

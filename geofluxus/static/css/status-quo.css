@@ -170,6 +170,16 @@ label[for="flows-waste06-select"] {
     border-radius: 19px;
 }
 
+.hide-filter-name-button {
+    height: 38px !important;
+    width: 38px !important;
+    border-radius: 19px;
+}
+
+.hide-filter-name-button .fas.fa-times {
+    font-size: x-large;
+    vertical-align: middle;
+}
 
 .helpIconContainer {
     height: 100%;
