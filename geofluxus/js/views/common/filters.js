@@ -744,9 +744,9 @@ define(['views/common/baseview',
                 //console.log("Saved filters on reloadFilterSelectPicker: ", this.savedFilters.models);
 
                 let filterArray = this.savedFilters.models;
-                filterArray.sort(function (a, b) {
-                    return (a.attributes.date < b.attributes.date) ? 1 : ((a.attributes.date > b.attributes.date) ? -1 : 0);
-                });
+                // filterArray.sort(function (a, b) {
+                //     return (a.attributes.date < b.attributes.date) ? 1 : ((a.attributes.date > b.attributes.date) ? -1 : 0);
+                // });
 
                 filterArray.forEach(filter => newSavedFiltersHtml += "<option class='dropdown-item' value='" + filter.attributes.id + "'>" + filter.attributes.name + "</option>");
                 $(this.filterConfigSelect).html(newSavedFiltersHtml);
