@@ -13,6 +13,7 @@ class UserFilterSerializer(HyperlinkedModelSerializer):
     def to_representation(self, instance):
         ret = super(UserFilterSerializer, self).to_representation(instance)
         filter = ret['filter'].replace("\'", "\"")
+        print(filter)
         ret['filter'] = json.loads(filter)
         return ret
 
