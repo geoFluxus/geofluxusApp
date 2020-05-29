@@ -50,42 +50,26 @@ define(['views/common/baseview',
                     apiTag: 'wastes06'
                 });
                 this.materials = new Collection([], {
-                    apiTag: 'materials',
-                    comparator: 'name',
+                    apiTag: 'materials'
                 });
                 this.products = new Collection([], {
-                    apiTag: 'products',
-                    comparator: 'name',
+                    apiTag: 'products'
                 });
                 this.composites = new Collection([], {
-                    apiTag: 'composites',
-                    comparator: 'name',
+                    apiTag: 'composites'
                 });
                 this.areaLevels = new Collection([], {
-                    apiTag: 'arealevels',
-                    comparator: "level",
+                    apiTag: 'arealevels'
                 });
-
                 this.years = new Collection([], {
                     apiTag: 'years'
                 });
                 this.months = new Collection([], {
                     apiTag: 'months'
                 });
-
                 this.savedFilters = new Collection([], {
-                    apiTag: 'filters',
-                    // comparator: function (savedFilter) {
-                    //     return -savedFilter.get("date");
-                    // },
-                    comparator: function (a, b) {
-                        a = a.date;
-                        b = b.date;
-                        return a > b ? -1 : a < b ? 1 : 0;
-                    }
+                    apiTag: 'filters'
                 });
-
-
 
                 this.areas = {};
 
@@ -756,9 +740,7 @@ define(['views/common/baseview',
                 let newSavedFiltersHtml = "";
                 this.savedFilters = response;
 
-
-                console.log("Saved filters on reloadFilterSelectPicker: ", this.savedFilters.models);
-
+                //console.log("Saved filters on reloadFilterSelectPicker: ", this.savedFilters.models);
 
                 let filterArray = this.savedFilters.models;
                 filterArray.sort(function (a, b) {
@@ -768,7 +750,7 @@ define(['views/common/baseview',
                 filterArray.forEach(filter => newSavedFiltersHtml += "<option class='dropdown-item' value='" + filter.attributes.id + "'>" + filter.attributes.name + "</option>");
                 $(this.filterConfigSelect).html(newSavedFiltersHtml);
 
-                console.log(newSavedFiltersHtml);
+                //console.log(newSavedFiltersHtml);
 
                 $(this.filterConfigSelect).selectpicker("refresh");
             },
