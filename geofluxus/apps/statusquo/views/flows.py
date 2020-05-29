@@ -228,12 +228,13 @@ class StatusQuoViewSet(FilterFlowViewSet):
             # with no areas!
             if areas.count() != 0:
                 # origin area
-                subq = areas.filter(geom__contains=OuterRef('origin__geom'))
-                queryset = queryset.annotate(origin_area=Subquery(subq.values('id')))
+                # subq = areas.filter(geom__contains=OuterRef('origin__geom'))
+                queryset = queryset.annotate(parent=F('origin__area__parent_area'))
+                print(queryset.values_list('parent', flat=True))
 
                 # destination area
-                subq = areas.filter(geom__contains=OuterRef('destination__geom'))
-                queryset = queryset.annotate(destination_area=Subquery(subq.values('id')))
+                # subq = areas.filter(geom__contains=OuterRef('destination__geom'))
+                queryset = queryset.filter(destination__area__parent_area__adminlevel=adminlevel).annotate(destination_area=F('destination__area'))
 
                 # append to other dimensions
                 level = ['origin_area', 'destination_area']
