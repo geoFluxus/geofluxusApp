@@ -146,6 +146,7 @@ class FlowManager(models.Manager):
         self.update_flows(created)
         return created
 
+
 class Flow(models.Model):
     objects = FlowManager()
 
@@ -176,6 +177,7 @@ class Flow(models.Model):
         return "{} : {} -> {}".format(self.flowchain,
                                       self.origin,
                                       self.destination)
+
 
 # MaterialInChain
 class MaterialInChain(models.Model):

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.contrib.admin import ModelAdmin, TabularInline
+from django.contrib.admin import TabularInline
 from django.contrib.gis.admin import GeoModelAdmin
 from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Activity,
@@ -83,6 +83,7 @@ class ProgressAdmin(CustomAdmin):
 class CompanyAdmin(CustomAdmin):
     search_fields = ['name']
 
+
 # Actor
 @admin.register(Actor)
 class ActorAdmin(CustomAdmin):
@@ -141,11 +142,14 @@ class MonthAdmin(CustomAdmin):
 class MaterialInChainInline(TabularInline):
     model = MaterialInChain
 
+
 class ProductInChainInline(TabularInline):
     model = ProductInChain
 
+
 class CompositeInChainInline(TabularInline):
     model = CompositeInChain
+
 
 @admin.register(FlowChain)
 class FlowChainAdmin(CustomAdmin):
@@ -188,11 +192,13 @@ class AreaAdmin(CustomAdmin):
 admin.site.register(Publication, CustomAdmin)
 admin.site.register(PublicationType, CustomAdmin)
 
+
 # Routing
 @admin.register(Routing)
 class RoutingAdmin(CustomAdmin):
     search_fields = ['origin__identifier',
                      'destination__identifier']
+
 
 # Vehicle
 @admin.register(Vehicle)
