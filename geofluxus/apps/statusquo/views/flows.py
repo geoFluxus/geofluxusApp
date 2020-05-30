@@ -187,29 +187,29 @@ class StatusQuoViewSet(FilterFlowViewSet):
         space = dimensions.pop('space', None)
         if space:
             # annotate spatial info to flows
-            if format == 'flowmap':
-                queryset = self.format_flows(queryset, space)
-            else:
-                queryset = self.format_space(queryset, space)
+            both = True if format == 'flowmap' else False
+            queryset = self.format_space(queryset, space, both)
 
-            # create inventory to recover actors
-            if 'actor' in level:
-                if isinstance(field, list):
+            # create inventory to recover actors / areas
+            # check the last level added!
+            if 'actor' in self.levels[-1]:
+                if both:
                     actors = list()
-                    for f in field:
-                        extra = list(queryset.values_list(f, flat=True).distinct())
+                    for field in self.levels[-2:]:
+                        extra = list(queryset.values_list(field, flat=True).distinct())
                         actors.extend(extra)
                 else:
-                    actors = queryset.values_list(field, flat=True).distinct()
-                self.space_inv = Actor.objects.filter(id__in=actors) \
+                    actors = queryset.values_list(self.levels[-1], flat=True).distinct()
+                self.space_inv = Actor.objects.filter(id__in=actors)\
                                               .values('id',
                                                       'company__name',
                                                       'geom')
-            elif 'area' in level:
+            elif 'area' in self.levels[-1]:
                 self.space_inv = Area.objects.values('id',
                                                      'name',
                                                      'geom')
 
+        # parallel sets for treatment method (group)
         if format == "parallelsets" and len(self.fields) == 1:
             field = self.fields[0].replace('origin__', '') \
                                   .replace('destination__', '')
@@ -220,51 +220,6 @@ class StatusQuoViewSet(FilterFlowViewSet):
                                 'destination__' + field])
 
         return queryset
-
-
-    @staticmethod
-    def format_flows(queryset, space):
-        # recover all areas of the selected
-        # administrative level
-        id = space.pop('adminlevel', None)
-        if id:
-            admin = AdminLevel.objects.filter(id=id)[0].level
-
-            # Actor level is the only one
-            # with no areas!
-            if admin != 1000:
-                # exclude origins / destinations with LOWER admin level!
-                search = 'adminlevel__level'
-                queryset = queryset.exclude(Q(**{('origin__area__' + search + '__lt'): admin}) |\
-                                            Q(**{('destination__area__' + search + '__lt'): admin}))
-
-                # annotate origin / destination areas
-                total = AdminLevel.objects.exclude(level=1000).count()
-                for node in ['origin__area', 'destination__area']:
-                    cases = []
-                    steps = total - admin  # steps to move in admin hierarchy
-
-                    while steps >= 0:
-                        func = node + '__' + 'parent_area__' * steps
-                        case = When(**{(func + search): admin}, then=F(func[:-2]))
-                        cases.append(case)
-                        steps -= 1
-
-                    node = node.replace('__', '_')
-                    queryset = queryset.annotate(**{node: Case(*cases, output_field=IntegerField())})
-
-                # append to other dimensions
-                level = ['origin_area', 'destination_area']
-                field = ['origin_area', 'destination_area']
-            else:
-                # annotate origin / destination actor
-                queryset = queryset.annotate(origin_actor=F('origin'),
-                                             destination_actor=F('destination'))
-
-                # append to other dimensions
-                level = ['origin_actor', 'destination_actor']
-                field = ['origin_actor', 'destination_actor']
-        return queryset, level, field
 
     def format_space(self, queryset, space, both=False):
         # recover administrative level
