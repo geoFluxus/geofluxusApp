@@ -53,10 +53,9 @@ class FilterFlowViewSet(PostGetViewMixin,
         destination_areas = params.pop('destination', {})
         flow_areas = filters.pop('selectedAreas', {})
 
-        area_filters = {}
-        area_filters['origin'] = origin_areas
-        area_filters['destination'] = destination_areas
-        area_filters['flows'] = flow_areas
+        area_filters = {'origin': origin_areas,
+                        'destination': destination_areas,
+                        'flows': flow_areas}
 
         # filter flows with non-spatial filters
         queryset = self.filter(queryset, filters)
@@ -143,7 +142,8 @@ class FilterFlowViewSet(PostGetViewMixin,
         # filter by origin
         area_ids = origin.pop('selectedAreas', [])
         if area_ids:
-            area = Area.objects.filter(id__in=area_ids).aggregate(area=Union('geom'))['area']
+            area = Area.objects.filter(id__in=area_ids)\
+                               .aggregate(area=Union('geom'))['area']
 
             # check where with respect to the area
             inOrOut = origin.pop('inOrOut', 'in')
@@ -155,7 +155,8 @@ class FilterFlowViewSet(PostGetViewMixin,
         # filter by destination
         area_ids = destination.pop('selectedAreas', [])
         if area_ids:
-            area = Area.objects.filter(id__in=area_ids).aggregate(area=Union('geom'))['area']
+            area = Area.objects.filter(id__in=area_ids)\
+                               .aggregate(area=Union('geom'))['area']
 
             # check where with respect to the area
             inOrOut = destination.pop('inOrOut', 'in')
@@ -167,7 +168,8 @@ class FilterFlowViewSet(PostGetViewMixin,
         # filter by flows
         area_ids = flows
         if area_ids:
-            area = Area.objects.filter(id__in=area_ids).aggregate(area=Union('geom'))['area']
+            area = Area.objects.filter(id__in=area_ids)\
+                               .aggregate(area=Union('geom'))['area']
 
             # select routings & check if they intersect the area
             ids = queryset.values_list('routing__id', flat=True).distinct()
