@@ -7,7 +7,7 @@ from geofluxus.apps.asmfa.models import (Area,
                                          Waste06,
                                          Actor)
 from collections import OrderedDict
-from django.db.models import (OuterRef, Subquery, F, Sum, Q, Case, When, IntegerField)
+from django.db.models import (F, Sum, Q, Case, When, IntegerField)
 
 
 class StatusQuoViewSet(FilterFlowViewSet):
@@ -223,33 +223,30 @@ class StatusQuoViewSet(FilterFlowViewSet):
         # administrative level
         id = space.pop('adminlevel', None)
         if id:
-            areas = Area.objects.filter(adminlevel=id)
             admin = AdminLevel.objects.filter(id=id)[0].level
 
             # Actor level is the only one
             # with no areas!
-            if areas.count() != 0:
-                # annotate origin / destination areas
+            if admin != 1000:
                 # exclude origins / destinations with LOWER admin level!
-                filter = 'area__adminlevel__level__lt'
-                queryset = queryset.exclude(Q(**{('origin__' + filter): admin}) |\
-                                            Q(**{('destination__' + filter): admin}))
+                search = 'adminlevel__level'
+                queryset = queryset.exclude(Q(**{('origin__area__' + search + '__lt'): admin}) |\
+                                            Q(**{('destination__area__' + search + '__lt'): admin}))
 
-                queryset = queryset.annotate(
-                    origin_area=Case(
-                        When(origin__area__adminlevel__level=admin, then=F('origin__area')),
-                        When(origin__area__parent_area__adminlevel__level=admin, then=F('origin__area__parent_area')),
-                        When(origin__area__parent_area__parent_area__adminlevel__level=admin, then=F('origin__area__parent_area__parent_area')),
-                        output_field=IntegerField()
-                    ),
-                    destination_area=Case(
-                        When(destination__area__adminlevel__level=admin, then=F('destination__area')),
-                        When(destination__area__parent_area__adminlevel__level=admin, then=F('destination__area__parent_area')),
-                        When(destination__area__parent_area__parent_area__adminlevel__level=admin,
-                             then=F('destination__area__parent_area__parent_area')),
-                        output_field=IntegerField()
-                    )
-                )
+                # annotate origin / destination areas
+                total = AdminLevel.objects.exclude(level=1000).count()
+                for node in ['origin__area', 'destination__area']:
+                    cases = []
+                    steps = total - admin  # steps to move in admin hierarchy
+
+                    while steps >= 0:
+                        func = node + '__' + 'parent_area__' * steps
+                        case = When(**{(func + search): admin}, then=F(func[:-2]))
+                        cases.append(case)
+                        steps -= 1
+
+                    node = node.replace('__', '_')
+                    queryset = queryset.annotate(**{node: Case(*cases, output_field=IntegerField())})
 
                 # append to other dimensions
                 level = ['origin_area', 'destination_area']
@@ -268,9 +265,9 @@ class StatusQuoViewSet(FilterFlowViewSet):
     def format_space(queryset, space):
         # recover all areas of the selected
         # administrative level
-        adminlevel = space.pop('adminlevel', None)
-        if adminlevel:
-            areas = Area.objects.filter(adminlevel=adminlevel)
+        id = space.pop('adminlevel', None)
+        if id:
+            admin = AdminLevel.objects.filter(id=id)[0].level
 
             # attach to flows the area
             # to which their origin / destination belongs
@@ -278,20 +275,33 @@ class StatusQuoViewSet(FilterFlowViewSet):
             if field:
                 # Actor level is the only one
                 # with no areas!
-                if areas.count() != 0:
-                    # recover the area id to which
-                    # the flow origin / destination belongs
-                    subq = areas.filter(geom__contains=OuterRef(field))
+                if admin != 1000:
+                    field = field + '__area'
 
-                    # annotate to area id to flows
-                    queryset = queryset.annotate(area=Subquery(subq.values('id')))
+                    # exclude origins / destinations with LOWER admin level!
+                    search = '__adminlevel__level'
+                    queryset = queryset.exclude(Q(**{(field + search + '__lt'): admin}))
+
+                    # annotate origin / destination areas
+                    total = AdminLevel.objects.exclude(level=1000).count()
+                    cases = []
+                    steps = total - admin  # steps to move in admin hierarchy
+
+                    while steps >= 0:
+                        func = field + '__parent_area' * steps
+                        case = When(**{(func + search): admin}, then=F(func))
+                        cases.append(case)
+                        steps -= 1
+
+                    queryset = queryset.annotate(**{'area': Case(*cases, output_field=IntegerField())})
+                    print(list(queryset.values_list('area', flat=True)))
 
                     # append to other dimensions
                     level = 'area'
                     field = 'area'
                 else:
                     # annotate origin / destination id
-                    field = field.split('__')[0] + '__id'
+                    field = field + '__id'
                     queryset = queryset.annotate(actor=F(field))
 
                     # append to other dimensions

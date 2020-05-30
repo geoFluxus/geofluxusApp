@@ -420,7 +420,7 @@ define(['views/common/baseview',
 
                 // Space
                 if ($(this.dimensions.spaceToggle).prop("checked")) {
-                    let originOrDestination = $(this.dimensions.spaceOrigDest).prop("checked") ? 'destination__geom' : 'origin__geom',
+                    let originOrDestination = $(this.dimensions.spaceOrigDest).prop("checked") ? 'destination' : 'origin',
                         gran = $('#dim-space-gran-select option:selected').val();
                     filterParams.dimensions.space = {};
                     filterParams.dimensions.space.adminlevel = gran;

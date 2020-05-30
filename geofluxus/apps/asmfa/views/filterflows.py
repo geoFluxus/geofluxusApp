@@ -27,7 +27,7 @@ class FilterFlowViewSet(PostGetViewMixin,
         filtered flows according to user selections
         '''
 
-        # anonymize
+        # anonymize for Demo Group
         anonymous = False
         user_groups = request.user.groups.values_list('name', flat=True)
         if 'Demo' in user_groups:
@@ -78,8 +78,15 @@ class FilterFlowViewSet(PostGetViewMixin,
         '''
         queries = []
         func, vals = filter
+
+        # annotate classification field to flows
+        classifs = Classification.objects
+        subq = classifs.filter(flowchain__id=OuterRef('flowchain__id'))
+        queryset = queryset.annotate(**{func: Subquery(subq.values(func))})
+
+        # filter
         for val in vals:
-            queries.append(Q(**{func:val}))
+            queries.append(Q(**{func: val}))
         if len(queries) == 1:
             queryset = queryset.filter(queries[0])
         if len(queries) > 1:
@@ -92,15 +99,6 @@ class FilterFlowViewSet(PostGetViewMixin,
         Filter chains with generic filters
         (non-spatial filtering)
         '''
-
-        # annotate classifications to flows
-        classifs = Classification.objects
-        subq = classifs.filter(flowchain__id=OuterRef('flowchain__id'))
-        queryset = queryset.annotate(mixed=Subquery(subq.values('mixed')),
-                                     clean=Subquery(subq.values('clean')),
-                                     direct=Subquery(subq.values('direct_use')),
-                                     composite=Subquery(subq.values('composite')),
-                                    )
 
         # classification lookups
         # these should be handled separately!
@@ -118,7 +116,6 @@ class FilterFlowViewSet(PostGetViewMixin,
                 continue
 
             # form query & append
-            func = func # search in chain!!!
             query = Q(**{func: val})
             queries.append(query)
 
