@@ -141,6 +141,12 @@ define(['views/common/baseview',
                     trigger: "focus"
                 });
 
+                // Set default admin level to Country:
+                let idOfCountryLevel = this.areaLevels.find(level => level.attributes.level == 1).id;
+                this.origin.adminLevel = idOfCountryLevel;
+                this.destination.adminLevel = idOfCountryLevel;
+                this.flows.adminLevel = idOfCountryLevel;
+            
                 this.renderSavedFiltersModal();
                 this.renderAreaSelectModal();
 
@@ -607,22 +613,15 @@ define(['views/common/baseview',
                     });
             },
 
-            changeAreaLevel: function (resetValues) {
+            changeAreaLevel: function () {
                 var levelId = this.areaLevelSelect.value;
 
-                if (resetValues) {
-                    if (this.areaMap.block == "origin") {
-                        this.selectedAreasOrigin = [];
-                        this.el.querySelector('#areaSelectionsOriginTextarea').innerHTML = '';
-                    } else if (this.areaMap.block == "flows") {
-                        this.selectedAreasFlows = [];
-                    } else if (this.areaMap.block == "destination") {
-                        this.selectedAreasDestination = [];
-                    }
-                }
+                // Save the current admin level as a property of this.origin/destination/flows:
+                this[this.areaMap.block].adminLevel = levelId;
+                console.log(this.origin.adminLevel);
 
                 // Clear the textarea with selected areas in the modal:
-                $("#areaSelectionsModalTextarea").html("")
+                $("#areaSelectionsModalTextarea").html("");
 
                 this.prepareAreas(levelId);
             },
@@ -728,13 +727,12 @@ define(['views/common/baseview',
                 }
 
                 if (_.has(flows, 'origin_role')) {
-
                     $("#origin-role-radio-production").parent().removeClass("active");
                     $("#origin-role-radio-both").parent().removeClass("active");
                     $("#origin-role-radio-treatment").parent().removeClass("active");
 
                     _this.origin.role = flows.origin_role;
-                    // set origin role
+                    // Set origin role
                     switch (flows.origin_role) {
                         case "production":
                             $($("#origin-role-radio-production").parent()[0]).addClass("active")
@@ -785,6 +783,36 @@ define(['views/common/baseview',
                     $(".activitySelectContainerOrigin").fadeIn("fast");
                 }
 
+                // Treatment method group
+                if (_.has(flows, 'origin__process__processgroup__in')) {
+                    $(_this.origin.processGroupSelect).selectpicker('val', flows.origin__process__processgroup__in);
+                    $(_this.origin.processGroupSelect).selectpicker("refresh");
+                }
+                // Treatment methods
+                if (_.has(flows, 'origin__process__in')) {
+                    let processObjects = _this.processes.models.filter(function (process) {
+                        return flows.origin__process__in.includes(process.attributes.id.toString());
+                    });
+
+                    // Get activity groups to which the selected activities belong and select in selectpicker:
+                    let processGroupsToDisplay = [];
+                    processObjects.forEach(process => {
+                        processGroupsToDisplay.push(process.attributes.processgroup.toString());
+                    });
+                    processGroupsToDisplay = _.uniq(processGroupsToDisplay, 'id');
+                    $(_this.origin.processGroupSelect).selectpicker('val', processGroupsToDisplay);
+                    $(_this.origin.processGroupSelect).selectpicker("refresh");
+
+                    // Filter all activities by the selected Activity Groups:
+                    let filteredProcesses = [];
+                    filteredProcesses = _this.processes.models.filter(function (process) {
+                        return processGroupsToDisplay.includes(process.attributes.processgroup.toString())
+                    });
+                    filterUtils.fillSelectPicker("treatmentMethod", $(_this.origin.processSelect), filteredProcesses);
+
+                    $(_this.origin.processSelect).selectpicker('val', flows.origin__process__in);
+                    $("#originContainerProcesses").fadeIn("fast");
+                }
 
                 // ///////////////////////////////
                 // Destination filters:
@@ -794,7 +822,7 @@ define(['views/common/baseview',
                 // Flows filters:
 
 
-                
+
                 $(".filterLoaded").fadeIn();
                 setTimeout(() => {
                     $(".filterLoaded").fadeOut();
@@ -822,10 +850,8 @@ define(['views/common/baseview',
                             filter: _this.getFilterParams(),
                         },
                         success: function (response) {
-                            console.log("Postfetch create success: ", response.models)
                             $("#newFilterAdded").fadeIn("fast");
                             $("#new-filter-name-input").attr("readonly", true);
-
                             _this.reloadFilterSelectPicker(response);
                         },
                         error: function (error) {
@@ -998,9 +1024,21 @@ define(['views/common/baseview',
             showAreaSelection: function (event) {
                 var _this = this;
                 var labelStringArray = [];
+                let adminLevel;
 
                 // Used to determine which 'Select area'-button the user has pressed, either 'origin', 'flows', or 'destination': 
                 _this.areaMap.block = $(event.currentTarget).data('area-select-block');
+
+                adminLevel = _this[_this.areaMap.block].adminLevel
+                // Set the admin level for origin/destination/flows in the selectpicker
+                $(this.areaLevelSelect).val(adminLevel);
+                $(this.areaLevelSelect).selectpicker("refresh");
+                
+                // this.prepareAreas(adminLevel)
+
+
+
+
 
                 // Show the actual modal:
                 $(this.areaModal).modal('show');
@@ -1010,7 +1048,7 @@ define(['views/common/baseview',
                     // Call updateSize to render the map with the correct dimensions:
                     _this.areaMap.map.updateSize();
                     if (_this.areaLevels.length > 0) {
-                        _this.changeAreaLevel(false);
+                        _this.changeAreaLevel();
                     }
                     // Create ol.Collection of Features to which we can add Features:
                     let features = _this.areaMap.layers.areas.select.getFeatures();
