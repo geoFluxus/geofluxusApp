@@ -719,6 +719,8 @@ define(['views/common/baseview',
                 let destination = configToLoad.destination;
                 let flows = configToLoad.flows;
 
+                console.log("Loading saved filter configuration: ", configToLoad);
+
                 // ///////////////////////////////
                 // Origin filters:
                 if (_.has(origin, 'selectedAreas')) {
@@ -752,12 +754,35 @@ define(['views/common/baseview',
                     }
                 }
 
+                // Activity group
                 if (_.has(flows, 'origin__activity__activitygroup__in')) {
                     $(_this.origin.activityGroupsSelect).selectpicker('val', flows.origin__activity__activitygroup__in);
                     $(_this.origin.activityGroupsSelect).selectpicker("refresh");
+                }
+                // Activities
+                if (_.has(flows, 'origin__activity__in')) {
+                    let activityObjects = _this.activities.models.filter(function (activity) {
+                        return flows.origin__activity__in.includes(activity.attributes.id.toString());
+                    });
 
+                    // Get activity groups to which the selected activities belong and select in selectpicker:
+                    let activityGroupsToDisplay = [];
+                    activityObjects.forEach(activity => {
+                        activityGroupsToDisplay.push(activity.attributes.activitygroup.toString());
+                    });
+                    activityGroupsToDisplay = _.uniq(activityGroupsToDisplay, 'id');
+                    $(_this.origin.activityGroupsSelect).selectpicker('val', activityGroupsToDisplay);
+                    $(_this.origin.activityGroupsSelect).selectpicker("refresh");
 
-                    // add activities here as well
+                    // Filter all activities by the selected Activity Groups:
+                    let filteredActivities = [];
+                    filteredActivities = _this.activities.models.filter(function (activity) {
+                        return activityGroupsToDisplay.includes(activity.attributes.activitygroup.toString())
+                    });
+                    filterUtils.fillSelectPicker("activity", $(_this.origin.activitySelect), filteredActivities);
+
+                    $(_this.origin.activitySelect).selectpicker('val', flows.origin__activity__in);
+                    $(".activitySelectContainerOrigin").fadeIn("fast");
                 }
 
 
@@ -767,6 +792,13 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////
                 // Flows filters:
+
+
+                
+                $(".filterLoaded").fadeIn();
+                setTimeout(() => {
+                    $(".filterLoaded").fadeOut();
+                }, 2500);
 
                 event.preventDefault();
                 event.stopPropagation();
@@ -847,6 +879,11 @@ define(['views/common/baseview',
                     success: function (response) {
                         console.log("Postfetch update config success: ", response.models)
                         _this.reloadFilterSelectPicker(response);
+
+                        $(".filterUpdated").fadeIn();
+                        setTimeout(() => {
+                            $(".filterUpdated").fadeOut();
+                        }, 2500);
                     },
                     error: function (error) {
                         console.log(error);
