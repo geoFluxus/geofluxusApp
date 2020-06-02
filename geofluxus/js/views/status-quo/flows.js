@@ -760,7 +760,7 @@ define(['views/common/baseview',
             renderFlowMap: function (dimensions, flows) {
                 if (this.flowMapView != null) this.flowMapView.close();
 
-                $(".flowmap-wrapper").show();
+                $(".flowmap-wrapper").fadeIn();
 
                 this.flowMapView = new FlowMapView({
                     el: ".flowmap-wrapper",
