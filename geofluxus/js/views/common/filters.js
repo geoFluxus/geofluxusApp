@@ -142,11 +142,11 @@ define(['views/common/baseview',
                 });
 
                 // Set default admin level to Country:
-                let idOfCountryLevel = this.areaLevels.find(level => level.attributes.level == 1).id;
-                this.origin.adminLevel = idOfCountryLevel;
-                this.destination.adminLevel = idOfCountryLevel;
-                this.flows.adminLevel = idOfCountryLevel;
-            
+                this.idOfCountryLevel = this.areaLevels.find(level => level.attributes.level == 1).id;
+                this.origin.adminLevel = this.idOfCountryLevel;
+                this.destination.adminLevel = this.idOfCountryLevel;
+                this.flows.adminLevel = this.idOfCountryLevel;
+
                 this.renderSavedFiltersModal();
                 this.renderAreaSelectModal();
 
@@ -618,32 +618,35 @@ define(['views/common/baseview',
 
                 // Save the current admin level as a property of this.origin/destination/flows:
                 this[this.areaMap.block].adminLevel = levelId;
-                console.log(this.origin.adminLevel);
 
                 // Clear the textarea with selected areas in the modal:
                 $("#areaSelectionsModalTextarea").html("");
 
-                this.prepareAreas(levelId);
+                this.prepareAreas(levelId, true);
             },
 
-            prepareAreas: function (levelId, onSuccess) {
+            prepareAreas: function (levelId, loaderOn, executeAfterLoading) {
                 var _this = this;
                 var areas = this.areas[levelId];
                 if (areas && areas.size() > 0) {
                     this.drawAreas(areas)
-                    if (onSuccess) onSuccess();
                 } else {
                     areas = new Collection([], {
                         apiTag: 'areas',
                         apiIds: [levelId]
                     });
                     this.areas[levelId] = areas;
-                    this.loader.activate();
+                    if (loaderOn) {
+                        this.loader.activate();
+                    }
                     areas.fetch({
                         success: function () {
                             _this.loader.deactivate();
+
+                            if (executeAfterLoading) {
+                                executeAfterLoading(levelId);
+                            }
                             _this.drawAreas(areas);
-                            if (onSuccess) onSuccess();
                         },
                         error: function (res) {
                             _this.loader.deactivate();
@@ -723,7 +726,21 @@ define(['views/common/baseview',
                 // ///////////////////////////////
                 // Origin filters:
                 if (_.has(origin, 'selectedAreas')) {
-                    // set origin areas
+                    this.origin.adminLevel = parseInt(origin.adminLevel);
+
+                    // Function to be executed after areas of this level have been loaded:
+                    let executeAfterLoading = function (adminLevel) {
+                        let labelStringArray = [];
+                        origin.selectedAreas.forEach(selectedAreaId => {
+                            let areaObject = _this.areas[adminLevel].find(area => area.attributes.id == selectedAreaId);
+                            _this.selectedAreasOrigin.push(areaObject);
+                            labelStringArray.push(areaObject.attributes.name);
+                        });
+                        $(".areaSelectionsOrigin").fadeIn();
+                        $("#areaSelectionsOriginTextarea").html(labelStringArray.join('; '));
+                        $(".selections").trigger('input');
+                    }
+                    _this.prepareAreas(this.origin.adminLevel, false, executeAfterLoading);
                 }
 
                 if (_.has(flows, 'origin_role')) {
@@ -1023,22 +1040,14 @@ define(['views/common/baseview',
 
             showAreaSelection: function (event) {
                 var _this = this;
-                var labelStringArray = [];
-                let adminLevel;
 
                 // Used to determine which 'Select area'-button the user has pressed, either 'origin', 'flows', or 'destination': 
                 _this.areaMap.block = $(event.currentTarget).data('area-select-block');
 
-                adminLevel = _this[_this.areaMap.block].adminLevel
+                let adminLevel = _this[_this.areaMap.block].adminLevel;
                 // Set the admin level for origin/destination/flows in the selectpicker
                 $(this.areaLevelSelect).val(adminLevel);
                 $(this.areaLevelSelect).selectpicker("refresh");
-                
-                // this.prepareAreas(adminLevel)
-
-
-
-
 
                 // Show the actual modal:
                 $(this.areaModal).modal('show');
@@ -1047,74 +1056,61 @@ define(['views/common/baseview',
                 setTimeout(function () {
                     // Call updateSize to render the map with the correct dimensions:
                     _this.areaMap.map.updateSize();
+                    // Fetch areas if they aren't there yet:
                     if (_this.areaLevels.length > 0) {
                         _this.changeAreaLevel();
                     }
-                    // Create ol.Collection of Features to which we can add Features:
-                    let features = _this.areaMap.layers.areas.select.getFeatures();
+                    _this.addFeaturesToMap();
+                }, 200);
+            },
 
-                    // Add the correct selected features to the areaMap:
-                    if (_this.areaMap.block == "origin") {
-                        // Add selected origin areas as selections to the map:
-                        if (_this.selectedAreasOrigin && _this.selectedAreasOrigin.length > 0) {
+            addFeaturesToMap: function () {
+                var labelStringArray = [];
+                // Create ol.Collection of Features to which we can add Features:
+                let features = this.areaMap.layers.areas.select.getFeatures();
 
-                            // Loop through all selected areas in selectedAreasOrigin:
-                            _this.selectedAreasOrigin.forEach(selectedArea => {
-                                // Get the feature object based on the id:
-                                let feature = _this.areaMap.getFeature("areas", selectedArea.id);
-                                labelStringArray.push(selectedArea.attributes.name);
+                // Add the correct selected features to the areaMap:
+                if (this.areaMap.block == "origin") {
+                    // Add selected origin areas as selections to the map:
+                    if (this.selectedAreasOrigin && this.selectedAreasOrigin.length > 0) {
 
-                                // Add it to the Features ol.Collection:
-                                features.push(feature);
-                            });
-                        }
+                        // Loop through all selected areas in selectedAreasOrigin:
+                        this.selectedAreasOrigin.forEach(selectedArea => {
+                            // Get the feature object based on the id:
+                            let feature = this.areaMap.getFeature("areas", selectedArea.id);
+                            labelStringArray.push(selectedArea.attributes.name);
 
-                    } else if (_this.areaMap.block == "destination") {
-                        // Add selected destination areas as selections to the map:
-                        if (_this.selectedAreasDestination && _this.selectedAreasDestination.length > 0) {
-
-                            // // Create ol.Collection of Features to which we can add Features:
-                            // var features = _this.areaMap.layers.areas.select.getFeatures();
-
-                            // Loop through all selected areas in selectedAreasDestination:
-                            _this.selectedAreasDestination.forEach(selectedArea => {
-                                // Get the feature object base on the id:
-                                let feature = _this.areaMap.getFeature("areas", selectedArea.id);
-                                labelStringArray.push(selectedArea.attributes.name);
-
-                                // Add it to the Features ol.Collection:
-                                features.push(feature);
-                            });
-                        }
-
-                    } else if (_this.areaMap.block == "flows") {
-                        // Add selected Flows areas as selections to the map:
-                        if (_this.selectedAreasFlows && _this.selectedAreasFlows.length > 0) {
-
-                            // // Create ol.Collection of Features to which we can add Features:
-                            // var features = _this.areaMap.layers.areas.select.getFeatures();
-
-                            // Loop through all selected areas in selectedAreasFlows:
-                            _this.selectedAreasFlows.forEach(selectedArea => {
-                                // Get the feature object base on the id:
-                                let feature = _this.areaMap.getFeature("areas", selectedArea.id);
-                                labelStringArray.push(selectedArea.attributes.name);
-
-                                // Add it to the Features ol.Collection:
-                                features.push(feature);
-                            });
-                        }
+                            // Add it to the Features ol.Collection:
+                            features.push(feature);
+                        });
                     }
 
-                    // Display the previousy selected regions in the label on the modal:
-                    $("#areaSelectionsModalTextarea").html(labelStringArray.join('; '));
+                } else if (this.areaMap.block == "destination") {
+                    // Add selected destination areas as selections to the map:
+                    if (this.selectedAreasDestination && this.selectedAreasDestination.length > 0) {
+                        this.selectedAreasDestination.forEach(selectedArea => {
+                            let feature = this.areaMap.getFeature("areas", selectedArea.id);
+                            labelStringArray.push(selectedArea.attributes.name);
+                            features.push(feature);
+                        });
+                    }
+                } else if (this.areaMap.block == "flows") {
+                    // Add selected Flows areas as selections to the map:
+                    if (this.selectedAreasFlows && this.selectedAreasFlows.length > 0) {
+                        this.selectedAreasFlows.forEach(selectedArea => {
+                            let feature = this.areaMap.getFeature("areas", selectedArea.id);
+                            labelStringArray.push(selectedArea.attributes.name);
+                            features.push(feature);
+                        });
+                    }
+                }
 
-                    // Show the text in the area selection modal Textarea and trigger input:
-                    $("#areaSelectionsModalTextarea").html(labelStringArray.join("; "));
-                    $(".selections").trigger('input');
+                // Display the previousy selected regions in the label on the modal:
+                $("#areaSelectionsModalTextarea").html(labelStringArray.join('; '));
 
-                    // End of setTimeout
-                }, 200);
+                // Show the text in the area selection modal Textarea and trigger input:
+                $("#areaSelectionsModalTextarea").html(labelStringArray.join("; "));
+                $(".selections").trigger('input');
             },
 
             resetFiltersToDefault: function () {
@@ -1131,6 +1127,7 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////////////////////
                 // Origin-controls:
+                this.origin.adminLevel = this.idOfCountryLevel;
                 $(".areaSelectionsOrigin").hide();
                 $("#areaSelectionsOriginTextarea").html("");
                 $("#origin-role-radio-production").parent().removeClass("active");
@@ -1153,6 +1150,7 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////////////////////
                 // Destination-controls:
+                this.destination.adminLevel = this.idOfCountryLevel;
                 $(".areaSelectionsDestination").hide();
                 $("#areaSelectionsDestinationTextarea").html("");
                 $("#destination-role-radio-production").parent().removeClass("active");
@@ -1173,6 +1171,7 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////////////////////
                 // Flows-controls:
+                this.flows.adminLevel = this.idOfCountryLevel;
                 $("#areaSelectionsFlows").hide();
                 $("#areaSelectionsFlowsTextarea").html("");
                 $("#areaSelectionsFlows").hide();
@@ -1217,6 +1216,8 @@ define(['views/common/baseview',
                 // ///////////////////////////////
                 // ORIGIN
 
+                filterParams.origin.adminLevel = this.origin.adminLevel;
+
                 if (this.selectedAreasOrigin !== undefined &&
                     this.selectedAreasOrigin.length > 0) {
                     filterParams.origin.selectedAreas = [];
@@ -1255,6 +1256,8 @@ define(['views/common/baseview',
                 // ///////////////////////////////
                 // DESTINATION
 
+                filterParams.destination.adminLevel = this.destination.adminLevel;
+
                 if (this.selectedAreasDestination !== undefined &&
                     this.selectedAreasDestination.length > 0) {
                     filterParams.destination.selectedAreas = [];
@@ -1291,6 +1294,9 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////
                 // FLOWS
+
+                filterParams.flows.adminLevel = this.flows.adminLevel;
+
                 if (this.selectedAreasFlows !== undefined &&
                     this.selectedAreasFlows.length > 0) {
                     filterParams.flows.selectedAreas = [];
