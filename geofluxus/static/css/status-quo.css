@@ -79,7 +79,8 @@
     max-width: 80vw;
 }
 
-#filterBlock .dropdown-menu .show {
+#filterBlock .dropdown-menu .inner.show {
+    min-width: 70px !important;
     max-width: 80vw;
     overflow-x: hidden;
     z-index: 1000;

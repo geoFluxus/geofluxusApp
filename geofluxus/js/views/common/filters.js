@@ -717,6 +717,7 @@ define(['views/common/baseview',
 
             loadFilterConfiguration: function (event) {
                 var _this = this;
+                this.resetFiltersToDefault();
                 $(".filterEdit").fadeOut();
 
                 let selectedFilterConfig = $(this.filterConfigSelect).val();
@@ -779,7 +780,7 @@ define(['views/common/baseview',
                  * @param {string} block the name of the section: 'origin' or 'destination'
                  * @param {object} savedConfig the saved filter config of the section
                  */
-                function loadSavedRole(block, savedConfig) {
+                function loadSavedRole(block) {
                     $("#" + block + "-role-radio-production").parent().removeClass("active");
                     $("#" + block + "-role-radio-both").parent().removeClass("active");
                     $("#" + block + "-role-radio-treatment").parent().removeClass("active");
@@ -827,7 +828,7 @@ define(['views/common/baseview',
                  * @param {string} block the name of the section: 'origin' or 'destination'
                  * @param {object} savedConfig the saved filter config of the section
                  */
-                function loadSavedActivities(block, savedConfig) {
+                function loadSavedActivities(block) {
 
                     let activityObjects = _this.activities.models.filter(function (activity) {
                         return flows[block + "__activity__in"].includes(activity.attributes.id.toString());
@@ -850,6 +851,7 @@ define(['views/common/baseview',
                     filterUtils.fillSelectPicker("activity", $(_this[block].activitySelect), filteredActivities);
 
                     $(_this[block].activitySelect).selectpicker('val', flows[block + "__activity__in"]);
+                    $(_this[block].activitySelect).selectpicker("refresh");
                     $(".activitySelectContainer-" + block).fadeIn("fast");
                 }
 
@@ -875,11 +877,14 @@ define(['views/common/baseview',
                 }
 
 
-
-                // Treatment methods
-                if (_.has(flows, 'origin__process__in')) {
+                /**
+                 * Load treatment methods for given section
+                 * @param {string} block the name of the section: 'origin' or 'destination'
+                 * @param {object} savedConfig the saved filter config of the section
+                 */
+                function loadSavedTreatmentMethods(block) {
                     let processObjects = _this.processes.models.filter(function (process) {
-                        return flows.origin__process__in.includes(process.attributes.id.toString());
+                        return flows[block + "__process__in"].includes(process.attributes.id.toString());
                     });
 
                     // Get activity groups to which the selected activities belong and select in selectpicker:
@@ -888,19 +893,28 @@ define(['views/common/baseview',
                         processGroupsToDisplay.push(process.attributes.processgroup.toString());
                     });
                     processGroupsToDisplay = _.uniq(processGroupsToDisplay, 'id');
-                    $(_this.origin.processGroupSelect).selectpicker('val', processGroupsToDisplay);
-                    $(_this.origin.processGroupSelect).selectpicker("refresh");
+                    $(_this[block].processGroupSelect).selectpicker('val', processGroupsToDisplay);
+                    $(_this[block].processGroupSelect).selectpicker("refresh");
 
                     // Filter all activities by the selected Activity Groups:
                     let filteredProcesses = [];
                     filteredProcesses = _this.processes.models.filter(function (process) {
                         return processGroupsToDisplay.includes(process.attributes.processgroup.toString())
                     });
-                    filterUtils.fillSelectPicker("treatmentMethod", $(_this.origin.processSelect), filteredProcesses);
+                    filterUtils.fillSelectPicker("treatmentMethod", $(_this[block].processSelect), filteredProcesses);
 
-                    $(_this.origin.processSelect).selectpicker('val', flows.origin__process__in);
-                    $("#originContainerProcesses").fadeIn("fast");
+                    $(_this[block].processSelect).selectpicker('val', flows[block + "__process__in"]);
+                    $("#" + block + "ContainerProcesses").fadeIn("fast");
                 }
+
+                // Treatment methods
+                if (_.has(flows, 'origin__process__in')) {
+                    loadSavedTreatmentMethods("origin")
+                }
+                if (_.has(flows, 'destination__process__in')) {
+                    loadSavedTreatmentMethods("destination")
+                }
+
 
                 // ///////////////////////////////
                 // Destination filters:
