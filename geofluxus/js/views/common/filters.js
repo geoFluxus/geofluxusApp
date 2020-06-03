@@ -630,6 +630,9 @@ define(['views/common/baseview',
                 var areas = this.areas[levelId];
                 if (areas && areas.size() > 0) {
                     this.drawAreas(areas)
+                    if (executeAfterLoading) {
+                        executeAfterLoading(levelId);
+                    }
                 } else {
                     areas = new Collection([], {
                         apiTag: 'areas',
