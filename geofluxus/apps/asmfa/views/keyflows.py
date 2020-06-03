@@ -34,7 +34,6 @@ from geofluxus.apps.asmfa.serializers import (Waste02CreateSerializer,
                                               CompositeCreateSerializer,
                                               YearCreateSerializer,
                                               MonthCreateSerializer)
-from django.db.models import Count
 
 
 # Waste02

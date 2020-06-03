@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.gis.db import models as gis
-from geofluxus.apps.asmfa.models import (Publication)
+from geofluxus.apps.asmfa.models import (Publication,
+                                         Activity,
+                                         Process,
+                                         Company)
 
 
 # AdminLevel
@@ -32,6 +35,7 @@ class AreaQueryset(models.query.QuerySet):
                        level=level)
         )
 
+
 # Custom AreaManager
 # for the AreaQueryset
 class AreaManager(models.Manager):
@@ -44,7 +48,28 @@ class AreaManager(models.Manager):
         return self.get_queryset().simplified(tolerance=tolerance,
                                               level=level)
 
-# Area
+    @staticmethod
+    def update_actors(created):
+        # retrieve areas
+        ids = [c.id for c in created]
+        areas = Area.objects.filter(id__in=ids)
+
+        queryset = Actor.objects
+        for c in created:
+            # fetch all actors within area
+            actors = queryset.filter(geom__within=c.geom)
+
+            # do not update actors with HIGHER admin level!
+            actors = actors.exclude(area__adminlevel__level__gt=c.adminlevel.level)
+            actors.update(area=c.pk)
+
+    # update actor on area bulk upload
+    def bulk_create(self, objs, **kwargs):
+        created = super(AreaManager, self).bulk_create(objs, **kwargs)
+        self.update_actors(created)
+        return created
+
+
 class Area(models.Model):
     # Add custom manager
     objects = AreaManager()
@@ -64,3 +89,31 @@ class Area(models.Model):
 
     def __str__(self):
         return self.name
+
+
+# Actor
+class Actor(models.Model):
+    geom = gis.PointField(blank=True,
+                          null=True)
+    activity = models.ForeignKey(Activity,
+                                 on_delete=models.CASCADE,
+                                 blank=True, null=True)
+    process = models.ForeignKey(Process,
+                                on_delete=models.CASCADE,
+                                blank=True, null=True)
+    identifier = models.CharField(max_length=255)
+    company = models.ForeignKey(Company,
+                                on_delete=models.CASCADE)
+    postcode = models.CharField(max_length=10)
+    address = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    country = models.CharField(max_length=255)
+    publication = models.ForeignKey(Publication,
+                                    null=True, blank=True,
+                                    on_delete=models.CASCADE)
+    area = models.ForeignKey(Area,
+                             null=True, blank=True,
+                             on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.identifier

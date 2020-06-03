@@ -146,6 +146,7 @@ var BulkUploadView = BaseView.extend({
                 _this.loader.deactivate();
             },
             error: function (res) {
+                console.log(res);
                 if (res.responseJSON) {
                     var msg = res.responseJSON.message;
                     if (msg) {

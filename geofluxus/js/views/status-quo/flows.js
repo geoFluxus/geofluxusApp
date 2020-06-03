@@ -420,7 +420,7 @@ define(['views/common/baseview',
 
                 // Space
                 if ($(this.dimensions.spaceToggle).prop("checked")) {
-                    let originOrDestination = $(this.dimensions.spaceOrigDest).prop("checked") ? 'destination__geom' : 'origin__geom',
+                    let originOrDestination = $(this.dimensions.spaceOrigDest).prop("checked") ? 'destination' : 'origin',
                         gran = $('#dim-space-gran-select option:selected').val();
                     filterParams.dimensions.space = {};
                     filterParams.dimensions.space.adminlevel = gran;
@@ -760,7 +760,7 @@ define(['views/common/baseview',
             renderFlowMap: function (dimensions, flows) {
                 if (this.flowMapView != null) this.flowMapView.close();
 
-                $(".flowmap-wrapper").show();
+                $(".flowmap-wrapper").fadeIn();
 
                 this.flowMapView = new FlowMapView({
                     el: ".flowmap-wrapper",
