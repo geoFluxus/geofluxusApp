@@ -19,9 +19,10 @@ define(['views/common/baseview',
                 this.origin = {};
                 this.destination = {};
                 this.flows = {};
-                this.selectedAreasOrigin = [];
-                this.selectedAreasDestination = [];
-                this.selectedAreasFlows = [];
+                this.selectedAreas = {};
+                this.selectedAreas.origin = [];
+                this.selectedAreas.destination = [];
+                this.selectedAreas.flows = [];
                 this.savedFiltersModal = "";
 
                 this.template = options.template;
@@ -143,9 +144,10 @@ define(['views/common/baseview',
 
                 // Set default admin level to Country:
                 this.idOfCountryLevel = this.areaLevels.find(level => level.attributes.level == 1).id;
-                this.origin.adminLevel = this.idOfCountryLevel;
-                this.destination.adminLevel = this.idOfCountryLevel;
-                this.flows.adminLevel = this.idOfCountryLevel;
+                this.adminLevel = {};
+                this.adminLevel.origin = this.idOfCountryLevel;
+                this.adminLevel.destination = this.idOfCountryLevel;
+                this.adminLevel.flows = this.idOfCountryLevel;
 
                 this.renderSavedFiltersModal();
                 this.renderAreaSelectModal();
@@ -191,11 +193,11 @@ define(['views/common/baseview',
                     if (eventTargetID == "origin-activitygroup-select") {
                         activityGroupsSelect = _this.origin.activityGroupsSelect;
                         activitySelect = _this.origin.activitySelect;
-                        activitySelectContainer = $(".activitySelectContainerOrigin");
+                        activitySelectContainer = $(".activitySelectContainer-origin");
                     } else if (eventTargetID == "destination-activitygroup-select") {
                         activityGroupsSelect = _this.destination.activityGroupsSelect;
                         activitySelect = _this.destination.activitySelect;
-                        activitySelectContainer = $(".activitySelectContainerDestination");
+                        activitySelectContainer = $(".activitySelectContainer-destination");
                     }
 
                     // Get the array with ID's of the selected activityGroup(s) from the .selectpicker:
@@ -536,6 +538,8 @@ define(['views/common/baseview',
                 this.areaModal.innerHTML = template({
                     levels: this.areaLevels
                 });
+                this.areaLevelSelect = this.el.querySelector('select[name="area-level-select"]');
+
                 this.areaMap = new Map({
                     el: this.areaModal.querySelector('.map'),
                     center: [-3.65, 37.53], // check centerOnLayer (map.js)
@@ -543,7 +547,6 @@ define(['views/common/baseview',
                     source: 'light',
                     opacity: 1.0
                 });
-                this.areaLevelSelect = this.el.querySelector('select[name="area-level-select"]');
                 this.areaMap.addLayer(
                     'areas', {
                         stroke: 'rgb(114, 145, 128)',
@@ -559,48 +562,48 @@ define(['views/common/baseview',
 
                                 if (_this.areaMap.block == "origin") {
                                     // The user has selected an area for the Origin block:
-                                    _this.selectedAreasOrigin = [];
+                                    _this.selectedAreas.origin = [];
                                     areaFeats.forEach(function (areaFeat) {
                                         labels.push(areaFeat.label);
-                                        _this.selectedAreasOrigin.push(areas.get(areaFeat.id));
+                                        _this.selectedAreas.origin.push(areas.get(areaFeat.id));
                                     });
 
-                                    if (_this.selectedAreasOrigin.length > 0) {
-                                        $(".areaSelectionsOrigin").fadeIn();
+                                    if (_this.selectedAreas.origin.length > 0) {
+                                        $(".areaSelections-origin").fadeIn();
                                     } else {
-                                        $(".areaSelectionsOrigin").fadeOut();
+                                        $(".areaSelections-origin").fadeOut();
                                     }
-                                    $("#areaSelectionsOriginTextarea").html(labels.join('; '))
+                                    $("#areaSelections-Textarea-origin").html(labels.join('; '))
 
                                 } else if (_this.areaMap.block == "destination") {
                                     // The user has selected an area for the Destination block:
-                                    _this.selectedAreasDestination = [];
+                                    _this.selectedAreas.destination = [];
                                     areaFeats.forEach(function (areaFeat) {
                                         labels.push(areaFeat.label);
-                                        _this.selectedAreasDestination.push(areas.get(areaFeat.id));
+                                        _this.selectedAreas.destination.push(areas.get(areaFeat.id));
                                     });
 
-                                    if (_this.selectedAreasDestination.length > 0) {
-                                        $(".areaSelectionsDestination").fadeIn();
+                                    if (_this.selectedAreas.destination.length > 0) {
+                                        $(".areaSelections-destination").fadeIn();
                                     } else {
-                                        $(".areaSelectionsDestination").fadeOut();
+                                        $(".areaSelections-destination").fadeOut();
                                     }
-                                    $("#areaSelectionsDestinationTextarea").html(labels.join('; '))
+                                    $("#areaSelections-Textarea-destination").html(labels.join('; '))
 
                                 } else if (_this.areaMap.block == "flows") {
                                     // The user has selected an area for the Flows block:
-                                    _this.selectedAreasFlows = [];
+                                    _this.selectedAreas.flows = [];
                                     areaFeats.forEach(function (areaFeat) {
                                         labels.push(areaFeat.label);
-                                        _this.selectedAreasFlows.push(areas.get(areaFeat.id));
+                                        _this.selectedAreas.flows.push(areas.get(areaFeat.id));
                                     });
 
-                                    if (_this.selectedAreasFlows.length > 0) {
-                                        $("#areaSelectionsFlows").fadeIn();
+                                    if (_this.selectedAreas.flows.length > 0) {
+                                        $("#areaSelections-flows").fadeIn();
                                     } else {
-                                        $("#areaSelectionsFlows").fadeOut();
+                                        $("#areaSelections-flows").fadeOut();
                                     }
-                                    $("#areaSelectionsFlowsTextarea").html(labels.join('; '))
+                                    $("#areaSelections-Textarea-flows").html(labels.join('; '))
                                 }
 
                                 // Show the selected areas in the textarea in the modal:
@@ -616,8 +619,7 @@ define(['views/common/baseview',
             changeAreaLevel: function () {
                 var levelId = this.areaLevelSelect.value;
 
-                // Save the current admin level as a property of this.origin/destination/flows:
-                this[this.areaMap.block].adminLevel = levelId;
+                this.adminLevel[this.areaMap.block] = levelId;
 
                 // Clear the textarea with selected areas in the modal:
                 $("#areaSelectionsModalTextarea").html("");
@@ -682,24 +684,24 @@ define(['views/common/baseview',
                 let buttonClicked = $(event.currentTarget).data('area-clear-button');
                 let _this = this;
 
-                if (buttonClicked == "origin" && _this.selectedAreasOrigin.length > 0) {
-                    _this.selectedAreasOrigin = [];
-                    $("#areaSelectionsOriginTextarea").html("");
+                if (buttonClicked == "origin" && _this.selectedAreas.origin.length > 0) {
+                    _this.selectedAreas.origin = [];
+                    $("#areaSelections-Textarea-origin").html("");
                     setTimeout(function () {
-                        $(".areaSelectionsOrigin").fadeOut();
+                        $(".areaSelections-origin").fadeOut();
                     }, 400);
 
-                } else if (buttonClicked == "destination" && _this.selectedAreasDestination.length > 0) {
-                    _this.selectedAreasDestination = [];
-                    $("#areaSelectionsDestinationTextarea").html("");
+                } else if (buttonClicked == "destination" && _this.selectedAreas.destination.length > 0) {
+                    _this.selectedAreas.destination = [];
+                    $("#areaSelections-Textarea-destination").html("");
                     setTimeout(function () {
-                        $(".areaSelectionsDestination").fadeOut();
+                        $(".areaSelections-destination").fadeOut();
                     }, 400);
-                } else if (buttonClicked == "flows" && _this.selectedAreasFlows.length > 0) {
-                    _this.selectedAreasFlows = [];
-                    $("#areaSelectionsFlowsTextarea").html("");
+                } else if (buttonClicked == "flows" && _this.selectedAreas.flows.length > 0) {
+                    _this.selectedAreas.flows = [];
+                    $("#areaSelections-Textarea-flows").html("");
                     setTimeout(function () {
-                        $("#areaSelectionsFlows").fadeOut();
+                        $("#areaSelections-flows").fadeOut();
                     }, 400);
                 }
             },
@@ -726,61 +728,109 @@ define(['views/common/baseview',
 
                 console.log("Loading saved filter configuration: ", configToLoad);
 
-                // ///////////////////////////////
-                // Origin filters:
-                if (_.has(origin, 'selectedAreas')) {
-                    this.origin.adminLevel = parseInt(origin.adminLevel);
 
-                    // Function to be executed after areas of this level have been loaded:
+                /**
+                 * Load saved areas for given section
+                 * @param {string} block the name of the section: 'origin', 'destination', or 'flows'.
+                 * @param {object} savedConfig the saved filter config of the section
+                 */
+                function loadSavedAreas(block, savedConfig) {
+                    _this.adminLevel[block] = parseInt(savedConfig.adminLevel);
+
+                    /**
+                     * Function to be executed after areas of this level have been loaded:
+                     * @param {int} adminLevel 
+                     */
                     let executeAfterLoading = function (adminLevel) {
                         let labelStringArray = [];
-                        origin.selectedAreas.forEach(selectedAreaId => {
+                        savedConfig.selectedAreas.forEach(selectedAreaId => {
                             let areaObject = _this.areas[adminLevel].find(area => area.attributes.id == selectedAreaId);
-                            _this.selectedAreasOrigin.push(areaObject);
+                            _this.selectedAreas[block].push(areaObject);
                             labelStringArray.push(areaObject.attributes.name);
                         });
-                        $(".areaSelectionsOrigin").fadeIn();
-                        $("#areaSelectionsOriginTextarea").html(labelStringArray.join('; '));
+                        $(".areaSelections-" + block).fadeIn();
+                        $("#areaSelections-Textarea-" + block).html(labelStringArray.join('; '));
                         $(".selections").trigger('input');
+                        $(".selections").textareaAutoSize();
+
+                        // Inside or outside toggle:
+                        if (savedConfig.inOrOut == 'in') {
+                            $(_this[block].inOrOut).bootstrapToggle("off");
+                        } else {
+                            $(_this[block].inOrOut).bootstrapToggle("on");
+                        }
                     }
-                    _this.prepareAreas(this.origin.adminLevel, false, executeAfterLoading);
+                    _this.prepareAreas(_this.adminLevel[block], false, executeAfterLoading);
                 }
 
-                if (_.has(flows, 'origin_role')) {
-                    $("#origin-role-radio-production").parent().removeClass("active");
-                    $("#origin-role-radio-both").parent().removeClass("active");
-                    $("#origin-role-radio-treatment").parent().removeClass("active");
+                // Load saved areas for each section:
+                if (_.has(origin, 'selectedAreas')) {
+                    loadSavedAreas("origin", origin);
+                }
+                if (_.has(destination, 'selectedAreas')) {
+                    loadSavedAreas("destination", destination);
+                }
+                if (_.has(flows, 'selectedAreas')) {
+                    loadSavedAreas("flows", flows);
+                }
 
-                    _this.origin.role = flows.origin_role;
+                /**
+                 * Load saved role for given section
+                 * @param {string} block the name of the section: 'origin' or 'destination'
+                 * @param {object} savedConfig the saved filter config of the section
+                 */
+                function loadSavedRole(block, savedConfig) {
+                    $("#" + block + "-role-radio-production").parent().removeClass("active");
+                    $("#" + block + "-role-radio-both").parent().removeClass("active");
+                    $("#" + block + "-role-radio-treatment").parent().removeClass("active");
+                    _this[block].role = flows[block + "_role"];
                     // Set origin role
-                    switch (flows.origin_role) {
+                    switch (_this[block].role) {
                         case "production":
-                            $($("#origin-role-radio-production").parent()[0]).addClass("active")
-                            $(".originContainerTreatmentMethod").hide();
-                            $(".originContainerActivity").fadeIn();
+                            $($("#" + block + "-role-radio-production").parent()[0]).addClass("active")
+                            $("." + block + "ContainerTreatmentMethod").hide();
+                            $("." + block + "ContainerActivity").fadeIn();
                             break;
                         case "both":
-                            $($("#origin-role-radio-both").parent()[0]).addClass("active")
-                            $(".originContainerActivity").fadeOut();
-                            $(".originContainerTreatmentMethod").fadeOut();
+                            $($("#" + block + "-role-radio-both").parent()[0]).addClass("active")
+                            $("." + block + "ContainerActivity").fadeOut();
+                            $("." + block + "ContainerTreatmentMethod").fadeOut();
                             break;
                         case "treatment":
-                            $($("#origin-role-radio-treatment").parent()[0]).addClass("active")
-                            $(".originContainerActivity").hide();
-                            $(".originContainerTreatmentMethod").fadeIn();
+                            $($("#" + block + "-role-radio-treatment").parent()[0]).addClass("active")
+                            $("." + block + "ContainerActivity").hide();
+                            $("." + block + "ContainerTreatmentMethod").fadeIn();
                             break;
                     }
                 }
+                if (_.has(flows, 'origin_role')) {
+                    loadSavedRole("origin", origin)
+                }
+                if (_.has(flows, 'destination_role')) {
+                    loadSavedRole("destination", destination)
+                }
 
-                // Activity group
+                /**
+                 * Load activity groups for Origin / Destination:
+                 */
                 if (_.has(flows, 'origin__activity__activitygroup__in')) {
                     $(_this.origin.activityGroupsSelect).selectpicker('val', flows.origin__activity__activitygroup__in);
                     $(_this.origin.activityGroupsSelect).selectpicker("refresh");
                 }
-                // Activities
-                if (_.has(flows, 'origin__activity__in')) {
+                if (_.has(flows, 'destination__activity__activitygroup__in')) {
+                    $(_this.destination.activityGroupsSelect).selectpicker('val', flows.destination__activity__activitygroup__in);
+                    $(_this.destination.activityGroupsSelect).selectpicker("refresh");
+                }
+
+                /**
+                 * Load activities for given section
+                 * @param {string} block the name of the section: 'origin' or 'destination'
+                 * @param {object} savedConfig the saved filter config of the section
+                 */
+                function loadSavedActivities(block, savedConfig) {
+
                     let activityObjects = _this.activities.models.filter(function (activity) {
-                        return flows.origin__activity__in.includes(activity.attributes.id.toString());
+                        return flows[block + "__activity__in"].includes(activity.attributes.id.toString());
                     });
 
                     // Get activity groups to which the selected activities belong and select in selectpicker:
@@ -789,25 +839,43 @@ define(['views/common/baseview',
                         activityGroupsToDisplay.push(activity.attributes.activitygroup.toString());
                     });
                     activityGroupsToDisplay = _.uniq(activityGroupsToDisplay, 'id');
-                    $(_this.origin.activityGroupsSelect).selectpicker('val', activityGroupsToDisplay);
-                    $(_this.origin.activityGroupsSelect).selectpicker("refresh");
+                    $(_this[block].activityGroupsSelect).selectpicker('val', activityGroupsToDisplay);
+                    $(_this[block].activityGroupsSelect).selectpicker("refresh");
 
                     // Filter all activities by the selected Activity Groups:
                     let filteredActivities = [];
                     filteredActivities = _this.activities.models.filter(function (activity) {
                         return activityGroupsToDisplay.includes(activity.attributes.activitygroup.toString())
                     });
-                    filterUtils.fillSelectPicker("activity", $(_this.origin.activitySelect), filteredActivities);
+                    filterUtils.fillSelectPicker("activity", $(_this[block].activitySelect), filteredActivities);
 
-                    $(_this.origin.activitySelect).selectpicker('val', flows.origin__activity__in);
-                    $(".activitySelectContainerOrigin").fadeIn("fast");
+                    $(_this[block].activitySelect).selectpicker('val', flows[block + "__activity__in"]);
+                    $(".activitySelectContainer-" + block).fadeIn("fast");
                 }
 
-                // Treatment method group
+
+                // Activities
+                if (_.has(flows, 'origin__activity__in')) {
+                    loadSavedActivities("origin")
+                }
+                if (_.has(flows, 'destination__activity__in')) {
+                    loadSavedActivities("destination")
+                }
+
+                /**
+                 * Load treatment method groups for Origin / Destination
+                 */
                 if (_.has(flows, 'origin__process__processgroup__in')) {
                     $(_this.origin.processGroupSelect).selectpicker('val', flows.origin__process__processgroup__in);
                     $(_this.origin.processGroupSelect).selectpicker("refresh");
                 }
+                if (_.has(flows, 'destination__process__processgroup__in')) {
+                    $(_this.destination.processGroupSelect).selectpicker('val', flows.destination__process__processgroup__in);
+                    $(_this.destination.processGroupSelect).selectpicker("refresh");
+                }
+
+
+
                 // Treatment methods
                 if (_.has(flows, 'origin__process__in')) {
                     let processObjects = _this.processes.models.filter(function (process) {
@@ -923,7 +991,6 @@ define(['views/common/baseview',
                         filter: _this.getFilterParams(),
                     },
                     success: function (response) {
-                        console.log("Postfetch update config success: ", response.models)
                         _this.reloadFilterSelectPicker(response);
 
                         $(".filterUpdated").fadeIn();
@@ -1047,7 +1114,7 @@ define(['views/common/baseview',
                 // Used to determine which 'Select area'-button the user has pressed, either 'origin', 'flows', or 'destination': 
                 _this.areaMap.block = $(event.currentTarget).data('area-select-block');
 
-                let adminLevel = _this[_this.areaMap.block].adminLevel;
+                let adminLevel = _this.adminLevel[_this.areaMap.block];
                 // Set the admin level for origin/destination/flows in the selectpicker
                 $(this.areaLevelSelect).val(adminLevel);
                 $(this.areaLevelSelect).selectpicker("refresh");
@@ -1075,10 +1142,10 @@ define(['views/common/baseview',
                 // Add the correct selected features to the areaMap:
                 if (this.areaMap.block == "origin") {
                     // Add selected origin areas as selections to the map:
-                    if (this.selectedAreasOrigin && this.selectedAreasOrigin.length > 0) {
+                    if (this.selectedAreas.origin && this.selectedAreas.origin.length > 0) {
 
-                        // Loop through all selected areas in selectedAreasOrigin:
-                        this.selectedAreasOrigin.forEach(selectedArea => {
+                        // Loop through all selected areas in selectedAreas.origin:
+                        this.selectedAreas.origin.forEach(selectedArea => {
                             // Get the feature object based on the id:
                             let feature = this.areaMap.getFeature("areas", selectedArea.id);
                             labelStringArray.push(selectedArea.attributes.name);
@@ -1090,8 +1157,8 @@ define(['views/common/baseview',
 
                 } else if (this.areaMap.block == "destination") {
                     // Add selected destination areas as selections to the map:
-                    if (this.selectedAreasDestination && this.selectedAreasDestination.length > 0) {
-                        this.selectedAreasDestination.forEach(selectedArea => {
+                    if (this.selectedAreas.destination && this.selectedAreas.destination.length > 0) {
+                        this.selectedAreas.destination.forEach(selectedArea => {
                             let feature = this.areaMap.getFeature("areas", selectedArea.id);
                             labelStringArray.push(selectedArea.attributes.name);
                             features.push(feature);
@@ -1099,8 +1166,8 @@ define(['views/common/baseview',
                     }
                 } else if (this.areaMap.block == "flows") {
                     // Add selected Flows areas as selections to the map:
-                    if (this.selectedAreasFlows && this.selectedAreasFlows.length > 0) {
-                        this.selectedAreasFlows.forEach(selectedArea => {
+                    if (this.selectedAreas.flows && this.selectedAreas.flows.length > 0) {
+                        this.selectedAreas.flows.forEach(selectedArea => {
                             let feature = this.areaMap.getFeature("areas", selectedArea.id);
                             labelStringArray.push(selectedArea.attributes.name);
                             features.push(feature);
@@ -1119,9 +1186,9 @@ define(['views/common/baseview',
             resetFiltersToDefault: function () {
                 _this = this;
 
-                _this.selectedAreasOrigin = [];
-                _this.selectedAreasDestination = [];
-                _this.selectedAreasFlows = [];
+                _this.selectedAreas.origin = [];
+                _this.selectedAreas.destination = [];
+                _this.selectedAreas.flows = [];
 
                 // HTML string for activity-select:
                 allActivitiesOptionsHTML = '<option selected value="-1">All (' + _this.activities.length + ')</option><option data-divider="true"></option>';
@@ -1130,9 +1197,11 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////////////////////
                 // Origin-controls:
-                this.origin.adminLevel = this.idOfCountryLevel;
-                $(".areaSelectionsOrigin").hide();
-                $("#areaSelectionsOriginTextarea").html("");
+                this.adminLevel.origin = this.idOfCountryLevel;
+                $(".areaSelections-origin").hide();
+                $("#areaSelections-Textarea-origin").html("");
+                $(this.origin.inOrOut).bootstrapToggle("off");
+
                 $("#origin-role-radio-production").parent().removeClass("active");
                 $("#origin-role-radio-both").parent().addClass("active")
                 $("#origin-role-radio-treatment").parent().removeClass("active");
@@ -1153,9 +1222,11 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////////////////////
                 // Destination-controls:
-                this.destination.adminLevel = this.idOfCountryLevel;
-                $(".areaSelectionsDestination").hide();
-                $("#areaSelectionsDestinationTextarea").html("");
+                this.adminLevel.destination = this.idOfCountryLevel;
+                $(".areaSelections-destination").hide();
+                $("#areaSelections-Textarea-destination").html("");
+                $(this.destination.inOrOut).bootstrapToggle("off");
+
                 $("#destination-role-radio-production").parent().removeClass("active");
                 $("#destination-role-radio-both").parent().addClass("active")
                 $("#destination-role-radio-treatment").parent().removeClass("active");
@@ -1174,10 +1245,12 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////////////////////
                 // Flows-controls:
-                this.flows.adminLevel = this.idOfCountryLevel;
-                $("#areaSelectionsFlows").hide();
-                $("#areaSelectionsFlowsTextarea").html("");
-                $("#areaSelectionsFlows").hide();
+                this.adminLevel.flows = this.idOfCountryLevel;
+                $("#areaSelections-flows").hide();
+                $("#areaSelections-Textarea-flows").html("");
+                $(this.flows.inOrOut).bootstrapToggle("off");
+
+                $("#areaSelections-flows").hide();
                 $(_this.flows.yearSelect).val("-1");
                 $(_this.flows.monthSelect).val("-1");
                 $("#monthCol").hide("fast");
@@ -1219,12 +1292,12 @@ define(['views/common/baseview',
                 // ///////////////////////////////
                 // ORIGIN
 
-                filterParams.origin.adminLevel = this.origin.adminLevel;
+                filterParams.origin.adminLevel = this.adminLevel.origin;
 
-                if (this.selectedAreasOrigin !== undefined &&
-                    this.selectedAreasOrigin.length > 0) {
+                if (this.selectedAreas.origin !== undefined &&
+                    this.selectedAreas.origin.length > 0) {
                     filterParams.origin.selectedAreas = [];
-                    this.selectedAreasOrigin.forEach(function (area) {
+                    this.selectedAreas.origin.forEach(function (area) {
                         filterParams.origin.selectedAreas.push(area.id);
                     });
                 }
@@ -1259,12 +1332,12 @@ define(['views/common/baseview',
                 // ///////////////////////////////
                 // DESTINATION
 
-                filterParams.destination.adminLevel = this.destination.adminLevel;
+                filterParams.destination.adminLevel = this.adminLevel.destination;
 
-                if (this.selectedAreasDestination !== undefined &&
-                    this.selectedAreasDestination.length > 0) {
+                if (this.selectedAreas.destination !== undefined &&
+                    this.selectedAreas.destination.length > 0) {
                     filterParams.destination.selectedAreas = [];
-                    this.selectedAreasDestination.forEach(function (area) {
+                    this.selectedAreas.destination.forEach(function (area) {
                         filterParams.destination.selectedAreas.push(area.id);
                     });
                 }
@@ -1298,12 +1371,12 @@ define(['views/common/baseview',
                 // ///////////////////////////////
                 // FLOWS
 
-                filterParams.flows.adminLevel = this.flows.adminLevel;
+                filterParams.flows.adminLevel = this.adminLevel.flows;
 
-                if (this.selectedAreasFlows !== undefined &&
-                    this.selectedAreasFlows.length > 0) {
+                if (this.selectedAreas.flows !== undefined &&
+                    this.selectedAreas.flows.length > 0) {
                     filterParams.flows.selectedAreas = [];
-                    this.selectedAreasFlows.forEach(function (area) {
+                    this.selectedAreas.flows.forEach(function (area) {
                         filterParams.flows.selectedAreas.push(area.id);
                     });
                 }
