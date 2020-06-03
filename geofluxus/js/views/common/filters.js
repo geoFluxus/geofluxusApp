@@ -887,7 +887,6 @@ define(['views/common/baseview',
                         return flows[block + "__process__in"].includes(process.attributes.id.toString());
                     });
 
-                    // Get activity groups to which the selected activities belong and select in selectpicker:
                     let processGroupsToDisplay = [];
                     processObjects.forEach(process => {
                         processGroupsToDisplay.push(process.attributes.processgroup.toString());
@@ -896,7 +895,6 @@ define(['views/common/baseview',
                     $(_this[block].processGroupSelect).selectpicker('val', processGroupsToDisplay);
                     $(_this[block].processGroupSelect).selectpicker("refresh");
 
-                    // Filter all activities by the selected Activity Groups:
                     let filteredProcesses = [];
                     filteredProcesses = _this.processes.models.filter(function (process) {
                         return processGroupsToDisplay.includes(process.attributes.processgroup.toString())
@@ -909,19 +907,96 @@ define(['views/common/baseview',
 
                 // Treatment methods
                 if (_.has(flows, 'origin__process__in')) {
-                    loadSavedTreatmentMethods("origin")
+                    loadSavedTreatmentMethods("origin");
                 }
                 if (_.has(flows, 'destination__process__in')) {
-                    loadSavedTreatmentMethods("destination")
+                    loadSavedTreatmentMethods("destination");
                 }
-
-
-                // ///////////////////////////////
-                // Destination filters:
 
 
                 // ///////////////////////////////
                 // Flows filters:
+
+                if (_.has(flows, 'flowchain__month__year__in')) {
+                    $(this.flows.yearSelect).selectpicker("val", flows.flowchain__month__year__in);
+                    $(this.flows.yearSelect).selectpicker("refresh");
+                }
+                if (_.has(flows, 'flowchain__month__in')) {
+                    let monthObjects = _this.months.models.filter(function (month) {
+                        return flows.flowchain__month__in.includes(month.attributes.id.toString());
+                    });
+
+                    let yearsToDisplay = [];
+                    monthObjects.forEach(month => {
+                        yearsToDisplay.push(month.attributes.year.toString());
+                    });
+                    yearsToDisplay = _.uniq(yearsToDisplay, 'id');
+                    $(_this.flows.yearSelect).selectpicker('val', yearsToDisplay);
+                    $(_this.flows.yearSelect).selectpicker("refresh");
+
+                    let filteredMonths = [];
+                    filteredMonths = _this.months.models.filter(function (month) {
+                        return yearsToDisplay.includes(month.attributes.year.toString())
+                    });
+                    filterUtils.fillSelectPicker("month", $(_this.flows.monthSelect), filteredMonths);
+                    $(_this.flows.monthSelect).selectpicker('val', flows.flowchain__month__in);
+                    $("#monthCol").fadeIn("fast");
+                }
+
+                // EWC
+                if (_.has(flows, 'flowchain__waste06__hazardous')) {
+                    if (flows.flowchain__waste06__hazardous) {
+                        $(this.flows.hazardousSelect).val("yes");
+                    } else {
+                        $(this.flows.hazardousSelect).val("no");
+                    }
+                    $(this.flows.hazardousSelect).selectpicker("refresh");
+                    $(this.flows.hazardousSelect).trigger('changed.bs.select');
+                }
+                
+
+                if (_.has(flows, 'flowchain__waste06__waste04__waste02__in')) {
+                    $(_this.origin.waste02Select).selectpicker('val', flows.flowchain__waste06__waste04__waste02__in);
+                    $(_this.origin.waste02Select).selectpicker("refresh");
+                }
+
+                if (_.has(flows, 'flowchain__waste06__waste04__in')) {
+                    let waste04Objects = _this.wastes04.models.filter(function (ewc4) {
+                        return flows.flowchain__waste06__waste04__in.includes(ewc4.attributes.id.toString());
+                    });
+
+                    let wastes02 = [];
+                    waste04Objects.forEach(ewc4 => {
+                        wastes02.push(ewc4.attributes.waste02.toString());
+                    });
+                    wastes02 = _.uniq(wastes02, 'id');
+                    $(_this.flows.waste02Select).selectpicker('val', wastes02);
+                    $(_this.flows.waste02Select).selectpicker("refresh");
+
+                    let filteredEwc4 = [];
+                    filteredEwc4 = _this.wastes04.models.filter(function (ewc4) {
+                        return wastes02.includes(ewc4.attributes.waste02.toString())
+                    });
+                    filterUtils.fillSelectPicker("waste04", $(_this.flows.waste04Select), filteredEwc4);
+                    $(_this.flows.waste04Select).selectpicker('val', flows.flowchain__waste06__waste04__in);
+                    $("#wastes04col").fadeIn("fast");
+                }
+
+                // this.flows.waste02Select = this.el.querySelector('select[name="flows-waste02-select"]');
+                // this.flows.waste04Select = this.el.querySelector('select[name="flows-waste04-select"]');
+                // this.flows.waste06Select = this.el.querySelector('select[name="flows-waste06-select"]');
+
+                // this.flows.materialSelect = this.el.querySelector('select[name="flows-material-select"]');
+                // this.flows.productSelect = this.el.querySelector('select[name="flows-product-select"]');
+                // this.flows.compositesSelect = this.el.querySelector('select[name="flows-composites-select"]');
+                // this.flows.routeSelect = this.el.querySelector('select[name="flows-route-select"]');
+                // this.flows.collectorSelect = this.el.querySelector('select[name="flows-collector-select"]');
+                // this.flows.hazardousSelect = this.el.querySelector('select[name="flows-hazardous-select"]');
+                // this.flows.cleanSelect = this.el.querySelector('select[name="flows-clean-select"]');
+                // this.flows.mixedSelect = this.el.querySelector('select[name="flows-mixed-select"]');
+                // this.flows.directSelect = this.el.querySelector('select[name="flows-direct-select"]');
+                // this.flows.isCompositeSelect = this.el.querySelector('select[name="flows-iscomposite-select"]');
+                // this.areaLevelSelect = this.el.querySelector('#area-level-select');
 
 
 
