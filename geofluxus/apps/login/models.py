@@ -12,3 +12,6 @@ class UserFilter(models.Model):
     filter = models.TextField()
     date = models.DateTimeField(blank=True,
                                 null=True)
+
+    def __str__(self):
+        return f'{self.user}: {self.name} ({self.date})'
