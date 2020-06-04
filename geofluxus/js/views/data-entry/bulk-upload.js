@@ -30,8 +30,8 @@ var BulkUploadView = BaseView.extend({
         // Render all models for uploading
         var upCol = this.el.querySelector('#upload-column');
         var ups = [
-            ['publicationtypes', 'Publication types'],
-            ['publications', 'Publications'],
+            ['datasettypes', 'Dataset types'],
+            ['datasets', 'Datasets'],
             ['activitygroups', 'Activity groups'],
             ['activities', 'Activities'],
             ['processgroups', 'Process groups'],

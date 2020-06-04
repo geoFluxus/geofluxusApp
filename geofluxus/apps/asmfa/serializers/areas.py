@@ -38,7 +38,7 @@ class AreaSerializer(HyperlinkedModelSerializer):
     geom = GeometryField()
     adminlevel = PrimaryKeyRelatedField(read_only=True)
     parent_area = PrimaryKeyRelatedField(read_only=True)
-    publication = PrimaryKeyRelatedField(read_only=True)
+    dataset = PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Area
@@ -50,7 +50,7 @@ class AreaSerializer(HyperlinkedModelSerializer):
                   'geom',
                   'parent_area',
                   'inhabitants',
-                  'publication')
+                  'dataset')
 
 
 class AreaListSerializer(AreaSerializer):
@@ -62,7 +62,7 @@ class AreaListSerializer(AreaSerializer):
                   'geom',
                   'parent_area',
                   'inhabitants',
-                  'publication')
+                  'dataset')
 
 
 # Actor
@@ -71,7 +71,7 @@ class ActorSerializer(HyperlinkedModelSerializer):
     activity = PrimaryKeyRelatedField(read_only=True)
     process = PrimaryKeyRelatedField(read_only=True)
     company = PrimaryKeyRelatedField(read_only=True)
-    publication = PrimaryKeyRelatedField(read_only=True)
+    dataset = PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Actor
@@ -87,7 +87,7 @@ class ActorSerializer(HyperlinkedModelSerializer):
                   'address',
                   'city',
                   'country',
-                  'publication',)
+                  'dataset',)
 
 
 class ActorListSerializer(ActorSerializer):
@@ -102,4 +102,4 @@ class ActorListSerializer(ActorSerializer):
                   'address',
                   'city',
                   'country',
-                  'publication',)
+                  'dataset',)

@@ -1,48 +1,48 @@
 from rest_framework.serializers import (HyperlinkedModelSerializer,
                                         PrimaryKeyRelatedField)
-from geofluxus.apps.asmfa.models import (PublicationType,
-                                         Publication)
+from geofluxus.apps.asmfa.models import (DatasetType,
+                                         Dataset)
 
 
-# PublicationType
-class PublicationTypeSerializer(HyperlinkedModelSerializer):
+# DatasetType
+class DatasetTypeSerializer(HyperlinkedModelSerializer):
     class Meta:
-        model = PublicationType
+        model = DatasetType
         fields = ('url',
                   'id',
                   'name')
 
 
-class PublicationTypeListSerializer(PublicationTypeSerializer):
-    class Meta(PublicationTypeSerializer.Meta):
+class DatasetTypeListSerializer(DatasetTypeSerializer):
+    class Meta(DatasetTypeSerializer.Meta):
         fields = ('id',
                   'name')
 
 
-# Publication
-class PublicationSerializer(HyperlinkedModelSerializer):
-    publicationtype = PrimaryKeyRelatedField(read_only=True)
+# Dataset
+class DatasetSerializer(HyperlinkedModelSerializer):
+    datasettype = PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
-        model = Publication
+        model = Dataset
         fields = ('url',
                   'id',
                   'citekey',
                   'author',
                   'note',
                   'title',
-                  'publicationtype',
+                  'datasettype',
                   'url',
                   'file_url')
 
 
-class PublicationListSerializer(PublicationSerializer):
-    class Meta(PublicationSerializer.Meta):
+class DatasetListSerializer(DatasetSerializer):
+    class Meta(DatasetSerializer.Meta):
         fields = ('id',
                   'citekey',
                   'author',
                   'note',
                   'title',
-                  'publicationtype',
+                  'datasettype',
                   'url',
                   'file_url')

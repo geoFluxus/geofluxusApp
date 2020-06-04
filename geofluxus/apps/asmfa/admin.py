@@ -24,8 +24,8 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          ExtraDescription,
                                          AdminLevel,
                                          Area,
-                                         Publication,
-                                         PublicationType,
+                                         Dataset,
+                                         DatasetType,
                                          Routing,
                                          Vehicle)
 
@@ -189,8 +189,8 @@ class AreaAdmin(CustomAdmin):
     search_fields = ['name']
 
 
-admin.site.register(Publication, CustomAdmin)
-admin.site.register(PublicationType, CustomAdmin)
+admin.site.register(Dataset, CustomAdmin)
+admin.site.register(DatasetType, CustomAdmin)
 
 
 # Routing

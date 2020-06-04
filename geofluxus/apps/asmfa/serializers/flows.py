@@ -66,7 +66,7 @@ class FlowChainSerializer(HyperlinkedModelSerializer):
     materials = MaterialSerializer(read_only=True, many=True)
     products = ProductSerializer(read_only=True, many=True)
     composites = CompositeSerializer(read_only=True, many=True)
-    publication = PrimaryKeyRelatedField(read_only=True)
+    dataset = PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = FlowChain
@@ -83,7 +83,7 @@ class FlowChainSerializer(HyperlinkedModelSerializer):
                   'materials',
                   'products',
                   'composites',
-                  'publication')
+                  'dataset')
 
 
 class FlowChainListSerializer(FlowChainSerializer):
@@ -100,7 +100,7 @@ class FlowChainListSerializer(FlowChainSerializer):
                   'materials',
                   'products',
                   'composites',
-                  'publication')
+                  'dataset')
 
 
 # Flow

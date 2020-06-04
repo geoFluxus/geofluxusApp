@@ -4,7 +4,8 @@ from geofluxus.apps.utils.views import (PostGetViewMixin,
 from geofluxus.apps.asmfa.models import (Flow,
                                          Classification,
                                          Area,
-                                         Routing)
+                                         Routing,)
+from geofluxus.apps.login.models import (UserDataset,)
 from geofluxus.apps.asmfa.serializers import (FlowSerializer)
 import json
 import numpy as np
@@ -27,15 +28,26 @@ class FilterFlowViewSet(PostGetViewMixin,
         filtered flows according to user selections
         '''
 
+        # retrieve request user
+        user = request.user
+
         # anonymize for Demo Group
         anonymous = False
-        user_groups = request.user.groups.values_list('name', flat=True)
+        user_groups = user.groups.values_list('name', flat=True)
         if 'Demo' in user_groups:
             anonymous = True
 
         # filter by query params
         queryset = self._filter(kwargs, query_params=request.query_params,
                                 SerializerClass=self.get_serializer_class())
+
+        # filter by user datasets
+        datasets = UserDataset.objects.filter(user__id=user.id)
+        if datasets:
+            ids = datasets[0].datasets.values_list('id', flat=True)
+            queryset = queryset.filter(flowchain__dataset__id__in=ids)
+        else:
+            return Response("No datasets for user")
 
         # retrieve filters
         params = {}

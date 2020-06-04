@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from geofluxus.apps.asmfa.models import Publication
+from geofluxus.apps.asmfa.models import Dataset
 
 
 # Save / edit user filters
@@ -18,20 +18,20 @@ class UserFilter(models.Model):
         return f'{self.user}: {self.name} ({self.date})'
 
 
-# Relate users to publications
-class UserPublication(models.Model):
+# Relate users to datasets
+class UserDataset(models.Model):
     user = models.ForeignKey(User,
                              on_delete=models.CASCADE)
-    publications = models.ManyToManyField(Publication,
-                                          through='PublicationInUser')
+    datasets = models.ManyToManyField(Dataset,
+                                      through='DatasetInUser')
 
     def __str__(self):
         return f'{self.user}'
 
 
-# PublicationInChain
-class PublicationInUser(models.Model):
-    userpublication = models.ForeignKey(UserPublication,
-                                        on_delete=models.CASCADE)
-    publication = models.ForeignKey(Publication,
+# DatasetInUser
+class DatasetInUser(models.Model):
+    userdataset = models.ForeignKey(UserDataset,
                                     on_delete=models.CASCADE)
+    dataset = models.ForeignKey(Dataset,
+                                on_delete=models.CASCADE)

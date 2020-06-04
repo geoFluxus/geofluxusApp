@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.gis.db import models as gis
-from geofluxus.apps.asmfa.models import (Publication,
+from geofluxus.apps.asmfa.models import (Dataset,
                                          Activity,
                                          Process,
                                          Company)
@@ -83,9 +83,9 @@ class Area(models.Model):
     parent_area = models.ForeignKey("self", null=True, blank=True,
                                      on_delete=models.CASCADE)
     inhabitants = models.BigIntegerField(default=0)
-    publication = models.ForeignKey(Publication,
-                                    null=True, blank=True,
-                                    on_delete=models.CASCADE)
+    dataset = models.ForeignKey(Dataset,
+                                null=True, blank=True,
+                                on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -108,9 +108,9 @@ class Actor(models.Model):
     address = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
     country = models.CharField(max_length=255)
-    publication = models.ForeignKey(Publication,
-                                    null=True, blank=True,
-                                    on_delete=models.CASCADE)
+    dataset = models.ForeignKey(Dataset,
+                                null=True, blank=True,
+                                on_delete=models.CASCADE)
     area = models.ForeignKey(Area,
                              null=True, blank=True,
                              on_delete=models.SET_NULL)
