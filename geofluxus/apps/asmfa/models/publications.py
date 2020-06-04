@@ -16,7 +16,8 @@ class Publication(models.Model):
     title = models.CharField(max_length=255)
     note = models.TextField()
     publicationtype = models.ForeignKey(PublicationType,
-                                        on_delete=models.CASCADE)
+                                        null=True, blank=True,
+                                        on_delete=models.SET_NULL)
     url = models.URLField(max_length=200,
                           blank=True,
                           null=True)
