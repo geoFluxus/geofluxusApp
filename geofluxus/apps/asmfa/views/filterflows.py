@@ -48,7 +48,7 @@ class FilterFlowViewSet(PostGetViewMixin,
             ids = user_datasets[0].datasets.values_list('id', flat=True)
             queryset = queryset.filter(flowchain__dataset__id__in=ids)
         else:
-            return Response("No datasets for user")
+            return Response("No datasets for user", status=500)
 
         # retrieve filters
         params = {}

@@ -67,7 +67,8 @@ class UserFilterViewSet(PostGetViewMixin,
 
             # if name does not exist, create
             if name in names:
-                return Response('Warning: Name exists!')
+                return Response('A filter with this name already exists. '
+                                'Please fill in another name.', status=500)
             else:
                 filter = params.pop('filter', None)
                 new = UserFilter(user=user,
@@ -85,7 +86,16 @@ class UserFilterViewSet(PostGetViewMixin,
 
             # update name
             name = params.pop('name', None)
-            if name: filter.update(name=name)
+            if name:
+                # check all other filter names
+                names = UserFilter.objects.filter(user__id=user_id) \
+                                          .exclude(id=id) \
+                                          .values_list('name', flat=True)
+                if name in names:
+                    return Response('A filter with this name already exists. '
+                                    'Please fill in another name.', status=500)
+                else:
+                    filter.update(name=name)
 
             # update filter params
             filterParams = params.pop('filter', None)

@@ -1112,6 +1112,11 @@ define(['views/common/baseview',
                         },
                         error: function (error) {
                             console.log(error);
+                            $(".newMode #filterNameExists").html("<span>A filter with this name already exists.</span><br><span>Please fill in another name.</span>")
+                            $(".newMode #filterNameExists").fadeIn();
+                            setTimeout(() => {
+                                $(".newMode #filterNameExists").fadeOut();
+                            }, 3000);
                         }
                     });
                 }
@@ -1198,6 +1203,11 @@ define(['views/common/baseview',
                         },
                         error: function (error) {
                             console.log(error);
+                            $(".savedMode #filterNameExists").html("<span>A filter with this name already exists.</span><br><span>Please fill in another name.</span>")
+                            $(".savedMode #filterNameExists").fadeIn();
+                            setTimeout(() => {
+                                $(".savedMode #filterNameExists").fadeOut();
+                            }, 3000);
                         }
                     });
                 }
