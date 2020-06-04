@@ -649,6 +649,7 @@ define(['views/common/baseview',
                             _this.loader.deactivate();
 
                             if (executeAfterLoading) {
+                                _this.areas[levelId] = areas;
                                 executeAfterLoading(_this, levelId, block);
                             }
                             _this.drawAreas(areas);
