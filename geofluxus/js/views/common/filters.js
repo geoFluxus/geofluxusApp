@@ -982,8 +982,49 @@ define(['views/common/baseview',
                     $("#wastes04col").fadeIn("fast");
                 }
 
-                // this.flows.waste02Select = this.el.querySelector('select[name="flows-waste02-select"]');
-                // this.flows.waste04Select = this.el.querySelector('select[name="flows-waste04-select"]');
+                if (_.has(flows, 'flowchain__waste06__in')) {
+                    let waste6Objects = _this.wastes06.models.filter(function (ewc6) {
+                        return flows.flowchain__waste06__in.includes(ewc6.attributes.id.toString());
+                    });
+
+                    // EWC 4 to which EWC6 belong:
+                    let wastes04 = [];
+                    waste6Objects.forEach(ewc6 => {
+                        wastes04.push(ewc6.attributes.waste04.toString());
+                    });
+                    wastes04 = _.uniq(wastes04, 'id');
+                    let waste04Objects = _this.wastes04.models.filter(function (ewc4) {
+                        return wastes04.includes(ewc4.attributes.id.toString());
+                    });
+
+                    // EWC2 to which EWC 4 belong:
+                    let wastes02 = [];
+                    waste04Objects.forEach(ewc4 => {
+                        wastes02.push(ewc4.attributes.waste02.toString());
+                    });
+                    wastes02 = _.uniq(wastes02, 'id');
+                    $(_this.flows.waste02Select).selectpicker('val', wastes02);
+                    $(_this.flows.waste02Select).selectpicker("refresh");
+
+                    // Select EWC4 after EWC2 automatically fills EWC4:
+                    $(_this.flows.waste04Select).selectpicker('val', wastes04);
+                    $(_this.flows.waste04Select).selectpicker("refresh");
+                    $("#wastes04col").fadeIn("fast");
+
+                    // Fill EWC6 after EWC4:
+                    let filteredEwc6 = [];
+                    filteredEwc6 = _this.wastes06.models.filter(function (ewc6) {
+                        return wastes04.includes(ewc6.attributes.waste04.toString())
+                    });
+                    filterUtils.fillSelectPicker("waste06", $(_this.flows.waste06Select), filteredEwc6);
+                    $(_this.flows.waste06Select).selectpicker('val', flows.flowchain__waste06__in);
+                    $("#wastes06col").fadeIn("fast");
+                }
+
+
+
+
+
                 // this.flows.waste06Select = this.el.querySelector('select[name="flows-waste06-select"]');
 
                 // this.flows.materialSelect = this.el.querySelector('select[name="flows-material-select"]');
@@ -996,8 +1037,6 @@ define(['views/common/baseview',
                 // this.flows.mixedSelect = this.el.querySelector('select[name="flows-mixed-select"]');
                 // this.flows.directSelect = this.el.querySelector('select[name="flows-direct-select"]');
                 // this.flows.isCompositeSelect = this.el.querySelector('select[name="flows-iscomposite-select"]');
-                // this.areaLevelSelect = this.el.querySelector('#area-level-select');
-
 
 
                 $(".filterLoaded").fadeIn();
