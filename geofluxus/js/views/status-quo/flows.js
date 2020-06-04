@@ -64,13 +64,17 @@ define(['views/common/baseview',
 
             // Rendering
             render: function () {
+                
                 var html = document.getElementById(this.template).innerHTML;
                 var template = _.template(html)
-
+                
                 this.el.innerHTML = template({
                     levels: this.areaLevels,
                     maxNumberOfDimensions: this.maxNumberOfDimensions
                 });
+                
+                // Render flow filters:
+                this.renderFiltersView();
 
                 // Activate help icons
                 var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
@@ -78,8 +82,6 @@ define(['views/common/baseview',
                     trigger: "focus"
                 });
 
-                // Render flow filters:
-                this.renderFiltersView();
 
                 // Dimension and granularity controls:
                 this.initializeControls();

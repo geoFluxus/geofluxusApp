@@ -60,6 +60,7 @@ class FilterFlowViewSet(PostGetViewMixin,
 
         # retrieve non-spatial filters
         filters = params.pop('flows', {})
+        filters.pop('adminLevel', None)
 
         # retrieve spatial filters
         origin_areas = params.pop('origin', {})

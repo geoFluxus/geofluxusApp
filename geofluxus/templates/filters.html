@@ -63,11 +63,11 @@
                         </div>
                     </div>
 
-                    <div class='row areaSelectionsOrigin' style="display: none;">
+                    <div class='row areaSelections-origin' style="display: none;">
                         <div class="col-md-4">
 
                             <textarea class="form-control-sm textarea-autosize selections"
-                                id="areaSelectionsOriginTextarea" style="width: 100% !important; display: inline-block"
+                                id="areaSelections-Textarea-origin" style="width: 100% !important; display: inline-block"
                                 type="text" readonly></textarea>
 
                             <button id="clear-origin-areas-button" class="btn btn-sm btn-primary clear-areas-button"
@@ -78,7 +78,7 @@
                         </div>
                     </div>
 
-                    <div class="row mt-2 areaSelectionsOrigin" style="display: none;">
+                    <div class="row mt-2 areaSelections-origin" style="display: none;">
                         <div class="col">
                             <div style="display: block;">
                                 <label style="display: inline-block;">The origin of the flows must be</label>
@@ -152,20 +152,24 @@
                                 </a>
                             </div>
 
-                            <select id="origin-activitygroup-select" name="origin-activitygroup-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true"
-                                data-dropup-auto="false" data-size="6" style="resize: vertical;">
+                            <select id="origin-activitygroup-select"
+                                    class="form-control form-control-sm selectpicker"
+                                    name="origin-activitygroup-select"
+                                    multiple
+                                    data-live-search="true"
+                                    data-dropup-auto="false"
+                                    data-size="6"
+                                    style="resize: vertical;">
                                 <option selected value="-1">All (<%= activityGroups.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% activityGroups.forEach(function(activitygroup){ %>
-                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>
-                                    <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
+                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>. <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
                                 </option>
                                 <% }); %>
                             </select>
                         </div>
 
-                        <div class="col-md-4 activitySelectContainer activitySelectContainerOrigin"
+                        <div class="col-md-4 activitySelectContainer activitySelectContainer-origin"
                             style="display: none">
 
                             <label for="origin-activity-select">Activity</label>
@@ -184,9 +188,15 @@
                             </div>
 
                             <i class="fas fa-angle-double-right filterDoubleChevron"></i>
-                            <select id="origin-activity-select" name="origin-activity-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true"
-                                data-dropup-auto="false" data-size="6" style="resize: vertical;">
+                            <select
+                                id="origin-activity-select"
+                                class="form-control form-control-sm selectpicker"
+                                name="origin-activity-select"
+                                multiple
+                                data-live-search="true"
+                                data-dropup-auto="false"
+                                data-size="6"
+                                style="resize: vertical;">
                             </select>
                         </div>
                     </div>
@@ -214,8 +224,7 @@
                                 <option selected value="-1">All (<%= processgroups.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% processgroups.forEach(function(process){ %>
-                                <option value="<%= process.id %>"><%= process.get('code') %>
-                                    <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
+                                <option value="<%= process.id %>"><%= process.get('code') %>. <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
                                 </option>
                                 <% }); %>
                             </select>
@@ -292,11 +301,11 @@
                         </div>
                     </div>
 
-                    <div class='row areaSelectionsDestination' style="display: none;">
+                    <div class='row areaSelections-destination' style="display: none;">
                         <div class="col-md-4">
 
                             <textarea class="form-control-sm textarea-autosize selections"
-                                id="areaSelectionsDestinationTextarea"
+                                id="areaSelections-Textarea-destination"
                                 style="width: 100% !important; display: inline-block" type="text" readonly></textarea>
 
                             <button id="clear-destination-areas-button"
@@ -307,7 +316,7 @@
 
                         </div>
                     </div>
-                    <div class="row mt-2 areaSelectionsDestination" style="display: none;">
+                    <div class="row mt-2 areaSelections-destination" style="display: none;">
                         <div class="col">
                             <div style="display: block;">
                                 <label style="display: inline-block;">The destination of the flows must be</label>
@@ -387,13 +396,12 @@
                                 <option selected value="-1">All (<%= activityGroups.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% activityGroups.forEach(function(activitygroup){ %>
-                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>
-                                    <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
+                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>. <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
                                 </option>
                                 <% }); %>
                             </select>
                         </div>
-                        <div class="col-md-4 activitySelectContainer activitySelectContainerDestination"
+                        <div class="col-md-4 activitySelectContainer activitySelectContainer-destination"
                             style="display: none">
                             <label for="destination-activity-select">Activity</label>
                             <div class="labelHelpiconContainer">
@@ -441,8 +449,7 @@
                                 <option selected value="-1">All (<%= processgroups.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% processgroups.forEach(function(process){ %>
-                                <option value="<%= process.id %>"><%= process.get('code') %>
-                                    <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
+                                <option value="<%= process.id %>"><%= process.get('code') %>. <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
                                 </option>
                                 <% }); %>
                             </select>
@@ -516,11 +523,11 @@
 
                         </div>
                     </div>
-                    <div class='row' id="areaSelectionsFlows" style="display: none;">
+                    <div class='row' id="areaSelections-flows" style="display: none;">
                         <div class="col-md-4">
 
                             <textarea class="form-control-sm textarea-autosize selections"
-                                id="areaSelectionsFlowsTextarea" style="width: 100% !important; display: inline-block"
+                                id="areaSelections-Textarea-flows" style="width: 100% !important; display: inline-block"
                                 type="text" readonly></textarea>
                             <button id="clear-flows-areas-button" class="btn btn-sm btn-primary clear-areas-button"
                                 data-area-clear-button="flows">
@@ -928,28 +935,46 @@
                     </div>
                     
                     <div class='row pt-2 pb-2 savedMode'>
-                        <div class="col d-flex justify-content-between">
-                            <button id='delete-filter-config' class="btn btn-sm btn-secondary w-25" title="Delete the selected filter configuration.">Delete</button>
-                            <button id='edit-filter-name' class="btn btn-sm btn-secondary w-25" title="Rename the selected filter configuration.">Rename</button>
-                            <button id='update-filter-config' class="btn btn-sm btn-secondary w-25" title="Update this filter with the current filter configuration.">Update</button>
-                            <button id='load-filter-config' class="btn btn-sm btn-primary w-25" title="Load the selected filter configuration.">Load</button>
+                        <div class="col d-flex justify-content-between fourButtons">
+                            <button id='delete-filter-config' class="btn btn-secondary w-25" title="Delete the selected filter configuration.">Delete</button>
+                            <button id='edit-filter-name' class="btn btn-secondary w-25" title="Rename the selected filter configuration.">Rename</button>
+                            <button id='update-filter-config' class="btn btn-secondary w-25" title="Update this filter with the current filter configuration.">Update</button>
+                            <button id='load-filter-config' class="btn btn-primary w-25" title="Load the selected filter configuration.">Load</button>
                         </div>
                     </div>
-    
-                    <div class='row pt-4 pb-2 mb-4 filterEdit' style="display: none;">
+
+                    <div class='row pt-4 pb-2 mb-3 filterUpdated' style="display: none;">
+                        <div class="col d-flex">
+                            <small class="text-white w-100 text-center">Filter has been updated!</small>
+                        </div>
+                    </div>
+
+                    <div class='row pt-4 pb-2 mb-3 filterLoaded' style="display: none;">
+                        <div class="col d-flex">
+                            <small class="text-white w-100 text-center">Filters have been loaded!</small>
+                        </div>
+                    </div>
+
+                    <div class='row pt-4 pb-2 mb-3 filterEdit' style="display: none;">
                         <div class="col d-flex">
 
-                            <div class="form-group w-100">
+                            <div class="form-group w-75">
                                 <input type="text" class="form-control-sm w-100" maxlength="255" id="update-filter-name" placeholder="Filter name" style="height: 38px; border: none; padding-left: 1rem;" required>
                                 <div class="invalid-feedback w-100 text-center mt-4">Please fill in a filter name.</div>
-                                <small id="filterNameUpdated" class="form-text text-white w-100 text-center mt-4" style="display: none;">Filter name has been updated!</small>
+                                <small id="filterNameUpdated" class="form-text text-white w-100 text-center mt-4" style="display: none;">Filter has been renamed!</small>
                             </div>
 
-                            <button id='save-filter-name'
-                                    type="submit"
-                                    class="btn btn-primary"
-                                    style="width: 6.65rem; height: 38px; margin-left: 4px;"
-                                    title="Save the filter name">Save</button>
+                            <div class="w-25 d-flex justify-content-between">
+                                <button class="btn btn-sm btn-secondary hide-filter-name-button" type="submit">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                <button id='save-filter-name'
+                                        type="submit"
+                                        class="btn btn-primary"
+                                        style="width: 4.3rem; height: 38px;"
+                                        title="Save the filter name">Save</button>
+                            </div>
+
                         </div>
                     </div>
                 </form>
