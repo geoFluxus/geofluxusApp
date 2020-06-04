@@ -175,6 +175,23 @@ label[for="flows-waste06-select"] {
     height: 38px !important;
     width: 38px !important;
     border-radius: 19px;
+    padding: 0;
+    text-align: center;
+    border: 0;
+}
+
+
+.savedMode button {
+    margin-right: 0.25rem;
+    margin-left: 0.25rem
+}
+
+.savedMode button:first-child {
+    margin-left: 0;
+}
+
+.savedMode button:last-child {
+    margin-right: 0;
 }
 
 .hide-filter-name-button .fas.fa-times {

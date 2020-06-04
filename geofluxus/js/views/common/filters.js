@@ -627,13 +627,13 @@ define(['views/common/baseview',
                 this.prepareAreas(levelId, true);
             },
 
-            prepareAreas: function (levelId, loaderOn, executeAfterLoading) {
+            prepareAreas: function (levelId, loaderOn, executeAfterLoading, block) {
                 var _this = this;
                 var areas = this.areas[levelId];
                 if (areas && areas.size() > 0) {
                     this.drawAreas(areas)
                     if (executeAfterLoading) {
-                        executeAfterLoading(levelId);
+                        executeAfterLoading(_this, levelId, block);
                     }
                 } else {
                     areas = new Collection([], {
@@ -649,7 +649,7 @@ define(['views/common/baseview',
                             _this.loader.deactivate();
 
                             if (executeAfterLoading) {
-                                executeAfterLoading(levelId);
+                                executeAfterLoading(_this, levelId, block);
                             }
                             _this.drawAreas(areas);
                         },
@@ -742,10 +742,10 @@ define(['views/common/baseview',
                      * Function to be executed after areas of this level have been loaded:
                      * @param {int} adminLevel 
                      */
-                    let executeAfterLoading = function (adminLevel) {
+                    let executeAfterLoading = function (_this, adminLevel, block) {
                         let labelStringArray = [];
                         savedConfig.selectedAreas.forEach(selectedAreaId => {
-                            let areaObject = _this.areas[adminLevel].find(area => area.attributes.id == selectedAreaId);
+                            let areaObject = _this.areas[adminLevel].models.find(area => area.attributes.id == selectedAreaId);
                             _this.selectedAreas[block].push(areaObject);
                             labelStringArray.push(areaObject.attributes.name);
                         });
@@ -761,7 +761,7 @@ define(['views/common/baseview',
                             $(_this[block].inOrOut).bootstrapToggle("on");
                         }
                     }
-                    _this.prepareAreas(_this.adminLevel[block], false, executeAfterLoading);
+                    _this.prepareAreas(_this.adminLevel[block], false, executeAfterLoading, block);
                 }
 
                 // Load saved areas for each section:
@@ -816,11 +816,9 @@ define(['views/common/baseview',
                  */
                 if (_.has(flows, 'origin__activity__activitygroup__in')) {
                     $(_this.origin.activityGroupsSelect).selectpicker('val', flows.origin__activity__activitygroup__in);
-                    $(_this.origin.activityGroupsSelect).selectpicker("refresh");
                 }
                 if (_.has(flows, 'destination__activity__activitygroup__in')) {
                     $(_this.destination.activityGroupsSelect).selectpicker('val', flows.destination__activity__activitygroup__in);
-                    $(_this.destination.activityGroupsSelect).selectpicker("refresh");
                 }
 
                 /**
@@ -841,7 +839,6 @@ define(['views/common/baseview',
                     });
                     activityGroupsToDisplay = _.uniq(activityGroupsToDisplay, 'id');
                     $(_this[block].activityGroupsSelect).selectpicker('val', activityGroupsToDisplay);
-                    $(_this[block].activityGroupsSelect).selectpicker("refresh");
 
                     // Filter all activities by the selected Activity Groups:
                     let filteredActivities = [];
@@ -851,7 +848,6 @@ define(['views/common/baseview',
                     filterUtils.fillSelectPicker("activity", $(_this[block].activitySelect), filteredActivities);
 
                     $(_this[block].activitySelect).selectpicker('val', flows[block + "__activity__in"]);
-                    $(_this[block].activitySelect).selectpicker("refresh");
                     $(".activitySelectContainer-" + block).fadeIn("fast");
                 }
 
@@ -869,11 +865,9 @@ define(['views/common/baseview',
                  */
                 if (_.has(flows, 'origin__process__processgroup__in')) {
                     $(_this.origin.processGroupSelect).selectpicker('val', flows.origin__process__processgroup__in);
-                    $(_this.origin.processGroupSelect).selectpicker("refresh");
                 }
                 if (_.has(flows, 'destination__process__processgroup__in')) {
                     $(_this.destination.processGroupSelect).selectpicker('val', flows.destination__process__processgroup__in);
-                    $(_this.destination.processGroupSelect).selectpicker("refresh");
                 }
 
 
@@ -893,7 +887,6 @@ define(['views/common/baseview',
                     });
                     processGroupsToDisplay = _.uniq(processGroupsToDisplay, 'id');
                     $(_this[block].processGroupSelect).selectpicker('val', processGroupsToDisplay);
-                    $(_this[block].processGroupSelect).selectpicker("refresh");
 
                     let filteredProcesses = [];
                     filteredProcesses = _this.processes.models.filter(function (process) {
@@ -919,7 +912,6 @@ define(['views/common/baseview',
 
                 if (_.has(flows, 'flowchain__month__year__in')) {
                     $(this.flows.yearSelect).selectpicker("val", flows.flowchain__month__year__in);
-                    $(this.flows.yearSelect).selectpicker("refresh");
                 }
                 if (_.has(flows, 'flowchain__month__in')) {
                     let monthObjects = _this.months.models.filter(function (month) {
@@ -932,7 +924,6 @@ define(['views/common/baseview',
                     });
                     yearsToDisplay = _.uniq(yearsToDisplay, 'id');
                     $(_this.flows.yearSelect).selectpicker('val', yearsToDisplay);
-                    $(_this.flows.yearSelect).selectpicker("refresh");
 
                     let filteredMonths = [];
                     filteredMonths = _this.months.models.filter(function (month) {
@@ -950,14 +941,12 @@ define(['views/common/baseview',
                     } else {
                         $(this.flows.hazardousSelect).val("no");
                     }
-                    $(this.flows.hazardousSelect).selectpicker("refresh");
                     $(this.flows.hazardousSelect).trigger('changed.bs.select');
                 }
-                
+
 
                 if (_.has(flows, 'flowchain__waste06__waste04__waste02__in')) {
                     $(_this.origin.waste02Select).selectpicker('val', flows.flowchain__waste06__waste04__waste02__in);
-                    $(_this.origin.waste02Select).selectpicker("refresh");
                 }
 
                 if (_.has(flows, 'flowchain__waste06__waste04__in')) {
@@ -971,7 +960,6 @@ define(['views/common/baseview',
                     });
                     wastes02 = _.uniq(wastes02, 'id');
                     $(_this.flows.waste02Select).selectpicker('val', wastes02);
-                    $(_this.flows.waste02Select).selectpicker("refresh");
 
                     let filteredEwc4 = [];
                     filteredEwc4 = _this.wastes04.models.filter(function (ewc4) {
@@ -1004,11 +992,9 @@ define(['views/common/baseview',
                     });
                     wastes02 = _.uniq(wastes02, 'id');
                     $(_this.flows.waste02Select).selectpicker('val', wastes02);
-                    $(_this.flows.waste02Select).selectpicker("refresh");
 
                     // Select EWC4 after EWC2 automatically fills EWC4:
                     $(_this.flows.waste04Select).selectpicker('val', wastes04);
-                    $(_this.flows.waste04Select).selectpicker("refresh");
                     $("#wastes04col").fadeIn("fast");
 
                     // Fill EWC6 after EWC4:
@@ -1021,23 +1007,67 @@ define(['views/common/baseview',
                     $("#wastes06col").fadeIn("fast");
                 }
 
+                // Materials
+                if (_.has(flows, 'flowchain__materials__in')) {
+                    $(this.flows.materialSelect).selectpicker("val", flows.flowchain__materials__in);
+                }
+                // Products
+                if (_.has(flows, 'flowchain__products__in')) {
+                    $(this.flows.productSelect).selectpicker("val", flows.flowchain__products__in);
+                }
+                // Composites
+                if (_.has(flows, 'flowchain__composites__in')) {
+                    $(this.flows.compositesSelect).selectpicker("val", flows.flowchain__composites__in);
+                }
 
+                // Composites
+                if (_.has(flows, 'flowchain__composites__in')) {
+                    $(this.flows.compositesSelect).selectpicker("val", flows.flowchain__composites__in);
+                }
 
+                function loadBooleanFilters(filter) {
+                    let valuesToSet = [];
+                    if (flows[filter].includes(false)) {
+                        valuesToSet.push("no");
+                    }
+                    if (flows[filter].includes(true)) {
+                        valuesToSet.push("yes");
+                    }
+                    if (flows[filter].includes(null)) {
+                        valuesToSet.push("unknown");
+                    }
 
+                    if (filter == "composite"){
+                        filter = "isComposite";
+                    }                    
+                    $(_this.flows[filter + "Select"]).selectpicker("val", valuesToSet);
+                }
+                let booleanFilters = ["clean", "mixed", "direct", "composite"];
+                booleanFilters.forEach(boolean => {
+                    if (_.has(flows, boolean)) {
+                        loadBooleanFilters(boolean);
+                    }
+                });
+                
+                // Route
+                if (_.has(flows, 'flowchain__route')) {
+                    if (flows.flowchain__route) {
+                        $(this.flows.routeSelect).selectpicker("val", "yes");                        
+                    } else {
+                        $(this.flows.routeSelect).selectpicker("val", "no");
+                    }
+                }
 
-                // this.flows.waste06Select = this.el.querySelector('select[name="flows-waste06-select"]');
+                // Collector
+                if (_.has(flows, 'flowchain__collector')) {
+                    if (flows.flowchain__collector){
+                        $(this.flows.collectorSelect).selectpicker("val", "yes");
+                    } else {
+                        $(this.flows.collectorSelect).selectpicker("val", "no");
+                    }
+                }
 
-                // this.flows.materialSelect = this.el.querySelector('select[name="flows-material-select"]');
-                // this.flows.productSelect = this.el.querySelector('select[name="flows-product-select"]');
-                // this.flows.compositesSelect = this.el.querySelector('select[name="flows-composites-select"]');
-                // this.flows.routeSelect = this.el.querySelector('select[name="flows-route-select"]');
-                // this.flows.collectorSelect = this.el.querySelector('select[name="flows-collector-select"]');
-                // this.flows.hazardousSelect = this.el.querySelector('select[name="flows-hazardous-select"]');
-                // this.flows.cleanSelect = this.el.querySelector('select[name="flows-clean-select"]');
-                // this.flows.mixedSelect = this.el.querySelector('select[name="flows-mixed-select"]');
-                // this.flows.directSelect = this.el.querySelector('select[name="flows-direct-select"]');
-                // this.flows.isCompositeSelect = this.el.querySelector('select[name="flows-iscomposite-select"]');
-
+                $(".selectpicker").selectpicker("refresh");
 
                 $(".filterLoaded").fadeIn();
                 setTimeout(() => {
@@ -1084,8 +1114,6 @@ define(['views/common/baseview',
                 var _this = this;
                 let idToDelete = $(this.filterConfigSelect).val();
 
-                console.log("Id of filter config to delete: ", idToDelete);
-
                 _this.savedFilters.postfetch({
                     data: {},
                     body: {
@@ -1093,11 +1121,8 @@ define(['views/common/baseview',
                         id: idToDelete,
                     },
                     success: function (response) {
-                        console.log("Postfetch delete success: ", response.models)
                         _this.savedFilters = response;
                         _this.reloadFilterSelectPicker(response);
-
-
                     },
                     error: function (error) {
                         console.log(error);
@@ -1144,8 +1169,6 @@ define(['views/common/baseview',
                 let formIsValid = savedFilterForm.checkValidity()
 
                 if (formIsValid) {
-                    console.log("Id of filter config to rename: ", idToUpdate);
-
                     _this.savedFilters.postfetch({
                         data: {},
                         body: {
@@ -1154,10 +1177,6 @@ define(['views/common/baseview',
                             name: newFilterName,
                         },
                         success: function (response) {
-                            console.log("Postfetch update name success: ", response.models);
-
-                            $("#update-filter-name").hide();
-
                             $("#filterNameUpdated").fadeIn("fast");
                             $("#update-filter-name").attr("readonly", true);
 
