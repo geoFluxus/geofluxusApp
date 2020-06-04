@@ -42,9 +42,10 @@ class FilterFlowViewSet(PostGetViewMixin,
                                 SerializerClass=self.get_serializer_class())
 
         # filter by user datasets
-        datasets = UserDataset.objects.filter(user__id=user.id)
-        if datasets:
-            ids = datasets[0].datasets.values_list('id', flat=True)
+        user_datasets = UserDataset.objects.filter(user__id=user.id)
+        if user_datasets and \
+           user_datasets[0].datasets.count():
+            ids = user_datasets[0].datasets.values_list('id', flat=True)
             queryset = queryset.filter(flowchain__dataset__id__in=ids)
         else:
             return Response("No datasets for user")
