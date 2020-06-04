@@ -4,7 +4,8 @@ from geofluxus.apps.utils.views import (PostGetViewMixin,
 from geofluxus.apps.asmfa.models import (Flow,
                                          Classification,
                                          Area,
-                                         Routing)
+                                         Routing,)
+from geofluxus.apps.login.models import (UserDataset,)
 from geofluxus.apps.asmfa.serializers import (FlowSerializer)
 import json
 import numpy as np
@@ -27,15 +28,27 @@ class FilterFlowViewSet(PostGetViewMixin,
         filtered flows according to user selections
         '''
 
-        # anonymize
+        # retrieve request user
+        user = request.user
+
+        # anonymize for Demo Group
         anonymous = False
-        user_groups = request.user.groups.values_list('name', flat=True)
+        user_groups = user.groups.values_list('name', flat=True)
         if 'Demo' in user_groups:
             anonymous = True
 
         # filter by query params
         queryset = self._filter(kwargs, query_params=request.query_params,
                                 SerializerClass=self.get_serializer_class())
+
+        # filter by user datasets
+        user_datasets = UserDataset.objects.filter(user__id=user.id)
+        if user_datasets and \
+           user_datasets[0].datasets.count():
+            ids = user_datasets[0].datasets.values_list('id', flat=True)
+            queryset = queryset.filter(flowchain__dataset__id__in=ids)
+        else:
+            return Response("No datasets for user")
 
         # retrieve filters
         params = {}
@@ -54,10 +67,9 @@ class FilterFlowViewSet(PostGetViewMixin,
         destination_areas = params.pop('destination', {})
         flow_areas = filters.pop('selectedAreas', {})
 
-        area_filters = {}
-        area_filters['origin'] = origin_areas
-        area_filters['destination'] = destination_areas
-        area_filters['flows'] = flow_areas
+        area_filters = {'origin': origin_areas,
+                        'destination': destination_areas,
+                        'flows': flow_areas}
 
         # filter flows with non-spatial filters
         queryset = self.filter(queryset, filters)
@@ -79,8 +91,15 @@ class FilterFlowViewSet(PostGetViewMixin,
         '''
         queries = []
         func, vals = filter
+
+        # annotate classification field to flows
+        classifs = Classification.objects
+        subq = classifs.filter(flowchain__id=OuterRef('flowchain__id'))
+        queryset = queryset.annotate(**{func: Subquery(subq.values(func))})
+
+        # filter
         for val in vals:
-            queries.append(Q(**{func:val}))
+            queries.append(Q(**{func: val}))
         if len(queries) == 1:
             queryset = queryset.filter(queries[0])
         if len(queries) > 1:
@@ -93,15 +112,6 @@ class FilterFlowViewSet(PostGetViewMixin,
         Filter chains with generic filters
         (non-spatial filtering)
         '''
-
-        # annotate classifications to flows
-        classifs = Classification.objects
-        subq = classifs.filter(flowchain__id=OuterRef('flowchain__id'))
-        queryset = queryset.annotate(mixed=Subquery(subq.values('mixed')),
-                                     clean=Subquery(subq.values('clean')),
-                                     direct=Subquery(subq.values('direct_use')),
-                                     composite=Subquery(subq.values('composite')),
-                                    )
 
         # classification lookups
         # these should be handled separately!
@@ -119,7 +129,6 @@ class FilterFlowViewSet(PostGetViewMixin,
                 continue
 
             # form query & append
-            func = func # search in chain!!!
             query = Q(**{func: val})
             queries.append(query)
 
@@ -147,7 +156,8 @@ class FilterFlowViewSet(PostGetViewMixin,
         # filter by origin
         area_ids = origin.pop('selectedAreas', [])
         if area_ids:
-            area = Area.objects.filter(id__in=area_ids).aggregate(area=Union('geom'))['area']
+            area = Area.objects.filter(id__in=area_ids)\
+                               .aggregate(area=Union('geom'))['area']
 
             # check where with respect to the area
             inOrOut = origin.pop('inOrOut', 'in')
@@ -159,7 +169,8 @@ class FilterFlowViewSet(PostGetViewMixin,
         # filter by destination
         area_ids = destination.pop('selectedAreas', [])
         if area_ids:
-            area = Area.objects.filter(id__in=area_ids).aggregate(area=Union('geom'))['area']
+            area = Area.objects.filter(id__in=area_ids)\
+                               .aggregate(area=Union('geom'))['area']
 
             # check where with respect to the area
             inOrOut = destination.pop('inOrOut', 'in')
@@ -171,7 +182,8 @@ class FilterFlowViewSet(PostGetViewMixin,
         # filter by flows
         area_ids = flows
         if area_ids:
-            area = Area.objects.filter(id__in=area_ids).aggregate(area=Union('geom'))['area']
+            area = Area.objects.filter(id__in=area_ids)\
+                               .aggregate(area=Union('geom'))['area']
 
             # select routings & check if they intersect the area
             ids = queryset.values_list('routing__id', flat=True).distinct()

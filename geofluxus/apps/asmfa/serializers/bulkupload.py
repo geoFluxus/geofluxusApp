@@ -6,8 +6,8 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Activity,
                                          Company,
                                          Actor,
-                                         PublicationType,
-                                         Publication,
+                                         DatasetType,
+                                         Dataset,
                                          ProcessGroup,
                                          Process,
                                          Waste02,
@@ -30,8 +30,8 @@ from geofluxus.apps.asmfa.serializers import (ActivityGroupSerializer,
                                               ActivitySerializer,
                                               CompanySerializer,
                                               ActorSerializer,
-                                              PublicationTypeSerializer,
-                                              PublicationSerializer,
+                                              DatasetTypeSerializer,
+                                              DatasetSerializer,
                                               ProcessGroupSerializer,
                                               ProcessSerializer,
                                               Waste02Serializer,
@@ -113,9 +113,9 @@ class ActorCreateSerializer(BulkSerializerMixin,
         'address': 'address',
         'city': 'city',
         'country': 'country',
-        'publication': Reference(name='publication',
-                                 referenced_field='citekey',
-                                 referenced_model=Publication)
+        'dataset': Reference(name='dataset',
+                             referenced_field='citekey',
+                             referenced_model=Dataset)
     }
     index_columns = ['identifier']
 
@@ -141,34 +141,34 @@ class ActorCreateSerializer(BulkSerializerMixin,
         return super().validate(attrs)
 
 
-class PublicationTypeCreateSerializer(BulkSerializerMixin,
-                                      PublicationTypeSerializer):
+class DatasetTypeCreateSerializer(BulkSerializerMixin,
+                                  DatasetTypeSerializer):
     field_map = {
         'name': 'name'
     }
     index_columns = ['name']
 
     def get_queryset(self):
-        return PublicationType.objects.all()
+        return DatasetType.objects.all()
 
 
-class PublicationCreateSerializer(BulkSerializerMixin,
-                                  PublicationSerializer):
+class DatasetCreateSerializer(BulkSerializerMixin,
+                              DatasetSerializer):
     field_map = {
         'citekey': 'citekey',
         'author': 'author',
         'note': 'note',
         'title': 'title',
-        'publicationtype': Reference(name='publicationtype',
-                                     referenced_field='name',
-                                     referenced_model=PublicationType),
+        'datasettype': Reference(name='datasettype',
+                                 referenced_field='name',
+                                 referenced_model=DatasetType),
         'url': 'url',
         'file_url': 'file_url'
     }
     index_columns = ['citekey']
 
     def get_queryset(self):
-        return Publication.objects.all()
+        return Dataset.objects.all()
 
 
 class ProcessGroupCreateSerializer(BulkSerializerMixin,
@@ -329,9 +329,9 @@ class FlowChainCreateSerializer(BulkSerializerMixin,
                                 referenced_model=Composite,
                                 many=True,
                                 allow_null=True),
-        'publication': Reference(name='publication',
-                                 referenced_field='citekey',
-                                 referenced_model=Publication)
+        'dataset': Reference(name='dataset',
+                             referenced_field='citekey',
+                             referenced_model=Dataset)
     }
     index_columns = ['identifier']
 
@@ -458,10 +458,10 @@ class AreaCreateSerializer(BulkSerializerMixin,
                             referenced_model=Area,
                             allow_null=True),
         'inhabitants': 'inhabitants',
-        'publication': Reference(name='publication',
-                                 referenced_field='citekey',
-                                 referenced_model=Publication,
-                                 allow_null=True)
+        'dataset': Reference(name='dataset',
+                             referenced_field='citekey',
+                             referenced_model=Dataset,
+                             allow_null=True)
     }
     index_columns = ['name']
 

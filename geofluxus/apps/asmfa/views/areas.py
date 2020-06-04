@@ -3,13 +3,17 @@ from geofluxus.apps.utils.views import (PostGetViewMixin,
                                         ViewSetMixin,
                                         ModelPermissionViewSet)
 from geofluxus.apps.asmfa.models import (AdminLevel,
-                                         Area)
+                                         Area,
+                                         Actor)
 from geofluxus.apps.asmfa.serializers import (AdminLevelSerializer,
-                                              AreaSerializer)
+                                              AreaSerializer,
+                                              ActorSerializer)
 from geofluxus.apps.asmfa.serializers import (AdminLevelListSerializer,
-                                              AreaListSerializer)
+                                              AreaListSerializer,
+                                              ActorListSerializer)
 from geofluxus.apps.asmfa.serializers import (AdminLevelCreateSerializer,
-                                              AreaCreateSerializer)
+                                              AreaCreateSerializer,
+                                              ActorCreateSerializer)
 from rest_framework.response import Response
 
 
@@ -61,3 +65,16 @@ class AreaInLevelViewSet(PostGetViewMixin,
                                     many=True,
                                     context={'request': request})
         return Response(serializer.data)
+
+
+# Actor
+class ActorViewSet(PostGetViewMixin,
+                   ViewSetMixin,
+                   ModelPermissionViewSet):
+    queryset = Actor.objects.order_by('id')
+    pagination_class = UnlimitedResultsSetPagination
+    serializer_class = ActorSerializer
+    serializers = {
+        'list': ActorListSerializer,
+        'create': ActorCreateSerializer
+    }

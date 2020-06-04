@@ -90,7 +90,7 @@ define(['underscore',
                     this.backgroundLayer = new L.TileLayer(this.tileUrl + this.tileType + this.tileSuffix, {
                         attribution: '© <a style="color:#0078A8" href="http://cartodb.com/attributions">CartoDB</a>'
                     });
-                    this.el.style.display = 'block';
+
                     $(this.el).html('<div class="flowmap-container d-block" style="width: 100%; height: 100%"></div><div class="flowmap-d3pluslegend-wrapper text-center"><svg class="flowmap-d3pluslegend"></svg></div>')
 
                     var _this = this;

@@ -1,7 +1,8 @@
 from rest_framework.serializers import (HyperlinkedModelSerializer,
                                         PrimaryKeyRelatedField)
 from geofluxus.apps.asmfa.models import (AdminLevel,
-                                         Area)
+                                         Area,
+                                         Actor)
 from rest_framework_gis.serializers import (GeometryField)
 from rest_framework.relations import HyperlinkedIdentityField
 
@@ -37,7 +38,7 @@ class AreaSerializer(HyperlinkedModelSerializer):
     geom = GeometryField()
     adminlevel = PrimaryKeyRelatedField(read_only=True)
     parent_area = PrimaryKeyRelatedField(read_only=True)
-    publication = PrimaryKeyRelatedField(read_only=True)
+    dataset = PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Area
@@ -49,7 +50,7 @@ class AreaSerializer(HyperlinkedModelSerializer):
                   'geom',
                   'parent_area',
                   'inhabitants',
-                  'publication')
+                  'dataset')
 
 
 class AreaListSerializer(AreaSerializer):
@@ -61,4 +62,44 @@ class AreaListSerializer(AreaSerializer):
                   'geom',
                   'parent_area',
                   'inhabitants',
-                  'publication')
+                  'dataset')
+
+
+# Actor
+class ActorSerializer(HyperlinkedModelSerializer):
+    geom = GeometryField()
+    activity = PrimaryKeyRelatedField(read_only=True)
+    process = PrimaryKeyRelatedField(read_only=True)
+    company = PrimaryKeyRelatedField(read_only=True)
+    dataset = PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = Actor
+        geo_field = 'geom'
+        fields = ('url',
+                  'id',
+                  'geom',
+                  'activity',
+                  'process',
+                  'identifier',
+                  'company',
+                  'postcode',
+                  'address',
+                  'city',
+                  'country',
+                  'dataset',)
+
+
+class ActorListSerializer(ActorSerializer):
+    class Meta(ActorSerializer.Meta):
+        fields = ('id',
+                  'geom',
+                  'activity',
+                  'process',
+                  'identifier',
+                  'company',
+                  'postcode',
+                  'address',
+                  'city',
+                  'country',
+                  'dataset',)
