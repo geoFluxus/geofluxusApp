@@ -99,7 +99,7 @@ function(ol, turf)
             var overlay = new ol.Overlay({
                 element: tooltip,
                 offset: [10, 0],
-                positioning: 'bottom-left'
+                positioning: 'bottom-center'
             });
             this.map.addOverlay(overlay);
 
