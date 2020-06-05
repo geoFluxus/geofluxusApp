@@ -5,7 +5,6 @@ from geofluxus.apps.asmfa.models import (Flow,
                                          Classification,
                                          Area,
                                          Routing,)
-from geofluxus.apps.login.models import (UserDataset,)
 from geofluxus.apps.asmfa.serializers import (FlowSerializer)
 import json
 import numpy as np
@@ -40,15 +39,6 @@ class FilterFlowViewSet(PostGetViewMixin,
         # filter by query params
         queryset = self._filter(kwargs, query_params=request.query_params,
                                 SerializerClass=self.get_serializer_class())
-
-        # filter by user datasets
-        user_datasets = UserDataset.objects.filter(user__id=user.id)
-        if user_datasets and \
-           user_datasets[0].datasets.count():
-            ids = user_datasets[0].datasets.values_list('id', flat=True)
-            queryset = queryset.filter(flowchain__dataset__id__in=ids)
-        else:
-            return Response("No datasets for user", status=500)
 
         # retrieve filters
         params = {}

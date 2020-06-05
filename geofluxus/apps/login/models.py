@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from geofluxus.apps.asmfa.models import Dataset
 
 
@@ -18,20 +18,20 @@ class UserFilter(models.Model):
         return f'{self.user}: {self.name} ({self.date})'
 
 
-# Relate users to datasets
-class UserDataset(models.Model):
-    user = models.ForeignKey(User,
-                             on_delete=models.CASCADE)
+# Relate groups to datasets
+class GroupDataset(models.Model):
+    group = models.ForeignKey(Group,
+                              on_delete=models.CASCADE)
     datasets = models.ManyToManyField(Dataset,
-                                      through='DatasetInUser')
+                                      through='DatasetInGroup')
 
     def __str__(self):
-        return f'{self.user}'
+        return f'{self.group}'
 
 
-# DatasetInUser
-class DatasetInUser(models.Model):
-    userdataset = models.ForeignKey(UserDataset,
-                                    on_delete=models.CASCADE)
+# DatasetInGroup
+class DatasetInGroup(models.Model):
+    groupdataset = models.ForeignKey(GroupDataset,
+                                     on_delete=models.CASCADE)
     dataset = models.ForeignKey(Dataset,
                                 on_delete=models.CASCADE)

@@ -2,8 +2,8 @@ from django.contrib import admin
 from geofluxus.apps.asmfa.admin import CustomAdmin
 from django.contrib.admin import TabularInline
 from geofluxus.apps.login.models import (UserFilter,
-                                         UserDataset,
-                                         DatasetInUser)
+                                         GroupDataset,
+                                         DatasetInGroup)
 
 
 # User Filter
@@ -13,11 +13,11 @@ class UserFilterAdmin(CustomAdmin):
 
 
 # Dataset
-class DatasetInUserInline(TabularInline):
-    model = DatasetInUser
+class DatasetInGroupInline(TabularInline):
+    model = DatasetInGroup
 
 
-# User Dataset
-@admin.register(UserDataset)
+# Group Dataset
+@admin.register(GroupDataset)
 class UserDatasetAdmin(CustomAdmin):
-    inlines = (DatasetInUserInline,)
+    inlines = (DatasetInGroupInline,)
