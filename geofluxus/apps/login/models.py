@@ -22,16 +22,9 @@ class UserFilter(models.Model):
 class GroupDataset(models.Model):
     group = models.ForeignKey(Group,
                               on_delete=models.CASCADE)
-    datasets = models.ManyToManyField(Dataset,
-                                      through='DatasetInGroup')
+    dataset = models.ForeignKey(Dataset,
+                                null=True, blank=True,
+                                on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.group}'
-
-
-# DatasetInGroup
-class DatasetInGroup(models.Model):
-    groupdataset = models.ForeignKey(GroupDataset,
-                                     on_delete=models.CASCADE)
-    dataset = models.ForeignKey(Dataset,
-                                on_delete=models.CASCADE)
+        return f'{self.group}: {self.dataset}'

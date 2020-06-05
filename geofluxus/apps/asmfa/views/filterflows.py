@@ -42,16 +42,15 @@ class FilterFlowViewSet(PostGetViewMixin,
                                 SerializerClass=self.get_serializer_class())
 
         # check all user groups
-        groups = (user.groups.values_list('id', flat=True))
+        groups = user.groups.values_list('id', flat=True)
 
         # retrieve datasets for these groups
-        group_datasets = GroupDataset.objects.filter(group__id__in=groups)
+        datasets = GroupDataset.objects.filter(group__id__in=groups)\
+                                       .values_list('dataset__id', flat=True)\
 
         # filter
-        if group_datasets:
-            for group in group_datasets:
-                ids = group.datasets.values_list('id', flat=True)
-                queryset = queryset.filter(flowchain__dataset__id__in=ids)
+        if datasets:
+            queryset = queryset.filter(flowchain__dataset__id__in=datasets)
         else:
             return Response('No datasets for user group', status=500)
 
