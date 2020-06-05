@@ -34,8 +34,6 @@ body {
     z-index: 0;
 }
 
-
-
 .block {
     background-color: #393939;
     border-radius: 30px;
@@ -385,6 +383,14 @@ input {
 #navbarID {
     /* Transition effect when sliding down (and up) */
     transition: top 0.3s;
+}
+
+.warning-no-datasets {
+    position: relative;
+    z-index: 999;
+    margin: auto;
+    width: 30rem;
+    top: 6rem;
 }
 
 @-webkit-keyframes spin {
