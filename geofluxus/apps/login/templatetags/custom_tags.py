@@ -11,7 +11,6 @@ def datasets(user):
     # retrieve datasets for these groups
     group_datasets = GroupDataset.objects.filter(group__id__in=groups)
 
-    if group_datasets and \
-       group_datasets[0].datasets.count():
+    if group_datasets:
         return True
     return False

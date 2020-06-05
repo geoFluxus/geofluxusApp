@@ -60,7 +60,7 @@
               <i class="fas fa-caret-down"></i>
             </button>
             <div class="dropdown-content">
-              {% if request.user|datasets %}
+              {% if request.user.is_superuser %}
               <a href="/data-entry">Data Entry</a>
               <a href="/admin">Admin</a>
               <a href="/api">API</a> {% endif %}

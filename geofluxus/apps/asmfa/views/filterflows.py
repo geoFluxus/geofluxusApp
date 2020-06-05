@@ -6,6 +6,7 @@ from geofluxus.apps.asmfa.models import (Flow,
                                          Area,
                                          Routing,)
 from geofluxus.apps.asmfa.serializers import (FlowSerializer)
+from geofluxus.apps.login.models import (GroupDataset)
 import json
 import numpy as np
 from rest_framework.response import Response
@@ -39,6 +40,20 @@ class FilterFlowViewSet(PostGetViewMixin,
         # filter by query params
         queryset = self._filter(kwargs, query_params=request.query_params,
                                 SerializerClass=self.get_serializer_class())
+
+        # check all user groups
+        groups = (user.groups.values_list('id', flat=True))
+
+        # retrieve datasets for these groups
+        group_datasets = GroupDataset.objects.filter(group__id__in=groups)
+
+        # filter
+        if group_datasets:
+            for group in group_datasets:
+                ids = group.datasets.values_list('id', flat=True)
+                queryset = queryset.filter(flowchain__dataset__id__in=ids)
+        else:
+            return Response('No datasets for user group', status=500)
 
         # retrieve filters
         params = {}
