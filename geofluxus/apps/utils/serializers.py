@@ -812,7 +812,8 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
         model = self.Meta.model
         queryset = self.get_queryset()
         # only fields defined in field_map will be written to database
-        fields = [v for v in self.field_map.values()]
+        fields = [getattr(v, 'name', None) or v
+                  for v in self.field_map.values()]
         updated = []
 
         dataframe = self._set_defaults(dataframe, model)
