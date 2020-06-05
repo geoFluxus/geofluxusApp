@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 {% load static %} {% load render_bundle from webpack_loader %}
+{% load custom_tags %}
 
 <head>
   <link href="https://fonts.googleapis.com/css?family=Lato|Montserrat|Open+Sans|Roboto" rel="stylesheet">
@@ -59,7 +60,7 @@
               <i class="fas fa-caret-down"></i>
             </button>
             <div class="dropdown-content">
-              {% if request.user.is_superuser %}
+              {% if request.user|datasets %}
               <a href="/data-entry">Data Entry</a>
               <a href="/admin">Admin</a>
               <a href="/api">API</a> {% endif %}

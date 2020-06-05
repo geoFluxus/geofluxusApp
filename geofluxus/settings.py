@@ -12,38 +12,6 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 
-DEFAULT = 'geofluxus'
-ROUTING = 'routing'
-DB_USER = 'postgres'
-DB_PASS = 'postgres'
-SECRET_KEY = 123
-
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': DEFAULT,
-        'USER': DB_USER,
-        'PASSWORD': DB_PASS,
-        'HOST': 'localhost',
-        'PORT': '5432',
-        'OPTIONS': {
-            'sslmode': 'allow',
-            },
-    },
-    'routing': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': ROUTING,
-        'USER': DB_USER,
-        'PASSWORD': DB_PASS,
-        'HOST': 'localhost',
-        'PORT': '5432',
-        'OPTIONS': {
-            'sslmode': 'allow',
-            },
-    }
-}
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 PUBLIC_ROOT = os.path.abspath(os.path.join(PROJECT_DIR, 'public'))
@@ -85,6 +53,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+
+AUTH_USER_MODEL = "login.UserProfile"
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
