@@ -881,20 +881,20 @@
 
 <!-- Saved filter modal-->
 <script type="text/template" id="saved-filters-modal-template">
-    <div class="modal-dialog modal-lg" style="max-width: 500px">
+    <div class="modal-dialog modal-lg" style="max-width: 650px">
         <!-- Modal content-->
         <div class="modal-content col-md-12 pt-1">
-            <div class="modal-header pt-2 pb-1">
+            <div class="modal-header pt-2 pb-1 ml-2">
                 <h4 class="modal-title savedMode">Saved filters</h4>
                 <h4 class="modal-title newMode">Save this set of filters</h4>
                 <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times"></i></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body pt-0">
 
                 <form class="newMode needs-validation" novalidate>
-                    <div class='row pt-4 pb-2'>
-                        <div class="col d-flex">
-                            <div class="form-group w-100">
+                    <div class='row pt-3 pb-0'>
+                        <div class="col d-flex mb-1">
+                            <div class="form-group w-100 mb-0">
                                 <input 
                                     type="text"
                                     id="new-filter-name-input"
@@ -935,7 +935,7 @@
                         </div>
                     </div>
                     
-                    <div class='row pt-2 pb-2 savedMode'>
+                    <div class='row pt-1 pb-2 savedMode'>
                         <div class="col d-flex justify-content-between fourButtons">
                             <button id='delete-filter-config' class="btn btn-secondary w-25" title="Delete the selected filter configuration.">Delete</button>
                             <button id='edit-filter-name' class="btn btn-secondary w-25" title="Rename the selected filter configuration.">Rename</button>
@@ -956,7 +956,7 @@
                         </div>
                     </div>
 
-                    <div class='row pt-4 pb-2 mb-3 filterEdit' style="display: none;">
+                    <div class='row pt-4 pb-0 mb-2 filterEdit' style="display: none;">
                         <div class="col d-flex">
 
                             <div class="form-group w-75">
@@ -967,13 +967,10 @@
                             </div>
 
                             <div class="w-25 d-flex justify-content-between">
-                                <button class="btn btn-sm btn-secondary hide-filter-name-button" type="submit">
-                                    <i class="fas fa-times"></i>
-                                </button>
+                                <button class="btn btn-sm btn-secondary hide-filter-name-button" type="submit">Cancel</button>
                                 <button id='save-filter-name'
                                         type="submit"
                                         class="btn btn-primary"
-                                        style="width: 4.3rem; height: 38px;"
                                         title="Save the filter name">Save</button>
                             </div>
 
@@ -995,7 +992,7 @@
 <script type="text/template" id="area-select-modal-template">
     <div class="modal-dialog modal-lg">
         <!-- Modal content-->
-        <div class="modal-content col-md-12 pt-1">
+        <div class="modal-content col-md-12 pt-1 ml-2">
             <div class="modal-header pt-2 pb-1">
                 <h4 class="modal-title">Select areas</h4>
                 <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times"></i></button>
