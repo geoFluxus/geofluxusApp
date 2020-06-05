@@ -6,26 +6,22 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Activity,
                                          ProcessGroup,
                                          Process,
-                                         Company,
-                                         Actor)
+                                         Company)
 from geofluxus.apps.asmfa.serializers import (ActivityGroupSerializer,
                                               ActivitySerializer,
                                               ProcessGroupSerializer,
                                               ProcessSerializer,
-                                              CompanySerializer,
-                                              ActorSerializer)
+                                              CompanySerializer)
 from geofluxus.apps.asmfa.serializers import (ActivityGroupListSerializer,
                                               ActivityListSerializer,
                                               ProcessGroupListSerializer,
                                               ProcessListSerializer,
-                                              CompanyListSerializer,
-                                              ActorListSerializer)
+                                              CompanyListSerializer)
 from geofluxus.apps.asmfa.serializers import (ActivityGroupCreateSerializer,
                                               ActivityCreateSerializer,
                                               ProcessGroupCreateSerializer,
                                               ProcessCreateSerializer,
-                                              CompanyCreateSerializer,
-                                              ActorCreateSerializer)
+                                              CompanyCreateSerializer)
 from django.db.models import Count, Value, IntegerField
 
 
@@ -112,17 +108,4 @@ class CompanyViewSet(PostGetViewMixin,
     serializers = {
         'list': CompanyListSerializer,
         'create': CompanyCreateSerializer
-    }
-
-
-# Actor
-class ActorViewSet(PostGetViewMixin,
-                   ViewSetMixin,
-                   ModelPermissionViewSet):
-    queryset = Actor.objects.order_by('id')
-    pagination_class = UnlimitedResultsSetPagination
-    serializer_class = ActorSerializer
-    serializers = {
-        'list': ActorListSerializer,
-        'create': ActorCreateSerializer
     }

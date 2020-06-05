@@ -1,9 +1,23 @@
 from django.contrib import admin
-from django.contrib.admin import ModelAdmin
-from geofluxus.apps.login.models import UserFilter
+from geofluxus.apps.asmfa.admin import CustomAdmin
+from django.contrib.admin import TabularInline
+from geofluxus.apps.login.models import (UserFilter,
+                                         UserDataset,
+                                         DatasetInUser)
 
 
 # User Filter
 @admin.register(UserFilter)
-class UserFilterAdmin(ModelAdmin):
-    pass
+class UserFilterAdmin(CustomAdmin):
+    search_fields = ['user__username']
+
+
+# Dataset
+class DatasetInUserInline(TabularInline):
+    model = DatasetInUser
+
+
+# User Dataset
+@admin.register(UserDataset)
+class UserDatasetAdmin(CustomAdmin):
+    inlines = (DatasetInUserInline,)

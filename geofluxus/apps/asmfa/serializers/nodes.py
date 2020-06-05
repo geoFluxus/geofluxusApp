@@ -1,6 +1,5 @@
 from rest_framework.serializers import (HyperlinkedModelSerializer,
-                                        PrimaryKeyRelatedField,
-                                        IntegerField)
+                                        PrimaryKeyRelatedField)
 from rest_framework_gis.serializers import (GeometryField)
 from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Activity,
@@ -102,43 +101,3 @@ class CompanyListSerializer(CompanySerializer):
                   'id',
                   'name',
                   'identifier')
-
-
-# Actor
-class ActorSerializer(HyperlinkedModelSerializer):
-    geom = GeometryField()
-    activity = PrimaryKeyRelatedField(read_only=True)
-    process = PrimaryKeyRelatedField(read_only=True)
-    company = PrimaryKeyRelatedField(read_only=True)
-    publication = PrimaryKeyRelatedField(read_only=True)
-
-    class Meta:
-        model = Actor
-        geo_field = 'geom'
-        fields = ('url',
-                  'id',
-                  'geom',
-                  'activity',
-                  'process',
-                  'identifier',
-                  'company',
-                  'postcode',
-                  'address',
-                  'city',
-                  'country',
-                  'publication',)
-
-
-class ActorListSerializer(ActorSerializer):
-    class Meta(ActorSerializer.Meta):
-        fields = ('id',
-                  'geom',
-                  'activity',
-                  'process',
-                  'identifier',
-                  'company',
-                  'postcode',
-                  'address',
-                  'city',
-                  'country',
-                  'publication',)

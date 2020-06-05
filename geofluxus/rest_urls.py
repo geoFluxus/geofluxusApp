@@ -22,8 +22,8 @@ from geofluxus.apps.asmfa.views import (ActivityGroupViewSet,
                                         AdminLevelViewSet,
                                         AreaViewSet,
                                         AreaInLevelViewSet,
-                                        PublicationTypeViewSet,
-                                        PublicationViewSet,
+                                        DatasetTypeViewSet,
+                                        DatasetViewSet,
                                         RoutingViewSet,
                                         WaysViewSet,
                                         VehicleViewSet)
@@ -34,9 +34,9 @@ from geofluxus.apps.impact.views import (ImpactViewSet,)
 
 router = DefaultRouter()
 
-# Publications
-router.register(r'publicationtypes', PublicationTypeViewSet)
-router.register(r'publications', PublicationViewSet)
+# Datasets
+router.register(r'datasettypes', DatasetTypeViewSet)
+router.register(r'datasets', DatasetViewSet)
 
 # Areas
 router.register(r'levels', AdminLevelViewSet)

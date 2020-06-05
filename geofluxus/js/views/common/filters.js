@@ -649,6 +649,7 @@ define(['views/common/baseview',
                             _this.loader.deactivate();
 
                             if (executeAfterLoading) {
+                                _this.areas[levelId] = areas;
                                 executeAfterLoading(_this, levelId, block);
                             }
                             _this.drawAreas(areas);
@@ -716,364 +717,373 @@ define(['views/common/baseview',
             },
 
             loadFilterConfiguration: function (event) {
-                var _this = this;
-                this.resetFiltersToDefault();
-                $(".filterEdit").fadeOut();
+                try {
+                    var _this = this;
+                    this.resetFiltersToDefault();
+                    $(".filterEdit").fadeOut();
 
-                let selectedFilterConfig = $(this.filterConfigSelect).val();
-                let configToLoad = this.savedFilters.find(filter => filter.attributes.id == selectedFilterConfig).get("filter");
+                    let selectedFilterConfig = $(this.filterConfigSelect).val();
+                    let configToLoad = this.savedFilters.find(filter => filter.attributes.id == selectedFilterConfig).get("filter");
 
-                let origin = configToLoad.origin;
-                let destination = configToLoad.destination;
-                let flows = configToLoad.flows;
+                    let origin = configToLoad.origin;
+                    let destination = configToLoad.destination;
+                    let flows = configToLoad.flows;
 
-                console.log("Loading saved filter configuration: ", configToLoad);
+                    console.log("Loading saved filter configuration: ", configToLoad);
 
-
-                /**
-                 * Load saved areas for given section
-                 * @param {string} block the name of the section: 'origin', 'destination', or 'flows'.
-                 * @param {object} savedConfig the saved filter config of the section
-                 */
-                function loadSavedAreas(block, savedConfig) {
-                    _this.adminLevel[block] = parseInt(savedConfig.adminLevel);
 
                     /**
-                     * Function to be executed after areas of this level have been loaded:
-                     * @param {int} adminLevel 
+                     * Load saved areas for given section
+                     * @param {string} block the name of the section: 'origin', 'destination', or 'flows'.
+                     * @param {object} savedConfig the saved filter config of the section
                      */
-                    let executeAfterLoading = function (_this, adminLevel, block) {
-                        let labelStringArray = [];
-                        savedConfig.selectedAreas.forEach(selectedAreaId => {
-                            let areaObject = _this.areas[adminLevel].models.find(area => area.attributes.id == selectedAreaId);
-                            _this.selectedAreas[block].push(areaObject);
-                            labelStringArray.push(areaObject.attributes.name);
-                        });
-                        $(".areaSelections-" + block).fadeIn();
-                        $("#areaSelections-Textarea-" + block).html(labelStringArray.join('; '));
-                        $(".selections").trigger('input');
-                        $(".selections").textareaAutoSize();
+                    function loadSavedAreas(block, savedConfig) {
+                        _this.adminLevel[block] = parseInt(savedConfig.adminLevel);
 
-                        // Inside or outside toggle:
-                        if (savedConfig.inOrOut == 'in') {
-                            $(_this[block].inOrOut).bootstrapToggle("off");
-                        } else {
-                            $(_this[block].inOrOut).bootstrapToggle("on");
+                        /**
+                         * Function to be executed after areas of this level have been loaded:
+                         * @param {int} adminLevel 
+                         */
+                        let executeAfterLoading = function (_this, adminLevel, block) {
+                            let labelStringArray = [];
+                            savedConfig.selectedAreas.forEach(selectedAreaId => {
+                                let areaObject = _this.areas[adminLevel].models.find(area => area.attributes.id == selectedAreaId);
+                                _this.selectedAreas[block].push(areaObject);
+                                labelStringArray.push(areaObject.attributes.name);
+                            });
+                            $(".areaSelections-" + block).fadeIn();
+                            $("#areaSelections-Textarea-" + block).html(labelStringArray.join('; '));
+                            $(".selections").trigger('input');
+                            $(".selections").textareaAutoSize();
+
+                            // Inside or outside toggle:
+                            if (savedConfig.inOrOut == 'in') {
+                                $(_this[block].inOrOut).bootstrapToggle("off");
+                            } else {
+                                $(_this[block].inOrOut).bootstrapToggle("on");
+                            }
+                        }
+                        _this.prepareAreas(_this.adminLevel[block], false, executeAfterLoading, block);
+                    }
+
+                    // Load saved areas for each section:
+                    if (_.has(origin, 'selectedAreas')) {
+                        loadSavedAreas("origin", origin);
+                    }
+                    if (_.has(destination, 'selectedAreas')) {
+                        loadSavedAreas("destination", destination);
+                    }
+                    if (_.has(flows, 'selectedAreas')) {
+                        loadSavedAreas("flows", flows);
+                    }
+
+                    /**
+                     * Load saved role for given section
+                     * @param {string} block the name of the section: 'origin' or 'destination'
+                     * @param {object} savedConfig the saved filter config of the section
+                     */
+                    function loadSavedRole(block) {
+                        $("#" + block + "-role-radio-production").parent().removeClass("active");
+                        $("#" + block + "-role-radio-both").parent().removeClass("active");
+                        $("#" + block + "-role-radio-treatment").parent().removeClass("active");
+                        _this[block].role = flows[block + "_role"];
+                        // Set origin role
+                        switch (_this[block].role) {
+                            case "production":
+                                $($("#" + block + "-role-radio-production").parent()[0]).addClass("active")
+                                $("." + block + "ContainerTreatmentMethod").hide();
+                                $("." + block + "ContainerActivity").fadeIn();
+                                break;
+                            case "both":
+                                $($("#" + block + "-role-radio-both").parent()[0]).addClass("active")
+                                $("." + block + "ContainerActivity").fadeOut();
+                                $("." + block + "ContainerTreatmentMethod").fadeOut();
+                                break;
+                            case "treatment":
+                                $($("#" + block + "-role-radio-treatment").parent()[0]).addClass("active")
+                                $("." + block + "ContainerActivity").hide();
+                                $("." + block + "ContainerTreatmentMethod").fadeIn();
+                                break;
                         }
                     }
-                    _this.prepareAreas(_this.adminLevel[block], false, executeAfterLoading, block);
-                }
-
-                // Load saved areas for each section:
-                if (_.has(origin, 'selectedAreas')) {
-                    loadSavedAreas("origin", origin);
-                }
-                if (_.has(destination, 'selectedAreas')) {
-                    loadSavedAreas("destination", destination);
-                }
-                if (_.has(flows, 'selectedAreas')) {
-                    loadSavedAreas("flows", flows);
-                }
-
-                /**
-                 * Load saved role for given section
-                 * @param {string} block the name of the section: 'origin' or 'destination'
-                 * @param {object} savedConfig the saved filter config of the section
-                 */
-                function loadSavedRole(block) {
-                    $("#" + block + "-role-radio-production").parent().removeClass("active");
-                    $("#" + block + "-role-radio-both").parent().removeClass("active");
-                    $("#" + block + "-role-radio-treatment").parent().removeClass("active");
-                    _this[block].role = flows[block + "_role"];
-                    // Set origin role
-                    switch (_this[block].role) {
-                        case "production":
-                            $($("#" + block + "-role-radio-production").parent()[0]).addClass("active")
-                            $("." + block + "ContainerTreatmentMethod").hide();
-                            $("." + block + "ContainerActivity").fadeIn();
-                            break;
-                        case "both":
-                            $($("#" + block + "-role-radio-both").parent()[0]).addClass("active")
-                            $("." + block + "ContainerActivity").fadeOut();
-                            $("." + block + "ContainerTreatmentMethod").fadeOut();
-                            break;
-                        case "treatment":
-                            $($("#" + block + "-role-radio-treatment").parent()[0]).addClass("active")
-                            $("." + block + "ContainerActivity").hide();
-                            $("." + block + "ContainerTreatmentMethod").fadeIn();
-                            break;
+                    if (_.has(flows, 'origin_role')) {
+                        loadSavedRole("origin", origin)
                     }
-                }
-                if (_.has(flows, 'origin_role')) {
-                    loadSavedRole("origin", origin)
-                }
-                if (_.has(flows, 'destination_role')) {
-                    loadSavedRole("destination", destination)
-                }
-
-                /**
-                 * Load activity groups for Origin / Destination:
-                 */
-                if (_.has(flows, 'origin__activity__activitygroup__in')) {
-                    $(_this.origin.activityGroupsSelect).selectpicker('val', flows.origin__activity__activitygroup__in);
-                }
-                if (_.has(flows, 'destination__activity__activitygroup__in')) {
-                    $(_this.destination.activityGroupsSelect).selectpicker('val', flows.destination__activity__activitygroup__in);
-                }
-
-                /**
-                 * Load activities for given section
-                 * @param {string} block the name of the section: 'origin' or 'destination'
-                 * @param {object} savedConfig the saved filter config of the section
-                 */
-                function loadSavedActivities(block) {
-
-                    let activityObjects = _this.activities.models.filter(function (activity) {
-                        return flows[block + "__activity__in"].includes(activity.attributes.id.toString());
-                    });
-
-                    // Get activity groups to which the selected activities belong and select in selectpicker:
-                    let activityGroupsToDisplay = [];
-                    activityObjects.forEach(activity => {
-                        activityGroupsToDisplay.push(activity.attributes.activitygroup.toString());
-                    });
-                    activityGroupsToDisplay = _.uniq(activityGroupsToDisplay, 'id');
-                    $(_this[block].activityGroupsSelect).selectpicker('val', activityGroupsToDisplay);
-
-                    // Filter all activities by the selected Activity Groups:
-                    let filteredActivities = [];
-                    filteredActivities = _this.activities.models.filter(function (activity) {
-                        return activityGroupsToDisplay.includes(activity.attributes.activitygroup.toString())
-                    });
-                    filterUtils.fillSelectPicker("activity", $(_this[block].activitySelect), filteredActivities);
-
-                    $(_this[block].activitySelect).selectpicker('val', flows[block + "__activity__in"]);
-                    $(".activitySelectContainer-" + block).fadeIn("fast");
-                }
-
-
-                // Activities
-                if (_.has(flows, 'origin__activity__in')) {
-                    loadSavedActivities("origin")
-                }
-                if (_.has(flows, 'destination__activity__in')) {
-                    loadSavedActivities("destination")
-                }
-
-                /**
-                 * Load treatment method groups for Origin / Destination
-                 */
-                if (_.has(flows, 'origin__process__processgroup__in')) {
-                    $(_this.origin.processGroupSelect).selectpicker('val', flows.origin__process__processgroup__in);
-                }
-                if (_.has(flows, 'destination__process__processgroup__in')) {
-                    $(_this.destination.processGroupSelect).selectpicker('val', flows.destination__process__processgroup__in);
-                }
-
-
-                /**
-                 * Load treatment methods for given section
-                 * @param {string} block the name of the section: 'origin' or 'destination'
-                 * @param {object} savedConfig the saved filter config of the section
-                 */
-                function loadSavedTreatmentMethods(block) {
-                    let processObjects = _this.processes.models.filter(function (process) {
-                        return flows[block + "__process__in"].includes(process.attributes.id.toString());
-                    });
-
-                    let processGroupsToDisplay = [];
-                    processObjects.forEach(process => {
-                        processGroupsToDisplay.push(process.attributes.processgroup.toString());
-                    });
-                    processGroupsToDisplay = _.uniq(processGroupsToDisplay, 'id');
-                    $(_this[block].processGroupSelect).selectpicker('val', processGroupsToDisplay);
-
-                    let filteredProcesses = [];
-                    filteredProcesses = _this.processes.models.filter(function (process) {
-                        return processGroupsToDisplay.includes(process.attributes.processgroup.toString())
-                    });
-                    filterUtils.fillSelectPicker("treatmentMethod", $(_this[block].processSelect), filteredProcesses);
-
-                    $(_this[block].processSelect).selectpicker('val', flows[block + "__process__in"]);
-                    $("#" + block + "ContainerProcesses").fadeIn("fast");
-                }
-
-                // Treatment methods
-                if (_.has(flows, 'origin__process__in')) {
-                    loadSavedTreatmentMethods("origin");
-                }
-                if (_.has(flows, 'destination__process__in')) {
-                    loadSavedTreatmentMethods("destination");
-                }
-
-
-                // ///////////////////////////////
-                // Flows filters:
-
-                if (_.has(flows, 'flowchain__month__year__in')) {
-                    $(this.flows.yearSelect).selectpicker("val", flows.flowchain__month__year__in);
-                }
-                if (_.has(flows, 'flowchain__month__in')) {
-                    let monthObjects = _this.months.models.filter(function (month) {
-                        return flows.flowchain__month__in.includes(month.attributes.id.toString());
-                    });
-
-                    let yearsToDisplay = [];
-                    monthObjects.forEach(month => {
-                        yearsToDisplay.push(month.attributes.year.toString());
-                    });
-                    yearsToDisplay = _.uniq(yearsToDisplay, 'id');
-                    $(_this.flows.yearSelect).selectpicker('val', yearsToDisplay);
-
-                    let filteredMonths = [];
-                    filteredMonths = _this.months.models.filter(function (month) {
-                        return yearsToDisplay.includes(month.attributes.year.toString())
-                    });
-                    filterUtils.fillSelectPicker("month", $(_this.flows.monthSelect), filteredMonths);
-                    $(_this.flows.monthSelect).selectpicker('val', flows.flowchain__month__in);
-                    $("#monthCol").fadeIn("fast");
-                }
-
-                // EWC
-                if (_.has(flows, 'flowchain__waste06__hazardous')) {
-                    if (flows.flowchain__waste06__hazardous) {
-                        $(this.flows.hazardousSelect).val("yes");
-                    } else {
-                        $(this.flows.hazardousSelect).val("no");
-                    }
-                    $(this.flows.hazardousSelect).trigger('changed.bs.select');
-                }
-
-
-                if (_.has(flows, 'flowchain__waste06__waste04__waste02__in')) {
-                    $(_this.origin.waste02Select).selectpicker('val', flows.flowchain__waste06__waste04__waste02__in);
-                }
-
-                if (_.has(flows, 'flowchain__waste06__waste04__in')) {
-                    let waste04Objects = _this.wastes04.models.filter(function (ewc4) {
-                        return flows.flowchain__waste06__waste04__in.includes(ewc4.attributes.id.toString());
-                    });
-
-                    let wastes02 = [];
-                    waste04Objects.forEach(ewc4 => {
-                        wastes02.push(ewc4.attributes.waste02.toString());
-                    });
-                    wastes02 = _.uniq(wastes02, 'id');
-                    $(_this.flows.waste02Select).selectpicker('val', wastes02);
-
-                    let filteredEwc4 = [];
-                    filteredEwc4 = _this.wastes04.models.filter(function (ewc4) {
-                        return wastes02.includes(ewc4.attributes.waste02.toString())
-                    });
-                    filterUtils.fillSelectPicker("waste04", $(_this.flows.waste04Select), filteredEwc4);
-                    $(_this.flows.waste04Select).selectpicker('val', flows.flowchain__waste06__waste04__in);
-                    $("#wastes04col").fadeIn("fast");
-                }
-
-                if (_.has(flows, 'flowchain__waste06__in')) {
-                    let waste6Objects = _this.wastes06.models.filter(function (ewc6) {
-                        return flows.flowchain__waste06__in.includes(ewc6.attributes.id.toString());
-                    });
-
-                    // EWC 4 to which EWC6 belong:
-                    let wastes04 = [];
-                    waste6Objects.forEach(ewc6 => {
-                        wastes04.push(ewc6.attributes.waste04.toString());
-                    });
-                    wastes04 = _.uniq(wastes04, 'id');
-                    let waste04Objects = _this.wastes04.models.filter(function (ewc4) {
-                        return wastes04.includes(ewc4.attributes.id.toString());
-                    });
-
-                    // EWC2 to which EWC 4 belong:
-                    let wastes02 = [];
-                    waste04Objects.forEach(ewc4 => {
-                        wastes02.push(ewc4.attributes.waste02.toString());
-                    });
-                    wastes02 = _.uniq(wastes02, 'id');
-                    $(_this.flows.waste02Select).selectpicker('val', wastes02);
-
-                    // Select EWC4 after EWC2 automatically fills EWC4:
-                    $(_this.flows.waste04Select).selectpicker('val', wastes04);
-                    $("#wastes04col").fadeIn("fast");
-
-                    // Fill EWC6 after EWC4:
-                    let filteredEwc6 = [];
-                    filteredEwc6 = _this.wastes06.models.filter(function (ewc6) {
-                        return wastes04.includes(ewc6.attributes.waste04.toString())
-                    });
-                    filterUtils.fillSelectPicker("waste06", $(_this.flows.waste06Select), filteredEwc6);
-                    $(_this.flows.waste06Select).selectpicker('val', flows.flowchain__waste06__in);
-                    $("#wastes06col").fadeIn("fast");
-                }
-
-                // Materials
-                if (_.has(flows, 'flowchain__materials__in')) {
-                    $(this.flows.materialSelect).selectpicker("val", flows.flowchain__materials__in);
-                }
-                // Products
-                if (_.has(flows, 'flowchain__products__in')) {
-                    $(this.flows.productSelect).selectpicker("val", flows.flowchain__products__in);
-                }
-                // Composites
-                if (_.has(flows, 'flowchain__composites__in')) {
-                    $(this.flows.compositesSelect).selectpicker("val", flows.flowchain__composites__in);
-                }
-
-                // Composites
-                if (_.has(flows, 'flowchain__composites__in')) {
-                    $(this.flows.compositesSelect).selectpicker("val", flows.flowchain__composites__in);
-                }
-
-                function loadBooleanFilters(filter) {
-                    let valuesToSet = [];
-                    if (flows[filter].includes(false)) {
-                        valuesToSet.push("no");
-                    }
-                    if (flows[filter].includes(true)) {
-                        valuesToSet.push("yes");
-                    }
-                    if (flows[filter].includes(null)) {
-                        valuesToSet.push("unknown");
+                    if (_.has(flows, 'destination_role')) {
+                        loadSavedRole("destination", destination)
                     }
 
-                    if (filter == "composite"){
-                        filter = "isComposite";
-                    }                    
-                    $(_this.flows[filter + "Select"]).selectpicker("val", valuesToSet);
-                }
-                let booleanFilters = ["clean", "mixed", "direct", "composite"];
-                booleanFilters.forEach(boolean => {
-                    if (_.has(flows, boolean)) {
-                        loadBooleanFilters(boolean);
+                    /**
+                     * Load activity groups for Origin / Destination:
+                     */
+                    if (_.has(flows, 'origin__activity__activitygroup__in')) {
+                        $(_this.origin.activityGroupsSelect).selectpicker('val', flows.origin__activity__activitygroup__in);
                     }
-                });
-                
-                // Route
-                if (_.has(flows, 'flowchain__route')) {
-                    if (flows.flowchain__route) {
-                        $(this.flows.routeSelect).selectpicker("val", "yes");                        
-                    } else {
-                        $(this.flows.routeSelect).selectpicker("val", "no");
+                    if (_.has(flows, 'destination__activity__activitygroup__in')) {
+                        $(_this.destination.activityGroupsSelect).selectpicker('val', flows.destination__activity__activitygroup__in);
                     }
-                }
 
-                // Collector
-                if (_.has(flows, 'flowchain__collector')) {
-                    if (flows.flowchain__collector){
-                        $(this.flows.collectorSelect).selectpicker("val", "yes");
-                    } else {
-                        $(this.flows.collectorSelect).selectpicker("val", "no");
+                    /**
+                     * Load activities for given section
+                     * @param {string} block the name of the section: 'origin' or 'destination'
+                     * @param {object} savedConfig the saved filter config of the section
+                     */
+                    function loadSavedActivities(block) {
+
+                        let activityObjects = _this.activities.models.filter(function (activity) {
+                            return flows[block + "__activity__in"].includes(activity.attributes.id.toString());
+                        });
+
+                        // Get activity groups to which the selected activities belong and select in selectpicker:
+                        let activityGroupsToDisplay = [];
+                        activityObjects.forEach(activity => {
+                            activityGroupsToDisplay.push(activity.attributes.activitygroup.toString());
+                        });
+                        activityGroupsToDisplay = _.uniq(activityGroupsToDisplay, 'id');
+                        $(_this[block].activityGroupsSelect).selectpicker('val', activityGroupsToDisplay);
+
+                        // Filter all activities by the selected Activity Groups:
+                        let filteredActivities = [];
+                        filteredActivities = _this.activities.models.filter(function (activity) {
+                            return activityGroupsToDisplay.includes(activity.attributes.activitygroup.toString())
+                        });
+                        filterUtils.fillSelectPicker("activity", $(_this[block].activitySelect), filteredActivities);
+
+                        $(_this[block].activitySelect).selectpicker('val', flows[block + "__activity__in"]);
+                        $(".activitySelectContainer-" + block).fadeIn("fast");
                     }
+
+
+                    // Activities
+                    if (_.has(flows, 'origin__activity__in')) {
+                        loadSavedActivities("origin")
+                    }
+                    if (_.has(flows, 'destination__activity__in')) {
+                        loadSavedActivities("destination")
+                    }
+
+                    /**
+                     * Load treatment method groups for Origin / Destination
+                     */
+                    if (_.has(flows, 'origin__process__processgroup__in')) {
+                        $(_this.origin.processGroupSelect).selectpicker('val', flows.origin__process__processgroup__in);
+                    }
+                    if (_.has(flows, 'destination__process__processgroup__in')) {
+                        $(_this.destination.processGroupSelect).selectpicker('val', flows.destination__process__processgroup__in);
+                    }
+
+
+                    /**
+                     * Load treatment methods for given section
+                     * @param {string} block the name of the section: 'origin' or 'destination'
+                     * @param {object} savedConfig the saved filter config of the section
+                     */
+                    function loadSavedTreatmentMethods(block) {
+                        let processObjects = _this.processes.models.filter(function (process) {
+                            return flows[block + "__process__in"].includes(process.attributes.id.toString());
+                        });
+
+                        let processGroupsToDisplay = [];
+                        processObjects.forEach(process => {
+                            processGroupsToDisplay.push(process.attributes.processgroup.toString());
+                        });
+                        processGroupsToDisplay = _.uniq(processGroupsToDisplay, 'id');
+                        $(_this[block].processGroupSelect).selectpicker('val', processGroupsToDisplay);
+
+                        let filteredProcesses = [];
+                        filteredProcesses = _this.processes.models.filter(function (process) {
+                            return processGroupsToDisplay.includes(process.attributes.processgroup.toString())
+                        });
+                        filterUtils.fillSelectPicker("treatmentMethod", $(_this[block].processSelect), filteredProcesses);
+
+                        $(_this[block].processSelect).selectpicker('val', flows[block + "__process__in"]);
+                        $("#" + block + "ContainerProcesses").fadeIn("fast");
+                    }
+
+                    // Treatment methods
+                    if (_.has(flows, 'origin__process__in')) {
+                        loadSavedTreatmentMethods("origin");
+                    }
+                    if (_.has(flows, 'destination__process__in')) {
+                        loadSavedTreatmentMethods("destination");
+                    }
+
+
+                    // ///////////////////////////////
+                    // Flows filters:
+
+                    if (_.has(flows, 'flowchain__month__year__in')) {
+                        $(this.flows.yearSelect).selectpicker("val", flows.flowchain__month__year__in);
+                    }
+                    if (_.has(flows, 'flowchain__month__in')) {
+                        let monthObjects = _this.months.models.filter(function (month) {
+                            return flows.flowchain__month__in.includes(month.attributes.id.toString());
+                        });
+
+                        let yearsToDisplay = [];
+                        monthObjects.forEach(month => {
+                            yearsToDisplay.push(month.attributes.year.toString());
+                        });
+                        yearsToDisplay = _.uniq(yearsToDisplay, 'id');
+                        $(_this.flows.yearSelect).selectpicker('val', yearsToDisplay);
+
+                        let filteredMonths = [];
+                        filteredMonths = _this.months.models.filter(function (month) {
+                            return yearsToDisplay.includes(month.attributes.year.toString())
+                        });
+                        filterUtils.fillSelectPicker("month", $(_this.flows.monthSelect), filteredMonths);
+                        $(_this.flows.monthSelect).selectpicker('val', flows.flowchain__month__in);
+                        $("#monthCol").fadeIn("fast");
+                    }
+
+                    // EWC
+                    if (_.has(flows, 'flowchain__waste06__hazardous')) {
+                        if (flows.flowchain__waste06__hazardous) {
+                            $(this.flows.hazardousSelect).val("yes");
+                        } else {
+                            $(this.flows.hazardousSelect).val("no");
+                        }
+                        $(this.flows.hazardousSelect).trigger('changed.bs.select');
+
+                        if (_.has(flows, 'flowchain__waste06__in')) {                        
+                            $(_this.flows.waste06Select).selectpicker('val', flows.flowchain__waste06__in);
+                        }
+                        $("#wastes04col").hide();
+                    }
+
+
+                    if (_.has(flows, 'flowchain__waste06__waste04__waste02__in')) {
+                        $(_this.origin.waste02Select).selectpicker('val', flows.flowchain__waste06__waste04__waste02__in);
+                    }
+
+                    if (_.has(flows, 'flowchain__waste06__waste04__in')) {
+                        let waste04Objects = _this.wastes04.models.filter(function (ewc4) {
+                            return flows.flowchain__waste06__waste04__in.includes(ewc4.attributes.id.toString());
+                        });
+
+                        let wastes02 = [];
+                        waste04Objects.forEach(ewc4 => {
+                            wastes02.push(ewc4.attributes.waste02.toString());
+                        });
+                        wastes02 = _.uniq(wastes02, 'id');
+                        $(_this.flows.waste02Select).selectpicker('val', wastes02);
+
+                        let filteredEwc4 = [];
+                        filteredEwc4 = _this.wastes04.models.filter(function (ewc4) {
+                            return wastes02.includes(ewc4.attributes.waste02.toString())
+                        });
+                        filterUtils.fillSelectPicker("waste04", $(_this.flows.waste04Select), filteredEwc4);
+                        $(_this.flows.waste04Select).selectpicker('val', flows.flowchain__waste06__waste04__in);
+                        $("#wastes04col").fadeIn("fast");
+                    }
+
+                    if (_.has(flows, 'flowchain__waste06__in') && !_.has(flows, 'flowchain__waste06__hazardous')) {
+                        let waste6Objects = _this.wastes06.models.filter(function (ewc6) {
+                            return flows.flowchain__waste06__in.includes(ewc6.attributes.id.toString());
+                        });
+
+                        // EWC 4 to which EWC6 belong:
+                        let wastes04 = [];
+                        waste6Objects.forEach(ewc6 => {
+                            wastes04.push(ewc6.attributes.waste04.toString());
+                        });
+                        wastes04 = _.uniq(wastes04, 'id');
+                        let waste04Objects = _this.wastes04.models.filter(function (ewc4) {
+                            return wastes04.includes(ewc4.attributes.id.toString());
+                        });
+
+                        // EWC2 to which EWC 4 belong:
+                        let wastes02 = [];
+                        waste04Objects.forEach(ewc4 => {
+                            wastes02.push(ewc4.attributes.waste02.toString());
+                        });
+                        wastes02 = _.uniq(wastes02, 'id');
+                        $(_this.flows.waste02Select).selectpicker('val', wastes02);
+
+                        // Select EWC4 after EWC2 automatically fills EWC4:
+                        $(_this.flows.waste04Select).selectpicker('val', wastes04);
+                        $("#wastes04col").fadeIn("fast");
+
+                        // Fill EWC6 after EWC4:
+                        let filteredEwc6 = [];
+                        filteredEwc6 = _this.wastes06.models.filter(function (ewc6) {
+                            return wastes04.includes(ewc6.attributes.waste04.toString())
+                        });
+                        filterUtils.fillSelectPicker("waste06", $(_this.flows.waste06Select), filteredEwc6);
+                        $(_this.flows.waste06Select).selectpicker('val', flows.flowchain__waste06__in);
+                        $("#wastes06col").fadeIn("fast");
+                    }
+
+                    // Materials
+                    if (_.has(flows, 'flowchain__materials__in')) {
+                        $(this.flows.materialSelect).selectpicker("val", flows.flowchain__materials__in);
+                    }
+                    // Products
+                    if (_.has(flows, 'flowchain__products__in')) {
+                        $(this.flows.productSelect).selectpicker("val", flows.flowchain__products__in);
+                    }
+                    // Composites
+                    if (_.has(flows, 'flowchain__composites__in')) {
+                        $(this.flows.compositesSelect).selectpicker("val", flows.flowchain__composites__in);
+                    }
+
+                    // Composites
+                    if (_.has(flows, 'flowchain__composites__in')) {
+                        $(this.flows.compositesSelect).selectpicker("val", flows.flowchain__composites__in);
+                    }
+
+                    function loadBooleanFilters(filter) {
+                        let valuesToSet = [];
+                        if (flows[filter].includes(false)) {
+                            valuesToSet.push("no");
+                        }
+                        if (flows[filter].includes(true)) {
+                            valuesToSet.push("yes");
+                        }
+                        if (flows[filter].includes(null)) {
+                            valuesToSet.push("unknown");
+                        }
+
+                        if (filter == "composite") {
+                            filter = "isComposite";
+                        }
+                        $(_this.flows[filter + "Select"]).selectpicker("val", valuesToSet);
+                    }
+                    let booleanFilters = ["clean", "mixed", "direct", "composite"];
+                    booleanFilters.forEach(boolean => {
+                        if (_.has(flows, boolean)) {
+                            loadBooleanFilters(boolean);
+                        }
+                    });
+
+                    // Route
+                    if (_.has(flows, 'flowchain__route')) {
+                        if (flows.flowchain__route) {
+                            $(this.flows.routeSelect).selectpicker("val", "yes");
+                        } else {
+                            $(this.flows.routeSelect).selectpicker("val", "no");
+                        }
+                    }
+
+                    // Collector
+                    if (_.has(flows, 'flowchain__collector')) {
+                        if (flows.flowchain__collector) {
+                            $(this.flows.collectorSelect).selectpicker("val", "yes");
+                        } else {
+                            $(this.flows.collectorSelect).selectpicker("val", "no");
+                        }
+                    }
+
+                    $(".selectpicker").selectpicker("refresh");
+
+                    $(".filterLoaded").fadeIn();
+                    setTimeout(() => {
+                        $(".filterLoaded").fadeOut();
+                    }, 2500);
+
+                } catch (error) {
+                    console.log("Error loading saved filters: ", error);
                 }
-
-                $(".selectpicker").selectpicker("refresh");
-
-                $(".filterLoaded").fadeIn();
-                setTimeout(() => {
-                    $(".filterLoaded").fadeOut();
-                }, 2500);
-
                 event.preventDefault();
                 event.stopPropagation();
             },
@@ -1102,6 +1112,11 @@ define(['views/common/baseview',
                         },
                         error: function (error) {
                             console.log(error);
+                            $(".newMode #filterNameExists").html("<span>A filter with this name already exists.</span><br><span>Please fill in another name.</span>")
+                            $(".newMode #filterNameExists").fadeIn();
+                            setTimeout(() => {
+                                $(".newMode #filterNameExists").fadeOut();
+                            }, 3000);
                         }
                     });
                 }
@@ -1188,6 +1203,11 @@ define(['views/common/baseview',
                         },
                         error: function (error) {
                             console.log(error);
+                            $(".savedMode #filterNameExists").html("<span>A filter with this name already exists.</span><br><span>Please fill in another name.</span>")
+                            $(".savedMode #filterNameExists").fadeIn();
+                            setTimeout(() => {
+                                $(".savedMode #filterNameExists").fadeOut();
+                            }, 3000);
                         }
                     });
                 }
@@ -1545,6 +1565,20 @@ define(['views/common/baseview',
                 let wastes04 = $(this.flows.waste04Select).val();
                 let wastes06 = $(this.flows.waste06Select).val();
 
+
+                // isHazardous
+                let hazardous = $(this.flows.hazardousSelect).val();
+                if (hazardous != 'both') {
+                    let is_hazardous = (hazardous == 'yes') ? true : false;
+                    filterParams.flows['flowchain__waste06__hazardous'] = is_hazardous;
+
+                    // Waste06 is not All
+                    if (wastes06[0] != "-1") {
+                        // Send Waste06:
+                        filterParams.flows['flowchain__waste06__in'] = wastes06;
+                    }
+                }
+
                 // Waste02 is not All:
                 if (wastes02[0] !== "-1") {
                     // Waste04 is All, so send Waste02:
@@ -1593,12 +1627,6 @@ define(['views/common/baseview',
                     filterParams.flows['flowchain__collector'] = is_collector;
                 }
 
-                // isHazardous
-                let hazardous = $(this.flows.hazardousSelect).val();
-                if (hazardous != 'both') {
-                    let is_hazardous = (hazardous == 'yes') ? true : false;
-                    filterParams.flows['flowchain__waste06__hazardous'] = is_hazardous;
-                }
 
                 // isClean
                 let clean = $(this.flows.cleanSelect).val();
