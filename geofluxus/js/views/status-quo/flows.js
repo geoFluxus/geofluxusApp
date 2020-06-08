@@ -1,4 +1,4 @@
-s// Flows
+// Flows
 define(['views/common/baseview',
         'underscore',
         'views/common/filters',
@@ -866,8 +866,8 @@ define(['views/common/baseview',
 
                             try {
                                 // Some visualizations require different processing: 
-                                if (["parallelsets", "circularsankey"].includes(selectedVizualisationString)) {
-                                    switch (selectedVizualisationString) {
+                                if (["parallelsets", "circularsankey"].includes(_this.selectedVizName)) {
+                                    switch (_this.selectedVizName) {
                                         case "parallelsets":
                                             _this.renderParallelSets(_this.selectedDimensions, _this.flows);
                                             break;
