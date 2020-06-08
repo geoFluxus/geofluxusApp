@@ -49,10 +49,11 @@ class FilterFlowViewSet(PostGetViewMixin,
                                        .values_list('dataset__id', flat=True)\
 
         # filter
-        if datasets:
-            queryset = queryset.filter(flowchain__dataset__id__in=datasets)
-        else:
-            return Response('No datasets for user group', status=500)
+        if not user.is_superuser:
+            if datasets:
+                queryset = queryset.filter(flowchain__dataset__id__in=datasets)
+            else:
+                return Response('No datasets for user group', status=500)
 
         # retrieve filters
         params = {}

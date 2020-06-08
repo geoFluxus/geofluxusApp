@@ -50,10 +50,6 @@ class AreaManager(models.Manager):
 
     @staticmethod
     def update_actors(created):
-        # retrieve areas
-        ids = [c.id for c in created]
-        areas = Area.objects.filter(id__in=ids)
-
         queryset = Actor.objects
         for c in created:
             # fetch all actors within area
@@ -91,8 +87,30 @@ class Area(models.Model):
         return self.name
 
 
+# Custom Actor Manager
+# to update actors wih areas
+# on Actor bulkupload
+class ActorManager(models.Manager):
+    @staticmethod
+    def update_actors(created):
+        queryset = Area.objects
+        for actor in created:
+            # order areas by administrative level (descending)
+            areas = queryset.filter(geom__contains=actor.geom) \
+                            .order_by('-adminlevel__level')
+            actor.area = areas[0]
+            actor.save()
+
+    # update actor with area
+    def bulk_create(self, objs, **kwargs):
+        created = super(ActorManager, self).bulk_create(objs, ** kwargs)
+        self.update_actors(created)
+        return created
+
 # Actor
 class Actor(models.Model):
+    objects = ActorManager()
+
     geom = gis.PointField(blank=True,
                           null=True)
     activity = models.ForeignKey(Activity,

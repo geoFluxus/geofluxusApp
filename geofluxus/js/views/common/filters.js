@@ -611,6 +611,7 @@ define(['views/common/baseview',
 
                                 // Trigger input event on textareas in order to autoresize if needed:
                                 $(".selections").trigger('input');
+                                $(".selections").textareaAutoSize();
                             }
                         }
                     });
@@ -656,7 +657,7 @@ define(['views/common/baseview',
                         },
                         error: function (res) {
                             _this.loader.deactivate();
-                            _this.onError(res);
+                            console.log("Error in prepareAreas: ",  res);
                         }
                     });
                 }
