@@ -802,7 +802,7 @@ define(['views/common/baseview',
                 $(".circularsankey-wrapper").show();
 
                 this.circularSankeyView = new CircularSankeyView({
-                    el: ".circularsankey-wrapper",
+                    el: "circularsankey-wrapper",
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,

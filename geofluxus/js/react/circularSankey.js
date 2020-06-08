@@ -1,3 +1,5 @@
+var CircularSankey = require('geofluxus-circular-sankey');
+
 define(['views/common/baseview',
             'underscore',
             'geofluxus-circular-sankey',
@@ -8,7 +10,7 @@ define(['views/common/baseview',
         function (
             BaseView,
             _,
-            CircularSankey,
+            CircularSankeyOLDDDD,
             React,
             ReactDOM) {
             /**
@@ -29,7 +31,6 @@ define(['views/common/baseview',
                     initialize: function (options) {
                         CircularSankeyComponentView.__super__.initialize.apply(this, [options]);
 
-
                         this.options = options;
                         this.render();
                     },
@@ -44,17 +45,19 @@ define(['views/common/baseview',
                         ReactDOM.render( < CircularSankey circularData = {
                                     this.options.circularData
                                 }
-                                />, document.getElementsByClassName(this.options.el)); return this;
+                                />, document.getElementById("circularsankey-wrapper")); return this;
 
-                        // This works:
-                        // ReactDOM.render(<p>Hello</p>, document.getElementById("circularsankey-wrapper")); return this;
-                    },
+                                //document.getElementsByClassName(this.options.el)); return this;
 
-                    close() {
-                        ReactDOM.unmountComponentAtNode(this.options.el);
-                        Backbone.View.prototype.remove.call(this);
-                    }
-                });
+                                // This works:
+                                // ReactDOM.render(<p>Hello</p>, document.getElementById("circularsankey-wrapper")); return this;
+                            },
+
+                            close() {
+                                ReactDOM.unmountComponentAtNode(this.options.el);
+                                Backbone.View.prototype.remove.call(this);
+                            }
+                    });
                 return CircularSankeyComponentView;
             }
         );
