@@ -12,6 +12,6 @@ def datasets(user):
     datasets = GroupDataset.objects.filter(group__id__in=groups)\
                                    .values_list('dataset__id', flat=True)\
 
-    if datasets:
+    if datasets or user.is_superuser:
         return True
     return False

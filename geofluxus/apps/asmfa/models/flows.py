@@ -76,7 +76,7 @@ class VehicleManager(models.Manager):
         for c in created:
             # fetch all flows with capacity & update
             flows = queryset.filter(capacity__gte=c.min,
-                                    capacity__lte=c.max)
+                                    capacity__lt=c.max)
             flows.update(vehicle=c.pk)
 
     def bulk_create(self, objs, **kwargs):
