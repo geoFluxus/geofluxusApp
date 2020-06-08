@@ -1,28 +1,38 @@
-define(['views/common/d3plusVizView',
+define(['views/common/baseview',
         'underscore',
-        'visualizations/simpleSankey',
-        'utils/enrichFlows',
         'd3',
-        'visualizations/d3plus',
+        'collections/collection',
+        'app-config',
+        'save-svg-as-png',
+        'file-saver',
         'utils/utils',
+        'utils/enrichFlows',
+        'react/circularSankey',
+        'geofluxus-circular-sankey',
     ],
 
     function (
-        D3plusVizView,
+        BaseView,
         _,
-        SimpleSankey,
-        enrichFlows,
         d3,
-        d3plus,
-        utils) {
+        Collection,
+        config,
+        saveSvgAsPng,
+        FileSaver,
+        utils,
+        enrichFlows,
+        CircularSankeyComponent,
+        CircularSankey,
+        Slider) {
 
         /**
+         *
          * @author Evert Van Hirtum
-         * @name module:views/ParallelSetsView
-         * @augments module:views/D3plusVizView
+         * @name module:views/CircularSankeyView
+         * @augments module:views/BaseView
          */
-        var ParallelSetsView = D3plusVizView.extend(
-            /** @lends module:views/ParallelSetsView.prototype */
+        var CircularSankeyView = BaseView.extend(
+            /** @lends module:views/CircularSankeyView.prototype */
             {
 
                 /**
@@ -33,19 +43,37 @@ define(['views/common/d3plusVizView',
                  * @see http://backbonejs.org/#View
                  */
                 initialize: function (options) {
-                    ParallelSetsView.__super__.initialize.apply(this, [options]);
+                    CircularSankeyView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
-                    _.bindAll(this, 'toggleDarkMode');
 
-                    this.canHaveLegend = false;
-                    this.isDarkMode = true;
                     this.options = options;
+                    this.render();
+                },
+
+                events: {
+                    'click .fullscreen-toggle': 'toggleFullscreen',
+                    'click .export-csv': 'exportCSV',
+                },
+
+
+                component: function () {
+                    return new CircularSankeyComponent({
+                        options: this.options.router
+                    });
+                },
+
+                pageRender: function (view) {
+                    this.$(this.options.el).html(view.render().$el);
+                },
+
+                render: function (data) {
+                    let _this = this;
+                    let flows = this.options.flows;
 
                     this.filtersView = this.options.flowsView.filtersView;
-                    this.flows = this.transformToLinksAndNodes(this.options.flows, this.options.dimensions, this.filtersView);
 
-                    this.tooltipConfig = {
+                    let tooltipConfig = {
                         tbody: [
                             ["Waste", function (d) {
                                 return d3plus.formatAbbreviate(d["value"], utils.returnD3plusFormatLocale()) + " t"
@@ -53,53 +81,20 @@ define(['views/common/d3plusVizView',
                         ]
                     };
 
-                    this.render();
-                },
+                    flows = this.transformToLinksAndNodes(this.options.flows, this.options.dimensions, this.filtersView);
 
-                events: {
-                    'click .fullscreen-toggle': 'toggleFullscreen',
-                    'click .export-csv': 'exportCSV',
-                    'click .toggle-darkmode': 'toggleDarkMode',                    
-                },
 
-                /**
-                 * Create a new D3Plus SimpleSankey object which will be rendered in this.options.el:
-                 */
-                render: function () {
-                    this.SimpleSankey = new SimpleSankey({
+                    this.circularSankey = new CircularSankeyComponent({
                         el: this.options.el,
-                        links: this.flows.links,
-                        nodes: this.flows.nodes,
-                        tooltipConfig: this.tooltipConfig,
-                        canHaveLegend: this.canHaveLegend,
-                        isDarkMode: this.isDarkMode,
+                        circularData: flows,
                     });
-                    this.scrollToVisualization();
-                    this.options.flowsView.loader.deactivate();
+ 
+                    // Smooth scroll to top of Viz
+                    $("#apply-filters")[0].scrollIntoView({
+                        behavior: "smooth"
+                    });
                 },
 
-                toggleDarkMode: function() {
-                    this.isDarkMode = !this.isDarkMode;
-
-                    if (this.isDarkMode) {
-                        d3.selectAll(".d3plus-Links .d3plus-Path")
-                        .attr("stroke", "#DBDBDB")
-                    } else {
-                            d3.selectAll(".d3plus-Links .d3plus-Path")
-                        .attr("stroke", "#393939")
-                    }
-
-                    $(".viz-wrapper-div").toggleClass("lightMode");
-                    $(".parallelsets-container").toggleClass("lightMode");
-                },
-
-                /**
-                 * Takes flows-data in origin/destination format and outputs it according to supplied dimensions into links and nodes format
-                 * 
-                 * @param {array} flows Array of flows containing origin and destination attributes
-                 * @param {object} dimensions object containing dimension information
-                 * @param {object} filtersView Backbone.js filtersView
-                 */
                 transformToLinksAndNodes: function (flows, dimensions, filtersView) {
                     let nodes = [],
                         links = [];
@@ -134,13 +129,17 @@ define(['views/common/d3plusVizView',
                                     destinationNode.id = enrichFlows.returnCodePlusName(processGroupDestinationObject) + " ";
                                     let processGroupOriginObject = processGroups.find(processGroup => processGroup.attributes.id == flow.origin.processgroup);
                                     originNode.id = enrichFlows.returnCodePlusName(processGroupOriginObject);
+                                    break;
+
                                     // Gran == Treatment method
                                 } else {
                                     let processDestinationObject = processes.find(process => process.attributes.id == flow.destination.process);
                                     destinationNode.id = enrichFlows.returnCodePlusName(processDestinationObject) + " ";
                                     let processOriginObject = processes.find(process => process.attributes.id == flow.origin.process);
                                     originNode.id = enrichFlows.returnCodePlusName(processOriginObject);
+
                                 }
+
                                 break;
                             case 2:
                                 // Econ dim1 > Treatment dim2
@@ -172,6 +171,9 @@ define(['views/common/d3plusVizView',
                                     let ewc2 = filtersView.wastes02.models;
                                     let ewc4 = filtersView.wastes04.models;
                                     let ewc6 = filtersView.wastes06.models;
+
+                                    let materialOriginDestination = "";
+
 
                                     // Econ dim1 > Material dim2
                                     if (dimStrings.includes("economicActivity")) {
@@ -301,13 +303,11 @@ define(['views/common/d3plusVizView',
                     }, {})
                     nodes = _(summed_by_type).map(function (v, k) {
                         return {
-                            id: k,
-                            value: v,
+                            name: k,
+                            value: v
                         }
                     })
 
-                    // Assign colors by id:
-                    nodes = enrichFlows.assignColorsByProperty(nodes, "id");
 
                     console.log("Links:");
                     console.log(links);
@@ -355,6 +355,6 @@ define(['views/common/d3plusVizView',
                 },
 
             });
-        return ParallelSetsView;
+        return CircularSankeyView;
     }
 );

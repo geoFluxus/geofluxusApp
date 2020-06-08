@@ -1,4 +1,4 @@
-// Flows
+s// Flows
 define(['views/common/baseview',
         'underscore',
         'views/common/filters',
@@ -13,10 +13,7 @@ define(['views/common/baseview',
         'views/common/areaChartView',
         'views/common/flowMapView',
         'views/common/parallelSetsView',
-        'bootstrap',
-        'bootstrap-select',
-        'bootstrap-toggle',
-        'textarea-autosize',
+        'views/common/circularSankeyView',
     ],
     function (
         BaseView,
@@ -33,6 +30,7 @@ define(['views/common/baseview',
         AreaChartView,
         FlowMapView,
         ParallelSetsView,
+        CircularSankeyView,
     ) {
         var FlowsView = BaseView.extend({
             initialize: function (options) {
@@ -273,6 +271,8 @@ define(['views/common/baseview',
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
                                 $("#viz-parallelsets").parent().fadeIn();
+
+                                $("#viz-circularsankey").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("economicActivity") && _this.selectedDimensionStrings.includes("material")) {
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
@@ -400,9 +400,19 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////
                 // Format
-                if (_this.selectedVizName) {
-                    if (_this.selectedVizName.includes("flowmap") || _this.selectedVizName.includes("parallelsets")) {
-                        filterParams.format = _this.selectedVizName;
+                let selectedVizualisationString;
+                $('.viz-selector-button').each(function (index, value) {
+                    if ($(this).hasClass("active")) {
+                        selectedVizualisationString = $(this).attr("data-viz");
+                    }
+                });
+
+                if (selectedVizualisationString) {
+                    if (["flowmap", "parallelsets", "circularsankey"].includes(selectedVizualisationString)) {
+                        let formatString = selectedVizualisationString;
+                        formatString = (formatString == "circularsankey") ? "parallelsets" : formatString;
+
+                        filterParams.format = formatString;
                     }
                 }
 
@@ -786,6 +796,19 @@ define(['views/common/baseview',
                 });
             },
 
+            renderCircularSankey: function (dimensions, flows) {
+                if (this.circularSankeyView != null) this.circularSankeyView.close();
+
+                $(".circularsankey-wrapper").show();
+
+                this.circularSankeyView = new CircularSankeyView({
+                    el: ".circularsankey-wrapper",
+                    dimensions: dimensions,
+                    flows: flows,
+                    flowsView: this,
+                });
+            },
+
             closeAllVizViews: function () {
                 $(".viz-wrapper-div").removeClass("lightMode");
                 $(".viz-wrapper-div").fadeOut();
@@ -842,19 +865,26 @@ define(['views/common/baseview',
                             }, _this.flows);
 
                             try {
-                                // Only Parallel Sets requires different processing: 
-                                if (_this.selectedVizName == "parallelsets") {
-                                    _this.renderParallelSets(_this.selectedDimensions, _this.flows);
+                                // Some visualizations require different processing: 
+                                if (["parallelsets", "circularsankey"].includes(selectedVizualisationString)) {
+                                    switch (selectedVizualisationString) {
+                                        case "parallelsets":
+                                            _this.renderParallelSets(_this.selectedDimensions, _this.flows);
+                                            break;
+                                        case "circularsankey":
+                                            _this.renderCircularSankey(_this.selectedDimensions, _this.flows);
+                                            break;
+                                    }
                                 } else {
                                     switch (_this.selectedDimensions.length) {
                                         case 1:
-                                            _this.render1Dvisualizations(_this.selectedDimensions, _this.flows);
+                                            _this.render1Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
                                             break;
                                         case 2:
-                                            _this.render2Dvisualizations(_this.selectedDimensions, _this.flows);
+                                            _this.render2Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
                                             break;
+                                        }
                                     }
-                                }
                             } catch (renderError) {
                                 console.log("Error during rendering of visualization: " + renderError)
                                 _this.loader.deactivate();

@@ -86,6 +86,19 @@ module.exports = {
             {
                 test: /\.coffee$/,
                 use: ['coffee-loader']
+            },
+            {
+                test: /\.m?js$/,
+                include: [
+                    path.resolve('./geofluxus/js/react/')
+                ],
+                exclude: /(node_modules|bower_components)/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env', '@babel/preset-react']
+                    }
+                }
             }
         ],
     },
