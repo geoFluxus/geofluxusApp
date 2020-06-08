@@ -1,7 +1,9 @@
 :root {
     --primary: #97BEA9;
     --primary-border: rgb(114, 145, 128);
-    --font-color: white
+    --font-color: white;
+    --primary-focus-bg: rgb(89, 155, 119);
+    --primary-focus-border: rgb(71, 109, 88);
 }
 
 a {
@@ -31,8 +33,6 @@ body {
     background-color: rgb(24, 24, 24);
     z-index: 0;
 }
-
-
 
 .block {
     background-color: #393939;
@@ -100,20 +100,25 @@ input {
     border-color: var(--primary-border);
 }
 
-.btn-primary.focus,
-.btn-primary:focus {
-    background-color: rgb(89, 155, 119) !important;
-    border-color: rgb(71, 109, 88) !important;
+.btn.focus,
+.btn:focus {
+    border-color: var(--primary-focus-border) !important;
     box-shadow: 0 0 0 .2rem rgba(112, 141, 125, .5);
+}
+
+.btn-primary.focus,
+.btn-primary:focus,
+.btn-outline-primary.focus,
+.btn-outline-primary:focus {
+    background-color: var(--primary-focus-bg) !important;
 }
 
 
 .btn-primary:not(:disabled):not(.disabled).active,
 .btn-primary:not(:disabled):not(.disabled):active,
 .show>.btn-primary.dropdown-toggle {
-    background-color: rgb(89, 155, 119) !important;
-    border-color: rgb(71, 109, 88) !important;
-
+    background-color: var(--primary-focus-bg) !important;
+    border-color: var(--primary-focus-border) !important;
 }
 
 .btn-primary:not(:disabled):not(.disabled).active:focus,
@@ -124,14 +129,32 @@ input {
 
 .btn-primary:not(:disabled):not(.disabled).active.focus,
 .btn-primary:not(:disabled):not(.disabled):active.focus,
-.show>.btn-primary.dropdown-toggle:focus {
+.show>.btn-primary.dropdown-toggle:focus,
+.btn-outline-primary:not(:disabled):not(.disabled).active.focus,
+.btn-outline-primary:not(:disabled):not(.disabled):active.focus,
+.btn-outline-primary:not(:disabled):not(.disabled):active:focus {
     box-shadow: 0 0 0 .2rem rgba(112, 141, 125, .5);
 }
 
 
-.btn-primary.active {
-    background-color: rgb(112, 141, 125) !important;
+.btn.active {
     border-color: var(--primary-border) !important;
+}
+
+.btn-primary.active,
+.btn-primary:active {
+    background-color: rgb(112, 141, 125) !important;
+}
+
+.btn-outline-primary {
+    color: white;
+    border-color: var(--primary);
+}
+
+.btn-outline-primary.active,
+.btn-outline-primary:active {
+    background-color: var(--primary-focus-bg) !important;
+    border-color: var(--primary-focus-border) !important;
 }
 
 .btn:hover {
@@ -212,6 +235,10 @@ input {
     background-color: grey !important;
 }
 
+.form-control-sm {
+    border-radius: 18px;
+}
+
 /* Popover Tooltips */
 
 .popover {
@@ -234,6 +261,7 @@ input {
     color: black !important;
     text-decoration: underline;
 }
+
 
 /* Helpicons to open popover tooltips */
 
@@ -292,7 +320,7 @@ input {
     box-shadow: 0px 0px 5px 10px rgba(3, 3, 3, 0.4);
     background-color: #585858;
     color: white;
-    border-radius: 18px;
+    border-radius: 24px;
 }
 
 .modal-header {
@@ -300,11 +328,41 @@ input {
 }
 
 .modal-footer {
-    border-top: 0 none;
+    border-color: gray;
+    padding-right: 0px;
+    margin-right: -0.5rem;
 }
 
 .modal-backdrop {
     background-color: rgba(0, 0, 0, .3);
+}
+
+.modal .close {
+    color: white;
+    font-size: 38px;
+    padding: 0 !important;
+    margin: 0 !important;
+    margin-right: -0.25em !important;
+    transition-property: transform;
+    transition-duration: 0.4s;
+    -webkit-transition-property: -webkit-transform;
+    -webkit-transition-duration: 0.4s;
+    -ms-transition-property: -ms-transform;
+    -ms-transition-duration: 0.4s;
+}
+
+.modal .close:hover {
+    transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+}
+
+.modal .close:focus {
+    outline: none;
+}
+
+.modal-footer button {
+    width: 5rem;
 }
 
 .loader {
@@ -323,8 +381,16 @@ input {
 }
 
 #navbarID {
-    transition: top 0.3s;
     /* Transition effect when sliding down (and up) */
+    transition: top 0.3s;
+}
+
+.warning-no-datasets {
+    position: relative;
+    z-index: 999;
+    margin: auto;
+    width: 30rem;
+    top: 6rem;
 }
 
 @-webkit-keyframes spin {

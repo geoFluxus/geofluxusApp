@@ -1,22 +1,23 @@
 from django.db import models
 
 
-# PublicationType
-class PublicationType(models.Model):
+# DatasetType
+class DatasetType(models.Model):
     name = models.CharField(max_length=255)
 
     def __str__(self):
         return self.name
 
 
-# Publication
-class Publication(models.Model):
+# Dataset
+class Dataset(models.Model):
     citekey = models.CharField(max_length=255)
     author = models.CharField(max_length=255)
     title = models.CharField(max_length=255)
     note = models.TextField()
-    publicationtype = models.ForeignKey(PublicationType,
-                                        on_delete=models.CASCADE)
+    datasettype = models.ForeignKey(DatasetType,
+                                    null=True, blank=True,
+                                    on_delete=models.SET_NULL)
     url = models.URLField(max_length=200,
                           blank=True,
                           null=True)

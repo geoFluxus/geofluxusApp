@@ -243,9 +243,33 @@ define([
                     let polygon = L.polygon(area.geom, areaStyling)
                         .bindTooltip(area.name, {
                             direction: "center",
-                            offset: L.point(0, 25), 
+                            offset: L.point(0, 25),
                             sticky: true // If true, the tooltip will follow the mouse instead of being fixed at the feature center.
                         })
+                        .on('mouseover', function () {
+                            if (_this.showAreaBorders){
+                                this.setStyle({
+                                    'fillColor': "rgba(124, 235, 175, 0.75)",
+                                });
+                            }
+                            if (_this.showAreaFilled){
+                                this.setStyle({
+                                    'fillColor': "rgba(124, 235, 175, 0.9)",
+                                });
+                            }
+                        })
+                        .on('mouseout', function () {
+                            if (_this.showAreaBorders){
+                                this.setStyle({
+                                    'fillColor': "transparent",
+                                });
+                            }
+                            if (_this.showAreaFilled){
+                                this.setStyle({
+                                    'fillColor': "rgba(151,190,169, 0.5)",
+                                });
+                            }
+                        });
 
                     _this.polygons.push(polygon)
                     polygon.addTo(_this.map);

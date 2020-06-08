@@ -36,7 +36,7 @@
             </div>
             <div class="col-md-3" id="gran-toggle-time-col" style="display: none">
                 <div class="checkbox">
-                    <input name="gran-toggle-time" id="gran-toggle-time" type="checkbox" data-width="100%"
+                    <input name="gran-toggle-time" id="gran-toggle-time" class="bootstrapToggle" type="checkbox" data-width="100%"
                         data-height="21" data-toggle="toggle" data-on="Month" data-off="Year">
                 </div>
             </div>
@@ -81,14 +81,14 @@
             </div>
             <div class="col-md-3" id="gran-econ-activity-col" style="display: none">
                 <div class="checkbox">
-                    <input name="gran-toggle-econ-activity" id="gran-toggle-econ-activity" type="checkbox"
+                    <input name="gran-toggle-econ-activity" id="gran-toggle-econ-activity" class="bootstrapToggle" type="checkbox"
                         data-width="100%" data-height="21" data-toggle="toggle" data-on="Activity"
                         data-off="Activity group">
                 </div>
             </div>
             <div class="col-md-3" id="origDest-toggle-econAct-col" style="display: none">
                 <div class="checkbox">
-                    <input name="origDest-toggle-econAct" id="origDest-toggle-econAct" type="checkbox" data-width="100%"
+                    <input name="origDest-toggle-econAct" id="origDest-toggle-econAct" class="bootstrapToggle" type="checkbox" data-width="100%"
                         data-height="21" data-toggle="toggle" data-on="Destination" data-off="Origin">
                 </div>
             </div>
@@ -106,14 +106,14 @@
             </div>
             <div class="col-md-3" id="gran-treatment-method-col" style="display: none">
                 <div class="checkbox">
-                    <input name="gran-toggle-treatment-method" id="gran-toggle-treatment-method" type="checkbox"
+                    <input name="gran-toggle-treatment-method" id="gran-toggle-treatment-method" class="bootstrapToggle" type="checkbox"
                         data-width="100%" data-height="21" data-toggle="toggle" data-on="Treatment method"
                         data-off="Treatment method group">
                 </div>
             </div>
             <div class="col-md-3" id="origDest-toggle-treatment-col" style="display: none">
                 <div class="checkbox">
-                    <input name="origDest-toggle-treatment" id="origDest-toggle-treatment" type="checkbox"
+                    <input name="origDest-toggle-treatment" id="origDest-toggle-treatment" type="checkbox" class="bootstrapToggle"
                         data-width="100%" data-height="21" data-toggle="toggle" data-on="Destination" data-off="Origin">
                 </div>
             </div>
@@ -222,14 +222,6 @@
                     </div>
                 </div>
 
-                <!-- <div class="row mb-3">
-                    <div class="col d-flex">
-                        <div class="custom-control custom-checkbox" style="margin: auto;">
-                            <input type="checkbox" class="custom-control-input" id="display-legend">
-                            <label class="custom-control-label" for="display-legend">Display legend</label>
-                        </div>
-                    </div>
-                </div> -->
             </div>
 
         </div>
@@ -238,7 +230,7 @@
 
     <div class="row mt-1 d-flex justify-content-between">
 
-        <button id='reset-dim-viz' class="btn btn-secondary resetButton" title="Reset all dimension and visualization settings">Reset
+        <button id='reset-dim-viz' class="btn btn-secondary resetButton" title="Reset all dimension and visualization settings">RESET
         </button>
 
         <div>
@@ -251,13 +243,13 @@
             </div>
             <button id='apply-filters' class="btn btn-primary"
                 title="Apply the filters and render the selected visualization."
-                style="margin-left: 10px; float: right; width: 10em">Visualize
+                style="margin-left: 10px; float: right; width: 10em">VISUALIZE
             </button>
         </div>
     </div>
 </div>
 
-<!-- template for viewing flows as sankey or map  -->
+
 <div id="flows-render-template">
 
     <div class="row">

@@ -34,7 +34,6 @@ from geofluxus.apps.asmfa.serializers import (Waste02CreateSerializer,
                                               CompositeCreateSerializer,
                                               YearCreateSerializer,
                                               MonthCreateSerializer)
-from django.db.models import Count
 
 
 # Waste02
@@ -49,12 +48,6 @@ class Waste02ViewSet(PostGetViewMixin,
         'create': Waste02CreateSerializer
     }
 
-    def get_queryset(self):
-        queryset = Waste02.objects
-        queryset = queryset.annotate(
-            flow_count=Count('waste04__waste06__flowchain__flow')
-        )
-        return queryset.order_by('id')
 
 # Waste04
 class Waste04ViewSet(PostGetViewMixin,
@@ -68,12 +61,6 @@ class Waste04ViewSet(PostGetViewMixin,
         'create': Waste04CreateSerializer
     }
 
-    def get_queryset(self):
-        queryset = Waste04.objects
-        queryset = queryset.annotate(
-            flow_count=Count('waste06__flowchain__flow')
-        )
-        return queryset.order_by('id')
 
 # Waste06
 class Waste06ViewSet(PostGetViewMixin,
@@ -86,13 +73,6 @@ class Waste06ViewSet(PostGetViewMixin,
         'list': Waste06ListSerializer,
         'create': Waste06CreateSerializer
     }
-
-    def get_queryset(self):
-        queryset = Waste06.objects
-        queryset = queryset.annotate(
-            flow_count=Count('flowchain__flow')
-        )
-        return queryset.order_by('id')
 
 
 # Material
@@ -107,13 +87,6 @@ class MaterialViewSet(PostGetViewMixin,
         'create': MaterialCreateSerializer
     }
 
-    def get_queryset(self):
-        queryset = Material.objects
-        queryset = queryset.annotate(
-            flow_count=Count('flowchain__flow')
-        )
-        return queryset.order_by('name')
-
 
 # Product
 class ProductViewSet(PostGetViewMixin,
@@ -126,13 +99,6 @@ class ProductViewSet(PostGetViewMixin,
         'list': ProductListSerializer,
         'create': ProductCreateSerializer
     }
-
-    def get_queryset(self):
-        queryset = Product.objects
-        queryset = queryset.annotate(
-            flow_count=Count('flowchain__flow')
-        )
-        return queryset.order_by('name')
 
 
 # Composite
@@ -147,12 +113,6 @@ class CompositeViewSet(PostGetViewMixin,
         'create': CompositeCreateSerializer
     }
 
-    def get_queryset(self):
-        queryset = Composite.objects
-        queryset = queryset.annotate(
-            flow_count=Count('flowchain__flow')
-        )
-        return queryset.order_by('name')
 
 # Year
 class YearViewSet(PostGetViewMixin,
@@ -166,13 +126,6 @@ class YearViewSet(PostGetViewMixin,
         'create': YearCreateSerializer
     }
 
-    def get_queryset(self):
-        queryset = Year.objects
-        queryset = queryset.annotate(
-            flow_count=Count('month__flowchain__flow')
-        )
-        return queryset.order_by('code')
-
 
 # Month
 class MonthViewSet(PostGetViewMixin,
@@ -185,10 +138,3 @@ class MonthViewSet(PostGetViewMixin,
         'list': MonthListSerializer,
         'create': MonthCreateSerializer
     }
-
-    def get_queryset(self):
-        queryset = Month.objects
-        queryset = queryset.annotate(
-            flow_count=Count('flowchain__flow')
-        )
-        return queryset.order_by('year__code', 'code')

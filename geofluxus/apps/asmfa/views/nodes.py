@@ -6,26 +6,22 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Activity,
                                          ProcessGroup,
                                          Process,
-                                         Company,
-                                         Actor)
+                                         Company)
 from geofluxus.apps.asmfa.serializers import (ActivityGroupSerializer,
                                               ActivitySerializer,
                                               ProcessGroupSerializer,
                                               ProcessSerializer,
-                                              CompanySerializer,
-                                              ActorSerializer)
+                                              CompanySerializer)
 from geofluxus.apps.asmfa.serializers import (ActivityGroupListSerializer,
                                               ActivityListSerializer,
                                               ProcessGroupListSerializer,
                                               ProcessListSerializer,
-                                              CompanyListSerializer,
-                                              ActorListSerializer)
+                                              CompanyListSerializer)
 from geofluxus.apps.asmfa.serializers import (ActivityGroupCreateSerializer,
                                               ActivityCreateSerializer,
                                               ProcessGroupCreateSerializer,
                                               ProcessCreateSerializer,
-                                              CompanyCreateSerializer,
-                                              ActorCreateSerializer)
+                                              CompanyCreateSerializer)
 from django.db.models import Count, Value, IntegerField
 
 
@@ -101,13 +97,6 @@ class ProcessViewSet(PostGetViewMixin,
         'create': ProcessCreateSerializer
     }
 
-    def get_queryset(self):
-        queryset = Process.objects
-        queryset = queryset.annotate(
-            flow_count=Value(0, output_field=IntegerField())
-        )
-        return queryset.order_by('id')
-
 
 # Company
 class CompanyViewSet(PostGetViewMixin,
@@ -120,27 +109,3 @@ class CompanyViewSet(PostGetViewMixin,
         'list': CompanyListSerializer,
         'create': CompanyCreateSerializer
     }
-
-    def get_queryset(self):
-        queryset = Company.objects.order_by('id')
-        return queryset
-
-
-# Actor
-class ActorViewSet(PostGetViewMixin,
-                   ViewSetMixin,
-                   ModelPermissionViewSet):
-    queryset = Actor.objects.order_by('id')
-    pagination_class = UnlimitedResultsSetPagination
-    serializer_class = ActorSerializer
-    serializers = {
-        'list': ActorListSerializer,
-        'create': ActorCreateSerializer
-    }
-
-    def get_queryset(self):
-        queryset = Actor.objects
-        queryset = queryset.annotate(
-            flow_count=Count('outputs', distinct=True) +
-                       Count('inputs', distinct=True))
-        return queryset.order_by('id')

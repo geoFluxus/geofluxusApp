@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 {% load static %} {% load render_bundle from webpack_loader %}
+{% load custom_tags %}
 
 <head>
   <link href="https://fonts.googleapis.com/css?family=Lato|Montserrat|Open+Sans|Roboto" rel="stylesheet">
@@ -72,6 +73,14 @@
       </ul>
     </div>
   </nav>
+
+  {% if not request.user|datasets %}
+  <div class="alert alert-warning text-center warning-no-datasets">
+    <small>
+      You are not allowed to access any data sets. Please contact us.
+    </small>
+  </div>
+  {% endif %}
 
   <!-- Sidebar -->
   <div id="wrapper" class="active">
