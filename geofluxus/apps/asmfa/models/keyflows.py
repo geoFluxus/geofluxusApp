@@ -10,6 +10,7 @@ class Waste02(models.Model):
         return "{} - {}".format(self.ewc_code,
                                 self.ewc_name)
 
+
 # Waste04 (4-digit EWC code)
 class Waste04(models.Model):
     ewc_name = models.CharField(max_length=255)
@@ -20,6 +21,7 @@ class Waste04(models.Model):
     def __str__(self):
         return "{} - {}".format(self.ewc_code,
                                 self.ewc_name)
+
 
 # Waste06 (6-digit EWC code)
 class Waste06(models.Model):

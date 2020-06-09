@@ -5,7 +5,7 @@ from geofluxus.apps.asmfa.models import (Waste06,
                                          Product,
                                          Composite,
                                          Actor,
-                                         Publication)
+                                         Dataset)
 from django.db.models import (Q, ExpressionWrapper, F, FloatField,
                               OuterRef, Subquery)
 from django.contrib.gis.db import models as gis
@@ -76,7 +76,7 @@ class VehicleManager(models.Manager):
         for c in created:
             # fetch all flows with capacity & update
             flows = queryset.filter(capacity__gte=c.min,
-                                    capacity__lte=c.max)
+                                    capacity__lt=c.max)
             flows.update(vehicle=c.pk)
 
     def bulk_create(self, objs, **kwargs):
@@ -115,9 +115,9 @@ class FlowChain(models.Model):
                                       through='ProductInChain')
     composites = models.ManyToManyField(Composite,
                                         through='CompositeInChain')
-    publication = models.ForeignKey(Publication,
-                                    null=True, blank=True,
-                                    on_delete=models.CASCADE)
+    dataset = models.ForeignKey(Dataset,
+                                null=True, blank=True,
+                                on_delete=models.CASCADE)
 
     def __str__(self):
         return self.identifier
@@ -145,6 +145,7 @@ class FlowManager(models.Manager):
         created = super(FlowManager, self).bulk_create(objs, **kwargs)
         self.update_flows(created)
         return created
+
 
 class Flow(models.Model):
     objects = FlowManager()
@@ -176,6 +177,7 @@ class Flow(models.Model):
         return "{} : {} -> {}".format(self.flowchain,
                                       self.origin,
                                       self.destination)
+
 
 # MaterialInChain
 class MaterialInChain(models.Model):

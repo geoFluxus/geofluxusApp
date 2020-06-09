@@ -1,7 +1,6 @@
 var d3 = require('d3');
 var utils = require('utils/utils');
 
-//var color = "" //d3.scale.category20();
 var color = d3.scaleOrdinal(d3.schemeCategory10);
 var colorScale = d3.scaleSequential(d3.interpolateSpectral);
 

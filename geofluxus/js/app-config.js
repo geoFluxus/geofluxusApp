@@ -9,8 +9,8 @@ function(Session) {
 
     config.api = {
         base:              '/api/',
-        publicationtypes:  '/api/publicationtypes/',
-        publications:      '/api/publications/',
+        datasettypes:      '/api/datasettypes/',
+        datasets:          '/api/datasets/',
         arealevels:        '/api/levels/',
         allareas:          '/api/allareas/',
         areas:             '/api/levels/{0}/areas/',
@@ -36,7 +36,8 @@ function(Session) {
         extradescriptions: '/api/extradescriptions/',
         routings:          '/api/routings/',
         ways:              '/api/ways/',
-        vehicles:          '/api/vehicles/'
+        vehicles:          '/api/vehicles/',
+        filters:           '/api/filters/'
     }
 
     return config;

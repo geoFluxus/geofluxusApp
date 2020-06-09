@@ -1,73 +1,27 @@
 <!--Filters-->
 <script type="text/template" id="filter-template">
-    <!--    <div id="filterViewContainer">-->
-    <!--        <div class="card bg-dark">-->
-    <!--            <div class="card-header" id="ch-filterViews">-->
-    <!--                <h4 class="mb-0 panel-title">-->
-    <!--                    <button class="btn btn-link collapsingHeaderButton collapsed" id="btn-filterViews"-->
-    <!--                            data-toggle="collapse" data-target="#collapseFilterViews" aria-expanded="false"-->
-    <!--                            aria-controls="collapseFilterViews" data-parent="#filterViewContainer">-->
-    <!--                        <i class="fa fa-chevron-down pull-right"></i>-->
-    <!--                        Saved Filters-->
-    <!--                    </button>-->
-    <!--                </h4>-->
-    <!--            </div>-->
-    <!--            <div id="collapseFilterViews" class="collapse" data-parent="#filterViewContainer">-->
-    <!--                <div class="card-body">-->
-    <!--                    <div class="row">-->
-    <!--                        <div class="col-sm">-->
-    <!--                            <div class="row">-->
-    <!--                                <select name="filter" class="form-control form-control-sm">-->
-    <!--                                    <option value="none">No saved filters found.</option>-->
-    <!--                                </select>-->
-    <!--                            </div>-->
-    <!--                        </div>-->
-    <!--                        <div class="col-sm">-->
-    <!--                            <div class="row">-->
-    <!--                                <button class="btn btn-primary btn-sm" title="Edit filter"-->
-    <!--                                        style="margin-right: 10px; width: 6em;"-->
-    <!--                                        id="edit-flowfilter-button">Edit-->
-    <!--                                </button>-->
-    <!--                                <button class="btn btn-primary btn-sm" title="Create filter"-->
-    <!--                                        style="margin-right: 10px; width: 6em;"-->
-    <!--                                        id="new-flowfilter-button">New-->
-    <!--                                </button>-->
-    <!--                                <button class="btn btn-warning btn-sm" title="Delete filter"-->
-    <!--                                        style="background-color: red; color:white; border: red; width: 6em;"-->
-    <!--                                        id="delete-flowfilter-button">Delete-->
-    <!--                                </button>-->
-    <!--                            </div>-->
-    <!--                        </div>-->
-    <!--                    </div>-->
-    <!--                    <div class="row" id="filter-attributes">-->
-    <!--                        <div class="col-sm">-->
-    <!--                            <div class="row">-->
-    <!--                                <input class="form-control form-control-sm" id="filterName" name="filterName"-->
-    <!--                                       placeholder="Name">-->
-    <!--                            </div>-->
-    <!--                            <div class="row">-->
-    <!--                                <input class="form-control form-control-sm" id="filterDescription"-->
-    <!--                                       name='filterDescription'-->
-    <!--                                       placeholder="Description">-->
-    <!--                            </div>-->
-    <!--                        </div>-->
-    <!--                        <div class="col-sm">-->
-    <!--                            <div class="row">-->
-    <!--                                <button id='upload-flowfilter-button' title="Save filter"-->
-    <!--                                        class="btn btn-sm btn-danger btn-upload">-->
-    <!--                                    <span class="fas fa-arrow-circle-up" style="margin-right:10px;"></span>Save Changes-->
-    <!--                                </button>-->
-    <!--                            </div>-->
-    <!--                        </div>-->
-    <!--                    </div>-->
-    <!--                </div>-->
-    <!--            </div>-->
-    <!--        </div>-->
-    <!--    </div>-->
 
     <div class="block accordion" id="filterBlock">
 
-        <h4 class="pb-2 pl-3">Step 1: Filter the flows</h4>
+        <div class="row justify-content-between">
+            <h4 class="pb-1 pl-3">Step 1: Filter the flows</h4>
+
+            <div>
+                <button
+                    id='view-saved-filters'
+                    class="btn btn-outline-primary openSavedFilterModal"
+                    data-filter-modal-mode="savedMode"
+                    title="View and set a saved filter configuration."
+                    style="height: 38px; width: 6em">SAVED</button>
+
+                <button
+                    id='save-filters'
+                    class="btn btn-outline-primary openSavedFilterModal"
+                    data-filter-modal-mode="newMode"
+                    title="Save the current filter configuration."
+                    style="height: 38px; width: 6em">NEW</button>
+            </div>
+        </div>
 
         <!-- ORIGIN CONTROLS -->
         <div class="card bg-dark">
@@ -81,10 +35,6 @@
                         Origin
                     </button>
                 </h4>
-                <!--                <a  float="left" class="help-icon fas fa-question-circle" data-toggle="popover" title="Activities and Actors Filter"-->
-                <!--                   data-html="true" tabindex="0"-->
-                <!--                   data-content='Filter the flows between activity groups, activities and actors'>-->
-                <!--                </a>-->
             </div>
 
             <div id="collapseOriginBlock" class="collapse show" aria-labelledby="card-header-collapse-origin"
@@ -93,7 +43,8 @@
                     <div class="row">
                         <div class="col-md-10">
 
-                            <label for="area-select-button-origin">Limit the <strong>origin</strong> of the waste flows to geographic
+                            <label for="area-select-button-origin">Limit the <strong>origin</strong> of the waste flows
+                                to geographic
                                 areas:</label>
 
                             <div class="d-block">
@@ -112,11 +63,11 @@
                         </div>
                     </div>
 
-                    <div class='row areaSelectionsOrigin' style="display: none;">
+                    <div class='row areaSelections-origin' style="display: none;">
                         <div class="col-md-4">
 
                             <textarea class="form-control-sm textarea-autosize selections"
-                                id="areaSelectionsOriginTextarea" style="width: 100% !important; display: inline-block"
+                                id="areaSelections-Textarea-origin" style="width: 100% !important; display: inline-block"
                                 type="text" readonly></textarea>
 
                             <button id="clear-origin-areas-button" class="btn btn-sm btn-primary clear-areas-button"
@@ -127,21 +78,21 @@
                         </div>
                     </div>
 
-                    <div class="row mt-2 areaSelectionsOrigin" style="display: none;">
+                    <div class="row mt-2 areaSelections-origin" style="display: none;">
                         <div class="col">
                             <div style="display: block;">
                                 <label style="display: inline-block;">The origin of the flows must be</label>
                                 <div class="checkbox in-or-out-container">
                                     <input name="in-or-out-origin" id="origin-area-in-or-out" type="checkbox"
                                         data-height="24" data-toggle="toggle" data-on="outside" data-off="within"
-                                        class="in-out-toggle">
+                                        class="in-out-toggle bootstrapToggle">
                                     <label style="display: inline-block;">the selected area(s).</label>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="row mt-4">
+                    <div class="row mt-3">
                         <div class="col-md-12">
 
                             <label for="origin-role-radio">Origin role</label>
@@ -201,20 +152,24 @@
                                 </a>
                             </div>
 
-                            <select id="origin-activitygroup-select" name="origin-activitygroup-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true"
-                                data-dropup-auto="false" data-size="6" style="resize: vertical;">
+                            <select id="origin-activitygroup-select"
+                                    class="form-control form-control-sm selectpicker"
+                                    name="origin-activitygroup-select"
+                                    multiple
+                                    data-live-search="true"
+                                    data-dropup-auto="false"
+                                    data-size="6"
+                                    style="resize: vertical;">
                                 <option selected value="-1">All (<%= activityGroups.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% activityGroups.forEach(function(activitygroup){ %>
-                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>
-                                    <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
+                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>. <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
                                 </option>
                                 <% }); %>
                             </select>
                         </div>
 
-                        <div class="col-md-4 activitySelectContainer activitySelectContainerOrigin"
+                        <div class="col-md-4 activitySelectContainer activitySelectContainer-origin"
                             style="display: none">
 
                             <label for="origin-activity-select">Activity</label>
@@ -233,9 +188,15 @@
                             </div>
 
                             <i class="fas fa-angle-double-right filterDoubleChevron"></i>
-                            <select id="origin-activity-select" name="origin-activity-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true"
-                                data-dropup-auto="false" data-size="6" style="resize: vertical;">
+                            <select
+                                id="origin-activity-select"
+                                class="form-control form-control-sm selectpicker"
+                                name="origin-activity-select"
+                                multiple
+                                data-live-search="true"
+                                data-dropup-auto="false"
+                                data-size="6"
+                                style="resize: vertical;">
                             </select>
                         </div>
                     </div>
@@ -263,8 +224,7 @@
                                 <option selected value="-1">All (<%= processgroups.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% processgroups.forEach(function(process){ %>
-                                <option value="<%= process.id %>"><%= process.get('code') %>
-                                    <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
+                                <option value="<%= process.id %>"><%= process.get('code') %>. <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
                                 </option>
                                 <% }); %>
                             </select>
@@ -320,7 +280,8 @@
                     <div class="row">
                         <div class="col-md-10">
 
-                            <label for="area-select-button-destination">Limit the <strong>destination</strong> of the waste flows to
+                            <label for="area-select-button-destination">Limit the <strong>destination</strong> of the
+                                waste flows to
                                 geographic areas:</label>
 
                             <div class="d-block">
@@ -340,11 +301,11 @@
                         </div>
                     </div>
 
-                    <div class='row areaSelectionsDestination' style="display: none;">
+                    <div class='row areaSelections-destination' style="display: none;">
                         <div class="col-md-4">
 
                             <textarea class="form-control-sm textarea-autosize selections"
-                                id="areaSelectionsDestinationTextarea"
+                                id="areaSelections-Textarea-destination"
                                 style="width: 100% !important; display: inline-block" type="text" readonly></textarea>
 
                             <button id="clear-destination-areas-button"
@@ -355,14 +316,14 @@
 
                         </div>
                     </div>
-                    <div class="row mt-2 areaSelectionsDestination" style="display: none;">
+                    <div class="row mt-2 areaSelections-destination" style="display: none;">
                         <div class="col">
                             <div style="display: block;">
                                 <label style="display: inline-block;">The destination of the flows must be</label>
                                 <div class="checkbox in-or-out-container">
                                     <input name="in-or-out-destination" id="destination-area-in-or-out" type="checkbox"
                                         data-height="24" data-toggle="toggle" data-on="outside" data-off="within"
-                                        class="in-out-toggle">
+                                        class="in-out-toggle bootstrapToggle">
                                     <label style="display: inline-block;">the selected area(s).</label>
                                 </div>
                             </div>
@@ -370,7 +331,7 @@
                     </div>
 
 
-                    <div class="row mt-4">
+                    <div class="row mt-3">
                         <div class="col-md-12">
 
                             <label for="destination-role-radio">Destination role</label>
@@ -435,13 +396,12 @@
                                 <option selected value="-1">All (<%= activityGroups.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% activityGroups.forEach(function(activitygroup){ %>
-                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>
-                                    <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
+                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>. <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
                                 </option>
                                 <% }); %>
                             </select>
                         </div>
-                        <div class="col-md-4 activitySelectContainer activitySelectContainerDestination"
+                        <div class="col-md-4 activitySelectContainer activitySelectContainer-destination"
                             style="display: none">
                             <label for="destination-activity-select">Activity</label>
                             <div class="labelHelpiconContainer">
@@ -489,8 +449,7 @@
                                 <option selected value="-1">All (<%= processgroups.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% processgroups.forEach(function(process){ %>
-                                <option value="<%= process.id %>"><%= process.get('code') %>
-                                    <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
+                                <option value="<%= process.id %>"><%= process.get('code') %>. <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
                                 </option>
                                 <% }); %>
                             </select>
@@ -524,7 +483,8 @@
         </div>
 
         <!-- FLOWS CONTROLS -->
-        <div class="card bg-dark" style="border-bottom-left-radius: 30px !important; border-bottom-right-radius: 30px !important">
+        <div class="card bg-dark"
+            style="border-bottom-left-radius: 30px !important; border-bottom-right-radius: 30px !important">
             <div class="card-header" id="card-header-collapse-flows">
                 <h4 class="mb-1">
                     <button class="btn btn-link collapsed collapsingHeaderButton" id="btn-collapse-header-flows"
@@ -563,11 +523,11 @@
 
                         </div>
                     </div>
-                    <div class='row' id="areaSelectionsFlows" style="display: none;">
+                    <div class='row' id="areaSelections-flows" style="display: none;">
                         <div class="col-md-4">
 
                             <textarea class="form-control-sm textarea-autosize selections"
-                                id="areaSelectionsFlowsTextarea" style="width: 100% !important; display: inline-block"
+                                id="areaSelections-Textarea-flows" style="width: 100% !important; display: inline-block"
                                 type="text" readonly></textarea>
                             <button id="clear-flows-areas-button" class="btn btn-sm btn-primary clear-areas-button"
                                 data-area-clear-button="flows">
@@ -751,7 +711,8 @@
                                 <option selected value="-1">All (<%= products.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% products.forEach(function(product){ %>
-                                <option value="<%= product.id %>"><%= product.get('name')[0].toUpperCase() + product.get('name').slice(1) %></option>
+                                <option value="<%= product.id %>">
+                                    <%= product.get('name')[0].toUpperCase() + product.get('name').slice(1) %></option>
                                 <% }); %>
                             </select>
                         </div>
@@ -771,7 +732,9 @@
                                 <option selected value="-1">All (<%= composites.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% composites.forEach(function(composite){ %>
-                                <option value="<%= composite.id %>"><%= composite.get('name')[0].toUpperCase() + composite.get('name').slice(1) %></option>
+                                <option value="<%= composite.id %>">
+                                    <%= composite.get('name')[0].toUpperCase() + composite.get('name').slice(1) %>
+                                </option>
                                 <% }); %>
                             </select>
                         </div>
@@ -783,13 +746,14 @@
                             <label for="flows-clean-select">Clean</label>
                             <div class="labelHelpiconContainer">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Clean"
-                                    data-html="true" tabindex="0" data-content="The Clean filter indicates the extent to which a 
+                                    data-html="true" tabindex="0"
+                                    data-content="The Clean filter indicates the extent to which a 
                                     flow is expected to be contaminated with another substance. ‘Mono’ streams are considered 
                                     clean streams since they consist of one material and are not contaminated, i.e. clean.">
                                 </a>
                             </div>
-                            <select id="flows-clean-select" name="flows-clean-select" class="form-control form-control-sm selectpicker" multiple
-                                style="resize: vertical;">
+                            <select id="flows-clean-select" name="flows-clean-select"
+                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
                                 <option selected value='-1'>Ignore</option>
                                 <option data-divider="true"></option>
                                 <option value='unknown'>Unknown</option>
@@ -808,8 +772,8 @@
                                     indicating they contain two or more materials.">
                                 </a>
                             </div>
-                            <select id="flows-mixed-select" name="flows-mixed-select" class="form-control form-control-sm selectpicker" multiple
-                                style="resize: vertical;">
+                            <select id="flows-mixed-select" name="flows-mixed-select"
+                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
                                 <option selected value='-1'>Ignore</option>
                                 <option data-divider="true"></option>
                                 <option value='unknown'>Unknown</option>
@@ -826,8 +790,8 @@
                                     processing is required. ">
                                 </a>
                             </div>
-                            <select id="flows-direct-select" name="flows-direct-select" class="form-control form-control-sm selectpicker"
-                                multiple style="resize: vertical;">
+                            <select id="flows-direct-select" name="flows-direct-select"
+                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
                                 <option selected value='-1'>Ignore</option>
                                 <option data-divider="true"></option>
                                 <option value='unknown'>Unknown</option>
@@ -843,8 +807,8 @@
                                     known composite consisting of two or more materials.">
                                 </a>
                             </div>
-                            <select id="flows-iscomposite-select" name="flows-iscomposite-select" class="form-control form-control-sm selectpicker"
-                                multiple style="resize: vertical;">
+                            <select id="flows-iscomposite-select" name="flows-iscomposite-select"
+                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
                                 <option selected value='-1'>Ignore</option>
                                 <option data-divider="true"></option>
                                 <option value='unknown'>Unknown</option>
@@ -893,7 +857,7 @@
                             </select>
                         </div>
                     </div>
-                    
+
 
                 </div>
             </div>
@@ -901,7 +865,7 @@
         </div>
 
         <div class="row mt-1">
-            <button id='reset-filters' class="btn btn-secondary resetButton" title="Reset all the filters">Reset
+            <button id='reset-filters' class="btn btn-secondary resetButton" title="Reset all the filters">RESET
             </button>
         </div>
 
@@ -910,23 +874,134 @@
 
     <!--Area selection-->
     <div class="area-filter modal fade" role="dialog"></div>
+
+    <!-- Saved filter modal-->
+    <div class="saved-filters modal fade" role="dialog"></div>
 </script>
 
+<!-- Saved filter modal-->
+<script type="text/template" id="saved-filters-modal-template">
+    <div class="modal-dialog modal-lg" style="max-width: 650px">
+        <!-- Modal content-->
+        <div class="modal-content col-md-12 pt-1">
+            <div class="modal-header pt-2 pb-1 ml-2">
+                <h4 class="modal-title savedMode">Saved filters</h4>
+                <h4 class="modal-title newMode">Save this set of filters</h4>
+                <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body pt-0">
+
+                <form class="newMode needs-validation" novalidate>
+                    <div class='row pt-3 pb-0'>
+                        <div class="col d-flex mb-1">
+                            <div class="form-group w-100 mb-0">
+                                <input 
+                                    type="text"
+                                    id="new-filter-name-input"
+                                    class="form-control-sm w-100 pl-3"
+                                    title="The name of the new saved filter configuration."
+                                    placeholder="New filter name"
+                                    style="height: 38px; border: none;" 
+                                    maxlength="255"
+                                    required>
+                                <div class="invalid-feedback w-100 text-center mt-4">Please fill in a filter name.</div>
+                                <div id="filterNameExists" class="invalid-feedback w-100 text-center mt-4" style="display: none;"></div>
+                                <small id="newFilterAdded" class="form-text text-white w-100 text-center mt-4" style="display: none;">New filter has been saved!</small>
+                            </div>             
+                            <button
+                                id='new-filter-name-btn'
+                                class="btn btn-primary"
+                                type="submit"
+                                title="Save the filter name"
+                                style="width: 6.65rem; height: 38px; margin-left: 4px;"
+                                >Save</button>
+                        </div>                        
+                    </div>
+                </form>
+                
+                <form class="savedMode needs-validation" novalidate>
+                    
+                    <div class='row pt-3 savedMode'>
+                        <div class="col">
+                            <select name="saved-filters-select"
+                                    id="saved-filters-select"
+                                    class="form-control selectpicker"
+                                    style="max-width: 350px;"
+                                    data-none-selected-text="No saved filters found.">
+                                    <% savedFilters.forEach(function(savedFilter) { %>
+                                            <option value="<%= savedFilter.id %>"><%= savedFilter.get('name') %></option>
+                                    <% }) %>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class='row pt-1 pb-2 savedMode'>
+                        <div class="col d-flex justify-content-between fourButtons">
+                            <button id='delete-filter-config' class="btn btn-secondary w-25" title="Delete the selected filter configuration.">Delete</button>
+                            <button id='edit-filter-name' class="btn btn-secondary w-25" title="Rename the selected filter configuration.">Rename</button>
+                            <button id='update-filter-config' class="btn btn-secondary w-25" title="Update this filter with the current filter configuration.">Update</button>
+                            <button id='load-filter-config' class="btn btn-primary w-25" title="Load the selected filter configuration.">Load</button>
+                        </div>
+                    </div>
+
+                    <div class='row pt-4 pb-2 mb-3 filterUpdated' style="display: none;">
+                        <div class="col d-flex">
+                            <small class="text-white w-100 text-center">Filter has been updated!</small>
+                        </div>
+                    </div>
+
+                    <div class='row pt-4 pb-2 mb-3 filterLoaded' style="display: none;">
+                        <div class="col d-flex">
+                            <small class="text-white w-100 text-center">Filters have been loaded!</small>
+                        </div>
+                    </div>
+
+                    <div class='row pt-4 pb-0 mb-2 filterEdit' style="display: none;">
+                        <div class="col d-flex">
+
+                            <div class="form-group w-75">
+                                <input type="text" class="form-control-sm w-100" maxlength="255" id="update-filter-name" placeholder="Filter name" style="height: 38px; border: none; padding-left: 1rem;" required>
+                                <div class="invalid-feedback w-100 text-center mt-4">Please fill in a filter name.</div>
+                                <div id="filterNameExists" class="invalid-feedback w-100 text-center mt-4" style="display: none;"></div>
+                                <small id="filterNameUpdated" class="form-text text-white w-100 text-center mt-4" style="display: none;">Filter has been renamed!</small>
+                            </div>
+
+                            <div class="w-25 d-flex justify-content-between">
+                                <button class="btn btn-sm btn-secondary hide-filter-name-button" type="submit">Cancel</button>
+                                <button id='save-filter-name'
+                                        type="submit"
+                                        class="btn btn-primary"
+                                        title="Save the filter name">Save</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+
+
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn cancel btn-secondary savedMode" data-dismiss="modal">Cancel</button> -->
+                <button class="btn btn-primary confirm" data-dismiss="modal" aria-hidden="true">OK</button>
+            </div>
+        </div>
+    </div>
+</script>
 
 <!--Area selection-->
 <script type="text/template" id="area-select-modal-template">
     <div class="modal-dialog modal-lg">
         <!-- Modal content-->
-        <div class="modal-content col-md-12">
-            <div class="modal-header" style="padding-bottom: 0px">
+        <div class="modal-content col-md-12 pt-1 ml-2">
+            <div class="modal-header pt-2 pb-1">
                 <h4 class="modal-title">Select areas</h4>
-                <button type="button" class="close" data-dismiss="modal" style="color: white;">&times;</button>
+                <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-                <div class='row' style="padding-top: 0px">
+                <div class='row pt-1'>
                     <div class="col">
-                        <label for="area-level-select" class="input-label" style="margin-top: .5rem; margin-right: 10px;">Geographic level:</label>
-                        <select name="area-level-select" id="area-level-select" class="form-control form-control-sm" style="max-width: 350px;">
+                        <label for="area-level-select" class="input-label">Geographic level:</label>
+                        <select name="area-level-select" id="area-level-select" class="form-control form-control-sm selectpicker" style="max-width: 350px;">
                             <% levels.forEach(function(level) { %>
                                 <% if (level.get('level') != "1000") %>
                                     <option value="<%= level.id %>"><%= level.get('name') %></option>
@@ -935,9 +1010,9 @@
                     </div>
                 </div>
                 <div class='row'>
-                    <div class='areaModalMapRow map' style=""></div>
+                    <div class='areaModalMapRow map'></div>
                 </div>
-                <div class='row' style="padding-top: 0px">
+                <div class='row pt-0'>
                     <div class="col">
                         <label for="areaSelectionsModalTextarea">Selected areas:</label>
                         <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsModalTextarea" style="width: 100%" type="text" readonly></textarea>
@@ -945,7 +1020,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn cancel btn-secondary" data-dismiss="modal">Cancel</button>
+                <!-- <button type="button" class="btn cancel btn-secondary" data-dismiss="modal">Cancel</button> -->
                 <button class="btn btn-primary confirm" data-dismiss="modal" aria-hidden="true">OK</button>
             </div>
         </div>

@@ -1,8 +1,6 @@
 from django.contrib import admin
-from django.contrib.admin import ModelAdmin, TabularInline
+from django.contrib.admin import TabularInline
 from django.contrib.gis.admin import GeoModelAdmin
-from django.db.models.functions import Lower
-from django.apps import apps
 from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Activity,
                                          ProcessGroup,
@@ -26,8 +24,8 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          ExtraDescription,
                                          AdminLevel,
                                          Area,
-                                         Publication,
-                                         PublicationType,
+                                         Dataset,
+                                         DatasetType,
                                          Routing,
                                          Vehicle)
 
@@ -84,6 +82,7 @@ class ProgressAdmin(CustomAdmin):
 @admin.register(Company)
 class CompanyAdmin(CustomAdmin):
     search_fields = ['name']
+
 
 # Actor
 @admin.register(Actor)
@@ -143,11 +142,14 @@ class MonthAdmin(CustomAdmin):
 class MaterialInChainInline(TabularInline):
     model = MaterialInChain
 
+
 class ProductInChainInline(TabularInline):
     model = ProductInChain
 
+
 class CompositeInChainInline(TabularInline):
     model = CompositeInChain
+
 
 @admin.register(FlowChain)
 class FlowChainAdmin(CustomAdmin):
@@ -187,14 +189,16 @@ class AreaAdmin(CustomAdmin):
     search_fields = ['name']
 
 
-admin.site.register(Publication, CustomAdmin)
-admin.site.register(PublicationType, CustomAdmin)
+admin.site.register(Dataset, CustomAdmin)
+admin.site.register(DatasetType, CustomAdmin)
+
 
 # Routing
 @admin.register(Routing)
 class RoutingAdmin(CustomAdmin):
     search_fields = ['origin__identifier',
                      'destination__identifier']
+
 
 # Vehicle
 @admin.register(Vehicle)

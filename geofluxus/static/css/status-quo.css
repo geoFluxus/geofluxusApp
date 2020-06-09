@@ -68,6 +68,7 @@
 .collapsingHeaderButton:focus {
     background-color: inherit;
     color: white;
+    box-shadow: none !important;
 }
 
 .flowFilterSubtitle {
@@ -78,7 +79,8 @@
     max-width: 80vw;
 }
 
-#filterBlock .dropdown-menu .show {
+#filterBlock .dropdown-menu .inner.show {
+    min-width: 70px !important;
     max-width: 80vw;
     overflow-x: hidden;
     z-index: 1000;
@@ -169,6 +171,23 @@ label[for="flows-waste06-select"] {
     border-radius: 19px;
 }
 
+.savedMode .fourButtons button {
+    margin-right: 0.5rem;
+    margin-left: 0.5rem
+}
+
+.savedMode .fourButtons button:first-child {
+    margin-left: 0;
+}
+
+.savedMode .fourButtons button:last-child {
+    margin-right: 0;
+}
+
+.filterEdit button {
+    width: 4.5rem;
+    height: 38px;
+}
 
 .helpIconContainer {
     height: 100%;
