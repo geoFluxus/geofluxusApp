@@ -797,8 +797,6 @@ define(['views/common/baseview',
             },
 
             renderCircularSankey: function (dimensions, flows) {
-                if (this.circularSankeyView != null) this.circularSankeyView.close();
-
                 $(".circularsankey-wrapper").show();
 
                 this.circularSankeyView = new CircularSankeyView({
@@ -811,8 +809,7 @@ define(['views/common/baseview',
 
             closeAllVizViews: function () {
                 $(".viz-wrapper-div").removeClass("lightMode");
-                $(".viz-wrapper-div").fadeOut();
-                $(".viz-wrapper-div").html("")
+                $(".viz-wrapper-div").hide();
                 $(".parallelsets-container").hide();
                 if (this.barChartView != null) this.barChartView.close();
                 if (this.pieChartView != null) this.pieChartView.close();
@@ -823,6 +820,7 @@ define(['views/common/baseview',
                 if (this.areaChartView != null) this.areaChartView.close();
                 if (this.flowMapView != null) this.flowMapView.close();
                 if (this.parallelSetsView != null) this.parallelSetsView.close();
+                if (this.circularSankeyView != null) this.circularSankeyView.close();
             },
 
             // Fetch flows and calls options.success(flows) on success
@@ -878,10 +876,10 @@ define(['views/common/baseview',
                                 } else {
                                     switch (_this.selectedDimensions.length) {
                                         case 1:
-                                            _this.render1Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
+                                            _this.render1Dvisualizations(_this.selectedDimensions, _this.flows, _this.selectedVizName);
                                             break;
                                         case 2:
-                                            _this.render2Dvisualizations(_this.selectedDimensions, _this.flows, selectedVizualisationString);
+                                            _this.render2Dvisualizations(_this.selectedDimensions, _this.flows, _this.selectedVizName);
                                             break;
                                         }
                                     }

@@ -321,6 +321,23 @@ label[for="flows-waste06-select"] {
 
 }
 
+/* Circular Sankey */
+
+#circularsankey-wrapper svg {
+    display: block;
+    margin: auto;
+}
+
+#circularsankey-wrapper {
+    min-height: 750px;
+    height: auto !important;
+}
+
+#circularsankey-wrapper {
+    font-family: Montserrat, sans-serif !important;
+    color: white
+}
+
 /* VISUALISATION STYLES */
 
 .viz-wrapper-div {

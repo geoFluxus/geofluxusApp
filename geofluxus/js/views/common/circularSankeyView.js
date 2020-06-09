@@ -1,29 +1,24 @@
 define(['views/common/baseview',
         'underscore',
-        'd3',
-        'collections/collection',
-        'app-config',
+        'utils/utils',
         'save-svg-as-png',
         'file-saver',
-        'utils/utils',
         'utils/enrichFlows',
         'react/circularSankey',
-        'geofluxus-circular-sankey',
+        'react',
+        'react-dom',
     ],
 
     function (
         BaseView,
         _,
-        d3,
-        Collection,
-        config,
+        utils,
         saveSvgAsPng,
         FileSaver,
-        utils,
         enrichFlows,
         CircularSankeyComponent,
-        CircularSankey,
-        Slider) {
+        React,
+        ReactDOM) {
 
         /**
          *
@@ -46,53 +41,57 @@ define(['views/common/baseview',
                     CircularSankeyView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
+                    
+                    var _this = this;
+                    this.options = options;                    
+                    this.filtersView = this.options.flowsView.filtersView;
+                    
 
-                    this.options = options;
+                    // let tooltipConfig = {
+                    //     tbody: [
+                    //         ["Waste", function (d) {
+                    //             return d3plus.formatAbbreviate(d["value"], utils.returnD3plusFormatLocale()) + " t"
+                    //         }]
+                    //     ]
+                    // };
+
+                    this.flows = this.transformToLinksAndNodes(this.options.flows, this.options.dimensions, this.filtersView);
+
+
+                    window.addEventListener('resize', function () {
+                        _this.render();
+                        console.log("Window resize > rerender");
+                    })
+
                     this.render();
+                    this.options.flowsView.loader.deactivate();
                 },
 
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
                 },
-
-
-                component: function () {
-                    return new CircularSankeyComponent({
-                        options: this.options.router
-                    });
-                },
-
-                pageRender: function (view) {
-                    this.$(this.options.el).html(view.render().$el);
-                },
-
-                render: function (data) {
-                    let _this = this;
-                    let flows = this.options.flows;
-
-                    this.filtersView = this.options.flowsView.filtersView;
-
-                    let tooltipConfig = {
-                        tbody: [
-                            ["Waste", function (d) {
-                                return d3plus.formatAbbreviate(d["value"], utils.returnD3plusFormatLocale()) + " t"
-                            }]
-                        ]
-                    };
-
-                    flows = this.transformToLinksAndNodes(this.options.flows, this.options.dimensions, this.filtersView);
-
-
+                render: function () {
                     this.circularSankey = new CircularSankeyComponent({
                         el: this.options.el,
-                        circularData: flows,
+                        width: $("#" + this.options.el).width(),
+                        height: $("#" + this.options.el).height(),
+                        circularData: this.flows,
                     });
- 
+
+                    //this.setSvgDimensions();
+
                     // Smooth scroll to top of Viz
                     $("#apply-filters")[0].scrollIntoView({
-                        behavior: "smooth"
+                        behavior: "smooth",
+                        block: "start",
+                        inline: "nearest",
                     });
+                },
+
+                setSvgDimensions: function () {
+                    $("#circularsankey-wrapper svg").width($("#" + this.options.el).width());
+                    $("#circularsankey-wrapper svg").height($("#" + this.options.el).height());
                 },
 
                 transformToLinksAndNodes: function (flows, dimensions, filtersView) {
@@ -346,9 +345,10 @@ define(['views/common/baseview',
                 },
 
                 close: function () {
+                    this.circularSankey.close();
                     this.undelegateEvents(); // remove click events
                     this.unbind(); // Unbind all local event bindings
-                    $(this.options.el).html(""); //empty the DOM element
+                    $("#" + this.options.el).html(""); //empty the DOM element
                 },
 
             });
