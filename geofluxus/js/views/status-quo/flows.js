@@ -219,6 +219,7 @@ define(['views/common/baseview',
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-treemap").parent().fadeIn();
                                 $("#viz-parallelsets").parent().fadeIn();
+                                $("#viz-circularsankey").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("material")) {
                                 $("#viz-piechart").parent().fadeIn();
                                 $("#viz-barchart").parent().fadeIn();
@@ -862,7 +863,7 @@ define(['views/common/baseview',
                                 this[index] = flow.attributes;
                             }, _this.flows);
 
-                            try {
+                            //try {
                                 // Some visualizations require different processing: 
                                 if (["parallelsets", "circularsankey"].includes(_this.selectedVizName)) {
                                     switch (_this.selectedVizName) {
@@ -883,10 +884,10 @@ define(['views/common/baseview',
                                             break;
                                         }
                                     }
-                            } catch (renderError) {
-                                console.log("Error during rendering of visualization: " + renderError)
-                                _this.loader.deactivate();
-                            }
+                            // } catch (renderError) {
+                            //     console.log("Error during rendering of visualization: " + renderError)
+                            //     _this.loader.deactivate();
+                            // }
 
                             //_this.loader.deactivate();
                         },

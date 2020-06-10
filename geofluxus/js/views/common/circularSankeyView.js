@@ -6,7 +6,7 @@ define(['views/common/baseview',
         'utils/enrichFlows',
         'react/circularSankey',
         'react',
-        'react-dom',
+        'react-dom'
     ],
 
     function (
@@ -41,11 +41,11 @@ define(['views/common/baseview',
                     CircularSankeyView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
                     _.bindAll(this, 'exportCSV');
-                    
+
                     var _this = this;
-                    this.options = options;                    
+                    this.options = options;
                     this.filtersView = this.options.flowsView.filtersView;
-                    
+
 
                     // let tooltipConfig = {
                     //     tbody: [
@@ -125,7 +125,7 @@ define(['views/common/baseview',
                                 // Gran == Treatment method group
                                 if (gran1.includes("group")) {
                                     let processGroupDestinationObject = processGroups.find(processGroup => processGroup.attributes.id == flow.destination.processgroup);
-                                    destinationNode.name = enrichFlows.returnCodePlusName(processGroupDestinationObject) + " ";
+                                    destinationNode.name = enrichFlows.returnCodePlusName(processGroupDestinationObject);
                                     let processGroupOriginObject = processGroups.find(processGroup => processGroup.attributes.id == flow.origin.processgroup);
                                     originNode.name = enrichFlows.returnCodePlusName(processGroupOriginObject);
                                     break;
@@ -133,10 +133,9 @@ define(['views/common/baseview',
                                     // Gran == Treatment method
                                 } else {
                                     let processDestinationObject = processes.find(process => process.attributes.id == flow.destination.process);
-                                    destinationNode.name = enrichFlows.returnCodePlusName(processDestinationObject) + " ";
+                                    destinationNode.name = enrichFlows.returnCodePlusName(processDestinationObject);
                                     let processOriginObject = processes.find(process => process.attributes.id == flow.origin.process);
                                     originNode.name = enrichFlows.returnCodePlusName(processOriginObject);
-
                                 }
 
                                 break;
@@ -293,17 +292,31 @@ define(['views/common/baseview',
 
 
                     // Group the nodes by NAME and sum the values:                    
-                    let summed_by_type = _(nodes).reduce(function (mem, d) {
-                        mem[d.name] = (mem[d.name] || 0) + d.value
-                        return mem
-                    }, {})
-                    nodes = _(summed_by_type).map(function (v, k) {
-                        return {
-                            name: k,
-                            value: v
-                        }
-                    })
+                    // let summed_by_type = _(nodes).reduce(function (mem, d) {
+                    //     mem[d.name] = (mem[d.name] || 0) + d.value
+                    //     return mem
+                    // }, {})
+                    // nodes = _(summed_by_type).map(function (v, k) {
+                    //     return {
+                    //         name: k,
+                    //         value: v
+                    //     }
+                    // })
 
+                    var result = [];
+                    nodes.reduce(function (res, item) {
+                        if (!res[item.name]) {
+                            res[item.name] = {
+                                name: item.name,
+                                value: 0
+                            };
+                            result.push(res[item.name])
+                        }
+                        res[item.name].value += item.value;
+                        return res;
+                    }, {});
+
+                    nodes = result;
 
                     console.log("Links:");
                     console.log(links);
