@@ -342,7 +342,8 @@ label[for="flows-waste06-select"] {
 
 .viz-wrapper-div {
     display: none;
-    height: 750px;
+    /* min-height: 750px; */
+    height: 90vh;
     min-width: 600px;
     background-color: #393939;
     border-radius: 18px;
