@@ -109,6 +109,9 @@ define(['underscore',
                         })
                         .addLayer(this.backgroundLayer);
 
+                    // Disable zoom on scroll:
+                    this.leafletMap.scrollWheelZoom.disable();
+
                     // If the flows are aggregated by geographic region, increase the maximum flow width:
                     if (!this.isActorLevel) {
                         this.maxFlowWidth = 50;
@@ -150,7 +153,7 @@ define(['underscore',
 
                     if (!this.isActorLevel) {
                         this.flowMap.showAreas = true;
-                        this.flowMap.showAreaBorders = true;                            
+                        this.flowMap.showAreaBorders = true;
                     }
 
                     // //////////////////////
@@ -288,7 +291,7 @@ define(['underscore',
                     // Prevent event propagation on button clicks:
                     L.DomEvent.disableClickPropagation(document.querySelector(".leaflet-top.leaflet-left"));
                     L.DomEvent.disableClickPropagation(document.querySelector(".leaflet-control-fullscreen.leaflet-bar.leaflet-control"));
-                    
+
                     // When user sets map to fullscreen, also change legend:
                     _this.leafletMap.on('fullscreenchange', function () {
                         if (_this.leafletMap.isFullscreen()) {
@@ -423,7 +426,7 @@ define(['underscore',
 
                     this.updateLegend();
                     this.flowMap.resetView();
-                    
+
                     if (zoomToFit) {
                         this.flowMap.zoomToFit();
                     }
