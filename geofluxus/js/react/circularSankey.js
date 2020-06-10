@@ -61,7 +61,7 @@ define(['views/common/baseview',
 
                     ReactDOM.render(React.createElement(CircularSankey, {
                         data: this.options.circularData,
-                        width: this.options.width,
+                        width: this.options.width / 2,
                         height: this.options.height,
                         absolutePosition: absolutePosition
                     }), document.getElementById(this.options.el));

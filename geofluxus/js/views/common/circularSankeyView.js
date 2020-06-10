@@ -1,24 +1,20 @@
 define(['views/common/baseview',
-        'underscore',
         'utils/utils',
         'save-svg-as-png',
         'file-saver',
         'utils/enrichFlows',
         'react/circularSankey',
-        'react',
-        'react-dom'
+        'underscore',
     ],
 
     function (
         BaseView,
-        _,
         utils,
         saveSvgAsPng,
         FileSaver,
         enrichFlows,
         CircularSankeyComponent,
-        React,
-        ReactDOM) {
+        _) {
 
         /**
          *
@@ -59,6 +55,9 @@ define(['views/common/baseview',
 
 
                     window.addEventListener('resize', function () {
+                        if (_this.circularSankey) {
+                            _this.circularSankey.close();
+                        }
                         _this.render();
                         console.log("Window resize > rerender");
                     })
@@ -290,19 +289,7 @@ define(['views/common/baseview',
 
                     }, flows);
 
-
                     // Group the nodes by NAME and sum the values:                    
-                    // let summed_by_type = _(nodes).reduce(function (mem, d) {
-                    //     mem[d.name] = (mem[d.name] || 0) + d.value
-                    //     return mem
-                    // }, {})
-                    // nodes = _(summed_by_type).map(function (v, k) {
-                    //     return {
-                    //         name: k,
-                    //         value: v
-                    //     }
-                    // })
-
                     var result = [];
                     nodes.reduce(function (res, item) {
                         if (!res[item.name]) {

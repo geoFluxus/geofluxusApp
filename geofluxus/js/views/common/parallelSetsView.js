@@ -59,7 +59,7 @@ define(['views/common/d3plusVizView',
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
-                    'click .toggle-darkmode': 'toggleDarkMode',                    
+                    'click .toggle-darkmode': 'toggleDarkMode',
                 },
 
                 /**
@@ -78,15 +78,15 @@ define(['views/common/d3plusVizView',
                     this.options.flowsView.loader.deactivate();
                 },
 
-                toggleDarkMode: function() {
+                toggleDarkMode: function () {
                     this.isDarkMode = !this.isDarkMode;
 
                     if (this.isDarkMode) {
                         d3.selectAll(".d3plus-Links .d3plus-Path")
-                        .attr("stroke", "#DBDBDB")
+                            .attr("stroke", "#DBDBDB")
                     } else {
-                            d3.selectAll(".d3plus-Links .d3plus-Path")
-                        .attr("stroke", "#393939")
+                        d3.selectAll(".d3plus-Links .d3plus-Path")
+                            .attr("stroke", "#393939")
                     }
 
                     $(".viz-wrapper-div").toggleClass("lightMode");
@@ -293,18 +293,21 @@ define(['views/common/d3plusVizView',
 
                     }, flows);
 
-
                     // Group the nodes by id and sum the values:                    
-                    let summed_by_type = _(nodes).reduce(function (mem, d) {
-                        mem[d.id] = (mem[d.id] || 0) + d.value
-                        return mem
-                    }, {})
-                    nodes = _(summed_by_type).map(function (v, k) {
-                        return {
-                            id: k,
-                            value: v,
+                    var result = [];
+                    nodes.reduce(function (res, item) {
+                        if (!res[item.id]) {
+                            res[item.id] = {
+                                id: item.id,
+                                value: 0
+                            };
+                            result.push(res[item.id])
                         }
-                    })
+                        res[item.id].value += item.value;
+                        return res;
+                    }, {});
+
+                    nodes = result;
 
                     // Assign colors by id:
                     nodes = enrichFlows.assignColorsByProperty(nodes, "id");
