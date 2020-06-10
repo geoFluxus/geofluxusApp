@@ -13,10 +13,7 @@ define(['views/common/baseview',
         'views/common/areaChartView',
         'views/common/flowMapView',
         'views/common/parallelSetsView',
-        'bootstrap',
-        'bootstrap-select',
-        'bootstrap-toggle',
-        'textarea-autosize',
+        'views/common/circularSankeyView',
     ],
     function (
         BaseView,
@@ -33,6 +30,7 @@ define(['views/common/baseview',
         AreaChartView,
         FlowMapView,
         ParallelSetsView,
+        CircularSankeyView,
     ) {
         var FlowsView = BaseView.extend({
             initialize: function (options) {
@@ -221,6 +219,7 @@ define(['views/common/baseview',
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-treemap").parent().fadeIn();
                                 $("#viz-parallelsets").parent().fadeIn();
+                                $("#viz-circularsankey").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("material")) {
                                 $("#viz-piechart").parent().fadeIn();
                                 $("#viz-barchart").parent().fadeIn();
@@ -273,6 +272,8 @@ define(['views/common/baseview',
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
                                 $("#viz-parallelsets").parent().fadeIn();
+
+                                $("#viz-circularsankey").parent().fadeIn();
                             } else if (_this.selectedDimensionStrings.includes("economicActivity") && _this.selectedDimensionStrings.includes("material")) {
                                 $("#viz-barchart").parent().fadeIn();
                                 $("#viz-stackedbarchart").parent().fadeIn();
@@ -400,9 +401,19 @@ define(['views/common/baseview',
 
                 // ///////////////////////////////
                 // Format
-                if (_this.selectedVizName) {
-                    if (_this.selectedVizName.includes("flowmap") || _this.selectedVizName.includes("parallelsets")) {
-                        filterParams.format = _this.selectedVizName;
+                let selectedVizualisationString;
+                $('.viz-selector-button').each(function (index, value) {
+                    if ($(this).hasClass("active")) {
+                        selectedVizualisationString = $(this).attr("data-viz");
+                    }
+                });
+
+                if (selectedVizualisationString) {
+                    if (["flowmap", "parallelsets", "circularsankey"].includes(selectedVizualisationString)) {
+                        let formatString = selectedVizualisationString;
+                        formatString = (formatString == "circularsankey") ? "parallelsets" : formatString;
+
+                        filterParams.format = formatString;
                     }
                 }
 
@@ -786,10 +797,20 @@ define(['views/common/baseview',
                 });
             },
 
+            renderCircularSankey: function (dimensions, flows) {
+                $(".circularsankey-wrapper").show();
+
+                this.circularSankeyView = new CircularSankeyView({
+                    el: "circularsankey-wrapper",
+                    dimensions: dimensions,
+                    flows: flows,
+                    flowsView: this,
+                });
+            },
+
             closeAllVizViews: function () {
                 $(".viz-wrapper-div").removeClass("lightMode");
-                $(".viz-wrapper-div").fadeOut();
-                $(".viz-wrapper-div").html("")
+                $(".viz-wrapper-div").hide();
                 $(".parallelsets-container").hide();
                 if (this.barChartView != null) this.barChartView.close();
                 if (this.pieChartView != null) this.pieChartView.close();
@@ -800,6 +821,7 @@ define(['views/common/baseview',
                 if (this.areaChartView != null) this.areaChartView.close();
                 if (this.flowMapView != null) this.flowMapView.close();
                 if (this.parallelSetsView != null) this.parallelSetsView.close();
+                if (this.circularSankeyView != null) this.circularSankeyView.close();
             },
 
             // Fetch flows and calls options.success(flows) on success
@@ -841,24 +863,31 @@ define(['views/common/baseview',
                                 this[index] = flow.attributes;
                             }, _this.flows);
 
-                            try {
-                                // Only Parallel Sets requires different processing: 
-                                if (_this.selectedVizName == "parallelsets") {
-                                    _this.renderParallelSets(_this.selectedDimensions, _this.flows);
+                            //try {
+                                // Some visualizations require different processing: 
+                                if (["parallelsets", "circularsankey"].includes(_this.selectedVizName)) {
+                                    switch (_this.selectedVizName) {
+                                        case "parallelsets":
+                                            _this.renderParallelSets(_this.selectedDimensions, _this.flows);
+                                            break;
+                                        case "circularsankey":
+                                            _this.renderCircularSankey(_this.selectedDimensions, _this.flows);
+                                            break;
+                                    }
                                 } else {
                                     switch (_this.selectedDimensions.length) {
                                         case 1:
-                                            _this.render1Dvisualizations(_this.selectedDimensions, _this.flows);
+                                            _this.render1Dvisualizations(_this.selectedDimensions, _this.flows, _this.selectedVizName);
                                             break;
                                         case 2:
-                                            _this.render2Dvisualizations(_this.selectedDimensions, _this.flows);
+                                            _this.render2Dvisualizations(_this.selectedDimensions, _this.flows, _this.selectedVizName);
                                             break;
+                                        }
                                     }
-                                }
-                            } catch (renderError) {
-                                console.log("Error during rendering of visualization: " + renderError)
-                                _this.loader.deactivate();
-                            }
+                            // } catch (renderError) {
+                            //     console.log("Error during rendering of visualization: " + renderError)
+                            //     _this.loader.deactivate();
+                            // }
 
                             //_this.loader.deactivate();
                         },
