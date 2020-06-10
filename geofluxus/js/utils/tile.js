@@ -1,6 +1,6 @@
 import {range} from "d3-array";
 
-export default function() {
+export function tile() {
   var x0 = 0,
       y0 = 0,
       x1 = 960,
@@ -71,5 +71,3 @@ export default function() {
 
   return tile;
 }
-
-export {tile};
