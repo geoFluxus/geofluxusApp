@@ -119,7 +119,7 @@ var d3Geo = Object.assign({}, d3GeoCore, d3GeoProjection);
 import * as scales from "d3-scale";
 import {
   tile
-} from "d3-tile";
+} from "utils/tile";
 import {
   feature
 } from "topojson-client";
