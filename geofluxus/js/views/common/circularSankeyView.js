@@ -105,8 +105,8 @@ define(['views/common/baseview',
 
                         // Data:
 
-                        let processGroups = filtersView.processgroups.models;
-                        let processes = filtersView.processes.models;
+                        let processGroups = filtersView.collections['processgroups'].models;
+                        let processes = filtersView.collections['processes'].models;
 
                         // Set value for origin and destination of nodes:
                         originNode.value = destinationNode.value = flow.amount;

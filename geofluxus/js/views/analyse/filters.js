@@ -28,71 +28,45 @@ define(['views/common/baseview',
 
                 this.template = options.template;
 
-                this.activityGroups = new Collection([], {
-                    apiTag: 'activitygroups'
-                });
-                this.activities = new Collection([], {
-                    apiTag: 'activities'
-                });
-                this.actors = new Collection([], {
-                    apiTag: 'actors'
-                });
-                this.processgroups = new Collection([], {
-                    apiTag: 'processgroups'
-                });
-                this.processes = new Collection([], {
-                    apiTag: 'processes'
-                });
-                this.wastes02 = new Collection([], {
-                    apiTag: 'wastes02'
-                });
-                this.wastes04 = new Collection([], {
-                    apiTag: 'wastes04'
-                });
-                this.wastes06 = new Collection([], {
-                    apiTag: 'wastes06'
-                });
-                this.materials = new Collection([], {
-                    apiTag: 'materials'
-                });
-                this.products = new Collection([], {
-                    apiTag: 'products'
-                });
-                this.composites = new Collection([], {
-                    apiTag: 'composites'
-                });
-                this.areaLevels = new Collection([], {
-                    apiTag: 'arealevels'
-                });
-                this.years = new Collection([], {
-                    apiTag: 'years'
-                });
-                this.months = new Collection([], {
-                    apiTag: 'months'
-                });
-                this.savedFilters = new Collection([], {
-                    apiTag: 'filters'
-                });
+                // Load model here
+                var tags = [
+                    'activitygroups',
+                    'activities',
+                    'actors',
+                    'processgroups',
+                    'processes',
+                    'wastes02',
+                    'wastes04',
+                    'wastes06',
+                    'materials',
+                    'products',
+                    'composites',
+                    'arealevels',
+                    'years',
+                    'months',
+                    'filters',
+                ]
+
+                // Model collections
+                // Refer to collection via tag
+                this.collections = {};
+                tags.forEach(function(tag) {
+                    var collection = new Collection([], {
+                        apiTag: tag
+                    });
+                    _this.collections[tag] = collection;
+                })
 
                 this.areas = {};
 
+                // Fetch model data
                 this.loader.activate();
-                var promises = [
-                    this.activityGroups.fetch(),
-                    this.activities.fetch(),
-                    this.processes.fetch(),
-                    this.processgroups.fetch(),
-                    this.wastes02.fetch(),
-                    this.wastes04.fetch(),
-                    this.wastes06.fetch(),
-                    this.materials.fetch(),
-                    this.products.fetch(),
-                    this.composites.fetch(),
-                    this.areaLevels.fetch(),
-                    this.years.fetch(),
-                    this.months.fetch(),
-                    this.savedFilters.fetch(),
-                ];
+                var promises = [];
+                Object.values(this.collections).forEach(function(collection) {
+                    var promise = collection.fetch();
+                    promises.push(promise);
+                })
+
                 Promise.all(promises).then(function () {
                     _this.loader.deactivate();
                     _this.render();
@@ -121,21 +95,7 @@ define(['views/common/baseview',
                     template = _.template(html),
                     _this = this;
                 // Add to template context:
-                this.el.innerHTML = template({
-                    processes: this.processes,
-                    processgroups: this.processgroups,
-                    wastes02: this.wastes02,
-                    wastes04: this.wastes04,
-                    wastes06: this.wastes06,
-                    materials: this.materials,
-                    products: this.products,
-                    composites: this.composites,
-                    activities: this.activities,
-                    activityGroups: this.activityGroups,
-                    levels: this.areaLevels,
-                    years: this.years,
-                    months: this.months,
-                });
+                this.el.innerHTML = template(this.collections);
 
                 // Activate help icons
                 var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
@@ -144,7 +104,7 @@ define(['views/common/baseview',
                 });
 
                 // Set default admin level to Country:
-                this.idOfCountryLevel = this.areaLevels.find(level => level.attributes.level == 1).id;
+                this.idOfCountryLevel = this.collections['arealevels'].find(level => level.attributes.level == 1).id;
                 this.adminLevel = {};
                 this.adminLevel.origin = this.idOfCountryLevel;
                 this.adminLevel.destination = this.idOfCountryLevel;
@@ -247,7 +207,7 @@ define(['views/common/baseview',
 
                     } else {
                         // Filter all activities by the selected Activity Groups:
-                        filteredActivities = _this.activities.models.filter(function (activity) {
+                        filteredActivities = _this.collections['activities'].models.filter(function (activity) {
                             return selectedActivityGroupIDs.includes(activity.attributes.activitygroup.toString())
                         });
                         filterUtils.fillSelectPicker("activity", activitySelect, filteredActivities);
@@ -282,7 +242,7 @@ define(['views/common/baseview',
 
                     } else {
                         // Filter all activities by the selected Process Groups:
-                        filteredProcesses = _this.processes.models.filter(function (process) {
+                        filteredProcesses = _this.collections['processes'].models.filter(function (process) {
                             return selectedProcessGroupIDs.includes(process.attributes.processgroup.toString())
                         });
                         filterUtils.fillSelectPicker("treatmentMethod", processSelect, filteredProcesses);
@@ -318,7 +278,7 @@ define(['views/common/baseview',
                     }
 
                     if (showOnlyHazardous != "both") {
-                        let filteredWastes06 = _this.wastes06.models.filter(function (waste06) {
+                        let filteredWastes06 = _this.collections['wastes06'].models.filter(function (waste06) {
                             return waste06.attributes.hazardous == showOnlyHazardous;
                         });
 
@@ -336,7 +296,7 @@ define(['views/common/baseview',
                     if (selectedEWC02IDs.length == 0 || selectedEWC02IDs[0] == "-1") {
                         $("#wastes04col").fadeOut("fast");
                     } else {
-                        filteredWastes04 = _this.wastes04.models.filter(function (waste04) {
+                        filteredWastes04 = _this.collections['wastes04'].models.filter(function (waste04) {
                             return selectedEWC02IDs.includes(waste04.attributes.waste02.toString())
                         });
                         filterUtils.fillSelectPicker("waste04", _this.flows.waste04Select, filteredWastes04);
@@ -351,7 +311,7 @@ define(['views/common/baseview',
                         $("#wastes06col").fadeOut("fast");
 
                     } else {
-                        filteredWastes06 = _this.wastes06.models.filter(function (waste06) {
+                        filteredWastes06 = _this.collections['wastes06'].models.filter(function (waste06) {
                             return selectedEWC04IDs.includes(waste06.attributes.waste04.toString())
                         });
                         filterUtils.fillSelectPicker("waste06", _this.flows.waste06Select, filteredWastes06);
@@ -365,7 +325,7 @@ define(['views/common/baseview',
                     if (selectedYearIDs.length == 0 || selectedYearIDs[0] == "-1") {
                         $("#monthCol").fadeOut("fast");
                     } else {
-                        filteredMonths = _this.months.models.filter(function (month) {
+                        filteredMonths = _this.collections['months'].models.filter(function (month) {
                             return selectedYearIDs.includes(month.attributes.year.toString())
                         });
                         filterUtils.fillSelectPicker("month", _this.flows.monthSelect, filteredMonths);
@@ -526,7 +486,7 @@ define(['views/common/baseview',
                 html = document.getElementById('saved-filters-modal-template').innerHTML;
                 template = _.template(html);
                 this.savedFiltersModal.innerHTML = template({
-                    savedFilters: this.savedFilters,
+                    filters: this.collections['filters']
                 });
 
                 $('.saved-filters.modal').on('hide.bs.modal', function (e) {
@@ -574,7 +534,7 @@ define(['views/common/baseview',
                 html = document.getElementById('area-select-modal-template').innerHTML;
                 template = _.template(html);
                 this.areaModal.innerHTML = template({
-                    levels: this.areaLevels
+                    levels: this.collections['arealevels']
                 });
                 this.areaLevelSelect = this.el.querySelector('select[name="area-level-select"]');
 
@@ -1333,7 +1293,7 @@ define(['views/common/baseview',
                     // Call updateSize to render the map with the correct dimensions:
                     _this.areaMap.map.updateSize();
                     // Fetch areas if they aren't there yet:
-                    if (_this.areaLevels.length > 0) {
+                    if (_this.collections['arealevels'].length > 0) {
                         _this.changeAreaLevel();
                     }
                     _this.addFeaturesToMap();

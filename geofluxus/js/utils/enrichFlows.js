@@ -5,9 +5,9 @@ let occurances = []
 
 module.exports = {
 
-    enrichTime: function (flows, filterFlowsView, granularity) {
-        let years = filterFlowsView.years.models;
-        let months = filterFlowsView.months.models;
+    enrichTime: function (flows, collections, granularity) {
+        let years = collections['years'].models;
+        let months = collections['months'].models;
 
 
         if (granularity == "flowchain__month__year") {
@@ -46,9 +46,9 @@ module.exports = {
         return flows
     },
 
-    enrichEconActivity: function (flows, filterFlowsView, granularity) {
-        let activityGroups = filterFlowsView.activityGroups.models;
-        let activities = filterFlowsView.activities.models;
+    enrichEconActivity: function (flows, collections, granularity) {
+        let activityGroups = collections['activitygroups'].models;
+        let activities = collections['activities'].models;
 
         // Granularity = Activity group
         if (granularity == "origin__activity__activitygroup" || granularity == "destination__activity__activitygroup") {
@@ -76,9 +76,9 @@ module.exports = {
         return flows
     },
 
-    enrichTreatmentMethod: function (flows, filterFlowsView, granularity) {
-        let processGroups = filterFlowsView.processgroups.models;
-        let processes = filterFlowsView.processes.models;
+    enrichTreatmentMethod: function (flows, collections, granularity) {
+        let processGroups = collections['processgroups'].models;
+        let processes = collections['processes'].models;
 
         // Granularity: Treatment Method Group
         if (granularity == "origin__process__processgroup" || granularity == "destination__process__processgroup") {
@@ -108,10 +108,10 @@ module.exports = {
         return flows
     },
 
-    enrichEWC: function (flows, filterFlowsView, granularity) {
-        let ewc2 = filterFlowsView.wastes02.models;
-        let ewc4 = filterFlowsView.wastes04.models;
-        let ewc6 = filterFlowsView.wastes06.models;
+    enrichEWC: function (flows, collections, granularity) {
+        let ewc2 = collections['wastes02'].models;
+        let ewc4 = collections['wastes04'].models;
+        let ewc6 = collections['wastes06'].models;
 
         // ewc2
         if (granularity == "flowchain__waste06__waste04__waste02") {

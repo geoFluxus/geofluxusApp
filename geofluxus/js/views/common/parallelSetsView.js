@@ -117,8 +117,8 @@ define(['views/common/d3plusVizView',
 
                         // Data:
 
-                        let processGroups = filtersView.processgroups.models;
-                        let processes = filtersView.processes.models;
+                        let processGroups = filtersView.collections['processgroups'].models;
+                        let processes = filtersView.collections['processes'].models;
 
                         // Set value for origin and destination of nodes:
                         originNode.value = destinationNode.value = flow.amount;
@@ -145,8 +145,8 @@ define(['views/common/d3plusVizView',
                             case 2:
                                 // Econ dim1 > Treatment dim2
                                 if (dimStrings.includes("economicActivity")) {
-                                    let activityGroups = filtersView.activityGroups.models;
-                                    let activities = filtersView.activities.models;
+                                    let activityGroups = filtersView.collections['activitygroups'].models;
+                                    let activities = filtersView.collections['activities'].models;
 
                                     switch (gran1) {
                                         case "origin__activity__activitygroup":
@@ -169,9 +169,9 @@ define(['views/common/d3plusVizView',
 
                                 }
                                 if (dimStrings.includes("material")) {
-                                    let ewc2 = filtersView.wastes02.models;
-                                    let ewc4 = filtersView.wastes04.models;
-                                    let ewc6 = filtersView.wastes06.models;
+                                    let ewc2 = filtersView.collections['wastes02'].models;
+                                    let ewc4 = filtersView.collections['wastes04'].models;
+                                    let ewc6 = filtersView.collections['wastes06'].models;
 
                                     // Econ dim1 > Material dim2
                                     if (dimStrings.includes("economicActivity")) {
