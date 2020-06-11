@@ -10,7 +10,7 @@ from collections import OrderedDict
 from django.db.models import (F, Sum, Q, Case, When, IntegerField)
 
 
-class StatusQuoViewSet(FilterFlowViewSet):
+class MonitorViewSet(FilterFlowViewSet):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.levels = []  # fields: exact field to search
