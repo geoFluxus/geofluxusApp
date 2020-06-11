@@ -1,6 +1,6 @@
 define(['views/common/baseview',
-        'views/status-quo/flows',
         'underscore',
+        'views/analyse/monitor',
         'collections/collection',
         'visualizations/map',
         'openlayers',
@@ -9,7 +9,7 @@ define(['views/common/baseview',
         'bootstrap',
     ],
 
-    function (BaseView, _, monitorView, Collection, Map, ol, utils, filterUtils) {
+    function (BaseView, _, MonitorView, Collection, Map, ol, utils, filterUtils) {
 
         var FiltersView = BaseView.extend({
             initialize: function (options) {
@@ -166,15 +166,16 @@ define(['views/common/baseview',
 
             renderMonitorView: function () {
                 var el = this.el.querySelector('#monitor-content');
-                this.monitorView = new monitorView({
+                this.monitorView = new MonitorView({
                     el: el,
                     template: 'monitor-template',
+                    filtersView: this
                 });
             },
 
             renderImpactView: function () {
                 var el = this.el.querySelector('#impact-content');
-                this.impactView = new impactView({
+                this.impactView = new ImpactView({
                     el: el,
                     template: 'impact-template',
                 });

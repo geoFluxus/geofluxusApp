@@ -30,10 +30,12 @@ define(['views/common/baseview',
         ParallelSetsView,
         CircularSankeyView,
     ) {
-        var FlowsView = BaseView.extend({
+        var MonitorView = BaseView.extend({
             initialize: function (options) {
                 var _this = this;
-                FlowsView.__super__.initialize.apply(this, [options]);
+                MonitorView.__super__.initialize.apply(this, [options]);
+
+                this.filtersView = options.filtersView;
 
                 this.dimensions = {};
                 this.maxNumberOfDimensions = 2;
@@ -953,5 +955,5 @@ define(['views/common/baseview',
             },
 
         });
-        return FlowsView;
+        return MonitorView;
     });

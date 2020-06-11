@@ -1,5 +1,5 @@
-// Status Quo
-define(['views/common/filters'],
+// Analyse
+define(['views/analyse/filters'],
 function (FiltersView) {
     var filtersView;
 

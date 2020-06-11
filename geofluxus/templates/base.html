@@ -42,12 +42,9 @@
     <!-- <a class="navbar-brand" href="/"><img src="../static/img/nav/tudelft.png"></a> -->
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item {% if request.resolver_match.url_name == 'status-quo' %} active{% endif %}"
-          id="status-quo-link">
-          <a class="nav-link" href="/status-quo">Monitor</a>
-        </li>
-        <li class="nav-item {% if request.resolver_match.url_name == 'impact' %} active{% endif %}" id="impact-link">
-          <a class="nav-link" href="/impact">Impact assessment</a>
+        <li class="nav-item {% if request.resolver_match.url_name == 'analyse' %} active{% endif %}"
+          id="analyse-link">
+          <a class="nav-link" href="/analyse">Analyse</a>
         </li>
       </ul>
 
