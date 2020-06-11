@@ -3,14 +3,14 @@
 
 {% block title %}TUDelft | Analyse{% endblock %}
 
-{% block sidebar %}
+<!-- {% block sidebar %}
     <script>
       document.getElementById("status-quo-link").classList.add('active');
     </script>
     <ul class="nav nav-pills nav-stacked" id="sidebar">
       <li class="active"><a href="#flows" data-toggle="pill"><span class="sub-icon fas fa-recycle"></span>Flows</a></li>
     </ul>
-{% endblock %}
+{% endblock %} -->
 
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/analyse.css" />
@@ -19,7 +19,7 @@
       <div id="filters"></div>
       
     </div>
-    {% include "filters.html" %}
+    {% include "analyse/filters.html" %}
     {% include "analyse/monitor.html" %}
     {% render_bundle 'Analyse' %}
 {% endblock %}

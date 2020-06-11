@@ -7,7 +7,6 @@ define(['views/common/baseview',
         'openlayers',
         'utils/utils',
         'utils/filterUtils',
-        'bootstrap',
     ],
 
     function (BaseView, _, MonitorView, ImpactView, Collection, Map, ol, utils, filterUtils) {
@@ -98,9 +97,6 @@ define(['views/common/baseview',
                     _this.loader.deactivate();
                     _this.render();
                 })
-
-
-
             },
 
             // DOM events
@@ -158,7 +154,6 @@ define(['views/common/baseview',
                 this.renderAreaSelectModal();
                 this.renderConfirmModal();
 
-
                 this.initializeControls();
                 this.addEventListeners();
 
@@ -190,11 +185,7 @@ define(['views/common/baseview',
                     let clickedMode = $(this).attr("data-mode");
 
                     if (clickedMode != _this.analyseMode) {
-
                         _this.analyseMode = clickedMode;
-                        event.preventDefault();
-
-                        console.log("Show mode block")
 
                         switch (_this.analyseMode) {
                             case "monitor":
@@ -205,6 +196,7 @@ define(['views/common/baseview',
                                 break;
                         }
                     }
+                    event.preventDefault();
                 });
 
 
