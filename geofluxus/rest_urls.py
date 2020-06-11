@@ -29,7 +29,7 @@ from geofluxus.apps.asmfa.views import (ActivityGroupViewSet,
                                         VehicleViewSet)
 from geofluxus.apps.login.views import (UserFilterViewSet)
 from geofluxus.apps.analyse.views import (MonitorViewSet,)
-from geofluxus.apps.impact.views import (ImpactViewSet,)
+from geofluxus.apps.analyse.views import (ImpactViewSet,)
 
 
 router = DefaultRouter()
