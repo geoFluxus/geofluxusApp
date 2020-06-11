@@ -303,11 +303,7 @@ define(['underscore',
 
                     // Smooth scroll to top of Viz after rendering
                     setTimeout(() => {
-                        $("#apply-filters")[0].scrollIntoView({
-                            behavior: "smooth",
-                            block: "start",
-                            inline: "nearest"
-                        });
+                        utils.scrollToVizRow();
                     }, 500);
                     this.options.flowsView.loader.deactivate();
                 },

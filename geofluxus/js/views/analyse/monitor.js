@@ -1,7 +1,6 @@
 // Flows
 define(['views/common/baseview',
         'underscore',
-        'views/common/filters',
         'collections/collection',
         'utils/enrichFlows',
         'views/common/pieChartView',
@@ -18,7 +17,6 @@ define(['views/common/baseview',
     function (
         BaseView,
         _,
-        FiltersView,
         Collection,
         enrichFlows,
         PieChartView,
@@ -32,10 +30,12 @@ define(['views/common/baseview',
         ParallelSetsView,
         CircularSankeyView,
     ) {
-        var FlowsView = BaseView.extend({
+        var MonitorView = BaseView.extend({
             initialize: function (options) {
                 var _this = this;
-                FlowsView.__super__.initialize.apply(this, [options]);
+                MonitorView.__super__.initialize.apply(this, [options]);
+
+                this.filtersView = options.filtersView;
 
                 this.dimensions = {};
                 this.maxNumberOfDimensions = 2;
@@ -62,17 +62,17 @@ define(['views/common/baseview',
 
             // Rendering
             render: function () {
-                
+
                 var html = document.getElementById(this.template).innerHTML;
                 var template = _.template(html)
-                
+
                 this.el.innerHTML = template({
                     levels: this.areaLevels,
                     maxNumberOfDimensions: this.maxNumberOfDimensions
                 });
-                
+
                 // Render flow filters:
-                this.renderFiltersView();
+                //this.renderFiltersView();
 
                 // Activate help icons
                 var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
@@ -108,7 +108,7 @@ define(['views/common/baseview',
                 this.dimensions.treatmentMethodToggleGran = this.el.querySelector('#gran-toggle-treatment-method');
                 this.dimensions.treatmentMethodOrigDest = this.el.querySelector('#origDest-toggle-treatment');
                 this.dimensions.materialToggle = this.el.querySelector('#dim-toggle-material');
-                
+
                 $(this.dimensions.spaceLevelGranSelect).selectpicker();
                 $(".bootstrapToggle").bootstrapToggle();
             },
@@ -312,7 +312,7 @@ define(['views/common/baseview',
                         $("#origDest-toggle-space").parent().fadeIn();
                         event.preventDefault();
                     }
-                    // If the selected visualization type is hasFlowsFormat, and dimension == space, hide origin/destination toggle:                    
+                    // If the selected visualization type is hasFlowsFormat, and dimension == space, hide origin/destination toggle:
                     if (_this.selectedDimensionStrings.includes("space") && selectedVizHasFlowsFormat) {
                         $("#origDest-toggle-space").parent().fadeOut();
                     } else {
@@ -851,7 +851,7 @@ define(['views/common/baseview',
 
                     this.loader.activate();
                     let flows = new Collection([], {
-                        apiTag: 'statusquoflows',
+                        apiTag: 'monitorflows',
                     });
                     flows.postfetch({
                         data: data,
@@ -863,8 +863,8 @@ define(['views/common/baseview',
                                 this[index] = flow.attributes;
                             }, _this.flows);
 
-                            //try {
-                                // Some visualizations require different processing: 
+                            try {
+                                // Some visualizations require different processing:
                                 if (["parallelsets", "circularsankey"].includes(_this.selectedVizName)) {
                                     switch (_this.selectedVizName) {
                                         case "parallelsets":
@@ -884,17 +884,16 @@ define(['views/common/baseview',
                                             break;
                                         }
                                     }
-                            // } catch (renderError) {
-                            //     console.log("Error during rendering of visualization: " + renderError)
-                            //     _this.loader.deactivate();
-                            // }
+                            } catch (renderError) {
+                                console.log("Error during rendering of visualization: " + renderError)
+                                _this.loader.deactivate();
+                            }
 
                             //_this.loader.deactivate();
                         },
                         error: function (error) {
                             _this.loader.deactivate();
                             console.log(error);
-                            //_this.onError(error);
                         }
                     });
                 }
@@ -956,5 +955,5 @@ define(['views/common/baseview',
             },
 
         });
-        return FlowsView;
+        return MonitorView;
     });

@@ -28,8 +28,8 @@ from geofluxus.apps.asmfa.views import (ActivityGroupViewSet,
                                         WaysViewSet,
                                         VehicleViewSet)
 from geofluxus.apps.login.views import (UserFilterViewSet)
-from geofluxus.apps.statusquo.views import (StatusQuoViewSet,)
-from geofluxus.apps.impact.views import (ImpactViewSet,)
+from geofluxus.apps.analyse.views import (MonitorViewSet,)
+from geofluxus.apps.analyse.views import (ImpactViewSet,)
 
 
 router = DefaultRouter()
@@ -67,7 +67,7 @@ router.register(r'months', MonthViewSet)
 # Flows
 router.register(r'flowchains', FlowChainViewSet)
 router.register(r'allflows', FlowViewSet)
-router.register(r'statusquoflows', StatusQuoViewSet)
+router.register(r'monitorflows', MonitorViewSet)
 router.register(r'impactflows', ImpactViewSet)
 router.register(r'classifications', ClassificationViewSet)
 router.register(r'extradescriptions', ExtraDescriptionViewSet)

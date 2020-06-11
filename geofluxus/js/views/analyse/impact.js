@@ -4,7 +4,6 @@ define(['views/common/baseview',
         'd3',
         'openlayers',
         'visualizations/map',
-        'views/common/filters',
         'collections/collection',
         'utils/utils',
         'bootstrap',
@@ -18,17 +17,16 @@ define(['views/common/baseview',
         d3,
         ol,
         Map,
-        FiltersView,
         Collection,
         utils,
     ) {
 
-        var FlowsView = BaseView.extend({
+        var ImpactView = BaseView.extend({
 
             // Initialization
             initialize: function (options) {
                 var _this = this;
-                FlowsView.__super__.initialize.apply(this, [options]);
+                ImpactView.__super__.initialize.apply(this, [options]);
 
                 this.dimensions = {};
                 this.maxNumberOfDimensions = 1;
@@ -63,9 +61,6 @@ define(['views/common/baseview',
                     maxNumberOfDimensions: this.maxNumberOfDimensions
                 });
 
-                // Render flow filters
-                this.renderFiltersView();
-
                 // Render map for visualizations
                 this.routingMap = new Map({
                     el: this.el.querySelector('.map'),
@@ -75,16 +70,6 @@ define(['views/common/baseview',
 
                 this.initializeControls();
                 this.addEventListeners();
-            },
-
-            renderFiltersView: function () {
-                var el = this.el.querySelector('#filter-content'),
-                    _this = this;
-
-                this.filtersView = new FiltersView({
-                    el: el,
-                    template: 'filter-template',
-                });
             },
 
             initializeControls: function () {
@@ -496,5 +481,5 @@ define(['views/common/baseview',
             },
 
         });
-        return FlowsView;
+        return ImpactView;
     });

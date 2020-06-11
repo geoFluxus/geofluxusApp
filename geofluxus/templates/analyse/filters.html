@@ -871,6 +871,41 @@
 
     </div>
 
+    <div class="block">
+        <h4 class="pb-2 pl-3">Step 2: Define the mode</h4>
+
+        <div class="card bg-dark">
+            <div class="row" id="message-container-row">
+                <div class="col mt-3">
+                    <span style="color: white">What do you want to do?</span>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col d-flex align-items-center mr-auto">
+                    <div class="btn-group btn-group-toggle flex-wrap justify-content-center" id="radio-group-analyse-mode"
+                    data-toggle="buttons" style="margin: auto">
+                
+                    <label class="btn btn-sm btn-primary justify-content-center align-items-center analyse-mode-radio-label" data-mode="monitor">
+                        <input type="radio">
+                        <span>Waste flow monitoring</span>
+                    </label>
+                    <label class="btn btn-sm btn-primary justify-content-center align-items-center analyse-mode-radio-label" data-mode="impact">
+                        <input type="radio">
+                        <span>Environmental impact assessment</span>
+                    </label>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div id="analyse-content"></div>
+
+    <!-- <div id="impact-content"></div> -->
+
 
     <!--Area selection-->
     <div class="area-filter modal fade" role="dialog"></div>
