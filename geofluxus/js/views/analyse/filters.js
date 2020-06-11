@@ -1097,7 +1097,7 @@ define(['views/common/baseview',
                 let formIsValid = newFilterForm.checkValidity();
 
                 if (formIsValid) {
-                    _this.savedFilters.postfetch({
+                    _this.collections['filters'].postfetch({
                         data: {},
                         body: {
                             action: "create",
@@ -1128,7 +1128,7 @@ define(['views/common/baseview',
                 var _this = this;
                 let idToDelete = $(this.filterConfigSelect).val();
 
-                _this.savedFilters.postfetch({
+                _this.collections['filters'].postfetch({
                     data: {},
                     body: {
                         action: "delete",
@@ -1150,7 +1150,7 @@ define(['views/common/baseview',
 
                 $(".filterEdit").fadeOut();
 
-                _this.savedFilters.postfetch({
+                _this.collections['filters'].postfetch({
                     data: {},
                     body: {
                         action: "update",
