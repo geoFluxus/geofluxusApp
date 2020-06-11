@@ -508,52 +508,21 @@ define(['views/common/baseview',
                                 var levelId = _this.areaLevelSelect.value;
                                 var labels = [];
                                 var areas = _this.areas[levelId];
+                                var block = _this.areaMap.block;
 
-                                if (_this.areaMap.block == "origin") {
-                                    // The user has selected an area for the Origin block:
-                                    _this.selectedAreas.origin = [];
-                                    areaFeats.forEach(function (areaFeat) {
-                                        labels.push(areaFeat.label);
-                                        _this.selectedAreas.origin.push(areas.get(areaFeat.id));
-                                    });
+                                // The user has selected an area for the Origin block:
+                                _this.selectedAreas[block] = [];
+                                areaFeats.forEach(function (areaFeat) {
+                                    labels.push(areaFeat.label);
+                                    _this.selectedAreas[block].push(areas.get(areaFeat.id));
+                                });
 
-                                    if (_this.selectedAreas.origin.length > 0) {
-                                        $(".areaSelections-origin").fadeIn();
-                                    } else {
-                                        $(".areaSelections-origin").fadeOut();
-                                    }
-                                    $("#areaSelections-Textarea-origin").html(labels.join('; '))
-
-                                } else if (_this.areaMap.block == "destination") {
-                                    // The user has selected an area for the Destination block:
-                                    _this.selectedAreas.destination = [];
-                                    areaFeats.forEach(function (areaFeat) {
-                                        labels.push(areaFeat.label);
-                                        _this.selectedAreas.destination.push(areas.get(areaFeat.id));
-                                    });
-
-                                    if (_this.selectedAreas.destination.length > 0) {
-                                        $(".areaSelections-destination").fadeIn();
-                                    } else {
-                                        $(".areaSelections-destination").fadeOut();
-                                    }
-                                    $("#areaSelections-Textarea-destination").html(labels.join('; '))
-
-                                } else if (_this.areaMap.block == "flows") {
-                                    // The user has selected an area for the Flows block:
-                                    _this.selectedAreas.flows = [];
-                                    areaFeats.forEach(function (areaFeat) {
-                                        labels.push(areaFeat.label);
-                                        _this.selectedAreas.flows.push(areas.get(areaFeat.id));
-                                    });
-
-                                    if (_this.selectedAreas.flows.length > 0) {
-                                        $("#areaSelections-flows").fadeIn();
-                                    } else {
-                                        $("#areaSelections-flows").fadeOut();
-                                    }
-                                    $("#areaSelections-Textarea-flows").html(labels.join('; '))
+                                if (_this.selectedAreas[block].length > 0) {
+                                    $(".areaSelections-" + block).fadeIn();
+                                } else {
+                                    $(".areaSelections-" + block).fadeOut();
                                 }
+                                $("#areaSelections-Textarea-" + block).html(labels.join('; '))
 
                                 // Show the selected areas in the textarea in the modal:
                                 $("#areaSelectionsModalTextarea").html(labels.join('; '));
