@@ -69,28 +69,16 @@ define(['views/common/baseview',
                     maxNumberOfDimensions: this.maxNumberOfDimensions
                 });
 
-                // Render flow filters:
-                //this.renderFiltersView();
-
                 // Activate help icons
                 var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
                 $(popovers).popover({
                     trigger: "focus"
                 });
 
-
                 // Dimension and granularity controls:
                 this.initializeControls();
 
                 this.addEventListeners();
-            },
-
-            renderFiltersView: function () {
-                var el = this.el.querySelector('#filter-content');
-                this.filtersView = new FiltersView({
-                    el: el,
-                    template: 'filter-template',
-                });
             },
 
             initializeControls: function () {

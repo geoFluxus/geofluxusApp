@@ -323,18 +323,6 @@ define(['views/common/d3plusVizView',
                     }
                 },
 
-                toggleFullscreen: function (event) {
-                    $(this.el).toggleClass('fullscreen');
-                    event.stopImmediatePropagation();
-                    // Only scroll when going to normal view:
-                    if (!$(this.el).hasClass('fullscreen')) {
-                        $("#apply-filters")[0].scrollIntoView({
-                            behavior: "smooth"
-                        });
-                    }
-                    window.dispatchEvent(new Event('resize'));
-                },
-
                 exportCSV: function (event) {
                     const items = this.options.flows;
                     const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here

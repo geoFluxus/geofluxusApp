@@ -115,10 +115,6 @@ label[for="activity-select"] {
     left: -1.2em;
 }
 
-#flows-render-template {
-    margin-bottom: 5em;
-}
-
 .clear-areas-button {
     display: inline-block;
     position: absolute;

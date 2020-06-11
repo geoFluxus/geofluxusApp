@@ -165,7 +165,7 @@ define(['views/common/baseview',
             },
 
             renderMonitorView: function () {
-                var el = this.el.querySelector('#monitor-content');
+                var el = this.el.querySelector('#analyse-content');
                 this.monitorView = new MonitorView({
                     el: el,
                     template: 'monitor-template',
@@ -174,7 +174,7 @@ define(['views/common/baseview',
             },
 
             renderImpactView: function () {
-                var el = this.el.querySelector('#impact-content');
+                var el = this.el.querySelector('#analyse-content');
                 this.impactView = new ImpactView({
                     el: el,
                     template: 'impact-template',

@@ -158,10 +158,6 @@ label[for="flows-waste06-select"] {
     float: left;
 } */
 
-#flows-render-template {
-    margin-bottom: 5em;
-}
-
 .clear-areas-button {
     display: inline-block;
     position: absolute;
