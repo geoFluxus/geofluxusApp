@@ -1,6 +1,7 @@
 define(['views/common/baseview',
         'underscore',
         'views/analyse/monitor',
+        'views/analyse/impact',
         'collections/collection',
         'visualizations/map',
         'openlayers',
@@ -9,7 +10,7 @@ define(['views/common/baseview',
         'bootstrap',
     ],
 
-    function (BaseView, _, MonitorView, Collection, Map, ol, utils, filterUtils) {
+    function (BaseView, _, MonitorView, ImpactView, Collection, Map, ol, utils, filterUtils) {
 
         var FiltersView = BaseView.extend({
             initialize: function (options) {
@@ -157,32 +158,55 @@ define(['views/common/baseview',
                 this.renderAreaSelectModal();
                 this.renderConfirmModal();
 
-                
+
                 this.initializeControls();
                 this.addEventListeners();
 
-                this.renderMonitorView();
+                //this.renderMonitorView();
             },
 
-            renderMonitorView: function () {
-                var el = this.el.querySelector('#analyse-content');
-                this.monitorView = new MonitorView({
+            renderMonitorView: function (_this) {
+                var el = _this.el.querySelector('#analyse-content');
+                _this.monitorView = new MonitorView({
                     el: el,
                     template: 'monitor-template',
-                    filtersView: this
+                    filtersView: _this
                 });
             },
 
-            renderImpactView: function () {
-                var el = this.el.querySelector('#analyse-content');
-                this.impactView = new ImpactView({
+            renderImpactView: function (_this) {
+                var el = _this.el.querySelector('#analyse-content');
+                _this.impactView = new ImpactView({
                     el: el,
                     template: 'impact-template',
+                    filtersView: _this
                 });
             },
 
             addEventListeners: function () {
                 var _this = this;
+
+                $('.analyse-mode-radio-label').on("click", function (event) {
+                    let clickedMode = $(this).attr("data-mode");
+
+                    if (clickedMode != _this.analyseMode) {
+
+                        _this.analyseMode = clickedMode;
+                        event.preventDefault();
+
+                        console.log("Show mode block")
+
+                        switch (_this.analyseMode) {
+                            case "monitor":
+                                _this.renderMonitorView(_this);
+                                break;
+                            case "impact":
+                                _this.renderImpactView(_this);
+                                break;
+                        }
+                    }
+                });
+
 
                 function multiCheck(evt, clickedIndex, checked) {
                     var select = evt.target;
