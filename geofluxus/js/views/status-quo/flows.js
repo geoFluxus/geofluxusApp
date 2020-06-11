@@ -863,7 +863,7 @@ define(['views/common/baseview',
                                 this[index] = flow.attributes;
                             }, _this.flows);
 
-                            //try {
+                            try {
                                 // Some visualizations require different processing: 
                                 if (["parallelsets", "circularsankey"].includes(_this.selectedVizName)) {
                                     switch (_this.selectedVizName) {
@@ -884,17 +884,16 @@ define(['views/common/baseview',
                                             break;
                                         }
                                     }
-                            // } catch (renderError) {
-                            //     console.log("Error during rendering of visualization: " + renderError)
-                            //     _this.loader.deactivate();
-                            // }
+                            } catch (renderError) {
+                                console.log("Error during rendering of visualization: " + renderError)
+                                _this.loader.deactivate();
+                            }
 
                             //_this.loader.deactivate();
                         },
                         error: function (error) {
                             _this.loader.deactivate();
                             console.log(error);
-                            //_this.onError(error);
                         }
                     });
                 }
