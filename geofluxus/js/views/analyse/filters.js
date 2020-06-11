@@ -181,30 +181,18 @@ define(['views/common/baseview',
                 }
 
                 function filterActivities(event, clickedIndex, checked) {
-                    let eventTargetID = event.target.id;
-                    let selectedActivityGroupIDs = [];
-                    let filteredActivities = [];
-                    let activityGroupsSelect;
-                    let activitySelect;
-                    let activitySelectContainer;
-
-                    if (eventTargetID == "origin-activitygroup-select") {
-                        activityGroupsSelect = _this.origin.activityGroupsSelect;
-                        activitySelect = _this.origin.activitySelect;
-                        activitySelectContainer = $(".activitySelectContainer-origin");
-                    } else if (eventTargetID == "destination-activitygroup-select") {
-                        activityGroupsSelect = _this.destination.activityGroupsSelect;
-                        activitySelect = _this.destination.activitySelect;
-                        activitySelectContainer = $(".activitySelectContainer-destination");
-                    }
+                    let eventTargetID = event.target.id,
+                        node =  eventTargetID.split('-')[0],
+                        activityGroupsSelect = _this[node].activityGroupsSelect,
+                        activitySelect = _this[node].activitySelect,
+                        activitySelectContainer = $(".activitySelectContainer-" + node);
 
                     // Get the array with ID's of the selected activityGroup(s) from the .selectpicker:
-                    selectedActivityGroupIDs = $(activityGroupsSelect).val();
+                    let selectedActivityGroupIDs = $(activityGroupsSelect).val();
 
                     // If no activity groups are selected, reset the activity filter to again show all activities:
                     if (selectedActivityGroupIDs.length == 0 || selectedActivityGroupIDs[0] == "-1") {
                         activitySelectContainer.fadeOut("fast");
-
                     } else {
                         // Filter all activities by the selected Activity Groups:
                         filteredActivities = _this.collections['activities'].models.filter(function (activity) {
@@ -216,30 +204,18 @@ define(['views/common/baseview',
                 }
 
                 function filterTreatmentMethods(event, clickedIndex, checked) {
-                    let eventTargetID = event.target.id;
-                    let selectedProcessGroupIDs = [];
-                    let filteredProcesses = [];
-                    let processGroupSelect;
-                    let processSelect;
-                    let processSelectContainer;
-
-                    if (eventTargetID == "origin-processGroup-select") {
-                        processGroupSelect = _this.origin.processGroupSelect;
-                        processSelect = _this.origin.processSelect;
-                        processSelectContainer = $("#originContainerProcesses");
-                    } else if (eventTargetID == "destination-processGroup-select") {
-                        processGroupSelect = _this.destination.processGroupSelect;
-                        processSelect = _this.destination.processSelect;
-                        processSelectContainer = $("#destinationContainerProcesses");
-                    }
+                    let eventTargetID = event.target.id,
+                        node =  eventTargetID.split('-')[0],
+                        processGroupSelect = _this[node].processGroupSelect,
+                        processSelect = _this[node].processSelect,
+                        processSelectContainer = $("#" + node + "ContainerProcesses");
 
                     // Get the array with ID's of the selected treatment method group(s) from the .selectpicker:
-                    selectedProcessGroupIDs = $(processGroupSelect).val();
+                    let selectedProcessGroupIDs = $(processGroupSelect).val();
 
                     // If no process groups are selected, reset filter:
                     if (selectedProcessGroupIDs.length == 0 || selectedProcessGroupIDs[0] == "-1") {
                         processSelectContainer.fadeOut("fast");
-
                     } else {
                         // Filter all activities by the selected Process Groups:
                         filteredProcesses = _this.collections['processes'].models.filter(function (process) {
@@ -266,7 +242,6 @@ define(['views/common/baseview',
                             showOnlyHazardous = true;
                             $("#wastes02col").hide();
                             $("#wastes04col").hide();
-
                             break;
                         case "no":
                             showOnlyHazardous = false;
@@ -336,55 +311,33 @@ define(['views/common/baseview',
                 // /////////////////////////////////
                 // Multicheck events:
 
-                // Origin: -------------------------
-                $(this.origin.activityGroupsSelect).on('changed.bs.select', multiCheck);
-                $(this.origin.activityGroupsSelect).on('changed.bs.select', filterActivities);
-                $(this.origin.activitySelect).on('changed.bs.select', multiCheck);
-                $(this.origin.processGroupSelect).on('changed.bs.select', multiCheck);
-                $(this.origin.processGroupSelect).on('changed.bs.select', filterTreatmentMethods);
-                $(this.origin.processSelect).on('changed.bs.select', multiCheck);
+                // Origin/Destination: -------------------------
+                nodes = ['origin', 'destination']
+                nodes.forEach(function(node) {
+                    $(_this[node].activityGroupsSelect).on('changed.bs.select', multiCheck);
+                    $(_this[node].activityGroupsSelect).on('changed.bs.select', filterActivities);
+                    $(_this[node].activitySelect).on('changed.bs.select', multiCheck);
+                    $(_this[node].processGroupSelect).on('changed.bs.select', multiCheck);
+                    $(_this[node].processGroupSelect).on('changed.bs.select', filterTreatmentMethods);
+                    $(_this[node].processSelect).on('changed.bs.select', multiCheck);
 
-                // Hide/show Activity Group or Treatment method group containers
-                $("#origin-role-radio-production").on('click', function () {
-                    _this.origin.role = "production";
-                    $(".originContainerTreatmentMethod").hide();
-                    $(".originContainerActivity").fadeIn();
-                });
-                $("#origin-role-radio-both").on('click', function () {
-                    _this.origin.role = "both";
-                    $(".originContainerActivity").fadeOut();
-                    $(".originContainerTreatmentMethod").fadeOut();
-                });
-                $("#origin-role-radio-treatment").on('click', function () {
-                    _this.origin.role = "treatment";
-                    $(".originContainerActivity").hide();
-                    $(".originContainerTreatmentMethod").fadeIn();
-                });
-
-                // Destination: ---------------------
-                $(this.destination.activityGroupsSelect).on('changed.bs.select', multiCheck);
-                $(this.destination.activityGroupsSelect).on('changed.bs.select', filterActivities);
-                $(this.destination.activitySelect).on('changed.bs.select', multiCheck);
-                $(this.destination.processGroupSelect).on('changed.bs.select', multiCheck);
-                $(this.destination.processGroupSelect).on('changed.bs.select', filterTreatmentMethods);
-                $(this.destination.processSelect).on('changed.bs.select', multiCheck);
-
-                // Hide/show Activity Group and Activity or Treatment method:
-                $("#destination-role-radio-production").on('click', function () {
-                    _this.destination.role = "production";
-                    $(".destinationContainerTreatmentMethod").hide();
-                    $(".destinationContainerActivity").fadeIn();
-                });
-                $("#destination-role-radio-both").on('click', function () {
-                    _this.destination.role = "both";
-                    $(".destinationContainerActivity").fadeOut();
-                    $(".destinationContainerTreatmentMethod").fadeOut();
-                });
-                $("#destination-role-radio-treatment").on('click', function () {
-                    _this.destination.role = "treatment";
-                    $(".destinationContainerActivity").hide();
-                    $(".destinationContainerTreatmentMethod").fadeIn();
-                });
+                    // Hide/show Activity Group or Treatment method group containers
+                    $("#" + node + "-role-radio-production").on('click', function () {
+                        _this[node].role = "production";
+                        $("." + node + "ContainerTreatmentMethod").hide();
+                        $("." + node + "ContainerActivity").fadeIn();
+                    });
+                    $("#" + node + "-role-radio-both").on('click', function () {
+                        _this[node].role = "both";
+                        $("." + node + "ContainerActivity").fadeOut();
+                        $("." + node + "ContainerTreatmentMethod").fadeOut();
+                    });
+                    $("#" + node + "-role-radio-treatment").on('click', function () {
+                        _this[node].role = "treatment";
+                        $("." + node + "ContainerActivity").hide();
+                        $("." + node + "ContainerTreatmentMethod").fadeIn();
+                    });
+                })
 
                 // Flows: ---------------------------
                 $(this.flows.yearSelect).on('changed.bs.select', multiCheck);
@@ -432,19 +385,17 @@ define(['views/common/baseview',
             },
 
             initializeControls: function () {
-                // Origin-controls:
-                this.origin.inOrOut = this.el.querySelector('#origin-area-in-or-out');
-                this.origin.activityGroupsSelect = this.el.querySelector('select[name="origin-activitygroup-select"]');
-                this.origin.activitySelect = this.el.querySelector('select[name="origin-activity-select"]');
-                this.origin.processGroupSelect = this.el.querySelector('select[name="origin-processGroup-select"]');
-                this.origin.processSelect = this.el.querySelector('select[name="origin-process-select"]');
+                var _this = this;
 
-                // Destination-controls:
-                this.destination.inOrOut = this.el.querySelector('#destination-area-in-or-out');
-                this.destination.activityGroupsSelect = this.el.querySelector('select[name="destination-activitygroup-select"]');
-                this.destination.activitySelect = this.el.querySelector('select[name="destination-activity-select"]');
-                this.destination.processGroupSelect = this.el.querySelector('select[name="destination-processGroup-select"]');
-                this.destination.processSelect = this.el.querySelector('select[name="destination-process-select"]');
+                // Origin/Destination-controls:
+                nodes = ['origin', 'destination']
+                nodes.forEach(function(node) {
+                    _this[node].inOrOut = _this.el.querySelector('#' + node + '-area-in-or-out');
+                    _this[node].activityGroupsSelect = _this.el.querySelector('select[name="' + node + '-activitygroup-select"]');
+                    _this[node].activitySelect = _this.el.querySelector('select[name="' + node + '-activity-select"]');
+                    _this[node].processGroupSelect = _this.el.querySelector('select[name="' + node + '-processGroup-select"]');
+                    _this[node].processSelect = _this.el.querySelector('select[name="' + node + '-process-select"]');
+                })
 
                 // Flows-controls:
                 this.flows.yearSelect = this.el.querySelector('select[name="flows-year-select"]');
@@ -1357,57 +1308,34 @@ define(['views/common/baseview',
                 _this.selectedAreas.flows = [];
 
                 // HTML string for activity-select:
-                allActivitiesOptionsHTML = '<option selected value="-1">All (' + _this.activities.length + ')</option><option data-divider="true"></option>';
-                _this.activities.models.forEach(activity => allActivitiesOptionsHTML += "<option>" + activity.attributes.name + "</option>");
-
+                let activities =  _this.collections['activities'];
+                allActivitiesOptionsHTML = '<option selected value="-1">All (' + activities.length + ')</option><option data-divider="true"></option>';
+                activities.models.forEach(activity => allActivitiesOptionsHTML += "<option>" + activity.attributes.name + "</option>");
 
                 // ///////////////////////////////////////////////
                 // Origin-controls:
-                this.adminLevel.origin = this.idOfCountryLevel;
-                $(".areaSelections-origin").hide();
-                $("#areaSelections-Textarea-origin").html("");
-                $(this.origin.inOrOut).bootstrapToggle("off");
+                let nodes = ['origin', 'destination']
+                nodes.forEach(function(node) {
+                    _this.adminLevel[node] = _this.idOfCountryLevel;
+                    $(".areaSelections-" + node).hide();
+                    $("#areaSelections-Textarea-" + node).html("");
+                    $(_this[node].inOrOut).bootstrapToggle("off");
 
-                $("#origin-role-radio-production").parent().removeClass("active");
-                $("#origin-role-radio-both").parent().addClass("active")
-                $("#origin-role-radio-treatment").parent().removeClass("active");
+                    $("#" + node + "-role-radio-production").parent().removeClass("active");
+                    $("#" + node + "-role-radio-both").parent().addClass("active")
+                    $("#" + node + "-role-radio-treatment").parent().removeClass("active");
 
-                $("#origin-role-radio label input").removeAttr("checked");
-                $("#origin-role-radio-both").attr("checked", true);
-                _this.origin.role = "both";
+                    $("#" + node + "-role-radio label input").removeAttr("checked");
+                    $("#" + node + "-role-radio-both").attr("checked", true);
+                    _this[node].role = "both";
 
-                $(_this.origin.activityGroupsSelect).val('-1');
-                $(_this.origin.activitySelect).html(allActivitiesOptionsHTML);
-                $(_this.origin.processGroupSelect).val('-1');
-                $(_this.origin.processSelect).val('-1');
-                $(".originContainerActivity").hide();
-                $(".originContainerTreatmentMethod").hide();
-
-
-                $(".activitySelectContainer").hide();
-
-                // ///////////////////////////////////////////////
-                // Destination-controls:
-                this.adminLevel.destination = this.idOfCountryLevel;
-                $(".areaSelections-destination").hide();
-                $("#areaSelections-Textarea-destination").html("");
-                $(this.destination.inOrOut).bootstrapToggle("off");
-
-                $("#destination-role-radio-production").parent().removeClass("active");
-                $("#destination-role-radio-both").parent().addClass("active")
-                $("#destination-role-radio-treatment").parent().removeClass("active");
-
-                $("#destination-role-radio label input").removeAttr("checked");
-                $("#destination-role-radio-both").attr("checked", true);
-                _this.destination.role = "both";
-
-                $(_this.destination.activityGroupsSelect).val('-1');
-                $(_this.destination.activitySelect).html(allActivitiesOptionsHTML);
-                $(_this.destination.processGroupSelect).val('-1');
-                $(_this.destination.processSelect).val('-1');
-                $(".destinationContainerActivity").hide();
-                $(".destinationContainerTreatmentMethod").hide();
-
+                    $(_this[node].activityGroupsSelect).val('-1');
+                    $(_this[node].activitySelect).html(allActivitiesOptionsHTML);
+                    $(_this[node].processGroupSelect).val('-1');
+                    $(_this[node].processSelect).val('-1');
+                    $("." + node + "ContainerActivity").hide();
+                    $("." + node + "ContainerTreatmentMethod").hide();
+                })
 
                 // ///////////////////////////////////////////////
                 // Flows-controls:
@@ -1448,6 +1376,7 @@ define(['views/common/baseview',
             },
 
             getFilterParams: function () {
+                var _this = this;
 
                 let filterParams = {
                     origin: {},
@@ -1456,83 +1385,45 @@ define(['views/common/baseview',
                 }
 
                 // ///////////////////////////////
-                // ORIGIN
+                // ORIGIN/DESTINATION
+                let nodes = ['origin', 'destination']
+                nodes.forEach(function(node) {
+                    filterParams[node].adminLevel = _this.adminLevel[node];
 
-                filterParams.origin.adminLevel = this.adminLevel.origin;
+                    if (_this.selectedAreas[node] !== undefined &&
+                        _this.selectedAreas[node].length > 0) {
+                        filterParams[node].selectedAreas = [];
+                        _this.selectedAreas[node].forEach(function (area) {
+                            filterParams[node].selectedAreas.push(area.id);
+                        });
+                    }
+                    if ($(_this[node].inOrOut).prop('checked')) {
+                        filterParams[node].inOrOut = 'out';
+                    } else {
+                        filterParams[node].inOrOut = 'in';
+                    }
+                    if (_this[node].role != 'both') {
+                        filterParams.flows['origin_role'] = _this.origin.role;
+                    }
 
-                if (this.selectedAreas.origin !== undefined &&
-                    this.selectedAreas.origin.length > 0) {
-                    filterParams.origin.selectedAreas = [];
-                    this.selectedAreas.origin.forEach(function (area) {
-                        filterParams.origin.selectedAreas.push(area.id);
-                    });
-                }
-                if ($(this.origin.inOrOut).prop('checked')) {
-                    filterParams.origin.inOrOut = 'out';
-                } else {
-                    filterParams.origin.inOrOut = 'in';
-                }
-                if (this.origin.role != 'both') {
-                    filterParams.flows['origin_role'] = this.origin.role;
-                }
-
-                if (this.origin.role == "production") {
-                    if ($(this.origin.activityGroupsSelect).val() != '-1') {
-                        if ($(this.origin.activitySelect).val() == '-1') {
-                            filterParams.flows['origin__activity__activitygroup__in'] = $(this.origin.activityGroupsSelect).val();
-                        } else {
-                            filterParams.flows['origin__activity__in'] = $(this.origin.activitySelect).val();
+                    if (_this[node].role == "production") {
+                        if ($(_this[node].activityGroupsSelect).val() != '-1') {
+                            if ($(_this[node].activitySelect).val() == '-1') {
+                                filterParams.flows[node + '__activity__activitygroup__in'] = $(_this[node].activityGroupsSelect).val();
+                            } else {
+                                filterParams.flows[node + '__activity__in'] = $(_this[node].origin.activitySelect).val();
+                            }
+                        }
+                    } else if (_this[node].role == "treatment") {
+                        if ($(_this[node].processGroupSelect).val() != '-1') {
+                            if ($(_this[node].processSelect).val() == '-1') {
+                                filterParams.flows[node + '__process__processgroup__in'] = $(_this[node].processGroupSelect).val();
+                            } else {
+                                filterParams.flows[node + '__process__in'] = $(_this[node].processSelect).val();
+                            }
                         }
                     }
-                } else if (this.origin.role == "treatment") {
-                    if ($(this.origin.processGroupSelect).val() != '-1') {
-                        if ($(this.origin.processSelect).val() == '-1') {
-                            filterParams.flows['origin__process__processgroup__in'] = $(this.origin.processGroupSelect).val();
-                        } else {
-                            filterParams.flows['origin__process__in'] = $(this.origin.processSelect).val();
-                        }
-                    }
-                }
-
-
-                // ///////////////////////////////
-                // DESTINATION
-
-                filterParams.destination.adminLevel = this.adminLevel.destination;
-
-                if (this.selectedAreas.destination !== undefined &&
-                    this.selectedAreas.destination.length > 0) {
-                    filterParams.destination.selectedAreas = [];
-                    this.selectedAreas.destination.forEach(function (area) {
-                        filterParams.destination.selectedAreas.push(area.id);
-                    });
-                }
-                if ($(this.destination.inOrOut).prop('checked')) {
-                    filterParams.destination.inOrOut = 'out';
-                } else {
-                    filterParams.destination.inOrOut = 'in';
-                }
-                if (this.destination.role != 'both') {
-                    filterParams.flows['destination_role'] = this.destination.role;
-                }
-
-                if (this.destination.role == "production") {
-                    if ($(this.destination.activityGroupsSelect).val() != '-1') {
-                        if ($(this.destination.activitySelect).val() == '-1') {
-                            filterParams.flows['destination__activity__activitygroup__in'] = $(this.destination.activityGroupsSelect).val();
-                        } else {
-                            filterParams.flows['destination__activity__in'] = $(this.destination.activitySelect).val();
-                        }
-                    }
-                } else if (this.destination.role == "treatment") {
-                    if ($(this.destination.processGroupSelect).val() != '-1') {
-                        if ($(this.destination.processSelect).val() == '-1') {
-                            filterParams.flows['destination__process__processgroup__in'] = $(this.destination.processGroupSelect).val();
-                        } else {
-                            filterParams.flows['destination__process__in'] = $(this.destination.processSelect).val();
-                        }
-                    }
-                }
+                })
 
                 // ///////////////////////////////
                 // FLOWS
