@@ -584,7 +584,7 @@ define(['views/common/baseview',
                     flows = enrichFlows.enrichTime(flows, collections, gran1);
                     // Actor level:
 
-                    let actorAreaLevelId = collections.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
+                    let actorAreaLevelId = collections['arealevels'].models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
                     if (dimensions[1][1].adminlevel == actorAreaLevelId) {
                         dimensions.isActorLevel = true;
                     }
