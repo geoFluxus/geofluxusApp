@@ -1,4 +1,5 @@
 define(['views/common/baseview',
+        'views/status-quo/flows',
         'underscore',
         'collections/collection',
         'visualizations/map',
@@ -8,7 +9,7 @@ define(['views/common/baseview',
         'bootstrap',
     ],
 
-    function (BaseView, _, Collection, Map, ol, utils, filterUtils) {
+    function (BaseView, _, monitorView, Collection, Map, ol, utils, filterUtils) {
 
         var FiltersView = BaseView.extend({
             initialize: function (options) {
@@ -96,6 +97,9 @@ define(['views/common/baseview',
                     _this.loader.deactivate();
                     _this.render();
                 })
+
+
+
             },
 
             // DOM events
@@ -151,12 +155,29 @@ define(['views/common/baseview',
 
                 this.renderSavedFiltersModal();
                 this.renderAreaSelectModal();
-
                 this.renderConfirmModal();
 
+                
                 this.initializeControls();
-
                 this.addEventListeners();
+
+                this.renderMonitorView();
+            },
+
+            renderMonitorView: function () {
+                var el = this.el.querySelector('#monitor-content');
+                this.monitorView = new monitorView({
+                    el: el,
+                    template: 'monitor-template',
+                });
+            },
+
+            renderImpactView: function () {
+                var el = this.el.querySelector('#impact-content');
+                this.impactView = new impactView({
+                    el: el,
+                    template: 'impact-template',
+                });
             },
 
             addEventListeners: function () {
@@ -657,7 +678,7 @@ define(['views/common/baseview',
                         },
                         error: function (res) {
                             _this.loader.deactivate();
-                            console.log("Error in prepareAreas: ",  res);
+                            console.log("Error in prepareAreas: ", res);
                         }
                     });
                 }
@@ -946,7 +967,7 @@ define(['views/common/baseview',
                         }
                         $(this.flows.hazardousSelect).trigger('changed.bs.select');
 
-                        if (_.has(flows, 'flowchain__waste06__in')) {                        
+                        if (_.has(flows, 'flowchain__waste06__in')) {
                             $(_this.flows.waste06Select).selectpicker('val', flows.flowchain__waste06__in);
                         }
                         $("#wastes04col").hide();

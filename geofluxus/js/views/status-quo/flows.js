@@ -72,7 +72,7 @@ define(['views/common/baseview',
                 });
                 
                 // Render flow filters:
-                this.renderFiltersView();
+                //this.renderFiltersView();
 
                 // Activate help icons
                 var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
