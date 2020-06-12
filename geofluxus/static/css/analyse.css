@@ -671,6 +671,14 @@ textarea.textarea-autosize.form-control-sm {
     margin: 0px 5px;
 }
 
+.leaflet-control-fullscreen-button {
+    display: flex !important;
+}
+
+.leaflet-control-fullscreen-button::before {
+    margin: auto;
+}
+
 .flowmap-container .leaflet-tooltip {
     z-index: 999999;
 }
@@ -753,13 +761,11 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .leaflet-control-fullscreen a::before {
-    position: relative;
-    top: 1.5px;
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     color: white;
     content: "\f065";
-    font-size: 14px;
+    font-size: 17px;
 }
 
 .leaflet-control-fullscreen a:hover {
