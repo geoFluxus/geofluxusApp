@@ -604,24 +604,11 @@ define(['views/common/baseview',
                 let buttonClicked = $(event.currentTarget).data('area-clear-button');
                 let _this = this;
 
-                if (buttonClicked == "origin" && _this.selectedAreas.origin.length > 0) {
-                    _this.selectedAreas.origin = [];
-                    $("#areaSelections-Textarea-origin").html("");
+                if (_this.selectedAreas[buttonClicked].length > 0) {
+                    _this.selectedAreas[buttonClicked] = [];
+                    $("#areaSelections-Textarea-" + buttonClicked).html("");
                     setTimeout(function () {
-                        $(".areaSelections-origin").fadeOut();
-                    }, 400);
-
-                } else if (buttonClicked == "destination" && _this.selectedAreas.destination.length > 0) {
-                    _this.selectedAreas.destination = [];
-                    $("#areaSelections-Textarea-destination").html("");
-                    setTimeout(function () {
-                        $(".areaSelections-destination").fadeOut();
-                    }, 400);
-                } else if (buttonClicked == "flows" && _this.selectedAreas.flows.length > 0) {
-                    _this.selectedAreas.flows = [];
-                    $("#areaSelections-Textarea-flows").html("");
-                    setTimeout(function () {
-                        $("#areaSelections-flows").fadeOut();
+                        $(".areaSelections-" + buttonClicked).fadeOut();
                     }, 400);
                 }
             },
