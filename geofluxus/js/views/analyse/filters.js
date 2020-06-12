@@ -1213,39 +1213,17 @@ define(['views/common/baseview',
                 let features = this.areaMap.layers.areas.select.getFeatures();
 
                 // Add the correct selected features to the areaMap:
-                if (this.areaMap.block == "origin") {
-                    // Add selected origin areas as selections to the map:
-                    if (this.selectedAreas.origin && this.selectedAreas.origin.length > 0) {
+                var block = this.areaMap.block;
+                if (this.selectedAreas[block] && this.selectedAreas[block].length > 0) {
+                    // Loop through all selected areas in selectedAreas.origin:
+                    this.selectedAreas[block].forEach(selectedArea => {
+                        // Get the feature object based on the id:
+                        let feature = this.areaMap.getFeature("areas", selectedArea.id);
+                        labelStringArray.push(selectedArea.attributes.name);
 
-                        // Loop through all selected areas in selectedAreas.origin:
-                        this.selectedAreas.origin.forEach(selectedArea => {
-                            // Get the feature object based on the id:
-                            let feature = this.areaMap.getFeature("areas", selectedArea.id);
-                            labelStringArray.push(selectedArea.attributes.name);
-
-                            // Add it to the Features ol.Collection:
-                            features.push(feature);
-                        });
-                    }
-
-                } else if (this.areaMap.block == "destination") {
-                    // Add selected destination areas as selections to the map:
-                    if (this.selectedAreas.destination && this.selectedAreas.destination.length > 0) {
-                        this.selectedAreas.destination.forEach(selectedArea => {
-                            let feature = this.areaMap.getFeature("areas", selectedArea.id);
-                            labelStringArray.push(selectedArea.attributes.name);
-                            features.push(feature);
-                        });
-                    }
-                } else if (this.areaMap.block == "flows") {
-                    // Add selected Flows areas as selections to the map:
-                    if (this.selectedAreas.flows && this.selectedAreas.flows.length > 0) {
-                        this.selectedAreas.flows.forEach(selectedArea => {
-                            let feature = this.areaMap.getFeature("areas", selectedArea.id);
-                            labelStringArray.push(selectedArea.attributes.name);
-                            features.push(feature);
-                        });
-                    }
+                        // Add it to the Features ol.Collection:
+                        features.push(feature);
+                    });
                 }
 
                 // Display the previousy selected regions in the label on the modal:
