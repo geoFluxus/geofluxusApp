@@ -633,8 +633,10 @@ textarea.textarea-autosize.form-control-sm {
 
 .icon-toggle-flowmap-animation {
     background-image: url("../img/flowmap-animation.svg");
-    width: 20px;
-    height: 20px;
+    position: relative;
+    width: 25px;
+    height: 25px;
+    top: 0.055rem;
 }
 
 .icon-toggle-flowmap-areas {
