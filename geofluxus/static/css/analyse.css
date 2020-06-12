@@ -446,7 +446,7 @@ textarea.textarea-autosize.form-control-sm {
 
 .leaflet-top,
 .leaflet-bottom {
-    z-index: 1000;
+    z-index: 998;
 }
 
 
