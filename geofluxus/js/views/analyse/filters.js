@@ -29,23 +29,13 @@ define(['views/common/baseview',
                 this.template = options.template;
 
                 // Load model here
-                var tags = [
-                    'activitygroups',
-                    'activities',
-                    'actors',
-                    'processgroups',
-                    'processes',
-                    'wastes02',
-                    'wastes04',
-                    'wastes06',
-                    'materials',
-                    'products',
-                    'composites',
-                    'arealevels',
-                    'years',
-                    'months',
-                    'filters',
-                ]
+                var tags = ['activitygroups', 'activities',
+                            'processgroups', 'processes',
+                            'wastes02', 'wastes04', 'wastes06',
+                            'materials', 'products', 'composites',
+                            'arealevels',
+                            'years', 'months',
+                            'filters']
 
                 // Model collections
                 // Refer to collection via tag
@@ -116,8 +106,6 @@ define(['views/common/baseview',
 
                 this.initializeControls();
                 this.addEventListeners();
-
-                //this.renderMonitorView();
             },
 
             renderMonitorView: function (_this) {
@@ -257,7 +245,7 @@ define(['views/common/baseview',
                             return waste06.attributes.hazardous == showOnlyHazardous;
                         });
 
-                        filterUtils.fillSelectPicker("waste06", _this.flows.waste06Select, filteredWastes06);
+                        filterUtils.fillSelectPicker("wastes06", _this.flows.waste06Select, filteredWastes06);
                         $(".chevronEwc06").hide();
                         $("#flows-waste06-label").css("position", "static");
                         $("#helpiconWaste06").addClass("hazaIconPos");
@@ -265,46 +253,23 @@ define(['views/common/baseview',
                     }
                 }
 
-                function filterEWC02to04(event, clickedIndex, checked) {
-                    let filteredWastes04 = [];
-                    let selectedEWC02IDs = $(_this.flows.waste02Select).val();
-                    if (selectedEWC02IDs.length == 0 || selectedEWC02IDs[0] == "-1") {
-                        $("#wastes04col").fadeOut("fast");
-                    } else {
-                        filteredWastes04 = _this.collections['wastes04'].models.filter(function (waste04) {
-                            return selectedEWC02IDs.includes(waste04.attributes.waste02.toString())
-                        });
-                        filterUtils.fillSelectPicker("waste04", _this.flows.waste04Select, filteredWastes04);
-                        $("#wastes04col").fadeIn("fast");
-                    }
-                }
+                function filterbyParent(evt, clickedIndex, checked) {
+                    // enable multiCheck
+                    multiCheck(evt, clickedIndex, checked);
 
-                function filterEWC04to06() {
-                    let filteredWastes06 = [];
-                    let selectedEWC04IDs = $(_this.flows.waste04Select).val();
-                    if (selectedEWC04IDs.length == 0 || selectedEWC04IDs[0] == "-1") {
-                        $("#wastes06col").fadeOut("fast");
-
+                    // filter children
+                    let ids = $(evt.target).val(),
+                        parent = evt.data.parent,
+                        tag = evt.data.children,
+                        picker = evt.data.picker;
+                    if (ids.length == 0 || ids[0] == "-1") {
+                        $("#" + tag + "col").fadeOut("fast");
                     } else {
-                        filteredWastes06 = _this.collections['wastes06'].models.filter(function (waste06) {
-                            return selectedEWC04IDs.includes(waste06.attributes.waste04.toString())
+                        let children = _this.collections[tag].models.filter(function (child) {
+                            return ids.includes(child.attributes[parent].toString())
                         });
-                        filterUtils.fillSelectPicker("waste06", _this.flows.waste06Select, filteredWastes06);
-                        $("#wastes06col").fadeIn("fast");
-                    }
-                }
-
-                function filterMonths() {
-                    let filteredMonths = [];
-                    let selectedYearIDs = $(_this.flows.yearSelect).val();
-                    if (selectedYearIDs.length == 0 || selectedYearIDs[0] == "-1") {
-                        $("#monthCol").fadeOut("fast");
-                    } else {
-                        filteredMonths = _this.collections['months'].models.filter(function (month) {
-                            return selectedYearIDs.includes(month.attributes.year.toString())
-                        });
-                        filterUtils.fillSelectPicker("month", _this.flows.monthSelect, filteredMonths);
-                        $("#monthCol").fadeIn("fast");
+                        filterUtils.fillSelectPicker(tag, picker, children);
+                        $("#" + tag + "col").fadeIn("fast");
                     }
                 }
 
@@ -340,15 +305,18 @@ define(['views/common/baseview',
                 })
 
                 // Flows: ---------------------------
-                $(this.flows.yearSelect).on('changed.bs.select', multiCheck);
-                $(this.flows.yearSelect).on('changed.bs.select', filterMonths);
+                $(this.flows.yearSelect).on('changed.bs.select',
+                                            {parent: 'year', children: 'months', picker: this.flows.monthSelect},
+                                            filterbyParent);
                 $(this.flows.monthSelect).on('changed.bs.select', multiCheck);
 
                 $(this.flows.hazardousSelect).on('changed.bs.select', filterEwcHazardous);
-                $(this.flows.waste02Select).on('changed.bs.select', multiCheck);
-                $(this.flows.waste02Select).on('changed.bs.select', filterEWC02to04);
-                $(this.flows.waste04Select).on('changed.bs.select', multiCheck);
-                $(this.flows.waste04Select).on('changed.bs.select', filterEWC04to06);
+                $(this.flows.waste02Select).on('changed.bs.select',
+                                               {parent: 'waste02', children: 'wastes04', picker: this.flows.waste04Select},
+                                               filterbyParent);
+                $(this.flows.waste04Select).on('changed.bs.select',
+                                               {parent: 'waste04', children: 'wastes06', picker: this.flows.waste06Select},
+                                               filterbyParent);
                 $(this.flows.waste06Select).on('changed.bs.select', multiCheck);
 
                 $(this.flows.materialSelect).on('changed.bs.select', multiCheck);
@@ -839,7 +807,7 @@ define(['views/common/baseview',
                         });
                         filterUtils.fillSelectPicker("month", $(_this.flows.monthSelect), filteredMonths);
                         $(_this.flows.monthSelect).selectpicker('val', flows.flowchain__month__in);
-                        $("#monthCol").fadeIn("fast");
+                        $("#monthscol").fadeIn("fast");
                     }
 
                     // EWC
@@ -1281,7 +1249,7 @@ define(['views/common/baseview',
                 $("#areaSelections-flows").hide();
                 $(_this.flows.yearSelect).val("-1");
                 $(_this.flows.monthSelect).val("-1");
-                $("#monthCol").hide("fast");
+                $("#monthscol").hide("fast");
 
                 $(_this.flows.waste02Select).val("-1");
                 $(_this.flows.waste04Select).val("-1");

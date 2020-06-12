@@ -9,35 +9,28 @@ module.exports = {
         let years = collections['years'].models;
         let months = collections['months'].models;
 
-
-        if (granularity == "flowchain__month__year") {
-
-            // // Get all unique years
-            // occurances = flows.map(x => x.year);
-            // occurances = _.unique(occurances);
-
-            // // Create array with unique colors:
-            // colorArray = utils.interpolateColors(occurances.length);
-
+        if (granularity.includes("year")) {
             flows.forEach(function (flow, index) {
                 let yearObject = years.find(year => year.attributes.id == flow.year);
 
                 this[index].id = this[index].year;
                 this[index].year = parseInt(yearObject.attributes.code);
-                //this[index].color = colorArray[index];
             }, flows);
 
             flows = _.sortBy(flows, 'year');
 
-        } else if (granularity == "flowchain__month") {
+        } else {
             flows.forEach(function (flow, index) {
-                let monthObject = months.find(month => month.attributes.id == flow.month);
+                let monthObject = months.find(month => month.attributes.id == flow.month),
+                    code = monthObject.attributes.code,
+                    month = code.substring(0, 2),
+                    year = code.substring(2, 6);
 
                 this[index].id = monthObject.attributes.id;
-                this[index].month = utils.toMonthString(monthObject.attributes.code.substring(0, 2)) + " " + monthObject.attributes.code.substring(2, 6);
-                this[index].monthName = this[index].month.substring(0, this[index].month.indexOf(' '));
-                this[index].yearMonthCode = parseInt(monthObject.attributes.code.substring(2, 6) + monthObject.attributes.code.substring(0, 2));
-                this[index].year = parseInt(monthObject.attributes.code.substring(2, 6));
+                this[index].month = utils.toMonthString(month) + " " + year;
+                this[index].monthName = this[index].month.split(" ")[0];
+                this[index].yearMonthCode = parseInt(year + month);
+                this[index].year = parseInt(year);
             }, flows);
 
             flows = _.sortBy(flows, 'id');
@@ -51,7 +44,7 @@ module.exports = {
         let activities = collections['activities'].models;
 
         // Granularity = Activity group
-        if (granularity == "origin__activity__activitygroup" || granularity == "destination__activity__activitygroup") {
+        if (granularity.includes("activitygroup")) {
             flows.forEach(function (flow, index) {
                 let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.activitygroup);
 
@@ -60,7 +53,7 @@ module.exports = {
             }, flows);
 
             // Granularity: Activity
-        } else if (granularity == "origin__activity" || granularity == "destination__activity") {
+        } else {
             flows.forEach(function (flow, index) {
                 let activityObject = activities.find(activity => activity.attributes.id == flow.activity);
                 let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.activitygroup);
@@ -81,7 +74,7 @@ module.exports = {
         let processes = collections['processes'].models;
 
         // Granularity: Treatment Method Group
-        if (granularity == "origin__process__processgroup" || granularity == "destination__process__processgroup") {
+        if (granularity.includes("processgroup")) {
 
             flows.forEach(function (flow, index) {
                 let processGroupObject = processGroups.find(processGroup => processGroup.attributes.id == flow.processgroup);
@@ -91,7 +84,7 @@ module.exports = {
             }, flows);
 
             // Granularity: Treatment Method
-        } else if (granularity == "origin__process" || granularity == "destination__process") {
+        } else {
 
             flows.forEach(function (flow, index) {
                 let processObject = processes.find(process => process.attributes.id == flow.process);
@@ -114,7 +107,7 @@ module.exports = {
         let ewc6 = collections['wastes06'].models;
 
         // ewc2
-        if (granularity == "flowchain__waste06__waste04__waste02") {
+        if (granularity.includes("waste02")) {
 
             flows.forEach(function (flow, index) {
                 let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.waste02);
@@ -124,7 +117,7 @@ module.exports = {
             }, flows);
 
             // ewc4
-        } else if (granularity == "flowchain__waste06__waste04") {
+        } else if (granularity.includes("waste04")) {
 
             flows.forEach(function (flow, index) {
                 let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.waste02);
@@ -137,7 +130,7 @@ module.exports = {
             }, flows);
 
             // ewc6
-        } else if (granularity == "flowchain__waste06") {
+        } else if (granularity.include("waste06")) {
             flows.forEach(function (flow, index) {
                 let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.waste02);
                 let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.waste04);
