@@ -161,7 +161,7 @@ define(['views/common/baseview',
             },
 
             renderMonitorView: function (_this) {
-                var el = _this.el.querySelector('#analyse-content');
+                var el = _this.el.querySelector('#monitor-content');
                 _this.monitorView = new MonitorView({
                     el: el,
                     template: 'monitor-template',
@@ -170,7 +170,7 @@ define(['views/common/baseview',
             },
 
             renderImpactView: function (_this) {
-                var el = _this.el.querySelector('#analyse-content');
+                var el = _this.el.querySelector('#impact-content');
                 _this.impactView = new ImpactView({
                     el: el,
                     template: 'impact-template',
@@ -186,13 +186,15 @@ define(['views/common/baseview',
 
                     if (clickedMode != _this.analyseMode) {
                         _this.analyseMode = clickedMode;
-
+                        $(".analyse-content-container").hide();
                         switch (_this.analyseMode) {
                             case "monitor":
                                 _this.renderMonitorView(_this);
+                                $("#monitor-content").fadeIn();
                                 break;
                             case "impact":
                                 _this.renderImpactView(_this);
+                                $("#impact-content").fadeIn();
                                 break;
                         }
                     }
