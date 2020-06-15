@@ -23,9 +23,21 @@
             </div>
         </div>
 
+        {% if datasets.count != 0 %}
         <div class="card bg-dark">
+
+            <div class="card-header">
+                <h4 class="mt-2 ml-3">
+                    <button class="btn btn-link collapsingHeaderButton" id="btn-collapse-header-origin"
+                        title="The filters related to the Origin of the waste flow.">
+                        <!-- <i class="fa fa-chevron-down pull-right"></i> -->
+                        Data set
+                    </button>
+                </h4>
+            </div>
+
             <div class="card-body">
-                <div class="row pt-4 pb-4">
+                <div class="row pb-4">
                     <div class="col-md-4">
                         <label for="datasetSelect">Data set</label>
                         <div class="labelHelpiconContainer">
@@ -35,12 +47,12 @@
                         </div>
 
                         <select name="flows-dataset-select" id="datasetSelect" multiple
-                            class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
+                            class="form-control form-control-sm selectpicker" data-size="4"
                             style="resize: vertical;">
-                            <option selected value="-1">All (<%= years.count %>)</option>
+                            <option selected value="-1">All (<%= datasets.count %>)</option>
                             <option data-divider="true"></option>
-                            <% years.forEach(function(year){ %>
-                            <option value="<%= year.id %>"><%= year.get('code') %></option>
+                            <% datasets.forEach(function(dataset){ %>
+                            <option value="<%= dataset.id %>"><%= dataset.get('title') %></option>
                             <% }); %>
                         </select>
 
@@ -49,6 +61,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
 
         <!-- ORIGIN CONTROLS -->
         <div class="card bg-dark">

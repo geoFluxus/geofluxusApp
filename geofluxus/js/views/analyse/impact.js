@@ -92,23 +92,9 @@ define(['views/common/baseview',
                     if (clickedIndicator != _this.indicator) {
                         _this.indicator = clickedIndicator;
                         $(".impactSourceContainer").fadeIn();
-                        
-                        // switch (_this.analyseMode) {
-                        //     case "monitor":
-                        //         _this.renderMonitorView(_this);
-                        //         $("#monitor-content").fadeIn();
-                        //         break;
-                        //     case "impact":
-                        //         _this.renderImpactView(_this);
-                        //         $("#impact-content").fadeIn();
-                        //         break;
-                        // }
                     }
                     event.preventDefault();
                 });
-
-
-
 
                 // Dimension toggles: ---------------------------
 

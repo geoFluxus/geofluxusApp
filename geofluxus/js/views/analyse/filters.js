@@ -73,6 +73,9 @@ define(['views/common/baseview',
                 this.savedFilters = new Collection([], {
                     apiTag: 'filters'
                 });
+                this.datasets = new Collection([], {
+                    apiTag: 'datasets'
+                });
 
                 this.areas = {};
 
@@ -92,6 +95,8 @@ define(['views/common/baseview',
                     this.years.fetch(),
                     this.months.fetch(),
                     this.savedFilters.fetch(),
+                    this.datasets.fetch(),
+
                 ];
                 Promise.all(promises).then(function () {
                     _this.loader.deactivate();
@@ -135,6 +140,7 @@ define(['views/common/baseview',
                     levels: this.areaLevels,
                     years: this.years,
                     months: this.months,
+                    datasets: this.datasets,
                 });
 
                 // Activate help icons
@@ -378,6 +384,8 @@ define(['views/common/baseview',
                 // /////////////////////////////////
                 // Multicheck events:
 
+
+                $(this.flows.datasetSelect).on('changed.bs.select', multiCheck);
                 // Origin: -------------------------
                 $(this.origin.activityGroupsSelect).on('changed.bs.select', multiCheck);
                 $(this.origin.activityGroupsSelect).on('changed.bs.select', filterActivities);
@@ -474,6 +482,10 @@ define(['views/common/baseview',
             },
 
             initializeControls: function () {
+
+                // Flows dataset:
+                this.flows.datasetSelect = this.el.querySelector('#datasetSelect');
+
                 // Origin-controls:
                 this.origin.inOrOut = this.el.querySelector('#origin-area-in-or-out');
                 this.origin.activityGroupsSelect = this.el.querySelector('select[name="origin-activitygroup-select"]');
@@ -772,6 +784,8 @@ define(['views/common/baseview',
 
                     console.log("Loading saved filter configuration: ", configToLoad);
 
+                    // Dataset filter:
+                    $(this.flows.datasetSelect).val(flows.datasets);
 
                     /**
                      * Load saved areas for given section
@@ -1402,6 +1416,8 @@ define(['views/common/baseview',
                 allActivitiesOptionsHTML = '<option selected value="-1">All (' + _this.activities.length + ')</option><option data-divider="true"></option>';
                 _this.activities.models.forEach(activity => allActivitiesOptionsHTML += "<option>" + activity.attributes.name + "</option>");
 
+                // Datasets:
+                $(this.flows.datasetSelect).val("-1");
 
                 // ///////////////////////////////////////////////
                 // Origin-controls:
@@ -1495,6 +1511,16 @@ define(['views/common/baseview',
                     origin: {},
                     destination: {},
                     flows: {},
+                }
+
+                // Datasets filter:
+                if ($(this.flows.datasetSelect).val() == '-1') {
+                    filterParams.flows['datasets'] = [];
+                    this.datasets.forEach(dataset => {
+                        filterParams.flows['datasets'].push(dataset.get("id"));
+                    });
+                } else {
+                    filterParams.flows['datasets'] = $(this.flows.datasetSelect).val();
                 }
 
                 // ///////////////////////////////
