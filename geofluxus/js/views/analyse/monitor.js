@@ -42,27 +42,36 @@ define(['views/common/baseview',
                 this.selectedDimensionStrings = [];
                 this.selectedVizName = "";
 
+                // Dimension-Visualizations inventory
                 this.vizs = {
-                    'time': ['piechart', 'barchart', 'treemap', 'lineplot'],
+                    // 1D visualizations
+                    'time':             ['piechart', 'barchart', 'treemap', 'lineplot'],
                     'economicActivity': ['piechart', 'barchart', 'treemap'],
-                    'space': ['piechart', 'barchart', 'treemap'],
-                    'treatmentMethod': ['piechart', 'barchart', 'treemap', 'parallelsets'],
-                    'material': ['piechart', 'barchart', 'treemap'],
-                    'time_economicActivity': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart'],
-                    'time_space': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'flowmap'],
-                    'time_treatmentMethod': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart'],
-                    'time_material': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart'],
+                    'space':            ['piechart', 'barchart', 'treemap'],
+                    'treatmentMethod':  ['piechart', 'barchart', 'treemap', 'parallelsets'],
+                    'material':         ['piechart', 'barchart', 'treemap'],
+                    // 2D visualizations
+                    'time_economicActivity':            ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart'],
+                    'time_space':                       ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'flowmap'],
+                    'time_treatmentMethod':             ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart'],
+                    'time_material':                    ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart'],
                     'economicActivity_treatmentMethod': ['barchart', 'stackedbarchart', 'parallelsets'],
-                    'economicActivity_material': ['barchart', 'stackedbarchart', 'parallelsets'],
-                    'treatmentMethod_material': ['barchart', 'stackedbarchart', 'parallelsets']
+                    'economicActivity_material':        ['barchart', 'stackedbarchart', 'parallelsets'],
+                    'treatmentMethod_material':         ['barchart', 'stackedbarchart', 'parallelsets']
                 }
 
+                // Visualization view inventory
                 this.vizViews = {
-                    'piechart': PieChartView,
-                    'barchart': BarChartView,
-                    'treemap': TreeMapView,
-                    'lineplot': LinePlotView,
-                    'lineplotmultiple': Multiple
+                    'piechart': {'view': PieChartView},
+                    'barchart': {'view': BarChartView},
+                    'stackedbarchart': {'view': BarChartView,
+                                        'options': {isStacked: true}},
+                    'treemap': {'view': TreeMapView},
+                    'lineplot': {'view': LinePlotView},
+                    'lineplotmultiple': {'view': LinePlotView,
+                                         'options': {hasMultipleLines: true}},
+                    'areachart': {'view': AreaChartView},
+                    'choroplethmap': {'view': ChoroplethView}
                 }
 
                 this.areaLevels = new Collection([], {
@@ -409,23 +418,80 @@ define(['views/common/baseview',
                 let collections = this.filtersView.collections;
 
                 // Enrich flows with info
+                let adminlevel = -1;
                 dimensions.forEach(function(dimension) {
                     let dimensionString = dimension[0];
                     let granularity = dimension[1];
 
                     if (dimensionString !== 'space') {
                         flows = enrichFlows.enrichFlows(flows, collections, granularity);
+                    } else {
+                        adminlevel = granularity.adminlevel;
                     }
                 })
 
+                // Render visualization
                 if (this.vizView != null) this.vizView.close();
+                if (_this.selectedVizName === 'lineplotmultiple') {
+                    _this.selectedVizName = 'lineplot';
+                }
                 $("." + _this.selectedVizName + "-wrapper").fadeIn();
-                this.vizView = new this.vizViews[_this.selectedVizName]({
-                    el: "." + _this.selectedVizName + "-wrapper",
-                    dimensions: dimensions,
-                    flows: flows,
-                    flowsView: this,
-                });
+
+                let vizView = this.vizViews[_this.selectedVizName],
+                    extraOptions = vizView['options'],
+                    defaultOptions = {
+                        el: "." + _this.selectedVizName + "-wrapper",
+                        dimensions: dimensions,
+                        flows: flows,
+                        flowsView: this,
+                    };
+
+                if (_this.selectedVizName === 'choroplethmap') {
+                    let occuringAreas = [];
+                    occuringAreas = flows.map(x => x.areaId);
+                    occuringAreas = _.unique(occuringAreas);
+
+                    areas = new Collection([], {
+                        apiTag: 'areas',
+                        apiIds: [adminlevel]
+                    });
+                    areas.fetch({
+                        success: function () {
+                            var geoJson = {};
+                            geoJson['type'] = 'FeatureCollection';
+                            features = geoJson['features'] = [];
+                            areas.forEach(function (area) {
+                                var feature = {};
+                                feature['type'] = 'Feature';
+                                feature['id'] = area.get('id')
+                                feature['geometry'] = area.get('geom')
+
+                                if (occuringAreas.includes(feature.id)) {
+                                    features.push(feature);
+                                }
+                            })
+
+                            flows.forEach(function (flow, index) {
+                                this[index].id = this[index].areaId;
+                            }, flows);
+
+                            _this.vizView = new ChoroplethView({
+                                el: ".choroplethmap-wrapper",
+                                dimensions: dimensions,
+                                flows: flows,
+                                flowsView: _this,
+                                geoJson: geoJson
+                            });
+                        },
+                        error: function (res) {
+                            console.log(res);
+                        }
+                    });
+                } else {
+                    this.vizView = new vizView['view'](
+                        Object.assign(defaultOptions, extraOptions)
+                    );
+                }
 
 //                switch (_this.selectedVizName) {
 //                    case "piechart":
@@ -487,134 +553,6 @@ define(['views/common/baseview',
 //                }
 
                 // console.log(flows);
-            },
-
-            render2Dvisualizations: function (dimensions, flows) {
-                let _this = this;
-                let collections = this.filtersView.collections;
-                let dimStrings = [];
-
-                let dim1String = dimensions[0][0];
-                let gran1 = dimensions[0][1];
-                let dim2String = dimensions[1][0];
-                let gran2 = dimensions[1][1];
-
-                // Array with dimension strings without Granularity:
-                dimensions.forEach(dim => dimStrings.push(dim[0]));
-
-                //console.log("Dimensions");
-                //console.log(dimStrings);
-
-                // Time & Space
-                if (dimStrings.includes("time") && dimStrings.includes("space")) {
-
-                    flows = enrichFlows.enrichTime(flows, collections, gran1);
-                    // Actor level:
-
-                    let actorAreaLevelId = collections['arealevels'].models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-                    if (dimensions[1][1].adminlevel == actorAreaLevelId) {
-                        dimensions.isActorLevel = true;
-                    }
-
-                    // Time & Economic Activity
-                } else if (dimStrings.includes("time") && dimStrings.includes("economicActivity")) {
-
-                    flows = enrichFlows.enrichTime(flows, collections, gran1);
-                    flows = enrichFlows.enrichEconActivity(flows, collections, gran2);
-
-                    // Time & Treatment method
-                } else if (dimStrings.includes("time") && dimStrings.includes("treatmentMethod")) {
-
-                    flows = enrichFlows.enrichTime(flows, collections, gran1);
-                    flows = enrichFlows.enrichTreatmentMethod(flows, collections, gran2);
-
-                    // Time & Material
-                } else if (dimStrings.includes("time") && dimStrings.includes("material")) {
-
-                    flows = enrichFlows.enrichTime(flows, collections, gran1);
-                    flows = enrichFlows.enrichEWC(flows, collections, gran2);
-
-                    // Space & Economic Activity
-                } else if (dimStrings.includes("space") && dimStrings.includes("economicActivity")) {
-
-                    // If level == actor:
-                    let actorAreaLevelId = collections.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-                    if (gran1.adminlevel == actorAreaLevelId) {
-                        dimensions.isActorLevel = true;
-                    }
-
-                    flows = enrichFlows.enrichEconActivity(flows, collections, gran2);
-
-                    // Space & Treatment Method
-                } else if (dimStrings.includes("space") && dimStrings.includes("treatmentMethod")) {
-
-                    // If level == actor:
-                    let actorAreaLevelId = collections.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-                    if (gran1.adminlevel == actorAreaLevelId) {
-                        dimensions.isActorLevel = true;
-                    }
-
-                    flows = enrichFlows.enrichTreatmentMethod(flows, collections, gran2);
-
-                    // Space & Material
-                } else if (dimStrings.includes("space") && dimStrings.includes("material")) {
-
-                    // If level == actor:
-                    let actorAreaLevelId = collections.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-                    if (gran1.adminlevel == actorAreaLevelId) {
-                        dimensions.isActorLevel = true;
-                    }
-
-                    flows = enrichFlows.enrichEWC(flows, collections, gran2);
-
-                    // Economic Activity & Treatment Method
-                } else if (dimStrings.includes("economicActivity") && dimStrings.includes("treatmentMethod")) {
-
-                    flows = enrichFlows.enrichEconActivity(flows, collections, gran1);
-                    flows = enrichFlows.enrichTreatmentMethod(flows, collections, gran2);
-
-                    // Economic Activity & Material
-                } else if (dimStrings.includes("economicActivity") && dimStrings.includes("material")) {
-
-                    flows = enrichFlows.enrichEconActivity(flows, collections, gran1);
-                    flows = enrichFlows.enrichEWC(flows, collections, gran2);
-                }
-
-                switch (_this.selectedVizName) {
-                    case "lineplotmultiple":
-                        this.renderLinePlot(dimensions, flows, true);
-                        break;
-                    case "areachart":
-                        this.renderAreaChart(dimensions, flows);
-                        break;
-                    case "barchart":
-                        this.renderBarChart(dimensions, flows);
-                        break;
-                    case "stackedbarchart":
-                        this.renderBarChart(dimensions, flows, true);
-                        break;
-                    case "flowmap":
-                        this.renderFlowMap(dimensions, flows);
-                        break;
-                    default:
-                        // Nothing
-                }
-
-                // console.log(flows);
-            },
-
-            renderLinePlot: function (dimensions, flows, hasMultipleLines) {
-                if (this.linePlotView != null) this.linePlotView.close();
-
-                $(".lineplot-wrapper").fadeIn();
-
-                this.linePlotView = new LinePlotView({
-                    el: ".lineplot-wrapper",
-                    dimensions: dimensions,
-                    flows: flows,
-                    flowsView: this,
-                    hasMultipleLines: hasMultipleLines,
-                });
             },
 
             renderChoropleth1D: function (dimensions, flows, geoJson) {
