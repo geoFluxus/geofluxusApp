@@ -46,7 +46,7 @@ class FilterFlowViewSet(PostGetViewMixin,
 
         # retrieve datasets for these groups
         datasets = GroupDataset.objects.filter(group__id__in=groups)\
-                                       .values_list('dataset__id', flat=True)\
+                                       .values_list('dataset__id', flat=True)
 
         # filter
         if not user.is_superuser:
