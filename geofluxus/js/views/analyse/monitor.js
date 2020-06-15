@@ -178,122 +178,49 @@ define(['views/common/baseview',
 
                     // ///////////////////////////////////////////////////////////////////
                     // Show available visualizations based on selected dimension(s):
+                    let vizs = {
+                        'time': ['piechart', 'barchart', 'treemap', 'lineplot'],
+                        'economicActivity': ['piechart', 'barchart', 'treemap'],
+                        'space': ['piechart', 'barchart', 'treemap'],
+                        'treatmentMethod': ['piechart', 'barchart', 'treemap', 'parallelsets'],
+                        'material': ['piechart', 'barchart', 'treemap'],
+                        'time_economicActivity': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart'],
+                        'time_space': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'flowmap'],
+                        'time_treatmentMethod': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart'],
+                        'time_material': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart'],
+                        'economicActivity_treatmentMethod': ['barchart', 'stackedbarchart', 'parallelsets'],
+                        'economicActivity_material': ['barchart', 'stackedbarchart', 'parallelsets'],
+                        'treatmentMethod_material': ['barchart', 'stackedbarchart', 'parallelsets']
+                    }
 
-                    switch (_this.checkedDimToggles.length) {
-                        case 0: // No dimensions
-                            $("#message-container-row").fadeIn();
-                            $(".viz-container").hide();
-                            break;
-                        case 1: // One dimension selected
-                            $(".viz-selector-button").hide();
-                            $(".viz-container").fadeIn();
+                    let dims = _this.selectedDimensionStrings;
+                    if (dims.length > 0) {
+                        $(".viz-selector-button").hide();
+                        $(".viz-container").fadeIn();
+                        vizs[_this.selectedDimensionStrings.join('_')].forEach(function(viz) {
+                            $("#viz-" + viz).parent().fadeIn();
+                        })
 
-                            if (_this.selectedDimensionStrings.includes("time")) {
-                                $("#viz-piechart").parent().fadeIn();
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-treemap").parent().fadeIn();
-                                $("#viz-lineplot").parent().fadeIn();
-                                if ($(_this.dimensions.timeToggleGran).prop("checked")) {
-                                    $("#viz-lineplotmultiple").parent().fadeIn();
-                                }
-                            } else if (_this.selectedDimensionStrings.includes("space")) {
-                                $("#viz-piechart").parent().fadeIn();
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-treemap").parent().fadeIn();
-
+                        // 1D
+                        if (dims.length == 1) {
+                            // time -> month
+                            if ($(_this.dimensions.timeToggleGran).prop("checked")) {
+                                $("#viz-lineplotmultiple").parent().fadeIn();
+                            }
+                            // space
+                            else if (dims.includes("space")) {
                                 let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
                                 let actorAreaLevelId = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-
                                 if (selectedAreaLevelId == actorAreaLevelId) {
                                     $("#viz-coordinatepointmap").parent().fadeIn();
                                 } else {
                                     $("#viz-choroplethmap").parent().fadeIn();
                                 }
-
-                            } else if (_this.selectedDimensionStrings.includes("economicActivity")) {
-                                $("#viz-piechart").parent().fadeIn();
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-treemap").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("treatmentMethod")) {
-                                $("#viz-piechart").parent().fadeIn();
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-treemap").parent().fadeIn();
-                                $("#viz-parallelsets").parent().fadeIn();
-                                $("#viz-circularsankey").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("material")) {
-                                $("#viz-piechart").parent().fadeIn();
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-treemap").parent().fadeIn();
                             }
-                            break;
-
-                        case 2: // Two dimensions:
-                            $(".viz-selector-button").hide();
-                            $(".viz-container").fadeIn();
-
-                            // Time & Space
-                            if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("space")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-lineplotmultiple").parent().fadeIn();
-                                $("#viz-areachart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-
-                                $("#viz-flowmap").parent().fadeIn();
-                                // Time & Economic Activity
-                            } else if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("economicActivity")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-lineplotmultiple").parent().fadeIn();
-                                $("#viz-areachart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                                // Time & Treatment Method
-                            } else if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-lineplotmultiple").parent().fadeIn();
-                                $("#viz-areachart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("material")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-lineplotmultiple").parent().fadeIn();
-                                $("#viz-areachart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("space") && _this.selectedDimensionStrings.includes("economicActivity")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                                $("#viz-flowmap").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("space") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                                $("#viz-flowmap").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("space") && _this.selectedDimensionStrings.includes("material")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                                $("#viz-flowmap").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("economicActivity") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                                $("#viz-parallelsets").parent().fadeIn();
-
-                                $("#viz-circularsankey").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("economicActivity") && _this.selectedDimensionStrings.includes("material")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                                $("#viz-parallelsets").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("material") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                                $("#viz-parallelsets").parent().fadeIn();
-                            }
-                            break;
-                        case 3: // Three dimensions:
-                            // $(".viz-selector-button").hide();
-                            // $(".viz-container").fadeIn();
-
-                            //console.log("Three  dimensions");
-
-
-                            break;
-                        default:
-                            // code block
+                        }
+                    } else {
+                        $("#message-container-row").fadeIn();
+                        $(".viz-container").hide();
                     }
 
                     // If the selected visualization type is hasFlowsFormat, and dimension == treatment method, hide origin/destination toggle:
