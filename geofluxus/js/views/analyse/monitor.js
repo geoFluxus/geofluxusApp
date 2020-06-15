@@ -42,6 +42,29 @@ define(['views/common/baseview',
                 this.selectedDimensionStrings = [];
                 this.selectedVizName = "";
 
+                this.vizs = {
+                    'time': ['piechart', 'barchart', 'treemap', 'lineplot'],
+                    'economicActivity': ['piechart', 'barchart', 'treemap'],
+                    'space': ['piechart', 'barchart', 'treemap'],
+                    'treatmentMethod': ['piechart', 'barchart', 'treemap', 'parallelsets'],
+                    'material': ['piechart', 'barchart', 'treemap'],
+                    'time_economicActivity': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart'],
+                    'time_space': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'flowmap'],
+                    'time_treatmentMethod': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart'],
+                    'time_material': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart'],
+                    'economicActivity_treatmentMethod': ['barchart', 'stackedbarchart', 'parallelsets'],
+                    'economicActivity_material': ['barchart', 'stackedbarchart', 'parallelsets'],
+                    'treatmentMethod_material': ['barchart', 'stackedbarchart', 'parallelsets']
+                }
+
+                this.vizViews = {
+                    'piechart': PieChartView,
+                    'barchart': BarChartView,
+                    'treemap': TreeMapView,
+                    'lineplot': LinePlotView,
+                    'lineplotmultiple': Multiple
+                }
+
                 this.areaLevels = new Collection([], {
                     apiTag: 'arealevels',
                     comparator: "level",
@@ -178,26 +201,11 @@ define(['views/common/baseview',
 
                     // ///////////////////////////////////////////////////////////////////
                     // Show available visualizations based on selected dimension(s):
-                    let vizs = {
-                        'time': ['piechart', 'barchart', 'treemap', 'lineplot'],
-                        'economicActivity': ['piechart', 'barchart', 'treemap'],
-                        'space': ['piechart', 'barchart', 'treemap'],
-                        'treatmentMethod': ['piechart', 'barchart', 'treemap', 'parallelsets'],
-                        'material': ['piechart', 'barchart', 'treemap'],
-                        'time_economicActivity': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart'],
-                        'time_space': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'flowmap'],
-                        'time_treatmentMethod': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart'],
-                        'time_material': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart'],
-                        'economicActivity_treatmentMethod': ['barchart', 'stackedbarchart', 'parallelsets'],
-                        'economicActivity_material': ['barchart', 'stackedbarchart', 'parallelsets'],
-                        'treatmentMethod_material': ['barchart', 'stackedbarchart', 'parallelsets']
-                    }
-
                     let dims = _this.selectedDimensionStrings;
                     if (dims.length > 0) {
                         $(".viz-selector-button").hide();
                         $(".viz-container").fadeIn();
-                        vizs[_this.selectedDimensionStrings.join('_')].forEach(function(viz) {
+                        _this.vizs[_this.selectedDimensionStrings.join('_')].forEach(function(viz) {
                             $("#viz-" + viz).parent().fadeIn();
                         })
 
@@ -410,16 +418,10 @@ define(['views/common/baseview',
                     }
                 })
 
-                let vizViews = {
-                    'piechart': PieChartView,
-                    'barchart': BarChartView,
-                    'lineplot': LinePlotView
-                }
-
                 if (this.vizView != null) this.vizView.close();
                 $("." + _this.selectedVizName + "-wrapper").fadeIn();
-                this.vizView = new vizViews[_this.selectedVizName]({
-                    el: "." + "-wrapper",
+                this.vizView = new this.vizViews[_this.selectedVizName]({
+                    el: "." + _this.selectedVizName + "-wrapper",
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
@@ -599,46 +601,6 @@ define(['views/common/baseview',
                 }
 
                 // console.log(flows);
-            },
-
-            renderPieChart: function (dimensions, flows) {
-                if (this.pieChartView != null) this.pieChartView.close();
-
-                $(".piechart-wrapper").fadeIn();
-
-                this.pieChartView = new PieChartView({
-                    el: ".piechart-wrapper",
-                    dimensions: dimensions,
-                    flows: flows,
-                    flowsView: this,
-                });
-            },
-
-            renderTreeMap: function (dimensions, flows) {
-                if (this.treeMapView != null) this.treeMapView.close();
-
-                $(".treemap-wrapper").fadeIn();
-
-                this.treeMapView = new TreeMapView({
-                    el: ".treemap-wrapper",
-                    dimensions: dimensions,
-                    flows: flows,
-                    flowsView: this,
-                });
-            },
-
-            renderBarChart: function (dimensions, flows, isStacked) {
-                if (this.barChartView != null) this.barChartView.close();
-
-                $(".barchart-wrapper").fadeIn();
-
-                this.barChartView = new BarChartView({
-                    el: ".barchart-wrapper",
-                    dimensions: dimensions,
-                    flows: flows,
-                    flowsView: this,
-                    isStacked: isStacked,
-                });
             },
 
             renderLinePlot: function (dimensions, flows, hasMultipleLines) {
