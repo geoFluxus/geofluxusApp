@@ -1514,13 +1514,18 @@ define(['views/common/baseview',
                 }
 
                 // Datasets filter:
-                if ($(this.flows.datasetSelect).val() == '-1') {
-                    filterParams.flows['datasets'] = [];
-                    this.datasets.forEach(dataset => {
-                        filterParams.flows['datasets'].push(dataset.get("id"));
-                    });
+                if (this.datasets.length == 1) {
+                    filterParams.flows['datasets'] = this.datasets.models[0].get("id");
                 } else {
-                    filterParams.flows['datasets'] = $(this.flows.datasetSelect).val();
+
+                    if ($(this.flows.datasetSelect).val() == '-1') {
+                        filterParams.flows['datasets'] = [];
+                        this.datasets.forEach(dataset => {
+                            filterParams.flows['datasets'].push(dataset.get("id"));
+                        });
+                    } else {
+                        filterParams.flows['datasets'] = $(this.flows.datasetSelect).val();
+                    }
                 }
 
                 // ///////////////////////////////

@@ -23,7 +23,7 @@
             </div>
         </div>
 
-        {% if datasets.count != 0 %}
+        <% if (datasets.count != 1) { %>
         <div class="card bg-dark">
 
             <div class="card-header">
@@ -61,7 +61,7 @@
                 </div>
             </div>
         </div>
-        {% endif %}
+        <% } %>
 
         <!-- ORIGIN CONTROLS -->
         <div class="card bg-dark">
