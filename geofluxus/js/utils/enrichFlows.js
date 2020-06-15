@@ -5,11 +5,12 @@ let occurances = []
 
 module.exports = {
 
-    enrichTime: function (flows, collections, granularity) {
+    enrichFlows: function(flows, collections, granularity) {
+        // TIME DIMENSION
         let years = collections['years'].models;
         let months = collections['months'].models;
 
-        if (granularity.includes("year")) {
+        if (granularity.includes('year')) {
             flows.forEach(function (flow, index) {
                 let yearObject = years.find(year => year.attributes.id == flow.year);
 
@@ -19,7 +20,7 @@ module.exports = {
 
             flows = _.sortBy(flows, 'year');
 
-        } else {
+        } else if (granularity.includes('month')) {
             flows.forEach(function (flow, index) {
                 let monthObject = months.find(month => month.attributes.id == flow.month),
                     code = monthObject.attributes.code,
@@ -36,15 +37,12 @@ module.exports = {
             flows = _.sortBy(flows, 'id');
         }
 
-        return flows
-    },
-
-    enrichEconActivity: function (flows, collections, granularity) {
+        // ECONOMIC ACTIVITY DIMENSION
         let activityGroups = collections['activitygroups'].models;
         let activities = collections['activities'].models;
 
         // Granularity = Activity group
-        if (granularity.includes("activitygroup")) {
+        if (granularity.includes('activitygroup')) {
             flows.forEach(function (flow, index) {
                 let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.activitygroup);
 
@@ -53,7 +51,7 @@ module.exports = {
             }, flows);
 
             // Granularity: Activity
-        } else {
+        } else if (granularity.includes('activity')) {
             flows.forEach(function (flow, index) {
                 let activityObject = activities.find(activity => activity.attributes.id == flow.activity);
                 let activityGroupObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.activitygroup);
@@ -66,10 +64,8 @@ module.exports = {
             }, flows);
         }
 
-        return flows
-    },
 
-    enrichTreatmentMethod: function (flows, collections, granularity) {
+        // TREATMENT METHOD DIMENSION
         let processGroups = collections['processgroups'].models;
         let processes = collections['processes'].models;
 
@@ -83,8 +79,8 @@ module.exports = {
                 this[index].processGroupName = utils.capitalizeFirstLetter(processGroupObject.attributes.name);
             }, flows);
 
-            // Granularity: Treatment Method
-        } else {
+        // Granularity: Treatment Method
+        } else if (granularity.includes('process')) {
 
             flows.forEach(function (flow, index) {
                 let processObject = processes.find(process => process.attributes.id == flow.process);
@@ -98,10 +94,8 @@ module.exports = {
             }, flows);
         }
 
-        return flows
-    },
 
-    enrichEWC: function (flows, collections, granularity) {
+        // MATERIAL DIMENSION
         let ewc2 = collections['wastes02'].models;
         let ewc4 = collections['wastes04'].models;
         let ewc6 = collections['wastes06'].models;
@@ -130,7 +124,7 @@ module.exports = {
             }, flows);
 
             // ewc6
-        } else if (granularity.include("waste06")) {
+        } else if (granularity.includes("waste06")) {
             flows.forEach(function (flow, index) {
                 let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.waste02);
                 let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.waste04);

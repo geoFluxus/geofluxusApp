@@ -402,29 +402,9 @@ define(['views/common/baseview',
                 let dimensionString = dimensions[0][0];
                 let granularity = dimensions[0][1];
 
-
-                switch (dimensionString) {
-                    case "time":
-                        flows = enrichFlows.enrichTime(flows, collections, granularity);
-                        break;
-                    case "space":
-                        // Set isActorLevel if necessary:
-                        let actorAreaLevelId = collections['arealevels'].models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-                        if (granularity.adminlevel == actorAreaLevelId) {
-                            dimensions.isActorLevel = true;
-                        }
-                        break;
-                    case "economicActivity":
-                        flows = enrichFlows.enrichEconActivity(flows, collections, granularity);
-                        break;
-                    case "treatmentMethod":
-                        flows = enrichFlows.enrichTreatmentMethod(flows, collections, granularity);
-                        break;
-                    case "material":
-                        flows = enrichFlows.enrichEWC(flows, collections, granularity);
-                        break;
-                    default:
-                        // Nothing
+                // Enrich flows with info
+                if (dimensionString !== 'space') {
+                    flows = enrichFlows.enrichFlows(flows, collections, granularity);
                 }
 
                 switch (_this.selectedVizName) {
