@@ -45,7 +45,8 @@ class DatasetViewSet(PostGetViewMixin,
         user = request.user
         groups = user.groups.values_list('id', flat=True)
         ids = GroupDataset.objects.filter(group__id__in=groups) \
-                                  .values_list('dataset__id', flat=True)
+                                  .values_list('dataset__id', flat=True) \
+                                  .distinct()
 
         # filter and serialize
         if not user.is_superuser:
