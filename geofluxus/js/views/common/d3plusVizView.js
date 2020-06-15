@@ -53,20 +53,14 @@ define(['views/common/baseview',
                 },
 
                 scrollToVisualization: function () {
-                    $("#apply-filters")[0].scrollIntoView({
-                        behavior: "smooth",
-                        block: "start",
-                        inline: "nearest",
-                    });
+                    utils.scrollToVizRow();
                 },
 
                 toggleFullscreen: function (event) {
                     $(this.el).toggleClass('fullscreen');
                     // Only scroll when going to normal view:
                     if (!$(this.el).hasClass('fullscreen')) {
-                        $("#apply-filters")[0].scrollIntoView({
-                            behavior: "smooth"
-                        });
+                        utils.scrollToVizRow();
                     }
                     window.dispatchEvent(new Event('resize'));
                     event.stopImmediatePropagation();

@@ -146,5 +146,14 @@ module.exports = {
             return string.substring(0, cutOffPoint) + '...';
         else
             return string;
+    },
+
+    scrollToVizRow: function() {
+        window.scrollTo({
+            top: $(".visualizationRow")[0].getBoundingClientRect().top + window.pageYOffset - 20,
+            behavior: 'smooth',
+            block: "start",
+            inline: "nearest",
+        });
     }
 }

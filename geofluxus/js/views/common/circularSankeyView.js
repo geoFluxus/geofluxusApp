@@ -80,12 +80,7 @@ define(['views/common/baseview',
 
                     //this.setSvgDimensions();
 
-                    // Smooth scroll to top of Viz
-                    $("#apply-filters")[0].scrollIntoView({
-                        behavior: "smooth",
-                        block: "start",
-                        inline: "nearest",
-                    });
+                    utils.scrollToVizRow();
                 },
 
                 setSvgDimensions: function () {
@@ -321,9 +316,7 @@ define(['views/common/baseview',
                     event.stopImmediatePropagation();
                     // Only scroll when going to normal view:
                     if (!$(this.el).hasClass('fullscreen')) {
-                        $("#apply-filters")[0].scrollIntoView({
-                            behavior: "smooth"
-                        });
+                        utils.scrollToVizRow();
                     }
                     window.dispatchEvent(new Event('resize'));
                 },

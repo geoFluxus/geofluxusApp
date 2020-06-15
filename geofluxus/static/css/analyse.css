@@ -158,10 +158,6 @@ label[for="flows-waste06-select"] {
     float: left;
 } */
 
-#flows-render-template {
-    margin-bottom: 5em;
-}
-
 .clear-areas-button {
     display: inline-block;
     position: absolute;
@@ -241,8 +237,25 @@ label[for="flows-waste06-select"] {
     background: black !important;
 }
 
+
+/* Radio buttons for Mode Type selection */
+.analyse-mode-radio-label {
+    border-radius: 24px !important;
+    margin: 0 0.5rem 1rem 0.5rem !important;
+    min-width: 10rem;
+    display: flex;
+    max-width: 10rem;
+    height: 142px;
+}
+
+.analyse-mode-radio-label span {
+    font-size: large;
+}
+
+/* Radio buttons for Viz Type selection */
+
 .viz-selector-button {
-    border-radius: 18px !important;
+    border-radius: 24px !important;
     margin: 0 0.5rem 1rem 0.5rem !important;
     min-width: 10rem;
     display: flex;
@@ -268,7 +281,6 @@ label[for="flows-waste06-select"] {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     align-self: flex-end;
-
 }
 
 #span-viz-choroplethmap::before {
@@ -294,7 +306,6 @@ label[for="flows-waste06-select"] {
 #span-viz-lineplot::before {
     background-image: url('../img/viz-icons/viz-lineplot.svg');
 }
-
 
 #span-viz-lineplotmultiple::before {
     background-image: url('../img/viz-icons/viz-lineplotmultiple.svg');

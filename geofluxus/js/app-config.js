@@ -30,7 +30,7 @@ function(Session) {
         months:            '/api/months/',
         flowchains:        '/api/flowchains/',
         allflows:          '/api/allflows/',
-        statusquoflows:    '/api/statusquoflows/',
+        monitorflows:      '/api/monitorflows/',
         impactflows:       '/api/impactflows/',
         classifications:   '/api/classifications/',
         extradescriptions: '/api/extradescriptions/',
