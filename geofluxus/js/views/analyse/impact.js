@@ -62,51 +62,53 @@ define(['views/common/baseview',
                 });
 
                 // Render map for visualizations
-                this.routingMap = new Map({
-                    el: this.el.querySelector('.map'),
-                    source: 'dark',
-                    opacity: 1.0
-                });
+                // this.routingMap = new Map({
+                //     el: this.el.querySelector('.map'),
+                //     source: 'dark',
+                //     opacity: 1.0
+                // });
 
                 this.initializeControls();
                 this.addEventListeners();
             },
 
             initializeControls: function () {
+                // Impact source controls:
+                this.impactSources = {};
+                this.impactSources.transportation = this.el.querySelector('#impact-source-toggle-transportation');
+                this.dimensions.treatment = this.el.querySelector('#impact-source-toggle-treatment');
 
-                // Dimension controls:
-                this.dimensions.timeToggle = this.el.querySelector('#dim-toggle-time');
-                $(this.dimensions.timeToggle).bootstrapToggle();
-                this.dimensions.timeToggleGran = this.el.querySelector('#gran-toggle-time');
-                $(this.dimensions.timeToggleGran).bootstrapToggle();
-
-                this.dimensions.spaceToggle = this.el.querySelector('#dim-toggle-space');
-                $(this.dimensions.spaceToggle).bootstrapToggle();
-                this.dimensions.spaceLevelGranSelect = this.el.querySelector('#dim-space-gran-select');
-                $(this.dimensions.spaceLevelGranSelect).selectpicker();
-                this.dimensions.spaceOrigDest = this.el.querySelector('#origDest-toggle-space');
-                $(this.dimensions.spaceOrigDest).bootstrapToggle();
-
-                this.dimensions.economicActivityToggle = this.el.querySelector('#dim-toggle-economic-activity');
-                $(this.dimensions.economicActivityToggle).bootstrapToggle();
-                this.dimensions.economicActivityToggleGran = this.el.querySelector('#gran-toggle-econ-activity');
-                $(this.dimensions.economicActivityToggleGran).bootstrapToggle();
-                this.dimensions.economicActivityOrigDest = this.el.querySelector('#origDest-toggle-econAct');
-                $(this.dimensions.economicActivityOrigDest).bootstrapToggle();
-
-                this.dimensions.treatmentMethodToggle = this.el.querySelector('#dim-toggle-treatment-method');
-                $(this.dimensions.treatmentMethodToggle).bootstrapToggle();
-                this.dimensions.treatmentMethodToggleGran = this.el.querySelector('#gran-toggle-treatment-method');
-                $(this.dimensions.treatmentMethodToggleGran).bootstrapToggle();
-                this.dimensions.treatmentMethodOrigDest = this.el.querySelector('#origDest-toggle-treatment');
-                $(this.dimensions.treatmentMethodOrigDest).bootstrapToggle();
-
-                this.dimensions.materialToggle = this.el.querySelector('#dim-toggle-material');
-                $(this.dimensions.materialToggle).bootstrapToggle();
+                $(".bootstrapToggle").bootstrapToggle();
             },
 
             addEventListeners: function () {
                 var _this = this;
+
+
+                // Indicator toggle
+                $('.impact-indicator-radio-label').on("click", function (event) {
+                    let clickedIndicator = $(this).attr("data-indicator");
+
+                    if (clickedIndicator != _this.indicator) {
+                        _this.indicator = clickedIndicator;
+                        $(".impactSourceContainer").fadeIn();
+                        
+                        // switch (_this.analyseMode) {
+                        //     case "monitor":
+                        //         _this.renderMonitorView(_this);
+                        //         $("#monitor-content").fadeIn();
+                        //         break;
+                        //     case "impact":
+                        //         _this.renderImpactView(_this);
+                        //         $("#impact-content").fadeIn();
+                        //         break;
+                        // }
+                    }
+                    event.preventDefault();
+                });
+
+
+
 
                 // Dimension toggles: ---------------------------
 
@@ -184,7 +186,7 @@ define(['views/common/baseview',
             },
 
             // Returns parameters for filtered post-fetching based on assigned filter
-            getFlowFilterParams: function () {
+            getImpactParams: function () {
 
                 // Prepare filters for request
                 let filterParams = this.filtersView.getFilterParams();
@@ -242,7 +244,7 @@ define(['views/common/baseview',
             // Fetch flows and calls options.success(flows) on success
             fetchFlows: function (options) {
                 let _this = this;
-                let filterParams = this.getFlowFilterParams();
+                let filterParams = this.getImpactParams();
                 let data = {};
                 let selectedVizualisationString;
                 this.selectedDimensions = Object.entries(filterParams.dimensions);

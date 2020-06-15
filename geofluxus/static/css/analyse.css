@@ -240,7 +240,7 @@ label[for="flows-waste06-select"] {
 
 
 /* Radio buttons for Mode Type selection */
-.analyse-mode-radio-label {
+.big-radio-no-image {
     border-radius: 24px !important;
     margin: 0 0.5rem 1rem 0.5rem !important;
     min-width: 10rem;
@@ -249,7 +249,7 @@ label[for="flows-waste06-select"] {
     height: 142px;
 }
 
-.analyse-mode-radio-label span {
+.big-radio-no-image span {
     font-size: large;
 }
 
