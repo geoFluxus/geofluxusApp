@@ -4,7 +4,7 @@
     <div class="block accordion" id="filterBlock">
 
         <div class="row justify-content-between">
-            <h4 class="pb-1 pl-3">Step 1: Filter the flows</h4>
+            <h4 class="pb-1 pl-3">Step 1: Filter the waste flows</h4>
 
             <div>
                 <button
@@ -22,6 +22,46 @@
                     style="height: 38px; width: 6em">NEW</button>
             </div>
         </div>
+
+        {% if datasets.count != 0 %}
+        <div class="card bg-dark">
+
+            <div class="card-header">
+                <h4 class="mt-2 ml-3">
+                    <button class="btn btn-link collapsingHeaderButton" id="btn-collapse-header-origin"
+                        title="The filters related to the Origin of the waste flow.">
+                        <!-- <i class="fa fa-chevron-down pull-right"></i> -->
+                        Data set
+                    </button>
+                </h4>
+            </div>
+
+            <div class="card-body">
+                <div class="row pb-4">
+                    <div class="col-md-4">
+                        <label for="datasetSelect">Data set</label>
+                        <div class="labelHelpiconContainer">
+                            <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Data set"
+                                data-html="true" tabindex="0" data-content="Select the data set you want to analyse.">
+                            </a>
+                        </div>
+
+                        <select name="flows-dataset-select" id="datasetSelect" multiple
+                            class="form-control form-control-sm selectpicker" data-size="4"
+                            style="resize: vertical;">
+                            <option selected value="-1">All (<%= datasets.count %>)</option>
+                            <option data-divider="true"></option>
+                            <% datasets.forEach(function(dataset){ %>
+                            <option value="<%= dataset.id %>"><%= dataset.get('title') %></option>
+                            <% }); %>
+                        </select>
+
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
 
         <!-- ORIGIN CONTROLS -->
         <div class="card bg-dark">
@@ -817,7 +857,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row pb-4">
                         <div class="col-md-3">
                             <label for="flows-route-select">Route</label>
                             <div class="labelHelpiconContainer">
@@ -875,7 +915,7 @@
         <h4 class="pb-2 pl-3">Step 2: Define the mode</h4>
 
         <div class="card bg-dark">
-            <div class="row" id="message-container-row">
+            <div class="row">
                 <div class="col mt-3">
                     <span style="color: white">What do you want to do?</span>
                 </div>
@@ -885,11 +925,11 @@
                     <div class="btn-group btn-group-toggle flex-wrap justify-content-center" id="radio-group-analyse-mode"
                     data-toggle="buttons" style="margin: auto">
                 
-                    <label class="btn btn-sm btn-primary justify-content-center align-items-center analyse-mode-radio-label" data-mode="monitor">
+                    <label class="btn btn-sm btn-primary justify-content-center align-items-center big-radio-no-image analyse-mode-radio-label" data-mode="monitor">
                         <input type="radio">
                         <span>Waste flow monitoring</span>
                     </label>
-                    <label class="btn btn-sm btn-primary justify-content-center align-items-center analyse-mode-radio-label" data-mode="impact">
+                    <label class="btn btn-sm btn-primary justify-content-center align-items-center big-radio-no-image analyse-mode-radio-label" data-mode="impact">
                         <input type="radio">
                         <span>Environmental impact assessment</span>
                     </label>
@@ -902,9 +942,8 @@
     </div>
 
 
-    <div id="analyse-content"></div>
-
-    <!-- <div id="impact-content"></div> -->
+    <div id="monitor-content" class="analyse-content-container" style="display: none;"></div>
+    <div id="impact-content" class="analyse-content-container" style="display: none;"></div>
 
 
     <!--Area selection-->
