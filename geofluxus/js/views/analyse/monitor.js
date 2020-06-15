@@ -396,75 +396,93 @@ define(['views/common/baseview',
                 return filterParams;
             },
 
-            render1Dvisualizations: function (dimensions, flows) {
+            renderVisualizations: function (dimensions, flows) {
                 let _this = this;
                 let collections = this.filtersView.collections;
-                let dimensionString = dimensions[0][0];
-                let granularity = dimensions[0][1];
 
                 // Enrich flows with info
-                if (dimensionString !== 'space') {
-                    flows = enrichFlows.enrichFlows(flows, collections, granularity);
+                dimensions.forEach(function(dimension) {
+                    let dimensionString = dimension[0];
+                    let granularity = dimension[1];
+
+                    if (dimensionString !== 'space') {
+                        flows = enrichFlows.enrichFlows(flows, collections, granularity);
+                    }
+                })
+
+                let vizViews = {
+                    'piechart': PieChartView,
+                    'barchart': BarChartView,
+                    'lineplot': LinePlotView
                 }
 
-                switch (_this.selectedVizName) {
-                    case "piechart":
-                        this.renderPieChart(dimensions, flows);
-                        break;
-                    case "barchart":
-                        this.renderBarChart(dimensions, flows);
-                        break;
-                    case "lineplot":
-                        this.renderLinePlot(dimensions, flows);
-                        break;
-                    case "treemap":
-                        this.renderTreeMap(dimensions, flows);
-                        break;
-                    case "lineplotmultiple":
-                        this.renderLinePlot(dimensions, flows, true);
-                        break;
-                    case "choroplethmap":
-                        let occuringAreas = [];
-                        occuringAreas = flows.map(x => x.areaId);
-                        occuringAreas = _.unique(occuringAreas);
+                if (this.vizView != null) this.vizView.close();
+                $("." + _this.selectedVizName + "-wrapper").fadeIn();
+                this.vizView = new vizViews[_this.selectedVizName]({
+                    el: "." + "-wrapper",
+                    dimensions: dimensions,
+                    flows: flows,
+                    flowsView: this,
+                });
 
-                        areas = new Collection([], {
-                            apiTag: 'areas',
-                            apiIds: [granularity.adminlevel]
-                        });
-                        areas.fetch({
-                            success: function () {
-                                var geoJson = {};
-                                geoJson['type'] = 'FeatureCollection';
-                                features = geoJson['features'] = [];
-                                areas.forEach(function (area) {
-                                    var feature = {};
-                                    feature['type'] = 'Feature';
-                                    feature['id'] = area.get('id')
-                                    feature['geometry'] = area.get('geom')
-
-                                    if (occuringAreas.includes(feature.id)) {
-                                        features.push(feature)
-                                    }
-                                })
-
-                                flows.forEach(function (flow, index) {
-                                    this[index].id = this[index].areaId;
-                                }, flows);
-
-                                _this.renderChoropleth1D(dimensions, flows, geoJson);
-                            },
-                            error: function (res) {
-                                console.log(res);
-                            }
-                        });
-                        break;
-                    case "coordinatepointmap": // Only in case of Actor
-                        _this.renderCoordinatePointMap1D(dimensions, flows);
-                        break;
-                    default:
-                        // Nothing
-                }
+//                switch (_this.selectedVizName) {
+//                    case "piechart":
+//                        this.renderPieChart(dimensions, flows);
+//                        break;
+//                    case "barchart":
+//                        this.renderBarChart(dimensions, flows);
+//                        break;
+//                    case "lineplot":
+//                        this.renderLinePlot(dimensions, flows);
+//                        break;
+//                    case "treemap":
+//                        this.renderTreeMap(dimensions, flows);
+//                        break;
+//                    case "lineplotmultiple":
+//                        this.renderLinePlot(dimensions, flows, true);
+//                        break;
+//                    case "choroplethmap":
+//                        let occuringAreas = [];
+//                        occuringAreas = flows.map(x => x.areaId);
+//                        occuringAreas = _.unique(occuringAreas);
+//
+//                        areas = new Collection([], {
+//                            apiTag: 'areas',
+//                            apiIds: [granularity.adminlevel]
+//                        });
+//                        areas.fetch({
+//                            success: function () {
+//                                var geoJson = {};
+//                                geoJson['type'] = 'FeatureCollection';
+//                                features = geoJson['features'] = [];
+//                                areas.forEach(function (area) {
+//                                    var feature = {};
+//                                    feature['type'] = 'Feature';
+//                                    feature['id'] = area.get('id')
+//                                    feature['geometry'] = area.get('geom')
+//
+//                                    if (occuringAreas.includes(feature.id)) {
+//                                        features.push(feature)
+//                                    }
+//                                })
+//
+//                                flows.forEach(function (flow, index) {
+//                                    this[index].id = this[index].areaId;
+//                                }, flows);
+//
+//                                _this.renderChoropleth1D(dimensions, flows, geoJson);
+//                            },
+//                            error: function (res) {
+//                                console.log(res);
+//                            }
+//                        });
+//                        break;
+//                    case "coordinatepointmap": // Only in case of Actor
+//                        _this.renderCoordinatePointMap1D(dimensions, flows);
+//                        break;
+//                    default:
+//                        // Nothing
+//                }
 
                 // console.log(flows);
             },
@@ -781,16 +799,8 @@ define(['views/common/baseview',
                                             break;
                                     }
                                 } else {
-                                    switch (_this.selectedDimensions.length) {
-                                        case 1:
-                                            _this.render1Dvisualizations(_this.selectedDimensions, _this.flows, _this.selectedVizName);
-                                            break;
-                                        case 2:
-                                            _this.render2Dvisualizations(_this.selectedDimensions, _this.flows, _this.selectedVizName);
-                                            break;
-                                        }
-                                    }
-
+                                    _this.renderVisualizations(_this.selectedDimensions, _this.flows, _this.selectedVizName);
+                                }
                             //_this.loader.deactivate();
                         },
                         error: function (error) {
