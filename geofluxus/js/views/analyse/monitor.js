@@ -62,7 +62,6 @@ define(['views/common/baseview',
 
             // Rendering
             render: function () {
-
                 var html = document.getElementById(this.template).innerHTML;
                 var template = _.template(html)
 
@@ -70,9 +69,6 @@ define(['views/common/baseview',
                     levels: this.areaLevels,
                     maxNumberOfDimensions: this.maxNumberOfDimensions
                 });
-
-                // Render flow filters:
-                //this.renderFiltersView();
 
                 // Activate help icons
                 var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
@@ -83,16 +79,7 @@ define(['views/common/baseview',
 
                 // Dimension and granularity controls:
                 this.initializeControls();
-
                 this.addEventListeners();
-            },
-
-            renderFiltersView: function () {
-                var el = this.el.querySelector('#filter-content');
-                this.filtersView = new FiltersView({
-                    el: el,
-                    template: 'filter-template',
-                });
             },
 
             initializeControls: function () {

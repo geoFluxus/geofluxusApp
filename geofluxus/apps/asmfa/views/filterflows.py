@@ -41,20 +41,6 @@ class FilterFlowViewSet(PostGetViewMixin,
         queryset = self._filter(kwargs, query_params=request.query_params,
                                 SerializerClass=self.get_serializer_class())
 
-        # check all user groups
-        groups = user.groups.values_list('id', flat=True)
-
-        # retrieve datasets for these groups
-        datasets = GroupDataset.objects.filter(group__id__in=groups)\
-                                       .values_list('dataset__id', flat=True)
-
-        # filter
-        if not user.is_superuser:
-            if datasets:
-                queryset = queryset.filter(flowchain__dataset__id__in=datasets)
-            else:
-                return Response('No datasets for user group', status=500)
-
         # retrieve filters
         params = {}
         for key, value in request.data.items():
@@ -66,6 +52,10 @@ class FilterFlowViewSet(PostGetViewMixin,
         # retrieve non-spatial filters
         filters = params.pop('flows', {})
         filters.pop('adminLevel', None)
+
+        # filter on datasets
+        datasets = filters.pop('datasets', None)
+        queryset = queryset.filter(flowchain__dataset__id__in=datasets)
 
         # retrieve spatial filters
         origin_areas = params.pop('origin', {})
