@@ -12,6 +12,7 @@ from geofluxus.apps.asmfa.serializers import (DatasetTypeListSerializer,
 from geofluxus.apps.asmfa.serializers import (DatasetTypeCreateSerializer,
                                               DatasetCreateSerializer)
 from rest_framework.response import Response
+from collections import OrderedDict
 
 
 # DatasetType
@@ -52,4 +53,7 @@ class DatasetViewSet(PostGetViewMixin,
         serializer = DatasetSerializer(self.queryset,
                                        many=True,
                                        context={'request': request})
-        return Response(serializer.data)
+        return Response(OrderedDict([
+            ('count', self.queryset.count()),
+            ('results', serializer.data)
+        ]))
