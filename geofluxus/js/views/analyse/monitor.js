@@ -37,7 +37,6 @@ define(['views/common/baseview',
 
                 this.filtersView = options.filtersView;
 
-                this.dimensions = {};
                 this.maxNumberOfDimensions = 2;
                 this.selectedDimensionStrings = [];
                 this.selectedVizName = "";
@@ -62,20 +61,20 @@ define(['views/common/baseview',
 
                 // Visualization view inventory
                 this.vizViews = {
-                    'piechart': {'view': PieChartView},
-                    'barchart': {'view': BarChartView},
-                    'stackedbarchart': {'view': BarChartView,
-                                        'options': {isStacked: true}},
-                    'treemap': {'view': TreeMapView},
-                    'lineplot': {'view': LinePlotView},
-                    'lineplotmultiple': {'view': LinePlotView,
-                                         'options': {hasMultipleLines: true}},
-                    'areachart': {'view': AreaChartView},
-                    'choroplethmap': {'view': ChoroplethView},
+                    'piechart':           {'view': PieChartView},
+                    'barchart':           {'view': BarChartView},
+                    'stackedbarchart':    {'view': BarChartView,
+                                           'options': {isStacked: true}},
+                    'treemap':            {'view': TreeMapView},
+                    'lineplot':           {'view': LinePlotView},
+                    'lineplotmultiple':   {'view': LinePlotView,
+                                           'options': {hasMultipleLines: true}},
+                    'areachart':          {'view': AreaChartView},
+                    'choroplethmap':      {'view': ChoroplethView},
                     'coordinatepointmap': {'view': CoordinatePointMapView},
-                    'flowmap': {'view': FlowMapView},
-                    'parallelsets': {'view': ParallelSetsView},
-                    'circularsankey': {'view': CircularSankeyView}
+                    'flowmap':            {'view': FlowMapView},
+                    'parallelsets':       {'view': ParallelSetsView},
+                    'circularsankey':     {'view': CircularSankeyView}
                 }
 
                 this.areaLevels = new Collection([], {
@@ -98,7 +97,6 @@ define(['views/common/baseview',
 
             // Rendering
             render: function () {
-
                 var html = document.getElementById(this.template).innerHTML;
                 var template = _.template(html)
 
@@ -113,36 +111,27 @@ define(['views/common/baseview',
                     trigger: "focus"
                 });
 
-
                 // Dimension and granularity controls:
                 this.initializeControls();
 
                 this.addEventListeners();
             },
 
-            renderFiltersView: function () {
-                var el = this.el.querySelector('#filter-content');
-                this.filtersView = new FiltersView({
-                    el: el,
-                    template: 'filter-template',
-                });
-            },
-
             initializeControls: function () {
-                this.dimensions.timeToggle = this.el.querySelector('#dim-toggle-time');
-                this.dimensions.timeToggleGran = this.el.querySelector('#gran-toggle-time');
-                this.dimensions.spaceToggle = this.el.querySelector('#dim-toggle-space');
-                this.dimensions.spaceLevelGranSelect = this.el.querySelector('#dim-space-gran-select');
-                this.dimensions.spaceOrigDest = this.el.querySelector('#origDest-toggle-space');
-                this.dimensions.economicActivityToggle = this.el.querySelector('#dim-toggle-economic-activity');
-                this.dimensions.economicActivityToggleGran = this.el.querySelector('#gran-toggle-econ-activity');
-                this.dimensions.economicActivityOrigDest = this.el.querySelector('#origDest-toggle-econAct');
-                this.dimensions.treatmentMethodToggle = this.el.querySelector('#dim-toggle-treatment-method');
-                this.dimensions.treatmentMethodToggleGran = this.el.querySelector('#gran-toggle-treatment-method');
-                this.dimensions.treatmentMethodOrigDest = this.el.querySelector('#origDest-toggle-treatment');
-                this.dimensions.materialToggle = this.el.querySelector('#dim-toggle-material');
+                this.timeToggle = this.el.querySelector('#dim-toggle-time');
+                this.timeToggleGran = this.el.querySelector('#gran-toggle-time');
+                this.spaceToggle = this.el.querySelector('#dim-toggle-space');
+                this.spaceLevelGranSelect = this.el.querySelector('#dim-space-gran-select');
+                this.spaceOrigDest = this.el.querySelector('#origDest-toggle-space');
+                this.economicActivityToggle = this.el.querySelector('#dim-toggle-economic-activity');
+                this.economicActivityToggleGran = this.el.querySelector('#gran-toggle-econ-activity');
+                this.economicActivityOrigDest = this.el.querySelector('#origDest-toggle-econAct');
+                this.treatmentMethodToggle = this.el.querySelector('#dim-toggle-treatment-method');
+                this.treatmentMethodToggleGran = this.el.querySelector('#gran-toggle-treatment-method');
+                this.treatmentMethodOrigDest = this.el.querySelector('#origDest-toggle-treatment');
+                this.materialToggle = this.el.querySelector('#dim-toggle-material');
 
-                $(this.dimensions.spaceLevelGranSelect).selectpicker();
+                $(this.spaceLevelGranSelect).selectpicker();
                 $(".bootstrapToggle").bootstrapToggle();
             },
 
@@ -222,12 +211,12 @@ define(['views/common/baseview',
                         // 1D
                         if (dims.length == 1) {
                             // time -> month
-                            if ($(_this.dimensions.timeToggleGran).prop("checked")) {
+                            if ($(_this.timeToggleGran).prop("checked")) {
                                 $("#viz-lineplotmultiple").parent().fadeIn();
                             }
                             // space
                             else if (dims.includes("space")) {
-                                let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
+                                let selectedAreaLevelId = $(_this.spaceLevelGranSelect).val();
                                 let actorAreaLevelId = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
                                 if (selectedAreaLevelId == actorAreaLevelId) {
                                     $("#viz-coordinatepointmap").parent().fadeIn();
@@ -290,8 +279,8 @@ define(['views/common/baseview',
                     }
                 });
 
-                $(_this.dimensions.spaceLevelGranSelect).change(function () {
-                    let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
+                $(_this.spaceLevelGranSelect).change(function () {
+                    let selectedAreaLevelId = $(_this.spaceLevelGranSelect).val();
                     let selectedAreaLevel = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.id.toString() == selectedAreaLevelId).attributes.level;
 
                     if (_this.selectedDimensionStrings.length == 1 && _this.selectedDimensionStrings.includes("space")) {
@@ -307,8 +296,8 @@ define(['views/common/baseview',
                 });
 
                 // Show Multiple Line option on dimension Time, granularity Month:
-                $(_this.dimensions.timeToggleGran).change(function () {
-                    let granularityIsMonth = $(_this.dimensions.timeToggleGran).prop("checked");
+                $(_this.timeToggleGran).change(function () {
+                    let granularityIsMonth = $(_this.timeToggleGran).prop("checked");
                     if (granularityIsMonth) {
                         $("#viz-lineplotmultiple").parent().fadeIn();
                     } else if (!granularityIsMonth && _this.selectedDimensionStrings.length == 1) {
@@ -367,18 +356,16 @@ define(['views/common/baseview',
                 filterParams.dimensions = {};
 
                 // Time
-                if ($(this.dimensions.timeToggle).prop("checked")) {
-                    var timeFilter = 'flowchain__month',
-                        gran = $(this.dimensions.timeToggleGran).prop("checked") ? 'month' : 'year';
-                    if (gran == 'year') {
-                        timeFilter += '__year';
+                if ($(this.timeToggle).prop("checked")) {
+                    filterParams.dimensions.time = 'flowchain__month';
+                    if (!$(this.timeToggleGran).prop("checked")) {
+                        filterParams.dimensions.time += '__year';
                     }
-                    filterParams.dimensions.time = timeFilter;
                 }
 
                 // Space
-                if ($(this.dimensions.spaceToggle).prop("checked")) {
-                    let originOrDestination = $(this.dimensions.spaceOrigDest).prop("checked") ? 'destination' : 'origin',
+                if ($(this.spaceToggle).prop("checked")) {
+                    let originOrDestination = $(this.spaceOrigDest).prop("checked") ? 'destination' : 'origin',
                         gran = $('#dim-space-gran-select option:selected').val();
                     filterParams.dimensions.space = {};
                     filterParams.dimensions.space.adminlevel = gran;
@@ -386,28 +373,28 @@ define(['views/common/baseview',
                 }
 
                 // Economic activity
-                if ($(this.dimensions.economicActivityToggle).prop("checked")) {
-                    let originOrDestination = $(this.dimensions.economicActivityOrigDest).prop("checked") ? 'destination__' : 'origin__';
-                    gran = $(this.dimensions.economicActivityToggleGran).prop("checked") ? 'activity' : 'activity__activitygroup',
+                if ($(this.economicActivityToggle).prop("checked")) {
+                    let originOrDestination = $(this.economicActivityOrigDest).prop("checked") ? 'destination__' : 'origin__';
+                    gran = $(this.economicActivityToggleGran).prop("checked") ? 'activity' : 'activity__activitygroup',
                         filterParams.dimensions.economicActivity = originOrDestination + gran;
                 }
 
                 // Treatment method
-                if ($(this.dimensions.treatmentMethodToggle).prop("checked")) {
-                    let originOrDestination = $(this.dimensions.treatmentMethodOrigDest).prop("checked") ? 'destination__' : 'origin__';
-                    gran = $(this.dimensions.treatmentMethodToggleGran).prop("checked") ? 'process' : 'process__processgroup',
+                if ($(this.treatmentMethodToggle).prop("checked")) {
+                    let originOrDestination = $(this.treatmentMethodOrigDest).prop("checked") ? 'destination__' : 'origin__';
+                    gran = $(this.treatmentMethodToggleGran).prop("checked") ? 'process' : 'process__processgroup',
                         filterParams.dimensions.treatmentMethod = originOrDestination + gran;
                 }
 
-                if ($(this.dimensions.materialToggle).prop("checked")) {
-                    let gran = $($(".gran-radio-material-label.active")).attr("data-ewc"),
-                        materialFilter = 'flowchain__waste06';
+                // Material
+                if ($(this.materialToggle).prop("checked")) {
+                    let gran = $($(".gran-radio-material-label.active")).attr("data-ewc");
+                    filterParams.dimensions.material = 'flowchain__waste06';
                     if (gran === 'ewc4') {
-                        materialFilter += '__waste04'
+                        filterParams.dimensions.material+= '__waste04'
                     } else if (gran === 'ewc2') {
-                        materialFilter += '__waste04__waste02'
+                        filterParams.dimensions.material += '__waste04__waste02'
                     }
-                    filterParams.dimensions.material = materialFilter;
                 }
 
                 console.log(filterParams);
@@ -497,7 +484,6 @@ define(['views/common/baseview',
                     this.vizView = new vizView['view'](
                         Object.assign(defaultOptions, extraOptions)
                     );
-                    console.log(this.vizView)
                 }
             },
 
@@ -569,29 +555,29 @@ define(['views/common/baseview',
                 // //////////////////////////////////
                 // Dimension controls:
 
-                $(_this.dimensions.timeToggle).bootstrapToggle('off');
-                $(_this.dimensions.timeToggleGran).bootstrapToggle('off');
+                $(_this.timeToggle).bootstrapToggle('off');
+                $(_this.timeToggleGran).bootstrapToggle('off');
                 $("#gran-toggle-time-col").hide();
 
-                $(_this.dimensions.spaceToggle).bootstrapToggle('off');
-                $(_this.dimensions.spaceLevelGranSelect).val($('#dim-space-gran-select:first-child')[0].value);
-                $(_this.dimensions.spaceOrigDest).bootstrapToggle('off');
+                $(_this.spaceToggle).bootstrapToggle('off');
+                $(_this.spaceLevelGranSelect).val($('#dim-space-gran-select:first-child')[0].value);
+                $(_this.spaceOrigDest).bootstrapToggle('off');
                 $("#gran-toggle-space-col").hide();
                 $("#origDest-toggle-space-col").hide();
 
-                $(_this.dimensions.economicActivityToggle).bootstrapToggle('off');
-                $(_this.dimensions.economicActivityToggleGran).bootstrapToggle('off');
-                $(_this.dimensions.economicActivityOrigDest).bootstrapToggle('off');
+                $(_this.economicActivityToggle).bootstrapToggle('off');
+                $(_this.economicActivityToggleGran).bootstrapToggle('off');
+                $(_this.economicActivityOrigDest).bootstrapToggle('off');
                 $("#gran-econ-activity-col").hide();
                 $("#origDest-toggle-econAct-col").hide();
 
-                $(_this.dimensions.treatmentMethodToggle).bootstrapToggle('off');
-                $(_this.dimensions.treatmentMethodToggleGran).bootstrapToggle('off');
-                $(_this.dimensions.treatmentMethodOrigDest).bootstrapToggle('off');
+                $(_this.treatmentMethodToggle).bootstrapToggle('off');
+                $(_this.treatmentMethodToggleGran).bootstrapToggle('off');
+                $(_this.treatmentMethodOrigDest).bootstrapToggle('off');
                 $("#gran-treatment-method-col").hide();
                 $("#origDest-toggle-treatment-col").hide();
 
-                $(_this.dimensions.materialToggle).bootstrapToggle('off');
+                $(_this.materialToggle).bootstrapToggle('off');
                 $(".gran-radio-material-label").removeClass("active");
                 $($("#gran-radio-material")[0].children[0]).addClass("active");
                 $("#gran-material-col").hide();
