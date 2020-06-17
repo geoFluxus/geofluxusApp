@@ -28,6 +28,31 @@ define(['views/common/baseview',
 
                 this.template = options.template;
 
+                // group filters on hierarchy
+                this.filters = [
+                    {'year':        'flowchain__month__year__in',
+                     'month':       'flowchain__month__in'},
+                    {'hazardous':   'flowchain__waste06__hazardous'},
+                    {'waste02':     'flowchain__waste06__waste04__waste02__in',
+                     'waste04':     'flowchain__waste06__waste04__in',
+                     'waste06':     'flowchain__waste06__in'},
+                    {'material':    'flowchain__materials__in'},
+                    {'product':     'flowchain__products__in'},
+                    {'composites':  'flowchain__composites__in'},
+                    {'route':       'flowchain__route'},
+                    {'collector':   'flowchain__collector'},
+                    {'clean':       'clean'},
+                    {'mixed':       'mixed'},
+                    {'direct':      'direct_use'},
+                    {'isComposite': 'composite'}
+                ]
+
+                this.boolean = {
+                    'unknown': null,
+                    'yes': true,
+                    'no': false
+                }
+
                 // Load model here
                 var tags = ['activitygroups', 'activities',
                             'processgroups', 'processes',
@@ -106,6 +131,42 @@ define(['views/common/baseview',
 
                 this.initializeControls();
                 this.addEventListeners();
+            },
+
+            initializeControls: function () {
+                var _this = this;
+
+                // Origin/Destination-controls:
+                nodes = ['origin', 'destination']
+                nodes.forEach(function(node) {
+                    _this[node].inOrOut = _this.el.querySelector('#' + node + '-area-in-or-out');
+                    _this[node].activityGroupsSelect = _this.el.querySelector('select[name="' + node + '-activitygroup-select"]');
+                    _this[node].activitySelect = _this.el.querySelector('select[name="' + node + '-activity-select"]');
+                    _this[node].processGroupSelect = _this.el.querySelector('select[name="' + node + '-processGroup-select"]');
+                    _this[node].processSelect = _this.el.querySelector('select[name="' + node + '-process-select"]');
+                })
+
+                // Flows-controls:
+                this.filters.forEach(function(filter) {
+                    Object.keys(filter).forEach(function(key) {
+                        var selector = 'select[name="flows-' + key.toLowerCase() + '-select"]';
+                        _this.flows[key + 'Select'] = _this.el.querySelector(selector);
+                    })
+                })
+
+                this.areaLevelSelect = this.el.querySelector('#area-level-select');
+
+                // Saved filter configs
+                this.filterConfigSelect = this.el.querySelector('select[name="saved-filters-select"]');
+
+                // Initialize all bootstrapToggles:
+                $(".bootstrapToggle").bootstrapToggle();
+
+                // Initialize all selectpickers:
+                $(".selectpicker").selectpicker();
+
+                // Initialize all textarea-autoresize components:
+                $(".selections").textareaAutoSize();
             },
 
             renderMonitorView: function (_this) {
@@ -305,28 +366,40 @@ define(['views/common/baseview',
                 })
 
                 // Flows: ---------------------------
-                $(this.flows.yearSelect).on('changed.bs.select',
-                                            {parent: 'year', children: 'months', picker: this.flows.monthSelect},
-                                            filterbyParent);
-                $(this.flows.monthSelect).on('changed.bs.select', multiCheck);
+                // TO DO: implement filterbyParent
+                this.filters.forEach(function(filter) {
+                    Object.keys(filter).forEach(function(key) {
+                        var selector = $(_this.flows[key + 'Select']);
+                            options = selector[0].options;
+                        // no selectors for non-fuzzy booleans
+                        if (!(options.length > 0 && options[0].value == 'both')) {
+                            selector.on('changed.bs.select', multiCheck);
+                        }
+                    })
+                })
 
-                $(this.flows.hazardousSelect).on('changed.bs.select', filterEwcHazardous);
-                $(this.flows.waste02Select).on('changed.bs.select',
-                                               {parent: 'waste02', children: 'wastes04', picker: this.flows.waste04Select},
-                                               filterbyParent);
-                $(this.flows.waste04Select).on('changed.bs.select',
-                                               {parent: 'waste04', children: 'wastes06', picker: this.flows.waste06Select},
-                                               filterbyParent);
-                $(this.flows.waste06Select).on('changed.bs.select', multiCheck);
-
-                $(this.flows.materialSelect).on('changed.bs.select', multiCheck);
-                $(this.flows.productSelect).on('changed.bs.select', multiCheck);
-                $(this.flows.compositesSelect).on('changed.bs.select', multiCheck);
-
-                $(this.flows.cleanSelect).on('changed.bs.select', multiCheck);
-                $(this.flows.mixedSelect).on('changed.bs.select', multiCheck);
-                $(this.flows.directSelect).on('changed.bs.select', multiCheck);
-                $(this.flows.isCompositeSelect).on('changed.bs.select', multiCheck);
+//                $(this.flows.yearSelect).on('changed.bs.select',
+//                                            {parent: 'year', children: 'months', picker: this.flows.monthSelect},
+//                                            filterbyParent);
+//                $(this.flows.monthSelect).on('changed.bs.select', multiCheck);
+//
+//                $(this.flows.hazardousSelect).on('changed.bs.select', filterEwcHazardous);
+//                $(this.flows.waste02Select).on('changed.bs.select',
+//                                               {parent: 'waste02', children: 'wastes04', picker: this.flows.waste04Select},
+//                                               filterbyParent);
+//                $(this.flows.waste04Select).on('changed.bs.select',
+//                                               {parent: 'waste04', children: 'wastes06', picker: this.flows.waste06Select},
+//                                               filterbyParent);
+//                $(this.flows.waste06Select).on('changed.bs.select', multiCheck);
+//
+//                $(this.flows.materialSelect).on('changed.bs.select', multiCheck);
+//                $(this.flows.productSelect).on('changed.bs.select', multiCheck);
+//                $(this.flows.compositesSelect).on('changed.bs.select', multiCheck);
+//
+//                $(this.flows.cleanSelect).on('changed.bs.select', multiCheck);
+//                $(this.flows.mixedSelect).on('changed.bs.select', multiCheck);
+//                $(this.flows.directSelect).on('changed.bs.select', multiCheck);
+//                $(this.flows.isCompositeSelect).on('changed.bs.select', multiCheck);
 
 
                 // Hide the .filterEdit container when the selected filter changes:
@@ -350,51 +423,6 @@ define(['views/common/baseview',
                 $(document).on('blur', 'input', function () {
                     focusedElement = null;
                 })
-            },
-
-            initializeControls: function () {
-                var _this = this;
-
-                // Origin/Destination-controls:
-                nodes = ['origin', 'destination']
-                nodes.forEach(function(node) {
-                    _this[node].inOrOut = _this.el.querySelector('#' + node + '-area-in-or-out');
-                    _this[node].activityGroupsSelect = _this.el.querySelector('select[name="' + node + '-activitygroup-select"]');
-                    _this[node].activitySelect = _this.el.querySelector('select[name="' + node + '-activity-select"]');
-                    _this[node].processGroupSelect = _this.el.querySelector('select[name="' + node + '-processGroup-select"]');
-                    _this[node].processSelect = _this.el.querySelector('select[name="' + node + '-process-select"]');
-                })
-
-                // Flows-controls:
-                this.flows.yearSelect = this.el.querySelector('select[name="flows-year-select"]');
-                this.flows.monthSelect = this.el.querySelector('select[name="flows-month-select"]');
-                this.flows.waste02Select = this.el.querySelector('select[name="flows-waste02-select"]');
-                this.flows.waste04Select = this.el.querySelector('select[name="flows-waste04-select"]');
-                this.flows.waste06Select = this.el.querySelector('select[name="flows-waste06-select"]');
-                this.flows.materialSelect = this.el.querySelector('select[name="flows-material-select"]');
-                this.flows.productSelect = this.el.querySelector('select[name="flows-product-select"]');
-                this.flows.compositesSelect = this.el.querySelector('select[name="flows-composites-select"]');
-                this.flows.routeSelect = this.el.querySelector('select[name="flows-route-select"]');
-                this.flows.collectorSelect = this.el.querySelector('select[name="flows-collector-select"]');
-                this.flows.hazardousSelect = this.el.querySelector('select[name="flows-hazardous-select"]');
-                this.flows.cleanSelect = this.el.querySelector('select[name="flows-clean-select"]');
-                this.flows.mixedSelect = this.el.querySelector('select[name="flows-mixed-select"]');
-                this.flows.directSelect = this.el.querySelector('select[name="flows-direct-select"]');
-                this.flows.isCompositeSelect = this.el.querySelector('select[name="flows-iscomposite-select"]');
-
-                this.areaLevelSelect = this.el.querySelector('#area-level-select');
-
-                // Saved filter configs
-                this.filterConfigSelect = this.el.querySelector('select[name="saved-filters-select"]');
-
-                // Initialize all bootstrapToggles:
-                $(".bootstrapToggle").bootstrapToggle();
-
-                // Initialize all selectpickers:
-                $(".selectpicker").selectpicker();
-
-                // Initialize all textarea-autoresize components:
-                $(".selections").textareaAutoSize();
             },
 
             renderSavedFiltersModal: function () {
@@ -1245,8 +1273,8 @@ define(['views/common/baseview',
                 $("#areaSelections-flows").hide();
                 $("#areaSelections-Textarea-flows").html("");
                 $(this.flows.inOrOut).bootstrapToggle("off");
-
                 $("#areaSelections-flows").hide();
+
                 $(_this.flows.yearSelect).val("-1");
                 $(_this.flows.monthSelect).val("-1");
                 $("#monthscol").hide("fast");
@@ -1340,41 +1368,16 @@ define(['views/common/baseview',
                     });
                 }
 
-                // group filters on hierarchy
-                filters = [
-                    {'year':        'flowchain__month__year__in',
-                     'month':       'flowchain__month__in'},
-                    {'hazardous':   'flowchain__waste06__hazardous'},
-                    {'waste02':     'flowchain__waste06__waste04__waste02__in',
-                     'waste04':     'flowchain__waste06__waste04__in',
-                     'waste06':     'flowchain__waste06__in'},
-                    {'material':    'flowchain__materials__in'},
-                    {'product':     'flowchain__products__in'},
-                    {'composites':  'flowchain__composites__in'},
-                    {'route':       'flowchain__route'},
-                    {'collector':   'flowchain__collector'},
-                    {'clean':       'clean'},
-                    {'mixed':       'mixed'},
-                    {'direct':      'direct_use'},
-                    {'isComposite': 'composite'}
-                ]
-
-                boolean = {
-                    'unknown': null,
-                    'yes': true,
-                    'no': false
-                }
-
                 // process value
                 function process(value) {
                     // might be a list of values or only one
-                    if (typeof(value) == 'object') {
-                        // check if we process only boolean values
-                        if (value.every(function(v) {return boolean[v] !== undefined})) {
+                    if (Array.isArray(value)) {
+                        // check if we have only boolean values
+                        if (value.every(function(v) {return _this.boolean[v] !== undefined})) {
                             // if so, turn into real boolean values
                             var _value = [];
                             value.forEach(function(v) {
-                                _value.push(boolean[v]);
+                                _value.push(_this.boolean[v]);
                             })
                             value = _value;
                         }
@@ -1382,16 +1385,15 @@ define(['views/common/baseview',
                     } else {
                         value = boolean[value];
                     }
-
                     return value;
                 }
 
                 // load filters to request
-                filters.forEach(function(filter) {
+                this.filters.forEach(function(filter) {
                     let _key = _value = null;
 
                     Object.keys(filter).forEach(function(key) {
-                        // if filter has value
+                        // retrieve filter value
                         var value = $(_this.flows[key + 'Select']).val();
 
                         // forbidden values
@@ -1401,13 +1403,15 @@ define(['views/common/baseview',
                             value !== 'both' // not 'both' option
                         ]
 
+                        // if no forbidden values, process
                         if (!conditions.includes(false)) {
                             _key = filter[key];
                             _value = process(value);
                         }
                     })
 
-                    if (_key) {
+                    // if no value, do not include filter in request
+                    if (_value) {
                         filterParams.flows[_key] = _value;
                     }
                 })
