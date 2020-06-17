@@ -12,8 +12,12 @@
 
         <div class="row" id="message-container-row">
             <div class="col mt-3">
-                <span style="color: white">Select between 1 and <%= maxNumberOfDimensions %> dimensions.</span>
-            </div>
+                <% if (maxNumberOfDimensions == 1) { %>
+                    <span style="color: white">Select at least one dimension.</span>
+                <% } else { %>
+                    <span style="color: white">Select between 1 and <%= maxNumberOfDimensions %> dimensions.</span>
+                <% } %>
+                </div>
         </div>
         <div class="row" id="alertMaxDimensionsRow" style="display: none;">
             <div class="col mt-3 text-center">

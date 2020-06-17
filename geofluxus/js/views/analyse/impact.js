@@ -1,5 +1,6 @@
 // Flows
 define(['views/common/baseview',
+        'views/analyse/monitor',
         'underscore',
         'd3',
         'openlayers',
@@ -13,6 +14,7 @@ define(['views/common/baseview',
     ],
     function (
         BaseView,
+        MonitorView,
         _,
         d3,
         ol,
@@ -31,6 +33,7 @@ define(['views/common/baseview',
                 this.dimensions = {};
                 this.maxNumberOfDimensions = 1;
                 this.selectedDimensionStrings = [];
+                this.impactSourceStrings = [];
 
                 this.areaLevels = new Collection([], {
                     apiTag: 'arealevels',
@@ -72,6 +75,18 @@ define(['views/common/baseview',
                 this.addEventListeners();
             },
 
+            renderMonitorView: function () {
+                var el = document.querySelector('#impact-dimensions-container');
+                this.monitorView = new MonitorView({
+                    el: el,
+                    template: 'monitor-template',
+                    filtersView: this.filtersView,
+                    maxNumberOfDimensions: 1,
+                    unit: this.unit,
+                    levels: this.areaLevels,
+                });
+            },
+
             initializeControls: function () {
                 // Impact source controls:
                 this.impactSources = {};
@@ -84,7 +99,6 @@ define(['views/common/baseview',
             addEventListeners: function () {
                 var _this = this;
 
-
                 // Indicator toggle
                 $('.impact-indicator-radio-label').on("click", function (event) {
                     let clickedIndicator = $(this).attr("data-indicator");
@@ -96,79 +110,111 @@ define(['views/common/baseview',
                     event.preventDefault();
                 });
 
-                // Dimension toggles: ---------------------------
 
-                // Show alert if user clicks on disabled dimension toggle:
-                $("#dimensionsCard .toggle.btn").on("click", function (event) {
-
-                    if ($($(event.currentTarget)[0]).is('[disabled=disabled]')) {
-                        $("#alertMaxDimensionsRow").fadeIn("fast");
-                        $("#alertMaxDimensions").alert();
-
-                        setTimeout(function () {
-                            $("#alertMaxDimensionsRow").fadeOut("fast");
-                        }, 6000);
-                    }
-                });
-
-                $(".dimensionToggle").change(function (event) {
+                // Impact source toggles:
+                $(".impactSourceToggle").change(function (event) {
                     // //////////////////////////////////////////////////////
                     // Disable dimension toggles for max number of dimensions:
                     let checkedToggles = [];
                     let uncheckedToggles = [];
-                    _this.selectedDimensionStrings = [];
+                    _this.impactSourceStrings = [];
 
                     // Divide the toggles in arrays of checked and unchecked toggles:
-                    $('.dimensionToggle').each(function (index, value) {
+                    $('.impactSourceToggle').each(function (index, value) {
                         let checked = $(this.parentElement.firstChild).prop('checked')
                         if (!checked) {
                             uncheckedToggles.push($(this));
                         } else {
                             checkedToggles.push($(this));
-
-                            _this.selectedDimensionStrings.push($(this).attr("data-dim"));
+                            _this.impactSourceStrings.push($(this).attr("data-source"));
                         }
                     });
 
-                    // If the maximum number of dimensions has been selected:
-                    if (_this.maxNumberOfDimensions == checkedToggles.length) {
-                        // Disable the remaining unchecked toggles:
-                        $(uncheckedToggles).each(function (index, value) {
-                            this.bootstrapToggle('disable');
-                        });
+                    if (_this.impactSourceStrings.length > 0) {
+                        $("#impact-dimensions-container").fadeIn();
+
+                        _this.renderMonitorView();
                     } else {
-                        // (Re)enable the toggles:
-                        $(uncheckedToggles).each(function (index, value) {
-                            this.bootstrapToggle('enable');
-                        });
-                        $("#alertMaxDimensionsRow").fadeOut("fast");
+                        // Remove 
+                        $("#impact-dimensions-container").fadeOut();
+                        $("#impact-dimensions-container").html("");
                     }
                 });
 
-                $(_this.dimensions.spaceLevelGranSelect).change(function () {
-                    let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
-                    let selectedAreaLevel = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.id.toString() == selectedAreaLevelId).attributes.level;
-                });
 
-                // Show granularity on toggle change:
-                $("#dim-toggle-time").change(function () {
-                    $("#gran-toggle-time-col").fadeToggle();
-                });
-                $("#dim-toggle-space").change(function () {
-                    $("#gran-toggle-space-col").fadeToggle();
-                    $("#origDest-toggle-space-col").fadeToggle();
-                });
-                $("#dim-toggle-economic-activity").change(function () {
-                    $("#gran-econ-activity-col").fadeToggle();
-                    $("#origDest-toggle-econAct-col").fadeToggle();
-                });
-                $("#dim-toggle-treatment-method").change(function () {
-                    $("#gran-treatment-method-col").fadeToggle();
-                    $("#origDest-toggle-treatment-col").fadeToggle();
-                });
-                $("#dim-toggle-material").change(function () {
-                    $("#gran-material-col").fadeToggle();
-                });
+                // // Dimension toggles: ---------------------------
+
+                // // Show alert if user clicks on disabled dimension toggle:
+                // $("#dimensionsCard .toggle.btn").on("click", function (event) {
+
+                //     if ($($(event.currentTarget)[0]).is('[disabled=disabled]')) {
+                //         $("#alertMaxDimensionsRow").fadeIn("fast");
+                //         $("#alertMaxDimensions").alert();
+
+                //         setTimeout(function () {
+                //             $("#alertMaxDimensionsRow").fadeOut("fast");
+                //         }, 6000);
+                //     }
+                // });
+
+                // $(".dimensionToggle").change(function (event) {
+                //     // //////////////////////////////////////////////////////
+                //     // Disable dimension toggles for max number of dimensions:
+                //     let checkedToggles = [];
+                //     let uncheckedToggles = [];
+                //     _this.selectedDimensionStrings = [];
+
+                //     // Divide the toggles in arrays of checked and unchecked toggles:
+                //     $('.dimensionToggle').each(function (index, value) {
+                //         let checked = $(this.parentElement.firstChild).prop('checked')
+                //         if (!checked) {
+                //             uncheckedToggles.push($(this));
+                //         } else {
+                //             checkedToggles.push($(this));
+
+                //             _this.selectedDimensionStrings.push($(this).attr("data-dim"));
+                //         }
+                //     });
+
+                //     // If the maximum number of dimensions has been selected:
+                //     if (_this.maxNumberOfDimensions == checkedToggles.length) {
+                //         // Disable the remaining unchecked toggles:
+                //         $(uncheckedToggles).each(function (index, value) {
+                //             this.bootstrapToggle('disable');
+                //         });
+                //     } else {
+                //         // (Re)enable the toggles:
+                //         $(uncheckedToggles).each(function (index, value) {
+                //             this.bootstrapToggle('enable');
+                //         });
+                //         $("#alertMaxDimensionsRow").fadeOut("fast");
+                //     }
+                // });
+
+                // $(_this.dimensions.spaceLevelGranSelect).change(function () {
+                //     let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
+                //     let selectedAreaLevel = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.id.toString() == selectedAreaLevelId).attributes.level;
+                // });
+
+                // // Show granularity on toggle change:
+                // $("#dim-toggle-time").change(function () {
+                //     $("#gran-toggle-time-col").fadeToggle();
+                // });
+                // $("#dim-toggle-space").change(function () {
+                //     $("#gran-toggle-space-col").fadeToggle();
+                //     $("#origDest-toggle-space-col").fadeToggle();
+                // });
+                // $("#dim-toggle-economic-activity").change(function () {
+                //     $("#gran-econ-activity-col").fadeToggle();
+                //     $("#origDest-toggle-econAct-col").fadeToggle();
+                // });
+                // $("#dim-toggle-treatment-method").change(function () {
+                //     $("#gran-treatment-method-col").fadeToggle();
+                //     $("#origDest-toggle-treatment-col").fadeToggle();
+                // });
+                // $("#dim-toggle-material").change(function () {
+                //     $("#gran-material-col").fadeToggle();
+                // });
             },
 
             // Returns parameters for filtered post-fetching based on assigned filter
@@ -286,14 +332,14 @@ define(['views/common/baseview',
                 });
                 this.loader.activate();
                 ways.fetch({
-                        success: function () {
-                            _this.loader.deactivate();
-                            _this.drawNetwork(ways, flows);
-                        },
-                        error: function (res) {
-                            _this.loader.deactivate();
-                            _this.onError(res);
-                        }
+                    success: function () {
+                        _this.loader.deactivate();
+                        _this.drawNetwork(ways, flows);
+                    },
+                    error: function (res) {
+                        _this.loader.deactivate();
+                        _this.onError(res);
+                    }
                 });
 
                 this.routingMap.addLayer('ways', {
@@ -303,13 +349,13 @@ define(['views/common/baseview',
             },
 
             // Add network layer to map
-            drawNetwork: function(ways, flows) {
+            drawNetwork: function (ways, flows) {
                 var _this = this;
 
                 // process flows to point to amounts
                 var amounts = {},
                     data = [];
-                flows.forEach(function(flow) {
+                flows.forEach(function (flow) {
                     var id = flow['id'],
                         amount = flow['amount'];
                     amounts[id] = amount;
@@ -336,23 +382,23 @@ define(['views/common/baseview',
                 // scale of equal frequency intervals
                 var max = Math.max(...data),
                     quantile = d3.scaleQuantile()
-                                 .domain(data)
-                                 .range(colors);
+                    .domain(data)
+                    .range(colors);
 
                 // prettify scale intervals
                 function prettify(val) {
                     var int = ~~(val)
-                        digits = int.toString().length - 1
-                        base = 10 ** digits;
+                    digits = int.toString().length - 1
+                    base = 10 ** digits;
                     return Math.round(val / base) * base;
                 }
                 var values = [];
-                Object.values(quantile.quantiles()).forEach(function(val) {
+                Object.values(quantile.quantiles()).forEach(function (val) {
                     values.push(prettify(val));
                 });
                 values.unshift(0);
 
-                function assignColor(amount){
+                function assignColor(amount) {
                     for (i = 1; i < values.length; i++) {
                         if (amount <= values[i]) {
                             return colors[i - 1];
@@ -362,15 +408,17 @@ define(['views/common/baseview',
                 }
 
                 // add ways to map and load with amounts
-                ways.forEach(function(way) {
+                ways.forEach(function (way) {
                     var id = way.get('id'),
                         coords = way.get('the_geom').coordinates,
                         type = way.get('the_geom').type.toLowerCase(),
                         amount = amounts[id];
                     _this.routingMap.addGeometry(coords, {
-                        projection: 'EPSG:4326', layername: 'ways',
-                        type: type, renderOSM: false,
-                        style : {
+                        projection: 'EPSG:4326',
+                        layername: 'ways',
+                        type: type,
+                        renderOSM: false,
+                        style: {
                             // color, width & zIndex based on amount
                             strokeColor: amount > 0 ? assignColor(amount) : 'rgb(255,255,255)',
                             strokeWidth: amount > 0 ? 2 * (1 + 2 * amount / max) : 0.5,
@@ -396,36 +444,44 @@ define(['views/common/baseview',
                 });
                 this.routingMap.map.addControl(controlPanel);
 
-//                var title = document.createElement('div');
-//                title.style.margin = "5%";
-//                title.innerHTML = '<h4 style="text-align: center;">Legend</h4>'
-//                legend.appendChild(title);
+                //                var title = document.createElement('div');
+                //                title.style.margin = "5%";
+                //                title.innerHTML = '<h4 style="text-align: center;">Legend</h4>'
+                //                legend.appendChild(title);
 
                 // add color scale to legend
                 var width = height = 30;
                 var scale = d3.select("#legend")
-                              .append("center")
-                              .append("svg")
-                              .attr("width", width * colors.length)
-                              .attr("height", 100),
+                    .append("center")
+                    .append("svg")
+                    .attr("width", width * colors.length)
+                    .attr("height", 100),
                     rects = scale.selectAll('rect')
-                                 .data(colors)
-                                 .enter()
-                                 .append("rect")
-                                 .attr("x", function(d, i) { return i * width; })
-                                 .attr("y", 10)
-                                 .attr("width", 30)
-                                 .attr("height", 30)
-                                 .attr("fill", function(d) { return d; }),
+                    .data(colors)
+                    .enter()
+                    .append("rect")
+                    .attr("x", function (d, i) {
+                        return i * width;
+                    })
+                    .attr("y", 10)
+                    .attr("width", 30)
+                    .attr("height", 30)
+                    .attr("fill", function (d) {
+                        return d;
+                    }),
                     texts = scale.selectAll('text')
-                                 .data(values)
-                                 .enter()
-                                 .append('text')
-                                 .text(function (d) { return d >= 1000 ? `${(d/1000)}K` : `${d}`;})
-                                 .attr("x", function(d, i) { return i * width; })
-                                 .attr('y', 2 * height)
-                                 .attr('fill', 'white')
-                                 .attr('font-size', 10);
+                    .data(values)
+                    .enter()
+                    .append('text')
+                    .text(function (d) {
+                        return d >= 1000 ? `${(d/1000)}K` : `${d}`;
+                    })
+                    .attr("x", function (d, i) {
+                        return i * width;
+                    })
+                    .attr('y', 2 * height)
+                    .attr('fill', 'white')
+                    .attr('font-size', 10);
             },
 
             resetDimAndVizToDefault: function () {

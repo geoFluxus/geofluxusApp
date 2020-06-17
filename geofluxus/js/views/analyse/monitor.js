@@ -38,9 +38,13 @@ define(['views/common/baseview',
                 this.filtersView = options.filtersView;
 
                 this.dimensions = {};
-                this.maxNumberOfDimensions = 2;
+                this.maxNumberOfDimensions = options.maxNumberOfDimensions;
                 this.selectedDimensionStrings = [];
                 this.selectedVizName = "";
+
+                this.indicator = options.indicator;
+
+                //this.unit = figure out this later
 
                 this.areaLevels = new Collection([], {
                     apiTag: 'arealevels',
@@ -277,7 +281,6 @@ define(['views/common/baseview',
 
                             //console.log("Three  dimensions");
 
-
                             break;
                         default:
                             // code block
@@ -288,24 +291,21 @@ define(['views/common/baseview',
                     // At least two dimensions, and one is treatmentMethod:
                     if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("treatmentMethod") && selectedVizHasFlowsFormat) {
                         $("#origDest-toggle-treatment").parent().fadeOut();
-                        event.preventDefault();
                     } else {
                         $("#origDest-toggle-treatment").parent().fadeIn();
-                        event.preventDefault();
                     }
 
                     // If the selected visualization type is NOT hasFlowsFormat, and dimension == space, show origin/destination toggle:
                     if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("space") && !selectedVizHasFlowsFormat) {
                         $("#origDest-toggle-space").parent().fadeIn();
-                        event.preventDefault();
                     }
                     // If the selected visualization type is hasFlowsFormat, and dimension == space, hide origin/destination toggle:
                     if (_this.selectedDimensionStrings.includes("space") && selectedVizHasFlowsFormat) {
                         $("#origDest-toggle-space").parent().fadeOut();
                     } else {
                         $("#origDest-toggle-space").parent().fadeIn();
-                        event.preventDefault();
                     }
+                    event.preventDefault();
                 });
 
                 // Disable origin/destination toggle for Space Treatment method for Flowmap and Parallel Sets
@@ -316,20 +316,17 @@ define(['views/common/baseview',
                     // At least two dimensions, and one is Space:
                     if ((_this.checkedDimToggles.length > 1) && _this.selectedDimensionStrings.includes("space") && clickedToggleHasFlowsFormat) {
                         $("#origDest-toggle-space").parent().fadeOut();
-                        event.preventDefault();
                     } else {
                         $("#origDest-toggle-space").parent().fadeIn();
-                        event.preventDefault();
                     }
 
                     // At least two dimensions, and one is treatmentMethod:
                     if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("treatmentMethod") && clickedToggleHasFlowsFormat) {
                         $("#origDest-toggle-treatment").parent().fadeOut();
-                        event.preventDefault();
                     } else {
                         $("#origDest-toggle-treatment").parent().fadeIn();
-                        event.preventDefault();
                     }
+                    event.preventDefault();
                 });
 
                 $(_this.dimensions.spaceLevelGranSelect).change(function () {
@@ -462,7 +459,6 @@ define(['views/common/baseview',
                 let dimensionString = dimensions[0][0];
                 let granularity = dimensions[0][1];
 
-
                 switch (dimensionString) {
                     case "time":
                         flows = enrichFlows.enrichTime(flows, filtersView, granularity);
@@ -483,8 +479,6 @@ define(['views/common/baseview',
                     case "material":
                         flows = enrichFlows.enrichEWC(flows, filtersView, granularity);
                         break;
-                    default:
-                        // Nothing
                 }
 
                 switch (_this.selectedVizName) {
@@ -542,8 +536,6 @@ define(['views/common/baseview',
                     case "coordinatepointmap": // Only in case of Actor
                         _this.renderCoordinatePointMap1D(dimensions, flows);
                         break;
-                    default:
-                        // Nothing
                 }
 
                 // console.log(flows);
@@ -624,18 +616,15 @@ define(['views/common/baseview',
                     if (gran1.adminlevel == actorAreaLevelId) {
                         dimensions.isActorLevel = true;
                     }
-
                     flows = enrichFlows.enrichEWC(flows, filtersView, gran2);
 
                     // Economic Activity & Treatment Method
                 } else if (dimStrings.includes("economicActivity") && dimStrings.includes("treatmentMethod")) {
-
                     flows = enrichFlows.enrichEconActivity(flows, filtersView, gran1);
                     flows = enrichFlows.enrichTreatmentMethod(flows, filtersView, gran2);
 
                     // Economic Activity & Material
                 } else if (dimStrings.includes("economicActivity") && dimStrings.includes("material")) {
-
                     flows = enrichFlows.enrichEconActivity(flows, filtersView, gran1);
                     flows = enrichFlows.enrichEWC(flows, filtersView, gran2);
                 }
@@ -656,18 +645,13 @@ define(['views/common/baseview',
                     case "flowmap":
                         this.renderFlowMap(dimensions, flows);
                         break;
-                    default:
-                        // Nothing
                 }
 
                 // console.log(flows);
             },
 
             renderPieChart: function (dimensions, flows) {
-                if (this.pieChartView != null) this.pieChartView.close();
-
                 $(".piechart-wrapper").fadeIn();
-
                 this.pieChartView = new PieChartView({
                     el: ".piechart-wrapper",
                     dimensions: dimensions,
@@ -677,10 +661,7 @@ define(['views/common/baseview',
             },
 
             renderTreeMap: function (dimensions, flows) {
-                if (this.treeMapView != null) this.treeMapView.close();
-
                 $(".treemap-wrapper").fadeIn();
-
                 this.treeMapView = new TreeMapView({
                     el: ".treemap-wrapper",
                     dimensions: dimensions,
@@ -690,10 +671,7 @@ define(['views/common/baseview',
             },
 
             renderBarChart: function (dimensions, flows, isStacked) {
-                if (this.barChartView != null) this.barChartView.close();
-
                 $(".barchart-wrapper").fadeIn();
-
                 this.barChartView = new BarChartView({
                     el: ".barchart-wrapper",
                     dimensions: dimensions,
@@ -704,10 +682,7 @@ define(['views/common/baseview',
             },
 
             renderLinePlot: function (dimensions, flows, hasMultipleLines) {
-                if (this.linePlotView != null) this.linePlotView.close();
-
                 $(".lineplot-wrapper").fadeIn();
-
                 this.linePlotView = new LinePlotView({
                     el: ".lineplot-wrapper",
                     dimensions: dimensions,
@@ -718,10 +693,7 @@ define(['views/common/baseview',
             },
 
             renderChoropleth1D: function (dimensions, flows, geoJson) {
-                if (this.choroplethView != null) this.choroplethView.close();
-
                 $(".choropleth-wrapper").fadeIn();
-
                 this.choroplethView = new ChoroplethView({
                     el: ".choropleth-wrapper",
                     dimensions: dimensions,
@@ -732,10 +704,7 @@ define(['views/common/baseview',
             },
 
             renderCoordinatePointMap1D: function (dimensions, flows) {
-                if (this.coordinatePointMapView != null) this.coordinatePointMapView.close();
-
                 $(".coordinatepointmap-wrapper").fadeIn();
-
                 this.coordinatePointMapView = new CoordinatePointMapView({
                     el: ".coordinatepointmap-wrapper",
                     dimensions: dimensions,
@@ -745,10 +714,7 @@ define(['views/common/baseview',
             },
 
             renderAreaChart: function (dimensions, flows) {
-                if (this.areaChartView != null) this.areaChartView.close();
-
                 $(".areachart-wrapper").fadeIn();
-
                 this.areaChartView = new AreaChartView({
                     el: ".areachart-wrapper",
                     dimensions: dimensions,
@@ -758,10 +724,7 @@ define(['views/common/baseview',
             },
 
             renderFlowMap: function (dimensions, flows) {
-                if (this.flowMapView != null) this.flowMapView.close();
-
                 $(".flowmap-wrapper").fadeIn();
-
                 this.flowMapView = new FlowMapView({
                     el: ".flowmap-wrapper",
                     dimensions: dimensions,
@@ -771,11 +734,8 @@ define(['views/common/baseview',
             },
 
             renderParallelSets: function (dimensions, flows) {
-                if (this.parallelSetsView != null) this.parallelSetsView.close();
-
                 $(".parallelsets-container").show();
                 $(".parallelsets-wrapper").fadeIn();
-
                 this.parallelSetsView = new ParallelSetsView({
                     el: ".parallelsets-wrapper",
                     dimensions: dimensions,
@@ -786,7 +746,6 @@ define(['views/common/baseview',
 
             renderCircularSankey: function (dimensions, flows) {
                 $(".circularsankey-wrapper").show();
-
                 this.circularSankeyView = new CircularSankeyView({
                     el: "circularsankey-wrapper",
                     dimensions: dimensions,
@@ -799,16 +758,10 @@ define(['views/common/baseview',
                 $(".viz-wrapper-div").removeClass("lightMode");
                 $(".viz-wrapper-div").hide();
                 $(".parallelsets-container").hide();
-                if (this.barChartView != null) this.barChartView.close();
-                if (this.pieChartView != null) this.pieChartView.close();
-                if (this.linePlotView != null) this.linePlotView.close();
-                if (this.treeMapView != null) this.treeMapView.close();
-                if (this.choroplethView != null) this.choroplethView.close();
-                if (this.coordinatePointMapView != null) this.coordinatePointMapView.close();
-                if (this.areaChartView != null) this.areaChartView.close();
-                if (this.flowMapView != null) this.flowMapView.close();
-                if (this.parallelSetsView != null) this.parallelSetsView.close();
-                if (this.circularSankeyView != null) this.circularSankeyView.close();
+                let vizViews = ["barChartView", "pieChartView", "linePlotView", "treeMapView", "choroplethView", "coordinatePointMapView", "areaChartView", "flowMapView", "parallelSetsView", "circularSankeyView"];
+                vizViews.forEach(vizView => {
+                    if (this[vizView] != null) this[vizView].close();
+                });
             },
 
             // Fetch flows and calls options.success(flows) on success

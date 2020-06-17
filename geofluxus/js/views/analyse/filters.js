@@ -171,7 +171,10 @@ define(['views/common/baseview',
                 _this.monitorView = new MonitorView({
                     el: el,
                     template: 'monitor-template',
-                    filtersView: _this
+                    filtersView: _this,
+                    indicator: "Waste",
+                    maxNumberOfDimensions: 2,
+                    levels: this.areaLevels,
                 });
             },
 
@@ -180,7 +183,8 @@ define(['views/common/baseview',
                 _this.impactView = new ImpactView({
                     el: el,
                     template: 'impact-template',
-                    filtersView: _this
+                    filtersView: _this,
+                    levels: this.areaLevels,
                 });
             },
 
