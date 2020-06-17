@@ -39,7 +39,7 @@ define(['views/common/baseview',
                 this.mode = options.mode;
                 this.titleNumber = options.titleNumber.toString();
                 this.indicator = options.indicator;
-                this.impactSources = options.impactSources;
+                this.impactSources = options.impactSourceStrings;
 
 
                 this.dimensions = {};
