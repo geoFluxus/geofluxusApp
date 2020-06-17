@@ -122,7 +122,7 @@ class FilterFlowViewSet(PostGetViewMixin,
         # these should be handled separately!
         lookups = ['clean',
                    'mixed',
-                   'direct',
+                   'direct_use',
                    'composite']
 
         # form queries

@@ -371,7 +371,6 @@ define(['views/common/baseview',
                 this.flows.waste02Select = this.el.querySelector('select[name="flows-waste02-select"]');
                 this.flows.waste04Select = this.el.querySelector('select[name="flows-waste04-select"]');
                 this.flows.waste06Select = this.el.querySelector('select[name="flows-waste06-select"]');
-
                 this.flows.materialSelect = this.el.querySelector('select[name="flows-material-select"]');
                 this.flows.productSelect = this.el.querySelector('select[name="flows-product-select"]');
                 this.flows.compositesSelect = this.el.querySelector('select[name="flows-composites-select"]');
@@ -382,6 +381,7 @@ define(['views/common/baseview',
                 this.flows.mixedSelect = this.el.querySelector('select[name="flows-mixed-select"]');
                 this.flows.directSelect = this.el.querySelector('select[name="flows-direct-select"]');
                 this.flows.isCompositeSelect = this.el.querySelector('select[name="flows-iscomposite-select"]');
+
                 this.areaLevelSelect = this.el.querySelector('#area-level-select');
 
                 // Saved filter configs
@@ -1340,145 +1340,77 @@ define(['views/common/baseview',
                     });
                 }
 
-                // Year
-                let year = $(this.flows.yearSelect).val();
-                let month = $(this.flows.monthSelect).val();
+                // group filters on hierarchy
+                filters = [
+                    {'year':        'flowchain__month__year__in',
+                     'month':       'flowchain__month__in'},
+                    {'hazardous':   'flowchain__waste06__hazardous'},
+                    {'waste02':     'flowchain__waste06__waste04__waste02__in',
+                     'waste04':     'flowchain__waste06__waste04__in',
+                     'waste06':     'flowchain__waste06__in'},
+                    {'material':    'flowchain__materials__in'},
+                    {'product':     'flowchain__products__in'},
+                    {'composites':  'flowchain__composites__in'},
+                    {'route':       'flowchain__route'},
+                    {'collector':   'flowchain__collector'},
+                    {'clean':       'clean'},
+                    {'mixed':       'mixed'},
+                    {'direct':      'direct_use'},
+                    {'isComposite': 'composite'}
+                ]
 
-                if (year[0] !== "-1") {
-                    if (month == "-1") {
-                        filterParams.flows['flowchain__month__year__in'] = year;
+                boolean = {
+                    'unknown': null,
+                    'yes': true,
+                    'no': false
+                }
+
+                // process value
+                function process(value) {
+                    // might be a list of values or only one
+                    if (typeof(value) == 'object') {
+                        // check if we process only boolean values
+                        if (value.every(function(v) {return boolean[v] !== undefined})) {
+                            // if so, turn into real boolean values
+                            var _value = [];
+                            value.forEach(function(v) {
+                                _value.push(boolean[v]);
+                            })
+                            value = _value;
+                        }
+                    // unique value -> only non-fuzzy booleans (true or false)
                     } else {
-                        filterParams.flows['flowchain__month__in'] = month;
+                        value = boolean[value];
                     }
+
+                    return value;
                 }
 
-                // Wastes
-                let wastes02 = $(this.flows.waste02Select).val();
-                let wastes04 = $(this.flows.waste04Select).val();
-                let wastes06 = $(this.flows.waste06Select).val();
+                // load filters to request
+                filters.forEach(function(filter) {
+                    let _key = _value = null;
 
+                    Object.keys(filter).forEach(function(key) {
+                        // if filter has value
+                        var value = $(_this.flows[key + 'Select']).val();
 
-                // isHazardous
-                let hazardous = $(this.flows.hazardousSelect).val();
-                if (hazardous != 'both') {
-                    let is_hazardous = (hazardous == 'yes') ? true : false;
-                    filterParams.flows['flowchain__waste06__hazardous'] = is_hazardous;
+                        // forbidden values
+                        var conditions = [
+                            value.length > 0, // not an empty array
+                            value[0] !== "-1", // not 'all' option
+                            value !== 'both' // not 'both' option
+                        ]
 
-                    // Waste06 is not All
-                    if (wastes06[0] != "-1") {
-                        // Send Waste06:
-                        filterParams.flows['flowchain__waste06__in'] = wastes06;
+                        if (!conditions.includes(false)) {
+                            _key = filter[key];
+                            _value = process(value);
+                        }
+                    })
+
+                    if (_key) {
+                        filterParams.flows[_key] = _value;
                     }
-                }
-
-                // Waste02 is not All:
-                if (wastes02[0] !== "-1") {
-                    // Waste04 is All, so send Waste02:
-                    if (wastes04[0] == "-1") {
-                        filterParams.flows['flowchain__waste06__waste04__waste02__in'] = wastes02;
-                    } else {
-                        // Waste06 is All, so send Waste04
-                        if (wastes06[0] == "-1") {
-                            filterParams.flows['flowchain__waste06__waste04__in'] = wastes04;
-                        } else {
-                            // Send Waste06:
-                            filterParams.flows['flowchain__waste06__in'] = wastes06;
-                        }
-                    }
-                }
-
-                // Materials
-                let materials = $(this.flows.materialSelect).val();
-                if (materials[0] !== "-1") {
-                    filterParams.flows['flowchain__materials__in'] = materials;
-                }
-
-                // Products
-                let products = $(this.flows.productSelect).val();
-                if (products[0] !== "-1") {
-                    filterParams.flows['flowchain__products__in'] = products;
-                }
-
-                // Composites
-                let composites = $(this.flows.compositesSelect).val();
-                if (composites[0] !== "-1") {
-                    filterParams.flows['flowchain__composites__in'] = composites;
-                }
-
-                // isRoute
-                let route = $(this.flows.routeSelect).val();
-                if (route != 'both') {
-                    let is_route = (route == 'yes') ? true : false;
-                    filterParams.flows['flowchain__route'] = is_route;
-                }
-
-                // isCollector
-                let collector = $(this.flows.collectorSelect).val();
-                if (collector != 'both') {
-                    let is_collector = (collector == 'yes') ? true : false;
-                    filterParams.flows['flowchain__collector'] = is_collector;
-                }
-
-
-                // isClean
-                let clean = $(this.flows.cleanSelect).val();
-                if (clean[0] !== "-1") {
-                    var options = [];
-                    clean.forEach(function (option) {
-                        if (option == 'unknown') {
-                            options.push(null);
-                        } else {
-                            var is_clean = (option == 'yes') ? true : false;
-                            options.push(is_clean);
-                        }
-                    })
-                    filterParams.flows['clean'] = options;
-                }
-
-                // isMixed
-                let mixed = $(this.flows.mixedSelect).val();
-                if (mixed[0] !== "-1") {
-                    var options = [];
-                    mixed.forEach(function (option) {
-                        if (option == 'unknown') {
-                            options.push(null);
-                        } else {
-                            var is_mixed = (option == 'yes') ? true : false;
-                            options.push(is_mixed);
-                        }
-                    })
-                    filterParams.flows['mixed'] = options;
-                }
-
-                // isDirectUse
-                let direct = $(this.flows.directSelect).val();
-                if (direct[0] !== "-1") {
-                    var options = [];
-                    direct.forEach(function (option) {
-                        if (option == 'unknown') {
-                            options.push(null);
-                        } else {
-                            var is_direct = (option == 'yes') ? true : false;
-                            options.push(is_direct);
-                        }
-                    })
-                    filterParams.flows['direct'] = options;
-                }
-
-                // isComposite
-                let composite = $(this.flows.isCompositeSelect).val();
-                if (composite[0] !== "-1") {
-                    var options = [];
-                    composite.forEach(function (option) {
-                        if (option == 'unknown') {
-                            options.push(null);
-                        } else {
-                            var is_composite = (option == 'yes') ? true : false;
-                            options.push(is_composite);
-                        }
-                    })
-                    filterParams.flows['composite'] = options;
-                }
+                })
 
                 return filterParams;
             },
