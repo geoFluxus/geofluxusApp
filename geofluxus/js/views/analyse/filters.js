@@ -54,18 +54,28 @@ define(['views/common/baseview',
                 }
 
                 // Load model here
-                var tags = ['activitygroups', 'activities',
-                            'processgroups', 'processes',
-                            'wastes02', 'wastes04', 'wastes06',
-                            'materials', 'products', 'composites',
-                            'arealevels',
-                            'years', 'months',
-                            'filters']
+                // singular: plural form
+                this.tags = {
+                    'activitygroup': 'activitygroups',
+                    'activity':      'activities',
+                    'processgroup':  'processgroups',
+                    'process':       'processes',
+                    'waste02':       'wastes02',
+                    'waste04':       'wastes04',
+                    'waste06':       'wastes06',
+                    'material':      'materials',
+                    'product':       'products',
+                    'composite':     'composites',
+                    'arealevel':     'arealevels',
+                    'year':          'years',
+                    'month':         'months',
+                    'filter':        'filters'
+                }
 
                 // Model collections
                 // Refer to collection via tag
                 this.collections = {};
-                tags.forEach(function(tag) {
+                Object.values(this.tags).forEach(function(tag) {
                     var collection = new Collection([], {
                         apiTag: tag
                     });
@@ -321,14 +331,16 @@ define(['views/common/baseview',
                     // filter children
                     let ids = $(evt.target).val(),
                         parent = evt.data.parent,
-                        tag = evt.data.children,
-                        picker = evt.data.picker;
+                        child = evt.data.child;
+                        picker = _this.flows[child + 'Select'];
                     if (ids.length == 0 || ids[0] == "-1") {
                         $("#" + tag + "col").fadeOut("fast");
                     } else {
-                        let children = _this.collections[tag].models.filter(function (child) {
-                            return ids.includes(child.attributes[parent].toString())
-                        });
+                        let tag = _this.tags[child];
+                            children = _this.collections[tag].models.filter(function (child) {
+                                console.log(parent)
+                                return ids.includes(child.attributes[parent].toString())
+                            });
                         filterUtils.fillSelectPicker(tag, picker, children);
                         $("#" + tag + "col").fadeIn("fast");
                     }
@@ -366,41 +378,26 @@ define(['views/common/baseview',
                 })
 
                 // Flows: ---------------------------
-                // TO DO: implement filterbyParent
                 this.filters.forEach(function(filter) {
-                    Object.keys(filter).forEach(function(key) {
-                        var selector = $(_this.flows[key + 'Select']);
+                    // all filter fields
+                    var fields = Object.keys(filter);
+
+                    fields.forEach(function(field, idx) {
+                        var selector = $(_this.flows[parent + 'Select']);
                             options = selector[0].options;
+
                         // no selectors for non-fuzzy booleans
                         if (!(options.length > 0 && options[0].value == 'both')) {
-                            selector.on('changed.bs.select', multiCheck);
+                            // for hierarchical fields, check for child field
+                            var next = fields[idx + 1];
+                            if (next !== undefined) {
+                                selector.on('changed.bs.select', {parent: field, child: next}, filterbyParent);
+                            } else {
+                                selector.on('changed.bs.select', multiCheck);
+                            }
                         }
                     })
                 })
-
-//                $(this.flows.yearSelect).on('changed.bs.select',
-//                                            {parent: 'year', children: 'months', picker: this.flows.monthSelect},
-//                                            filterbyParent);
-//                $(this.flows.monthSelect).on('changed.bs.select', multiCheck);
-//
-//                $(this.flows.hazardousSelect).on('changed.bs.select', filterEwcHazardous);
-//                $(this.flows.waste02Select).on('changed.bs.select',
-//                                               {parent: 'waste02', children: 'wastes04', picker: this.flows.waste04Select},
-//                                               filterbyParent);
-//                $(this.flows.waste04Select).on('changed.bs.select',
-//                                               {parent: 'waste04', children: 'wastes06', picker: this.flows.waste06Select},
-//                                               filterbyParent);
-//                $(this.flows.waste06Select).on('changed.bs.select', multiCheck);
-//
-//                $(this.flows.materialSelect).on('changed.bs.select', multiCheck);
-//                $(this.flows.productSelect).on('changed.bs.select', multiCheck);
-//                $(this.flows.compositesSelect).on('changed.bs.select', multiCheck);
-//
-//                $(this.flows.cleanSelect).on('changed.bs.select', multiCheck);
-//                $(this.flows.mixedSelect).on('changed.bs.select', multiCheck);
-//                $(this.flows.directSelect).on('changed.bs.select', multiCheck);
-//                $(this.flows.isCompositeSelect).on('changed.bs.select', multiCheck);
-
 
                 // Hide the .filterEdit container when the selected filter changes:
                 $(this.filterConfigSelect).on('changed.bs.select', function () {
