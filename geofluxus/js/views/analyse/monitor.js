@@ -35,6 +35,7 @@ define(['views/common/baseview',
                 MonitorView.__super__.initialize.apply(this, [options]);
 
                 this.filtersView = options.filtersView;
+                this.el = options.el;
 
                 this.mode = options.mode;
                 this.titleNumber = options.titleNumber.toString();
@@ -114,7 +115,8 @@ define(['views/common/baseview',
                     event.preventDefault();
                 });
 
-                // Dimension toggles: ---------------------------
+                // /////////////////////////////////////////////////
+                // Dimension toggles:
 
                 // Show alert if user clicks on disabled dimension toggle:
                 $("#dimensionsCard .toggle.btn").on("click", function (event) {
@@ -131,6 +133,7 @@ define(['views/common/baseview',
                     }
                 });
 
+                
                 $(".dimensionToggle").change(function (event) {
                     if (_this.resetInProgres) {
                         return
@@ -167,7 +170,6 @@ define(['views/common/baseview',
                         });
                         $("#alertMaxDimensionsRow").fadeOut("fast");
                     }
-
 
                     // ///////////////////////////////////////////////////////////////////
                     // Show available visualizations based on selected dimension(s):
@@ -913,7 +915,10 @@ define(['views/common/baseview',
             },
 
             close: function () {
-                MonitorView.__super__.close.call(this);
+                console.log("Closing the monitorView with mode: ", this.mode);
+                this.undelegateEvents(); // remove click events
+                this.unbind(); // Unbind all local event bindings
+                $(this.el).html("");
             }
 
         });

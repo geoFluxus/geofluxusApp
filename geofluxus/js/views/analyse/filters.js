@@ -198,7 +198,12 @@ define(['views/common/baseview',
 
                     if (clickedMode != _this.analyseMode) {
                         _this.analyseMode = clickedMode;
+
                         $(".analyse-content-container").hide();
+                        
+                        if (_this.monitorView) _this.monitorView.close();
+                        if (_this.impactView) _this.impactView.close();
+                        
                         switch (_this.analyseMode) {
                             case "monitor":
                                 _this.renderMonitorView(_this);

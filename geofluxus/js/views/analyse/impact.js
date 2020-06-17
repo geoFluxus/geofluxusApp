@@ -73,6 +73,8 @@ define(['views/common/baseview',
                 //     opacity: 1.0
                 // });
 
+                this.renderMonitorView();
+
                 this.initializeControls();
                 this.addEventListeners();
             },
@@ -136,7 +138,6 @@ define(['views/common/baseview',
 
                     if (_this.impactSourceStrings.length > 0) {
                         $("#impact-dimensions-container").fadeIn();
-                        _this.monitorView = _this.renderMonitorView();
                     } else {
                         // Remove 
                         if (_this.monitorView) _this.monitorView.close();
@@ -528,9 +529,10 @@ define(['views/common/baseview',
                 $(".selectpicker").selectpicker('refresh');
             },
 
-            close: function () {
-                if (_this.monitorView) _this.monitorView.close();
-                ImpactView.__super__.close.call(this);
+            close: function () {                
+                if (this.monitorView) this.monitorView.close();
+                this.undelegateEvents(); // remove click events
+                this.unbind(); // Unbind all local event bindings
             }
 
         });
