@@ -171,8 +171,10 @@ define(['views/common/baseview',
                 _this.monitorView = new MonitorView({
                     el: el,
                     template: 'monitor-template',
+                    mode: "monitor",
                     filtersView: _this,
                     indicator: "Waste",
+                    titleNumber: 3,
                     maxNumberOfDimensions: 2,
                     levels: this.areaLevels,
                 });

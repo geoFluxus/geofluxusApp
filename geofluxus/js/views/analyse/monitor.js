@@ -1,4 +1,3 @@
-// Flows
 define(['views/common/baseview',
         'underscore',
         'collections/collection',
@@ -37,14 +36,16 @@ define(['views/common/baseview',
 
                 this.filtersView = options.filtersView;
 
+                this.mode = options.mode;
+                this.titleNumber = options.titleNumber.toString();
+                this.indicator = options.indicator;
+                this.impactSources = options.impactSources;
+
+
                 this.dimensions = {};
                 this.maxNumberOfDimensions = options.maxNumberOfDimensions;
                 this.selectedDimensionStrings = [];
                 this.selectedVizName = "";
-
-                this.indicator = options.indicator;
-
-                //this.unit = figure out this later
 
                 this.areaLevels = new Collection([], {
                     apiTag: 'arealevels',
@@ -71,7 +72,8 @@ define(['views/common/baseview',
 
                 this.el.innerHTML = template({
                     levels: this.areaLevels,
-                    maxNumberOfDimensions: this.maxNumberOfDimensions
+                    maxNumberOfDimensions: this.maxNumberOfDimensions,
+                    titleNumber: this.titleNumber,
                 });
 
                 // Activate help icons
@@ -396,7 +398,6 @@ define(['views/common/baseview',
                     if (["flowmap", "parallelsets", "circularsankey"].includes(selectedVizualisationString)) {
                         let formatString = selectedVizualisationString;
                         formatString = (formatString == "circularsankey") ? "parallelsets" : formatString;
-
                         filterParams.format = formatString;
                     }
                 }
@@ -447,6 +448,13 @@ define(['views/common/baseview',
                         materialFilter += '__waste04__waste02'
                     }
                     filterParams.dimensions.material = materialFilter;
+                }
+
+
+                // Gather impact params for impact mode:
+                if (this.mode == "impact") {
+                    filterParams.indicator = this.indicator;
+                    filterParams.impactSources = this.impactSources;
                 }
 
                 console.log(filterParams);
@@ -657,6 +665,7 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
+                    indicator: this.indicator,
                 });
             },
 
@@ -667,6 +676,7 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
+                    indicator: this.indicator,
                 });
             },
 
@@ -678,6 +688,7 @@ define(['views/common/baseview',
                     flows: flows,
                     flowsView: this,
                     isStacked: isStacked,
+                    indicator: this.indicator,
                 });
             },
 
@@ -689,6 +700,7 @@ define(['views/common/baseview',
                     flows: flows,
                     flowsView: this,
                     hasMultipleLines: hasMultipleLines,
+                    indicator: this.indicator,
                 });
             },
 
@@ -700,6 +712,7 @@ define(['views/common/baseview',
                     flows: flows,
                     flowsView: this,
                     geoJson: geoJson,
+                    indicator: this.indicator,
                 });
             },
 
@@ -710,6 +723,7 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
+                    indicator: this.indicator,
                 });
             },
 
@@ -720,6 +734,7 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
+                    indicator: this.indicator,
                 });
             },
 
@@ -730,6 +745,7 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
+                    indicator: this.indicator,
                 });
             },
 
@@ -741,6 +757,7 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
+                    indicator: this.indicator,
                 });
             },
 
@@ -751,6 +768,7 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
+                    indicator: this.indicator,
                 });
             },
 

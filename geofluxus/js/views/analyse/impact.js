@@ -30,6 +30,8 @@ define(['views/common/baseview',
                 var _this = this;
                 ImpactView.__super__.initialize.apply(this, [options]);
 
+                this.filtersView = options.filtersView;
+
                 this.dimensions = {};
                 this.maxNumberOfDimensions = 1;
                 this.selectedDimensionStrings = [];
@@ -50,7 +52,7 @@ define(['views/common/baseview',
 
             // DOM events
             events: {
-                'click #apply-filters': 'fetchFlows',
+                // 'click #apply-filters': 'fetchFlows',
                 'click #reset-dim-viz': 'resetDimAndVizToDefault',
             },
 
@@ -81,8 +83,11 @@ define(['views/common/baseview',
                     el: el,
                     template: 'monitor-template',
                     filtersView: this.filtersView,
+                    mode: "impact",
                     maxNumberOfDimensions: 1,
-                    unit: this.unit,
+                    indicator: this.indicator,
+                    titleNumber: 5,
+                    impactSourceStrings: this.impactSourceStrings,
                     levels: this.areaLevels,
                 });
             },
@@ -110,7 +115,6 @@ define(['views/common/baseview',
                     event.preventDefault();
                 });
 
-
                 // Impact source toggles:
                 $(".impactSourceToggle").change(function (event) {
                     // //////////////////////////////////////////////////////
@@ -132,10 +136,10 @@ define(['views/common/baseview',
 
                     if (_this.impactSourceStrings.length > 0) {
                         $("#impact-dimensions-container").fadeIn();
-
-                        _this.renderMonitorView();
+                        _this.monitorView = _this.renderMonitorView();
                     } else {
                         // Remove 
+                        if (_this.monitorView) _this.monitorView.close();
                         $("#impact-dimensions-container").fadeOut();
                         $("#impact-dimensions-container").html("");
                     }
