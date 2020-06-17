@@ -840,8 +840,8 @@ define(['views/common/baseview',
                                         case 2:
                                             _this.render2Dvisualizations(_this.selectedDimensions, _this.flows, _this.selectedVizName);
                                             break;
-                                        }
                                     }
+                                }
                             } catch (renderError) {
                                 console.log("Error during rendering of visualization: " + renderError)
                                 _this.loader.deactivate();
@@ -911,6 +911,10 @@ define(['views/common/baseview',
                 $(".selectpicker").selectpicker('refresh');
                 _this.resetInProgres = false;
             },
+
+            close: function () {
+                MonitorView.__super__.close.call(this);
+            }
 
         });
         return MonitorView;

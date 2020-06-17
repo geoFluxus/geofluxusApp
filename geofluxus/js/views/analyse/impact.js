@@ -528,6 +528,11 @@ define(['views/common/baseview',
                 $(".selectpicker").selectpicker('refresh');
             },
 
+            close: function () {
+                if (_this.monitorView) _this.monitorView.close();
+                ImpactView.__super__.close.call(this);
+            }
+
         });
         return ImpactView;
     });
