@@ -69,7 +69,8 @@ define(['views/common/baseview',
                     'arealevel':     'arealevels',
                     'year':          'years',
                     'month':         'months',
-                    'filter':        'filters'
+                    'filter':        'filters',
+                    'dataset':       'datasets'
                 }
 
                 // Model collections
@@ -370,7 +371,6 @@ define(['views/common/baseview',
                     $(_this[node].processGroupSelect).on('changed.bs.select', multiCheck);
                     $(_this[node].processGroupSelect).on('changed.bs.select', filterTreatmentMethods);
                     $(_this[node].processSelect).on('changed.bs.select', multiCheck);
-                $(this.flows.datasetSelect).on('changed.bs.select', multiCheck);
 
                     // Hide/show Activity Group or Treatment method group containers
                     $("#" + node + "-role-radio-production").on('click', function () {
@@ -1345,8 +1345,8 @@ define(['views/common/baseview',
                 }
 
                 // Datasets filter:
-                if (this.datasets.length == 1) {
-                    filterParams.flows['datasets'] = this.datasets.models[0].get("id");
+                if (this.collections['datasets'].length == 1) {
+                    filterParams.flows['datasets'] = this.collections['datasets'].models[0].get("id");
                 } else {
 
                     if ($(this.flows.datasetSelect).val() == '-1') {
