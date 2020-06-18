@@ -469,7 +469,7 @@ define(['views/common/baseview',
                         dimensions: dimensions,
                         flows: flows,
                         flowsView: this,
-                        label:
+                        indicator: this.indicator,
                     };
 
                 if (_this.selectedVizName === 'choroplethmap') {
@@ -565,6 +565,8 @@ define(['views/common/baseview',
                             _this.flows.forEach(function (flow, index) {
                                 this[index] = flow.attributes;
                             }, _this.flows);
+
+                            _this.selectedDimensions.label = _this.labels[_this.indicator];
 
                             // Render visualization
                             _this.renderVisualizations(_this.selectedDimensions, _this.flows, _this.selectedVizName);
