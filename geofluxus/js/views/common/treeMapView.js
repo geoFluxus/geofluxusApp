@@ -112,18 +112,18 @@ define(['views/common/d3plusVizView',
                         // ewc2
                         if (gran1 == "flowchain__waste06__waste04__waste02") {
                             this.groupBy = ["ewc2Code"];
-                            this.tooltipConfig.title = "Waste per EWC Chapter";
+                            this.tooltipConfig.title = this.label + " per EWC Chapter";
                             // ewc4
                         } else if (gran1 == "flowchain__waste06__waste04") {
                             this.groupBy = ["ewc2Code", "ewc4Code"];
-                            this.tooltipConfig.title = "Waste per EWC Sub-Chapter";
+                            this.tooltipConfig.title = this.label + " per EWC Sub-Chapter";
                             this.tooltipConfig.tbody.push(["EWC Sub-Chapter", function (d) {
                                 return d.ewc4Code + " " + d.ewc4Name;
                             }]);
                             // ewc6
                         } else if (gran1 == "flowchain__waste06") {
                             this.groupBy = ["ewc2Code", "ewc4Code", "ewc6Code"];
-                            this.tooltipConfig.title = "Waste per Entry";
+                            this.tooltipConfig.title = this.label + " per Entry";
                             this.tooltipConfig.tbody.push(
                                 ["EWC Sub-Chapter", function (d) {
                                     return d.ewc4Code + " " + d.ewc4Name;

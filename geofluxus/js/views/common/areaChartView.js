@@ -55,7 +55,7 @@ define(['views/common/d3plusVizView',
                     // Granularity = year
                     if (gran1 == "flowchain__month__year") {
                         this.x = ["year"];
-                        this.tooltipConfig.title = "Waste totals per year";
+                        this.tooltipConfig.title = this.label + " totals per year";
                         this.tooltipConfig.tbody.push(["Year", function (d) {
                             return d.year
                         }]);
@@ -63,7 +63,7 @@ define(['views/common/d3plusVizView',
                         // Granularity = month:
                     } else if (gran1 == "flowchain__month") {
                         this.x = ["yearMonthCode"];
-                        this.tooltipConfig.title = "Waste totals per month";
+                        this.tooltipConfig.title = this.label + " totals per month";
                         this.tooltipConfig.tbody.push(["Month", function (d) {
                             return d.month
                         }]);
@@ -134,14 +134,14 @@ define(['views/common/d3plusVizView',
                             // ewc4
                         } else if (gran2 == "flowchain__waste06__waste04") {
                             this.groupBy = ["ewc4Code"];
-                            this.tooltipConfig.title = "Waste per EWC Sub-Chapter";
+                            this.tooltipConfig.title = this.label + " per EWC Sub-Chapter";
                             this.tooltipConfig.tbody.push(["EWC Sub-Chapter", function (d) {
                                 return d.ewc4Code + " " + d.ewc4Name;
                             }]);
                             // ewc6
                         } else if (gran2 == "flowchain__waste06") {
                             this.groupBy = ["ewc6Code"];
-                            this.tooltipConfig.title = "Waste per EWC Entry";
+                            this.tooltipConfig.title = this.label + " per EWC Entry";
                             this.tooltipConfig.tbody.push(
                                 ["EWC Sub-Chapter", function (d) {
                                     return d.ewc4Code + " " + d.ewc4Name;

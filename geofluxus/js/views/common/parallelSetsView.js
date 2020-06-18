@@ -47,7 +47,7 @@ define(['views/common/d3plusVizView',
 
                     this.tooltipConfig = {
                         tbody: [
-                            ["Waste", function (d) {
+                            [this.label, function (d) {
                                 return d3plus.formatAbbreviate(d["value"], utils.returnD3plusFormatLocale()) + " t"
                             }]
                         ]
