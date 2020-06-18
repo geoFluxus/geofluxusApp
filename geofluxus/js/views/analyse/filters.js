@@ -1115,7 +1115,7 @@ define(['views/common/baseview',
                         }
                         $(_this.flows[filter + "Select"]).selectpicker("val", valuesToSet);
                     }
-                    let booleanFilters = ["clean", "mixed", "direct", "composite"];
+                    let booleanFilters = ["clean", "mixed", "direct_use", "composite"];
                     booleanFilters.forEach(boolean => {
                         if (_.has(flows, boolean)) {
                             loadBooleanFilters(boolean);
@@ -1753,7 +1753,7 @@ define(['views/common/baseview',
                             options.push(is_direct);
                         }
                     })
-                    filterParams.flows['direct'] = options;
+                    filterParams.flows['direct_use'] = options;
                 }
 
                 // isComposite
