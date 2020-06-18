@@ -469,6 +469,7 @@ define(['views/common/baseview',
                         dimensions: dimensions,
                         flows: flows,
                         flowsView: this,
+                        label:
                     };
 
                 if (_this.selectedVizName === 'choroplethmap') {

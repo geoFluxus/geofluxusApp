@@ -44,7 +44,8 @@ define(['views/common/baseview',
                     {'clean':       'clean'},
                     {'mixed':       'mixed'},
                     {'direct':      'direct_use'},
-                    {'isComposite': 'composite'}
+                    {'isComposite': 'composite'},
+                    {'dataset':     'datasets'}
                 ]
 
                 this.boolean = {
@@ -1345,13 +1346,14 @@ define(['views/common/baseview',
                 }
 
                 // Datasets filter:
+                console.log(this.collections['datasets']);
                 if (this.collections['datasets'].length == 1) {
                     filterParams.flows['datasets'] = this.collections['datasets'].models[0].get("id");
                 } else {
 
                     if ($(this.flows.datasetSelect).val() == '-1') {
                         filterParams.flows['datasets'] = [];
-                        this.datasets.forEach(dataset => {
+                        this.collections['datasets'].forEach(dataset => {
                             filterParams.flows['datasets'].push(dataset.get("id"));
                         });
                     } else {
