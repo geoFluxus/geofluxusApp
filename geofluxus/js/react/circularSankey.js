@@ -42,7 +42,7 @@ define(['views/common/baseview',
                         top: 40,
                         left: 300,
                         right: 300,
-                        bottom: 40
+                        bottom: 60
                     }
 
                     // ReactDOM.render( < CircularSankey data = {
@@ -63,7 +63,9 @@ define(['views/common/baseview',
                         data: this.options.circularData,
                         width: this.options.width / 2,
                         height: this.options.height,
-                        absolutePosition: absolutePosition
+                        absolutePosition: absolutePosition,
+                        fontColor: this.options.fontColor,
+                        unitString: this.options.label + " t",
                     }), document.getElementById(this.options.el));
                     return this;
 

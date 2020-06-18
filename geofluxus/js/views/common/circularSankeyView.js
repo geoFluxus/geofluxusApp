@@ -42,6 +42,9 @@ define(['views/common/baseview',
                     this.options = options;
                     this.filtersView = this.options.flowsView.filtersView;
 
+                    this.label = options.dimensions.label;
+                    this.isDarkMode = true;
+                    this.fontColor = "white";
 
                     // let tooltipConfig = {
                     //     tbody: [
@@ -76,6 +79,8 @@ define(['views/common/baseview',
                         width: $("#" + this.options.el).width(),
                         height: $("#" + this.options.el).height(),
                         circularData: this.flows,
+                        fontColor: this.fontColor,
+                        label: this.label,
                     });
 
                     //this.setSvgDimensions();
@@ -86,6 +91,31 @@ define(['views/common/baseview',
                 setSvgDimensions: function () {
                     $("#circularsankey-wrapper svg").width($("#" + this.options.el).width());
                     $("#circularsankey-wrapper svg").height($("#" + this.options.el).height());
+                },
+
+                toggleFullscreen: function (event) {
+                    $(this.el).toggleClass('fullscreen');
+                    // Only scroll when going to normal view:
+                    if (!$(this.el).hasClass('fullscreen')) {
+                        utils.scrollToVizRow();
+                    }
+                    window.dispatchEvent(new Event('resize'));
+                    event.stopImmediatePropagation();
+                },
+       
+                toggleDarkMode: function () {
+                    $(this.options.el).html("");
+                    this.isDarkMode = !this.isDarkMode;
+
+                    $(".viz-wrapper-div").toggleClass("lightMode");
+                    
+                    if (this.isDarkMode) {
+                            this.fontColor = "white";
+                    } else {
+                        this.fontColor = "black";
+                    }
+
+                    this.render();
                 },
 
                 transformToLinksAndNodes: function (flows, dimensions, filtersView) {
@@ -309,16 +339,6 @@ define(['views/common/baseview',
                         links: links,
                         nodes: nodes,
                     }
-                },
-
-                toggleFullscreen: function (event) {
-                    $(this.el).toggleClass('fullscreen');
-                    event.stopImmediatePropagation();
-                    // Only scroll when going to normal view:
-                    if (!$(this.el).hasClass('fullscreen')) {
-                        utils.scrollToVizRow();
-                    }
-                    window.dispatchEvent(new Event('resize'));
                 },
 
                 exportCSV: function (event) {
