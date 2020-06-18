@@ -315,6 +315,8 @@ define(['views/common/baseview',
                 // Disable origin/destination toggle for Space Treatment method for Flowmap and Parallel Sets
                 $(".viz-selector-button").click(function (event) {
 
+                    $('#apply-filters').popover('dispose');
+
                     let clickedToggleHasFlowsFormat = $($(event.currentTarget)[0]).hasClass("hasFlowsFormat")
 
                     // At least two dimensions, and one is Space:
@@ -915,7 +917,6 @@ define(['views/common/baseview',
             },
 
             close: function () {
-                console.log("Closing the monitorView with mode: ", this.mode);
                 this.undelegateEvents(); // remove click events
                 this.unbind(); // Unbind all local event bindings
                 $(this.el).html("");

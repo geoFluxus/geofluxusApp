@@ -119,8 +119,6 @@ define(['views/common/baseview',
 
                 // Impact source toggles:
                 $(".impactSourceToggle").change(function (event) {
-                    // //////////////////////////////////////////////////////
-                    // Disable dimension toggles for max number of dimensions:
                     let checkedToggles = [];
                     let uncheckedToggles = [];
                     _this.impactSourceStrings = [];
@@ -139,87 +137,10 @@ define(['views/common/baseview',
                     if (_this.impactSourceStrings.length > 0) {
                         $("#impact-dimensions-container").fadeIn();
                     } else {
-                        // Remove 
-                        if (_this.monitorView) _this.monitorView.close();
                         $("#impact-dimensions-container").fadeOut();
-                        $("#impact-dimensions-container").html("");
                     }
                 });
 
-
-                // // Dimension toggles: ---------------------------
-
-                // // Show alert if user clicks on disabled dimension toggle:
-                // $("#dimensionsCard .toggle.btn").on("click", function (event) {
-
-                //     if ($($(event.currentTarget)[0]).is('[disabled=disabled]')) {
-                //         $("#alertMaxDimensionsRow").fadeIn("fast");
-                //         $("#alertMaxDimensions").alert();
-
-                //         setTimeout(function () {
-                //             $("#alertMaxDimensionsRow").fadeOut("fast");
-                //         }, 6000);
-                //     }
-                // });
-
-                // $(".dimensionToggle").change(function (event) {
-                //     // //////////////////////////////////////////////////////
-                //     // Disable dimension toggles for max number of dimensions:
-                //     let checkedToggles = [];
-                //     let uncheckedToggles = [];
-                //     _this.selectedDimensionStrings = [];
-
-                //     // Divide the toggles in arrays of checked and unchecked toggles:
-                //     $('.dimensionToggle').each(function (index, value) {
-                //         let checked = $(this.parentElement.firstChild).prop('checked')
-                //         if (!checked) {
-                //             uncheckedToggles.push($(this));
-                //         } else {
-                //             checkedToggles.push($(this));
-
-                //             _this.selectedDimensionStrings.push($(this).attr("data-dim"));
-                //         }
-                //     });
-
-                //     // If the maximum number of dimensions has been selected:
-                //     if (_this.maxNumberOfDimensions == checkedToggles.length) {
-                //         // Disable the remaining unchecked toggles:
-                //         $(uncheckedToggles).each(function (index, value) {
-                //             this.bootstrapToggle('disable');
-                //         });
-                //     } else {
-                //         // (Re)enable the toggles:
-                //         $(uncheckedToggles).each(function (index, value) {
-                //             this.bootstrapToggle('enable');
-                //         });
-                //         $("#alertMaxDimensionsRow").fadeOut("fast");
-                //     }
-                // });
-
-                // $(_this.dimensions.spaceLevelGranSelect).change(function () {
-                //     let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
-                //     let selectedAreaLevel = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.id.toString() == selectedAreaLevelId).attributes.level;
-                // });
-
-                // // Show granularity on toggle change:
-                // $("#dim-toggle-time").change(function () {
-                //     $("#gran-toggle-time-col").fadeToggle();
-                // });
-                // $("#dim-toggle-space").change(function () {
-                //     $("#gran-toggle-space-col").fadeToggle();
-                //     $("#origDest-toggle-space-col").fadeToggle();
-                // });
-                // $("#dim-toggle-economic-activity").change(function () {
-                //     $("#gran-econ-activity-col").fadeToggle();
-                //     $("#origDest-toggle-econAct-col").fadeToggle();
-                // });
-                // $("#dim-toggle-treatment-method").change(function () {
-                //     $("#gran-treatment-method-col").fadeToggle();
-                //     $("#origDest-toggle-treatment-col").fadeToggle();
-                // });
-                // $("#dim-toggle-material").change(function () {
-                //     $("#gran-material-col").fadeToggle();
-                // });
             },
 
             // Returns parameters for filtered post-fetching based on assigned filter
