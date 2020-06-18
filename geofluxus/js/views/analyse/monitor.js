@@ -849,6 +849,7 @@ define(['views/common/baseview',
 
                             try {
 
+                                // Pass label onto all visualizationViews:
                                 _this.selectedDimensions.label = _this.labels[_this.indicator];
 
                                 // Some visualizations require different processing:
