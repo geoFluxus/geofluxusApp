@@ -19,7 +19,7 @@ class ImpactViewSet(MonitorViewSet):
         queryset = queryset.annotate(distance=F('routing__distance'))
 
         # compute emissions
-        amount = ExpressionWrapper((F('amount') * F('distance') * F(indicator) / 10**6),
+        amount = ExpressionWrapper((F('amount') * F('distance') * F(indicator) / 10**9),
                                    output_field=FloatField())
         queryset = queryset.annotate(amount=amount)
 
