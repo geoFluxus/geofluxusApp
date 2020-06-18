@@ -39,9 +39,15 @@ define(['views/common/baseview',
 
                 this.mode = options.mode;
                 this.titleNumber = options.titleNumber.toString();
-                this.indicator = options.indicator;
-                this.impactSources = options.impactSourceStrings;
+                this.indicator = "waste";
+                this.impactSourceStrings = [];
 
+                this.labels = {
+                    waste: "Waste",
+                    co2: "CO<sub>2</sub>",
+                    nox: "NO<sub>x</sub>",
+                    pm: "particulate matter",
+                }
 
                 this.dimensions = {};
                 this.maxNumberOfDimensions = options.maxNumberOfDimensions;
@@ -466,17 +472,10 @@ define(['views/common/baseview',
                         }
                     });
 
-                    let checkedToggles = [];
-                    let uncheckedToggles = [];
-                    _this.impactSourceStrings = [];
-
                     // Divide the toggles in arrays of checked and unchecked toggles:
                     $('.impactSourceToggle').each(function (index, value) {
                         let checked = $(this.parentElement.firstChild).prop('checked')
-                        if (!checked) {
-                            uncheckedToggles.push($(this));
-                        } else {
-                            checkedToggles.push($(this));
+                        if (checked) {
                             _this.impactSourceStrings.push($(this).attr("data-source"));
                         }
                         filterParams.impactSources = _this.impactSourceStrings;
@@ -849,6 +848,9 @@ define(['views/common/baseview',
                             }, _this.flows);
 
                             try {
+
+                                _this.selectedDimensions.label = _this.labels[_this.indicator];
+
                                 // Some visualizations require different processing:
                                 if (["parallelsets", "circularsankey"].includes(_this.selectedVizName)) {
                                     switch (_this.selectedVizName) {

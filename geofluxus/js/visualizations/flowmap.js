@@ -49,6 +49,8 @@ define([
 
             this.polygons = [];
 
+            this.label = options.label;
+
             this.showAreas = options.showAreas || false;
             this.showAreaBorders = options.showAreaBorders || false;
             this.showAreaFilled = options.showAreaFilled || false;
@@ -586,7 +588,7 @@ define([
                     <thead class="d3plus-tooltip-thead"></thead>
                     <tbody class="d3plus-tooltip-tbody style='display: block; padding-bottom: 0.5rem;'">
                         <tr>
-                            <td>Waste</td>
+                            <td>` + this.label + `</td>
                             <td>` + input.amountText + `</td>
                         </tr>
                         <tr>
@@ -609,7 +611,7 @@ define([
                     <thead class="d3plus-tooltip-thead"></thead>
                     <tbody class="d3plus-tooltip-tbody">
                         <tr>
-                            <td>Waste</td>
+                            <td>` + this.label + `</td>
                             <td>` + flow.amountText + `</td>
                         </tr>
                         <tr>
@@ -652,7 +654,7 @@ define([
                             <td>` + toString + `</td>
                         </tr>
                         <tr>
-                            <td>Waste</td>
+                            <td>` + this.label + `</td>
                             <td>` + nodesData.amountText + `</td>
                         </tr>
                         <tr>

@@ -134,21 +134,21 @@ define(['views/common/d3plusVizView',
                         // ewc2
                         if (gran1 == "flowchain__waste06__waste04__waste02") {
                             this.x = this.groupBy = ["ewc2Code"];
-                            this.tooltipConfig.title = "Waste per EWC Chapter";
+                            this.tooltipConfig.title = this.label + " per EWC Chapter";
                             this.tooltipConfig.tbody.push(["EWC Chapter", function (d) {
                                 return d.ewc2Code + " " + d.ewc2Name;
                             }]);
                             // ewc4
                         } else if (gran1 == "flowchain__waste06__waste04") {
                             this.x = this.groupBy = ["ewc4Code"];
-                            this.tooltipConfig.title = "Waste per EWC Sub-Chapter";
+                            this.tooltipConfig.title = this.label + " per EWC Sub-Chapter";
                             this.tooltipConfig.tbody.push(["EWC Sub-Chapter", function (d) {
                                 return d.ewc4Code + " " + d.ewc4Name;
                             }]);
                             // ewc6
                         } else if (gran1 == "flowchain__waste06") {
                             this.x = this.groupBy = ["ewc6Code"];
-                            this.tooltipConfig.title = "Waste per EWC Entry";
+                            this.tooltipConfig.title = this.label + " per EWC Entry";
                             this.tooltipConfig.tbody.push(["EWC Entry", function (d) {
                                 return d.ewc6Code + " " + d.ewc6Name;
                             }]);
@@ -164,7 +164,7 @@ define(['views/common/d3plusVizView',
                         // Granularity = year
                         if (gran1 == "flowchain__month__year") {
                             this.x = ["year"];
-                            this.tooltipConfig.title = "Waste totals per year";
+                            this.tooltipConfig.title = this.label + " totals per year";
                             this.tooltipConfig.tbody.push(["Year", function (d) {
                                 return d.year
                             }]);
@@ -172,7 +172,7 @@ define(['views/common/d3plusVizView',
                             // Granularity = month:
                         } else if (gran1 == "flowchain__month") {
                             this.x = ["yearMonthCode"];
-                            this.tooltipConfig.title = "Waste totals per month";
+                            this.tooltipConfig.title = this.label + " totals per month";
                             this.tooltipConfig.tbody.push(["Month", function (d) {
                                 return d.month
                             }]);
@@ -200,7 +200,7 @@ define(['views/common/d3plusVizView',
                         // Granularity = year
                         if (gran1 == "flowchain__month__year") {
                             this.x = ["year"];
-                            this.tooltipConfig.title = "Waste totals per year";
+                            this.tooltipConfig.title = this.label + " totals per year";
                             this.tooltipConfig.tbody.push(["Year", function (d) {
                                 return d.year
                             }]);
@@ -208,7 +208,7 @@ define(['views/common/d3plusVizView',
                             // Granularity = month:
                         } else if (gran1 == "flowchain__month") {
                             this.x = ["yearMonthCode"];
-                            this.tooltipConfig.title = "Waste totals per month";
+                            this.tooltipConfig.title = this.label + " totals per month";
                             this.tooltipConfig.tbody.push(["Month", function (d) {
                                 return d.month
                             }]);
@@ -237,7 +237,7 @@ define(['views/common/d3plusVizView',
                         // Granularity = year
                         if (gran1 == "flowchain__month__year") {
                             this.x = ["year"];
-                            this.tooltipConfig.title = "Waste totals per year";
+                            this.tooltipConfig.title = this.label + " totals per year";
                             this.tooltipConfig.tbody.push(["Year", function (d) {
                                 return d.year
                             }]);
@@ -246,7 +246,7 @@ define(['views/common/d3plusVizView',
                         } else if (gran1 == "flowchain__month") {
                             this.x = ["yearMonthCode"];
 
-                            this.tooltipConfig.title = "Waste totals per month";
+                            this.tooltipConfig.title = this.label + " totals per month";
                             this.tooltipConfig.tbody.push(["Month", function (d) {
                                 return d.month
                             }]);
@@ -274,7 +274,7 @@ define(['views/common/d3plusVizView',
                         // Granularity = year
                         if (gran1 == "flowchain__month__year") {
                             this.x = ["year"];
-                            this.tooltipConfig.title = "Waste totals per year";
+                            this.tooltipConfig.title = this.label + " totals per year";
                             this.tooltipConfig.tbody.push(["Year", function (d) {
                                 return d.year
                             }]);
@@ -282,7 +282,7 @@ define(['views/common/d3plusVizView',
                             // Granularity = month:
                         } else if (gran1 == "flowchain__month") {
                             this.x = ["yearMonthCode"];
-                            this.tooltipConfig.title = "Waste totals per month";
+                            this.tooltipConfig.title = this.label + " totals per month";
                             this.tooltipConfig.tbody.push(["Month", function (d) {
                                 return d.month
                             }]);
@@ -294,18 +294,18 @@ define(['views/common/d3plusVizView',
                         // ewc2
                         if (gran2 == "flowchain__waste06__waste04__waste02") {
                             this.groupBy = ["ewc2Code"];
-                            this.tooltipConfig.title = "Waste per EWC Chapter";
+                            this.tooltipConfig.title = this.label + " per EWC Chapter";
                             // ewc4
                         } else if (gran2 == "flowchain__waste06__waste04") {
                             this.groupBy = ["ewc4Code"];
-                            this.tooltipConfig.title = "Waste per EWC Sub-Chapter";
+                            this.tooltipConfig.title = this.label + " per EWC Sub-Chapter";
                             this.tooltipConfig.tbody.push(["EWC Sub-Chapter", function (d) {
                                 return d.ewc4Code + " " + d.ewc4Name;
                             }]);
                             // ewc6
                         } else if (gran2 == "flowchain__waste06") {
                             this.groupBy = ["ewc6Code"];
-                            this.tooltipConfig.title = "Waste per EWC Entry";
+                            this.tooltipConfig.title = this.label + " per EWC Entry";
                             this.tooltipConfig.tbody.push(
                                 ["EWC Sub-Chapter", function (d) {
                                     return d.ewc4Code + " " + d.ewc4Name;
@@ -322,14 +322,14 @@ define(['views/common/d3plusVizView',
                         // SPACE
                         if (!this.options.dimensions.isActorLevel) {
                             this.x = ["areaName"];
-                            this.tooltipConfig.title = "Waste totals per area";
+                            this.tooltipConfig.title = this.label + " totals per area";
                             this.tooltipConfig.tbody.push(["Area", function (d) {
                                 return d.areaName
                             }]);
                         } else {
                             //isActorLevel = true;
                             this.x = ["actorName"];
-                            this.tooltipConfig.title = "Waste totals per company";
+                            this.tooltipConfig.title = this.label + " totals per company";
                             this.tooltipConfig.tbody.push(["Company", function (d) {
                                 return d.actorName
                             }]);
@@ -358,14 +358,14 @@ define(['views/common/d3plusVizView',
                         // SPACE
                         if (!this.options.dimensions.isActorLevel) {
                             this.x = ["areaName"];
-                            this.tooltipConfig.title = "Waste totals per area per treatment method";
+                            this.tooltipConfig.title = this.label + " totals per area per treatment method";
                             this.tooltipConfig.tbody.push(["Area", function (d) {
                                 return d.areaName
                             }]);
                         } else {
                             //isActorLevel = true;
                             this.x = ["actorName"];
-                            this.tooltipConfig.title = "Waste totals per company per treatment method";
+                            this.tooltipConfig.title = this.label + " totals per company per treatment method";
                             this.tooltipConfig.tbody.push(["Company", function (d) {
                                 return d.actorName
                             }]);
@@ -391,14 +391,14 @@ define(['views/common/d3plusVizView',
                         // SPACE
                         if (!this.options.dimensions.isActorLevel) {
                             this.x = ["areaName"];
-                            this.tooltipConfig.title = "Waste totals per area per material";
+                            this.tooltipConfig.title = this.label + " totals per area per material";
                             this.tooltipConfig.tbody.push(["Area", function (d) {
                                 return d.areaName
                             }]);
                         } else {
                             //isActorLevel = true;
                             this.x = ["actorName"];
-                            this.tooltipConfig.title = "Waste totals per company per material";
+                            this.tooltipConfig.title = this.label + " totals per company per material";
                             this.tooltipConfig.tbody.push(["Company", function (d) {
                                 return d.actorName
                             }]);
@@ -436,7 +436,7 @@ define(['views/common/d3plusVizView',
                         // Economic activity dimension already added 
 
 
-                        this.tooltipConfig.title = "Waste per Economic activity and Treatment method";
+                        this.tooltipConfig.title = this.label + " per Economic activity and Treatment method";
 
                         // Treatment method dimension
                         this.tooltipConfig.tbody.push(["Treatment method group", function (d) {
@@ -455,7 +455,7 @@ define(['views/common/d3plusVizView',
                         ///////////////////////////////
                         // Economic Activity & Material
                     } else if (dimStrings.includes("economicActivity") && dimStrings.includes("material")) {
-                        this.tooltipConfig.title = "Waste per Economic activity and Material";
+                        this.tooltipConfig.title = this.label + " per Economic activity and Material";
 
                         // Material
                         this.tooltipConfig.tbody.push(["EWC Chapter", function (d) {
