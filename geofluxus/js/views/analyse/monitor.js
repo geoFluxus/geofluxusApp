@@ -836,7 +836,7 @@ define(['views/common/baseview',
 
                     this.loader.activate();
                     let flows = new Collection([], {
-                        apiTag: 'monitorflows',
+                        apiTag: _this.mode + 'flows',
                     });
                     flows.postfetch({
                         data: data,

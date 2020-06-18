@@ -13,14 +13,20 @@ from django.db.models import (F, Sum, Q, Case, When, IntegerField)
 class MonitorViewSet(FilterFlowViewSet):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.levels = []  # fields: exact field to search
-        self.fields = []  # levels: dimension granularity
+        self.levels = []     # dimension granularity
+        self.fields = []     # exact field to search
         self.space_inv = {}  # space dimension inventory
-        self.eco_inv = {}  # eco dimension inventory
+        self.eco_inv = {}    # eco dimension inventory
         self.treat_inv = {}  # treat dimension inventory
-        self.mat_inv = {}  # material dimension inventory
+        self.mat_inv = {}    # material dimension inventory
 
-    def serialize(self, queryset, dimensions, format, anonymous):
+    def annotate_amounts(self, queryset, indicator, impactSources):
+        queryset = queryset.annotate(amount=F('flowchain__amount'))
+        return queryset
+
+    def serialize(self, queryset,
+                  dimensions, format, anonymous,
+                  indicator, impactSources):
         '''
         Serialize data into groups
         according to the requested dimensions
@@ -28,7 +34,7 @@ class MonitorViewSet(FilterFlowViewSet):
         data = []
 
         # annotate info from chains to flows
-        queryset = queryset.annotate(amount=F('flowchain__amount'))
+        queryset = self.annotate_amounts(queryset, indicator, impactSources)
 
         # process dimensions for flow groups
         queryset = self.process_dimensions(queryset, dimensions, format)
@@ -57,7 +63,7 @@ class MonitorViewSet(FilterFlowViewSet):
             # remove flows with same origin / destination
             if format == 'flowmap':
                 if 'origin_area' in group and \
-                        'destination_area' in group:
+                   'destination_area' in group:
                     origin = group['origin_area']
                     destination = group['destination_area']
                     if origin == destination: continue

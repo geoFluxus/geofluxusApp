@@ -6,7 +6,6 @@ from geofluxus.apps.asmfa.models import (Flow,
                                          Area,
                                          Routing,)
 from geofluxus.apps.asmfa.serializers import (FlowSerializer)
-from geofluxus.apps.login.models import (GroupDataset)
 import json
 import numpy as np
 from rest_framework.response import Response
@@ -51,7 +50,7 @@ class FilterFlowViewSet(PostGetViewMixin,
 
         # retrieve non-spatial filters
         filters = params.pop('flows', {})
-        filters.pop('adminLevel', None)
+        filters.pop('adminLevel', None) # no need for adminlevel
 
         # filter on datasets
         datasets = filters.pop('datasets', None)
@@ -72,10 +71,21 @@ class FilterFlowViewSet(PostGetViewMixin,
         # filter flows with spatial filters
         queryset = self.filter_areas(queryset, area_filters)
 
-        # serialize data according to dimension
-        dimensions = params.pop('dimensions', {})
-        format = params.pop('format', None)
-        data = self.serialize(queryset, dimensions, format, anonymous)
+        # serialization parameters
+        serials = {}
+        serialParams = [
+            'anonymous',      # anonymize data for demo
+            'dimensions',     # dimensions to process (time, space etc.)
+            'format',         # special format (flow map, parallel sets etc.)
+            'indicator',      # indicator to compute (waste amount, emission etc.)
+            'impactSources',  # sources of impact (transportation, processing etc.)
+        ]
+        for param in serialParams:
+            serials[param] = params.pop(param, None)
+
+        # serialize data
+        data = self.serialize(queryset, **serials)
+
         return Response(data)
 
     # filter chain classifications
@@ -112,7 +122,7 @@ class FilterFlowViewSet(PostGetViewMixin,
         # these should be handled separately!
         lookups = ['clean',
                    'mixed',
-                   'direct',
+                   'direct_use',
                    'composite']
 
         # form queries
