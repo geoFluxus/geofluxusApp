@@ -1,4 +1,3 @@
-// Flows
 define(['views/common/baseview',
         'underscore',
         'collections/collection',
@@ -36,9 +35,16 @@ define(['views/common/baseview',
                 MonitorView.__super__.initialize.apply(this, [options]);
 
                 this.filtersView = options.filtersView;
+                this.el = options.el;
+
+                this.mode = options.mode;
+                this.titleNumber = options.titleNumber.toString();
+                this.indicator = options.indicator;
+                this.impactSources = options.impactSourceStrings;
+
 
                 this.dimensions = {};
-                this.maxNumberOfDimensions = 2;
+                this.maxNumberOfDimensions = options.maxNumberOfDimensions;
                 this.selectedDimensionStrings = [];
                 this.selectedVizName = "";
 
@@ -67,7 +73,8 @@ define(['views/common/baseview',
 
                 this.el.innerHTML = template({
                     levels: this.areaLevels,
-                    maxNumberOfDimensions: this.maxNumberOfDimensions
+                    maxNumberOfDimensions: this.maxNumberOfDimensions,
+                    titleNumber: this.titleNumber,
                 });
 
                 // Activate help icons
@@ -108,7 +115,8 @@ define(['views/common/baseview',
                     event.preventDefault();
                 });
 
-                // Dimension toggles: ---------------------------
+                // /////////////////////////////////////////////////
+                // Dimension toggles:
 
                 // Show alert if user clicks on disabled dimension toggle:
                 $("#dimensionsCard .toggle.btn").on("click", function (event) {
@@ -124,6 +132,7 @@ define(['views/common/baseview',
                         }, 6000);
                     }
                 });
+
 
                 $(".dimensionToggle").change(function (event) {
                     if (_this.resetInProgres) {
@@ -161,7 +170,6 @@ define(['views/common/baseview',
                         });
                         $("#alertMaxDimensionsRow").fadeOut("fast");
                     }
-
 
                     // ///////////////////////////////////////////////////////////////////
                     // Show available visualizations based on selected dimension(s):
@@ -277,7 +285,6 @@ define(['views/common/baseview',
 
                             //console.log("Three  dimensions");
 
-
                             break;
                         default:
                             // code block
@@ -288,48 +295,44 @@ define(['views/common/baseview',
                     // At least two dimensions, and one is treatmentMethod:
                     if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("treatmentMethod") && selectedVizHasFlowsFormat) {
                         $("#origDest-toggle-treatment").parent().fadeOut();
-                        event.preventDefault();
                     } else {
                         $("#origDest-toggle-treatment").parent().fadeIn();
-                        event.preventDefault();
                     }
 
                     // If the selected visualization type is NOT hasFlowsFormat, and dimension == space, show origin/destination toggle:
                     if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("space") && !selectedVizHasFlowsFormat) {
                         $("#origDest-toggle-space").parent().fadeIn();
-                        event.preventDefault();
                     }
                     // If the selected visualization type is hasFlowsFormat, and dimension == space, hide origin/destination toggle:
                     if (_this.selectedDimensionStrings.includes("space") && selectedVizHasFlowsFormat) {
                         $("#origDest-toggle-space").parent().fadeOut();
                     } else {
                         $("#origDest-toggle-space").parent().fadeIn();
-                        event.preventDefault();
                     }
+                    event.preventDefault();
                 });
 
                 // Disable origin/destination toggle for Space Treatment method for Flowmap and Parallel Sets
                 $(".viz-selector-button").click(function (event) {
+
+                    $('#apply-filters').popover('dispose');
 
                     let clickedToggleHasFlowsFormat = $($(event.currentTarget)[0]).hasClass("hasFlowsFormat")
 
                     // At least two dimensions, and one is Space:
                     if ((_this.checkedDimToggles.length > 1) && _this.selectedDimensionStrings.includes("space") && clickedToggleHasFlowsFormat) {
                         $("#origDest-toggle-space").parent().fadeOut();
-                        event.preventDefault();
                     } else {
                         $("#origDest-toggle-space").parent().fadeIn();
-                        event.preventDefault();
                     }
 
                     // At least two dimensions, and one is treatmentMethod:
                     if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("treatmentMethod") && clickedToggleHasFlowsFormat) {
                         $("#origDest-toggle-treatment").parent().fadeOut();
-                        event.preventDefault();
                     } else {
                         $("#origDest-toggle-treatment").parent().fadeIn();
-                        event.preventDefault();
                     }
+                    event.preventDefault();
                 });
 
                 $(_this.dimensions.spaceLevelGranSelect).change(function () {
@@ -399,7 +402,6 @@ define(['views/common/baseview',
                     if (["flowmap", "parallelsets", "circularsankey"].includes(selectedVizualisationString)) {
                         let formatString = selectedVizualisationString;
                         formatString = (formatString == "circularsankey") ? "parallelsets" : formatString;
-
                         filterParams.format = formatString;
                     }
                 }
@@ -452,6 +454,36 @@ define(['views/common/baseview',
                     filterParams.dimensions.material = materialFilter;
                 }
 
+
+                // Gather impact params for impact mode:
+                if (this.mode == "impact") {
+
+                    // Indicator toggle
+                    $('.impact-indicator-radio-label').each(function (index, value) {
+                        if ($(this).hasClass("active")) {
+                            _this.indicator = $(this).attr("data-indicator")
+                            filterParams.indicator = _this.indicator;
+                        }
+                    });
+
+                    let checkedToggles = [];
+                    let uncheckedToggles = [];
+                    _this.impactSourceStrings = [];
+
+                    // Divide the toggles in arrays of checked and unchecked toggles:
+                    $('.impactSourceToggle').each(function (index, value) {
+                        let checked = $(this.parentElement.firstChild).prop('checked')
+                        if (!checked) {
+                            uncheckedToggles.push($(this));
+                        } else {
+                            checkedToggles.push($(this));
+                            _this.impactSourceStrings.push($(this).attr("data-source"));
+                        }
+                        filterParams.impactSources = _this.impactSourceStrings;
+                    });
+
+                }
+
                 console.log(filterParams);
                 return filterParams;
             },
@@ -461,7 +493,6 @@ define(['views/common/baseview',
                 let filtersView = this.filtersView;
                 let dimensionString = dimensions[0][0];
                 let granularity = dimensions[0][1];
-
 
                 switch (dimensionString) {
                     case "time":
@@ -483,8 +514,6 @@ define(['views/common/baseview',
                     case "material":
                         flows = enrichFlows.enrichEWC(flows, filtersView, granularity);
                         break;
-                    default:
-                        // Nothing
                 }
 
                 switch (_this.selectedVizName) {
@@ -542,8 +571,6 @@ define(['views/common/baseview',
                     case "coordinatepointmap": // Only in case of Actor
                         _this.renderCoordinatePointMap1D(dimensions, flows);
                         break;
-                    default:
-                        // Nothing
                 }
 
                 // console.log(flows);
@@ -624,18 +651,15 @@ define(['views/common/baseview',
                     if (gran1.adminlevel == actorAreaLevelId) {
                         dimensions.isActorLevel = true;
                     }
-
                     flows = enrichFlows.enrichEWC(flows, filtersView, gran2);
 
                     // Economic Activity & Treatment Method
                 } else if (dimStrings.includes("economicActivity") && dimStrings.includes("treatmentMethod")) {
-
                     flows = enrichFlows.enrichEconActivity(flows, filtersView, gran1);
                     flows = enrichFlows.enrichTreatmentMethod(flows, filtersView, gran2);
 
                     // Economic Activity & Material
                 } else if (dimStrings.includes("economicActivity") && dimStrings.includes("material")) {
-
                     flows = enrichFlows.enrichEconActivity(flows, filtersView, gran1);
                     flows = enrichFlows.enrichEWC(flows, filtersView, gran2);
                 }
@@ -656,142 +680,122 @@ define(['views/common/baseview',
                     case "flowmap":
                         this.renderFlowMap(dimensions, flows);
                         break;
-                    default:
-                        // Nothing
                 }
 
                 // console.log(flows);
             },
 
             renderPieChart: function (dimensions, flows) {
-                if (this.pieChartView != null) this.pieChartView.close();
-
                 $(".piechart-wrapper").fadeIn();
-
                 this.pieChartView = new PieChartView({
                     el: ".piechart-wrapper",
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
+                    indicator: this.indicator,
                 });
             },
 
             renderTreeMap: function (dimensions, flows) {
-                if (this.treeMapView != null) this.treeMapView.close();
-
                 $(".treemap-wrapper").fadeIn();
-
                 this.treeMapView = new TreeMapView({
                     el: ".treemap-wrapper",
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
+                    indicator: this.indicator,
                 });
             },
 
             renderBarChart: function (dimensions, flows, isStacked) {
-                if (this.barChartView != null) this.barChartView.close();
-
                 $(".barchart-wrapper").fadeIn();
-
                 this.barChartView = new BarChartView({
                     el: ".barchart-wrapper",
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
                     isStacked: isStacked,
+                    indicator: this.indicator,
                 });
             },
 
             renderLinePlot: function (dimensions, flows, hasMultipleLines) {
-                if (this.linePlotView != null) this.linePlotView.close();
-
                 $(".lineplot-wrapper").fadeIn();
-
                 this.linePlotView = new LinePlotView({
                     el: ".lineplot-wrapper",
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
                     hasMultipleLines: hasMultipleLines,
+                    indicator: this.indicator,
                 });
             },
 
             renderChoropleth1D: function (dimensions, flows, geoJson) {
-                if (this.choroplethView != null) this.choroplethView.close();
-
                 $(".choropleth-wrapper").fadeIn();
-
                 this.choroplethView = new ChoroplethView({
                     el: ".choropleth-wrapper",
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
                     geoJson: geoJson,
+                    indicator: this.indicator,
                 });
             },
 
             renderCoordinatePointMap1D: function (dimensions, flows) {
-                if (this.coordinatePointMapView != null) this.coordinatePointMapView.close();
-
                 $(".coordinatepointmap-wrapper").fadeIn();
-
                 this.coordinatePointMapView = new CoordinatePointMapView({
                     el: ".coordinatepointmap-wrapper",
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
+                    indicator: this.indicator,
                 });
             },
 
             renderAreaChart: function (dimensions, flows) {
-                if (this.areaChartView != null) this.areaChartView.close();
-
                 $(".areachart-wrapper").fadeIn();
-
                 this.areaChartView = new AreaChartView({
                     el: ".areachart-wrapper",
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
+                    indicator: this.indicator,
                 });
             },
 
             renderFlowMap: function (dimensions, flows) {
-                if (this.flowMapView != null) this.flowMapView.close();
-
                 $(".flowmap-wrapper").fadeIn();
-
                 this.flowMapView = new FlowMapView({
                     el: ".flowmap-wrapper",
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
+                    indicator: this.indicator,
                 });
             },
 
             renderParallelSets: function (dimensions, flows) {
-                if (this.parallelSetsView != null) this.parallelSetsView.close();
-
                 $(".parallelsets-container").show();
                 $(".parallelsets-wrapper").fadeIn();
-
                 this.parallelSetsView = new ParallelSetsView({
                     el: ".parallelsets-wrapper",
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
+                    indicator: this.indicator,
                 });
             },
 
             renderCircularSankey: function (dimensions, flows) {
                 $(".circularsankey-wrapper").show();
-
                 this.circularSankeyView = new CircularSankeyView({
                     el: "circularsankey-wrapper",
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: this,
+                    indicator: this.indicator,
                 });
             },
 
@@ -799,16 +803,10 @@ define(['views/common/baseview',
                 $(".viz-wrapper-div").removeClass("lightMode");
                 $(".viz-wrapper-div").hide();
                 $(".parallelsets-container").hide();
-                if (this.barChartView != null) this.barChartView.close();
-                if (this.pieChartView != null) this.pieChartView.close();
-                if (this.linePlotView != null) this.linePlotView.close();
-                if (this.treeMapView != null) this.treeMapView.close();
-                if (this.choroplethView != null) this.choroplethView.close();
-                if (this.coordinatePointMapView != null) this.coordinatePointMapView.close();
-                if (this.areaChartView != null) this.areaChartView.close();
-                if (this.flowMapView != null) this.flowMapView.close();
-                if (this.parallelSetsView != null) this.parallelSetsView.close();
-                if (this.circularSankeyView != null) this.circularSankeyView.close();
+                let vizViews = ["barChartView", "pieChartView", "linePlotView", "treeMapView", "choroplethView", "coordinatePointMapView", "areaChartView", "flowMapView", "parallelSetsView", "circularSankeyView"];
+                vizViews.forEach(vizView => {
+                    if (this[vizView] != null) this[vizView].close();
+                });
             },
 
             // Fetch flows and calls options.success(flows) on success
@@ -869,8 +867,8 @@ define(['views/common/baseview',
                                         case 2:
                                             _this.render2Dvisualizations(_this.selectedDimensions, _this.flows, _this.selectedVizName);
                                             break;
-                                        }
                                     }
+                                }
                             } catch (renderError) {
                                 console.log("Error during rendering of visualization: " + renderError)
                                 _this.loader.deactivate();
@@ -940,6 +938,12 @@ define(['views/common/baseview',
                 $(".selectpicker").selectpicker('refresh');
                 _this.resetInProgres = false;
             },
+
+            close: function () {
+                this.undelegateEvents(); // remove click events
+                this.unbind(); // Unbind all local event bindings
+                $(this.el).html("");
+            }
 
         });
         return MonitorView;

@@ -171,7 +171,12 @@ define(['views/common/baseview',
                 _this.monitorView = new MonitorView({
                     el: el,
                     template: 'monitor-template',
-                    filtersView: _this
+                    mode: "monitor",
+                    filtersView: _this,
+                    indicator: "Waste",
+                    titleNumber: 3,
+                    maxNumberOfDimensions: 2,
+                    levels: this.areaLevels,
                 });
             },
 
@@ -180,7 +185,8 @@ define(['views/common/baseview',
                 _this.impactView = new ImpactView({
                     el: el,
                     template: 'impact-template',
-                    filtersView: _this
+                    filtersView: _this,
+                    levels: this.areaLevels,
                 });
             },
 
@@ -192,7 +198,12 @@ define(['views/common/baseview',
 
                     if (clickedMode != _this.analyseMode) {
                         _this.analyseMode = clickedMode;
+
                         $(".analyse-content-container").hide();
+                        
+                        if (_this.monitorView) _this.monitorView.close();
+                        if (_this.impactView) _this.impactView.close();
+                        
                         switch (_this.analyseMode) {
                             case "monitor":
                                 _this.renderMonitorView(_this);

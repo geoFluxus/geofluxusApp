@@ -1,5 +1,6 @@
 <script type="text/template" id="impact-template">
 
+    <!-- Indicators -->
     <div class="block">
         <h4 class="pb-2 pl-3">Step 3: Choose an indicator</h4>
 
@@ -34,6 +35,7 @@
         </div>
     </div>
 
+    <!-- Impact sources -->
     <div class="block impactSourceContainer" style="display: none;">
         <h4 class="pb-2 pl-3">Step 4: Define the impact source</h4>
 
@@ -74,6 +76,50 @@
             </div>
     
         </div>
+    </div>
+
+    <!-- Dimensions -->
+    <div id="impact-dimensions-container" style="display: none;">
+
+        <!-- <h4 class="pb-2 pl-3">Step 3: Visualize</h4>
+
+        <div class="card bg-dark" id="dimensionsCard">
+            
+            <div class="row" id="message-container-row">
+                <div class="col mt-3">
+                    <% if (maxNumberOfDimensions == 1) { %>
+                        <span style="color: white">Select at least one dimension.</span>
+                    <% } else { %>
+                        <span style="color: white">Select between 1 and <%= maxNumberOfDimensions %> dimensions.</span>
+                    <% } %>
+                    </div>
+            </div>
+            <div class="row" id="alertMaxDimensionsRow" style="display: none;">
+                <div class="col mt-3 text-center">
+                    <div class="alert alert-warning fade show" id="alertMaxDimensions" role="alert">
+                        You can select up to <strong><%= maxNumberOfDimensions %> dimensions</strong> at the same time.
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-md-3">
+                    <div class="checkbox">
+                        <input name="dim-toggle-time" class="bootstrapToggle dimensionToggle" id="dim-toggle-time"
+                            type="checkbox" data-width="100%" data-height="21" data-toggle="toggle" data-dim="time"
+                            data-on="Time" data-off="Time">
+                    </div>
+                </div>
+                <div class="col-md-3" id="gran-toggle-time-col" style="display: none">
+                    <div class="checkbox">
+                        <input name="gran-toggle-time" id="gran-toggle-time" class="bootstrapToggle" type="checkbox" data-width="100%"
+                            data-height="21" data-toggle="toggle" data-on="Month" data-off="Year">
+                    </div>
+                </div>
+            </div>
+
+        </div> -->
+
     </div>
 
 </script>
