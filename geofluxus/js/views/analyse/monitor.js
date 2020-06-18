@@ -133,7 +133,7 @@ define(['views/common/baseview',
                     }
                 });
 
-                
+
                 $(".dimensionToggle").change(function (event) {
                     if (_this.resetInProgres) {
                         return
@@ -457,8 +457,31 @@ define(['views/common/baseview',
 
                 // Gather impact params for impact mode:
                 if (this.mode == "impact") {
-                    filterParams.indicator = this.indicator;
-                    filterParams.impactSources = this.impactSources;
+
+                    // Indicator toggle
+                    $('.impact-indicator-radio-label').each(function (index, value) {
+                        if ($(this).hasClass("active")) {
+                            _this.indicator = $(this).attr("data-indicator")
+                            filterParams.indicator = _this.indicator;
+                        }
+                    });
+
+                    let checkedToggles = [];
+                    let uncheckedToggles = [];
+                    _this.impactSourceStrings = [];
+
+                    // Divide the toggles in arrays of checked and unchecked toggles:
+                    $('.impactSourceToggle').each(function (index, value) {
+                        let checked = $(this.parentElement.firstChild).prop('checked')
+                        if (!checked) {
+                            uncheckedToggles.push($(this));
+                        } else {
+                            checkedToggles.push($(this));
+                            _this.impactSourceStrings.push($(this).attr("data-source"));
+                        }
+                        filterParams.impactSources = _this.impactSourceStrings;
+                    });
+
                 }
 
                 console.log(filterParams);
