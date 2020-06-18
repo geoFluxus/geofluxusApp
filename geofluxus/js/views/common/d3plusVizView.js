@@ -33,13 +33,15 @@ define(['views/common/baseview',
                     _.bindAll(this, 'exportCSV');
                     _.bindAll(this, 'toggleLegend');
 
+                    this.label = options.dimensions.label;
                     this.tooltipConfig = {
                         tbody: [
-                            ["Waste", function (d) {
+                            [this.label, function (d) {
                                 return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale()) + " t"
                             }]
                         ]
                     };
+
                 },
 
                 events: {

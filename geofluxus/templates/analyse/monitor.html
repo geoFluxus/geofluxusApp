@@ -5,15 +5,19 @@
 
 <div class="block">
 
-    <h4 class="pb-2 pl-3">Step 3: Visualize</h4>
+    <h4 class="pb-2 pl-3">Step <%= titleNumber %>: Visualize</h4>
 
     <div class="card bg-dark" id="dimensionsCard">
         
 
         <div class="row" id="message-container-row">
             <div class="col mt-3">
-                <span style="color: white">Select between 1 and <%= maxNumberOfDimensions %> dimensions.</span>
-            </div>
+                <% if (maxNumberOfDimensions == 1) { %>
+                    <span style="color: white">Select at least one dimension.</span>
+                <% } else { %>
+                    <span style="color: white">Select between 1 and <%= maxNumberOfDimensions %> dimensions.</span>
+                <% } %>
+                </div>
         </div>
         <div class="row" id="alertMaxDimensionsRow" style="display: none;">
             <div class="col mt-3 text-center">
@@ -143,88 +147,83 @@
             </div>
         </div>
       
+        <div class="viz-container" style="display: none;">
 
-        <div id="collapseVizualisationBlock">
+            <div class="row">
+                <div class="col">
+                    <span style="color: white">Select one of the available visualizations:</span>
+                </div>
+            </div>
 
-            <div class="viz-container" style="display: none;">
+            <div class="row">
+                <div class="col d-flex align-items-center mr-auto">
+                    <div class="btn-group btn-group-toggle flex-wrap justify-content-center" id="visualization-type"
+                        data-toggle="buttons" style="margin: auto">
+                        <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
+                            data-viz="piechart" style="display: none;">
+                            <input type="radio" id="viz-piechart"><span class="span-viz" id="span-viz-piechart">Pie
+                                chart</span>
+                        </label>
+                        <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
+                            data-viz="treemap" style="display: none;">
+                            <input type="radio" id="viz-treemap"><span class="span-viz" id="span-viz-treemap">Treemap</span>
+                        </label>
+                        <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
+                            data-viz="barchart" style="display: none;">
+                            <input type="radio" id="viz-barchart"><span class="span-viz" id="span-viz-barchart">Bar
+                                chart</span>
+                        </label>
+                        <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
+                            data-viz="lineplot" style="display: none;">
+                            <input type="radio" id="viz-lineplot"><span class="span-viz" id="span-viz-lineplot">Line
+                                plot</span>
+                        </label>
+                        <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
+                            data-viz="choroplethmap" style="display: none;">
+                            <input type="radio" id="viz-choroplethmap"><span class="span-viz"
+                                id="span-viz-choroplethmap">Choropleth map</span>
+                        </label>
+                        <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
+                            data-viz="coordinatepointmap" style="display: none;">
+                            <input type="radio" id="viz-coordinatepointmap"><span class="span-viz"
+                                id="span-viz-coordinatepointmap">Dot map</span>
+                        </label>
 
-                <div class="row">
-                    <div class="col">
-                        <span style="color: white">Select one of the available visualizations:</span>
+                        <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
+                            data-viz="lineplotmultiple" style="display: none;">
+                            <input type="radio" id="viz-lineplotmultiple"><span class="span-viz"
+                                id="span-viz-lineplotmultiple">Multiple line plot</span>
+                        </label>
+                        <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
+                            data-viz="areachart" style="display: none;">
+                            <input type="radio" id="viz-areachart"><span class="span-viz" id="span-viz-areachart">Stacked
+                                area chart</span>
+                        </label>
+                        <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
+                            data-viz="stackedbarchart" style="display: none;">
+                            <input type="radio" id="viz-stackedbarchart"><span class="span-viz"
+                                id="span-viz-stackedbarchart">Stacked bar chart</span>
+                        </label>
+
+                        <label
+                            class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button hasFlowsFormat"
+                            data-viz="parallelsets" style="display: none;">
+                            <input type="radio" id="viz-parallelsets"><span class="span-viz"
+                                id="span-viz-parallelsets">Parallel sets</span>
+                        </label>
+                        <label
+                            class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button hasFlowsFormat"
+                            data-viz="circularsankey" style="display: none;">
+                            <input type="radio" id="viz-circularsankey"><span class="span-viz" id="span-viz-circularsankey">Circular Sankey</span>
+                        </label>
+                        <label
+                            class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button hasFlowsFormat"
+                            data-viz="flowmap" style="display: none;">
+                            <input type="radio" id="viz-flowmap"><span class="span-viz" id="span-viz-flowmap">Flow map</span>
+                        </label>
+
                     </div>
                 </div>
-
-                <div class="row">
-                    <div class="col d-flex align-items-center mr-auto">
-                        <div class="btn-group btn-group-toggle flex-wrap justify-content-center" id="visualization-type"
-                            data-toggle="buttons" style="margin: auto">
-                            <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
-                                data-viz="piechart" style="display: none;">
-                                <input type="radio" id="viz-piechart"><span class="span-viz" id="span-viz-piechart">Pie
-                                    chart</span>
-                            </label>
-                            <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
-                                data-viz="treemap" style="display: none;">
-                                <input type="radio" id="viz-treemap"><span class="span-viz" id="span-viz-treemap">Treemap</span>
-                            </label>
-                            <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
-                                data-viz="barchart" style="display: none;">
-                                <input type="radio" id="viz-barchart"><span class="span-viz" id="span-viz-barchart">Bar
-                                    chart</span>
-                            </label>
-                            <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
-                                data-viz="lineplot" style="display: none;">
-                                <input type="radio" id="viz-lineplot"><span class="span-viz" id="span-viz-lineplot">Line
-                                    plot</span>
-                            </label>
-                            <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
-                                data-viz="choroplethmap" style="display: none;">
-                                <input type="radio" id="viz-choroplethmap"><span class="span-viz"
-                                    id="span-viz-choroplethmap">Choropleth map</span>
-                            </label>
-                            <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
-                                data-viz="coordinatepointmap" style="display: none;">
-                                <input type="radio" id="viz-coordinatepointmap"><span class="span-viz"
-                                    id="span-viz-coordinatepointmap">Dot map</span>
-                            </label>
-
-                            <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
-                                data-viz="lineplotmultiple" style="display: none;">
-                                <input type="radio" id="viz-lineplotmultiple"><span class="span-viz"
-                                    id="span-viz-lineplotmultiple">Multiple line plot</span>
-                            </label>
-                            <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
-                                data-viz="areachart" style="display: none;">
-                                <input type="radio" id="viz-areachart"><span class="span-viz" id="span-viz-areachart">Stacked
-                                    area chart</span>
-                            </label>
-                            <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
-                                data-viz="stackedbarchart" style="display: none;">
-                                <input type="radio" id="viz-stackedbarchart"><span class="span-viz"
-                                    id="span-viz-stackedbarchart">Stacked bar chart</span>
-                            </label>
-
-                            <label
-                                class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button hasFlowsFormat"
-                                data-viz="parallelsets" style="display: none;">
-                                <input type="radio" id="viz-parallelsets"><span class="span-viz"
-                                    id="span-viz-parallelsets">Parallel sets</span>
-                            </label>
-                            <label
-                                class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button hasFlowsFormat"
-                                data-viz="circularsankey" style="display: none;">
-                                <input type="radio" id="viz-circularsankey"><span class="span-viz" id="span-viz-circularsankey">Circular Sankey</span>
-                            </label>
-                            <label
-                                class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button hasFlowsFormat"
-                                data-viz="flowmap" style="display: none;">
-                                <input type="radio" id="viz-flowmap"><span class="span-viz" id="span-viz-flowmap">Flow map</span>
-                            </label>
-
-                        </div>
-                    </div>
-                </div>
-
             </div>
 
         </div>

@@ -52,6 +52,7 @@ define(['underscore',
                     var _this = this;
                     this.options = options;
                     this.flows = this.options.flows;
+                    this.label = options.dimensions.label;
 
                     this.dimStrings = [];
                     this.options.dimensions.forEach(dim => this.dimStrings.push(dim[0]));
@@ -142,7 +143,8 @@ define(['underscore',
                     this.flowMap = new FlowMap(this.leafletMap, {
                         maxFlowWidth: this.maxFlowWidth,
                         toolTipContainer: this.el,
-                        areas: areas
+                        areas: areas,
+                        label: this.label,
                     });
                     this.flowMap.showFlows = true;
                     this.flowMap.showNodes = false;
@@ -519,7 +521,7 @@ define(['underscore',
                     return {
                         dimensionValue: dimensionValue.toString(),
                         dimensionId: dimensionId,
-                        toolTipText: fromToText + description + dimensionValue + '<br><b>Amount: </b>' + amountText,
+                        toolTipText: fromToText + description + dimensionValue + '<br><b>' + this.label + ': </b>' + amountText,
                         amountText: amountText,
                         dimensionText: dimensionText,
                     }

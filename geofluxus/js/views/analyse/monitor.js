@@ -1,4 +1,3 @@
-// Flows
 define(['views/common/baseview',
         'underscore',
         'collections/collection',
@@ -36,8 +35,22 @@ define(['views/common/baseview',
                 MonitorView.__super__.initialize.apply(this, [options]);
 
                 this.filtersView = options.filtersView;
+                this.el = options.el;
 
-                this.maxNumberOfDimensions = 2;
+                this.mode = options.mode;
+                this.titleNumber = options.titleNumber.toString();
+                this.indicator = "waste";
+                this.impactSourceStrings = [];
+
+                this.labels = {
+                    waste: "Waste",
+                    co2: "CO<sub>2</sub>",
+                    nox: "NO<sub>x</sub>",
+                    pm: "particulate matter",
+                }
+
+                this.dimensions = {};
+                this.maxNumberOfDimensions = options.maxNumberOfDimensions;
                 this.selectedDimensionStrings = [];
                 this.selectedVizName = "";
 
@@ -102,7 +115,8 @@ define(['views/common/baseview',
 
                 this.el.innerHTML = template({
                     levels: this.areaLevels,
-                    maxNumberOfDimensions: this.maxNumberOfDimensions
+                    maxNumberOfDimensions: this.maxNumberOfDimensions,
+                    titleNumber: this.titleNumber,
                 });
 
                 // Activate help icons
@@ -113,7 +127,6 @@ define(['views/common/baseview',
 
                 // Dimension and granularity controls:
                 this.initializeControls();
-
                 this.addEventListeners();
             },
 
@@ -143,7 +156,8 @@ define(['views/common/baseview',
                     event.preventDefault();
                 });
 
-                // Dimension toggles: ---------------------------
+                // /////////////////////////////////////////////////
+                // Dimension toggles:
 
                 // Show alert if user clicks on disabled dimension toggle:
                 $("#dimensionsCard .toggle.btn").on("click", function (event) {
@@ -159,6 +173,7 @@ define(['views/common/baseview',
                         }, 6000);
                     }
                 });
+
 
                 $(".dimensionToggle").change(function (event) {
                     if (_this.resetInProgres) {
@@ -197,7 +212,6 @@ define(['views/common/baseview',
                         $("#alertMaxDimensionsRow").fadeOut("fast");
                     }
 
-
                     // ///////////////////////////////////////////////////////////////////
                     // Show available visualizations based on selected dimension(s):
                     let dims = _this.selectedDimensionStrings;
@@ -235,48 +249,44 @@ define(['views/common/baseview',
                     // At least two dimensions, and one is treatmentMethod:
                     if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("treatmentMethod") && selectedVizHasFlowsFormat) {
                         $("#origDest-toggle-treatment").parent().fadeOut();
-                        event.preventDefault();
                     } else {
                         $("#origDest-toggle-treatment").parent().fadeIn();
-                        event.preventDefault();
                     }
 
                     // If the selected visualization type is NOT hasFlowsFormat, and dimension == space, show origin/destination toggle:
                     if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("space") && !selectedVizHasFlowsFormat) {
                         $("#origDest-toggle-space").parent().fadeIn();
-                        event.preventDefault();
                     }
                     // If the selected visualization type is hasFlowsFormat, and dimension == space, hide origin/destination toggle:
                     if (_this.selectedDimensionStrings.includes("space") && selectedVizHasFlowsFormat) {
                         $("#origDest-toggle-space").parent().fadeOut();
                     } else {
                         $("#origDest-toggle-space").parent().fadeIn();
-                        event.preventDefault();
                     }
+                    event.preventDefault();
                 });
 
                 // Disable origin/destination toggle for Space Treatment method for Flowmap and Parallel Sets
                 $(".viz-selector-button").click(function (event) {
+
+                    $('#apply-filters').popover('dispose');
 
                     let clickedToggleHasFlowsFormat = $($(event.currentTarget)[0]).hasClass("hasFlowsFormat")
 
                     // At least two dimensions, and one is Space:
                     if ((_this.checkedDimToggles.length > 1) && _this.selectedDimensionStrings.includes("space") && clickedToggleHasFlowsFormat) {
                         $("#origDest-toggle-space").parent().fadeOut();
-                        event.preventDefault();
                     } else {
                         $("#origDest-toggle-space").parent().fadeIn();
-                        event.preventDefault();
                     }
 
                     // At least two dimensions, and one is treatmentMethod:
                     if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("treatmentMethod") && clickedToggleHasFlowsFormat) {
                         $("#origDest-toggle-treatment").parent().fadeOut();
-                        event.preventDefault();
                     } else {
                         $("#origDest-toggle-treatment").parent().fadeIn();
-                        event.preventDefault();
                     }
+                    event.preventDefault();
                 });
 
                 $(_this.spaceLevelGranSelect).change(function () {
@@ -346,7 +356,6 @@ define(['views/common/baseview',
                     if (["flowmap", "parallelsets", "circularsankey"].includes(selectedVizualisationString)) {
                         let formatString = selectedVizualisationString;
                         formatString = (formatString == "circularsankey") ? "parallelsets" : formatString;
-
                         filterParams.format = formatString;
                     }
                 }
@@ -395,6 +404,29 @@ define(['views/common/baseview',
                     } else if (gran === 'ewc2') {
                         filterParams.dimensions.material += '__waste04__waste02'
                     }
+                }
+
+
+                // Gather impact params for impact mode:
+                if (this.mode == "impact") {
+
+                    // Indicator toggle
+                    $('.impact-indicator-radio-label').each(function (index, value) {
+                        if ($(this).hasClass("active")) {
+                            _this.indicator = $(this).attr("data-indicator")
+                            filterParams.indicator = _this.indicator;
+                        }
+                    });
+
+                    // Divide the toggles in arrays of checked and unchecked toggles:
+                    $('.impactSourceToggle').each(function (index, value) {
+                        let checked = $(this.parentElement.firstChild).prop('checked')
+                        if (checked) {
+                            _this.impactSourceStrings.push($(this).attr("data-source"));
+                        }
+                        filterParams.impactSources = _this.impactSourceStrings;
+                    });
+
                 }
 
                 console.log(filterParams);
@@ -521,7 +553,7 @@ define(['views/common/baseview',
 
                     this.loader.activate();
                     let flows = new Collection([], {
-                        apiTag: 'monitorflows',
+                        apiTag: _this.mode + 'flows',
                     });
                     flows.postfetch({
                         data: data,
@@ -598,6 +630,12 @@ define(['views/common/baseview',
                 $(".selectpicker").selectpicker('refresh');
                 _this.resetInProgres = false;
             },
+
+            close: function () {
+                this.undelegateEvents(); // remove click events
+                this.unbind(); // Unbind all local event bindings
+                $(this.el).html("");
+            }
 
         });
         return MonitorView;

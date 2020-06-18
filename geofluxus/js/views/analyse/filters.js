@@ -180,20 +180,26 @@ define(['views/common/baseview',
             },
 
             renderMonitorView: function (_this) {
-                var el = _this.el.querySelector('#analyse-content');
+                var el = document.querySelector('#monitor-content');
                 _this.monitorView = new MonitorView({
                     el: el,
                     template: 'monitor-template',
-                    filtersView: _this
+                    mode: "monitor",
+                    filtersView: _this,
+                    indicator: "Waste",
+                    titleNumber: 3,
+                    maxNumberOfDimensions: 2,
+                    levels: this.areaLevels,
                 });
             },
 
             renderImpactView: function (_this) {
-                var el = _this.el.querySelector('#analyse-content');
+                var el = document.querySelector('#impact-content');
                 _this.impactView = new ImpactView({
                     el: el,
                     template: 'impact-template',
-                    filtersView: _this
+                    filtersView: _this,
+                    levels: this.areaLevels,
                 });
             },
 
@@ -206,12 +212,19 @@ define(['views/common/baseview',
                     if (clickedMode != _this.analyseMode) {
                         _this.analyseMode = clickedMode;
 
+                        $(".analyse-content-container").hide();
+                        
+                        if (_this.monitorView) _this.monitorView.close();
+                        if (_this.impactView) _this.impactView.close();
+                        
                         switch (_this.analyseMode) {
                             case "monitor":
                                 _this.renderMonitorView(_this);
+                                $("#monitor-content").fadeIn();
                                 break;
                             case "impact":
                                 _this.renderImpactView(_this);
+                                $("#impact-content").fadeIn();
                                 break;
                         }
                     }
@@ -357,6 +370,7 @@ define(['views/common/baseview',
                     $(_this[node].processGroupSelect).on('changed.bs.select', multiCheck);
                     $(_this[node].processGroupSelect).on('changed.bs.select', filterTreatmentMethods);
                     $(_this[node].processSelect).on('changed.bs.select', multiCheck);
+                $(this.flows.datasetSelect).on('changed.bs.select', multiCheck);
 
                     // Hide/show Activity Group or Treatment method group containers
                     $("#" + node + "-role-radio-production").on('click', function () {
@@ -633,6 +647,8 @@ define(['views/common/baseview',
 
                     console.log("Loading saved filter configuration: ", configToLoad);
 
+                    // Dataset filter:
+                    $(this.flows.datasetSelect).val(flows.datasets);
 
                     /**
                      * Load saved areas for given section
@@ -1253,6 +1269,9 @@ define(['views/common/baseview',
                 allActivitiesOptionsHTML = '<option selected value="-1">All (' + activities.length + ')</option><option data-divider="true"></option>';
                 activities.models.forEach(activity => allActivitiesOptionsHTML += "<option>" + activity.attributes.name + "</option>");
 
+                // Datasets:
+                $(this.flows.datasetSelect).val("-1");
+
                 // ///////////////////////////////////////////////
                 // Origin-controls:
                 let nodes = ['origin', 'destination']
@@ -1323,6 +1342,21 @@ define(['views/common/baseview',
                     origin: {},
                     destination: {},
                     flows: {},
+                }
+
+                // Datasets filter:
+                if (this.datasets.length == 1) {
+                    filterParams.flows['datasets'] = this.datasets.models[0].get("id");
+                } else {
+
+                    if ($(this.flows.datasetSelect).val() == '-1') {
+                        filterParams.flows['datasets'] = [];
+                        this.datasets.forEach(dataset => {
+                            filterParams.flows['datasets'].push(dataset.get("id"));
+                        });
+                    } else {
+                        filterParams.flows['datasets'] = $(this.flows.datasetSelect).val();
+                    }
                 }
 
                 // ///////////////////////////////
