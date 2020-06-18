@@ -338,7 +338,6 @@ define(['views/common/baseview',
                     } else {
                         let tag = _this.tags[child];
                             children = _this.collections[tag].models.filter(function (child) {
-                                console.log(parent)
                                 return ids.includes(child.attributes[parent].toString())
                             });
                         filterUtils.fillSelectPicker(tag, picker, children);
@@ -383,14 +382,18 @@ define(['views/common/baseview',
                     var fields = Object.keys(filter);
 
                     fields.forEach(function(field, idx) {
-                        var selector = $(_this.flows[parent + 'Select']);
-                            options = selector[0].options;
+                        var selector = $(_this.flows[field + 'Select']), // field selector
+                            options = selector[0].options;                // selector options
 
-                        // no selectors for non-fuzzy booleans
+                        // no selectors for non-fuzzy booleans (either true or false)
+                        // to find them, check if there are options, including 'both'
                         if (!(options.length > 0 && options[0].value == 'both')) {
                             // for hierarchical fields, check for child field
-                            var next = fields[idx + 1];
+                            var next = fields[idx + 1]; // next field in order
+
+                            // if child does exist
                             if (next !== undefined) {
+                                // render child menu, filtered by current field
                                 selector.on('changed.bs.select', {parent: field, child: next}, filterbyParent);
                             } else {
                                 selector.on('changed.bs.select', multiCheck);
@@ -622,7 +625,7 @@ define(['views/common/baseview',
                     $(".filterEdit").fadeOut();
 
                     let selectedFilterConfig = $(this.filterConfigSelect).val();
-                    let configToLoad = this.savedFilters.find(filter => filter.attributes.id == selectedFilterConfig).get("filter");
+                    let configToLoad = this.collections['filters'].find(filter => filter.attributes.id == selectedFilterConfig).get("filter");
 
                     let origin = configToLoad.origin;
                     let destination = configToLoad.destination;
@@ -811,167 +814,178 @@ define(['views/common/baseview',
                     // ///////////////////////////////
                     // Flows filters:
 
-                    if (_.has(flows, 'flowchain__month__year__in')) {
-                        $(this.flows.yearSelect).selectpicker("val", flows.flowchain__month__year__in);
-                    }
-                    if (_.has(flows, 'flowchain__month__in')) {
-                        let monthObjects = _this.months.models.filter(function (month) {
-                            return flows.flowchain__month__in.includes(month.attributes.id.toString());
-                        });
+                    this.filters.forEach(function(filter) {
+                        fields = Object.keys(filter).reverse()
+                        console.log(fields);
+                        fields.forEach(function(field) {
+                            var val = flows[filter[field]];
+                            if (val !== undefined) {
+                               $(_this.flows[field + 'Select']).selectpicker("val", val);
+                            }
+                        })
+                    })
 
-                        let yearsToDisplay = [];
-                        monthObjects.forEach(month => {
-                            yearsToDisplay.push(month.attributes.year.toString());
-                        });
-                        yearsToDisplay = _.uniq(yearsToDisplay, 'id');
-                        $(_this.flows.yearSelect).selectpicker('val', yearsToDisplay);
-
-                        let filteredMonths = [];
-                        filteredMonths = _this.months.models.filter(function (month) {
-                            return yearsToDisplay.includes(month.attributes.year.toString())
-                        });
-                        filterUtils.fillSelectPicker("month", $(_this.flows.monthSelect), filteredMonths);
-                        $(_this.flows.monthSelect).selectpicker('val', flows.flowchain__month__in);
-                        $("#monthscol").fadeIn("fast");
-                    }
-
-                    // EWC
-                    if (_.has(flows, 'flowchain__waste06__hazardous')) {
-                        if (flows.flowchain__waste06__hazardous) {
-                            $(this.flows.hazardousSelect).val("yes");
-                        } else {
-                            $(this.flows.hazardousSelect).val("no");
-                        }
-                        $(this.flows.hazardousSelect).trigger('changed.bs.select');
-
-                        if (_.has(flows, 'flowchain__waste06__in')) {
-                            $(_this.flows.waste06Select).selectpicker('val', flows.flowchain__waste06__in);
-                        }
-                        $("#wastes04col").hide();
-                    }
-
-
-                    if (_.has(flows, 'flowchain__waste06__waste04__waste02__in')) {
-                        $(_this.origin.waste02Select).selectpicker('val', flows.flowchain__waste06__waste04__waste02__in);
-                    }
-
-                    if (_.has(flows, 'flowchain__waste06__waste04__in')) {
-                        let waste04Objects = _this.wastes04.models.filter(function (ewc4) {
-                            return flows.flowchain__waste06__waste04__in.includes(ewc4.attributes.id.toString());
-                        });
-
-                        let wastes02 = [];
-                        waste04Objects.forEach(ewc4 => {
-                            wastes02.push(ewc4.attributes.waste02.toString());
-                        });
-                        wastes02 = _.uniq(wastes02, 'id');
-                        $(_this.flows.waste02Select).selectpicker('val', wastes02);
-
-                        let filteredEwc4 = [];
-                        filteredEwc4 = _this.wastes04.models.filter(function (ewc4) {
-                            return wastes02.includes(ewc4.attributes.waste02.toString())
-                        });
-                        filterUtils.fillSelectPicker("waste04", $(_this.flows.waste04Select), filteredEwc4);
-                        $(_this.flows.waste04Select).selectpicker('val', flows.flowchain__waste06__waste04__in);
-                        $("#wastes04col").fadeIn("fast");
-                    }
-
-                    if (_.has(flows, 'flowchain__waste06__in') && !_.has(flows, 'flowchain__waste06__hazardous')) {
-                        let waste6Objects = _this.wastes06.models.filter(function (ewc6) {
-                            return flows.flowchain__waste06__in.includes(ewc6.attributes.id.toString());
-                        });
-
-                        // EWC 4 to which EWC6 belong:
-                        let wastes04 = [];
-                        waste6Objects.forEach(ewc6 => {
-                            wastes04.push(ewc6.attributes.waste04.toString());
-                        });
-                        wastes04 = _.uniq(wastes04, 'id');
-                        let waste04Objects = _this.wastes04.models.filter(function (ewc4) {
-                            return wastes04.includes(ewc4.attributes.id.toString());
-                        });
-
-                        // EWC2 to which EWC 4 belong:
-                        let wastes02 = [];
-                        waste04Objects.forEach(ewc4 => {
-                            wastes02.push(ewc4.attributes.waste02.toString());
-                        });
-                        wastes02 = _.uniq(wastes02, 'id');
-                        $(_this.flows.waste02Select).selectpicker('val', wastes02);
-
-                        // Select EWC4 after EWC2 automatically fills EWC4:
-                        $(_this.flows.waste04Select).selectpicker('val', wastes04);
-                        $("#wastes04col").fadeIn("fast");
-
-                        // Fill EWC6 after EWC4:
-                        let filteredEwc6 = [];
-                        filteredEwc6 = _this.wastes06.models.filter(function (ewc6) {
-                            return wastes04.includes(ewc6.attributes.waste04.toString())
-                        });
-                        filterUtils.fillSelectPicker("waste06", $(_this.flows.waste06Select), filteredEwc6);
-                        $(_this.flows.waste06Select).selectpicker('val', flows.flowchain__waste06__in);
-                        $("#wastes06col").fadeIn("fast");
-                    }
-
-                    // Materials
-                    if (_.has(flows, 'flowchain__materials__in')) {
-                        $(this.flows.materialSelect).selectpicker("val", flows.flowchain__materials__in);
-                    }
-                    // Products
-                    if (_.has(flows, 'flowchain__products__in')) {
-                        $(this.flows.productSelect).selectpicker("val", flows.flowchain__products__in);
-                    }
-                    // Composites
-                    if (_.has(flows, 'flowchain__composites__in')) {
-                        $(this.flows.compositesSelect).selectpicker("val", flows.flowchain__composites__in);
-                    }
-
-                    // Composites
-                    if (_.has(flows, 'flowchain__composites__in')) {
-                        $(this.flows.compositesSelect).selectpicker("val", flows.flowchain__composites__in);
-                    }
-
-                    function loadBooleanFilters(filter) {
-                        let valuesToSet = [];
-                        if (flows[filter].includes(false)) {
-                            valuesToSet.push("no");
-                        }
-                        if (flows[filter].includes(true)) {
-                            valuesToSet.push("yes");
-                        }
-                        if (flows[filter].includes(null)) {
-                            valuesToSet.push("unknown");
-                        }
-
-                        if (filter == "composite") {
-                            filter = "isComposite";
-                        }
-                        $(_this.flows[filter + "Select"]).selectpicker("val", valuesToSet);
-                    }
-                    let booleanFilters = ["clean", "mixed", "direct", "composite"];
-                    booleanFilters.forEach(boolean => {
-                        if (_.has(flows, boolean)) {
-                            loadBooleanFilters(boolean);
-                        }
-                    });
-
-                    // Route
-                    if (_.has(flows, 'flowchain__route')) {
-                        if (flows.flowchain__route) {
-                            $(this.flows.routeSelect).selectpicker("val", "yes");
-                        } else {
-                            $(this.flows.routeSelect).selectpicker("val", "no");
-                        }
-                    }
-
-                    // Collector
-                    if (_.has(flows, 'flowchain__collector')) {
-                        if (flows.flowchain__collector) {
-                            $(this.flows.collectorSelect).selectpicker("val", "yes");
-                        } else {
-                            $(this.flows.collectorSelect).selectpicker("val", "no");
-                        }
-                    }
+//                    if (_.has(flows, 'flowchain__month__year__in')) {
+//                        $(this.flows.yearSelect).selectpicker("val", flows.flowchain__month__year__in);
+//                    }
+//                    if (_.has(flows, 'flowchain__month__in')) {
+//                        let monthObjects = _this.months.models.filter(function (month) {
+//                            return flows.flowchain__month__in.includes(month.attributes.id.toString());
+//                        });
+//
+//                        let yearsToDisplay = [];
+//                        monthObjects.forEach(month => {
+//                            yearsToDisplay.push(month.attributes.year.toString());
+//                        });
+//                        yearsToDisplay = _.uniq(yearsToDisplay, 'id');
+//                        $(_this.flows.yearSelect).selectpicker('val', yearsToDisplay);
+//
+//                        let filteredMonths = [];
+//                        filteredMonths = _this.months.models.filter(function (month) {
+//                            return yearsToDisplay.includes(month.attributes.year.toString())
+//                        });
+//                        filterUtils.fillSelectPicker("month", $(_this.flows.monthSelect), filteredMonths);
+//                        $(_this.flows.monthSelect).selectpicker('val', flows.flowchain__month__in);
+//                        $("#monthscol").fadeIn("fast");
+//                    }
+//
+//                    // EWC
+//                    if (_.has(flows, 'flowchain__waste06__hazardous')) {
+//                        if (flows.flowchain__waste06__hazardous) {
+//                            $(this.flows.hazardousSelect).val("yes");
+//                        } else {
+//                            $(this.flows.hazardousSelect).val("no");
+//                        }
+//                        $(this.flows.hazardousSelect).trigger('changed.bs.select');
+//
+//                        if (_.has(flows, 'flowchain__waste06__in')) {
+//                            $(_this.flows.waste06Select).selectpicker('val', flows.flowchain__waste06__in);
+//                        }
+//                        $("#wastes04col").hide();
+//                    }
+//
+//
+//                    if (_.has(flows, 'flowchain__waste06__waste04__waste02__in')) {
+//                        $(_this.origin.waste02Select).selectpicker('val', flows.flowchain__waste06__waste04__waste02__in);
+//                    }
+//
+//                    if (_.has(flows, 'flowchain__waste06__waste04__in')) {
+//                        let waste04Objects = _this.wastes04.models.filter(function (ewc4) {
+//                            return flows.flowchain__waste06__waste04__in.includes(ewc4.attributes.id.toString());
+//                        });
+//
+//                        let wastes02 = [];
+//                        waste04Objects.forEach(ewc4 => {
+//                            wastes02.push(ewc4.attributes.waste02.toString());
+//                        });
+//                        wastes02 = _.uniq(wastes02, 'id');
+//                        $(_this.flows.waste02Select).selectpicker('val', wastes02);
+//
+//                        let filteredEwc4 = [];
+//                        filteredEwc4 = _this.wastes04.models.filter(function (ewc4) {
+//                            return wastes02.includes(ewc4.attributes.waste02.toString())
+//                        });
+//                        filterUtils.fillSelectPicker("waste04", $(_this.flows.waste04Select), filteredEwc4);
+//                        $(_this.flows.waste04Select).selectpicker('val', flows.flowchain__waste06__waste04__in);
+//                        $("#wastes04col").fadeIn("fast");
+//                    }
+//
+//                    if (_.has(flows, 'flowchain__waste06__in') && !_.has(flows, 'flowchain__waste06__hazardous')) {
+//                        let waste6Objects = _this.wastes06.models.filter(function (ewc6) {
+//                            return flows.flowchain__waste06__in.includes(ewc6.attributes.id.toString());
+//                        });
+//
+//                        // EWC 4 to which EWC6 belong:
+//                        let wastes04 = [];
+//                        waste6Objects.forEach(ewc6 => {
+//                            wastes04.push(ewc6.attributes.waste04.toString());
+//                        });
+//                        wastes04 = _.uniq(wastes04, 'id');
+//                        let waste04Objects = _this.wastes04.models.filter(function (ewc4) {
+//                            return wastes04.includes(ewc4.attributes.id.toString());
+//                        });
+//
+//                        // EWC2 to which EWC 4 belong:
+//                        let wastes02 = [];
+//                        waste04Objects.forEach(ewc4 => {
+//                            wastes02.push(ewc4.attributes.waste02.toString());
+//                        });
+//                        wastes02 = _.uniq(wastes02, 'id');
+//                        $(_this.flows.waste02Select).selectpicker('val', wastes02);
+//
+//                        // Select EWC4 after EWC2 automatically fills EWC4:
+//                        $(_this.flows.waste04Select).selectpicker('val', wastes04);
+//                        $("#wastes04col").fadeIn("fast");
+//
+//                        // Fill EWC6 after EWC4:
+//                        let filteredEwc6 = [];
+//                        filteredEwc6 = _this.wastes06.models.filter(function (ewc6) {
+//                            return wastes04.includes(ewc6.attributes.waste04.toString())
+//                        });
+//                        filterUtils.fillSelectPicker("waste06", $(_this.flows.waste06Select), filteredEwc6);
+//                        $(_this.flows.waste06Select).selectpicker('val', flows.flowchain__waste06__in);
+//                        $("#wastes06col").fadeIn("fast");
+//                    }
+//
+//                    // Materials
+//                    if (_.has(flows, 'flowchain__materials__in')) {
+//                        $(this.flows.materialSelect).selectpicker("val", flows.flowchain__materials__in);
+//                    }
+//                    // Products
+//                    if (_.has(flows, 'flowchain__products__in')) {
+//                        $(this.flows.productSelect).selectpicker("val", flows.flowchain__products__in);
+//                    }
+//                    // Composites
+//                    if (_.has(flows, 'flowchain__composites__in')) {
+//                        $(this.flows.compositesSelect).selectpicker("val", flows.flowchain__composites__in);
+//                    }
+//
+//                    // Composites
+//                    if (_.has(flows, 'flowchain__composites__in')) {
+//                        $(this.flows.compositesSelect).selectpicker("val", flows.flowchain__composites__in);
+//                    }
+//
+//                    function loadBooleanFilters(filter) {
+//                        let valuesToSet = [];
+//                        if (flows[filter].includes(false)) {
+//                            valuesToSet.push("no");
+//                        }
+//                        if (flows[filter].includes(true)) {
+//                            valuesToSet.push("yes");
+//                        }
+//                        if (flows[filter].includes(null)) {
+//                            valuesToSet.push("unknown");
+//                        }
+//
+//                        if (filter == "composite") {
+//                            filter = "isComposite";
+//                        }
+//                        $(_this.flows[filter + "Select"]).selectpicker("val", valuesToSet);
+//                    }
+//                    let booleanFilters = ["clean", "mixed", "direct", "composite"];
+//                    booleanFilters.forEach(boolean => {
+//                        if (_.has(flows, boolean)) {
+//                            loadBooleanFilters(boolean);
+//                        }
+//                    });
+//
+//                    // Route
+//                    if (_.has(flows, 'flowchain__route')) {
+//                        if (flows.flowchain__route) {
+//                            $(this.flows.routeSelect).selectpicker("val", "yes");
+//                        } else {
+//                            $(this.flows.routeSelect).selectpicker("val", "no");
+//                        }
+//                    }
+//
+//                    // Collector
+//                    if (_.has(flows, 'flowchain__collector')) {
+//                        if (flows.flowchain__collector) {
+//                            $(this.flows.collectorSelect).selectpicker("val", "yes");
+//                        } else {
+//                            $(this.flows.collectorSelect).selectpicker("val", "no");
+//                        }
+//                    }
 
                     $(".selectpicker").selectpicker("refresh");
 
