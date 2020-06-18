@@ -10,15 +10,29 @@ from collections import OrderedDict
 from django.db.models import (F, Sum, Q, Case, When, IntegerField)
 
 
+DIMS = {
+    # name: levels
+    'time':             ['month', 'year'],
+    'economicActivity': ['activity', 'activitygroup'],
+    'treatmentMethod':  ['process', 'processgroup'],
+    'material':         ['waste06', 'waste04', 'waste02']
+}
+
+MODELS = {
+    'activity': Activity,
+    'process':  Process,
+    'waste04':  Waste04,
+    'waste06':  Waste06
+}
+
+INV = {}
+
+
 class MonitorViewSet(FilterFlowViewSet):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.levels = []     # dimension granularity
         self.fields = []     # exact field to search
-        self.space_inv = {}  # space dimension inventory
-        self.eco_inv = {}    # eco dimension inventory
-        self.treat_inv = {}  # treat dimension inventory
-        self.mat_inv = {}    # material dimension inventory
 
     def annotate_amounts(self, queryset, indicator, impactSources):
         queryset = queryset.annotate(amount=F('flowchain__amount'))
@@ -72,60 +86,35 @@ class MonitorViewSet(FilterFlowViewSet):
             # to recover any info in the frontend
             flow_item = [('amount', group['total'])]
             for level, field in zip(self.levels, self.fields):
-                # format parent / special fields
-                if 'actor' in level:
-                    actor = next(x for x in self.space_inv if x['id'] == group[field])
-                    if format == 'flowmap':
-                        item = {}
-                        item['id'] = actor['id']
-                        item['name'] = 'company ' + str(random.randint(1, 10 ** 6)) if anonymous else actor[
-                            'company__name']
-                        item['lon'] = actor['geom'].x + random.randint(0, 10) * 0.01 if anonymous \
-                            else actor['geom'].x
-                        item['lat'] = actor['geom'].y + random.randint(0, 10) * 0.01 if anonymous \
-                            else actor['geom'].y
-                        label = level.split('_')[0]
-                        flow_item.append((label, item))
-                    else:
-                        if anonymous:
-                            flow_item.append(('actorId', actor['id']))
-                            flow_item.append(('actorName', 'company ' + str(random.randint(1, 10 ** 6))))
-                            flow_item.append(('lon', actor['geom'].x + random.randint(0, 10) * 0.01))
-                            flow_item.append(('lat', actor['geom'].y + random.randint(0, 10) * 0.01))
-                        else:
-                            flow_item.append(('actorId', actor['id']))
-                            flow_item.append(('actorName', actor['company__name']))
-                            flow_item.append(('lon', actor['geom'].x))
-                            flow_item.append(('lat', actor['geom'].y))
-                    continue
-                elif 'area' in level:
+                if any(l in level for l in ['actor', 'area']):
                     area = next(x for x in self.space_inv if x['id'] == group[field])
+
+                    item = {}
+                    item['id'] = area['id']
+                    item['name'] = area['name'] if 'area' in level else area['company__name']
+                    item['lon'] = area['geom'].centroid.x if 'area' in level else area['geom'].x
+                    item['lat'] = area['geom'].centroid.y if 'area' in level else area['geom'].y
+
+                    if anonymous:
+                        item['name'] = 'company ' + str(random.randint(1, 10**6))
+                        item['lon'] += random.randint(0, 10) * 0.01
+                        item['lat'] += random.randint(0, 10) * 0.01
+
                     if format == 'flowmap':
-                        item = {}
-                        item['id'] = area['id']
-                        item['name'] = area['name']
-                        item['lon'] = area['geom'].centroid.x
-                        item['lat'] = area['geom'].centroid.y
                         label = level.split('_')[0]
                         flow_item.append((label, item))
                     else:
-                        flow_item.append(('areaId', area['id']))
-                        flow_item.append(('areaName', area['name']))
+                        label = level.split('_')[-1]
+                        for key, value in item.items():
+                            flow_item.append((label + key.capitalize(), value))
                     continue
-                elif level == 'activity' and format != 'parallelsets':
-                    activity = next(x for x in self.eco_inv if x['id'] == group[field])
-                    flow_item.append(('activitygroup', activity['activitygroup__id']))
-                elif level == 'process' and format != "parallelsets":
-                    process = next(x for x in self.treat_inv if x['id'] == group[field])
-                    flow_item.append(('processgroup', process['processgroup__id']))
-                elif 'waste' in level and format != "parallelsets":
-                    if level == 'waste04':
-                        waste04 = next(x for x in self.mat_inv if x['id'] == group[field])
-                        flow_item.append(('waste02', waste04['waste02__id']))
-                    elif level == 'waste06':
-                        waste06 = next(x for x in self.mat_inv if x['id'] == group[field])
-                        flow_item.append(('waste04', waste06['waste04__id']))
-                        flow_item.append(('waste02', waste06['waste04__waste02__id']))
+
+                if format != 'parallelsets' and level in INV.keys():
+                    item = next(x for x in INV[level] if x['id'] == group[field])
+                    for key, value in item.items():
+                        if key != 'id':
+                            label = key.split('__')[-2]
+                            flow_item.append((label, item[key]))
 
                 # format field
                 if format == 'parallelsets':
@@ -146,48 +135,24 @@ class MonitorViewSet(FilterFlowViewSet):
 
     def process_dimensions(self, queryset, dimensions, format):
         # recover dimensions
-        # TIME DIMENSION
-        time = dimensions.pop('time', None)
-        if time:
-            self.levels.append(time.split('__')[-1])
-            self.fields.append(time)
+        for dim in DIMS.keys():
+            # check if dimension is requested by field
+            field = dimensions.pop(dim, None)
+            if field:
+                level = field.split('__')[-1]   # the requested level
+                levels = DIMS[dim]              # all dimension levels
 
-        # ECONOMIC DIMENSION
-        eco = dimensions.pop('economicActivity', None)
-        if eco:
-            # create inventory to recover parent activitygroup
-            level = eco.split('__')[-1]
-            if level == 'activity':
-                self.eco_inv = Activity.objects.values('id',
-                                                       'activitygroup__id')
-            self.levels.append(level)
-            self.fields.append(eco)
+                # hierarchical search
+                if level in MODELS.keys():
+                    parents = levels[levels.index(level) + 1:]
+                    values = []
+                    for i in range(len(parents)):
+                        values.append('__'.join(parents[:i+1]) + '__id')
+                    INV[level] = MODELS[level].objects.values('id', *values)
 
-        # TREATMENT DIMENSION
-        treat = dimensions.pop('treatmentMethod', None)
-        if treat:
-            # create inventory to recover parent processgroup
-            level = treat.split('__')[-1]
-            if level == 'process':
-                self.treat_inv = Process.objects.values('id',
-                                                        'processgroup__id')
-            self.levels.append(level)
-            self.fields.append(treat)
-
-        # MATERIAL DIMENSION
-        mat = dimensions.pop('material', None)
-        if mat:
-            # create inventory to recover parent waste
-            level = mat.split('__')[-1]
-            if level == 'waste04':
-                self.mat_inv = Waste04.objects.values('id',
-                                                      'waste02__id')
-            elif level == 'waste06':
-                self.mat_inv = Waste06.objects.values('id',
-                                                      'waste04__id',
-                                                      'waste04__waste02__id')
-            self.levels.append(level)
-            self.fields.append(mat)
+                # append
+                self.levels.append(level)
+                self.fields.append(field)
 
         # SPACE DIMENSION
         space = dimensions.pop('space', None)
