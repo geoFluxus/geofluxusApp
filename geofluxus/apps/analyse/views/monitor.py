@@ -27,6 +27,8 @@ MODELS = {
 
 INV = {}
 
+ACTOR_LEVEL = 1000
+
 
 class MonitorViewSet(FilterFlowViewSet):
     def __init__(self, **kwargs):
@@ -67,39 +69,32 @@ class MonitorViewSet(FilterFlowViewSet):
         for group in groups:
             # check for groups fields with null values!
             # these groups should be excluded entirely
-            has_null = False
-            for field, value in group.items():
-                if not value:
-                    has_null = True
-                    break
-            if has_null: continue
+            if any(not value for value in group.values()): continue
 
             # remove flows with same origin / destination
-            if format == 'flowmap':
-                if 'origin_area' in group and \
-                   'destination_area' in group:
-                    origin = group['origin_area']
-                    destination = group['destination_area']
-                    if origin == destination: continue
+            if group.get('origin_area', True) == group.get('destination_area', False): continue
 
             # for the dimensions, return the id
             # to recover any info in the frontend
             flow_item = [('amount', group['total'])]
             for level, field in zip(self.levels, self.fields):
+                # serialize space dimension fields
                 if any(l in level for l in ['actor', 'area']):
                     area = next(x for x in self.space_inv if x['id'] == group[field])
 
-                    item = {}
-                    item['id'] = area['id']
-                    item['name'] = area['name'] if 'area' in level else area['company__name']
-                    item['lon'] = area['geom'].centroid.x if 'area' in level else area['geom'].x
-                    item['lat'] = area['geom'].centroid.y if 'area' in level else area['geom'].y
+                    item = {
+                        'id': area['id'], 'name': area['name'] if 'area' in level else area['company__name'],
+                        'lon': area['geom'].centroid.x if 'area' in level else area['geom'].x,
+                        'lat': area['geom'].centroid.y if 'area' in level else area['geom'].y
+                    }
 
-                    if anonymous:
+                    # anonymize actor fields for demo mode
+                    if anonymous and 'actor' in level:
                         item['name'] = 'company ' + str(random.randint(1, 10**6))
                         item['lon'] += random.randint(0, 10) * 0.01
                         item['lat'] += random.randint(0, 10) * 0.01
 
+                    # change format for flowmap (both origin/destination)
                     if format == 'flowmap':
                         label = level.split('_')[0]
                         flow_item.append((label, item))
@@ -109,6 +104,8 @@ class MonitorViewSet(FilterFlowViewSet):
                             flow_item.append((label + key.capitalize(), value))
                     continue
 
+                # recover parent fields (if necessary)
+                # not required for parallel sets
                 if format != 'parallelsets' and level in INV.keys():
                     item = next(x for x in INV[level] if x['id'] == group[field])
                     for key, value in item.items():
@@ -118,6 +115,8 @@ class MonitorViewSet(FilterFlowViewSet):
 
                 # format field
                 if format == 'parallelsets':
+                    # for parallel sets
+                    # determine if material dimension is origin or destination
                     if 'waste' in field:
                         if any('origin' in f for f in self.fields):
                             flow_item.append(('destination', {level: group[field]}))
@@ -142,12 +141,14 @@ class MonitorViewSet(FilterFlowViewSet):
                 level = field.split('__')[-1]   # the requested level
                 levels = DIMS[dim]              # all dimension levels
 
-                # hierarchical search
+                # hierarchical search for requested level
                 if level in MODELS.keys():
-                    parents = levels[levels.index(level) + 1:]
-                    values = []
+                    parents = levels[levels.index(level) + 1:] # recover all parent levels
+                    values = []  # hierarchical search in Django (child__parent)
                     for i in range(len(parents)):
                         values.append('__'.join(parents[:i+1]) + '__id')
+
+                    # create inventory to search ids during serialization
                     INV[level] = MODELS[level].objects.values('id', *values)
 
                 # append
@@ -158,17 +159,19 @@ class MonitorViewSet(FilterFlowViewSet):
         space = dimensions.pop('space', None)
         if space:
             # annotate spatial info to flows
-            both = True if format == 'flowmap' else False
+            both = format == 'flowmap'
             queryset = self.format_space(queryset, space, both)
 
             # create inventory to recover actors / areas
             # check the last level added!
             if 'actor' in self.levels[-1]:
+                # recover actor info for both origin / destination
                 if both:
                     actors = list()
                     for field in self.levels[-2:]:
                         extra = list(queryset.values_list(field, flat=True).distinct())
                         actors.extend(extra)
+                # recover actor info either for origin or destination
                 else:
                     actors = queryset.values_list(self.levels[-1], flat=True).distinct()
                 self.space_inv = Actor.objects.filter(id__in=actors)\
@@ -199,17 +202,14 @@ class MonitorViewSet(FilterFlowViewSet):
             admin = AdminLevel.objects.filter(id=id)[0].level
 
             # check if both origin & destination are needed
-            if not both:
-                fields = [space.pop('field', None)]
-            else:
-                fields = ['origin', 'destination']
+            fields = ['origin', 'destination'] if both else [space.pop('field', None)]
 
             # attach to flows the area
             # to which their origin / destination belongs
             for field in fields:
                 # Actor level is the only one
                 # with no areas!
-                if admin != 1000:
+                if admin != ACTOR_LEVEL:
                     field += '__area'
 
                     # exclude origins / destinations with LOWER admin level!
@@ -217,7 +217,7 @@ class MonitorViewSet(FilterFlowViewSet):
                     queryset = queryset.exclude(Q(**{(field + search + '__lt'): admin}))
 
                     # annotate origin / destination areas
-                    total = AdminLevel.objects.exclude(level=1000).count()
+                    total = AdminLevel.objects.exclude(level=ACTOR_LEVEL).count()
                     cases = []
                     steps = total - admin  # steps to move in admin hierarchy
 
