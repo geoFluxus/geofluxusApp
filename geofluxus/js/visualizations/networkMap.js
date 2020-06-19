@@ -43,11 +43,11 @@ define([
 
         drawTooltip: function(amount) {
             var label = "";
-            if (amount >= 10**3 && amount < 10**6) {
+            if (10**3 <= amount && amount < 10**6) {
                 label = "k";
-            } elif (amount >= 10**6 && amount < 10**9) {
+            } else if (10**6 <= amount && amount < 10**9) {
                 label = "M";
-            } elif (amount >= 10**9) {
+            } else if (amount <= 10**9) {
                 label = "B";
             }
             return `${amount.toFixed(3)} {label}t`;
