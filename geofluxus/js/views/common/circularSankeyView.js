@@ -131,18 +131,7 @@ define(['views/common/baseview',
                             .on("click", function () {
                                 _this.toggleDarkMode();
                             });
-
-                        // Check on hover over Viz if it still contains Fullscreen button, if not, readd:
-                        vizContainer.on("mouseover", function () {
-                            let buttonFullscreen = d3.select(".fullscreen-toggle")
-                            if (buttonFullscreen.empty()) {
-                                _this.addButtons();
-                            }
-                        })
-
                     }
-
-
                 },
 
                 toggleFullscreen: function (event) {
