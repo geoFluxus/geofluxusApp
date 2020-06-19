@@ -1526,7 +1526,7 @@ define(['views/common/baseview',
 
                 // Datasets filter:
                 if (this.datasets.length == 1) {
-                    filterParams.flows['datasets'] = this.datasets.models[0].get("id");
+                    filterParams.flows['datasets'] = [this.datasets.models[0].get("id")];
                 } else {
 
                     if ($(this.flows.datasetSelect).val() == '-1') {
