@@ -93,7 +93,6 @@ define(['views/common/baseview',
                 },
 
                 addButtons: function () {
-
                     let buttonFullscreen = d3.select(".fullscreen-toggle")
                     if (buttonFullscreen.empty()) {
 
