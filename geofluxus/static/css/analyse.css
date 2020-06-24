@@ -350,6 +350,31 @@ label[for="flows-waste06-select"] {
     color: white
 }
 
+.sankeyControlContainer {
+    width: 32px;
+    margin-left: 5px;    
+    position: absolute;
+}
+
+.sankeyControlContainer button {
+    margin-top: 5px;
+    width: 32px;
+    height: 32px;
+}
+/* 
+    background-color: var(--primary);
+    border: none;
+    position: relative;
+    border-radius: 16px;
+    top: 5px;
+    color: transparent;
+    margin-bottom: 5px !important;
+    font-size: 16px !important;
+    margin: 0px 5px;
+} */
+
+
+
 /* VISUALISATION STYLES */
 
 .viz-wrapper-div {
