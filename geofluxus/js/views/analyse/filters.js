@@ -347,14 +347,14 @@ define(['views/common/baseview',
                     let ids = $(evt.target).val(),
                         parent = evt.data.parent,
                         child = evt.data.child;
-                        picker = _this.flows[child + 'Select'];
+                        picker = _this.flows[child + 'Select'],
+                        tag = _this.tags[child];
                     if (ids.length == 0 || ids[0] == "-1") {
                         $("#" + tag + "col").fadeOut("fast");
                     } else {
-                        let tag = _this.tags[child];
-                            children = _this.collections[tag].models.filter(function (child) {
-                                return ids.includes(child.attributes[parent].toString())
-                            });
+                        children = _this.collections[tag].models.filter(function (child) {
+                            return ids.includes(child.attributes[parent].toString())
+                        });
                         filterUtils.fillSelectPicker(tag, picker, children);
                         $("#" + tag + "col").fadeIn("fast");
                     }
@@ -832,39 +832,43 @@ define(['views/common/baseview',
                     // Flows filters:
 
                     this.filters.forEach(function(filter) {
-                        fields = Object.keys(filter).reverse()
-                        console.log(fields);
-                        fields.forEach(function(field) {
+                        // get all filter fields
+                        fields = Object.keys(filter);
+
+                        fields.forEach(function(field, idx) {
+                            // load value of filter field
                             var val = flows[filter[field]];
+
+                            // if value exists
                             if (val !== undefined) {
-                               $(_this.flows[field + 'Select']).selectpicker("val", val);
+                                // find all parent fields
+                                var parents = fields.slice(0, idx);
+
+                                parents.forEach(function(parent) {
+                                    // get current field collection
+                                    var collection = _this.collections[_this.tags[field]];
+
+                                    // filter collection with field values
+                                    collection = collection.models.filter(function(item) {
+                                        return val.includes(item.attributes.id.toString());
+                                    })
+
+                                    // find all parent ids
+                                    var ids = new Set(); // unique ids
+                                    collection.forEach(item => {
+                                        ids.add(item.attributes[parent].toString());
+                                    });
+
+                                    // update parent select-picker
+                                    $(_this.flows[parent + 'Select']).selectpicker("val", Array.from(ids));
+                                })
+
+                                // update select-picker
+                                $(_this.flows[field + 'Select']).selectpicker("val", val);
                             }
                         })
                     })
 
-//                    if (_.has(flows, 'flowchain__month__year__in')) {
-//                        $(this.flows.yearSelect).selectpicker("val", flows.flowchain__month__year__in);
-//                    }
-//                    if (_.has(flows, 'flowchain__month__in')) {
-//                        let monthObjects = _this.months.models.filter(function (month) {
-//                            return flows.flowchain__month__in.includes(month.attributes.id.toString());
-//                        });
-//
-//                        let yearsToDisplay = [];
-//                        monthObjects.forEach(month => {
-//                            yearsToDisplay.push(month.attributes.year.toString());
-//                        });
-//                        yearsToDisplay = _.uniq(yearsToDisplay, 'id');
-//                        $(_this.flows.yearSelect).selectpicker('val', yearsToDisplay);
-//
-//                        let filteredMonths = [];
-//                        filteredMonths = _this.months.models.filter(function (month) {
-//                            return yearsToDisplay.includes(month.attributes.year.toString())
-//                        });
-//                        filterUtils.fillSelectPicker("month", $(_this.flows.monthSelect), filteredMonths);
-//                        $(_this.flows.monthSelect).selectpicker('val', flows.flowchain__month__in);
-//                        $("#monthscol").fadeIn("fast");
-//                    }
 //
 //                    // EWC
 //                    if (_.has(flows, 'flowchain__waste06__hazardous')) {
