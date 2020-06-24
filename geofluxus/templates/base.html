@@ -71,12 +71,14 @@
     </div>
   </nav>
 
-  {% if not request.user|datasets %}
-  <div class="alert alert-warning text-center warning-no-datasets">
-    <small>
-      You are not allowed to access any data sets. Please contact us.
-    </small>
-  </div>
+  {% if request.user.is_authenticated %}
+    {% if not request.user|datasets %}
+    <div class="alert alert-warning text-center warning-no-datasets">
+      <small>
+        You are not allowed to access any data sets. Please contact us.
+      </small>
+    </div>
+    {% endif %}
   {% endif %}
 
   <!-- Sidebar -->

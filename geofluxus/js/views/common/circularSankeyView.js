@@ -5,6 +5,7 @@ define(['views/common/baseview',
         'utils/enrichFlows',
         'react/circularSankey',
         'underscore',
+        'd3'
     ],
 
     function (
@@ -14,7 +15,8 @@ define(['views/common/baseview',
         FileSaver,
         enrichFlows,
         CircularSankeyComponent,
-        _) {
+        _,
+        d3) {
 
         /**
          *
@@ -42,6 +44,12 @@ define(['views/common/baseview',
                     this.options = options;
                     this.filtersView = this.options.flowsView.filtersView;
 
+                    this.width = $("#" + this.options.el).width();
+                    this.height = $("#" + this.options.el).height();
+
+                    this.label = options.dimensions.label;
+                    this.isDarkMode = true;
+                    this.fontColor = "white";
 
                     // let tooltipConfig = {
                     //     tbody: [
@@ -73,19 +81,82 @@ define(['views/common/baseview',
                 render: function () {
                     this.circularSankey = new CircularSankeyComponent({
                         el: this.options.el,
-                        width: $("#" + this.options.el).width(),
-                        height: $("#" + this.options.el).height(),
+                        width: this.width,
+                        height: this.height,
                         circularData: this.flows,
+                        fontColor: this.fontColor,
+                        label: this.label,
                     });
 
-                    //this.setSvgDimensions();
-
                     utils.scrollToVizRow();
+                    this.addButtons();
                 },
 
-                setSvgDimensions: function () {
-                    $("#circularsankey-wrapper svg").width($("#" + this.options.el).width());
-                    $("#circularsankey-wrapper svg").height($("#" + this.options.el).height());
+                addButtons: function () {
+                    let buttonFullscreen = d3.select(".fullscreen-toggle")
+                    if (buttonFullscreen.empty()) {
+
+                        let _this = this;
+                        let vizContainer = d3.select("#circularsankey-wrapper div");
+                        vizContainer.append("div")
+                            .attr("class", "sankeyControlContainer")
+                            .lower();
+
+                        let sankeyControlContainer = vizContainer.select(".sankeyControlContainer")
+
+                        sankeyControlContainer.append("button")
+                            .attr("class", "btn btn-sm btn-primary d3plus-Button fullscreen-toggle")
+                            .attr("title", "View this visualization in fullscreen mode.")
+                            .attr("type", "button")
+                            .html('<i class="fas fa-expand icon-fullscreen"></i>')
+                            .on("click", function () {
+                                _this.toggleFullscreen();
+                            });
+
+                        sankeyControlContainer.append("button")
+                            .attr("class", "btn btn-sm btn-primary d3plus-Button export-csv")
+                            .attr("title", "Export the data of this visualization as a CSV file.")
+                            .attr("type", "button")
+                            .html('<i class="fas fa-file icon-export"></i>')
+                            .on("click", function () {
+                                _this.exportCSV();
+                            });
+
+                        sankeyControlContainer.append("button")
+                            .attr("class", "btn btn-sm btn-primary d3plus-Button toggle-darkmode")
+                            .attr("title", "Toggle light or dark mode.")
+                            .attr("type", "button")
+                            .html('<i class="fas icon-toggle-darkmode"></i>')
+                            .on("click", function () {
+                                _this.toggleDarkMode();
+                            });
+                    }
+                },
+
+                toggleFullscreen: function (event) {
+                    console.log('toggleFullscreen');
+
+                    $("#circularsankey-wrapper").toggleClass('fullscreen');
+                    // Only scroll when going to normal view:
+                    if (!$("#circularsankey-wrapper").hasClass('fullscreen')) {
+                        utils.scrollToVizRow();
+                    }
+                    this.render();
+                    d3.event.preventDefault();
+                },
+
+                toggleDarkMode: function () {
+                    this.isDarkMode = !this.isDarkMode;
+
+                    $(".viz-wrapper-div").toggleClass("lightMode");
+
+                    if (this.isDarkMode) {
+                        this.fontColor = "white";
+                    } else {
+                        this.fontColor = "black";
+                    }
+
+                    this.render();
                 },
 
                 transformToLinksAndNodes: function (flows, dimensions, filtersView) {
@@ -309,16 +380,6 @@ define(['views/common/baseview',
                         links: links,
                         nodes: nodes,
                     }
-                },
-
-                toggleFullscreen: function (event) {
-                    $(this.el).toggleClass('fullscreen');
-                    event.stopImmediatePropagation();
-                    // Only scroll when going to normal view:
-                    if (!$(this.el).hasClass('fullscreen')) {
-                        utils.scrollToVizRow();
-                    }
-                    window.dispatchEvent(new Event('resize'));
                 },
 
                 exportCSV: function (event) {
