@@ -72,9 +72,8 @@ class FilterFlowViewSet(PostGetViewMixin,
         queryset = self.filter_areas(queryset, area_filters)
 
         # serialization parameters
-        serials = {}
+        serials = {'anonymous': anonymous}  # anonymize data for demo
         serialParams = [
-            'anonymous',      # anonymize data for demo
             'dimensions',     # dimensions to process (time, space etc.)
             'format',         # special format (flow map, parallel sets etc.)
             'indicator',      # indicator to compute (waste amount, emission etc.)
@@ -153,39 +152,24 @@ class FilterFlowViewSet(PostGetViewMixin,
         (spatial filtering)
         '''
 
-        # retrieve filters
-        origin = filter['origin']
-        destination = filter['destination']
-        flows = filter['flows']
+        # filter by origin / destination
+        nodes = ['origin', 'destination']
+        for node in nodes:
+            area_ids = filter[node].pop('selectedAreas', [])
+            if area_ids:
+                area = Area.objects.filter(id__in=area_ids)\
+                                   .aggregate(area=Union('geom'))['area']
 
-        # filter by origin
-        area_ids = origin.pop('selectedAreas', [])
-        if area_ids:
-            area = Area.objects.filter(id__in=area_ids)\
-                               .aggregate(area=Union('geom'))['area']
-
-            # check where with respect to the area
-            inOrOut = origin.pop('inOrOut', 'in')
-            if inOrOut == 'in':
-                queryset = queryset.filter(origin__geom__within=area)
-            else:
-                queryset = queryset.exclude(origin__geom__within=area)
-
-        # filter by destination
-        area_ids = destination.pop('selectedAreas', [])
-        if area_ids:
-            area = Area.objects.filter(id__in=area_ids)\
-                               .aggregate(area=Union('geom'))['area']
-
-            # check where with respect to the area
-            inOrOut = destination.pop('inOrOut', 'in')
-            if inOrOut == 'in':
-                queryset = queryset.filter(destination__geom__within=area)
-            else:
-                queryset = queryset.exclude(destination__geom__within=area)
+                # check where with respect to the area
+                inOrOut = filter[node].pop('inOrOut', 'in')
+                kwargs = {node + '__geom__within': area}
+                if inOrOut == 'in':
+                    queryset = queryset.filter(**kwargs)
+                else:
+                    queryset = queryset.exclude(**kwargs)
 
         # filter by flows
-        area_ids = flows
+        area_ids = filter['flows']
         if area_ids:
             area = Area.objects.filter(id__in=area_ids)\
                                .aggregate(area=Union('geom'))['area']
