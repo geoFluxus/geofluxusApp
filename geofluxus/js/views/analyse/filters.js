@@ -709,108 +709,12 @@ define(['views/common/baseview',
                     if (_.has(flows, 'destination_role')) {
                         loadSavedRole("destination", destination)
                     }
-//
-//                    /**
-//                     * Load activity groups for Origin / Destination:
-//                     */
-//                    if (_.has(flows, 'origin__activity__activitygroup__in')) {
-//                        $(_this.origin.activityGroupsSelect).selectpicker('val', flows.origin__activity__activitygroup__in);
-//                    }
-//                    if (_.has(flows, 'destination__activity__activitygroup__in')) {
-//                        $(_this.destination.activityGroupsSelect).selectpicker('val', flows.destination__activity__activitygroup__in);
-//                    }
-//
-//                    /**
-//                     * Load activities for given section
-//                     * @param {string} block the name of the section: 'origin' or 'destination'
-//                     * @param {object} savedConfig the saved filter config of the section
-//                     */
-//                    function loadSavedActivities(block) {
-//
-//                        let activityObjects = _this.activities.models.filter(function (activity) {
-//                            return flows[block + "__activity__in"].includes(activity.attributes.id.toString());
-//                        });
-//
-//                        // Get activity groups to which the selected activities belong and select in selectpicker:
-//                        let activityGroupsToDisplay = [];
-//                        activityObjects.forEach(activity => {
-//                            activityGroupsToDisplay.push(activity.attributes.activitygroup.toString());
-//                        });
-//                        activityGroupsToDisplay = _.uniq(activityGroupsToDisplay, 'id');
-//                        $(_this[block].activityGroupsSelect).selectpicker('val', activityGroupsToDisplay);
-//
-//                        // Filter all activities by the selected Activity Groups:
-//                        let filteredActivities = [];
-//                        filteredActivities = _this.activities.models.filter(function (activity) {
-//                            return activityGroupsToDisplay.includes(activity.attributes.activitygroup.toString())
-//                        });
-//                        filterUtils.fillSelectPicker("activity", $(_this[block].activitySelect), filteredActivities);
-//
-//                        $(_this[block].activitySelect).selectpicker('val', flows[block + "__activity__in"]);
-//                        $(".activitySelectContainer-" + block).fadeIn("fast");
-//                    }
-//
-//
-//                    // Activities
-//                    if (_.has(flows, 'origin__activity__in')) {
-//                        loadSavedActivities("origin")
-//                    }
-//                    if (_.has(flows, 'destination__activity__in')) {
-//                        loadSavedActivities("destination")
-//                    }
-//
-//                    /**
-//                     * Load treatment method groups for Origin / Destination
-//                     */
-//                    if (_.has(flows, 'origin__process__processgroup__in')) {
-//                        $(_this.origin.processGroupSelect).selectpicker('val', flows.origin__process__processgroup__in);
-//                    }
-//                    if (_.has(flows, 'destination__process__processgroup__in')) {
-//                        $(_this.destination.processGroupSelect).selectpicker('val', flows.destination__process__processgroup__in);
-//                    }
-//
-//
-//                    /**
-//                     * Load treatment methods for given section
-//                     * @param {string} block the name of the section: 'origin' or 'destination'
-//                     * @param {object} savedConfig the saved filter config of the section
-//                     */
-//                    function loadSavedTreatmentMethods(block) {
-//                        let processObjects = _this.processes.models.filter(function (process) {
-//                            return flows[block + "__process__in"].includes(process.attributes.id.toString());
-//                        });
-//
-//                        let processGroupsToDisplay = [];
-//                        processObjects.forEach(process => {
-//                            processGroupsToDisplay.push(process.attributes.processgroup.toString());
-//                        });
-//                        processGroupsToDisplay = _.uniq(processGroupsToDisplay, 'id');
-//                        $(_this[block].processGroupSelect).selectpicker('val', processGroupsToDisplay);
-//
-//                        let filteredProcesses = [];
-//                        filteredProcesses = _this.processes.models.filter(function (process) {
-//                            return processGroupsToDisplay.includes(process.attributes.processgroup.toString())
-//                        });
-//                        filterUtils.fillSelectPicker("treatmentMethod", $(_this[block].processSelect), filteredProcesses);
-//
-//                        $(_this[block].processSelect).selectpicker('val', flows[block + "__process__in"]);
-//                        $("#" + block + "ContainerProcesses").fadeIn("fast");
-//                    }
-//
-//                    // Treatment methods
-//                    if (_.has(flows, 'origin__process__in')) {
-//                        loadSavedTreatmentMethods("origin");
-//                    }
-//                    if (_.has(flows, 'destination__process__in')) {
-//                        loadSavedTreatmentMethods("destination");
-//                    }
-
 
                     // ///////////////////////////////
                     // Flows filters:
 
                     // load non-boolean fields
-                    function load(picker, parents) {
+                    function load(group, picker, parents) {
                         // store ALL selectors
                         var field = picker[0],
                             val = picker[1],
@@ -845,43 +749,50 @@ define(['views/common/baseview',
                         pickers.reverse().forEach(function(picker) {
                             var field = picker[0],
                                 val = picker[1];
-                            $(_this.flows[field + 'Select']).selectpicker("val", val);
+                            $(_this[group][field + 'Select']).selectpicker("val", val);
                         })
                     }
 
-                    // load boolean fields
+                    // invert boolean inventory
                     var boolean = _.invert(_this.boolean);
-                    this.filters.forEach(function(filter) {
-                        // get all filter fields
-                        fields = Object.keys(filter);
 
-                        fields.forEach(function(field, idx) {
-                            // load value of filter field
-                            var val = flows[filter[field]];
+                    var groups = Object.keys(this.filters);
+                    groups.forEach(function(group) {
+                        // get all group filters
+                        var filters = _this.filters[group];
 
-                            // if value exists
-                            if (val !== undefined) {
-                                // if value is Array
-                                if (Array.isArray(val)) {
-                                    if (val.every(function(v) {return boolean[v] !== undefined})) {
-                                        // if so, turn into real boolean values
-                                        var _val = [];
-                                        val.forEach(function(v) {
-                                            _val.push(boolean[v]);
-                                        })
-                                        val = _val;
+                        filters.forEach(function(filter) {
+                            // get all filter fields// get all filter fields
+                            fields = Object.keys(filter);
+
+                            fields.forEach(function(field, idx) {
+                                // load value of filter field
+                                var val = flows[filter[field]];
+
+                                // if value exists
+                                if (val !== undefined) {
+                                    // if value is Array
+                                    if (Array.isArray(val)) {
+                                        if (val.every(function(v) {return boolean[v] !== undefined})) {
+                                            // if so, turn into real boolean values
+                                            var _val = [];
+                                            val.forEach(function(v) {
+                                                _val.push(boolean[v]);
+                                            })
+                                            val = _val;
+                                        }
+
+                                        // find all parent fields
+                                        // highest -> lowest in hierarchy
+                                        var parents = fields.slice(0, idx).reverse();
+                                        load(group, [field, val], parents);
+                                    } else {
+                                        // convert values to pseudo-boolean
+                                        val = boolean[val];
+                                        $(_this[group][field + 'Select']).selectpicker("val", val);
                                     }
-
-                                    // find all parent fields
-                                    // highest -> lowest in hierarchy
-                                    var parents = fields.slice(0, idx).reverse();
-                                    load([field, val], parents);
-                                } else {
-                                    // convert values to pseudo-boolean
-                                    val = boolean[val];
-                                    $(_this.flows[field + 'Select']).selectpicker("val", val);
                                 }
-                            }
+                            })
                         })
                     })
 
@@ -1146,14 +1057,6 @@ define(['views/common/baseview',
                 _this.selectedAreas.destination = [];
                 _this.selectedAreas.flows = [];
 
-                // HTML string for activity-select:
-                let activities =  _this.collections['activities'];
-                allActivitiesOptionsHTML = '<option selected value="-1">All (' + activities.length + ')</option><option data-divider="true"></option>';
-                activities.models.forEach(activity => allActivitiesOptionsHTML += "<option>" + activity.attributes.name + "</option>");
-
-                // Datasets:
-                $(this.flows.datasetSelect).val("-1");
-
                 // ///////////////////////////////////////////////
                 // Origin-controls:
                 let nodes = ['origin', 'destination']
@@ -1171,10 +1074,6 @@ define(['views/common/baseview',
                     $("#" + node + "-role-radio-both").attr("checked", true);
                     _this[node].role = "both";
 
-                    $(_this[node].activityGroupsSelect).val('-1');
-                    $(_this[node].activitySelect).html(allActivitiesOptionsHTML);
-                    $(_this[node].processGroupSelect).val('-1');
-                    $(_this[node].processSelect).val('-1');
                     $("." + node + "ContainerActivity").hide();
                     $("." + node + "ContainerTreatmentMethod").hide();
                 })
@@ -1187,19 +1086,25 @@ define(['views/common/baseview',
                 $(this.flows.inOrOut).bootstrapToggle("off");
                 $("#areaSelections-flows").hide();
 
-                // get all filter fields
-                this.filters.forEach(function(filter) {
-                    // get all filter fields
-                    var fields =  Object.keys(filter);
+                // get all groups
+                var groups = Object.keys(this.filters)
+                groups.forEach(function(group) {
+                    // get all group filters
+                    var filters = _this.filters[group];
 
-                    // reset selector
-                    fields.forEach(function(field) {
-                        var selector = $(_this.flows[field + 'Select']),
-                            options = selector[0];
-                        if (options.length > 0) {
-                            selector.selectpicker('deselectAll');
-                            options[0].selected = true;
-                        }
+                    filters.forEach(function(filter) {
+                        // get all filter fields
+                        var fields =  Object.keys(filter);
+
+                        // reset selector
+                        fields.forEach(function(field) {
+                            var selector = $(_this[group][field + 'Select']),
+                                options = selector[0];
+                            if (options.length > 0) {
+                                selector.selectpicker('deselectAll');
+                                options[0].selected = true;
+                            }
+                        })
                     })
                 })
 
@@ -1247,10 +1152,15 @@ define(['views/common/baseview',
                             filterParams[node].selectedAreas.push(area.id);
                         });
                     }
+                    
                     if ($(_this[node].inOrOut).prop('checked')) {
                         filterParams[node].inOrOut = 'out';
                     } else {
                         filterParams[node].inOrOut = 'in';
+                    }
+
+                    if (_this[node].role != 'both') {
+                        filterParams.flows['origin_role'] = _this.origin.role;
                     }
                 })
 
@@ -1288,9 +1198,7 @@ define(['views/common/baseview',
                 }
 
                 // load filters to request
-                // get all group fields
                 var groups = Object.keys(this.filters);
-
                 groups.forEach(function(group) {
                     // get group filters
                     var filters = _this.filters[group];
