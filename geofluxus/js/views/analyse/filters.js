@@ -836,7 +836,8 @@ define(['views/common/baseview',
                     // ///////////////////////////////
                     // Flows filters:
 
-                    function loadHierarchy(picker, parents) {
+                    // load non-boolean fields
+                    function load(picker, parents) {
                         // store ALL selectors
                         var field = picker[0],
                             val = picker[1],
@@ -875,6 +876,8 @@ define(['views/common/baseview',
                         })
                     }
 
+                    // load boolean fields
+                    var boolean = _.invert(_this.boolean);
                     this.filters.forEach(function(filter) {
                         // get all filter fields
                         fields = Object.keys(filter);
@@ -885,55 +888,29 @@ define(['views/common/baseview',
 
                             // if value exists
                             if (val !== undefined) {
-                                // find all parent fields
-                                // highest -> lowest in hierarchy
-                                var parents = fields.slice(0, idx).reverse();
-                                loadHierarchy([field, val], parents);
+                                // if value is Array
+                                if (Array.isArray(val)) {
+                                    if (val.every(function(v) {return boolean[v] !== undefined})) {
+                                        // if so, turn into real boolean values
+                                        var _val = [];
+                                        val.forEach(function(v) {
+                                            _val.push(boolean[v]);
+                                        })
+                                        val = _val;
+                                    }
+
+                                    // find all parent fields
+                                    // highest -> lowest in hierarchy
+                                    var parents = fields.slice(0, idx).reverse();
+                                    load([field, val], parents);
+                                } else {
+                                    // convert values to pseudo-boolean
+                                    val = boolean[val];
+                                    $(_this.flows[field + 'Select']).selectpicker("val", val);
+                                }
                             }
                         })
                     })
-
-//                    function loadBooleanFilters(filter) {
-//                        let valuesToSet = [];
-//                        if (flows[filter].includes(false)) {
-//                            valuesToSet.push("no");
-//                        }
-//                        if (flows[filter].includes(true)) {
-//                            valuesToSet.push("yes");
-//                        }
-//                        if (flows[filter].includes(null)) {
-//                            valuesToSet.push("unknown");
-//                        }
-//
-//                        if (filter == "composite") {
-//                            filter = "isComposite";
-//                        }
-//                        $(_this.flows[filter + "Select"]).selectpicker("val", valuesToSet);
-//                    }
-//                    let booleanFilters = ["clean", "mixed", "direct", "composite"];
-//                    booleanFilters.forEach(boolean => {
-//                        if (_.has(flows, boolean)) {
-//                            loadBooleanFilters(boolean);
-//                        }
-//                    });
-//
-//                    // Route
-//                    if (_.has(flows, 'flowchain__route')) {
-//                        if (flows.flowchain__route) {
-//                            $(this.flows.routeSelect).selectpicker("val", "yes");
-//                        } else {
-//                            $(this.flows.routeSelect).selectpicker("val", "no");
-//                        }
-//                    }
-//
-//                    // Collector
-//                    if (_.has(flows, 'flowchain__collector')) {
-//                        if (flows.flowchain__collector) {
-//                            $(this.flows.collectorSelect).selectpicker("val", "yes");
-//                        } else {
-//                            $(this.flows.collectorSelect).selectpicker("val", "no");
-//                        }
-//                    }
 
                     $(".selectpicker").selectpicker("refresh");
 
@@ -1361,36 +1338,38 @@ define(['views/common/baseview',
                         }
                     // unique value -> only non-fuzzy booleans (true or false)
                     } else {
-                        value = boolean[value];
+                        value = _this.boolean[value];
                     }
                     return value;
                 }
 
                 // load filters to request
                 this.filters.forEach(function(filter) {
-                    let _key = _value = null;
+                    // get all filter fields
+                    var fields = Object.keys(filter);
 
-                    Object.keys(filter).forEach(function(key) {
+                    var _field = _value = null;
+                    fields.forEach(function(field) {
                         // retrieve filter value
-                        var value = $(_this.flows[key + 'Select']).val();
+                        var value = $(_this.flows[field + 'Select']).val();
 
                         // forbidden values
                         var conditions = [
+                            value !== 'both', // not 'both' option
                             value.length > 0, // not an empty array
                             value[0] !== "-1", // not 'all' option
-                            value !== 'both' // not 'both' option
                         ]
 
                         // if no forbidden values, process
                         if (!conditions.includes(false)) {
-                            _key = filter[key];
+                            _field = filter[field];
                             _value = process(value);
                         }
                     })
 
                     // if no value, do not include filter in request
                     if (_value) {
-                        filterParams.flows[_key] = _value;
+                        filterParams.flows[_field] = _value;
                     }
                 })
 
