@@ -57,6 +57,7 @@ define(['views/common/baseview',
                 // Load model here
                 // singular: plural form
                 this.tags = {
+                    'dataset':       'datasets',
                     'activitygroup': 'activitygroups',
                     'activity':      'activities',
                     'processgroup':  'processgroups',
@@ -71,7 +72,6 @@ define(['views/common/baseview',
                     'year':          'years',
                     'month':         'months',
                     'filter':        'filters',
-                    'dataset':       'datasets'
                 }
 
                 // Model collections
@@ -1214,27 +1214,21 @@ define(['views/common/baseview',
                 $(this.flows.inOrOut).bootstrapToggle("off");
                 $("#areaSelections-flows").hide();
 
-                $(_this.flows.yearSelect).val("-1");
-                $(_this.flows.monthSelect).val("-1");
-                $("#monthscol").hide("fast");
+                // get all filter fields
+                this.filters.forEach(function(filter) {
+                    // get all filter fields
+                    var fields =  Object.keys(filter);
 
-                $(_this.flows.waste02Select).val("-1");
-                $(_this.flows.waste04Select).val("-1");
-                $("#wastes04col").hide("fast");
-                $(_this.flows.waste06Select).val("-1");
-                $("#wastes06col").hide("fast");
-
-                $(_this.flows.materialSelect).val("-1");
-                $(_this.flows.productSelect).val("-1");
-                $(_this.flows.compositesSelect).val("-1");
-                $(_this.flows.routeSelect).val("both");
-                $(_this.flows.collectorSelect).val("both");
-                $(_this.flows.hazardousSelect).val("both");
-                $(_this.flows.cleanSelect).val("-1");
-                $(_this.flows.mixedSelect).val("-1");
-                $(_this.flows.directSelect).val("-1");
-                $(_this.flows.isCompositeSelect).val("-1");
-
+                    // reset selector
+                    fields.forEach(function(field) {
+                        var selector = $(_this.flows[field + 'Select']),
+                            options = selector[0];
+                        if (options.length > 0) {
+                            selector.selectpicker('deselectAll');
+                            options[0].selected = true;
+                        }
+                    })
+                })
 
                 // Empty all textareas:
                 $(".selections").html("");
@@ -1254,11 +1248,9 @@ define(['views/common/baseview',
                 }
 
                 // Datasets filter:
-                console.log(this.collections['datasets']);
                 if (this.collections['datasets'].length == 1) {
                     filterParams.flows['datasets'] = this.collections['datasets'].models[0].get("id");
                 } else {
-
                     if ($(this.flows.datasetSelect).val() == '-1') {
                         filterParams.flows['datasets'] = [];
                         this.collections['datasets'].forEach(dataset => {
