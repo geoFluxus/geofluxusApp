@@ -12,7 +12,7 @@ module.exports = {
     fillSelectPicker: function (filterName, selectPicker, objectArray) {
         let itemsHtml = "<option selected value='-1'>All (" + objectArray.length + ")</option><option data-divider='true'></option>";
 
-        if (["activityGroup", "activity", "treatmentMethodGroup", "treatmentMethod"].includes(filterName)) {
+        if (["activitygroup", "activities", "treatmentMethodGroup", "processes"].includes(filterName)) {
             objectArray.forEach(function (item) {
                 itemsHtml += "<option class='dropdown-item' value='" + item.attributes.id + "'>" + enrichFlows.returnCodePlusName(item) + "</option>";
             });
