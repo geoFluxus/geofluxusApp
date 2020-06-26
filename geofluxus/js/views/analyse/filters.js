@@ -17,16 +17,16 @@ define(['views/common/baseview',
                 FiltersView.__super__.initialize.apply(this, [options]);
                 _.bindAll(this, 'prepareAreas');
 
-                this.origin = {};
-                this.destination = {};
-                this.flows = {};
-                this.selectedAreas = {};
-                this.selectedAreas.origin = [];
-                this.selectedAreas.destination = [];
-                this.selectedAreas.flows = [];
+                this.areas = {};
                 this.savedFiltersModal = "";
 
                 this.template = options.template;
+
+                this.boolean = {
+                    'unknown': null,
+                    'yes': true,
+                    'no': false
+                }
 
                 // group filters on hierarchy
                 this.filters = {
@@ -62,12 +62,6 @@ define(['views/common/baseview',
                     ]
                 }
 
-                this.boolean = {
-                    'unknown': null,
-                    'yes': true,
-                    'no': false
-                }
-
                 // Load model here
                 // singular: plural form
                 this.tags = {
@@ -97,8 +91,6 @@ define(['views/common/baseview',
                     });
                     _this.collections[tag] = collection;
                 })
-
-                this.areas = {};
 
                 // Fetch model data
                 this.loader.activate();
@@ -144,13 +136,6 @@ define(['views/common/baseview',
                     trigger: "focus"
                 });
 
-                // Set default admin level to Country:
-                this.idOfCountryLevel = this.collections['arealevels'].find(level => level.attributes.level == 1).id;
-                this.adminLevel = {};
-                this.adminLevel.origin = this.idOfCountryLevel;
-                this.adminLevel.destination = this.idOfCountryLevel;
-                this.adminLevel.flows = this.idOfCountryLevel;
-
                 this.renderSavedFiltersModal();
                 this.renderAreaSelectModal();
                 this.renderConfirmModal();
@@ -162,15 +147,17 @@ define(['views/common/baseview',
             initializeControls: function () {
                 var _this = this;
 
-                // Origin/Destination-controls:
-                nodes = ['origin', 'destination']
-                nodes.forEach(function(node) {
-                    _this[node].inOrOut = _this.el.querySelector('#' + node + '-area-in-or-out');
-                })
+                // Set default admin level to Country:
+                var areaLevels = this.collections['arealevels'];
+                this.idOfCountryLevel = areaLevels.find(level => level.attributes.level == 1).id;
 
-                // Flows-controls:
+                // filters
                 var groups = Object.keys(this.filters);
                 groups.forEach(function(group) {
+                    // initialize group object
+                    _this[group] = {'selectedAreas': [],
+                                    'adminLevel': _this.idOfCountryLevel};
+
                     // get group filters
                     var filters = _this.filters[group];
 
@@ -186,10 +173,9 @@ define(['views/common/baseview',
                     })
                 })
 
-                this.areaLevelSelect = this.el.querySelector('#area-level-select');
-
-                // Saved filter configs
-                this.filterConfigSelect = this.el.querySelector('select[name="saved-filters-select"]');
+                // in-or-out toggles
+                this.origin.inOrOut = _this.el.querySelector('#origin-area-in-or-out');
+                this.destination.inOrOut = _this.el.querySelector('#destination-area-in-or-out');
 
                 // Initialize all bootstrapToggles:
                 $(".bootstrapToggle").bootstrapToggle();
@@ -199,30 +185,6 @@ define(['views/common/baseview',
 
                 // Initialize all textarea-autoresize components:
                 $(".selections").textareaAutoSize();
-            },
-
-            renderMonitorView: function (_this) {
-                var el = document.querySelector('#monitor-content');
-                _this.monitorView = new MonitorView({
-                    el: el,
-                    template: 'monitor-template',
-                    mode: "monitor",
-                    filtersView: _this,
-                    indicator: "Waste",
-                    titleNumber: 3,
-                    maxNumberOfDimensions: 2,
-                    levels: this.areaLevels,
-                });
-            },
-
-            renderImpactView: function (_this) {
-                var el = document.querySelector('#impact-content');
-                _this.impactView = new ImpactView({
-                    el: el,
-                    template: 'impact-template',
-                    filtersView: _this,
-                    levels: this.areaLevels,
-                });
             },
 
             addEventListeners: function () {
@@ -235,10 +197,10 @@ define(['views/common/baseview',
                         _this.analyseMode = clickedMode;
 
                         $(".analyse-content-container").hide();
-                        
+
                         if (_this.monitorView) _this.monitorView.close();
                         if (_this.impactView) _this.impactView.close();
-                        
+
                         switch (_this.analyseMode) {
                             case "monitor":
                                 _this.renderMonitorView(_this);
@@ -418,55 +380,6 @@ define(['views/common/baseview',
                 })
             },
 
-            renderSavedFiltersModal: function () {
-                var _this = this;
-                let form;
-
-                this.savedFiltersModal = this.el.querySelector('.saved-filters.modal');
-                html = document.getElementById('saved-filters-modal-template').innerHTML;
-                template = _.template(html);
-                this.savedFiltersModal.innerHTML = template({
-                    filters: this.collections['filters']
-                });
-
-                $('.saved-filters.modal').on('hide.bs.modal', function (e) {
-                    switch (_this.savedFiltersModal.mode) {
-                        case "savedMode":
-                            form = $("form.savedMode")[0];
-                            $(".filterEdit").hide();
-                            $(".update-filter-name").val("");
-                            $(".filterEdit .invalid-feedback").hide();
-                            $(".filterEdit #filterNameUpdated").hide();
-                            break;
-                        case "newMode":
-                            form = $("form.newMode")[0];
-                            $("#newFilterAdded").hide();
-                            $("#new-filter-name-input").val("");
-                            $(".invalid-feedback").hide();
-                            $("#new-filter-name-input").attr("readonly", false);
-                            break;
-                    }
-                    form.classList.remove('was-validated');
-                    form.classList.add('needs-validation');
-                })
-            },
-
-            renderConfirmModal: function () {
-                var _this = this;
-                this.confirmationModal = $('#confirmation-modal')[0];
-                html = document.getElementById('delete-modal-template').innerHTML;
-                template = _.template(html);
-                this.confirmationModal.innerHTML = template({
-                    title: "Please confirm",
-                    confirmButtonText: "Delete",
-                    message: "Are you sure you want to delete the selected filter configuration?"
-                });
-
-                $("#modal-confirm-btn").click(function () {
-                    _this.deleteFilterConfig();
-                })
-            },
-
             renderAreaSelectModal: function () {
                 var _this = this;
 
@@ -500,13 +413,13 @@ define(['views/common/baseview',
                                 var block = _this.areaMap.block;
 
                                 // The user has selected an area for the Origin block:
-                                _this.selectedAreas[block] = [];
+                                _this[block].selectedAreas = [];
                                 areaFeats.forEach(function (areaFeat) {
                                     labels.push(areaFeat.label);
-                                    _this.selectedAreas[block].push(areas.get(areaFeat.id));
+                                    _this[block].selectedAreas.push(areas.get(areaFeat.id));
                                 });
 
-                                if (_this.selectedAreas[block].length > 0) {
+                                if (_this[block].selectedAreas.length > 0) {
                                     $(".areaSelections-" + block).fadeIn();
                                 } else {
                                     $(".areaSelections-" + block).fadeOut();
@@ -524,10 +437,11 @@ define(['views/common/baseview',
                     });
             },
 
+
             changeAreaLevel: function () {
                 var levelId = this.areaLevelSelect.value;
 
-                this.adminLevel[this.areaMap.block] = levelId;
+                this[this.areaMap.block].adminLevel = levelId;
 
                 // Clear the textarea with selected areas in the modal:
                 $("#areaSelectionsModalTextarea").html("");
@@ -593,13 +507,141 @@ define(['views/common/baseview',
                 let buttonClicked = $(event.currentTarget).data('area-clear-button');
                 let _this = this;
 
-                if (_this.selectedAreas[buttonClicked].length > 0) {
-                    _this.selectedAreas[buttonClicked] = [];
+                if (_this[buttonClicked].selectedAreas.length > 0) {
+                    _this[buttonClicked].selectedAreas = [];
                     $("#areaSelections-Textarea-" + buttonClicked).html("");
                     setTimeout(function () {
                         $(".areaSelections-" + buttonClicked).fadeOut();
                     }, 400);
                 }
+            },
+
+            showAreaSelection: function (event) {
+                var _this = this;
+
+                // Used to determine which 'Select area'-button the user has pressed, either 'origin', 'flows', or 'destination':
+                _this.areaMap.block = $(event.currentTarget).data('area-select-block');
+
+                let adminLevel = _this[_this.areaMap.block].adminLevel;
+                // Set the admin level for origin/destination/flows in the selectpicker
+                $(this.areaLevelSelect).val(adminLevel);
+                $(this.areaLevelSelect).selectpicker("refresh");
+
+                // Show the actual modal:
+                $(this.areaModal).modal('show');
+
+                // After the modal has fully opened...
+                setTimeout(function () {
+                    // Call updateSize to render the map with the correct dimensions:
+                    _this.areaMap.map.updateSize();
+                    // Fetch areas if they aren't there yet:
+                    if (_this.collections['arealevels'].length > 0) {
+                        _this.changeAreaLevel();
+                    }
+                    _this.addFeaturesToMap();
+                }, 200);
+            },
+
+            addFeaturesToMap: function () {
+                var labelStringArray = [];
+                // Create ol.Collection of Features to which we can add Features:
+                let features = this.areaMap.layers.areas.select.getFeatures();
+
+                // Add the correct selected features to the areaMap:
+                var block = this.areaMap.block;
+                if (this[block].selectedAreas && this[block].selectedAreas.length > 0) {
+                    // Loop through all selected areas in selectedAreas.origin:
+                    this[block].selectedAreas.forEach(selectedArea => {
+                        // Get the feature object based on the id:
+                        let feature = this.areaMap.getFeature("areas", selectedArea.id);
+                        labelStringArray.push(selectedArea.attributes.name);
+
+                        // Add it to the Features ol.Collection:
+                        features.push(feature);
+                    });
+                }
+
+                // Display the previousy selected regions in the label on the modal:
+                $("#areaSelectionsModalTextarea").html(labelStringArray.join('; '));
+
+                // Show the text in the area selection modal Textarea and trigger input:
+                $("#areaSelectionsModalTextarea").html(labelStringArray.join("; "));
+                $(".selections").trigger('input');
+            },
+
+
+            renderMonitorView: function (_this) {
+                var el = document.querySelector('#monitor-content');
+                _this.monitorView = new MonitorView({
+                    el: el,
+                    template: 'monitor-template',
+                    mode: "monitor",
+                    filtersView: _this,
+                    indicator: "Waste",
+                    titleNumber: 3,
+                    maxNumberOfDimensions: 2,
+                    levels: this.areaLevels,
+                });
+            },
+
+            renderImpactView: function (_this) {
+                var el = document.querySelector('#impact-content');
+                _this.impactView = new ImpactView({
+                    el: el,
+                    template: 'impact-template',
+                    filtersView: _this,
+                    levels: this.areaLevels,
+                });
+            },
+
+            renderSavedFiltersModal: function () {
+                var _this = this;
+                let form;
+
+                this.savedFiltersModal = this.el.querySelector('.saved-filters.modal');
+                html = document.getElementById('saved-filters-modal-template').innerHTML;
+                template = _.template(html);
+                this.savedFiltersModal.innerHTML = template({
+                    filters: this.collections['filters']
+                });
+                this.filterConfigSelect = this.el.querySelector('select[name="saved-filters-select"]');
+
+                $('.saved-filters.modal').on('hide.bs.modal', function (e) {
+                    switch (_this.savedFiltersModal.mode) {
+                        case "savedMode":
+                            form = $("form.savedMode")[0];
+                            $(".filterEdit").hide();
+                            $(".update-filter-name").val("");
+                            $(".filterEdit .invalid-feedback").hide();
+                            $(".filterEdit #filterNameUpdated").hide();
+                            break;
+                        case "newMode":
+                            form = $("form.newMode")[0];
+                            $("#newFilterAdded").hide();
+                            $("#new-filter-name-input").val("");
+                            $(".invalid-feedback").hide();
+                            $("#new-filter-name-input").attr("readonly", false);
+                            break;
+                    }
+                    form.classList.remove('was-validated');
+                    form.classList.add('needs-validation');
+                })
+            },
+
+            renderConfirmModal: function () {
+                var _this = this;
+                this.confirmationModal = $('#confirmation-modal')[0];
+                html = document.getElementById('delete-modal-template').innerHTML;
+                template = _.template(html);
+                this.confirmationModal.innerHTML = template({
+                    title: "Please confirm",
+                    confirmButtonText: "Delete",
+                    message: "Are you sure you want to delete the selected filter configuration?"
+                });
+
+                $("#modal-confirm-btn").click(function () {
+                    _this.deleteFilterConfig();
+                })
             },
 
             reloadFilterSelectPicker: function (response) {
@@ -995,59 +1037,6 @@ define(['views/common/baseview',
                         break;
                 }
                 $(this.savedFiltersModal).modal('show');
-            },
-
-            showAreaSelection: function (event) {
-                var _this = this;
-
-                // Used to determine which 'Select area'-button the user has pressed, either 'origin', 'flows', or 'destination': 
-                _this.areaMap.block = $(event.currentTarget).data('area-select-block');
-
-                let adminLevel = _this.adminLevel[_this.areaMap.block];
-                // Set the admin level for origin/destination/flows in the selectpicker
-                $(this.areaLevelSelect).val(adminLevel);
-                $(this.areaLevelSelect).selectpicker("refresh");
-
-                // Show the actual modal:
-                $(this.areaModal).modal('show');
-
-                // After the modal has fully opened...
-                setTimeout(function () {
-                    // Call updateSize to render the map with the correct dimensions:
-                    _this.areaMap.map.updateSize();
-                    // Fetch areas if they aren't there yet:
-                    if (_this.collections['arealevels'].length > 0) {
-                        _this.changeAreaLevel();
-                    }
-                    _this.addFeaturesToMap();
-                }, 200);
-            },
-
-            addFeaturesToMap: function () {
-                var labelStringArray = [];
-                // Create ol.Collection of Features to which we can add Features:
-                let features = this.areaMap.layers.areas.select.getFeatures();
-
-                // Add the correct selected features to the areaMap:
-                var block = this.areaMap.block;
-                if (this.selectedAreas[block] && this.selectedAreas[block].length > 0) {
-                    // Loop through all selected areas in selectedAreas.origin:
-                    this.selectedAreas[block].forEach(selectedArea => {
-                        // Get the feature object based on the id:
-                        let feature = this.areaMap.getFeature("areas", selectedArea.id);
-                        labelStringArray.push(selectedArea.attributes.name);
-
-                        // Add it to the Features ol.Collection:
-                        features.push(feature);
-                    });
-                }
-
-                // Display the previousy selected regions in the label on the modal:
-                $("#areaSelectionsModalTextarea").html(labelStringArray.join('; '));
-
-                // Show the text in the area selection modal Textarea and trigger input:
-                $("#areaSelectionsModalTextarea").html(labelStringArray.join("; "));
-                $(".selections").trigger('input');
             },
 
             resetFiltersToDefault: function () {
