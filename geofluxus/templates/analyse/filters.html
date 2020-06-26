@@ -23,7 +23,6 @@
             </div>
         </div>
 
-        <% if (datasets.count != 1) { %>
         <div class="card bg-dark">
 
             <div class="card-header">
@@ -61,7 +60,6 @@
                 </div>
             </div>
         </div>
-        <% } %>
 
         <!-- ORIGIN CONTROLS -->
         <div class="card bg-dark">
@@ -141,13 +139,13 @@
                                 <div class="btn-group btn-group-toggle" id="origin-role-radio" data-toggle="buttons"
                                     style="width: 18rem;">
 
-                                    <label class="btn btn-sm btn-primary" style="width: 40%;">
-                                        <input type="radio" id="origin-role-radio-production" checked>Production
+                                    <label class="btn btn-sm btn-primary origin-role" style="width: 40%;" role="production">
+                                        <input type="radio" id="origin-role-radio-production">Production
                                     </label>
-                                    <label class="btn btn-sm btn-primary active" style="width: 20%;">
+                                    <label class="btn btn-sm btn-primary active origin-role" style="width: 20%;" role="both">
                                         <input type="radio" id="origin-role-radio-both">Both
                                     </label>
-                                    <label class="btn btn-sm btn-primary" style="width: 40%;">
+                                    <label class="btn btn-sm btn-primary origin-role" style="width: 40%;" role="treatment">
                                         <input type="radio" id="origin-role-radio-treatment">Treatment
                                     </label>
 
@@ -168,7 +166,7 @@
                         </div>
                     </div>
 
-                    <div class="row originContainerActivity" style="display: none;">
+                    <div class="row origin-production" style="display: none;">
                         <div class="col-md-4">
 
                             <label for="origin-activitygroup-select">Activity group</label>
@@ -235,7 +233,7 @@
                         </div>
                     </div>
 
-                    <div class="row originContainerTreatmentMethod" style="display: none;">
+                    <div class="row origin-treatment" style="display: none;">
                         <div class="col-md-4">
 
                             <label for="origin-processgroup-select">Treatment method group</label>

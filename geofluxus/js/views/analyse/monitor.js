@@ -34,12 +34,14 @@ define(['views/common/baseview',
                 var _this = this;
                 MonitorView.__super__.initialize.apply(this, [options]);
 
-                this.filtersView = options.filtersView;
                 this.el = options.el;
+                this.template = options.template;
+                this.filtersView = options.filtersView;
+                this.areaLevels = options.levels;
 
-                this.mode = options.mode;
-                this.titleNumber = options.titleNumber.toString();
-                this.indicator = "waste";
+                this.mode = options.mode || 'monitor';
+                this.titleNumber = (options.titleNumber || 3).toString();
+                this.indicator = options.indicator || "waste";
                 this.impactSourceStrings = [];
 
                 this.labels = {
@@ -90,16 +92,7 @@ define(['views/common/baseview',
                     'circularsankey':     {'view': CircularSankeyView}
                 }
 
-                this.areaLevels = new Collection([], {
-                    apiTag: 'arealevels',
-                    comparator: "level",
-                });
-                var promises = [
-                    this.areaLevels.fetch(),
-                ];
-                Promise.all(promises).then(function () {
-                    _this.render();
-                })
+                this.render();
             },
 
             // DOM events
@@ -108,10 +101,10 @@ define(['views/common/baseview',
                 'click #reset-dim-viz': 'resetDimAndVizToDefault',
             },
 
-            // Rendering
+            // render
             render: function () {
                 var html = document.getElementById(this.template).innerHTML;
-                var template = _.template(html)
+                var template = _.template(html);
 
                 this.el.innerHTML = template({
                     levels: this.areaLevels,

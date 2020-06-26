@@ -17,10 +17,10 @@ define(['views/common/baseview',
                 FiltersView.__super__.initialize.apply(this, [options]);
                 _.bindAll(this, 'prepareAreas');
 
+                this.template = options.template;
+
                 this.areas = {};
                 this.savedFiltersModal = "";
-
-                this.template = options.template;
 
                 this.boolean = {
                     'unknown': null,
@@ -108,10 +108,12 @@ define(['views/common/baseview',
 
             // DOM events
             events: {
+                // area modal
                 'click .area-select-button': 'showAreaSelection',
                 'change select[name="area-level-select"]': 'changeAreaLevel',
-                'click #reset-filters': 'resetFiltersToDefault',
                 'click .clear-areas-button': 'clearAreas',
+
+                'click #reset-filters': 'resetFiltersToDefault',
                 'click .openSavedFilterModal': 'showSavedFiltersModal',
                 'click #new-filter-name-btn': 'saveNewFilter',
                 'click #delete-filter-config': 'showConfirmModal',
@@ -122,7 +124,6 @@ define(['views/common/baseview',
                 "click .hide-filter-name-button": "hideFilterNameInput",
             },
 
-            // Rendering
             render: function () {
                 var html = document.getElementById(this.template).innerHTML,
                     template = _.template(html),
@@ -144,6 +145,18 @@ define(['views/common/baseview',
                 this.addEventListeners();
             },
 
+            renderModeView: function () {
+                var el = document.querySelector('#' + this.mode + '-content'),
+                    options = {
+                        el: el,
+                        template: this.mode + '-template',
+                        filtersView: this,
+                        levels: this.collections['arealevels'],
+                    };
+
+                this.modeView = this.mode == 'monitor' ? new MonitorView(options) : new ImpactView(options);
+            },
+
             initializeControls: function () {
                 var _this = this;
 
@@ -154,7 +167,7 @@ define(['views/common/baseview',
                 // filters
                 var groups = Object.keys(this.filters);
                 groups.forEach(function(group) {
-                    // initialize group object
+                    // initialize group object without areas
                     _this[group] = {'selectedAreas': [],
                                     'adminLevel': _this.idOfCountryLevel};
 
@@ -190,94 +203,59 @@ define(['views/common/baseview',
             addEventListeners: function () {
                 var _this = this;
 
-                $('.analyse-mode-radio-label').on("click", function (event) {
-                    let clickedMode = $(this).attr("data-mode");
+                // render mode (monitor/impact)
+                $('.analyse-mode-radio-label').on("click", function(event) {
+                    let mode = $(this).attr("data-mode");
 
-                    if (clickedMode != _this.analyseMode) {
-                        _this.analyseMode = clickedMode;
+                    if (mode != _this.mode) {
+                        _this.mode = mode;
 
                         $(".analyse-content-container").hide();
+                        if (_this.modeView) _this.modeView.close();
 
-                        if (_this.monitorView) _this.monitorView.close();
-                        if (_this.impactView) _this.impactView.close();
-
-                        switch (_this.analyseMode) {
-                            case "monitor":
-                                _this.renderMonitorView(_this);
-                                $("#monitor-content").fadeIn();
-                                break;
-                            case "impact":
-                                _this.renderImpactView(_this);
-                                $("#impact-content").fadeIn();
-                                break;
-                        }
+                        _this.renderModeView();
+                        $("#" + _this.mode + "-content").fadeIn();
                     }
-                    event.preventDefault();
+                    event.preventDefault(); // avoid firing twice!
                 });
 
-                function filterEwcHazardous(event, clickedIndex, checked) {
-                    let showOnlyHazardous = $(_this.flows.hazardousSelect).val();
+                // origin/destination role buttons (ToDo: Destination role container)
+                $('.origin-role').on("click", function(event) {
+                    let role =  $(this).attr('role'),
+                        containers = ['production', 'treatment'];
 
-                    switch (showOnlyHazardous) {
-                        case "both":
-                            $("#flows-wastes02Col").show();
-                            $("#flows-wastes04Col").hide();
-                            $(".chevronEwc06").show();
-                            $("#flows-waste06-label").css("position", "relative");
-                            $("#helpiconWaste06").removeClass("hazaIconPos");
-                            $("#flows-wastes06Col").hide();
-                            break;
-                        case "yes":
-                            showOnlyHazardous = true;
-                            $("#flows-wastes02Col").hide();
-                            $("#flows-wastes04Col").hide();
-                            break;
-                        case "no":
-                            showOnlyHazardous = false;
-                            $("#flows-wastes02Col").hide();
-                            $("#flows-wastes04Col").hide();
-                            break;
-                        default:
-                            break;
-                    }
+                    containers.forEach(function(container) {
+                        $(".origin-" + container)[(container == role) ? 'fadeIn' : 'hide']();
+                    })
 
-                    if (showOnlyHazardous != "both") {
-                        let filteredWastes06 = _this.collections['wastes06'].models.filter(function (waste06) {
-                            return waste06.attributes.hazardous == showOnlyHazardous;
-                        });
+                    event.preventDefault(); // avoid firing twice!
+                })
 
-                        filterUtils.fillSelectPicker("wastes06", _this.flows.waste06Select, filteredWastes06);
+                function filterEwcHazardous(evt) {
+                    let select = evt.target.value;
+
+                    if (select == 'both') {
+                        $("#flows-wastes02Col").show();
+                        $("#flows-wastes04Col").hide();
+                        $(".chevronEwc06").show();
+                        $("#flows-waste06-label").css("position", "relative");
+                        $("#helpiconWaste06").removeClass("hazaIconPos");
+                        $("#flows-wastes06Col").hide();
+                    } else {
+                        $("#flows-wastes02Col").hide();
+                        $("#flows-wastes04Col").hide();
                         $(".chevronEwc06").hide();
                         $("#flows-waste06-label").css("position", "static");
                         $("#helpiconWaste06").addClass("hazaIconPos");
-                        $("#flows-wastes06Col").fadeIn("fast");
+                        $("#flows-wastes06Col").show();
+
+                        let filteredWastes06 = _this.collections['wastes06'].models.filter(function (waste06) {
+                            return waste06.attributes.hazardous == _this.boolean[select];
+                        });
+                        filterUtils.fillSelectPicker("wastes06", _this.flows.waste06Select, filteredWastes06);
                     }
                 }
                 $(this.flows.hazardousSelect).on('changed.bs.select', filterEwcHazardous);
-
-                // /////////////////////////////////
-                // Multicheck events:
-
-                // Origin/Destination: -------------------------
-                nodes = ['origin', 'destination']
-                nodes.forEach(function(node) {
-                    // Hide/show Activity Group or Treatment method group containers
-                    $("#" + node + "-role-radio-production").on('click', function () {
-                        _this[node].role = "production";
-                        $("." + node + "ContainerTreatmentMethod").hide();
-                        $("." + node + "ContainerActivity").fadeIn();
-                    });
-                    $("#" + node + "-role-radio-both").on('click', function () {
-                        _this[node].role = "both";
-                        $("." + node + "ContainerActivity").hide();
-                        $("." + node + "ContainerTreatmentMethod").hide();
-                    });
-                    $("#" + node + "-role-radio-treatment").on('click', function () {
-                        _this[node].role = "treatment";
-                        $("." + node + "ContainerActivity").hide();
-                        $("." + node + "ContainerTreatmentMethod").fadeIn();
-                    });
-                })
 
                 // enable multiple check for selectors
                 function multiCheck(evt, clickedIndex, checked) {
@@ -325,7 +303,6 @@ define(['views/common/baseview',
                     }
                 }
 
-                // Flows: ---------------------------
                 var groups = Object.keys(this.filters);
                 groups.forEach(function(group) {
                     // all group filters
@@ -379,6 +356,7 @@ define(['views/common/baseview',
                     focusedElement = null;
                 })
             },
+
 
             renderAreaSelectModal: function () {
                 var _this = this;
@@ -436,7 +414,6 @@ define(['views/common/baseview',
                         }
                     });
             },
-
 
             changeAreaLevel: function () {
                 var levelId = this.areaLevelSelect.value;
@@ -567,31 +544,6 @@ define(['views/common/baseview',
                 // Show the text in the area selection modal Textarea and trigger input:
                 $("#areaSelectionsModalTextarea").html(labelStringArray.join("; "));
                 $(".selections").trigger('input');
-            },
-
-
-            renderMonitorView: function (_this) {
-                var el = document.querySelector('#monitor-content');
-                _this.monitorView = new MonitorView({
-                    el: el,
-                    template: 'monitor-template',
-                    mode: "monitor",
-                    filtersView: _this,
-                    indicator: "Waste",
-                    titleNumber: 3,
-                    maxNumberOfDimensions: 2,
-                    levels: this.areaLevels,
-                });
-            },
-
-            renderImpactView: function (_this) {
-                var el = document.querySelector('#impact-content');
-                _this.impactView = new ImpactView({
-                    el: el,
-                    template: 'impact-template',
-                    filtersView: _this,
-                    levels: this.areaLevels,
-                });
             },
 
             renderSavedFiltersModal: function () {
@@ -1042,19 +994,9 @@ define(['views/common/baseview',
             resetFiltersToDefault: function () {
                 _this = this;
 
-                _this.selectedAreas.origin = [];
-                _this.selectedAreas.destination = [];
-                _this.selectedAreas.flows = [];
-
-                // ///////////////////////////////////////////////
-                // Origin-controls:
+                // origin / destination
                 let nodes = ['origin', 'destination']
                 nodes.forEach(function(node) {
-                    _this.adminLevel[node] = _this.idOfCountryLevel;
-                    $(".areaSelections-" + node).hide();
-                    $("#areaSelections-Textarea-" + node).html("");
-                    $(_this[node].inOrOut).bootstrapToggle("off");
-
                     $("#" + node + "-role-radio-production").parent().removeClass("active");
                     $("#" + node + "-role-radio-both").parent().addClass("active")
                     $("#" + node + "-role-radio-treatment").parent().removeClass("active");
@@ -1062,30 +1004,30 @@ define(['views/common/baseview',
                     $("#" + node + "-role-radio label input").removeAttr("checked");
                     $("#" + node + "-role-radio-both").attr("checked", true);
                     _this[node].role = "both";
+                    $(_this[node].inOrOut).bootstrapToggle("off");
 
                     $("." + node + "ContainerActivity").hide();
                     $("." + node + "ContainerTreatmentMethod").hide();
                 })
 
-                // ///////////////////////////////////////////////
-                // Flows-controls:
-                this.adminLevel.flows = this.idOfCountryLevel;
-                $("#areaSelections-flows").hide();
-                $("#areaSelections-Textarea-flows").html("");
-                $(this.flows.inOrOut).bootstrapToggle("off");
-                $("#areaSelections-flows").hide();
-
                 // get all groups
                 var groups = Object.keys(this.filters)
                 groups.forEach(function(group) {
-                    // get all group filters
-                    var filters = _this.filters[group];
+                    // reset group areas
+                    _this[group].selectedAreas = [];
+                    _this[group].adminLevel = _this.idOfCountryLevel;
 
+                    // reset area selections
+                    $(".areaSelections-" + group).hide();
+                    $("#areaSelections-Textarea-" + group).html("");
+
+                    // reset all group filters
+                    var filters = _this.filters[group];
                     filters.forEach(function(filter) {
                         // get all filter fields
                         var fields =  Object.keys(filter);
 
-                        // reset selector
+                        // reset selectors
                         fields.forEach(function(field) {
                             var selector = $(_this[group][field + 'Select']),
                                 options = selector[0];
@@ -1108,63 +1050,37 @@ define(['views/common/baseview',
             getFilterParams: function () {
                 var _this = this;
 
+                // request parameters
                 let filterParams = {
                     origin: {},
                     destination: {},
                     flows: {},
                 }
 
-                // Datasets filter:
-                if (this.collections['datasets'].length == 1) {
-                    filterParams.flows['datasets'] = this.collections['datasets'].models[0].get("id");
-                } else {
-                    if ($(this.flows.datasetSelect).val() == '-1') {
-                        filterParams.flows['datasets'] = [];
-                        this.collections['datasets'].forEach(dataset => {
-                            filterParams.flows['datasets'].push(dataset.get("id"));
-                        });
-                    } else {
-                        filterParams.flows['datasets'] = $(this.flows.datasetSelect).val();
-                    }
-                }
-
-                // ///////////////////////////////
-                // ORIGIN/DESTINATION
-                let nodes = ['origin', 'destination']
-                nodes.forEach(function(node) {
-                    filterParams[node].adminLevel = _this.adminLevel[node];
-
-                    if (_this.selectedAreas[node] !== undefined &&
-                        _this.selectedAreas[node].length > 0) {
-                        filterParams[node].selectedAreas = [];
-                        _this.selectedAreas[node].forEach(function (area) {
-                            filterParams[node].selectedAreas.push(area.id);
-                        });
-                    }
-                    
-                    if ($(_this[node].inOrOut).prop('checked')) {
-                        filterParams[node].inOrOut = 'out';
-                    } else {
-                        filterParams[node].inOrOut = 'in';
-                    }
-
-                    if (_this[node].role != 'both') {
-                        filterParams.flows['origin_role'] = _this.origin.role;
-                    }
-                })
-
-                // ///////////////////////////////
-                // FLOWS
-
-                filterParams.flows.adminLevel = this.adminLevel.flows;
-
-                if (this.selectedAreas.flows !== undefined &&
-                    this.selectedAreas.flows.length > 0) {
-                    filterParams.flows.selectedAreas = [];
-                    this.selectedAreas.flows.forEach(function (area) {
-                        filterParams.flows.selectedAreas.push(area.id);
+                // dataset filter -> to flows filters
+                var datasets = this.collections['datasets'],
+                    ids = $(this.flows.datasetSelect).val();
+                // if 'all' is selected
+                if (ids[0] == '-1') {
+                    ids = [];
+                    datasets.forEach(dataset => {
+                        ids.push(dataset.get("id"));
                     });
                 }
+                filterParams.flows['datasets'] = ids;
+
+                // origin/destination in-or-out & role
+                let group = ['origin', 'destination']
+                group.forEach(function(group) {
+                    var inOrOut = _this[group].inOrOut;
+                    filterParams[group].inOrOut = $(inOrOut).prop('checked') ? 'out' : 'in';
+
+                    var role = _this[group].role;
+                    if (role != 'both') {
+                        // save to flows (non-spatial) filters
+                        filterParams.flows[group + '_role'] = role;
+                    }
+                })
 
                 // process value
                 function process(value) {
@@ -1189,9 +1105,18 @@ define(['views/common/baseview',
                 // load filters to request
                 var groups = Object.keys(this.filters);
                 groups.forEach(function(group) {
+                    // get group areas
+                    filterParams[group].adminLevel = _this[group].adminLevel;
+                    if (_this[group].selectedAreas !== undefined &&
+                        _this[group].selectedAreas.length > 0) {
+                        filterParams[group].selectedAreas = [];
+                        _this[group].selectedAreas.forEach(function (area) {
+                            filterParams[group].selectedAreas.push(area.id);
+                        });
+                    }
+
                     // get group filters
                     var filters = _this.filters[group];
-
                     filters.forEach(function(filter) {
                         // get filter fields
                         var fields = Object.keys(filter);
@@ -1217,6 +1142,7 @@ define(['views/common/baseview',
 
                         // if no value, do not include filter in request
                         if (_value) {
+                            // save to flows (non-spatial) fields
                             filterParams.flows[_field] = _value;
                         }
                     })
