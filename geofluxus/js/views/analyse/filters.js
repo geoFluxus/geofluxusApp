@@ -524,10 +524,11 @@ define(['views/common/baseview',
                 let features = this.areaMap.layers.areas.select.getFeatures();
 
                 // Add the correct selected features to the areaMap:
-                var block = this.areaMap.block;
-                if (this[block].selectedAreas && this[block].selectedAreas.length > 0) {
+                var block = this.areaMap.block,
+                    selectedAreas = this[block].selectedAreas;
+                if (selectedAreas != undefined && selectedAreas.length > 0) {
                     // Loop through all selected areas in selectedAreas.origin:
-                    this[block].selectedAreas.forEach(selectedArea => {
+                    selectedAreas.forEach(selectedArea => {
                         // Get the feature object based on the id:
                         let feature = this.areaMap.getFeature("areas", selectedArea.id);
                         labelStringArray.push(selectedArea.attributes.name);
@@ -626,11 +627,11 @@ define(['views/common/baseview',
                             selectedAreas = savedConfig.selectedAreas,
                             inOrOut = savedConfig.inOrOut;
 
-                        // update admin level
-                        _this[group].adminLevel = adminLevel;
-
-                        // selected areas
+                        // add selected areas to map
                         if (selectedAreas != undefined) {
+                            // update admin level
+                            _this[group].adminLevel = adminLevel;
+
                             let executeAfterLoading = function (_this, adminLevel, group) {
                                 let labelStringArray = [];
                                 selectedAreas.forEach(selectedAreaId => {
@@ -1053,12 +1054,13 @@ define(['views/common/baseview',
                 // load filters to request
                 var groups = Object.keys(this.filters);
                 groups.forEach(function(group) {
-                    // get group areas
+                    // get group admin level & areas
                     filterParams[group].adminLevel = _this[group].adminLevel;
-                    if (_this[group].selectedAreas !== undefined &&
-                        _this[group].selectedAreas.length > 0) {
+
+                    var selectedAreas = _this[group].selectedAreas;
+                    if (selectedAreas !== undefined && selectedAreas.length > 0) {
                         filterParams[group].selectedAreas = [];
-                        _this[group].selectedAreas.forEach(function (area) {
+                        selectedAreas.forEach(function (area) {
                             filterParams[group].selectedAreas.push(area.id);
                         });
                     }
