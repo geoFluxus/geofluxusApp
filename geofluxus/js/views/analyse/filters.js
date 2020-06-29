@@ -22,6 +22,7 @@ define(['views/common/baseview',
                 this.areas = {};
                 this.savedFiltersModal = "";
 
+                // boolean selections
                 this.boolean = {
                     'unknown': null,
                     'yes': true,
@@ -62,7 +63,7 @@ define(['views/common/baseview',
                     ]
                 }
 
-                // Load model here
+                // template model tags
                 // singular: plural form
                 this.tags = {
                     'dataset':       'datasets',
@@ -82,8 +83,8 @@ define(['views/common/baseview',
                     'filter':        'filters',
                 }
 
-                // Model collections
-                // Refer to collection via tag
+                // model collections
+                // refer to collection via tag
                 this.collections = {};
                 Object.values(this.tags).forEach(function(tag) {
                     var collection = new Collection([], {
@@ -92,7 +93,7 @@ define(['views/common/baseview',
                     _this.collections[tag] = collection;
                 })
 
-                // Fetch model data
+                // fetch model data
                 this.loader.activate();
                 var promises = [];
                 Object.values(this.collections).forEach(function(collection) {
@@ -108,12 +109,12 @@ define(['views/common/baseview',
 
             // DOM events
             events: {
-                // area modal
+                // AREA MODAL
                 'click .area-select-button': 'showAreaSelection',
                 'change select[name="area-level-select"]': 'changeAreaLevel',
                 'click .clear-areas-button': 'clearAreas',
 
-                'click #reset-filters': 'resetFiltersToDefault',
+                // FILTER MODAL
                 'click .openSavedFilterModal': 'showSavedFiltersModal',
                 'click #new-filter-name-btn': 'saveNewFilter',
                 'click #delete-filter-config': 'showConfirmModal',
@@ -122,6 +123,8 @@ define(['views/common/baseview',
                 "click #save-filter-name": "updateFilterName",
                 "click #load-filter-config": "loadFilterConfiguration",
                 "click .hide-filter-name-button": "hideFilterNameInput",
+
+                'click #reset-filters': 'resetFiltersToDefault',
             },
 
             render: function () {
@@ -226,6 +229,7 @@ define(['views/common/baseview',
                         let role =  $(this).attr('role'),
                             containers = ['production', 'treatment'];
 
+                        _this[group].role = role;
                         containers.forEach(function(container) {
                             $("." + group + "-" + container)[(container == role) ? 'fadeIn' : 'hide']();
                         })
@@ -356,6 +360,7 @@ define(['views/common/baseview',
             },
 
 
+            // AREA MODAL //
             renderAreaSelectModal: function () {
                 var _this = this;
 
@@ -395,11 +400,7 @@ define(['views/common/baseview',
                                     _this[block].selectedAreas.push(areas.get(areaFeat.id));
                                 });
 
-                                if (_this[block].selectedAreas.length > 0) {
-                                    $(".areaSelections-" + block).fadeIn();
-                                } else {
-                                    $(".areaSelections-" + block).fadeOut();
-                                }
+                                $(".areaSelections-" + block)[_this[block].selectedAreas.length > 0 ? 'fadeIn' : 'fadeOut']();
                                 $("#areaSelections-Textarea-" + block).html(labels.join('; '))
 
                                 // Show the selected areas in the textarea in the modal:
@@ -543,7 +544,10 @@ define(['views/common/baseview',
                 $("#areaSelectionsModalTextarea").html(labelStringArray.join("; "));
                 $(".selections").trigger('input');
             },
+            // AREA MODAL //
 
+
+            // FILTER MODAL //
             renderSavedFiltersModal: function () {
                 var _this = this;
                 let form;
@@ -627,7 +631,7 @@ define(['views/common/baseview',
                      * @param {object} savedConfig the saved filter config of the section
                      */
                     function loadSavedAreas(block, savedConfig) {
-                        _this.adminLevel[block] = parseInt(savedConfig.adminLevel);
+                        _this[block].adminLevel = parseInt(savedConfig.adminLevel);
 
                         /**
                          * Function to be executed after areas of this level have been loaded:
@@ -637,7 +641,7 @@ define(['views/common/baseview',
                             let labelStringArray = [];
                             savedConfig.selectedAreas.forEach(selectedAreaId => {
                                 let areaObject = _this.areas[adminLevel].models.find(area => area.attributes.id == selectedAreaId);
-                                _this.selectedAreas[block].push(areaObject);
+                                _this[block].selectedAreas.push(areaObject);
                                 labelStringArray.push(areaObject.attributes.name);
                             });
                             $(".areaSelections-" + block).fadeIn();
@@ -652,7 +656,7 @@ define(['views/common/baseview',
                                 $(_this[block].inOrOut).bootstrapToggle("on");
                             }
                         }
-                        _this.prepareAreas(_this.adminLevel[block], false, executeAfterLoading, block);
+                        _this.prepareAreas(_this[block].adminLevel, false, executeAfterLoading, block);
                     }
 
                     // Load saved areas for each section:
@@ -666,46 +670,16 @@ define(['views/common/baseview',
                         loadSavedAreas("flows", flows);
                     }
 
-                    /**
-                     * Load saved role for given section
-                     * @param {string} block the name of the section: 'origin' or 'destination'
-                     * @param {object} savedConfig the saved filter config of the section
-                     */
-                    function loadSavedRole(block) {
-                        $("#" + block + "-role-radio-production").parent().removeClass("active");
-                        $("#" + block + "-role-radio-both").parent().removeClass("active");
-                        $("#" + block + "-role-radio-treatment").parent().removeClass("active");
-                        _this[block].role = flows[block + "_role"];
-                        // Set origin role
-                        switch (_this[block].role) {
-                            case "production":
-                                $($("#" + block + "-role-radio-production").parent()[0]).addClass("active")
-                                $("." + block + "ContainerTreatmentMethod").hide();
-                                $("." + block + "ContainerActivity").fadeIn();
-                                break;
-                            case "both":
-                                $($("#" + block + "-role-radio-both").parent()[0]).addClass("active")
-                                $("." + block + "ContainerActivity").fadeOut();
-                                $("." + block + "ContainerTreatmentMethod").fadeOut();
-                                break;
-                            case "treatment":
-                                $($("#" + block + "-role-radio-treatment").parent()[0]).addClass("active")
-                                $("." + block + "ContainerActivity").hide();
-                                $("." + block + "ContainerTreatmentMethod").fadeIn();
-                                break;
+                    // load origin/destination role
+                    var groups = ['origin', 'destination'];
+                    groups.forEach(function(group) {
+                        var role = flows[group + '_role'];
+                        if (role !== undefined) {
+                            $("#" + group + "-role-radio-" + role).click();
                         }
-                    }
-                    if (_.has(flows, 'origin_role')) {
-                        loadSavedRole("origin", origin)
-                    }
-                    if (_.has(flows, 'destination_role')) {
-                        loadSavedRole("destination", destination)
-                    }
+                    })
 
-                    // ///////////////////////////////
-                    // Flows filters:
-
-                    // load non-boolean fields
+                    // load fields with multiple fields
                     function load(group, picker, parents) {
                         // store ALL selectors
                         var field = picker[0],
@@ -988,28 +962,21 @@ define(['views/common/baseview',
                 }
                 $(this.savedFiltersModal).modal('show');
             },
+            // FILTER MODAL //
+
 
             resetFiltersToDefault: function () {
                 _this = this;
 
-                // origin / destination
-                let nodes = ['origin', 'destination']
-                nodes.forEach(function(node) {
-                    $("#" + node + "-role-radio-production").parent().removeClass("active");
-                    $("#" + node + "-role-radio-both").parent().addClass("active")
-                    $("#" + node + "-role-radio-treatment").parent().removeClass("active");
-
-                    $("#" + node + "-role-radio label input").removeAttr("checked");
-                    $("#" + node + "-role-radio-both").attr("checked", true);
-                    _this[node].role = "both";
-                    $(_this[node].inOrOut).bootstrapToggle("off");
-
-                    $("." + node + "ContainerActivity").hide();
-                    $("." + node + "ContainerTreatmentMethod").hide();
+                // origin / destination role & in-or-out toggle
+                var groups = ['origin', 'destination']
+                groups.forEach(function(group) {
+                    $("#" + group + "-role-radio-both").click();
+                    $(_this[group].inOrOut).bootstrapToggle("off");
                 })
 
                 // get all groups
-                var groups = Object.keys(this.filters)
+                var groups = Object.keys(this.filters);
                 groups.forEach(function(group) {
                     // reset group areas
                     _this[group].selectedAreas = [];
@@ -1140,6 +1107,12 @@ define(['views/common/baseview',
 
                         // if no value, do not include filter in request
                         if (_value) {
+                            // save activity (group) only on 'production' role
+                            if (_this[group].role !== 'production' && _field.includes('activity')) {return;}
+
+                            // save process (group) only on 'treatment' role
+                            if (_this[group].role !== 'treatment' && _field.includes('process')) {return;}
+
                             // save to flows (non-spatial) fields
                             filterParams.flows[_field] = _value;
                         }
