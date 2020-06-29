@@ -614,61 +614,45 @@ define(['views/common/baseview',
                     $(".filterEdit").fadeOut();
 
                     let selectedFilterConfig = $(this.filterConfigSelect).val();
-                    let configToLoad = this.collections['filters'].find(filter => filter.attributes.id == selectedFilterConfig).get("filter");
+                    let config = this.collections['filters'].find(filter => filter.attributes.id == selectedFilterConfig).get("filter");
 
-                    let origin = configToLoad.origin;
-                    let destination = configToLoad.destination;
-                    let flows = configToLoad.flows;
+                    console.log("Loading saved filter configuration: ", config);
 
-                    console.log("Loading saved filter configuration: ", configToLoad);
+                    // load selected areas
+                    groups = Object.keys(this.filters);
+                    groups.forEach(function(group) {
+                        var savedConfig = config[group],
+                            adminLevel = savedConfig.adminLevel,
+                            selectedAreas = savedConfig.selectedAreas,
+                            inOrOut = savedConfig.inOrOut;
 
-                    // Dataset filter:
-                    $(this.flows.datasetSelect).val(flows.datasets);
+                        // update admin level
+                        _this[group].adminLevel = adminLevel;
 
-                    /**
-                     * Load saved areas for given section
-                     * @param {string} block the name of the section: 'origin', 'destination', or 'flows'.
-                     * @param {object} savedConfig the saved filter config of the section
-                     */
-                    function loadSavedAreas(block, savedConfig) {
-                        _this[block].adminLevel = parseInt(savedConfig.adminLevel);
+                        // selected areas
+                        if (selectedAreas != undefined) {
+                            let executeAfterLoading = function (_this, adminLevel, group) {
+                                let labelStringArray = [];
+                                selectedAreas.forEach(selectedAreaId => {
+                                    let areaObject = _this.areas[adminLevel].models.find(area => area.attributes.id == selectedAreaId);
+                                    _this[group].selectedAreas.push(areaObject);
+                                    labelStringArray.push(areaObject.attributes.name);
+                                });
+                                $(".areaSelections-" + group).fadeIn();
+                                $("#areaSelections-Textarea-" + group).html(labelStringArray.join('; '));
+                                $(".selections").trigger('input');
+                                $(".selections").textareaAutoSize();
 
-                        /**
-                         * Function to be executed after areas of this level have been loaded:
-                         * @param {int} adminLevel 
-                         */
-                        let executeAfterLoading = function (_this, adminLevel, block) {
-                            let labelStringArray = [];
-                            savedConfig.selectedAreas.forEach(selectedAreaId => {
-                                let areaObject = _this.areas[adminLevel].models.find(area => area.attributes.id == selectedAreaId);
-                                _this[block].selectedAreas.push(areaObject);
-                                labelStringArray.push(areaObject.attributes.name);
-                            });
-                            $(".areaSelections-" + block).fadeIn();
-                            $("#areaSelections-Textarea-" + block).html(labelStringArray.join('; '));
-                            $(".selections").trigger('input');
-                            $(".selections").textareaAutoSize();
-
-                            // Inside or outside toggle:
-                            if (savedConfig.inOrOut == 'in') {
-                                $(_this[block].inOrOut).bootstrapToggle("off");
-                            } else {
-                                $(_this[block].inOrOut).bootstrapToggle("on");
+                                // in-or-out toggle
+                                $(_this[group].inOrOut).bootstrapToggle(inOrOut == 'in' ? "off" : "on");
                             }
+                            _this.prepareAreas(_this[group].adminLevel, false, executeAfterLoading, group);
                         }
-                        _this.prepareAreas(_this[block].adminLevel, false, executeAfterLoading, block);
-                    }
+                    })
 
-                    // Load saved areas for each section:
-                    if (_.has(origin, 'selectedAreas')) {
-                        loadSavedAreas("origin", origin);
-                    }
-                    if (_.has(destination, 'selectedAreas')) {
-                        loadSavedAreas("destination", destination);
-                    }
-                    if (_.has(flows, 'selectedAreas')) {
-                        loadSavedAreas("flows", flows);
-                    }
+                    // dataset filter
+                    var flows = config.flows;
+                    $(this.flows.datasetSelect).val(flows.datasets);
 
                     // load origin/destination role
                     var groups = ['origin', 'destination'];
@@ -722,7 +706,6 @@ define(['views/common/baseview',
                     // invert boolean inventory
                     var boolean = _.invert(_this.boolean);
 
-                    var groups = Object.keys(this.filters);
                     groups.forEach(function(group) {
                         // get all group filters
                         var filters = _this.filters[group];
