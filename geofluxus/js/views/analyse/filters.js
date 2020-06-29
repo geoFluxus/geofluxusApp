@@ -219,43 +219,41 @@ define(['views/common/baseview',
                     event.preventDefault(); // avoid firing twice!
                 });
 
-                // origin/destination role buttons (ToDo: Destination role container)
-                $('.origin-role').on("click", function(event) {
-                    let role =  $(this).attr('role'),
-                        containers = ['production', 'treatment'];
+                // origin/destination role buttons
+                groups = ['origin', 'destination']
+                groups.forEach(function(group) {
+                    $('.' + group + '-role').on("click", function(event) {
+                        let role =  $(this).attr('role'),
+                            containers = ['production', 'treatment'];
 
-                    containers.forEach(function(container) {
-                        $(".origin-" + container)[(container == role) ? 'fadeIn' : 'hide']();
+                        containers.forEach(function(container) {
+                            $("." + group + "-" + container)[(container == role) ? 'fadeIn' : 'hide']();
+                        })
+
+                        event.preventDefault(); // avoid firing twice!
                     })
-
-                    event.preventDefault(); // avoid firing twice!
                 })
 
-                function filterEwcHazardous(evt) {
+                // render ewc codes based on hazardous selection
+                function filterHazardous(evt) {
                     let select = evt.target.value;
 
-                    if (select == 'both') {
-                        $("#flows-wastes02Col").show();
-                        $("#flows-wastes04Col").hide();
-                        $(".chevronEwc06").show();
-                        $("#flows-waste06-label").css("position", "relative");
-                        $("#helpiconWaste06").removeClass("hazaIconPos");
-                        $("#flows-wastes06Col").hide();
-                    } else {
-                        $("#flows-wastes02Col").hide();
-                        $("#flows-wastes04Col").hide();
-                        $(".chevronEwc06").hide();
-                        $("#flows-waste06-label").css("position", "static");
-                        $("#helpiconWaste06").addClass("hazaIconPos");
-                        $("#flows-wastes06Col").show();
+                    $("#flows-wastes04Col").hide(); // to happen in all cases
+                    $("#flows-wastes02Col")[select == 'both' ? 'show' : 'hide']();
+                    $(".chevronEwc06")[select == 'both' ? 'show' : 'hide']();
+                    $("#flows-waste06-label").css("position", select == 'both' ? "relative" : "static");
+                    $("#helpiconWaste06")[select == 'both' ? 'removeClass' : 'addClass']("hazaIconPos");
+                    $("#flows-wastes06Col")[select == 'both' ? 'hide' : 'show']();
 
+                    // load all hazardous/non-hazardous codess
+                    if (select != 'both') {
                         let filteredWastes06 = _this.collections['wastes06'].models.filter(function (waste06) {
                             return waste06.attributes.hazardous == _this.boolean[select];
                         });
                         filterUtils.fillSelectPicker("wastes06", _this.flows.waste06Select, filteredWastes06);
                     }
                 }
-                $(this.flows.hazardousSelect).on('changed.bs.select', filterEwcHazardous);
+                $(this.flows.hazardousSelect).on('changed.bs.select', filterHazardous);
 
                 // enable multiple check for selectors
                 function multiCheck(evt, clickedIndex, checked) {
