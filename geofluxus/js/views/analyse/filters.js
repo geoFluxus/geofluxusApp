@@ -6,10 +6,9 @@ define(['views/common/baseview',
         'visualizations/map',
         'openlayers',
         'utils/utils',
-        'utils/filterUtils',
     ],
 
-    function (BaseView, _, MonitorView, ImpactView, Collection, Map, ol, utils, filterUtils) {
+    function (BaseView, _, MonitorView, ImpactView, Collection, Map, ol, utils) {
 
         var FiltersView = BaseView.extend({
             initialize: function (options) {
@@ -236,6 +235,7 @@ define(['views/common/baseview',
 
                         event.preventDefault(); // avoid firing twice!
                     })
+                    $("#" + group + "-role-radio-both").click();
                 })
 
                 // render ewc codes based on hazardous selection
@@ -254,7 +254,7 @@ define(['views/common/baseview',
                         let filteredWastes06 = _this.collections['wastes06'].models.filter(function (waste06) {
                             return waste06.attributes.hazardous == _this.boolean[select];
                         });
-                        filterUtils.fillSelectPicker("wastes06", _this.flows.waste06Select, filteredWastes06);
+                        _this.fillSelectPicker(filteredWastes06, _this.flows.waste06Select);
                     }
                 }
                 $(this.flows.hazardousSelect).on('changed.bs.select', filterHazardous);
@@ -293,7 +293,7 @@ define(['views/common/baseview',
                     var values = _this.collections[tag].models.filter(function (child) {
                         return ids.includes(child.attributes[parent].toString())
                     });
-                    filterUtils.fillSelectPicker(tag, picker, values);
+                    _this.fillSelectPicker(values, picker);
 
                     // show/hide child menu column on parent selection
                     var column  = "#" + group + "-" + tag + "Col";
@@ -357,6 +357,25 @@ define(['views/common/baseview',
                 $(document).on('blur', 'input', function () {
                     focusedElement = null;
                 })
+            },
+
+            fillSelectPicker: function (values, picker) {
+                var html = "<option selected value='-1'>All (" + values.length + ")</option><option data-divider='true'></option>";
+
+                values.forEach(function(item) {
+                    var attr = item.attributes,
+                        id = attr.id,
+                        code = (attr.code || attr.nace || attr.ewc_code || "") + '. ',
+                        name = utils.capitalizeFirstLetter(attr.name || attr.ewc_name || ""),
+                        hazardous = attr.hazardous ? "*" : "";
+                    if (picker.id.includes('month')) {
+                        code =  code.substring(2, 6) + " " + utils.toMonthString(code.substring(0, 2));
+                    }
+                    html += "<option class='dropdown-item' value='" + id + "'>" + code + name + hazardous + "</option>";
+                });
+
+                $(picker).html(html);
+                $(picker).selectpicker("refresh");
             },
 
 
@@ -652,7 +671,7 @@ define(['views/common/baseview',
                     })
 
                     // dataset filter
-                    var flows = config.flows;
+                    var flows = Object.assign({}, config.flows); // copy object, we will delete properties!!
                     $(this.flows.datasetSelect).val(flows.datasets);
 
                     // load origin/destination role
@@ -663,6 +682,23 @@ define(['views/common/baseview',
                             $("#" + group + "-role-radio-" + role).click();
                         }
                     })
+
+                    // invert boolean inventory
+                    var boolean = _.invert(_this.boolean);
+
+                    // load hazardous filter
+                    var hazardous = flows['flowchain__waste06__hazardous']
+                    if (hazardous != undefined) {
+                        // get also waste06 values
+                        var val = flows['flowchain__waste06__in']
+
+                        // avoid processing the filters again!
+                        delete flows['flowchain__waste06__hazardous']
+                        delete flows['flowchain__waste06__in']
+
+                        $(_this.flows.hazardousSelect).selectpicker("val", boolean[hazardous]);
+                        $(_this.flows.waste06Select).selectpicker("val", val);
+                    }
 
                     // load fields with multiple fields
                     function load(group, picker, parents) {
@@ -703,9 +739,6 @@ define(['views/common/baseview',
                             $(_this[group][field + 'Select']).selectpicker("val", val);
                         })
                     }
-
-                    // invert boolean inventory
-                    var boolean = _.invert(_this.boolean);
 
                     groups.forEach(function(group) {
                         // get all group filters
@@ -808,7 +841,6 @@ define(['views/common/baseview',
                         id: idToDelete,
                     },
                     success: function (response) {
-                        _this.savedFilters = response;
                         _this.reloadFilterSelectPicker(response);
                     },
                     error: function (error) {
@@ -932,18 +964,13 @@ define(['views/common/baseview',
             },
 
             showSavedFiltersModal(event) {
-                var _this = this;
-                _this.savedFiltersModal.mode = $(event.currentTarget).data('filter-modal-mode');
-                switch (_this.savedFiltersModal.mode) {
-                    case "savedMode":
-                        $(".newMode").hide();
-                        $(".savedMode").show();
-                        break;
-                    case "newMode":
-                        $(".savedMode").hide();
-                        $(".newMode").show();
-                        break;
-                }
+                var _this = this,
+                    mode = $(event.currentTarget).data('filter-modal-mode');
+
+                $(".savedMode")[mode == 'savedMode' ? 'show' : 'hide']();
+                $(".newMode")[mode == 'newMode' ? 'show' : 'hide']();
+
+                _this.savedFiltersModal.mode = mode;
                 $(this.savedFiltersModal).modal('show');
             },
             // FILTER MODAL //
