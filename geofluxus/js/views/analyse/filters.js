@@ -171,7 +171,7 @@ define(['views/common/baseview',
                 groups.forEach(function(group) {
                     // initialize group object without areas
                     _this[group] = {'selectedAreas': [],
-                                    'adminLevel': _this.idOfCountryLevel};
+                                    'adminLevel': _this.idOfCountryLevel,};
 
                     // get group filters
                     var filters = _this.filters[group];
@@ -235,13 +235,12 @@ define(['views/common/baseview',
 
                         event.preventDefault(); // avoid firing twice!
                     })
-                    $("#" + group + "-role-radio-both").click();
                 })
 
                 // render ewc codes based on hazardous selection
                 function filterHazardous(evt) {
                     let select = evt.target.value;
-
+                    
                     $("#flows-wastes04Col").hide(); // to happen in all cases
                     $("#flows-wastes02Col")[select == 'both' ? 'show' : 'hide']();
                     $(".chevronEwc06")[select == 'both' ? 'show' : 'hide']();
