@@ -240,7 +240,7 @@ define(['views/common/baseview',
                 // render ewc codes based on hazardous selection
                 function filterHazardous(evt) {
                     let select = evt.target.value;
-                    
+
                     $("#flows-wastes04Col").hide(); // to happen in all cases
                     $("#flows-wastes02Col")[select == 'both' ? 'show' : 'hide']();
                     $(".chevronEwc06")[select == 'both' ? 'show' : 'hide']();
@@ -674,8 +674,7 @@ define(['views/common/baseview',
                     $(this.flows.datasetSelect).val(flows.datasets);
 
                     // load origin/destination role
-                    var groups = ['origin', 'destination'];
-                    groups.forEach(function(group) {
+                    ['origin', 'destination'].forEach(function(group) {
                         var role = flows[group + '_role'];
                         if (role !== undefined) {
                             $("#" + group + "-role-radio-" + role).click();
@@ -995,6 +994,11 @@ define(['views/common/baseview',
                     // reset area selections
                     $(".areaSelections-" + group).hide();
                     $("#areaSelections-Textarea-" + group).html("");
+
+                    // reset ewc columns
+                    $('#flows-wastes02Col').show();
+                    $('#flows-wastes04Col').hide();
+                    $('#flows-wastes06Col').hide();
 
                     // reset all group filters
                     var filters = _this.filters[group];
