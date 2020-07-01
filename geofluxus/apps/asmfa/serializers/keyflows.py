@@ -9,6 +9,7 @@ from geofluxus.apps.asmfa.models import (Waste02,
                                          Composite,
                                          Year,
                                          Month)
+from calendar import month_name
 
 
 # Waste02
@@ -137,6 +138,12 @@ class YearListSerializer(YearSerializer):
 # Month
 class MonthSerializer(HyperlinkedModelSerializer):
     year = PrimaryKeyRelatedField(read_only=True)
+
+    def to_representation(self, instance):
+        ret = super(MonthSerializer, self).to_representation(instance)
+        code = ret['code']
+        ret['code'] = " ".join([month_name[int(code[:2])], code[2:]])
+        return ret
 
     class Meta:
         model = Month

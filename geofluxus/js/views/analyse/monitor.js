@@ -52,7 +52,7 @@ define(['views/common/baseview',
                 }
 
                 this.dimensions = {};
-                this.maxNumberOfDimensions = options.maxNumberOfDimensions;
+                this.maxNumberOfDimensions = options.maxNumberOfDimensions || 2;
                 this.selectedDimensionStrings = [];
                 this.selectedVizName = "";
 
@@ -428,7 +428,8 @@ define(['views/common/baseview',
 
             renderVisualizations: function (dimensions, flows) {
                 let _this = this;
-                let collections = this.filtersView.collections;
+                let collections = this.filtersView.collections,
+                    tags = this.filtersView.tags;
 
                 // Enrich flows with info
                 let adminlevel = -1;
@@ -438,7 +439,7 @@ define(['views/common/baseview',
 
                     if (dimensionString !== 'space') {
                         if (!['parallelsets', 'circularsankey'].includes(_this.selectedVizName)) {
-                            flows = enrichFlows.enrichFlows(flows, collections, granularity);
+                            flows = enrichFlows.enrichFlows(flows, tags, collections, granularity);
                         }
                     } else {
                         adminlevel = granularity.adminlevel;

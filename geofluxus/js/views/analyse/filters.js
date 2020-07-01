@@ -171,7 +171,7 @@ define(['views/common/baseview',
                 groups.forEach(function(group) {
                     // initialize group object without areas
                     _this[group] = {'selectedAreas': [],
-                                    'adminLevel': _this.idOfCountryLevel,};
+                                    'adminLevel': _this.idOfCountryLevel};
 
                     // get group filters
                     var filters = _this.filters[group];
@@ -364,13 +364,11 @@ define(['views/common/baseview',
                 values.forEach(function(item) {
                     var attr = item.attributes,
                         id = attr.id,
-                        code = (attr.code || attr.nace || attr.ewc_code || "") + '. ',
+                        code = (attr.code || attr.nace || attr.ewc_code || ""),
                         name = utils.capitalizeFirstLetter(attr.name || attr.ewc_name || ""),
+                        dot = name == "" ? "" : ". ";
                         hazardous = attr.hazardous ? "*" : "";
-                    if (picker.id.includes('month')) {
-                        code =  code.substring(2, 6) + " " + utils.toMonthString(code.substring(0, 2));
-                    }
-                    html += "<option class='dropdown-item' value='" + id + "'>" + code + name + hazardous + "</option>";
+                    html += "<option class='dropdown-item' value='" + id + "'>" + code + dot + name + hazardous + "</option>";
                 });
 
                 $(picker).html(html);
@@ -1049,8 +1047,8 @@ define(['views/common/baseview',
                 filterParams.flows['datasets'] = ids;
 
                 // origin/destination in-or-out & role
-                let group = ['origin', 'destination']
-                group.forEach(function(group) {
+                var groups= ['origin', 'destination']
+                groups.forEach(function(group) {
                     var inOrOut = _this[group].inOrOut;
                     filterParams[group].inOrOut = $(inOrOut).prop('checked') ? 'out' : 'in';
 
@@ -1082,7 +1080,7 @@ define(['views/common/baseview',
                 }
 
                 // load filters to request
-                var groups = Object.keys(this.filters);
+                groups = Object.keys(this.filters);
                 groups.forEach(function(group) {
                     // get group admin level & areas
                     filterParams[group].adminLevel = _this[group].adminLevel;
