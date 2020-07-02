@@ -33,6 +33,8 @@ define(['views/common/d3plusVizView',
                     _.bindAll(this, 'toggleLegend');
                     _.bindAll(this, 'toggleDarkMode');
 
+                    var _this = this;
+
                     this.options = options;
                     this.flows = this.options.flows;
                     
@@ -40,7 +42,7 @@ define(['views/common/d3plusVizView',
                     this.hasLegend = true;
                     this.isDarkMode = true;
 
-                    this.titles = {
+                    this.props = {
                         'activitygroup' : 'Activity group',
                         'activity'      : 'Activity',
                         'processgroup'  : 'Treatment method group',
@@ -54,18 +56,25 @@ define(['views/common/d3plusVizView',
                         gran = this.options.dimensions[0][1];
 
                     // choose grouping
-                    this.groupBy = "code"; // default option
+                    this.groupBy = "group"; // default option
                     if (dim == 'space') {
                         this.groupBy = this.options.dimensions.isActorLevel ? "actorName" : "areaName";
                     }
 
                     // configure tooltips
-                    if (typeof gran == 'string') gran = gran.split("__").pop();
-                    if (this.titles[gran] !== undefined) {
-                        this.tooltipConfig.tbody.push([this.titles[gran], function (d) {
-                            return d.code + " " + d.name;
-                        }]);
-                    }
+                    Object.keys(this.props).forEach(function(property) {
+                        // check if flows have code/name for current property
+                        var flow = _this.flows[0],
+                            code = property + 'Code',
+                            name = property + 'Name';
+
+                        // if they do, add to tooltip
+                        if (flow[code] != undefined && flow[name] != undefined) {
+                            _this.tooltipConfig.tbody.push([_this.props[property], function (d) {
+                                return d[code] + " " + d[name];
+                            }]);
+                        }
+                    })
 
                     // assign colors by groupings
                     this.flows = enrichFlows.assignColorsByProperty(this.flows, this.groupBy);

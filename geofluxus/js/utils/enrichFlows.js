@@ -29,17 +29,45 @@ module.exports = {
     },
 
     enrichFlows: function(flows, tags, collections, granularity) {
-        var property = granularity.split("__").pop(),
-            collection = collections[tags[property]];
+//        var property = granularity.split("__").pop(),
+//            collection = collections[tags[property]];
 
+        granularity = granularity.split("__").pop();
         flows.forEach(function (flow, index) {
-            // find corresponding model
-            var model = collection.find(model => model.attributes.id == flow[property]);
+            var _this = this;
 
-            // fetch info
-            var attr = model.attributes;
-            this[index].code = attr.code || attr.nace || attr.ewc_code;
-            this[index].name = utils.capitalizeFirstLetter(attr.name || attr.ewc_name || "");
+            var properties = Object.keys(flow);
+
+            properties.forEach(function(property) {
+                var collection = collections[tags[property]];
+
+                if (collection != undefined) {
+                    var model = collection.find(model => model.attributes.id == flow[property]);
+
+                    var attr = model.attributes,
+                        code = attr.code || attr.nace || attr.ewc_code,
+                        name = utils.capitalizeFirstLetter(attr.name || attr.ewc_name || "");
+
+                    if (property == granularity) {
+                        _this[index].group = code;
+                    }
+
+                    _this[index][property + 'Code'] = code;
+                    _this[index][property + 'Name'] = name;
+                }
+            })
+//            // find corresponding model
+//            var model = collection.find(model => model.attributes.id == flow[property]);
+//
+//            // fetch info
+//            var attr = model.attributes;
+//            this[index].code = attr.code || attr.nace || attr.ewc_code;
+//            this[index].name = utils.capitalizeFirstLetter(attr.name || attr.ewc_name || "");
+//
+//            // ToDo: fetch parent fields
+//            Object.keys(flow).forEach(function(key) {
+//                console.log(key);
+//            })
         }, flows);
 
         return flows
