@@ -4,19 +4,46 @@ var colorArray = [];
 let occurances = []
 
 module.exports = {
-    enrichFlows: function(flows, tags, collections, granularity) {
-        var search = granularity.split("__").pop(),
-            collection = collections[tags[search]];
+    assignColorsByProperty: function (items, propertyName) {
+        // Get all unique occurences
+        occurances = items.map(x => x[propertyName]);
+        occurances = _.unique(occurances);
 
+        // Create array with unique colors:
+        colorArray = utils.interpolateColors(occurances.length);
+
+        // Create array with prop of unique property and prop of matching color:
+        occurances.forEach(function (propertyName, index) {
+            this[index] = {
+                name: this[index],
+                color: colorArray[index],
+            };
+        }, occurances);
+
+        // Asisgn a color for each unique property:
+        items.forEach(function (item, index) {
+            this[index].color = occurances.find(occ => occ.name == item[propertyName]).color;
+        }, items);
+
+        return items
+    },
+
+    enrichFlows: function(flows, tags, collections, granularity) {
+        var property = granularity.split("__").pop(),
+            collection = collections[tags[property]];
 
         flows.forEach(function (flow, index) {
             // find corresponding model
-            let model = collection.find(model => model.attributes.id == flow[search]);
+            var model = collection.find(model => model.attributes.id == flow[property]);
 
             // fetch info
             var attr = model.attributes;
             this[index].code = attr.code || attr.nace || attr.ewc_code;
+            this[index].name = utils.capitalizeFirstLetter(attr.name || attr.ewc_name || "");
         }, flows);
+
+        return flows
+    },
 
 
         //flows = _.sortBy(flows, 'code');
@@ -141,9 +168,6 @@ module.exports = {
 //            }, flows);
 //        }
 
-        return flows
-    },
-
     returnCodePlusName: function (input) {
         let codeString = input.attributes.code ? input.attributes.code : input.attributes.nace;
         return codeString + ". " + utils.capitalizeFirstLetter(input.attributes.name);
@@ -160,28 +184,5 @@ module.exports = {
      * @param {*} propertyName: the property by which colors will be assigned 
      */
 
-    assignColorsByProperty: function (items, propertyName) {
 
-        // Get all unique occurences
-        occurances = items.map(x => x[propertyName]);
-        occurances = _.unique(occurances);
-
-        // Create array with unique colors:
-        colorArray = utils.interpolateColors(occurances.length);
-
-        // Create array with prop of unique property and prop of matching color:
-        occurances.forEach(function (propertyName, index) {
-            this[index] = {
-                name: this[index],
-                color: colorArray[index],
-            };
-        }, occurances);
-
-        // Asisgn a color for each unique property:
-        items.forEach(function (item, index) {
-            this[index].color = occurances.find(occ => occ.name == item[propertyName]).color;
-        }, items);
-
-        return items
-    }
 }

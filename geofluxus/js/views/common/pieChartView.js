@@ -40,95 +40,35 @@ define(['views/common/d3plusVizView',
                     this.hasLegend = true;
                     this.isDarkMode = true;
 
-                    this.groupBy = "code";
+                    this.titles = {
+                        'activitygroup' : 'Activity group',
+                        'activity'      : 'Activity',
+                        'processgroup'  : 'Treatment method group',
+                        'process'       : 'Treatment method',
+                        'waste02'       : 'EWC Chapter',
+                        'waste04'       : 'EWC Sub-Chapter',
+                        'waste06'       : 'EWC Entry'
+                    }
 
-//                    // Time
-//                    if (dim1String == "time") {
-//                        // Granularity = year
-//                        if (gran1 == "flowchain__month__year") {
-//                            this.groupBy = ["year"];
-//
-//                            // Granularity = month:
-//                        } else if (gran1 == "flowchain__month") {
-//                            this.groupBy = ["month"];
-//                        }
-//
-//                        // Space
-//                    } else if (dim1String == "space") {
-//
-//                        // Areas:
-//                        if (!this.options.dimensions.isActorLevel) {
-//                            this.groupBy = ["areaName"];
-//                        } else {
-//                            // Actor level
-//                            this.groupBy = ["actorName"];
-//                        }
-//
-//                        // Economic Activity dimension
-//                    } else if (dim1String == "economicActivity") {
-//                        this.tooltipConfig.tbody.push(["Activity group", function (d) {
-//                            return d.activityGroupCode + " " + d.activityGroupName;
-//                        }]);
-//
-//                        // Granularity: Activity group
-//                        if (gran1 == "origin__activity__activitygroup" || gran1 == "destination__activity__activitygroup") {
-//                            this.groupBy = ["activityGroupCode"];
-//
-//                            // Granularity: Activity
-//                        } else if (gran1 == "origin__activity" || gran1 == "destination__activity") {
-//                            this.groupBy = ["activityCode"];
-//                            this.tooltipConfig.tbody.push(["Activity", function (d) {
-//                                return d.activityCode + " " + d.activityName;
-//                            }]);
-//                        }
-//
-//                        // Treatment method
-//                    } else if (dim1String == "treatmentMethod") {
-//                        this.tooltipConfig.tbody.push(["Treatment method group", function (d) {
-//                            return d.processGroupCode + " " + d.processGroupName;
-//                        }]);
-//
-//                        if (gran1 == "origin__process__processgroup" || gran1 == "destination__process__processgroup") {
-//                            this.groupBy = ["processGroupCode"];
-//
-//                            // Granularity: Activity
-//                        } else if (gran1 == "origin__process" || gran1 == "destination__process") {
-//                            this.groupBy = ["processCode"];
-//                            this.tooltipConfig.tbody.push(["Treatment method", function (d) {
-//                                return d.processCode + " " + d.processName;
-//                            }]);
-//                        }
-//
-//                        // Material
-//                    } else if (dim1String == "material") {
-//                        // ewc2
-//                        if (gran1 == "flowchain__waste06__waste04__waste02") {
-//                            this.groupBy = ["ewc2Code"];
-//                            this.tooltipConfig.title = "Waste per EWC Chapter";
-//                            this.tooltipConfig.tbody.push(["EWC Chapter", function (d) {
-//                                return d.ewc2Code + " " + d.ewc2Name;
-//                            }]);
-//                            // ewc4
-//                        } else if (gran1 == "flowchain__waste06__waste04") {
-//                            this.groupBy = ["ewc4Code"];
-//                            this.tooltipConfig.title = this.label + " per EWC Sub-Chapter";
-//                            this.tooltipConfig.tbody.push(["EWC Sub-Chapter", function (d) {
-//                                return d.ewc4Code + " " + d.ewc4Name;
-//                            }]);
-//                            // ewc6
-//                        } else if (gran1 == "flowchain__waste06") {
-//                            this.groupBy = ["ewc6Code"];
-//                            this.tooltipConfig.title = this.label + " per EWC Entry";
-//                            this.tooltipConfig.tbody.push(["EWC Entry", function (d) {
-//                                return d.ewc6Code + " " + d.ewc6Name;
-//                            }]);
-//                        }
-//
-//                    }
+                    let dim = this.options.dimensions[0][0],
+                        gran = this.options.dimensions[0][1];
 
-                    // Assign colors by groupings:
+                    // choose grouping
+                    this.groupBy = "code"; // default option
+                    if (dim == 'space') {
+                        this.groupBy = this.options.dimensions.isActorLevel ? "actorName" : "areaName";
+                    }
+
+                    // configure tooltips
+                    if (typeof gran == 'string') gran = gran.split("__").pop();
+                    if (this.titles[gran] !== undefined) {
+                        this.tooltipConfig.tbody.push([this.titles[gran], function (d) {
+                            return d.code + " " + d.name;
+                        }]);
+                    }
+
+                    // assign colors by groupings
                     this.flows = enrichFlows.assignColorsByProperty(this.flows, this.groupBy);
-
                     this.render();
                 },
 

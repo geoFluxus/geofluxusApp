@@ -443,6 +443,8 @@ define(['views/common/baseview',
                         }
                     } else {
                         adminlevel = granularity.adminlevel;
+                        let actorAreaLevelId =  collections['arealevels'].models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
+                        dimensions.isActorLevel = (adminlevel == actorAreaLevelId) ? true : false;
                     }
                 })
 
