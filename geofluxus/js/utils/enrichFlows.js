@@ -5,9 +5,6 @@ let occurances = []
 
 module.exports = {
     enrichFlows: function(flows, tags, collections, granularity) {
-        // get last part of granularity -> property CODE to group by
-        granularity = granularity.split("__").pop();
-
         flows.forEach(function (flow, index) {
             var _this = this;
 
@@ -19,18 +16,13 @@ module.exports = {
                 var collection = collections[tags[property]];
 
                 if (collection != undefined) {
-                    // find correspondind model by ID
+                    // find corresponding model by ID
                     var model = collection.find(model => model.attributes.id == flow[property]);
 
                     // fetch attributes
                     var attr = model.attributes,
                         code = attr.code || attr.nace || attr.ewc_code,
                         name = utils.capitalizeFirstLetter(attr.name || attr.ewc_name || "");
-
-                    // add group CODE to flow
-                    if (property == granularity) {
-                        _this[index].group = code;
-                    }
 
                     // add attributes to flows
                     _this[index][property + 'Code'] = code;

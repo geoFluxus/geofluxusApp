@@ -1,6 +1,7 @@
 from geofluxus.apps.asmfa.views import FilterFlowViewSet
 from geofluxus.apps.asmfa.models import (Area,
                                          AdminLevel,
+                                         Month,
                                          Activity,
                                          Process,
                                          Waste04,
@@ -19,6 +20,7 @@ DIMS = {
 }
 
 MODELS = {
+    'month': Month,
     'activity': Activity,
     'process':  Process,
     'waste04':  Waste04,

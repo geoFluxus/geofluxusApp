@@ -43,6 +43,8 @@ define(['views/common/d3plusVizView',
                     this.isDarkMode = true;
 
                     this.props = {
+                        'year'          : 'Year',
+                        'month'         : 'Month',
                         'activitygroup' : 'Activity group',
                         'activity'      : 'Activity',
                         'processgroup'  : 'Treatment method group',
@@ -55,12 +57,6 @@ define(['views/common/d3plusVizView',
                     let dim = this.options.dimensions[0][0],
                         gran = this.options.dimensions[0][1];
 
-                    // choose grouping
-                    this.groupBy = "group"; // default option
-                    if (dim == 'space') {
-                        this.groupBy = this.options.dimensions.isActorLevel ? "actorName" : "areaName";
-                    }
-
                     // configure tooltips
                     Object.keys(this.props).forEach(function(property) {
                         // check if flows have code/name for current property
@@ -68,13 +64,23 @@ define(['views/common/d3plusVizView',
                             code = property + 'Code',
                             name = property + 'Name';
 
-                        // if they do, add to tooltip
-                        if (flow[code] != undefined && flow[name] != undefined) {
-                            _this.tooltipConfig.tbody.push([_this.props[property], function (d) {
-                                return d[code] + " " + d[name];
-                            }]);
+                        // if code, group by
+                        if (flow[code] != undefined && flow[code] != "") {
+                            _this.groupBy = code; // group by CODE
+
+                            // if name, add tooltip
+                            if (flow[name] != undefined && flow[name] != "") {
+                                _this.tooltipConfig.tbody.push([_this.props[property], function (d) {
+                                    return d[code] + " " + d[name];
+                                }]);
+                            }
                         }
                     })
+
+                    // choose grouping for time / space dimension
+                    if (dim == 'space') {
+                        this.groupBy = this.options.dimensions.isActorLevel ? "actorName" : "areaName";
+                    }
 
                     // assign colors by groupings
                     this.flows = enrichFlows.assignColorsByProperty(this.flows, this.groupBy);
