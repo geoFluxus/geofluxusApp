@@ -44,6 +44,7 @@ define(['views/common/d3plusVizView',
 
                     this.flows = this.options.flows;
                     this.label = this.options.label;
+                    this.tooltipConfig.title = "";
 
                     this.groupBy = this.x = "";
 
@@ -110,14 +111,9 @@ define(['views/common/d3plusVizView',
                                 }
                             })
                         }
-                        
+
                         _this.tooltipConfig.title += title;
                     })
-
-//                    // sort by amount
-//                    this.xSort = function (a, b) {
-//                        return b["amount"] - a["amount"];
-//                    }
 
                     // assign colors by groupings
                     this.flows = enrichFlows.assignColorsByProperty(this.flows, this.groupBy);

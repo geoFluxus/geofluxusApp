@@ -35,7 +35,6 @@ define(['views/common/baseview',
 
                     this.label = options.dimensions.label;
                     this.tooltipConfig = {
-                        title: "",
                         tbody: [
                             [this.label, function (d) {
                                 return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale()) + " t"
