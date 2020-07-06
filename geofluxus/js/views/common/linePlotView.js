@@ -35,7 +35,6 @@ define(['views/common/d3plusVizView',
 
                     var _this = this;
                     this.options = options;
-                    this.isStacked = this.options.isStacked;
 
                     this.canHaveLegend = true;
                     this.hasLegend = true;
@@ -118,6 +117,22 @@ define(['views/common/d3plusVizView',
 
                         _this.tooltipConfig.title += title;
                     })
+
+                    // year / month plots
+                    if (dimensions.length == 1) {
+                        var dim = dimensions[0][0],
+                            gran = dimensions[0][1];
+                        if (dim == 'time') {
+                            if (gran.includes('year') || !this.options.hasMultipleLines) {
+                                _this.groupBy = "";
+                            } else if (this.options.hasMultipleLines) {
+                                _this.groupBy = "yearCode";
+                                _this.flows.forEach(function(flow) {
+                                    flow.monthCode = flow.monthCode.split(" ")[0];
+                                })
+                            }
+                        }
+                    }
 
                     // assign colors by groupings
                     this.flows = enrichFlows.assignColorsByProperty(this.flows, this.groupBy);

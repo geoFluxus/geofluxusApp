@@ -448,18 +448,17 @@ define(['views/common/baseview',
 
                 // Render visualization
                 if (this.vizView != null) this.vizView.close();
-                if (_this.selectedVizName === 'lineplotmultiple') {
-                    _this.selectedVizName = 'lineplot';
-                }
                 if (_this.selectedVizName === 'parallelsets') {
                     $(".parallelsets-container").show();
                 }
-                $("." + _this.selectedVizName + "-wrapper").fadeIn();
 
                 let vizView = this.vizViews[_this.selectedVizName],
-                    extraOptions = vizView['options'],
-                    defaultOptions = {
-                        el: "." + _this.selectedVizName + "-wrapper",
+                    extraOptions = vizView['options'];
+
+                let wrapperName = _this.selectedVizName === 'lineplotmultiple' ? 'lineplot' : _this.selectedVizName;
+                $("." + wrapperName + "-wrapper").fadeIn();
+                let defaultOptions = {
+                        el: "." + wrapperName + "-wrapper",
                         dimensions: dimensions,
                         flows: flows,
                         flowsView: this,
