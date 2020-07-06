@@ -33,146 +33,89 @@ define(['views/common/d3plusVizView',
                     _.bindAll(this, 'toggleLegend');
                     _.bindAll(this, 'toggleDarkMode');
 
-                    this.isDarkMode = true;
+                    var _this = this;
+                    this.options = options;
+                    this.isStacked = this.options.isStacked;
+
                     this.canHaveLegend = true;
                     this.hasLegend = true;
+                    this.isDarkMode = true;
 
-                    this.options = options;
                     this.flows = this.options.flows;
-                    this.x = "";
-                    this.groupBy = "";
-                    this.isActorLevel = false;
+                    this.label = this.options.label;
+                    this.tooltipConfig.title = "";
 
-                    let gran1 = this.options.dimensions[0][1];
-                    let gran2 = this.options.dimensions[1] ? this.options.dimensions[1][1] : {};
+                    this.groupBy = this.x = "";
 
-                    let dimStrings = [];
-                    this.options.dimensions.forEach(dim => dimStrings.push(dim[0]));
-
-
-                    // /////////////////////////////
-                    // 1D - Time dimension
-
-                    // Granularity = year
-                    if (gran1 == "flowchain__month__year") {
-                        this.x = ["year"];
-                        this.tooltipConfig.title = this.label + " totals per year";
-                        this.tooltipConfig.tbody.push(["Year", function (d) {
-                            return d.year
-                        }]);
-
-                        // Granularity = month:
-                    } else if (gran1 == "flowchain__month") {
-                        this.x = ["yearMonthCode"];
-
-                        this.tooltipConfig.title = this.label + " totals per month";
-
-                        // Only for time
-                        if (dimStrings.length == 1 && this.options.hasMultipleLines) {
-                            this.groupBy = ["year"];
-                            this.x = ["monthName"];
-
-                            this.tooltipConfig.tbody.push(["Month", function (d) {
-                                return d.monthName
-                            }]);
-                        } else {
-                            this.tooltipConfig.tbody.push(["Month", function (d) {
-                                return d.month
-                            }]);
+                    this.dimensions = {
+                        'time': {
+                            'year' : 'Year',
+                            'month': 'Month',
+                        },
+                        'economicActivity': {
+                            'activitygroup': 'Activity group',
+                            'activity'     : 'Activity',
+                        },
+                        'treatmentMethod': {
+                            'processgroup': 'Treatment method group',
+                            'process'     : 'Treatment method',
+                        },
+                        'material': {
+                            'waste02': 'EWC Chapter',
+                            'waste04': 'EWC Sub-Chapter',
+                            'waste06': 'EWC Entry'
                         }
                     }
 
-                    // //////////////////////////////////////////
-                    // 2D - Time & Space
-                    if (dimStrings.includes("space")) {
-
-                        if (!this.options.dimensions.isActorLevel) {
-                            this.groupBy = ["areaName"];
-                            this.tooltipConfig.tbody.push(["Area", function (d) {
-                                return d.areaName
-                            }]);
-
-                        } else {
-                            this.isActorLevel = true;
-                            this.groupBy = ["actorId"];
-
-                            this.tooltipConfig.tbody.push(["Company", function (d) {
-                                return d.actorName
-                            }]);
+                    // configure tooltips
+                    let dimensions = this.options.dimensions;
+                    var title = "";
+                    dimensions.forEach(function(dim, index) {
+                        // choose grouping for space dimension
+                        if (dim[0] == 'space') {
+                            var actorLevel = _this.options.dimensions.isActorLevel;
+                            _this.groupBy = _this.x = actorLevel ? "actorName" : "areaName";
+                            _this.tooltipConfig.title = _this.label + " per " + (actorLevel ? 'Company' : 'Area');
                         }
 
-                        // //////////////////////////////////////////
-                        // 2D - Time & Economic Activity
-                    } else if (dimStrings.includes("economicActivity")) {
+                        var properties = _this.dimensions[dim[0]];
+                        if (properties != undefined & _this.flows.length > 0) {
+                            Object.keys(properties).forEach(function(prop) {
+                                // check if flows have code/name for current property
+                                var flow = _this.flows[0],
+                                    code = prop + 'Code',
+                                    name = prop + 'Name';
 
-                        this.tooltipConfig.tbody.push(["Activity group", function (d) {
-                            return d.activityGroupCode + " " + d.activityGroupName;
-                        }, ])
+                                // if code, group by
+                                if (flow[code] != undefined) {
+                                    // if name, add tooltip
+                                    if (flow[name] != undefined) {
+                                        // tooltip subtitle (body)
+                                        var sub = properties[prop];
 
-                        if (gran2 == "origin__activity__activitygroup" || gran2 == "destination__activity__activitygroup") {
-                            this.groupBy = ["activityGroupCode"];
-                        } else if (gran2 == "origin__activity" || gran2 == "destination__activity") {
-                            this.groupBy = ["activityCode"];
-                            this.tooltipConfig.tbody.push(["Activity", function (d) {
-                                return d.activityCode + " " + d.activityName;
-                            }]);
+                                        // tooltip title (header)
+                                        if (!index) {
+                                            _this.x = _this.groupBy = code;
+                                            title = _this.label + " per " + sub;
+                                        } else {
+                                            _this.groupBy = code;
+                                            title = " & " + sub;
+                                        }
+
+                                        // tooltip body
+                                        _this.tooltipConfig.tbody.push([sub, function (d) {
+                                            return d[code] + " " + d[name];
+                                        }]);
+                                    }
+                                }
+                            })
                         }
 
-                        // //////////////////////////////////////////
-                        // 2D - Time & Treatment method
-                    } else if (dimStrings.includes("treatmentMethod")) {
+                        _this.tooltipConfig.title += title;
+                    })
 
-                        this.tooltipConfig.tbody.push(["Treatment method group", function (d) {
-                            return d.processGroupCode + " " + d.processGroupName;
-                        }])
-
-                        if (gran2 == "origin__process__processgroup" || gran2 == "destination__process__processgroup") {
-                            this.groupBy = ["processGroupCode"];
-                        } else if (gran2 == "origin__process" || gran2 == "destination__process") {
-                            this.groupBy = ["processCode"];
-                            this.tooltipConfig.tbody.push(["Treatment method", function (d) {
-                                return d.processCode + " " + d.processName;
-                            }]);
-                        }
-
-                        // //////////////////////////////////////////
-                        // 2D - Time & Material
-                    } else if (dimStrings.includes("material")) {
-
-                        this.tooltipConfig.tbody.push(["EWC Chapter", function (d) {
-                            return d.ewc2Code + " " + d.ewc2Name;
-                        }]);
-
-                        // ewc2
-                        if (gran2 == "flowchain__waste06__waste04__waste02") {
-                            this.groupBy = ["ewc2Code"];
-                            this.tooltipConfig.title = this.label + " per EWC Chapter";
-                            // ewc4
-                        } else if (gran2 == "flowchain__waste06__waste04") {
-                            this.groupBy = ["ewc4Code"];
-                            this.tooltipConfig.title = this.label + " per EWC Sub-Chapter";
-                            this.tooltipConfig.tbody.push(["EWC Sub-Chapter", function (d) {
-                                return d.ewc4Code + " " + d.ewc4Name;
-                            }]);
-                            // ewc6
-                        } else if (gran2 == "flowchain__waste06") {
-                            this.groupBy = ["ewc6Code"];
-                            this.tooltipConfig.title = this.label + " per Entry";
-                            this.tooltipConfig.tbody.push(
-                                ["EWC Sub-Chapter", function (d) {
-                                    return d.ewc4Code + " " + d.ewc4Name;
-                                }],
-                                ["EWC Entry", function (d) {
-                                    return d.ewc6Code + " " + d.ewc6Name;
-                                }]);
-                        }
-                    }
-
-                    // Assign colors by groupings:
-                    if (this.groupBy) {
-                        this.flows = enrichFlows.assignColorsByProperty(this.flows, this.groupBy)
-                    }
-
+                    // assign colors by groupings
+                    this.flows = enrichFlows.assignColorsByProperty(this.flows, this.groupBy);
                     this.render();
                 },
 

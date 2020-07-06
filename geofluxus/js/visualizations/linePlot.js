@@ -66,6 +66,8 @@ define([
                 }
             }
 
+            console.log(options.x)
+            console.log(groupByValue)
             new d3plus.Plot()
                 .data(options.data)
                 .x(options.x)
