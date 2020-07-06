@@ -86,6 +86,7 @@ define([
                 .data(options.data)
                 .x(options.x)
                 .xSort(xSort)
+                .xConfig({labelRotation: true})
                 .y("amount")
                 .baseline(0)
                 .discrete("x")
