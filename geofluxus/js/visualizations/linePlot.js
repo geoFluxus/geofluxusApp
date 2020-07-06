@@ -66,11 +66,26 @@ define([
                 }
             }
 
-            console.log(options.x)
-            console.log(groupByValue)
+            // sort data (for months)
+            let xSort = options.x != 'monthCode' ? null :  function(a, b) {
+                var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+                var res = 0;
+                [a, b].forEach(function(t, idx) {
+                    var code = t.monthCode.split(" "),
+                        month = months.indexOf(code[0]),
+                        year = parseInt(code[1]);
+                    res += (month + 12 * year) * (-1)**(idx%2);
+                })
+
+                return res;
+            };
+
             new d3plus.Plot()
                 .data(options.data)
                 .x(options.x)
+                .xSort(xSort)
                 .y("amount")
                 .baseline(0)
                 .discrete("x")
