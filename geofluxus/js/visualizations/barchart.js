@@ -19,7 +19,23 @@ define([
             let _this = this;
             var options = options || {};
 
-            let xSort = options.xSort ? options.xSort : null;
+            // sort data (for months)
+            let xSort = options.x != 'monthCode' ? null :  function(a, b) {
+                var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+                var res = 0;
+                [a, b].forEach(function(t, idx) {
+                    var code = t.monthCode,
+                        month = months.indexOf(code.substring(0, 3)),
+                        year = parseInt(code.substring(3, 8));
+                    res += (month + 12 * year) * (-1)**(idx%2);
+                })
+
+                return res;
+            };
+
+
             let groupByValue = options.groupBy ? options.groupBy : null;
 
             let labelFunction = function (d) {

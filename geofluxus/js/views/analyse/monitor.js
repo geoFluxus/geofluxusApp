@@ -220,12 +220,11 @@ define(['views/common/baseview',
 
                         // 1D
                         if (dims.length == 1) {
-                            // time -> month
-                            if ($(_this.timeToggleGran).prop("checked")) {
-                                $("#viz-lineplotmultiple").parent().fadeIn();
+                            if (dims.includes("time")) {
+                                $(_this.timeToggleGran).trigger("change");
                             }
-                            // space
-                            else if (dims.includes("space")) {
+
+                            if (dims.includes("space")) {
                                 let selectedAreaLevelId = $(_this.spaceLevelGranSelect).val();
                                 let actorAreaLevelId = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
                                 if (selectedAreaLevelId == actorAreaLevelId) {
@@ -452,18 +451,17 @@ define(['views/common/baseview',
 
                 // Render visualization
                 if (this.vizView != null) this.vizView.close();
-                if (_this.selectedVizName === 'lineplotmultiple') {
-                    _this.selectedVizName = 'lineplot';
-                }
                 if (_this.selectedVizName === 'parallelsets') {
                     $(".parallelsets-container").show();
                 }
-                $("." + _this.selectedVizName + "-wrapper").fadeIn();
 
                 let vizView = this.vizViews[_this.selectedVizName],
-                    extraOptions = vizView['options'],
-                    defaultOptions = {
-                        el: "." + _this.selectedVizName + "-wrapper",
+                    extraOptions = vizView['options'];
+
+                let wrapperName = _this.selectedVizName === 'lineplotmultiple' ? 'lineplot' : _this.selectedVizName;
+                $("." + wrapperName + "-wrapper").fadeIn();
+                let defaultOptions = {
+                        el: "." + wrapperName + "-wrapper",
                         dimensions: dimensions,
                         flows: flows,
                         flowsView: this,
