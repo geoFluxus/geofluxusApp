@@ -26,9 +26,9 @@ define([
 
                 var res = 0;
                 [a, b].forEach(function(t, idx) {
-                    var code = t.monthCode.split(" "),
-                        month = months.indexOf(code[0]),
-                        year = parseInt(code[1]);
+                    var code = t.monthCode,
+                        month = months.indexOf(code.substring(0, 3)),
+                        year = parseInt(code.substring(3, 8));
                     res += (month + 12 * year) * (-1)**(idx%2);
                 })
 

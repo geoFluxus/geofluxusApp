@@ -220,6 +220,10 @@ define(['views/common/baseview',
 
                         // 1D
                         if (dims.length == 1) {
+                            if (dims.includes("time")) {
+                                $(_this.timeToggleGran).trigger("change");
+                            }
+
                             if (dims.includes("space")) {
                                 let selectedAreaLevelId = $(_this.spaceLevelGranSelect).val();
                                 let actorAreaLevelId = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
