@@ -72,14 +72,19 @@ define(['views/common/d3plusVizView',
                     dimensions.forEach(function(dim, index) {
                         // choose grouping for space dimension
                         if (dim[0] == 'space') {
-                            var actorLevel = _this.options.dimensions.isActorLevel;
+                            var actorLevel = _this.options.dimensions.isActorLevel,
+                                prop = actorLevel ? "actorName" : "areaName",
+                                label = actorLevel ? 'Company' : 'Area';
                             if (!index) {
-                                _this.groupBy = _this.x = actorLevel ? "actorName" : "areaName";
-                                title = _this.label + " per " + (actorLevel ? 'Company' : 'Area');
+                                _this.groupBy = _this.x = prop;
+                                title = _this.label + " per " + label;
                             } else {
-                                _this.groupBy = actorLevel ? "actorName" : "areaName";
-                                title = " & " + (actorLevel ? 'Company' : 'Area');
+                                _this.groupBy = prop;
+                                title = " & " + label;
                             }
+                            _this.tooltipConfig.tbody.push([label, function (d) {
+                                return d[prop];
+                            }]);
                         }
 
                         var properties = _this.dimensions[dim[0]];
