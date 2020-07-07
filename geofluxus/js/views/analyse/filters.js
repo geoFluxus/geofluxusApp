@@ -361,6 +361,12 @@ define(['views/common/baseview',
                 })
             },
 
+            /**
+             * Fills a given Bootstrap selectpicker with an array of values
+             * 
+             * @param {array} values An array with the values of the selectpicker to be added
+             * @param {string} picker The CSS selector of the selectpicker that needs to be filled
+             */
             fillSelectPicker: function (values, picker) {
                 var html = "<option selected value='-1'>All (" + values.length + ")</option><option data-divider='true'></option>";
 
@@ -444,6 +450,15 @@ define(['views/common/baseview',
                 this.prepareAreas(levelId, true);
             },
 
+            /**
+             * Fetches the areas for a given level
+             * Optionally activates the loader, and executes a callback function after fetching areas.
+             * 
+             * @param {int} levelId the id of the selected area level 
+             * @param {Boolean} loaderOn indicates whether the loader needs to be activated or not
+             * @param {function} executeAfterLoading optional function to be executed after areas have been fetched
+             * @param {string} block paramater to be passed to executeAfterLoading function, either 'origin', 'destination', or 'flows'.
+             */
             prepareAreas: function (levelId, loaderOn, executeAfterLoading, block) {
                 var _this = this;
                 var areas = this.areas[levelId];
@@ -479,6 +494,11 @@ define(['views/common/baseview',
                 }
             },
 
+            /**
+             * Draws the areas on the map
+             * 
+             * @param {collection} areas collection of areas 
+             */
             drawAreas: function (areas) {
                 var _this = this;
                 this.areaMap.clearLayer('areas');
@@ -498,6 +518,9 @@ define(['views/common/baseview',
                 this.areaMap.centerOnLayer('areas');
             },
 
+            /** 
+             * Clears the selected areas
+             */
             clearAreas: function (event) {
                 let buttonClicked = $(event.currentTarget).data('area-clear-button');
                 let _this = this;
@@ -511,6 +534,9 @@ define(['views/common/baseview',
                 }
             },
 
+            /** 
+             * Show the area select modal:
+             */
             showAreaSelection: function (event) {
                 var _this = this;
 
@@ -646,7 +672,7 @@ define(['views/common/baseview',
                             selectedAreas = savedConfig.selectedAreas,
                             inOrOut = savedConfig.inOrOut;
 
-                        // add selected areas to map
+                        // Add selected areas to map
                         if (selectedAreas != undefined) {
                             // update admin level
                             _this[group].adminLevel = adminLevel;
@@ -670,14 +696,15 @@ define(['views/common/baseview',
                         }
                     })
 
-                    // dataset filter
+                    // Dataset filter:
                     var flows = Object.assign({}, config.flows); // copy object, we will delete properties!!
                     $(this.flows.datasetSelect).val(flows.datasets);
 
-                    // load origin/destination role
+                    // Origin and Destination role:
                     ['origin', 'destination'].forEach(function(group) {
                         var role = flows[group + '_role'];
                         if (role !== undefined) {
+                            // Trigger click event:
                             $("#" + group + "-role-radio-" + role).click();
                         }
                     })
@@ -699,7 +726,7 @@ define(['views/common/baseview',
                         $(_this.flows.waste06Select).selectpicker("val", val);
                     }
 
-                    // load fields with multiple fields
+                    // Load hierarchical fields:
                     function load(group, picker, parents) {
                         // store ALL selectors
                         var field = picker[0],
@@ -716,7 +743,7 @@ define(['views/common/baseview',
                                 return val.includes(item.attributes.id.toString());
                             })
 
-                            // find all parent ids
+                            // Find all parent ids
                             var ids = new Set(); // unique ids
                             collection.forEach(item => {
                                 ids.add(item.attributes[parent].toString());
@@ -985,6 +1012,7 @@ define(['views/common/baseview',
                     $(_this[group].inOrOut).bootstrapToggle("off");
                 })
 
+                
                 // get all groups
                 var groups = Object.keys(this.filters);
                 groups.forEach(function(group) {
