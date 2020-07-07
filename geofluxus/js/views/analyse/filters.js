@@ -166,7 +166,7 @@ define(['views/common/baseview',
                 var areaLevels = this.collections['arealevels'];
                 this.idOfCountryLevel = areaLevels.find(level => level.attributes.level == 1).id;
 
-                // filters
+                // Initialize all filters:
                 var groups = Object.keys(this.filters);
                 groups.forEach(function(group) {
                     // initialize group object without areas
@@ -248,7 +248,7 @@ define(['views/common/baseview',
                     $("#helpiconWaste06")[select == 'both' ? 'removeClass' : 'addClass']("hazaIconPos");
                     $("#flows-wastes06Col")[select == 'both' ? 'hide' : 'show']();
 
-                    // load all hazardous/non-hazardous codess
+                    // load all hazardous/non-hazardous codes
                     if (select != 'both') {
                         let filteredWastes06 = _this.collections['wastes06'].models.filter(function (waste06) {
                             return waste06.attributes.hazardous == _this.boolean[select];
@@ -258,7 +258,7 @@ define(['views/common/baseview',
                 }
                 $(this.flows.hazardousSelect).on('changed.bs.select', filterHazardous);
 
-                // enable multiple check for selectors
+                // Enable multiple check for selectors
                 function multiCheck(evt, clickedIndex, checked) {
                     var select = evt.target;
                     if (checked) {
@@ -304,11 +304,11 @@ define(['views/common/baseview',
                     }
                 }
 
+                // Add event listeners to all filters:
                 var groups = Object.keys(this.filters);
                 groups.forEach(function(group) {
-                    // all group filters
+                    // Loop through all filters
                     var filters = _this.filters[group];
-
                     filters.forEach(function(filter) {
                         var fields = Object.keys(filter);
 
@@ -316,16 +316,19 @@ define(['views/common/baseview',
                             var selector = $(_this[group][field + 'Select']); // field selector
                                 options = selector[0].options;                // selector options
 
-                            // no selectors for non-fuzzy booleans (either true or false)
-                            // to find them, check if there are options, including 'both'
+                            // Exclude non-fuzzy booleans (either true or false).
+                            // To find them, check if there are options, including 'both'
                             if (!(options.length > 0 && options[0].value == 'both')) {
-                                // for hierarchical fields, check for child field
+                                
+                                // Add multiCheck event listener
+                                selector.on('changed.bs.select', multiCheck);
+
+                                // For hierarchical fields, check if there is a child field
                                 var next = fields[idx + 1]; // next field in order
 
-                                // if child does exist
-                                selector.on('changed.bs.select', multiCheck);
+                                // If there is a child field:
                                 if (next !== undefined) {
-                                    // render child menu, filtered by current field
+                                    // Add filterbyParent event listener. This will render child menu, filtered by current field:
                                     selector.on('changed.bs.select',
                                                 {group: group, parent: field, child: next},
                                                 filterbyParent);

@@ -402,7 +402,6 @@ define(['views/common/baseview',
                     }
                 }
 
-
                 // Gather impact params for impact mode:
                 if (this.mode == "impact") {
 
