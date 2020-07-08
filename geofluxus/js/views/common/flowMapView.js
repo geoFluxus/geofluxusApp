@@ -1,13 +1,10 @@
 define(['underscore',
         'views/common/baseview',
         'collections/collection',
-        'collections/geolocation',
-        'collections/flows',
         'visualizations/flowmap',
         'visualizations/d3plusLegend',
         'd3',
         'visualizations/d3plus',
-        'openlayers',
         'utils/utils',
         'utils/enrichFlows',
         'leaflet',
@@ -21,7 +18,7 @@ define(['underscore',
         'leaflet-fullscreen/dist/leaflet.fullscreen.css'
     ],
 
-    function (_, BaseView, Collection, GeoLocation, Flows, FlowMap, D3plusLegend, d3, d3plus, ol, utils, enrichFlows, L) {
+    function (_, BaseView, Collection, FlowMap, D3plusLegend, d3, d3plus, utils, enrichFlows, L) {
 
         /**
          *
@@ -62,6 +59,18 @@ define(['underscore',
                     this.dimensionIsOrigin;
                     this.adminLevel = this.options.dimensions.find(dim => dim[0] == "space")[1].adminlevel;
                     this.isActorLevel = this.options.dimensions.isActorLevel;
+
+                    this.props = {
+                        'year'          : 'Year',
+                        'month'         : 'Month',
+                        'activitygroup' : 'Activity group',
+                        'activity'      : 'Activity',
+                        'processgroup'  : 'Treatment method group',
+                        'process'       : 'Treatment method',
+                        'waste02'       : 'EWC Chapter',
+                        'waste04'       : 'EWC Sub-Chapter',
+                        'waste06'       : 'EWC Entry'
+                    }
 
                     this.areas = new Collection([], {
                         apiTag: 'areas',
@@ -146,6 +155,8 @@ define(['underscore',
                         areas: areas,
                         label: this.label,
                     });
+
+                    this.flowMap.dottedLines = false;
                     this.flowMap.showFlows = true;
                     this.flowMap.showNodes = false;
 
@@ -329,31 +340,16 @@ define(['underscore',
                 },
 
                 toggleAnimation() {
-                    var _this = this;
-                    // If animation is off, turn it on and set to lines:
-                    if (_this.animationOn == false) {
-                        _this.animationOn = true;
-
-                        _this.flowMap.dottedLines = false;
-                        _this.flowMap.toggleAnimation(true);
-
-                        _this.animationLines = true;
-                        _this.animationDots = false;
-
-                        // If animation is on, and type == lines, set to dots:
-                    } else if (_this.animationOn && _this.animationLines) {
-                        _this.animationLines = false;
-                        _this.animationDots = true;
-
-                        _this.flowMap.dottedLines = true;
-                        _this.flowMap.toggleAnimation(true);
-
-                        // If animation is on, and type == dots, turn off:
-                    } else if (_this.animationOn && _this.animationDots) {
-                        _this.flowMap.toggleAnimation(false);
-                        _this.animationOn = false;
+                    if (this.animationOn == this.flowMap.dottedLines) {
+                        // when turn on/off the animation,
+                        // turn off the dotted lines
+                        this.animationOn = !this.animationOn;
+                        this.flowMap.dottedLines = false;
+                    } else {
+                        this.flowMap.dottedLines = true;
                     }
-                    _this.rerender();
+                    this.flowMap.toggleAnimation(this.animationOn);
+                    this.rerender();
                 },
 
                 toggleAreas() {
@@ -455,66 +451,14 @@ define(['underscore',
 
                 returnLinkInfo: function (link) {
                     let fromToText = link.origin.name + ' &#10132; ' + link.destination.name + '<br>'
-                    let dimensionText = "";
-                    let dimensionValue = "";
                     let amountText = d3plus.formatAbbreviate(link.amount, utils.returnD3plusFormatLocale()) + ' t';
-                    let dimensionId;
 
-                    switch (this.dim2[0]) {
-                        case "time":
-                            if (this.dim2[1] == "flowchain__month__year") {
-                                dimensionText = "Year";
-                                dimensionId = dimensionValue = link.year;
-                            } else if (this.dim2[1] == "flowchain__month") {
-                                dimensionText = "Month";
-                                dimensionId = dimensionValue = link.month;
-                            }
-                            break;
-                        case "economicActivity":
-                            if (this.dim2[1] == "origin__activity__activitygroup" || this.dim2[1] == "destination__activity__activitygroup") {
-                                dimensionText = "Activity group";
-                                dimensionId = link.activitygroup;
-                                dimensionValue = link.activityGroupCode + " " + link.activityGroupName;
-                            } else if (this.dim2[1] == "origin__activity" || this.dim2[1] == "destination__activity") {
-                                dimensionText = "Activity";
-                                dimensionId = link.activity;
-                                dimensionValue = link.activityCode + " " + link.activityName;
-                            }
-                            break;
-                        case "treatmentMethod":
-
-                            if (this.dim2[1] == "origin__process__processgroup" || this.dim2[1] == "destination__process__processgroup") {
-                                dimensionText = "Treatment method group";
-                                dimensionId = link.processgroup;
-                                dimensionValue = link.processGroupCode + " " + link.processGroupName;
-                            } else if (this.dim2[1] == "origin__process" || this.dim2[1] == "destination__process") {
-                                dimensionId = link.process
-                                dimensionText = "Treatment method";
-                                dimensionValue = link.processCode + " " + link.processName;
-                            }
-                            break;
-                        case "material":
-
-                            switch (this.dim2[1]) {
-                                case "flowchain__waste06__waste04__waste02":
-                                    dimensionId = link.waste02;
-                                    dimensionText = "EWC Chapter";
-                                    dimensionValue = link.ewc2Code + " " + link.ewc2Name;
-                                    break;
-                                case "flowchain__waste06__waste04":
-                                    dimensionId = link.waste04;
-                                    dimensionText = "EWC Sub-Chapter";
-                                    dimensionValue = link.ewc4Code + " " + link.ewc4Name;
-                                    break;
-                                case "flowchain__waste06":
-                                    dimensionId = link.waste06;
-                                    dimensionText = "EWC Entry";
-                                    dimensionValue = link.ewc6Code + " " + link.ewc6Name;
-                                    break;
-                            }
-
-                            break;
-                    }
+                    let prop = this.dim2[1].split("__").pop(),
+                        dimensionText = this.props[prop],
+                        dimensionId = link[prop],
+                        dimensionCode = link[prop + 'Code'],
+                        dimensionName = link[prop + 'Name'],
+                        dimensionValue = dimensionCode + [dimensionName != undefined ? " " + dimensionName : ""];
 
                     let description = '<br><b>' + dimensionText + ':</b> ';
 
@@ -533,33 +477,24 @@ define(['underscore',
                         nodes = [],
                         links = [];
 
-                    if (this.dim2[1].includes("origin")) {
-                        this.dimensionIsOrigin = true;
-                    } else {
-                        this.dimensionIsOrigin = false;
-                    }
+                    this.dimensionIsOrigin = this.dim2[1].includes("origin");
 
                     flows.forEach(function (flow, index) {
                         let originNode = flow.origin;
-                        let destinationNode = flow.destination
+                        let destinationNode = flow.destination;
                         let link = flow;
                         let linkInfo = _this.returnLinkInfo(this[index]);
                         let nodeOpacity = 1;
 
                         // NODES
                         // Add the origin and destination to Nodes, and include amounts:
-                        originNode.value = flow.amount;
-                        originNode.dimensionValue = linkInfo.dimensionValue;
-                        originNode.dimensionText = linkInfo.dimensionText;
-                        originNode.amountText = linkInfo.amountText
-                        originNode.opacity = nodeOpacity;
-                        originNode.displayNode = _this.dimensionIsOrigin;
+                        originNode.value = destinationNode.value = flow.amount;
+                        originNode.dimensionValue = destinationNode.dimensionValue = linkInfo.dimensionValue;
+                        originNode.dimensionText = destinationNode.dimensionText = linkInfo.dimensionText;
+                        originNode.amountText = destinationNode.amountText = linkInfo.amountText;
+                        originNode.opacity = destinationNode.opacity = nodeOpacity;
 
-                        destinationNode.value = flow.amount;
-                        destinationNode.dimensionValue = linkInfo.dimensionValue;
-                        destinationNode.dimensionText = linkInfo.dimensionText;
-                        destinationNode.amountText = linkInfo.amountText
-                        destinationNode.opacity = nodeOpacity;
+                        originNode.displayNode = _this.dimensionIsOrigin;
                         destinationNode.displayNode = !_this.dimensionIsOrigin;
 
                         // Store info of source/destination as prop:
