@@ -3,6 +3,7 @@ define(['views/common/baseview',
         'visualizations/d3plus',
         'file-saver',
         'utils/utils',
+        'utils/enrichFlows',
     ],
 
     function (
@@ -11,6 +12,7 @@ define(['views/common/baseview',
         d3plus,
         FileSaver,
         utils,
+        enrichFlows
     ) {
         /**
          * @author Evert Van Hirtum
@@ -79,6 +81,16 @@ define(['views/common/baseview',
                     this.isDarkMode = !this.isDarkMode;
 
                     $(".viz-wrapper-div").toggleClass("lightMode");
+
+                    this.render();
+                },
+
+                flipGrouping: function() {
+                    $(this.options.el).html("");
+
+                    this.groupBy = [this.x, this.x = this.groupBy][0];
+
+                    this.flows = enrichFlows.assignColorsByProperty(this.flows, this.groupBy);
 
                     this.render();
                 },

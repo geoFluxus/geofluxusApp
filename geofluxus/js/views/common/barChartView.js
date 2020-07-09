@@ -39,6 +39,7 @@ define(['views/common/d3plusVizView',
                     this.isStacked = this.options.isStacked;
 
                     this.canHaveLegend = true;
+                    this.canFlipGrouping = false;
                     this.hasLegend = true;
                     this.isDarkMode = true;
 
@@ -125,6 +126,10 @@ define(['views/common/d3plusVizView',
                         _this.tooltipConfig.title += title;
                     })
 
+                    if (dimensions.length > 1) {
+                        this.canFlipGrouping = true;
+                    }
+
                     // assign colors by groupings
                     this.flows = enrichFlows.assignColorsByProperty(this.flows, this.groupBy);
                     this.render();
@@ -135,6 +140,7 @@ define(['views/common/d3plusVizView',
                     'click .export-csv': 'exportCSV',
                     'click .toggle-legend': 'toggleLegend',
                     'click .toggle-darkmode': 'toggleDarkMode',
+                    'click .flip-grouping': 'flipGrouping',
                 },
 
                 /**
@@ -152,11 +158,12 @@ define(['views/common/d3plusVizView',
                         isActorLevel: this.isActorLevelevel,
                         hasLegend: this.hasLegend,
                         canHaveLegend: this.canHaveLegend,
+                        canFlipGrouping: this.canFlipGrouping,
                         isDarkMode: this.isDarkMode,
                     });
                     this.scrollToVisualization();
                     this.options.flowsView.loader.deactivate();
-                },
+                }
             });
         return BarChartView;
     }

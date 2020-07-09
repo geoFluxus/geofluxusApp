@@ -57,6 +57,15 @@ define([
                     .html('<i class="fas icon-toggle-legend"></i>');
             }
 
+            if (this.options.canFlipGrouping) {
+                svg.select(".d3plus-Form.d3plus-Form-Button")
+                    .append("button")
+                    .attr("class", "d3plus-Button flip-grouping")
+                    .attr("title", "Inverts the grouping and the X-axis.")
+                    .attr("type", "button")
+                    .html('<i class="fas icon-flip-grouping"></i>');
+            }
+
             // Check on hover over Viz if it still contains Fullscreen button, if not, readd:
             svg.on("mouseover", function () {
                 let buttonFullscreen = d3.select(".fullscreen-toggle")
