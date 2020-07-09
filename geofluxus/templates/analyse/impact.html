@@ -1,7 +1,7 @@
 <script type="text/template" id="impact-template">
 
     <!-- Indicators -->
-    <div class="block">
+    <!-- <div class="block">
         <h4 class="pb-2 pl-3">Step 3: Choose an indicator</h4>
 
         <div class="card bg-dark">
@@ -33,10 +33,10 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- Impact sources -->
-    <div class="block impactSourceContainer" style="display: none;">
+    <!-- <div class="block impactSourceContainer" style="display: none;">
         <h4 class="pb-2 pl-3">Step 4: Define the impact source</h4>
 
         <div class="card bg-dark">
@@ -76,50 +76,88 @@
             </div>
     
         </div>
+    </div> -->
+
+    <!-- Indicators -->
+    <div class="block">
+        <h4 class="pb-2 pl-3">Step 3: Define impact parameters</h4>
+
+        <div class="card bg-dark">
+            <div class="row">
+                <div class="col mt-3">
+                    <span style="color: white">Pick an indicator of environmental impact:</span>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col d-flex align-items-center mr-auto">
+
+                    <div class="btn-group btn-group-toggle flex-wrap justify-content-center" id="radio-group-impact-indicator"
+                    data-toggle="buttons" style="margin: auto">
+                    
+                        <label class="btn btn-sm btn-primary justify-content-center align-items-center big-radio-no-image impact-indicator-radio-label" data-indicator="co2">
+                            <input type="radio">
+                            <span>CO<sub>2</sub></span>
+                        </label>
+                        <!-- <label class="btn btn-sm btn-primary justify-content-center align-items-center big-radio-no-image impact-indicator-radio-label" data-indicator="nox">
+                            <input type="radio">
+                            <span>NO<sub>x</sub></span>
+                        </label>
+                        <label class="btn btn-sm btn-primary justify-content-center align-items-center big-radio-no-image impact-indicator-radio-label" data-indicator="pm">
+                            <input type="radio">
+                            <span>Particulate matter</span>
+                        </label> -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- </div> -->
+
+    <!-- Impact sources -->
+    <!-- <div class="impactSourceContainer" style="display: none;">
+        <h4 class="pb-2 pl-3">Step 4: Define the impact source</h4> -->
+
+        <div class="card bg-dark impactSourceContainer" style="display: none;">
+            <div class="row">
+                <div class="col mt-3">
+                    <span style="color: white">Pick the source(s) of environmental impact:</span>
+                </div>
+            </div>
+
+            <div class="row mt-2 pb-4">
+                <div class="col-md-4">
+                    <div class="checkbox">
+                        <input name="impact-source-transportation" class="bootstrapToggle impactSourceToggle"
+                            id="impact-source-toggle-transportation" type="checkbox" data-width="100%" data-height="21"
+                            data-toggle="toggle" data-source="transportation" data-on="Transportation"
+                            data-off="Transportation">
+                    </div>
+                </div>
+           
+                <div class="col-md-4">
+                    <div class="checkbox">
+                        <input name="impact-source-treatment" class="bootstrapToggle impactSourceToggle"
+                            id="impact-source-toggle-treatment" type="checkbox" data-width="100%" data-height="21"
+                            data-toggle="toggle" data-source="treatment" disabled data-on="Waste treatment"
+                            data-off="Waste treatment">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="checkbox">
+                        <input name="impact-source-econ-activity" class="bootstrapToggle impactSourceToggle"
+                            id="impact-source-toggle-econ-activity" type="checkbox" data-width="100%" data-height="21"
+                            data-toggle="toggle" data-source="economicActivity" disabled data-on="Economic activity"
+                            data-off="Economic activity">
+                    </div>
+                </div>
+            </div>
+    
+        </div>
     </div>
+    
 
     <!-- Dimensions -->
-    <div id="impact-dimensions-container" style="display: none;">
-
-        <!-- <h4 class="pb-2 pl-3">Step 3: Visualize</h4>
-
-        <div class="card bg-dark" id="dimensionsCard">
-            
-            <div class="row" id="message-container-row">
-                <div class="col mt-3">
-                    <% if (maxNumberOfDimensions == 1) { %>
-                        <span style="color: white">Select at least one dimension.</span>
-                    <% } else { %>
-                        <span style="color: white">Select between 1 and <%= maxNumberOfDimensions %> dimensions.</span>
-                    <% } %>
-                    </div>
-            </div>
-            <div class="row" id="alertMaxDimensionsRow" style="display: none;">
-                <div class="col mt-3 text-center">
-                    <div class="alert alert-warning fade show" id="alertMaxDimensions" role="alert">
-                        You can select up to <strong><%= maxNumberOfDimensions %> dimensions</strong> at the same time.
-                    </div>
-                </div>
-            </div>
-
-            <div class="row mt-2">
-                <div class="col-md-3">
-                    <div class="checkbox">
-                        <input name="dim-toggle-time" class="bootstrapToggle dimensionToggle" id="dim-toggle-time"
-                            type="checkbox" data-width="100%" data-height="21" data-toggle="toggle" data-dim="time"
-                            data-on="Time" data-off="Time">
-                    </div>
-                </div>
-                <div class="col-md-3" id="gran-toggle-time-col" style="display: none">
-                    <div class="checkbox">
-                        <input name="gran-toggle-time" id="gran-toggle-time" class="bootstrapToggle" type="checkbox" data-width="100%"
-                            data-height="21" data-toggle="toggle" data-on="Month" data-off="Year">
-                    </div>
-                </div>
-            </div>
-
-        </div> -->
-
-    </div>
+    <div id="impact-dimensions-container" style="display: none;"></div>
 
 </script>

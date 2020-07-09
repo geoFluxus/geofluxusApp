@@ -4,7 +4,8 @@
 {% load custom_tags %}
 
 <head>
-  <link href="https://fonts.googleapis.com/css?family=Lato|Montserrat|Open+Sans|Roboto" rel="stylesheet">
+  <link href='{{STATIC_URL}}css/montserrat.css' rel='stylesheet' type='text/css'>
+
   <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css"> {% render_bundle 'commons' %}
   {% render_bundle 'Base' %}
   <title>{% block title %}TU Delft{% endblock %}</title>
