@@ -37,6 +37,15 @@ define([
                 .groupBy(options.groupBy)
                 .x(options.x)
                 .time(options.x)
+                .timelineConfig({
+                    on: {
+                        brush: function(d) {
+                            if (!Array.isArray(d)) {
+                                throw new Error();
+                            }
+                        }
+                    }
+                })
                 .y("amount")
                 .baseline(0)
                 .color(function (d) {

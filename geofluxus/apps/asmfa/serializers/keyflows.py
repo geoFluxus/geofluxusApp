@@ -9,7 +9,7 @@ from geofluxus.apps.asmfa.models import (Waste02,
                                          Composite,
                                          Year,
                                          Month)
-from calendar import month_abbr, month_name
+from calendar import month_name
 
 
 # Waste02

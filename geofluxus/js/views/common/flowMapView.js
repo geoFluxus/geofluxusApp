@@ -49,7 +49,6 @@ define(['underscore',
                     var _this = this;
                     this.options = options;
                     this.flows = this.options.flows;
-                    this.label = options.dimensions.label;
 
                     this.dimStrings = [];
                     this.options.dimensions.forEach(dim => this.dimStrings.push(dim[0]));
@@ -60,6 +59,7 @@ define(['underscore',
                     this.adminLevel = this.options.dimensions.find(dim => dim[0] == "space")[1].adminlevel;
                     this.isActorLevel = this.options.dimensions.isActorLevel;
 
+                    this.label = options.dimensions.label;
                     this.props = {
                         'year'          : 'Year',
                         'month'         : 'Month',
@@ -88,7 +88,10 @@ define(['underscore',
                 /*
                  * dom events (managed by jquery)
                  */
-                events: {},
+                events: {
+                    'click .toggle-legend': 'toggleLegend',
+
+                },
 
                 /*
                  * render the view
@@ -101,23 +104,23 @@ define(['underscore',
                         attribution: '© <a style="color:#0078A8" href="http://cartodb.com/attributions">CartoDB</a>'
                     });
 
-                    $(this.el).html('<div class="flowmap-container d-block" style="width: 100%; height: 100%"></div><div class="flowmap-d3pluslegend-wrapper text-center"><svg class="flowmap-d3pluslegend"></svg></div>')
+                    $(this.el).html(`<div class="flowmap-container d-block" style="width: 100%; height: 100%"></div>
+                                     <div class="flowmap-d3pluslegend-wrapper text-center">
+                                     <svg class="flowmap-d3pluslegend"></svg></div>`);
 
                     var _this = this;
                     this.hasLegend = true;
                     this.isDarkMode = true;
                     this.animationOn = false;
-                    this.animationLines = true;
-                    this.animationDots = false;
 
                     this.leafletMap = new L.Map(this.el.firstChild, {
-                            center: [52.1326, 5.2913], // Center of Netherlands
+                        center: [52.1326, 5.2913], // Center of Netherlands
                             zoomSnap: 0.25,
                             zoom: 10.5,
                             minZoom: 5,
                             maxZoom: 25
                         })
-                        .addLayer(this.backgroundLayer);
+                    .addLayer(this.backgroundLayer);
 
                     // Disable zoom on scroll:
                     this.leafletMap.scrollWheelZoom.disable();
@@ -136,8 +139,7 @@ define(['underscore',
 
                     // Retrieve area geometry
                     var areas = [];
-                    this.areas.forEach(function (area) {
-
+                    this.areas.forEach(function(area) {
                         let newArea = {
                             id: area.get('id'),
                             name: area.get('name'),
@@ -276,10 +278,6 @@ define(['underscore',
                     };
                     topLefControls.addTo(this.leafletMap);
 
-                    // Event listeners for custom buttons
-                    legendToggleBtn.addEventListener('click', function (event) {
-                        _this.toggleLegend();
-                    })
                     darkmodeToggleBtn.addEventListener('click', function (event) {
                         _this.isDarkMode = !_this.isDarkMode;
                         _this.toggleLight();
@@ -322,11 +320,7 @@ define(['underscore',
                 },
 
                 toggleLight() {
-                    if (this.isDarkMode) {
-                        this.tileType = "dark_all"
-                    } else {
-                        this.tileType = "light_all"
-                    }
+                    this.tileType = this.isDarkMode ? "dark_all" : "light_all";
 
                     this.updateLegend();
                     this.leafletMap.removeLayer(this.backgroundLayer);
