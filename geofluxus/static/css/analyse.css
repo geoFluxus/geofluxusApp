@@ -622,6 +622,7 @@ textarea.textarea-autosize.form-control-sm {
 
 .icon-toggle-legend,
 .icon-toggle-darkmode,
+.icon-flip-grouping,
 .icon-toggle-flowmap-flows,
 .icon-toggle-flowmap-nodes,
 .icon-toggle-flowmap-animation,
@@ -636,6 +637,10 @@ textarea.textarea-autosize.form-control-sm {
 
 .icon-toggle-legend {
     background-image: url("../img/legend.svg");
+}
+
+.icon-flip-grouping {
+    background-image: url("../img/flip-grouping.svg");
 }
 
 .icon-toggle-darkmode {
