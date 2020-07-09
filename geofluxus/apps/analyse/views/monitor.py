@@ -214,7 +214,7 @@ class MonitorViewSet(FilterFlowViewSet):
 
                     # exclude origins / destinations with LOWER admin level!
                     search = '__adminlevel__level'
-                    queryset = queryset.exclude(Q(**{(field + search + '__lt'): admin}))
+                    # queryset = queryset.exclude(Q(**{(field + search + '__lt'): admin}))
 
                     # annotate origin / destination areas
                     total = AdminLevel.objects.exclude(level=ACTOR_LEVEL).count()
@@ -227,8 +227,11 @@ class MonitorViewSet(FilterFlowViewSet):
                         cases.append(case)
                         steps -= 1
 
+                    default = field  # set original origin/destination area as default value
                     field = field.replace('__', '_')
-                    queryset = queryset.annotate(**{field: Case(*cases, output_field=IntegerField())})
+                    queryset = queryset.annotate(**{field: Case(*cases,
+                                                                output_field=IntegerField(),
+                                                                default=F(default))})
                 else:
                     # annotate origin / destination id
                     queryset = queryset.annotate(**{(field + '_actor'): F(field + '_id')})
@@ -237,5 +240,18 @@ class MonitorViewSet(FilterFlowViewSet):
                 # append to other dimensions
                 self.fields.append(field)
                 self.levels.append(field)
+
+            # for areas, filter queryset to contain
+            # only flows with origin / destination in selected admin level
+            if admin != ACTOR_LEVEL:
+                # find all areas of selected admin level
+                ids = Area.objects.filter(adminlevel=id)\
+                          .values_list('id', flat=True)
+                # either origin / destination should belong to that level
+                if both:
+                    queryset = queryset.filter(Q(origin_area__in=ids) |\
+                                               Q(destination_area__in=ids))
+                else:
+                    queryset = queryset.filter(**{(field + '__in'): ids})
 
         return queryset
