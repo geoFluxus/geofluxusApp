@@ -65,7 +65,7 @@ define(['views/common/baseview',
                     'treatmentMethod':  ['piechart', 'barchart', 'treemap', 'parallelsets'],
                     'material':         ['piechart', 'barchart', 'treemap'],
                     // 2D visualizations
-                    'time_economicActivity':            ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart'],
+                    'time_economicActivity':            ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'treemap'],
                     'time_space':                       ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'flowmap'],
                     'time_treatmentMethod':             ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart'],
                     'time_material':                    ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart'],
