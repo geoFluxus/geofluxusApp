@@ -88,7 +88,7 @@ define(['views/common/baseview',
                     mode: "impact",
                     maxNumberOfDimensions: 2,
                     indicator: this.indicator,
-                    titleNumber: 5,
+                    titleNumber: 4,
                     impactSourceStrings: this.impactSourceStrings,
                     levels: this.areaLevels,
                 });
