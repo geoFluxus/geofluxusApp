@@ -34,56 +34,101 @@ define(['views/common/d3plusVizView',
                     _.bindAll(this, 'toggleLegend');
                     _.bindAll(this, 'toggleDarkMode');
 
-                    var _this = this;
-
+var _this = this;
                     this.options = options;
-                    this.flows = this.options.flows;
+                    this.isStacked = this.options.isStacked;
 
-                    this.hasLegend = true;
                     this.canHaveLegend = true;
+                    this.canFlipGrouping = false;
+                    this.hasLegend = true;
                     this.isDarkMode = true;
+
+                    this.flows = this.options.flows;
+                    this.label = this.options.label;
+                    this.tooltipConfig.title = "";
 
                     this.groupBy = [];
 
-                    this.props = {
-                        'year'          : 'Year',
-                        'month'         : 'Month',
-                        'activitygroup' : 'Activity group',
-                        'activity'      : 'Activity',
-                        'processgroup'  : 'Treatment method group',
-                        'process'       : 'Treatment method',
-                        'waste02'       : 'EWC Chapter',
-                        'waste04'       : 'EWC Sub-Chapter',
-                        'waste06'       : 'EWC Entry'
+                    this.dimensions = {
+                        'time': {
+                            'year' : 'Year',
+                            'month': 'Month',
+                        },
+                        'economicActivity': {
+                            'activitygroup': 'Activity group',
+                            'activity'     : 'Activity',
+                        },
+                        'treatmentMethod': {
+                            'processgroup': 'Treatment method group',
+                            'process'     : 'Treatment method',
+                        },
+                        'material': {
+                            'waste02': 'EWC Chapter',
+                            'waste04': 'EWC Sub-Chapter',
+                            'waste06': 'EWC Entry'
+                        }
                     }
-
-                    let dim = this.options.dimensions[0][0],
-                        gran = this.options.dimensions[0][1];
 
                     // configure tooltips
-                    Object.keys(this.props).forEach(function(property) {
-                        // check if flows have code/name for current property
-                        var flow = _this.flows[0],
-                            code = property + 'Code',
-                            name = property + 'Name';
-
-                        // if code, group by
-                        if (flow[code] != undefined && flow[code] != "") {
-                            _this.groupBy.push(code); // group by multiple CODES
-
-                            // if name, add tooltip
-                            if (flow[name] != undefined && flow[name] != "") {
-                                _this.tooltipConfig.tbody.push([_this.props[property], function (d) {
-                                    return d[code] + " " + d[name];
-                                }]);
+                    let dimensions = this.options.dimensions;
+                    var title = "";
+                    dimensions.forEach(function(dim, index) {
+                        // choose grouping for space dimension
+                        if (dim[0] == 'space') {
+                            var actorLevel = _this.options.dimensions.isActorLevel,
+                                prop = actorLevel ? "actorName" : "areaName",
+                                label = actorLevel ? 'Company' : 'Area';
+                            if (!index) {
+                                _this.groupBy.push(prop);
+                                title = _this.label + " per " + label;
+                            } else {
+                                _this.groupBy.push(prop);
+                                title = " & " + label;
                             }
+                            _this.tooltipConfig.tbody.push([label, function (d) {
+                                return d[prop];
+                            }]);
                         }
+
+                        var properties = _this.dimensions[dim[0]];
+                        if (properties != undefined & _this.flows.length > 0) {
+                            Object.keys(properties).forEach(function(prop) {
+                                // check if flows have code/name for current property
+                                var flow = _this.flows[0],
+                                    code = prop + 'Code',
+                                    name = prop + 'Name';
+
+                                // if code, group by
+                                if (flow[code] != undefined) {
+                                    // if name, add tooltip
+                                    if (flow[name] != undefined) {
+                                        // tooltip subtitle (body)
+                                        var sub = properties[prop];
+
+                                        // tooltip title (header)
+                                        if (!index) {
+                                            _this.groupBy.push(code);
+                                            title = _this.label + " per " + sub;
+                                        } else {
+                                            _this.groupBy.push(code);
+                                            title = " & " + sub;
+                                        }
+
+                                        // tooltip body
+                                        _this.tooltipConfig.tbody.push([sub, function (d) {
+                                            return d[code] + " " + d[name];
+                                        }]);
+                                    }
+                                }
+                            })
+                        }
+
+                        _this.tooltipConfig.title += title;
                     })
 
-                    // choose grouping for time / space dimension
-                    if (dim == 'space') {
-                        this.groupBy = this.options.dimensions.isActorLevel ? ["actorName"] : ["areaName"];
-                    }
+//                    if (dimensions.length > 1) {
+//                        this.canFlipGrouping = true;
+//                    }
 
                     // assign colors by groupings
                     this.flows = enrichFlows.assignColorsByProperty(this.flows, this.groupBy[0]);
