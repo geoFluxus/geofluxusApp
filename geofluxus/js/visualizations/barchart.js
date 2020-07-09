@@ -21,8 +21,8 @@ define([
 
             // sort data (for months)
             let xSort = options.x != 'monthCode' ? null :  function(a, b) {
-                var months = ["January", "February", "March", "April", "May", "June",
-                              "July", "August", "September", "October", "November", "December"];
+                var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
                 var res = 0;
                 [a, b].forEach(function(t, idx) {
