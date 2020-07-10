@@ -66,15 +66,15 @@ define(['views/common/baseview',
                     'material':         ['piechart', 'barchart', 'treemap'],
                     // 2D visualizations
                     'time_economicActivity':            ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'treemap'],
-                    'time_space':                       ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'flowmap'],
-                    'time_treatmentMethod':             ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart'],
-                    'time_material':                    ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart'],
-                    'space_economicActivity':           ['barchart', 'stackedbarchart', 'flowmap'],
-                    'space_treatmentMethod':            ['barchart', 'stackedbarchart', 'flowmap'],
-                    'space_material':                   ['barchart', 'stackedbarchart', 'flowmap'],
-                    'economicActivity_treatmentMethod': ['barchart', 'stackedbarchart', 'parallelsets'],
-                    'economicActivity_material':        ['barchart', 'stackedbarchart', 'parallelsets'],
-                    'treatmentMethod_material':         ['barchart', 'stackedbarchart', 'parallelsets']
+                    'time_space':                       ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'flowmap', 'treemap'],
+                    'time_treatmentMethod':             ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'treemap'],
+                    'time_material':                    ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'treemap'],
+                    'space_economicActivity':           ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
+                    'space_treatmentMethod':            ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
+                    'space_material':                   ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
+                    'economicActivity_treatmentMethod': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap'],
+                    'economicActivity_material':        ['barchart', 'stackedbarchart', 'parallelsets', 'treemap'],
+                    'treatmentMethod_material':         ['barchart', 'stackedbarchart', 'parallelsets', 'treemap']
                 }
 
                 // Visualization view inventory
@@ -172,6 +172,9 @@ define(['views/common/baseview',
 
 
                 $(".dimensionToggle").change(function (event) {
+                    // Deselect any selected Viz-buttons: 
+                    $(".viz-selector-button").removeClass("active");
+
                     if (_this.resetInProgres) {
                         return
                     }
