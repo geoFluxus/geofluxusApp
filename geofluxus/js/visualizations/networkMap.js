@@ -28,8 +28,8 @@ define([
                 opacity: options.opacity || 1.0
             });
 
-            this.network = options.network;
             this.flows = options.flows;
+            this.network = options.network;
 
             // define legend
             this.drawLegend();

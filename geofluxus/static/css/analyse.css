@@ -330,7 +330,10 @@ label[for="flows-waste06-select"] {
 
 #span-viz-flowmap::before {
     background-image: url('../img/viz-icons/viz-flowmap.svg');
+}
 
+#span-viz-networkmap::before {
+    background-image: url('../img/viz-icons/viz-networkmap.svg');
 }
 
 /* Circular Sankey */

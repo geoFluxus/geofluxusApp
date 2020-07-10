@@ -243,7 +243,6 @@ define(['views/common/baseview',
                         error: function (error) {
                             _this.loader.deactivate();
                             console.log(error);
-                            //_this.onError(error);
                         }
                     });
                 }

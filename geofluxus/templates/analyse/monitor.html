@@ -1,9 +1,6 @@
-<!--Flows-->
-
-<!--Filter editing-->
 <script type="text/template" id="monitor-template">
 
-<div class="block">
+    <div class="block">
 
     <h4 class="pb-2 pl-3">Step <%= titleNumber %>: Visualize</h4>
 
@@ -221,6 +218,11 @@
                             data-viz="flowmap" style="display: none;">
                             <input type="radio" id="viz-flowmap"><span class="span-viz" id="span-viz-flowmap">Flow map</span>
                         </label>
+                        <label
+                            class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
+                            data-viz="networkmap" style="display: none;">
+                            <input type="radio" id="viz-networkmap"><span class="span-viz" id="span-viz-networkmap">Road network map</span>
+                        </label>
 
                     </div>
                 </div>
@@ -267,7 +269,7 @@
             <div class="flowmap-container d-block" style="width: 100%; height: 100%"></div>
             <svg class="flowmap-d3pluslegend" style="width: 100%; background-color: grey"></svg>
         </div>
-
+        <div class="viz-wrapper-div networkmap-wrapper"></div>
 
         <div class="parallelsets-container p-2" style="display: none;">
             <div class="viz-wrapper-div parallelsets-wrapper"></div>

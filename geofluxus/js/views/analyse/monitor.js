@@ -12,6 +12,7 @@ define(['views/common/baseview',
         'views/common/flowMapView',
         'views/common/parallelSetsView',
         'views/common/circularSankeyView',
+        'views/common/networkMapView',
     ],
     function (
         BaseView,
@@ -28,6 +29,7 @@ define(['views/common/baseview',
         FlowMapView,
         ParallelSetsView,
         CircularSankeyView,
+        NetworkMapView,
     ) {
         var MonitorView = BaseView.extend({
             initialize: function (options) {
@@ -59,40 +61,71 @@ define(['views/common/baseview',
                 // Dimension-Visualizations inventory
                 this.vizs = {
                     // 1D visualizations
-                    'time':             ['piechart', 'barchart', 'treemap', 'lineplot'],
+                    'time': ['piechart', 'barchart', 'treemap', 'lineplot'],
                     'economicActivity': ['piechart', 'barchart', 'treemap'],
-                    'space':            ['piechart', 'barchart', 'treemap'],
-                    'treatmentMethod':  ['piechart', 'barchart', 'treemap', 'parallelsets'],
-                    'material':         ['piechart', 'barchart', 'treemap'],
+                    'space': ['piechart', 'barchart', 'treemap', 'networkmap'],
+                    'treatmentMethod': ['piechart', 'barchart', 'treemap', 'parallelsets'],
+                    'material': ['piechart', 'barchart', 'treemap'],
                     // 2D visualizations
-                    'time_economicActivity':            ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'treemap'],
-                    'time_space':                       ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'flowmap', 'treemap'],
-                    'time_treatmentMethod':             ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'treemap'],
-                    'time_material':                    ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'treemap'],
-                    'space_economicActivity':           ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
-                    'space_treatmentMethod':            ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
-                    'space_material':                   ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
+                    'time_economicActivity': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'treemap'],
+                    'time_space': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'flowmap', 'treemap'],
+                    'time_treatmentMethod': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'treemap'],
+                    'time_material': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'treemap'],
+                    'space_economicActivity': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
+                    'space_treatmentMethod': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
+                    'space_material': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
                     'economicActivity_treatmentMethod': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap'],
-                    'economicActivity_material':        ['barchart', 'stackedbarchart', 'parallelsets', 'treemap'],
-                    'treatmentMethod_material':         ['barchart', 'stackedbarchart', 'parallelsets', 'treemap']
+                    'economicActivity_material': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap'],
+                    'treatmentMethod_material': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap']
                 }
 
                 // Visualization view inventory
                 this.vizViews = {
-                    'piechart':           {'view': PieChartView},
-                    'barchart':           {'view': BarChartView},
-                    'stackedbarchart':    {'view': BarChartView,
-                                           'options': {isStacked: true}},
-                    'treemap':            {'view': TreeMapView},
-                    'lineplot':           {'view': LinePlotView},
-                    'lineplotmultiple':   {'view': LinePlotView,
-                                           'options': {hasMultipleLines: true}},
-                    'areachart':          {'view': AreaChartView},
-                    'choroplethmap':      {'view': ChoroplethView},
-                    'coordinatepointmap': {'view': CoordinatePointMapView},
-                    'flowmap':            {'view': FlowMapView},
-                    'parallelsets':       {'view': ParallelSetsView},
-                    'circularsankey':     {'view': CircularSankeyView}
+                    'piechart': {
+                        'view': PieChartView
+                    },
+                    'barchart': {
+                        'view': BarChartView
+                    },
+                    'stackedbarchart': {
+                        'view': BarChartView,
+                        'options': {
+                            isStacked: true
+                        }
+                    },
+                    'treemap': {
+                        'view': TreeMapView
+                    },
+                    'lineplot': {
+                        'view': LinePlotView
+                    },
+                    'lineplotmultiple': {
+                        'view': LinePlotView,
+                        'options': {
+                            hasMultipleLines: true
+                        }
+                    },
+                    'areachart': {
+                        'view': AreaChartView
+                    },
+                    'choroplethmap': {
+                        'view': ChoroplethView
+                    },
+                    'coordinatepointmap': {
+                        'view': CoordinatePointMapView
+                    },
+                    'flowmap': {
+                        'view': FlowMapView
+                    },
+                    'parallelsets': {
+                        'view': ParallelSetsView
+                    },
+                    'circularsankey': {
+                        'view': CircularSankeyView
+                    },
+                    'networkmap': {
+                        'view': NetworkMapView
+                    }
                 }
 
                 this.render();
@@ -217,7 +250,7 @@ define(['views/common/baseview',
                     if (dims.length > 0) {
                         $(".viz-selector-button").hide();
                         $(".viz-container").fadeIn();
-                        _this.vizs[_this.selectedDimensionStrings.join('_')].forEach(function(viz) {
+                        _this.vizs[_this.selectedDimensionStrings.join('_')].forEach(function (viz) {
                             $("#viz-" + viz).parent().fadeIn();
                         })
 
@@ -356,6 +389,9 @@ define(['views/common/baseview',
                         formatString = (formatString == "circularsankey") ? "parallelsets" : formatString;
                         filterParams.format = formatString;
                     }
+                    if(selectedVizualisationString == "networkmap"){
+                        filterParams.format = "networkmap";
+                    }
                 }
 
                 // ///////////////////////////////
@@ -398,7 +434,7 @@ define(['views/common/baseview',
                     let gran = $($(".gran-radio-material-label.active")).attr("data-ewc");
                     filterParams.dimensions.material = 'flowchain__waste06';
                     if (gran === 'ewc4') {
-                        filterParams.dimensions.material+= '__waste04'
+                        filterParams.dimensions.material += '__waste04'
                     } else if (gran === 'ewc2') {
                         filterParams.dimensions.material += '__waste04__waste02'
                     }
@@ -437,7 +473,7 @@ define(['views/common/baseview',
 
                 // Enrich flows with info
                 let adminlevel = -1;
-                dimensions.forEach(function(dimension) {
+                dimensions.forEach(function (dimension) {
                     let dimensionString = dimension[0];
                     let granularity = dimension[1];
 
@@ -447,7 +483,7 @@ define(['views/common/baseview',
                         }
                     } else {
                         adminlevel = granularity.adminlevel;
-                        let actorAreaLevelId =  collections['arealevels'].models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
+                        let actorAreaLevelId = collections['arealevels'].models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
                         dimensions.isActorLevel = (adminlevel == actorAreaLevelId) ? true : false;
                     }
                 })
@@ -464,12 +500,12 @@ define(['views/common/baseview',
                 let wrapperName = _this.selectedVizName === 'lineplotmultiple' ? 'lineplot' : _this.selectedVizName;
                 $("." + wrapperName + "-wrapper").fadeIn();
                 let defaultOptions = {
-                        el: "." + wrapperName + "-wrapper",
-                        dimensions: dimensions,
-                        flows: flows,
-                        flowsView: this,
-                        label: this.labels[this.indicator],
-                    };
+                    el: "." + wrapperName + "-wrapper",
+                    dimensions: dimensions,
+                    flows: flows,
+                    flowsView: this,
+                    label: this.labels[this.indicator],
+                };
 
                 if (_this.selectedVizName === 'choroplethmap') {
                     let occuringAreas = [];
@@ -548,7 +584,7 @@ define(['views/common/baseview',
                     $('#apply-filters').popover(options);
                     $('#apply-filters').popover('show');
 
-                // Only fetch Flows if a visualization has been selected:
+                    // Only fetch Flows if a visualization has been selected:
                 } else {
 
                     this.loader.activate();
