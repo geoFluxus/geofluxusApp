@@ -52,6 +52,7 @@ define(['underscore',
                     var _this = this;
                     this.options = options;
                     this.flows = this.options.flows;
+                    this.label = options.dimensions.label;
 
                     this.dimStrings = [];
                     this.options.dimensions.forEach(dim => this.dimStrings.push(dim[0]));
@@ -109,6 +110,9 @@ define(['underscore',
                         })
                         .addLayer(this.backgroundLayer);
 
+                    // Disable zoom on scroll:
+                    this.leafletMap.scrollWheelZoom.disable();
+
                     // If the flows are aggregated by geographic region, increase the maximum flow width:
                     if (!this.isActorLevel) {
                         this.maxFlowWidth = 50;
@@ -139,7 +143,8 @@ define(['underscore',
                     this.flowMap = new FlowMap(this.leafletMap, {
                         maxFlowWidth: this.maxFlowWidth,
                         toolTipContainer: this.el,
-                        areas: areas
+                        areas: areas,
+                        label: this.label,
                     });
                     this.flowMap.showFlows = true;
                     this.flowMap.showNodes = false;
@@ -150,7 +155,7 @@ define(['underscore',
 
                     if (!this.isActorLevel) {
                         this.flowMap.showAreas = true;
-                        this.flowMap.showAreaBorders = true;                            
+                        this.flowMap.showAreaBorders = true;
                     }
 
                     // //////////////////////
@@ -288,7 +293,7 @@ define(['underscore',
                     // Prevent event propagation on button clicks:
                     L.DomEvent.disableClickPropagation(document.querySelector(".leaflet-top.leaflet-left"));
                     L.DomEvent.disableClickPropagation(document.querySelector(".leaflet-control-fullscreen.leaflet-bar.leaflet-control"));
-                    
+
                     // When user sets map to fullscreen, also change legend:
                     _this.leafletMap.on('fullscreenchange', function () {
                         if (_this.leafletMap.isFullscreen()) {
@@ -300,11 +305,7 @@ define(['underscore',
 
                     // Smooth scroll to top of Viz after rendering
                     setTimeout(() => {
-                        $("#apply-filters")[0].scrollIntoView({
-                            behavior: "smooth",
-                            block: "start",
-                            inline: "nearest"
-                        });
+                        utils.scrollToVizRow();
                     }, 500);
                     this.options.flowsView.loader.deactivate();
                 },
@@ -423,7 +424,7 @@ define(['underscore',
 
                     this.updateLegend();
                     this.flowMap.resetView();
-                    
+
                     if (zoomToFit) {
                         this.flowMap.zoomToFit();
                     }
@@ -520,7 +521,7 @@ define(['underscore',
                     return {
                         dimensionValue: dimensionValue.toString(),
                         dimensionId: dimensionId,
-                        toolTipText: fromToText + description + dimensionValue + '<br><b>Amount: </b>' + amountText,
+                        toolTipText: fromToText + description + dimensionValue + '<br><b>' + this.label + ': </b>' + amountText,
                         amountText: amountText,
                         dimensionText: dimensionText,
                     }

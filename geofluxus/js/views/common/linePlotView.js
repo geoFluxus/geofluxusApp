@@ -56,7 +56,7 @@ define(['views/common/d3plusVizView',
                     // Granularity = year
                     if (gran1 == "flowchain__month__year") {
                         this.x = ["year"];
-                        this.tooltipConfig.title = "Waste totals per year";
+                        this.tooltipConfig.title = this.label + " totals per year";
                         this.tooltipConfig.tbody.push(["Year", function (d) {
                             return d.year
                         }]);
@@ -65,7 +65,7 @@ define(['views/common/d3plusVizView',
                     } else if (gran1 == "flowchain__month") {
                         this.x = ["yearMonthCode"];
 
-                        this.tooltipConfig.title = "Waste totals per month";
+                        this.tooltipConfig.title = this.label + " totals per month";
 
                         // Only for time
                         if (dimStrings.length == 1 && this.options.hasMultipleLines) {
@@ -146,18 +146,18 @@ define(['views/common/d3plusVizView',
                         // ewc2
                         if (gran2 == "flowchain__waste06__waste04__waste02") {
                             this.groupBy = ["ewc2Code"];
-                            this.tooltipConfig.title = "Waste per EWC Chapter";
+                            this.tooltipConfig.title = this.label + " per EWC Chapter";
                             // ewc4
                         } else if (gran2 == "flowchain__waste06__waste04") {
                             this.groupBy = ["ewc4Code"];
-                            this.tooltipConfig.title = "Waste per EWC Sub-Chapter";
+                            this.tooltipConfig.title = this.label + " per EWC Sub-Chapter";
                             this.tooltipConfig.tbody.push(["EWC Sub-Chapter", function (d) {
                                 return d.ewc4Code + " " + d.ewc4Name;
                             }]);
                             // ewc6
                         } else if (gran2 == "flowchain__waste06") {
                             this.groupBy = ["ewc6Code"];
-                            this.tooltipConfig.title = "Waste per Entry";
+                            this.tooltipConfig.title = this.label + " per Entry";
                             this.tooltipConfig.tbody.push(
                                 ["EWC Sub-Chapter", function (d) {
                                     return d.ewc4Code + " " + d.ewc4Name;

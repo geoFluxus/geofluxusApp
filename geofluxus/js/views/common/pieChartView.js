@@ -35,7 +35,7 @@ define(['views/common/d3plusVizView',
 
                     this.options = options;
                     this.flows = this.options.flows;
-
+                    
                     this.canHaveLegend = true;
                     this.hasLegend = true;
                     this.isDarkMode = true;
@@ -114,14 +114,14 @@ define(['views/common/d3plusVizView',
                             // ewc4
                         } else if (gran1 == "flowchain__waste06__waste04") {
                             this.groupBy = ["ewc4Code"];
-                            this.tooltipConfig.title = "Waste per EWC Sub-Chapter";
+                            this.tooltipConfig.title = this.label + " per EWC Sub-Chapter";
                             this.tooltipConfig.tbody.push(["EWC Sub-Chapter", function (d) {
                                 return d.ewc4Code + " " + d.ewc4Name;
                             }]);
                             // ewc6
                         } else if (gran1 == "flowchain__waste06") {
                             this.groupBy = ["ewc6Code"];
-                            this.tooltipConfig.title = "Waste per EWC Entry";
+                            this.tooltipConfig.title = this.label + " per EWC Entry";
                             this.tooltipConfig.tbody.push(["EWC Entry", function (d) {
                                 return d.ewc6Code + " " + d.ewc6Name;
                             }]);

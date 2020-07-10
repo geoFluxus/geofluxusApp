@@ -5,11 +5,10 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 var entryPoints = {
     DataEntry: './js/data-entry',
-    StatusQuo: './js/status-quo',
+    Analyse: './js/analyse',
     Login: './js/login',
     Welcome: './js/welcome',
     Base: './js/base',
-    Impact: './js/impact',
 };
 
 module.exports = {
@@ -86,6 +85,19 @@ module.exports = {
             {
                 test: /\.coffee$/,
                 use: ['coffee-loader']
+            },
+            {
+                test: /\.m?js$/,
+                include: [
+                    path.resolve('./geofluxus/js/react/')
+                ],
+                exclude: /(node_modules|bower_components)/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env', '@babel/preset-react']
+                    }
+                }
             }
         ],
     },

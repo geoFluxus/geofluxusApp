@@ -52,7 +52,7 @@ define([
                     return d.actorName;
                 })
                 .point(function (d) {
-                    return [d.lon, d.lat];
+                    return [d.actorLon, d.actorLat];
                 })
                 .pointSize(function (d) {
                     return d.amount;

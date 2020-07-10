@@ -33,13 +33,15 @@ define(['views/common/baseview',
                     _.bindAll(this, 'exportCSV');
                     _.bindAll(this, 'toggleLegend');
 
+                    this.label = options.dimensions.label;
                     this.tooltipConfig = {
                         tbody: [
-                            ["Waste", function (d) {
+                            [this.label, function (d) {
                                 return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale()) + " t"
                             }]
                         ]
                     };
+
                 },
 
                 events: {
@@ -53,20 +55,14 @@ define(['views/common/baseview',
                 },
 
                 scrollToVisualization: function () {
-                    $("#apply-filters")[0].scrollIntoView({
-                        behavior: "smooth",
-                        block: "start",
-                        inline: "nearest",
-                    });
+                    utils.scrollToVizRow();
                 },
 
                 toggleFullscreen: function (event) {
                     $(this.el).toggleClass('fullscreen');
                     // Only scroll when going to normal view:
                     if (!$(this.el).hasClass('fullscreen')) {
-                        $("#apply-filters")[0].scrollIntoView({
-                            behavior: "smooth"
-                        });
+                        utils.scrollToVizRow();
                     }
                     window.dispatchEvent(new Event('resize'));
                     event.stopImmediatePropagation();

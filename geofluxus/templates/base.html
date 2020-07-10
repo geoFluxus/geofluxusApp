@@ -4,7 +4,8 @@
 {% load custom_tags %}
 
 <head>
-  <link href="https://fonts.googleapis.com/css?family=Lato|Montserrat|Open+Sans|Roboto" rel="stylesheet">
+  <link href='{{STATIC_URL}}css/montserrat.css' rel='stylesheet' type='text/css'>
+
   <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css"> {% render_bundle 'commons' %}
   {% render_bundle 'Base' %}
   <title>{% block title %}TU Delft{% endblock %}</title>
@@ -42,12 +43,9 @@
     <!-- <a class="navbar-brand" href="/"><img src="../static/img/nav/tudelft.png"></a> -->
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item {% if request.resolver_match.url_name == 'status-quo' %} active{% endif %}"
-          id="status-quo-link">
-          <a class="nav-link" href="/status-quo">Monitor</a>
-        </li>
-        <li class="nav-item {% if request.resolver_match.url_name == 'impact' %} active{% endif %}" id="impact-link">
-          <a class="nav-link" href="/impact">Impact assessment</a>
+        <li class="nav-item {% if request.resolver_match.url_name == 'analyse' %} active{% endif %}"
+          id="analyse-link">
+          <a class="nav-link" href="/analyse">Analyse</a>
         </li>
       </ul>
 
@@ -74,12 +72,14 @@
     </div>
   </nav>
 
-  {% if not request.user|datasets %}
-  <div class="alert alert-warning text-center warning-no-datasets">
-    <small>
-      You are not allowed to access any data sets. Please contact us.
-    </small>
-  </div>
+  {% if request.user.is_authenticated %}
+    {% if not request.user|datasets %}
+    <div class="alert alert-warning text-center warning-no-datasets">
+      <small>
+        You are not allowed to access any data sets. Please contact us.
+      </small>
+    </div>
+    {% endif %}
   {% endif %}
 
   <!-- Sidebar -->
@@ -106,7 +106,7 @@
   </div>
 
   <!-- Footer -->
-  <footer class="page-footer font-small pt-5">
+  <footer class="page-footer font-small" style="margin-top: 5rem">
 
     <!-- Footer Links -->
     <div class="container-fluid text-center text-md-left">
