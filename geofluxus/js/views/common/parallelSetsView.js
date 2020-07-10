@@ -150,11 +150,12 @@ define(['views/common/d3plusVizView',
                                 node = is_origin != undefined ? 'origin' : 'destination';
 
                             // if origin & destination have same property, fetch node from granularity
+                            var extra = "";
                             if (is_origin != undefined && is_destination != undefined) {
                                 node = gran.shift();
 
                                 // add extra character for circular nodes
-                                var extra = i ? " " : "";
+                                extra = i ? " " : "";
                             }
 
                             // get node item
