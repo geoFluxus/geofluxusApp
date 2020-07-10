@@ -61,7 +61,7 @@ define([
                 svg.select(".d3plus-Form.d3plus-Form-Button")
                     .append("button")
                     .attr("class", "d3plus-Button flip-grouping")
-                    .attr("title", "Inverts the grouping and the X-axis.")
+                    .attr("title", "Inverts the dimensions.")
                     .attr("type", "button")
                     .html('<i class="fas icon-flip-grouping"></i>');
             }
