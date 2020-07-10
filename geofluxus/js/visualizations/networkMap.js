@@ -1,6 +1,6 @@
 define([
     'd3',
-    'visualizations/map,
+    'visualizations/map',
 ], function (d3, Map) {
     class NetworkMap {
         constructor(options) {
