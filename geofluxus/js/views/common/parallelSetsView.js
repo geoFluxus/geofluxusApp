@@ -93,13 +93,8 @@ define(['views/common/d3plusVizView',
                 toggleDarkMode: function () {
                     this.isDarkMode = !this.isDarkMode;
 
-                    if (this.isDarkMode) {
-                        d3.selectAll(".d3plus-Links .d3plus-Path")
-                            .attr("stroke", "#DBDBDB")
-                    } else {
-                        d3.selectAll(".d3plus-Links .d3plus-Path")
-                            .attr("stroke", "#393939")
-                    }
+                    d3.selectAll(".d3plus-Links .d3plus-Path")
+                      .attr("stroke", this.isDarkMode ? "#DBDBDB" : "#393939")
 
                     $(".viz-wrapper-div").toggleClass("lightMode");
                     $(".parallelsets-container").toggleClass("lightMode");
@@ -204,11 +199,6 @@ define(['views/common/d3plusVizView',
 
                     // Assign colors by id:
                     nodes = enrichFlows.assignColorsByProperty(nodes, "id");
-
-//                    console.log("Links:");
-//                    console.log(links);
-//                    console.log("Nodes:");
-//                    console.log(nodes);
 
                     return {
                         links: links,
