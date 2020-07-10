@@ -19,7 +19,6 @@ define(['views/common/d3plusVizView',
         var TreeMapView = D3plusVizView.extend(
             /** @lends module:views/TreeMapView.prototype */
             {
-
                 /**
                  * @param {Object} options
                  * @param {HTMLElement} options.el                   element the view will be rendered in
@@ -34,7 +33,7 @@ define(['views/common/d3plusVizView',
                     _.bindAll(this, 'toggleLegend');
                     _.bindAll(this, 'toggleDarkMode');
 
-var _this = this;
+                    var _this = this;
                     this.options = options;
                     this.isStacked = this.options.isStacked;
 
@@ -47,20 +46,18 @@ var _this = this;
                     this.label = this.options.label;
                     this.tooltipConfig.title = "";
 
-                    this.groupBy = [];
-
                     this.dimensions = {
                         'time': {
-                            'year' : 'Year',
+                            'year': 'Year',
                             'month': 'Month',
                         },
                         'economicActivity': {
                             'activitygroup': 'Activity group',
-                            'activity'     : 'Activity',
+                            'activity': 'Activity',
                         },
                         'treatmentMethod': {
                             'processgroup': 'Treatment method group',
-                            'process'     : 'Treatment method',
+                            'process': 'Treatment method',
                         },
                         'material': {
                             'waste02': 'EWC Chapter',
@@ -69,13 +66,32 @@ var _this = this;
                         }
                     }
 
-                    // configure tooltips
+                    this.preProcess();
+
+                    this.render();
+                },
+
+                events: {
+                    'click .fullscreen-toggle': 'toggleFullscreen',
+                    'click .export-csv': 'exportCSV',
+                    'click .toggle-legend': 'toggleLegend',
+                    'click .toggle-darkmode': 'toggleDarkMode',
+                    'click .flip-grouping': 'flipGrouping',
+                },
+
+                preProcess: function () {
+                    var _this = this;
                     let dimensions = this.options.dimensions;
-                    var title = "";
-                    dimensions.forEach(function(dim, index) {
+
+                    this.tooltipConfig.tbody.length = 1;
+                    var title = this.tooltipConfig.title = "";
+
+                    this.groupBy = [];
+
+                    dimensions.forEach(function (dim, index) {
                         // choose grouping for space dimension
                         if (dim[0] == 'space') {
-                            var actorLevel = _this.options.dimensions.isActorLevel,
+                            var actorLevel = dimensions.isActorLevel,
                                 prop = actorLevel ? "actorName" : "areaName",
                                 label = actorLevel ? 'Company' : 'Area';
                             if (!index) {
@@ -92,7 +108,7 @@ var _this = this;
 
                         var properties = _this.dimensions[dim[0]];
                         if (properties != undefined & _this.flows.length > 0) {
-                            Object.keys(properties).forEach(function(prop) {
+                            Object.keys(properties).forEach(function (prop) {
                                 // check if flows have code/name for current property
                                 var flow = _this.flows[0],
                                     code = prop + 'Code',
@@ -126,20 +142,25 @@ var _this = this;
                         _this.tooltipConfig.title += title;
                     })
 
-//                    if (dimensions.length > 1) {
-//                        this.canFlipGrouping = true;
-//                    }
+                    if (dimensions.length > 1) {
+                        this.canFlipGrouping = true;
+                    }
 
                     // assign colors by groupings
                     this.flows = enrichFlows.assignColorsByProperty(this.flows, this.groupBy[0]);
-                    this.render();
                 },
 
-                events: {
-                    'click .fullscreen-toggle': 'toggleFullscreen',
-                    'click .export-csv': 'exportCSV',
-                    'click .toggle-legend': 'toggleLegend',
-                    'click .toggle-darkmode': 'toggleDarkMode',                    
+                flipGrouping: function () {
+                    $(this.options.el).html("");
+
+                    //this.groupBy = [this.x, this.x = this.groupBy][0];
+
+                    this.options.dimensions.reverse();  
+                    this.preProcess();
+
+                    //this.flows = enrichFlows.assignColorsByProperty(this.flows, this.groupBy);
+
+                    this.render();
                 },
 
                 /**
@@ -154,6 +175,7 @@ var _this = this;
                         canHaveLegend: this.canHaveLegend,
                         hasLegend: this.hasLegend,
                         isDarkMode: this.isDarkMode,
+                        canFlipGrouping: this.canFlipGrouping,
                     });
                     this.scrollToVisualization();
                     this.options.flowsView.loader.deactivate();

@@ -174,6 +174,7 @@ define(['views/common/baseview',
                 $(".dimensionToggle").change(function (event) {
                     // Deselect any selected Viz-buttons: 
                     $(".viz-selector-button").removeClass("active");
+                    _this.selectedVizName = "";
 
                     if (_this.resetInProgres) {
                         return
@@ -192,7 +193,6 @@ define(['views/common/baseview',
                             _this.uncheckedDimToggles.push($(this));
                         } else {
                             _this.checkedDimToggles.push($(this));
-
                             _this.selectedDimensionStrings.push($(this).attr("data-dim"));
                         }
                     });
