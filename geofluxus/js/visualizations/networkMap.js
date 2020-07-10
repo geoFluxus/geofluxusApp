@@ -41,7 +41,7 @@ define([
             this.drawNetwork();
         }
 
-        drawTooltip: function(amount) {
+        drawTooltip(amount) {
             var label = "";
             if (10**3 <= amount && amount < 10**6) {
                 label = "k";
@@ -53,7 +53,7 @@ define([
             return `${amount.toFixed(3)} {label}t`;
         }
 
-        drawLegend: function () {
+        drawLegend() {
             // add legend
             var legend = document.getElementById('legend');
             if (legend) {
@@ -107,7 +107,7 @@ define([
                              .attr('font-size', 10);
         }
 
-        defineScale: function () {
+        defineScale() {
             // scale of equal frequency intervals
             var max = Math.max(...data),
                 quantile = d3.scaleQuantile()
@@ -129,7 +129,7 @@ define([
             this.values.unshift(0);
         }
 
-        drawNetwork: function () {
+        drawNetwork() {
             var _this = this;
 
             // process flows to point to amounts
@@ -177,7 +177,7 @@ define([
                         strokeWidth: amount > 0 ? 2 * (1 + 2 * amount / max) : 0.5,
                         zIndex: amount
                     },
-                    tooltip: _this.drawTooltip(amount);
+                    tooltip: _this.drawTooltip(amount)
                 });
             });
 

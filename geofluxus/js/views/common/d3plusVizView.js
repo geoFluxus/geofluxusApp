@@ -43,7 +43,6 @@ define(['views/common/baseview',
                             }]  
                         ]
                     };
-
                 },
 
                 events: {
@@ -70,7 +69,7 @@ define(['views/common/baseview',
                     event.stopImmediatePropagation();
                 },
 
-                toggleLegend: function (event) {
+                toggleLegend: function () {
                     $(this.options.el).html("");
                     this.hasLegend = !this.hasLegend;
                     this.render();
@@ -79,19 +78,14 @@ define(['views/common/baseview',
                 toggleDarkMode: function () {
                     $(this.options.el).html("");
                     this.isDarkMode = !this.isDarkMode;
-
                     $(".viz-wrapper-div").toggleClass("lightMode");
-
                     this.render();
                 },
 
                 flipGrouping: function() {
                     $(this.options.el).html("");
-
                     this.groupBy = [this.x, this.x = this.groupBy][0];
-
                     this.flows = enrichFlows.assignColorsByProperty(this.flows, this.groupBy);
-
                     this.render();
                 },
 
