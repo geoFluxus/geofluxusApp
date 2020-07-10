@@ -133,7 +133,7 @@ define(['views/common/d3plusVizView',
                             } else if (this.options.hasMultipleLines) {
                                 _this.groupBy = "yearCode";
                                 _this.flows.forEach(function(flow) {
-                                    flow.monthCode = " " + flow.monthCode.split(" ")[0];
+                                    flow.monthCode = flow.monthCode.substring(0, 3);
                                 })
                             }
                         }

@@ -35,9 +35,9 @@ define([
                 var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                               "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                 data.forEach(function(d) {
-                    var code = d.monthCode.split(" "),
-                        month = months.indexOf(code[0]),
-                        year = code[1];
+                    var code = d.monthCode,
+                        month = months.indexOf(code.substring(0, 3)),
+                        year = parseInt(code.substring(3, 8));
                     var name = (month + 1).toString();
                     d.month = year + (name.length == 1 ? "0" + name : name);
                 })
