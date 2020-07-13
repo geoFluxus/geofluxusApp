@@ -77,6 +77,8 @@ define(['underscore',
                         apiIds: [this.adminLevel]
                     });
 
+                    this.areas.filterBy({'id': [1, 2]});
+
                     var promises = [this.areas.fetch()];
 
                     Promise.all(promises).then(function () {
@@ -91,7 +93,10 @@ define(['underscore',
                 events: {
                     'click .toggle-legend': 'toggleLegend',
                     'click .toggle-darkmode': 'toggleDarkMode',
-                    'click .toggle-animation': 'toggleAnimation'
+                    'click .toggle-animation': 'toggleAnimation',
+                    'click .toggle-flows': 'toggleFlows',
+                    'click .toggle-nodes': 'toggleNodes',
+                    'click .toggle-areas': 'toggleAreas'
                 },
 
                 /*
@@ -152,13 +157,13 @@ define(['underscore',
                         toolTipContainer: this.el,
                         areas: areas,
                         label: this.label,
-                        dottedLines: false,
-                        showFlows: true,
-                        showNodes: false,
-                        showAreas: !this.isActorLevel,
-                        showAreaBorders: !this.isActorLevel,
-                        showAreaFilled: false
                     });
+                    this.flowMap.dottedLines = false;
+                    this.flowMap.showFlows = true;
+                    this.flowMap.showNodes = false;
+                    this.flowMap.showAreas = !this.isActorLevel;
+                    this.flowMap.showAreaBorders = !this.isActorLevel;
+                    this.flowMap.showAreaFilled = false;
 
                     // //////////////////////
                     // Leaflet buttons
@@ -229,8 +234,6 @@ define(['underscore',
                         var className = icon.split('-').pop(),
                             btn = document.createElement('button');
 
-                        console.log(className)
-
                         btn.classList.add("btn", "btn-primary", "toggle-" + className);
                         btn.title = title;
                         btn.innerHTML = '<i class="fas icon-toggle-' + icon + '"></i>';
@@ -243,20 +246,7 @@ define(['underscore',
                     };
                     topLefControls.addTo(this.leafletMap);
 
-//
-//                    showFlowsToggleBtn.addEventListener('click', function (event) {
-//                        _this.flowMap.showFlows = !_this.flowMap.showFlows;
-//                        _this.rerender();
-//                    })
-//                    showNodesToggleBtn.addEventListener('click', function (event) {
-//                        _this.flowMap.showNodes = !_this.flowMap.showNodes;
-//                        _this.rerender();
-//                    })
-//                    if (!this.isActorLevel) {
-//                        showAreasToggleBtn.addEventListener('click', function (event) {
-//                            _this.toggleAreas();
-//                        })
-//                    }
+                    if (this.isActorLevel) $('.toggle-areas').hide();
 
                     // Prevent event propagation on button clicks:
                     L.DomEvent.disableClickPropagation(document.querySelector(".leaflet-top.leaflet-left"));
@@ -304,6 +294,16 @@ define(['underscore',
                     }
 
                     this.flowMap.toggleAnimation(this.animationOn);
+                    this.rerender();
+                },
+
+                toggleFlows() {
+                    this.flowMap.showFlows = !this.flowMap.showFlows;
+                    this.rerender();
+                },
+
+                toggleNodes() {
+                    this.flowMap.showNodes = !this.flowMap.showNodes;
                     this.rerender();
                 },
 
