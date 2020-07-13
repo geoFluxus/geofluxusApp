@@ -32,14 +32,95 @@ define([
             this.flows = options.flows;
             this.network = options.network;
 
-            // define color scale
+            // add network layer to map
+            this.drawNetwork();
+        }
+
+        drawNetwork() {
+            var _this = this;
+
+            // process flows to point to amounts
+            var amounts = {};
+            this.data = [];
+            this.flows.forEach(function (flow) {
+                var id = flow['id'],
+                    amount = flow['amount'];
+                amounts[id] = amount;
+                // exclude zero values from scale definition
+                if (amount > 0) {
+                    _this.data.push(amount);
+                }
+            })
+
+            // define scale
             this.defineScale();
+
+            // define network color based on amount
+            function assignColor(amount) {
+                for (var i = 1; i < _this.values.length; i++) {
+                    if (amount <= _this.values[i]) {
+                        return _this.colors[i - 1];
+                    }
+                }
+                return _this.colors[_this.colors.length - 1];
+            }
+
+            // create network layer
+            this.map.addLayer('network', {
+                stroke: 'rgb(255, 255, 255)',
+                strokeWidth: 5
+            });
+
+            // add ways to map and load with amounts
+            this.network.forEach(function (way) {
+                var id = way.get('id'),
+                    coords = way.get('the_geom').coordinates,
+                    type = way.get('the_geom').type.toLowerCase(),
+                    amount = amounts[id];
+                _this.map.addGeometry(coords, {
+                    projection: 'EPSG:4326',
+                    layername: 'network',
+                    type: type,
+                    renderOSM: false,
+                    style: {
+                        // color, width & zIndex based on amount
+                        strokeColor: amount > 0 ? assignColor(amount) : 'rgb(255,255,255)',
+                        strokeWidth: amount > 0 ? 2 * (1 + 2 * amount / _this.max) : 0.5,
+                        zIndex: amount
+                    },
+                    tooltip: _this.drawTooltip(amount)
+                });
+            });
+
+            // focus on network layer
+            this.map.centerOnLayer('network');
 
             // define legend
             this.drawLegend();
+        }
 
-            // add network layer to map
-            this.drawNetwork();
+        defineScale() {
+            var _this = this;
+
+            // scale of equal frequency intervals
+            this.max = Math.max(...this.data);
+            var quantile = d3.scaleQuantile()
+                             .domain(this.data)
+                             .range(this.colors);
+
+            // prettify scale intervals
+            function prettify(val) {
+                var int = ~~(val),
+                    digits = int.toString().length - 1,
+                    base = 10 ** digits;
+                return Math.round(val / base) * base;
+            }
+
+            this.values = [];
+            Object.values(quantile.quantiles()).forEach(function (val) {
+                _this.values.push(prettify(val));
+            });
+            this.values.unshift(0);
         }
 
         drawTooltip(amount) {
@@ -74,7 +155,8 @@ define([
             //  legend.appendChild(title);
 
             // add color scale to legend
-            var width, height = 30;
+            var width = 30,
+                height = 30;
             var scale = d3.select("#legend")
                           .append("center")
                           .append("svg")
@@ -106,84 +188,6 @@ define([
                              .attr('y', 2 * height)
                              .attr('fill', 'white')
                              .attr('font-size', 10);
-        }
-
-        defineScale() {
-            // scale of equal frequency intervals
-            var max = Math.max(...this.data),
-                quantile = d3.scaleQuantile()
-                             .domain(this.data)
-                             .range(this.colors);
-
-            // prettify scale intervals
-            function prettify(val) {
-                var int = ~~(val)
-                digits = int.toString().length - 1
-                base = 10 ** digits;
-                return Math.round(val / base) * base;
-            }
-
-            this.values = [];
-            Object.values(quantile.quantiles()).forEach(function (val) {
-                _this.values.push(prettify(val));
-            });
-            this.values.unshift(0);
-        }
-
-        drawNetwork() {
-            var _this = this;
-
-            // process flows to point to amounts
-            var amounts = {};
-            this.data = [];
-            this.flows.forEach(function (flow) {
-                var id = flow['id'],
-                    amount = flow['amount'];
-                amounts[id] = amount;
-                // exclude zero values from scale definition
-                if (amount > 0) {
-                    data.push(amount);
-                }
-            })
-
-            function assignColor(amount) {
-                for (var i = 1; i < _this.values.length; i++) {
-                    if (amount <= _this.values[i]) {
-                        return this.colors[i - 1];
-                    }
-                }
-                return _this.colors[_this.colors.length - 1];
-            }
-
-            // create network layer
-            this.map.addLayer('network', {
-                stroke: 'rgb(255, 255, 255)',
-                strokeWidth: 5
-            });
-
-            // add ways to map and load with amounts
-            this.network.forEach(function (way) {
-                var id = way.get('id'),
-                    coords = way.get('the_geom').coordinates,
-                    type = way.get('the_geom').type.toLowerCase(),
-                    amount = amounts[id];
-                _this.map.addGeometry(coords, {
-                    projection: 'EPSG:4326',
-                    layername: 'network',
-                    type: type,
-                    renderOSM: false,
-                    style: {
-                        // color, width & zIndex based on amount
-                        strokeColor: amount > 0 ? assignColor(amount) : 'rgb(255,255,255)',
-                        strokeWidth: amount > 0 ? 2 * (1 + 2 * amount / max) : 0.5,
-                        zIndex: amount
-                    },
-                    tooltip: _this.drawTooltip(amount)
-                });
-            });
-
-            // focus on network layer
-            this.map.centerOnLayer('network');
         }
     }
     return NetworkMap;
