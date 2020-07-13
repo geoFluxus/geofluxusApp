@@ -56,6 +56,7 @@ class MonitorViewSet(FilterFlowViewSet):
         ways = {}
         for flow in queryset:
             seq, amount = flow['sequence'], flow['amount']
+            if not amount: amount = 0
             if seq:
                 seq = [int(id) for id in seq.split('@')]
                 for id in seq:
