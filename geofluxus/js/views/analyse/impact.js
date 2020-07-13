@@ -137,7 +137,7 @@ define(['views/common/baseview',
             },
 
             close: function () {                
-                if (this.impactView) this.impactView.close();
+                if (this.monitorView) this.monitorView.close();
                 this.undelegateEvents(); // remove click events
                 this.unbind(); // Unbind all local event bindings
             }
