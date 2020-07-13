@@ -64,7 +64,7 @@ define(['views/common/baseview',
                     this.NetworkMap = new NetworkMap({
                         el: this.options.el,
                         flows: this.flows,
-                        ways: this.network,
+                        network: this.network,
                     })
                     this.scrollToVisualization();
                     this.options.flowsView.loader.deactivate();

@@ -1,7 +1,8 @@
 define([
     'd3',
     'visualizations/map',
-], function (d3, Map) {
+    'openlayers'
+], function (d3, Map, ol) {
     class NetworkMap {
         constructor(options) {
             let _this = this;
@@ -23,7 +24,7 @@ define([
 
             // background map options
             this.map = new Map({
-                el: options.el,
+                el: document.querySelector(options.el),
                 source: options.source || 'dark',
                 opacity: options.opacity || 1.0
             });
@@ -31,11 +32,11 @@ define([
             this.flows = options.flows;
             this.network = options.network;
 
-            // define legend
-            this.drawLegend();
-
             // define color scale
             this.defineScale();
+
+            // define legend
+            this.drawLegend();
 
             // add network layer to map
             this.drawNetwork();
@@ -65,7 +66,7 @@ define([
             var controlPanel = new ol.control.Control({
                 element: legend
             });
-            this.map.addControl(controlPanel);
+            this.map.map.addControl(controlPanel);
 
             //  var title = document.createElement('div');
             //  title.style.margin = "5%";
@@ -73,14 +74,14 @@ define([
             //  legend.appendChild(title);
 
             // add color scale to legend
-            var width = height = 30;
+            var width, height = 30;
             var scale = d3.select("#legend")
                           .append("center")
                           .append("svg")
-                          .attr("width", width * colors.length)
+                          .attr("width", width * this.colors.length)
                           .attr("height", 100),
                 rects = scale.selectAll('rect')
-                             .data(colors)
+                             .data(this.colors)
                              .enter()
                              .append("rect")
                              .attr("x", function (d, i) {
@@ -93,7 +94,7 @@ define([
                                 return d;
                              }),
                 texts = scale.selectAll('text')
-                             .data(values)
+                             .data(this.values)
                              .enter()
                              .append('text')
                              .text(function (d) {
@@ -109,10 +110,10 @@ define([
 
         defineScale() {
             // scale of equal frequency intervals
-            var max = Math.max(...data),
+            var max = Math.max(...this.data),
                 quantile = d3.scaleQuantile()
-                             .domain(data)
-                             .range(colors);
+                             .domain(this.data)
+                             .range(this.colors);
 
             // prettify scale intervals
             function prettify(val) {
@@ -133,8 +134,8 @@ define([
             var _this = this;
 
             // process flows to point to amounts
-            var amounts = {},
-                data = [];
+            var amounts = {};
+            this.data = [];
             this.flows.forEach(function (flow) {
                 var id = flow['id'],
                     amount = flow['amount'];
@@ -146,16 +147,16 @@ define([
             })
 
             function assignColor(amount) {
-                for (i = 1; i < values.length; i++) {
-                    if (amount <= values[i]) {
-                        return colors[i - 1];
+                for (var i = 1; i < _this.values.length; i++) {
+                    if (amount <= _this.values[i]) {
+                        return this.colors[i - 1];
                     }
                 }
                 return _this.colors[_this.colors.length - 1];
             }
 
             // create network layer
-            this.routingMap.addLayer('network', {
+            this.map.addLayer('network', {
                 stroke: 'rgb(255, 255, 255)',
                 strokeWidth: 5
             });
