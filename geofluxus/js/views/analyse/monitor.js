@@ -269,6 +269,24 @@ define(['views/common/baseview',
                     event.preventDefault();
                 });
 
+                // Show Multiple Line option on dimension Time, granularity Month:
+                $(_this.timeToggleGran).change(function () {
+                    if (_this.selectedDimensionStrings == 'time') {
+                        let granularityIsMonth = $(_this.timeToggleGran).prop("checked");
+                        $("#viz-lineplotmultiple").parent()[granularityIsMonth ? 'fadeIn' : 'hide']();
+                    }
+                });
+
+                // Show choropleth / coordinate map for space dimension
+                $(_this.spaceLevelGranSelect).change(function () {
+                    if (_this.selectedDimensionStrings == "space") {
+                        let selectedAreaLevel = $(_this.spaceLevelGranSelect).val(),
+                            actorLevel = selectedAreaLevel == _this.actorLevel;
+                        $("#viz-coordinatepointmap").parent()[actorLevel ? 'fadeIn' : 'hide']();
+                        $("#viz-choroplethmap").parent()[actorLevel ? 'hide' : 'fadeIn']();
+                    }
+                });
+
                 // Disable origin/destination toggle for Space Treatment method for Flowmap and Parallel Sets
                 $(".viz-selector-button").click(function (event) {
                     $('#apply-filters').popover('dispose');
@@ -289,24 +307,6 @@ define(['views/common/baseview',
                         $("#origDest-toggle-treatment").parent().fadeIn();
                     }
                     event.preventDefault();
-                });
-
-                // Show choropleth / coordinate map for space dimension
-                $(_this.spaceLevelGranSelect).change(function () {
-                    if (_this.selectedDimensionStrings == "space") {
-                        let selectedAreaLevel = $(_this.spaceLevelGranSelect).val(),
-                            actorLevel = selectedAreaLevel == _this.actorLevel;
-                        $("#viz-coordinatepointmap").parent()[actorLevel ? 'fadeIn' : 'hide']();
-                        $("#viz-choroplethmap").parent()[actorLevel ? 'hide' : 'fadeIn']();
-                    }
-                });
-
-                // Show Multiple Line option on dimension Time, granularity Month:
-                $(_this.timeToggleGran).change(function () {
-                    if (_this.selectedDimensionStrings == 'time') {
-                        let granularityIsMonth = $(_this.timeToggleGran).prop("checked");
-                        $("#viz-lineplotmultiple").parent()[granularityIsMonth ? 'fadeIn' : 'hide']();
-                    }
                 });
 
                 // Show granularity on toggle change:

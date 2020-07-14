@@ -35,6 +35,26 @@ define(['views/common/baseview',
                     _.bindAll(this, 'exportCSV');
                     _.bindAll(this, 'toggleLegend');
 
+                    this.dimensions = {
+                        'time': {
+                            'year': 'Year',
+                            'month': 'Month',
+                        },
+                        'economicActivity': {
+                            'activitygroup': 'Activity group',
+                            'activity': 'Activity',
+                        },
+                        'treatmentMethod': {
+                            'processgroup': 'Treatment method group',
+                            'process': 'Treatment method',
+                        },
+                        'material': {
+                            'waste02': 'EWC Chapter',
+                            'waste04': 'EWC Sub-Chapter',
+                            'waste06': 'EWC Entry'
+                        }
+                    }
+
                     this.label = options.dimensions.label;
                     this.tooltipConfig = {
                         tbody: [
@@ -92,7 +112,13 @@ define(['views/common/baseview',
                 exportCSV: function (event) {
                     const items = this.options.flows;
                     const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-                    const header = Object.keys(items[0])
+
+                    let fields = ["amount", "Code", "Name"];
+                    let header = Object.keys(items[0]);
+                    header = header.filter(prop => {
+                        return fields.some(f => prop.includes(f))
+                    })
+
                     let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
                     csv.unshift(header.join(','))
                     csv = csv.join('\r\n')

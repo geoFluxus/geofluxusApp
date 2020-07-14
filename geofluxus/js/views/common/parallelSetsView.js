@@ -38,17 +38,7 @@ define(['views/common/d3plusVizView',
                     _.bindAll(this, 'exportCSV');
                     _.bindAll(this, 'toggleDarkMode');
 
-                    this.props = {
-                        'year'          : 'Year',
-                        'month'         : 'Month',
-                        'activitygroup' : 'Activity group',
-                        'activity'      : 'Activity',
-                        'processgroup'  : 'Treatment method group',
-                        'process'       : 'Treatment method',
-                        'waste02'       : 'EWC Chapter',
-                        'waste04'       : 'EWC Sub-Chapter',
-                        'waste06'       : 'EWC Entry'
-                    }
+                    this.props = Object.assign(...Object.values(this.dimensions));
 
                     this.canHaveLegend = false;
                     this.isDarkMode = true;
