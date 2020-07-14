@@ -1,12 +1,25 @@
 define([
     'd3',
     'visualizations/map',
-    'openlayers'
-], function (d3, Map, ol) {
+    'openlayers',
+    'utils/utils',
+    'visualizations/d3plus',
+], function (d3, Map, ol, utils, d3plus) {
     class NetworkMap {
         constructor(options) {
             let _this = this;
-            var options = options || {};
+            this.options = options || {};
+            this.label = this.options.label;
+            this.darkMode = this.options.darkMode;
+
+
+            if (this.darkMode){
+                this.fontColor = "white";
+                this.options.source = "dark";
+            } else {
+                this.fontColor = "black";
+                this.options.source = "light";
+            }
 
             // define color scale for amounts
             this.colors = [
@@ -22,11 +35,11 @@ define([
                 'rgb(168, 0, 0)'
             ]
 
-            // background map options
+            // Background map options
             this.map = new Map({
-                el: document.querySelector(options.el),
-                source: options.source || 'dark',
-                opacity: options.opacity || 1.0
+                el: document.querySelector(this.options.el),
+                source: this.options.source || 'dark',
+                opacity: this.options.opacity || 1.0
             });
 
             this.flows = options.flows;
@@ -84,11 +97,11 @@ define([
                     renderOSM: false,
                     style: {
                         // color, width & zIndex based on amount
-                        strokeColor: amount > 0 ? assignColor(amount) : 'rgb(255,255,255)',
+                        strokeColor: amount > 0 ? assignColor(amount) : _this.fontColor,
                         strokeWidth: amount > 0 ? 2 * (1 + 2 * amount / _this.max) : 0.5,
-                        zIndex: amount
+                        zIndex: amount,
                     },
-                    tooltip: _this.drawTooltip(amount)
+                    tooltip: _this.getTooltipText(amount)
                 });
             });
 
@@ -105,8 +118,8 @@ define([
             // scale of equal frequency intervals
             this.max = Math.max(...this.data);
             var quantile = d3.scaleQuantile()
-                             .domain(this.data)
-                             .range(this.colors);
+                .domain(this.data)
+                .range(this.colors);
 
             // prettify scale intervals
             function prettify(val) {
@@ -121,73 +134,67 @@ define([
                 _this.values.push(prettify(val));
             });
             this.values.unshift(0);
+            this.values.push(prettify(this.max));
         }
 
-        drawTooltip(amount) {
-            var label = "";
-            if (10**3 <= amount && amount < 10**6) {
-                label = "k";
-            } else if (10**6 <= amount && amount < 10**9) {
-                label = "M";
-            } else if (amount <= 10**9) {
-                label = "B";
-            }
-            return `${amount.toFixed(3)} {label}t`;
+        getTooltipText(amount) {
+            return this.label + ": " + d3plus.formatAbbreviate(amount, utils.returnD3plusFormatLocale()) + " t"
         }
 
         drawLegend() {
-            // add legend
-            var legend = document.getElementById('legend');
+            var _this = this;
+
+            var legend = document.getElementById('networkmap-legend');
             if (legend) {
                 legend.parentElement.removeChild(legend);
             }
             var legend = document.createElement('div');
             legend.className = 'ol-control-panel ol-unselectable ol-control';
-            legend.id = 'legend';
+            legend.id = 'networkmap-legend';
             var controlPanel = new ol.control.Control({
                 element: legend
             });
             this.map.map.addControl(controlPanel);
 
-            //  var title = document.createElement('div');
-            //  title.style.margin = "5%";
-            //  title.innerHTML = '<h4 style="text-align: center;">Legend</h4>'
-            //  legend.appendChild(title);
+            var title = document.createElement('div');
+            title.style.textAlign = "center";
+            title.innerHTML = '<span style="color: ' + this.fontColor +'; text-align: center;">' + this.label + ' (t)</span>'
+            legend.appendChild(title);
 
             // add color scale to legend
             var width = 30,
                 height = 30;
-            var scale = d3.select("#legend")
-                          .append("center")
-                          .append("svg")
-                          .attr("width", width * this.colors.length)
-                          .attr("height", 100),
-                rects = scale.selectAll('rect')
-                             .data(this.colors)
-                             .enter()
-                             .append("rect")
-                             .attr("x", function (d, i) {
-                                return i * width;
-                             })
-                             .attr("y", 10)
-                             .attr("width", 30)
-                             .attr("height", 30)
-                             .attr("fill", function (d) {
-                                return d;
-                             }),
-                texts = scale.selectAll('text')
-                             .data(this.values)
-                             .enter()
-                             .append('text')
-                             .text(function (d) {
-                                return d >= 1000 ? `${(d/1000)}K` : `${d}`;
-                             })
-                             .attr("x", function (d, i) {
-                                return i * width;
-                             })
-                             .attr('y', 2 * height)
-                             .attr('fill', 'white')
-                             .attr('font-size', 10);
+            var scale = d3.select("#networkmap-legend")
+                .append("center")
+                .append("svg")
+                .attr("width", width * (this.colors.length + 1))
+                .attr("height", 100),
+            rects = scale.selectAll('rect')
+                .data(this.colors)
+                .enter()
+                .append("rect")
+                .attr("x", function (d, i) {
+                    return i * width;
+                })
+                .attr("y", 10)
+                .attr("width", 30)
+                .attr("height", 30)
+                .attr("fill", function (d) {
+                    return d;
+                }),
+            texts = scale.selectAll('text')
+                .data(this.values)
+                .enter()
+                .append('text')
+                .text(function (d) {
+                    return d >= 1000 ? `${(d/1000)}k` : `${d}`;
+                })
+                .attr("x", function (d, i) {
+                    return i * (width - 1);
+                })
+                .attr('y', 2 * height)
+                .attr('fill', _this.fontColor)
+                .attr('font-size', 10);
         }
     }
     return NetworkMap;

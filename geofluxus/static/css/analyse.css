@@ -355,7 +355,7 @@ label[for="flows-waste06-select"] {
 
 .sankeyControlContainer {
     width: 32px;
-    margin-left: 5px;    
+    margin-left: 5px;
     position: absolute;
 }
 
@@ -364,6 +364,7 @@ label[for="flows-waste06-select"] {
     width: 32px;
     height: 32px;
 }
+
 /* 
     background-color: var(--primary);
     border: none;
@@ -512,6 +513,78 @@ textarea.textarea-autosize.form-control-sm {
     left: 0;
     border-radius: 0px !important;
 }
+
+/* Openlayers buttons */
+
+.ol-control {
+    background-color: transparent;
+}
+
+.ol-control:hover {
+    background-color: transparent;
+}
+
+.ol-control button:hover {
+    background-color: grey;
+    border-color: grey;
+    color: white;
+    box-shadow: none;
+}
+
+.ol-control button {
+    background-color: var(--primary);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    font-size: 16px !important;
+    margin: 0px;
+    margin-bottom: 4px;
+}
+
+.ol-zoom button {
+    margin: 0px !important;
+    margin-bottom: 0px !important;
+}
+
+.ol-zoom button:first-child {
+    border-top-left-radius: 16px !important;
+    border-top-right-radius: 16px !important;
+}
+
+.ol-zoom button:last-child {
+    border-top-left-radius: 0px !important;
+    border-top-right-radius: 0px !important;
+    border-bottom-left-radius: 16px !important;
+    border-bottom-right-radius: 16px !important;
+}
+
+/* Network map */
+
+#networkmap-legend {
+    position: relative;
+    top: -7rem;
+    width: 25rem;
+    margin: auto;
+    background-color: transparent;
+}
+
+.networkmap-wrapper .ol-viewport{
+    border-radius: 18px;
+}
+
+.networkmap-wrapper .ol-full-screen {
+    left: 0.5em;
+}
+
+.networkmap-wrapper .ol-zoom {
+    top: 9.5em;
+}
+
+.networkmap-wrapper .oltooltip {
+    opacity: 1 !important;
+}
+
 
 
 /* d3plus Tooltip */
