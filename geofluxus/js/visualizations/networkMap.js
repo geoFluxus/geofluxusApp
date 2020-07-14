@@ -85,10 +85,11 @@ define([
             });
 
             // add ways to map and load with amounts
-            this.network.forEach(function (way) {
-                var id = way.get('id'),
-                    coords = way.get('the_geom').coordinates,
-                    type = way.get('the_geom').type.toLowerCase(),
+            this.flows.forEach(function (flow) {
+                console.log(flow)
+                var id = flow.id,
+                    coords = flow.geometry.coordinates,
+                    type = flow.geometry.type.toLowerCase(),
                     amount = amounts[id];
                 _this.map.addGeometry(coords, {
                     projection: 'EPSG:4326',

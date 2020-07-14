@@ -3,6 +3,7 @@ from django.db.models import (F, FloatField,
                               ExpressionWrapper,)
 from django.db import connections
 from collections import OrderedDict
+import json
 
 
 class ImpactViewSet(MonitorViewSet):
@@ -36,6 +37,7 @@ class ImpactViewSet(MonitorViewSet):
         cursor = connections['routing'].cursor()
         query = '''
                 SELECT id,
+                       ST_AsGeoJSON(the_geom),
                        ST_LengthSpheroid(the_geom,
                                          'SPHEROID["GRS_1980",6378137,298.257222101]')
                 FROM ways
@@ -44,10 +46,11 @@ class ImpactViewSet(MonitorViewSet):
 
         # serialize
         for way in cursor.fetchall():
-            id, distance = way
-            if id not in ways: continue
+            id, geometry, distance = way
+            if id not in ways: ways[id] = 0
 
             flow_item = [('id', id),
+                         ('geometry', json.loads(geometry)),
                          ('amount', ways[id] * distance / 10**3)]
             data.append(OrderedDict(flow_item))
 

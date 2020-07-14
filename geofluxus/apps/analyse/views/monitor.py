@@ -10,6 +10,7 @@ from geofluxus.apps.asmfa.models import (Area,
 from collections import OrderedDict
 from django.db.models import (F, Sum, Q, Case, When, IntegerField)
 from django.db import connections
+import json
 
 
 DIMS = {
@@ -70,17 +71,20 @@ class MonitorViewSet(FilterFlowViewSet):
         # fetch network (without distances)
         cursor = connections['routing'].cursor()
         query = '''
-                SELECT id
+                SELECT id,
+                       ST_AsGeoJSON(the_geom)
                 FROM ways
                 '''
         cursor.execute(query)
 
         # serialize
         for way in cursor.fetchall():
-            id = way[0]
-            if id not in ways: continue
+            id, geometry = way
+            if id not in ways: ways[id] = 0
 
-            flow_item = [('id', id), ('amount', ways[id])]
+            flow_item = [('id', id),
+                         ('geometry', json.loads(geometry)),
+                         ('amount', ways[id])]
             data.append(OrderedDict(flow_item))
 
         return data
