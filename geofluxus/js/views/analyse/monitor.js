@@ -287,10 +287,10 @@ define(['views/common/baseview',
                     }
                 });
 
-                // Disable origin/destination toggle for Space Treatment method for Flowmap and Parallel Sets
                 $(".viz-selector-button").click(function (event) {
                     $('#apply-filters').popover('dispose');
 
+                    // Disable origin/destination toggle for Space Treatment method for Flowmap and Parallel Sets
                     let clickedToggleHasFlowsFormat = $($(event.currentTarget)[0]).hasClass("hasFlowsFormat");
 
                     // At least two dimensions, and one is Space:
@@ -306,6 +306,16 @@ define(['views/common/baseview',
                     } else {
                         $("#origDest-toggle-treatment").parent().fadeIn();
                     }
+
+                    // Hide space gran for Network Map:
+                    if (_this.selectedDimensionStrings == "space" && _this.selectedVizName == "networkmap") {
+                        $("#gran-toggle-space-col").fadeOut()
+                        $("#origDest-toggle-space-col").fadeOut();
+                    } else {
+                        $("#gran-toggle-space-col").fadeIn()
+                        $("#origDest-toggle-space-col").fadeIn();
+                    }
+
                     event.preventDefault();
                 });
 
@@ -475,45 +485,45 @@ define(['views/common/baseview',
                 var _this = this;
 
                 let occuringAreas = [];
-                    occuringAreas = flows.map(x => x.areaId);
-                    occuringAreas = _.unique(occuringAreas);
+                occuringAreas = flows.map(x => x.areaId);
+                occuringAreas = _.unique(occuringAreas);
 
-                    areas = new Collection([], {
-                        apiTag: 'areas',
-                        apiIds: [adminlevel]
-                    });
-                    areas.fetch({
-                        success: function () {
-                            var geoJson = {};
-                            geoJson['type'] = 'FeatureCollection';
-                            features = geoJson['features'] = [];
-                            areas.forEach(function (area) {
-                                var feature = {};
-                                feature['type'] = 'Feature';
-                                feature['id'] = area.get('id')
-                                feature['geometry'] = area.get('geom')
+                areas = new Collection([], {
+                    apiTag: 'areas',
+                    apiIds: [adminlevel]
+                });
+                areas.fetch({
+                    success: function () {
+                        var geoJson = {};
+                        geoJson['type'] = 'FeatureCollection';
+                        features = geoJson['features'] = [];
+                        areas.forEach(function (area) {
+                            var feature = {};
+                            feature['type'] = 'Feature';
+                            feature['id'] = area.get('id')
+                            feature['geometry'] = area.get('geom')
 
-                                if (occuringAreas.includes(feature.id)) {
-                                    features.push(feature);
-                                }
-                            })
+                            if (occuringAreas.includes(feature.id)) {
+                                features.push(feature);
+                            }
+                        })
 
-                            flows.forEach(function (flow, index) {
-                                this[index].id = this[index].areaId;
-                            }, flows);
+                        flows.forEach(function (flow, index) {
+                            this[index].id = this[index].areaId;
+                        }, flows);
 
-                            _this.vizView = new ChoroplethView({
-                                el: ".choroplethmap-wrapper",
-                                dimensions: dimensions,
-                                flows: flows,
-                                flowsView: _this,
-                                geoJson: geoJson
-                            });
-                        },
-                        error: function (res) {
-                            console.log(res);
-                        }
-                    });
+                        _this.vizView = new ChoroplethView({
+                            el: ".choroplethmap-wrapper",
+                            dimensions: dimensions,
+                            flows: flows,
+                            flowsView: _this,
+                            geoJson: geoJson
+                        });
+                    },
+                    error: function (res) {
+                        console.log(res);
+                    }
+                });
             },
 
             closeAllVizViews: function () {
@@ -579,56 +589,56 @@ define(['views/common/baseview',
                 }, 3000);
             },
 
-//            resetDimAndVizToDefault: function (event) {
-//                _this = this;
-//                _this.resetInProgres = true;
-//
-//                // //////////////////////////////////
-//                // Dimension controls:
-//
-//                $(_this.timeToggle).bootstrapToggle('off');
-//                $(_this.timeToggleGran).bootstrapToggle('off');
-//                $("#gran-toggle-time-col").hide();
-//
-//                $(_this.spaceToggle).bootstrapToggle('off');
-//                $(_this.spaceLevelGranSelect).val($('#dim-space-gran-select:first-child')[0].value);
-//                $(_this.spaceOrigDest).bootstrapToggle('off');
-//                $("#gran-toggle-space-col").hide();
-//                $("#origDest-toggle-space-col").hide();
-//
-//                $(_this.economicActivityToggle).bootstrapToggle('off');
-//                $(_this.economicActivityToggleGran).bootstrapToggle('off');
-//                $(_this.economicActivityOrigDest).bootstrapToggle('off');
-//                $("#gran-econ-activity-col").hide();
-//                $("#origDest-toggle-econAct-col").hide();
-//
-//                $(_this.treatmentMethodToggle).bootstrapToggle('off');
-//                $(_this.treatmentMethodToggleGran).bootstrapToggle('off');
-//                $(_this.treatmentMethodOrigDest).bootstrapToggle('off');
-//                $("#gran-treatment-method-col").hide();
-//                $("#origDest-toggle-treatment-col").hide();
-//
-//                $(_this.materialToggle).bootstrapToggle('off');
-//                $(".gran-radio-material-label").removeClass("active");
-//                $($("#gran-radio-material")[0].children[0]).addClass("active");
-//                $("#gran-material-col").hide();
-//
-//                // (Re)enable all toggles:
-//                $('.bootstrapToggle').each(function (index, value) {
-//                    $(this).bootstrapToggle('enable');
-//                });
-//
-//                // //////////////////////////////////
-//                // Vizualisation controls:
-//                $(".viz-selector-button").removeClass("active");
-//
-//                // Hide all Viz options:
-//                $(".viz-container").hide();
-//
-//                // Refresh all selectpickers:
-//                $(".selectpicker").selectpicker('refresh');
-//                _this.resetInProgres = false;
-//            },
+            //            resetDimAndVizToDefault: function (event) {
+            //                _this = this;
+            //                _this.resetInProgres = true;
+            //
+            //                // //////////////////////////////////
+            //                // Dimension controls:
+            //
+            //                $(_this.timeToggle).bootstrapToggle('off');
+            //                $(_this.timeToggleGran).bootstrapToggle('off');
+            //                $("#gran-toggle-time-col").hide();
+            //
+            //                $(_this.spaceToggle).bootstrapToggle('off');
+            //                $(_this.spaceLevelGranSelect).val($('#dim-space-gran-select:first-child')[0].value);
+            //                $(_this.spaceOrigDest).bootstrapToggle('off');
+            //                $("#gran-toggle-space-col").hide();
+            //                $("#origDest-toggle-space-col").hide();
+            //
+            //                $(_this.economicActivityToggle).bootstrapToggle('off');
+            //                $(_this.economicActivityToggleGran).bootstrapToggle('off');
+            //                $(_this.economicActivityOrigDest).bootstrapToggle('off');
+            //                $("#gran-econ-activity-col").hide();
+            //                $("#origDest-toggle-econAct-col").hide();
+            //
+            //                $(_this.treatmentMethodToggle).bootstrapToggle('off');
+            //                $(_this.treatmentMethodToggleGran).bootstrapToggle('off');
+            //                $(_this.treatmentMethodOrigDest).bootstrapToggle('off');
+            //                $("#gran-treatment-method-col").hide();
+            //                $("#origDest-toggle-treatment-col").hide();
+            //
+            //                $(_this.materialToggle).bootstrapToggle('off');
+            //                $(".gran-radio-material-label").removeClass("active");
+            //                $($("#gran-radio-material")[0].children[0]).addClass("active");
+            //                $("#gran-material-col").hide();
+            //
+            //                // (Re)enable all toggles:
+            //                $('.bootstrapToggle').each(function (index, value) {
+            //                    $(this).bootstrapToggle('enable');
+            //                });
+            //
+            //                // //////////////////////////////////
+            //                // Vizualisation controls:
+            //                $(".viz-selector-button").removeClass("active");
+            //
+            //                // Hide all Viz options:
+            //                $(".viz-container").hide();
+            //
+            //                // Refresh all selectpickers:
+            //                $(".selectpicker").selectpicker('refresh');
+            //                _this.resetInProgres = false;
+            //            },
 
             close: function () {
                 this.undelegateEvents(); // remove click events

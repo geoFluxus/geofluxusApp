@@ -531,6 +531,11 @@ textarea.textarea-autosize.form-control-sm {
     box-shadow: none;
 }
 
+.ol-control button:active, .ol-control button:focus {
+    background-color: var(--primary-focus-bg) !important;
+    border-color: var(--primary-focus-border) !important;
+}
+
 .ol-control button {
     background-color: var(--primary);
     border: none;
@@ -569,7 +574,7 @@ textarea.textarea-autosize.form-control-sm {
     background-color: transparent;
 }
 
-.networkmap-wrapper .ol-viewport{
+.networkmap-wrapper .ol-viewport {
     border-radius: 18px;
 }
 
