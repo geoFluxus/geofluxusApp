@@ -77,8 +77,6 @@ define(['underscore',
                         apiIds: [this.adminLevel]
                     });
 
-                    this.areas.filterBy({'id': [1, 2]});
-
                     var promises = [this.areas.fetch()];
 
                     Promise.all(promises).then(function () {

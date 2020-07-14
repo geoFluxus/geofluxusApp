@@ -134,8 +134,7 @@ define(['views/common/baseview',
             // DOM events
             events: {
                 'click #apply-filters': 'fetchFlows',
-                'click #reset-dim-viz': 'render',
-                //'click #reset-dim-viz': 'resetDimAndVizToDefault',
+                'click #reset-dim-viz': 'resetDimAndVizToDefault',
             },
 
             // render
@@ -589,56 +588,56 @@ define(['views/common/baseview',
                 }, 3000);
             },
 
-            //            resetDimAndVizToDefault: function (event) {
-            //                _this = this;
-            //                _this.resetInProgres = true;
-            //
-            //                // //////////////////////////////////
-            //                // Dimension controls:
-            //
-            //                $(_this.timeToggle).bootstrapToggle('off');
-            //                $(_this.timeToggleGran).bootstrapToggle('off');
-            //                $("#gran-toggle-time-col").hide();
-            //
-            //                $(_this.spaceToggle).bootstrapToggle('off');
-            //                $(_this.spaceLevelGranSelect).val($('#dim-space-gran-select:first-child')[0].value);
-            //                $(_this.spaceOrigDest).bootstrapToggle('off');
-            //                $("#gran-toggle-space-col").hide();
-            //                $("#origDest-toggle-space-col").hide();
-            //
-            //                $(_this.economicActivityToggle).bootstrapToggle('off');
-            //                $(_this.economicActivityToggleGran).bootstrapToggle('off');
-            //                $(_this.economicActivityOrigDest).bootstrapToggle('off');
-            //                $("#gran-econ-activity-col").hide();
-            //                $("#origDest-toggle-econAct-col").hide();
-            //
-            //                $(_this.treatmentMethodToggle).bootstrapToggle('off');
-            //                $(_this.treatmentMethodToggleGran).bootstrapToggle('off');
-            //                $(_this.treatmentMethodOrigDest).bootstrapToggle('off');
-            //                $("#gran-treatment-method-col").hide();
-            //                $("#origDest-toggle-treatment-col").hide();
-            //
-            //                $(_this.materialToggle).bootstrapToggle('off');
-            //                $(".gran-radio-material-label").removeClass("active");
-            //                $($("#gran-radio-material")[0].children[0]).addClass("active");
-            //                $("#gran-material-col").hide();
-            //
-            //                // (Re)enable all toggles:
-            //                $('.bootstrapToggle').each(function (index, value) {
-            //                    $(this).bootstrapToggle('enable');
-            //                });
-            //
-            //                // //////////////////////////////////
-            //                // Vizualisation controls:
-            //                $(".viz-selector-button").removeClass("active");
-            //
-            //                // Hide all Viz options:
-            //                $(".viz-container").hide();
-            //
-            //                // Refresh all selectpickers:
-            //                $(".selectpicker").selectpicker('refresh');
-            //                _this.resetInProgres = false;
-            //            },
+            resetDimAndVizToDefault: function (event) {
+                _this = this;
+                _this.resetInProgres = true;
+
+                // //////////////////////////////////
+                // Dimension controls:
+
+                $(_this.timeToggle).bootstrapToggle('off');
+                $(_this.timeToggleGran).bootstrapToggle('off');
+                $("#gran-toggle-time-col").hide();
+
+                $(_this.spaceToggle).bootstrapToggle('off');
+                $(_this.spaceLevelGranSelect).val($('#dim-space-gran-select:first-child')[0].value);
+                $(_this.spaceOrigDest).bootstrapToggle('off');
+                $("#gran-toggle-space-col").hide();
+                $("#origDest-toggle-space-col").hide();
+
+                $(_this.economicActivityToggle).bootstrapToggle('off');
+                $(_this.economicActivityToggleGran).bootstrapToggle('off');
+                $(_this.economicActivityOrigDest).bootstrapToggle('off');
+                $("#gran-econ-activity-col").hide();
+                $("#origDest-toggle-econAct-col").hide();
+
+                $(_this.treatmentMethodToggle).bootstrapToggle('off');
+                $(_this.treatmentMethodToggleGran).bootstrapToggle('off');
+                $(_this.treatmentMethodOrigDest).bootstrapToggle('off');
+                $("#gran-treatment-method-col").hide();
+                $("#origDest-toggle-treatment-col").hide();
+
+                $(_this.materialToggle).bootstrapToggle('off');
+                $(".gran-radio-material-label").removeClass("active");
+                $($("#gran-radio-material")[0].children[0]).addClass("active");
+                $("#gran-material-col").hide();
+
+                // (Re)enable all toggles:
+                $('.bootstrapToggle').each(function (index, value) {
+                    $(this).bootstrapToggle('enable');
+                });
+
+                // //////////////////////////////////
+                // Vizualisation controls:
+                $(".viz-selector-button").removeClass("active");
+
+                // Hide all Viz options:
+                $(".viz-container").hide();
+
+                // Refresh all selectpickers:
+                $(".selectpicker").selectpicker('refresh');
+                _this.resetInProgres = false;
+            },
 
             close: function () {
                 this.undelegateEvents(); // remove click events
