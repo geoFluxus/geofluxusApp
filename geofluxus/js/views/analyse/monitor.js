@@ -40,11 +40,11 @@ define(['views/common/baseview',
                 this.template = options.template;
                 this.filtersView = options.filtersView;
                 this.areaLevels = options.levels;
+                this.actorLevel = this.areaLevels.models.find(l => l.attributes.level == "1000").attributes.id;
 
                 this.mode = options.mode || 'monitor';
                 this.titleNumber = (options.titleNumber || 3).toString();
                 this.indicator = options.indicator || "waste";
-                this.impactSourceStrings = [];
 
                 this.labels = {
                     waste: "Waste",
@@ -134,7 +134,8 @@ define(['views/common/baseview',
             // DOM events
             events: {
                 'click #apply-filters': 'fetchFlows',
-                'click #reset-dim-viz': 'resetDimAndVizToDefault',
+                'click #reset-dim-viz': 'render',
+                //'click #reset-dim-viz': 'resetDimAndVizToDefault',
             },
 
             // render
@@ -180,6 +181,7 @@ define(['views/common/baseview',
             addEventListeners: function () {
                 var _this = this;
 
+                // selected visualization
                 $('.viz-selector-button').on("click", function (event) {
                     _this.selectedVizName = $(this).attr("data-viz");
                     event.preventDefault();
@@ -203,7 +205,6 @@ define(['views/common/baseview',
                     }
                 });
 
-
                 $(".dimensionToggle").change(function (event) {
                     // Deselect any selected Viz-buttons: 
                     $(".viz-selector-button").removeClass("active");
@@ -215,7 +216,6 @@ define(['views/common/baseview',
 
                     // //////////////////////////////////////////////////////
                     // Disable dimension toggles for max number of dimensions:
-                    _this.checkedDimToggles = [];
                     _this.uncheckedDimToggles = [];
                     _this.selectedDimensionStrings = [];
 
@@ -225,13 +225,12 @@ define(['views/common/baseview',
                         if (!checked) {
                             _this.uncheckedDimToggles.push($(this));
                         } else {
-                            _this.checkedDimToggles.push($(this));
                             _this.selectedDimensionStrings.push($(this).attr("data-dim"));
                         }
                     });
 
                     // If the maximum number of dimensions has been selected:
-                    if (_this.maxNumberOfDimensions == _this.checkedDimToggles.length) {
+                    if (_this.maxNumberOfDimensions == _this.selectedDimensionStrings.length) {
                         // Disable the remaining unchecked toggles:
                         $(_this.uncheckedDimToggles).each(function (index, value) {
                             $(this).bootstrapToggle('disable');
@@ -244,75 +243,47 @@ define(['views/common/baseview',
                         $("#alertMaxDimensionsRow").fadeOut("fast");
                     }
 
-                    // ///////////////////////////////////////////////////////////////////
-                    // Show available visualizations based on selected dimension(s):
-                    let dims = _this.selectedDimensionStrings;
-                    if (dims.length > 0) {
+                    // If dimensions are selected
+                    if (_this.selectedDimensionStrings.length) {
+                        // Show available visualizations based on selected dimension(s)
                         $(".viz-selector-button").hide();
                         $(".viz-container").fadeIn();
                         _this.vizs[_this.selectedDimensionStrings.join('_')].forEach(function (viz) {
                             $("#viz-" + viz).parent().fadeIn();
                         })
 
-                        // 1D
-                        if (dims.length == 1) {
-                            if (dims.includes("time")) {
-                                $(_this.timeToggleGran).trigger("change");
-                            }
+                        // show lineplot multiple for month
+                        $(_this.timeToggleGran).trigger("change");
 
-                            if (dims.includes("space")) {
-                                let selectedAreaLevelId = $(_this.spaceLevelGranSelect).val();
-                                let actorAreaLevelId = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-                                if (selectedAreaLevelId == actorAreaLevelId) {
-                                    $("#viz-coordinatepointmap").parent().fadeIn();
-                                } else {
-                                    $("#viz-choroplethmap").parent().fadeIn();
-                                }
-                            }
-                        }
+                        // show choropleth / point map
+                        $(_this.spaceLevelGranSelect).trigger("change");
+
+                        // show origin / destination for space & treatment method
+                        $("#origDest-toggle-space").parent().fadeIn();
+                        $("#origDest-toggle-treatment").parent().fadeIn();
                     } else {
                         $("#message-container-row").fadeIn();
                         $(".viz-container").hide();
                     }
 
-                    // If the selected visualization type is hasFlowsFormat, and dimension == treatment method, hide origin/destination toggle:
-                    let selectedVizHasFlowsFormat = $(".viz-selector-button.active").hasClass("hasFlowsFormat")
-                    // At least two dimensions, and one is treatmentMethod:
-                    if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("treatmentMethod") && selectedVizHasFlowsFormat) {
-                        $("#origDest-toggle-treatment").parent().fadeOut();
-                    } else {
-                        $("#origDest-toggle-treatment").parent().fadeIn();
-                    }
-
-                    // If the selected visualization type is NOT hasFlowsFormat, and dimension == space, show origin/destination toggle:
-                    if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("space") && !selectedVizHasFlowsFormat) {
-                        $("#origDest-toggle-space").parent().fadeIn();
-                    }
-                    // If the selected visualization type is hasFlowsFormat, and dimension == space, hide origin/destination toggle:
-                    if (_this.selectedDimensionStrings.includes("space") && selectedVizHasFlowsFormat) {
-                        $("#origDest-toggle-space").parent().fadeOut();
-                    } else {
-                        $("#origDest-toggle-space").parent().fadeIn();
-                    }
                     event.preventDefault();
                 });
 
                 // Disable origin/destination toggle for Space Treatment method for Flowmap and Parallel Sets
                 $(".viz-selector-button").click(function (event) {
-
                     $('#apply-filters').popover('dispose');
 
-                    let clickedToggleHasFlowsFormat = $($(event.currentTarget)[0]).hasClass("hasFlowsFormat")
+                    let clickedToggleHasFlowsFormat = $($(event.currentTarget)[0]).hasClass("hasFlowsFormat");
 
                     // At least two dimensions, and one is Space:
-                    if ((_this.checkedDimToggles.length > 1) && _this.selectedDimensionStrings.includes("space") && clickedToggleHasFlowsFormat) {
+                    if (_this.selectedDimensionStrings.includes("space") && clickedToggleHasFlowsFormat) {
                         $("#origDest-toggle-space").parent().fadeOut();
                     } else {
                         $("#origDest-toggle-space").parent().fadeIn();
                     }
 
-                    // At least two dimensions, and one is treatmentMethod:
-                    if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("treatmentMethod") && clickedToggleHasFlowsFormat) {
+                    // Only treatmentMethod:
+                    if (_this.selectedDimensionStrings == "treatmentMethod" && clickedToggleHasFlowsFormat) {
                         $("#origDest-toggle-treatment").parent().fadeOut();
                     } else {
                         $("#origDest-toggle-treatment").parent().fadeIn();
@@ -320,29 +291,21 @@ define(['views/common/baseview',
                     event.preventDefault();
                 });
 
+                // Show choropleth / coordinate map for space dimension
                 $(_this.spaceLevelGranSelect).change(function () {
-                    let selectedAreaLevelId = $(_this.spaceLevelGranSelect).val();
-                    let selectedAreaLevel = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.id.toString() == selectedAreaLevelId).attributes.level;
-
-                    if (_this.selectedDimensionStrings.length == 1 && _this.selectedDimensionStrings.includes("space")) {
-
-                        if (selectedAreaLevel == 1000) {
-                            $("#viz-coordinatepointmap").parent().fadeIn();
-                            $("#viz-choroplethmap").parent().hide();
-                        } else {
-                            $("#viz-coordinatepointmap").parent().hide();
-                            $("#viz-choroplethmap").parent().fadeIn();
-                        }
+                    if (_this.selectedDimensionStrings == "space") {
+                        let selectedAreaLevel = $(_this.spaceLevelGranSelect).val(),
+                            actorLevel = selectedAreaLevel == _this.actorLevel;
+                        $("#viz-coordinatepointmap").parent()[actorLevel ? 'fadeIn' : 'hide']();
+                        $("#viz-choroplethmap").parent()[actorLevel ? 'hide' : 'fadeIn']();
                     }
                 });
 
                 // Show Multiple Line option on dimension Time, granularity Month:
                 $(_this.timeToggleGran).change(function () {
-                    let granularityIsMonth = $(_this.timeToggleGran).prop("checked");
-                    if (granularityIsMonth) {
-                        $("#viz-lineplotmultiple").parent().fadeIn();
-                    } else if (!granularityIsMonth && _this.selectedDimensionStrings.length == 1) {
-                        $("#viz-lineplotmultiple").parent().hide();
+                    if (_this.selectedDimensionStrings == 'time') {
+                        let granularityIsMonth = $(_this.timeToggleGran).prop("checked");
+                        $("#viz-lineplotmultiple").parent()[granularityIsMonth ? 'fadeIn' : 'hide']();
                     }
                 });
 
@@ -383,15 +346,11 @@ define(['views/common/baseview',
                     }
                 });
 
-                if (selectedVizualisationString) {
-                    if (["flowmap", "parallelsets", "circularsankey"].includes(selectedVizualisationString)) {
-                        let formatString = selectedVizualisationString;
-                        formatString = (formatString == "circularsankey") ? "parallelsets" : formatString;
-                        filterParams.format = formatString;
-                    }
-                    if(selectedVizualisationString == "networkmap"){
-                        filterParams.format = "networkmap";
-                    }
+                var specialVizs = ["flowmap", "parallelsets", "circularsankey", "networkmap"];
+                if (specialVizs.includes(selectedVizualisationString)) {
+                    let formatString = selectedVizualisationString;
+                    formatString = (formatString == "circularsankey") ? "parallelsets" : formatString;
+                    filterParams.format = formatString;
                 }
 
                 // ///////////////////////////////
@@ -442,24 +401,21 @@ define(['views/common/baseview',
 
                 // Gather impact params for impact mode:
                 if (this.mode == "impact") {
-
                     // Indicator toggle
                     $('.impact-indicator-radio-label').each(function (index, value) {
                         if ($(this).hasClass("active")) {
-                            _this.indicator = $(this).attr("data-indicator")
-                            filterParams.indicator = _this.indicator;
+                            filterParams.indicator = $(this).attr("data-indicator");
                         }
                     });
 
                     // Divide the toggles in arrays of checked and unchecked toggles:
+                    filterParams.impactSources = [];
                     $('.impactSourceToggle').each(function (index, value) {
-                        let checked = $(this.parentElement.firstChild).prop('checked')
+                        let checked = $(this.parentElement.firstChild).prop('checked');
                         if (checked) {
-                            _this.impactSourceStrings.push($(this).attr("data-source"));
+                            filterParams.impactSources.push($(this).attr("data-source"));
                         }
-                        filterParams.impactSources = _this.impactSourceStrings;
                     });
-
                 }
 
                 console.log(filterParams);
@@ -472,7 +428,7 @@ define(['views/common/baseview',
                     tags = this.filtersView.tags;
 
                 // Enrich flows with info
-                let adminlevel = -1;
+                let adminlevel = null;
                 dimensions.forEach(function (dimension) {
                     let dimensionString = dimension[0];
                     let granularity = dimension[1];
@@ -483,8 +439,7 @@ define(['views/common/baseview',
                         }
                     } else {
                         adminlevel = granularity.adminlevel;
-                        let actorAreaLevelId = collections['arealevels'].models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-                        dimensions.isActorLevel = (adminlevel == actorAreaLevelId) ? true : false;
+                        dimensions.isActorLevel = (adminlevel == _this.actorLevel) ? true : false;
                     }
                 })
 
@@ -508,7 +463,18 @@ define(['views/common/baseview',
                 };
 
                 if (_this.selectedVizName === 'choroplethmap') {
-                    let occuringAreas = [];
+                    _this.renderChoroplethMap(flows, adminlevel, dimensions);
+                } else {
+                    this.vizView = new vizView['view'](
+                        Object.assign(defaultOptions, extraOptions)
+                    );
+                }
+            },
+
+            renderChoroplethMap: function (flows, adminlevel, dimensions) {
+                var _this = this;
+
+                let occuringAreas = [];
                     occuringAreas = flows.map(x => x.areaId);
                     occuringAreas = _.unique(occuringAreas);
 
@@ -548,11 +514,6 @@ define(['views/common/baseview',
                             console.log(res);
                         }
                     });
-                } else {
-                    this.vizView = new vizView['view'](
-                        Object.assign(defaultOptions, extraOptions)
-                    );
-                }
             },
 
             closeAllVizViews: function () {
@@ -618,56 +579,56 @@ define(['views/common/baseview',
                 }, 3000);
             },
 
-            resetDimAndVizToDefault: function (event) {
-                _this = this;
-                _this.resetInProgres = true;
-
-                // //////////////////////////////////
-                // Dimension controls:
-
-                $(_this.timeToggle).bootstrapToggle('off');
-                $(_this.timeToggleGran).bootstrapToggle('off');
-                $("#gran-toggle-time-col").hide();
-
-                $(_this.spaceToggle).bootstrapToggle('off');
-                $(_this.spaceLevelGranSelect).val($('#dim-space-gran-select:first-child')[0].value);
-                $(_this.spaceOrigDest).bootstrapToggle('off');
-                $("#gran-toggle-space-col").hide();
-                $("#origDest-toggle-space-col").hide();
-
-                $(_this.economicActivityToggle).bootstrapToggle('off');
-                $(_this.economicActivityToggleGran).bootstrapToggle('off');
-                $(_this.economicActivityOrigDest).bootstrapToggle('off');
-                $("#gran-econ-activity-col").hide();
-                $("#origDest-toggle-econAct-col").hide();
-
-                $(_this.treatmentMethodToggle).bootstrapToggle('off');
-                $(_this.treatmentMethodToggleGran).bootstrapToggle('off');
-                $(_this.treatmentMethodOrigDest).bootstrapToggle('off');
-                $("#gran-treatment-method-col").hide();
-                $("#origDest-toggle-treatment-col").hide();
-
-                $(_this.materialToggle).bootstrapToggle('off');
-                $(".gran-radio-material-label").removeClass("active");
-                $($("#gran-radio-material")[0].children[0]).addClass("active");
-                $("#gran-material-col").hide();
-
-                // (Re)enable all toggles:
-                $('.bootstrapToggle').each(function (index, value) {
-                    $(this).bootstrapToggle('enable');
-                });
-
-                // //////////////////////////////////
-                // Vizualisation controls:
-                $(".viz-selector-button").removeClass("active");
-
-                // Hide all Viz options:
-                $(".viz-container").hide();
-
-                // Refresh all selectpickers:
-                $(".selectpicker").selectpicker('refresh');
-                _this.resetInProgres = false;
-            },
+//            resetDimAndVizToDefault: function (event) {
+//                _this = this;
+//                _this.resetInProgres = true;
+//
+//                // //////////////////////////////////
+//                // Dimension controls:
+//
+//                $(_this.timeToggle).bootstrapToggle('off');
+//                $(_this.timeToggleGran).bootstrapToggle('off');
+//                $("#gran-toggle-time-col").hide();
+//
+//                $(_this.spaceToggle).bootstrapToggle('off');
+//                $(_this.spaceLevelGranSelect).val($('#dim-space-gran-select:first-child')[0].value);
+//                $(_this.spaceOrigDest).bootstrapToggle('off');
+//                $("#gran-toggle-space-col").hide();
+//                $("#origDest-toggle-space-col").hide();
+//
+//                $(_this.economicActivityToggle).bootstrapToggle('off');
+//                $(_this.economicActivityToggleGran).bootstrapToggle('off');
+//                $(_this.economicActivityOrigDest).bootstrapToggle('off');
+//                $("#gran-econ-activity-col").hide();
+//                $("#origDest-toggle-econAct-col").hide();
+//
+//                $(_this.treatmentMethodToggle).bootstrapToggle('off');
+//                $(_this.treatmentMethodToggleGran).bootstrapToggle('off');
+//                $(_this.treatmentMethodOrigDest).bootstrapToggle('off');
+//                $("#gran-treatment-method-col").hide();
+//                $("#origDest-toggle-treatment-col").hide();
+//
+//                $(_this.materialToggle).bootstrapToggle('off');
+//                $(".gran-radio-material-label").removeClass("active");
+//                $($("#gran-radio-material")[0].children[0]).addClass("active");
+//                $("#gran-material-col").hide();
+//
+//                // (Re)enable all toggles:
+//                $('.bootstrapToggle').each(function (index, value) {
+//                    $(this).bootstrapToggle('enable');
+//                });
+//
+//                // //////////////////////////////////
+//                // Vizualisation controls:
+//                $(".viz-selector-button").removeClass("active");
+//
+//                // Hide all Viz options:
+//                $(".viz-container").hide();
+//
+//                // Refresh all selectpickers:
+//                $(".selectpicker").selectpicker('refresh');
+//                _this.resetInProgres = false;
+//            },
 
             close: function () {
                 this.undelegateEvents(); // remove click events

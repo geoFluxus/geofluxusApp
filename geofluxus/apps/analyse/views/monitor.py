@@ -39,23 +39,21 @@ class MonitorViewSet(FilterFlowViewSet):
         self.levels = []     # dimension granularity
         self.fields = []     # exact field to search
 
-    def annotate_amounts(self, queryset, indicator, impactSources):
+    def annotate_amounts(self, queryset, indicator, impactSources, format):
         queryset = queryset.annotate(amount=F('flowchain__amount'))
         return queryset
 
     def process_network(self, queryset):
-        data = []
-
         # annotate routing seq
         # exclude flows with no routing
-        queryset = queryset.filter(routing__id__isnull=False) \
-                           .annotate(sequence=F('routing__seq'))\
+        queryset = queryset.annotate(sequence=F('routing__seq'))\
                            .values('sequence', 'amount')
 
         # load ways with flows
         ways = {}
         for flow in queryset:
             seq, amount = flow['sequence'], flow['amount']
+            if not amount: amount = 0
             if seq:
                 seq = [int(id) for id in seq.split('@')]
                 for id in seq:
@@ -64,9 +62,21 @@ class MonitorViewSet(FilterFlowViewSet):
                     else:
                         ways[id] = amount
 
-        # serialize network
+        return self.serialize_network(ways)
+
+    def serialize_network(self, ways):
+        data = []
+
+        # fetch network (without distances)
         cursor = connections['routing'].cursor()
-        cursor.execute("SELECT id, ST_AsText(the_geom) from ways")
+        query = '''
+                SELECT id, 
+                       ST_AsText(the_geom) 
+                FROM ways
+                '''
+        cursor.execute(query)
+
+        # serialize
         for way in cursor.fetchall():
             flow_item = []
             id, wkt = way
@@ -76,6 +86,7 @@ class MonitorViewSet(FilterFlowViewSet):
             else:
                 flow_item.append(('amount', 0))
             data.append(OrderedDict(flow_item))
+
         return data
 
     def serialize(self, queryset,
@@ -88,7 +99,7 @@ class MonitorViewSet(FilterFlowViewSet):
         data = []
 
         # annotate info from chains to flows
-        queryset = self.annotate_amounts(queryset, indicator, impactSources)
+        queryset = self.annotate_amounts(queryset, indicator, impactSources, format)
 
         # process for network map
         if format == 'networkmap':
