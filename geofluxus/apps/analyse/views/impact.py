@@ -35,8 +35,7 @@ class ImpactViewSet(MonitorViewSet):
         # fetch network (with distances)
         cursor = connections['routing'].cursor()
         query = '''
-                SELECT id, 
-                       ST_AsText(the_geom),
+                SELECT id,
                        ST_LengthSpheroid(the_geom,
                                          'SPHEROID["GRS_1980",6378137,298.257222101]')
                 FROM ways
@@ -45,13 +44,11 @@ class ImpactViewSet(MonitorViewSet):
 
         # serialize
         for way in cursor.fetchall():
-            flow_item = []
-            id, wkt, distance = way
-            flow_item.append(('id', id))
-            if id in ways:
-                flow_item.append(('amount', ways[id] * distance / 10**3))
-            else:
-                flow_item.append(('amount', 0))
+            id, distance = way
+            if id not in ways: continue
+
+            flow_item = [('id', id),
+                         ('amount', ways[id] * distance / 10**3)]
             data.append(OrderedDict(flow_item))
 
         return data

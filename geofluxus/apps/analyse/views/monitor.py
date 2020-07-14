@@ -70,21 +70,17 @@ class MonitorViewSet(FilterFlowViewSet):
         # fetch network (without distances)
         cursor = connections['routing'].cursor()
         query = '''
-                SELECT id, 
-                       ST_AsText(the_geom) 
+                SELECT id
                 FROM ways
                 '''
         cursor.execute(query)
 
         # serialize
         for way in cursor.fetchall():
-            flow_item = []
-            id, wkt = way
-            flow_item.append(('id', id))
-            if id in ways:
-                flow_item.append(('amount', ways[id]))
-            else:
-                flow_item.append(('amount', 0))
+            id = way[0]
+            if id not in ways: continue
+
+            flow_item = [('id', id), ('amount', ways[id])]
             data.append(OrderedDict(flow_item))
 
         return data
