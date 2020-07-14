@@ -74,6 +74,8 @@ define(['views/common/baseview',
 
                 // Indicator toggle
                 $('.impact-indicator-radio-label').on("click", function (event) {
+                    _this.monitorView.indicator = $(event.currentTarget).attr("data-indicator");
+                    
                     $(".impactSourceContainer").fadeIn();
                     event.preventDefault();
                 });
