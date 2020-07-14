@@ -43,7 +43,6 @@ define([
             });
 
             this.flows = options.flows;
-            this.network = options.network;
 
             // add network layer to map
             this.drawNetwork();

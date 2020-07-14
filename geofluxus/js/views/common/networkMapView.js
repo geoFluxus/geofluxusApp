@@ -124,24 +124,6 @@ define(['views/common/baseview',
                     this.options.flowsView.loader.deactivate();
                 },
 
-//                fetchNetworkThenRender: function () {
-//                    var _this = this;
-//
-//                    this.network = new Collection([], {
-//                        apiTag: 'ways',
-//                    });
-//                    this.network.fetch({
-//                        success: function () {
-//                            _this.render();
-//                            _this.options.flowsView.loader.deactivate();
-//                        },
-//                        error: function (res) {
-//                            _this.options.flowsView.loader.deactivate();
-//                            console.log(res);
-//                        }
-//                    });
-//                },
-
                 scrollToVisualization: function () {
                     utils.scrollToVizRow();
                 },
