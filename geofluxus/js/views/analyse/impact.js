@@ -24,35 +24,19 @@ define(['views/common/baseview',
     ) {
 
         var ImpactView = BaseView.extend({
-
             // Initialization
             initialize: function (options) {
                 var _this = this;
                 ImpactView.__super__.initialize.apply(this, [options]);
 
                 this.filtersView = options.filtersView;
+                this.areaLevels = options.levels;
 
-                this.dimensions = {};
-                this.maxNumberOfDimensions = 1;
-                this.selectedDimensionStrings = [];
-                this.impactSourceStrings = [];
-
-                this.areaLevels = new Collection([], {
-                    apiTag: 'arealevels',
-                    comparator: "level",
-                });
-
-                var promises = [
-                    this.areaLevels.fetch(),
-                ];
-                Promise.all(promises).then(function () {
-                    _this.render();
-                })
+                this.render();
             },
 
             // DOM events
             events: {
-                // 'click #apply-filters': 'fetchFlows',
                 'click #reset-dim-viz': 'resetDimAndVizToDefault',
             },
 
@@ -61,10 +45,7 @@ define(['views/common/baseview',
                 var html = document.getElementById(this.template).innerHTML;
                 var template = _.template(html)
 
-                this.el.innerHTML = template({
-                    levels: this.areaLevels,
-                    maxNumberOfDimensions: this.maxNumberOfDimensions
-                });
+                this.el.innerHTML = template();
 
                 this.renderMonitorView();
 
@@ -78,21 +59,13 @@ define(['views/common/baseview',
                     el: el,
                     template: 'monitor-template',
                     filtersView: this.filtersView,
-                    mode: "impact",
-                    maxNumberOfDimensions: 2,
-                    indicator: this.indicator,
-                    titleNumber: 5,
-                    impactSourceStrings: this.impactSourceStrings,
                     levels: this.areaLevels,
+                    mode: "impact",
+                    titleNumber: 5,
                 });
             },
 
             initializeControls: function () {
-                // Impact source controls:
-                this.impactSources = {};
-                this.impactSources.transportation = this.el.querySelector('#impact-source-toggle-transportation');
-                this.dimensions.treatment = this.el.querySelector('#impact-source-toggle-treatment');
-
                 $(".bootstrapToggle").bootstrapToggle();
             },
 
@@ -101,37 +74,23 @@ define(['views/common/baseview',
 
                 // Indicator toggle
                 $('.impact-indicator-radio-label').on("click", function (event) {
-                    let clickedIndicator = $(this).attr("data-indicator");
-
-                    if (clickedIndicator != _this.indicator) {
-                        _this.indicator = clickedIndicator;
-                        $(".impactSourceContainer").fadeIn();
-                    }
+                    $(".impactSourceContainer").fadeIn();
                     event.preventDefault();
                 });
 
                 // Impact source toggles:
                 $(".impactSourceToggle").change(function (event) {
                     let checkedToggles = [];
-                    let uncheckedToggles = [];
-                    _this.impactSourceStrings = [];
 
                     // Divide the toggles in arrays of checked and unchecked toggles:
                     $('.impactSourceToggle').each(function (index, value) {
-                        let checked = $(this.parentElement.firstChild).prop('checked')
-                        if (!checked) {
-                            uncheckedToggles.push($(this));
-                        } else {
+                        let checked = $(this.parentElement.firstChild).prop('checked');
+                        if (checked) {
                             checkedToggles.push($(this));
-                            _this.impactSourceStrings.push($(this).attr("data-source"));
                         }
                     });
 
-                    if (_this.impactSourceStrings.length > 0) {
-                        $("#impact-dimensions-container").fadeIn();
-                    } else {
-                        $("#impact-dimensions-container").fadeOut();
-                    }
+                    $("#impact-dimensions-container")[checkedToggles.length ? 'fadeIn' : 'fadeOut']();
                 });
 
             },

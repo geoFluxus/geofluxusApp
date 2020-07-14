@@ -110,6 +110,7 @@ define([
 
             // prettify scale intervals
             function prettify(val) {
+                if (val < 1) return val.toFixed(2);
                 var int = ~~(val),
                     digits = int.toString().length - 1,
                     base = 10 ** digits;
