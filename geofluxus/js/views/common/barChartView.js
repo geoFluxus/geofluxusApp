@@ -49,26 +49,6 @@ define(['views/common/d3plusVizView',
 
                     this.groupBy = this.x = "";
 
-                    this.dimensions = {
-                        'time': {
-                            'year' : 'Year',
-                            'month': 'Month',
-                        },
-                        'economicActivity': {
-                            'activitygroup': 'Activity group',
-                            'activity'     : 'Activity',
-                        },
-                        'treatmentMethod': {
-                            'processgroup': 'Treatment method group',
-                            'process'     : 'Treatment method',
-                        },
-                        'material': {
-                            'waste02': 'EWC Chapter',
-                            'waste04': 'EWC Sub-Chapter',
-                            'waste06': 'EWC Entry'
-                        }
-                    }
-
                     // configure tooltips
                     let dimensions = this.options.dimensions;
                     var title = "";

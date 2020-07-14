@@ -42,17 +42,7 @@ define(['views/common/d3plusVizView',
                     this.hasLegend = true;
                     this.isDarkMode = true;
 
-                    this.props = {
-                        'year'          : 'Year',
-                        'month'         : 'Month',
-                        'activitygroup' : 'Activity group',
-                        'activity'      : 'Activity',
-                        'processgroup'  : 'Treatment method group',
-                        'process'       : 'Treatment method',
-                        'waste02'       : 'EWC Chapter',
-                        'waste04'       : 'EWC Sub-Chapter',
-                        'waste06'       : 'EWC Entry'
-                    }
+                    this.props = Object.assign(...Object.values(this.dimensions));
 
                     let dim = this.options.dimensions[0][0],
                         gran = this.options.dimensions[0][1];
@@ -91,7 +81,7 @@ define(['views/common/d3plusVizView',
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
                     'click .toggle-legend': 'toggleLegend',
-                    'click .toggle-darkmode': 'toggleDarkMode',                    
+                    'click .toggle-darkmode': 'toggleDarkMode',
                 },
 
                 /**

@@ -2,11 +2,6 @@
 define(['views/common/baseview',
         'views/analyse/monitor',
         'underscore',
-        'd3',
-        'openlayers',
-        'visualizations/map',
-        'collections/collection',
-        'utils/utils',
         'bootstrap',
         'bootstrap-select',
         'bootstrap-toggle',
@@ -16,11 +11,6 @@ define(['views/common/baseview',
         BaseView,
         MonitorView,
         _,
-        d3,
-        ol,
-        Map,
-        Collection,
-        utils,
     ) {
 
         var ImpactView = BaseView.extend({
