@@ -128,17 +128,15 @@ define(['views/common/d3plusVizView',
 
                     // assign colors by groupings
                     this.flows = enrichFlows.assignColorsByProperty(this.flows, this.groupBy[0]);
+                    // Disable legend there are more than fifty groups:
+                    this.canHaveLegend = this.hasLegend = enrichFlows.checkToDisableLegend(this.flows, this.groupBy[0]);
                 },
 
                 flipGrouping: function () {
                     $(this.options.el).html("");
 
-                    //this.groupBy = [this.x, this.x = this.groupBy][0];
-
                     this.options.dimensions.reverse();  
                     this.preProcess();
-
-                    //this.flows = enrichFlows.assignColorsByProperty(this.flows, this.groupBy);
 
                     this.render();
                 },

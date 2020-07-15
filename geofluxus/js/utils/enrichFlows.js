@@ -72,4 +72,15 @@ module.exports = {
 
         return items
     },
+
+    checkToDisableLegend: function(items, propertyName) {
+        occurances = items.map(x => x[propertyName]);
+        occurances = _.unique(occurances);
+
+        if (occurances.length > 50) {
+            return false
+        } else {
+            return true;
+        }
+    }
 }
