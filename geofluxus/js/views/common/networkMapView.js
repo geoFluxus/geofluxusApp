@@ -43,7 +43,7 @@ define(['views/common/baseview',
                     this.options = options;
                     this.flows = this.options.flows;
                     this.isDarkMode = true;
-                    this.showNetwork = false;
+                    this.showNetwork = true;
 
                     this.label = options.dimensions.label;
                     this.tooltipConfig = {
