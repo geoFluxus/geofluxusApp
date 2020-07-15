@@ -13,7 +13,7 @@ define([
             this.darkMode = this.options.darkMode;
 
 
-            if (this.darkMode){
+            if (this.darkMode) {
                 this.fontColor = "white";
                 this.options.source = "dark";
             } else {
@@ -81,12 +81,12 @@ define([
             // create network layer
             this.map.addLayer('network', {
                 stroke: 'rgb(255, 255, 255)',
-                strokeWidth: 5
+                strokeWidth: 5,
+                crossOrigin: 'anonymous',
             });
 
             // add ways to map and load with amounts
             this.flows.forEach(function (flow) {
-                console.log(flow)
                 var id = flow.id,
                     coords = flow.geometry.coordinates,
                     type = flow.geometry.type.toLowerCase(),
@@ -160,7 +160,7 @@ define([
 
             var title = document.createElement('div');
             title.style.textAlign = "center";
-            title.innerHTML = '<span style="color: ' + this.fontColor +'; text-align: center;">' + this.label + ' (t)</span>'
+            title.innerHTML = '<span style="color: ' + this.fontColor + '; text-align: center;">' + this.label + ' (t)</span>'
             legend.appendChild(title);
 
             // add color scale to legend
@@ -171,7 +171,7 @@ define([
                 .append("svg")
                 .attr("width", width * (this.colors.length + 1))
                 .attr("height", 100),
-            rects = scale.selectAll('rect')
+                rects = scale.selectAll('rect')
                 .data(this.colors)
                 .enter()
                 .append("rect")
@@ -184,7 +184,7 @@ define([
                 .attr("fill", function (d) {
                     return d;
                 }),
-            texts = scale.selectAll('text')
+                texts = scale.selectAll('text')
                 .data(this.values)
                 .enter()
                 .append('text')

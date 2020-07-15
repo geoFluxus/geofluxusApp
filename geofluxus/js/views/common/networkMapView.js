@@ -85,6 +85,7 @@ define(['views/common/baseview',
                     buttons = {
                         'legend': 'Toggle the legend on or off.',
                         'darkmode': 'Toggle light or dark mode.',
+                        'network': 'Toggle the network on or off.'
                     }
                     Object.entries(buttons).forEach(function (button) {
                         [icon, title] = button;
@@ -104,6 +105,9 @@ define(['views/common/baseview',
                     $(".toggle-darkmode").click(function () {
                         _this.toggleDarkMode();
                     });
+                    $(".toggle-network").click(function () {
+                        _this.toggleNetwork();
+                    });
 
                     // ------------
 
@@ -116,31 +120,12 @@ define(['views/common/baseview',
                     $(".leaflet-control-zoom.leaflet-bar.leaflet-control").append(resetMapViewBtn);
                     resetMapViewBtn.addEventListener('click', function (event) {
                         _this.NetworkMap.map.centerOnLayer('network');
-                        // event.preventDefault(event);
                     })
                     zoomBtnDiv.appendChild(resetMapViewBtn);
 
                     this.scrollToVisualization();
                     this.options.flowsView.loader.deactivate();
                 },
-
-//                fetchNetworkThenRender: function () {
-//                    var _this = this;
-//
-//                    this.network = new Collection([], {
-//                        apiTag: 'ways',
-//                    });
-//                    this.network.fetch({
-//                        success: function () {
-//                            _this.render();
-//                            _this.options.flowsView.loader.deactivate();
-//                        },
-//                        error: function (res) {
-//                            _this.options.flowsView.loader.deactivate();
-//                            console.log(res);
-//                        }
-//                    });
-//                },
 
                 scrollToVisualization: function () {
                     utils.scrollToVizRow();
@@ -160,6 +145,10 @@ define(['views/common/baseview',
                     $("#networkmap-legend").fadeToggle();
                 },
 
+                toggleNetwork: function(){
+
+                },
+
                 toggleDarkMode: function () {
                     $(this.options.el).html("");
                     this.isDarkMode = !this.isDarkMode;
@@ -167,86 +156,17 @@ define(['views/common/baseview',
                 },
 
                 exportPng: function () {
-                    var _this = this;
+                    var c = document.querySelector(".networkmap-wrapper canvas");
+                    var d = c.toDataURL("image/png");
+                    var w = window.open('about:blank', 'image from canvas');
+                    w.document.write("<img src='" + d + "' alt='from canvas'/>");
 
-                    // html2canvas(document.querySelector(".networkmap-wrapper canvas"), {
-                    //     allowTaint: true,
-                    // }).then((canvas) => {
-                    //     canvas.toBlob(function (blob) {
-                    //         FileSaver.saveAs(blob, "network-map.png");
-                    //     });
-                    // });
-
-                    // const convertAllImagesToBase64 = (proxyURL, cloned) => {
-                    //     const pendingImagesPromises = [];
-                    //     const pendingPromisesData = [];
-
-                    //     const images = cloned.getElementsByTagName('img');
-
-                    //     for (let i = 0; i < images.length; i += 1) {
-                    //         // First we create an empty promise for each image
-                    //         const promise = new Promise((resolve, reject) => {
-                    //             pendingPromisesData.push({
-                    //                 index: i,
-                    //                 resolve,
-                    //                 reject,
-                    //             });
-                    //         });
-                    //         // We save the promise for later resolve them
-                    //         pendingImagesPromises.push(promise);
-                    //     }
-
-                    //     for (let i = 0; i < images.length; i += 1) {
-                    //         // We fetch the current image
-                    //         fetch(`${proxyURL}?url=${images[i].src}`)
-                    //             .then((response) => response.json())
-                    //             .then((data) => {
-                    //                 const pending = pendingPromisesData.find((p) => p.index === i);
-                    //                 images[i].src = data;
-                    //                 pending.resolve(data);
-                    //             })
-                    //             .catch((e) => {
-                    //                 const pending = pendingPromisesData.find((p) => p.index === i);
-                    //                 pending.reject(e);
-                    //             });
-                    //     }
-
-                    //     // This will resolve only when all the promises resolve
-                    //     return Promise.all(pendingImagesPromises);
-                    // };
-
-
-
-                    // this.NetworkMap.map.map.once('postcompose', function (event) {
-                    //     var dataURL;
-                    //     var canvas = event.context.canvas;
-                    //     if (ol.has.DEVICE_PIXEL_RATIO == 1) {
-                    //         dataURL = canvas.toDataURL('image/png');
-                    //     } else {
-                    //         var targetCanvas = document.createElement('canvas');
-                    //         var size = _this.NetworkMap.map.map.getSize();
-                    //         targetCanvas.width = size[0];
-                    //         targetCanvas.height = size[1];
-                    //         targetCanvas.getContext('2d').drawImage(canvas,
-                    //             0, 0, canvas.width, canvas.height,
-                    //             0, 0, targetCanvas.width, targetCanvas.height);
-                    //         dataURL = targetCanvas.toDataURL('image/png');
-                    //     }
-                    // });
-                    // this.NetworkMap.map.map.renderSync();
-
-
-                    // var c = document.querySelector(".networkmap-wrapper canvas");
-                    // var d = c.toDataURL("image/png");
-                    // var w = window.open('about:blank', 'image from canvas');
-                    // w.document.write("<img src='" + d + "' alt='from canvas'/>");
-
-
-                    // var canvas = document.querySelector(".networkmap-wrapper canvas");
-                    // canvas.toBlob(function (blob) {
-                    //     FileSaver.saveAs(blob, "network-map.png");
-                    // });
+                    var canvas = document.querySelector(".networkmap-wrapper canvas");
+                    canvas.toBlob(function (blob) {
+                        FileSaver.saveAs(blob, "network-map.png");
+                    });
                 },
+
                 // exportCSV: function (event) {
                 //     const items = this.options.flows;
                 //     const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here

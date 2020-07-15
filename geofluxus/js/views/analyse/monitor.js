@@ -310,11 +310,10 @@ define(['views/common/baseview',
                     if (_this.selectedDimensionStrings == "space" && _this.selectedVizName == "networkmap") {
                         $("#gran-toggle-space-col").fadeOut()
                         $("#origDest-toggle-space-col").fadeOut();
-                    } else {
-                        $("#gran-toggle-space-col").fadeIn()
-                        $("#origDest-toggle-space-col").fadeIn();
+                    } else if (_this.selectedDimensionStrings.includes("space")){
+                            $("#gran-toggle-space-col").fadeIn()
+                            $("#origDest-toggle-space-col").fadeIn();                        
                     }
-
                     event.preventDefault();
                 });
 
@@ -526,6 +525,9 @@ define(['views/common/baseview',
             },
 
             closeAllVizViews: function () {
+                $(".no-data-found").fadeOut();
+                $(".no-data-found").removeClass("d-flex");
+
                 $(".viz-wrapper-div").removeClass("lightMode");
                 $(".viz-wrapper-div").hide();
                 $(".parallelsets-container").hide();
@@ -573,8 +575,14 @@ define(['views/common/baseview',
 
                             _this.selectedDimensions.label = _this.labels[_this.indicator];
 
-                            // Render visualization
-                            _this.renderVisualizations(_this.selectedDimensions, _this.flows, _this.selectedVizName);
+                            if (_this.flows.length == 0) {
+                                _this.loader.deactivate()
+                                $(".no-data-found").fadeIn();
+                                $(".no-data-found").addClass("d-flex");
+                            } else {
+                                // Render visualization
+                                _this.renderVisualizations(_this.selectedDimensions, _this.flows, _this.selectedVizName);
+                            }
                         },
                         error: function (error) {
                             _this.loader.deactivate();

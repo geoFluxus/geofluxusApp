@@ -531,7 +531,8 @@ textarea.textarea-autosize.form-control-sm {
     box-shadow: none;
 }
 
-.ol-control button:active, .ol-control button:focus {
+.ol-control button:active,
+.ol-control button:focus {
     background-color: var(--primary-focus-bg) !important;
     border-color: var(--primary-focus-border) !important;
 }
@@ -583,7 +584,7 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .networkmap-wrapper .ol-zoom {
-    top: 9.5em;
+    top: 11.75em;
 }
 
 .networkmap-wrapper .oltooltip {
@@ -703,6 +704,7 @@ textarea.textarea-autosize.form-control-sm {
 
 .icon-toggle-legend,
 .icon-toggle-darkmode,
+.icon-toggle-network,
 .icon-flip-grouping,
 .icon-toggle-flowmap-flows,
 .icon-toggle-flowmap-nodes,
@@ -720,12 +722,18 @@ textarea.textarea-autosize.form-control-sm {
     background-image: url("../img/legend.svg");
 }
 
-.icon-flip-grouping {
-    background-image: url("../img/flip-grouping.svg");
-}
-
 .icon-toggle-darkmode {
     background-image: url("../img/nightmode.svg");
+    margin-bottom: 0px;
+}
+
+.icon-toggle-network {
+    background-image: url("../img/viz-icons/viz-networkmap.svg");
+    margin-bottom: 0px;
+}
+
+.icon-flip-grouping {
+    background-image: url("../img/flip-grouping.svg");
 }
 
 .icon-toggle-flowmap-flows {
