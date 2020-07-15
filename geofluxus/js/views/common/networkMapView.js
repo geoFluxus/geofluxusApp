@@ -43,6 +43,7 @@ define(['views/common/baseview',
                     this.options = options;
                     this.flows = this.options.flows;
                     this.isDarkMode = true;
+                    this.showNetwork = false;
 
                     this.label = options.dimensions.label;
                     this.tooltipConfig = {
@@ -69,6 +70,7 @@ define(['views/common/baseview',
                         flows: this.flows,
                         label: this.options.label,
                         darkMode: this.isDarkMode,
+                        showNetwork: this.showNetwork
                     })
 
                     // Add extra buttons to fullscreenButton container on the top left of the map:
@@ -153,7 +155,9 @@ define(['views/common/baseview',
                 },
 
                 toggleNetwork: function () {
-
+                    $(this.options.el).html("");
+                    this.showNetwork = !this.showNetwork;
+                    this.render();
                 },
 
                 toggleDarkMode: function () {

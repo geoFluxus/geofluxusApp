@@ -11,7 +11,9 @@ define([
             this.options = options || {};
             this.label = this.options.label;
             this.darkMode = this.options.darkMode;
+            this.showNetwork = this.options.showNetwork;
 
+            console.log(this.showNetwork)
 
             if (this.darkMode) {
                 this.fontColor = "white";
@@ -84,6 +86,13 @@ define([
                 crossOrigin: 'anonymous',
             });
 
+            // create flows layer
+            this.map.addLayer('flows', {
+                stroke: 'rgb(255, 255, 255)',
+                strokeWidth: 5,
+                crossOrigin: 'anonymous',
+            });
+
             // add ways to map and load with amounts
             this.flows.forEach(function (flow) {
                 var id = flow.id,
@@ -92,7 +101,7 @@ define([
                     amount = amounts[id];
                 _this.map.addGeometry(coords, {
                     projection: 'EPSG:4326',
-                    layername: 'network',
+                    layername: amount ? 'flows' : 'network',
                     type: type,
                     renderOSM: false,
                     style: {
@@ -106,7 +115,8 @@ define([
             });
 
             // focus on network layer
-            this.map.centerOnLayer('network');
+            this.map.centerOnLayer('flows');
+            this.map.setVisible('network', this.showNetwork);
 
             // define legend
             this.drawLegend();
