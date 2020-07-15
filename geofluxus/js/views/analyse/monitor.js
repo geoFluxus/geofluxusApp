@@ -258,6 +258,7 @@ define(['views/common/baseview',
                         $(_this.spaceLevelGranSelect).trigger("change");
 
                         // show origin / destination for space & treatment method
+                        $("#dim-space-gran-select").parent().fadeIn();
                         $("#origDest-toggle-space").parent().fadeIn();
                         $("#origDest-toggle-treatment").parent().fadeIn();
                     } else {
@@ -296,6 +297,7 @@ define(['views/common/baseview',
                     if (_this.selectedDimensionStrings.includes("space") && clickedToggleHasFlowsFormat) {
                         $("#origDest-toggle-space").parent().fadeOut();
                     } else {
+                        $("#dim-space-gran-select").parent().fadeIn();
                         $("#origDest-toggle-space").parent().fadeIn();
                     }
 
@@ -307,12 +309,9 @@ define(['views/common/baseview',
                     }
 
                     // Hide space gran for Network Map:
-                    if (_this.selectedDimensionStrings == "space" && _this.selectedVizName == "networkmap") {
-                        $("#gran-toggle-space-col").fadeOut()
-                        $("#origDest-toggle-space-col").fadeOut();
-                    } else if (_this.selectedDimensionStrings.includes("space")){
-                            $("#gran-toggle-space-col").fadeIn()
-                            $("#origDest-toggle-space-col").fadeIn();                        
+                    if (_this.selectedVizName == "networkmap") {
+                        $("#dim-space-gran-select").parent().fadeOut();
+                        $("#origDest-toggle-space").parent().fadeOut();
                     }
                     event.preventDefault();
                 });
