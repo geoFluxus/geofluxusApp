@@ -6,9 +6,11 @@ define(['views/common/baseview',
         'visualizations/map',
         'openlayers',
         'utils/utils',
+        'bloodhound-js',
+        'corejs-typeahead'
     ],
 
-    function (BaseView, _, MonitorView, ImpactView, Collection, Map, ol, utils) {
+    function (BaseView, _, MonitorView, ImpactView, Collection, Map, ol, utils, Bloodhound, typeahead) {
 
         var FiltersView = BaseView.extend({
             initialize: function (options) {
@@ -204,6 +206,24 @@ define(['views/common/baseview',
 
             addEventListeners: function () {
                 var _this = this;
+
+                var companiesDisplay = new Bloodhound({
+                    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                    queryTokenizer: Bloodhound.tokenizers.whitespace,
+                    remote: {
+                        url: '/api/companies/',
+                        replace: function(url, query) {
+                            return url + "?q=" + query;
+                        }
+                    }
+                });
+                $('#remote .typeahead').typeahead({
+                    minLength: 1,
+                    highlight: true},
+                    {name: 'titles-display',
+                    display: 'name',
+                    source: companiesDisplay,
+                });
 
                 // render mode (monitor/impact)
                 $('.analyse-mode-radio-label').on("click", function(event) {

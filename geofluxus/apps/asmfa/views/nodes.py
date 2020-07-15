@@ -23,6 +23,7 @@ from geofluxus.apps.asmfa.serializers import (ActivityGroupCreateSerializer,
                                               ProcessCreateSerializer,
                                               CompanyCreateSerializer)
 from django.db.models import Count, Value, IntegerField
+from django.db.models import Q
 
 
 # Activity group
@@ -109,3 +110,29 @@ class CompanyViewSet(PostGetViewMixin,
         'list': CompanyListSerializer,
         'create': CompanyCreateSerializer
     }
+
+    def get_queryset(self, *args, **kwargs):
+        queryset = super(CompanyViewSet, self).get_queryset(*args, **kwargs)
+        query = self.request.GET.get('q')
+
+        if query:
+            queryset = queryset.filter(Q(name__icontains=query))
+
+        return queryset
+
+
+
+
+# from django.db.models import Q
+# from django.views.generic.list import ListView
+# from django.views.decorators.http import require_http_methods
+# from django.http import JsonResponse
+#
+# class CompanyListView(ListView):
+#     model = Company
+#     template_name = 'some_template.html'
+#
+#     def get_context_data(self, *args, **kwargs):
+#         context = super(CompanyListView, self).get_context_data(*args, **kwargs)
+#         context['query'] = self.request.GET.get('q')
+#         return context
