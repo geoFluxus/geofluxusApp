@@ -62,11 +62,15 @@ define(['openlayers',
                 });
                 initlayers.push(basicLayer);
 
+                var fspan = document.createElement('i');
+                fspan.setAttribute('class', 'fa fa-expand');
+
                 var controls = ol.control.defaults({
                         attribution: true
                     })
                     .extend([new ol.control.FullScreen({
-                        source: options.el
+                        source: options.el,
+                        label: fspan,
                     })]);
 
                 var interactOptions = {

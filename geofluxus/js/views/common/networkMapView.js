@@ -109,10 +109,7 @@ define(['views/common/baseview',
                         _this.toggleNetwork();
                     });
 
-                    // ------------
-
                     var zoomBtnDiv = document.querySelector(".networkmap-wrapper .ol-zoom");
-
                     var resetMapViewBtn = document.createElement('button');
                     resetMapViewBtn.classList.add("btn-reset-view")
                     resetMapViewBtn.title = "Reset the map to the original position."
@@ -122,6 +119,16 @@ define(['views/common/baseview',
                         _this.NetworkMap.map.centerOnLayer('network');
                     })
                     zoomBtnDiv.appendChild(resetMapViewBtn);
+
+                    // Center network or scroll to viz on fullscreen enter/exit:
+                    document.addEventListener('fullscreenchange', (event) => {
+                        if (document.fullscreenElement) {
+                            _this.NetworkMap.map.centerOnLayer('network');
+                        } else {
+                            _this.NetworkMap.map.centerOnLayer('network');
+                            _this.scrollToVisualization();
+                        }
+                    });
 
                     this.scrollToVisualization();
                     this.options.flowsView.loader.deactivate();
@@ -145,7 +152,7 @@ define(['views/common/baseview',
                     $("#networkmap-legend").fadeToggle();
                 },
 
-                toggleNetwork: function(){
+                toggleNetwork: function () {
 
                 },
 
