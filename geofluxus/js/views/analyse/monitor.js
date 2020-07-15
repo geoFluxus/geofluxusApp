@@ -574,7 +574,8 @@ define(['views/common/baseview',
 
                             _this.selectedDimensions.label = _this.labels[_this.indicator];
 
-                            if (_this.flows.length == 0) {
+                            if (_this.flows.length == 0 ||
+                                _this.flows.every(function(flow) {return flow.amount == 0;})) {
                                 _this.loader.deactivate()
                                 $(".no-data-found").fadeIn();
                                 $(".no-data-found").addClass("d-flex");
