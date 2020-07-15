@@ -13,8 +13,6 @@ define([
             this.darkMode = this.options.darkMode;
             this.showNetwork = this.options.showNetwork;
 
-            console.log(this.showNetwork)
-
             if (this.darkMode) {
                 this.fontColor = "white";
                 this.options.source = "dark";

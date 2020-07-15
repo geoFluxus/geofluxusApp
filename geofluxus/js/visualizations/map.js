@@ -7,7 +7,7 @@ define(['openlayers',
                 var _this = this;
                 this.idCounter = 0;
                 this.mapProjection = options.projection || 'EPSG:3857';
-                this.center = options.center || [13.4, 52.5];
+                this.center = options.center || [0, 0];
                 this.center = ol.proj.transform(this.center, 'EPSG:4326', this.mapProjection);
                 var showControls = (options.showControls != false) ? true : false,
                     enableZoom = (options.enableZoom != false) ? true : false,
@@ -16,7 +16,7 @@ define(['openlayers',
                 this.view = new ol.View({
                     projection: this.mapProjection,
                     center: this.center,
-                    zoom: options.zoom || 10
+                    zoom: options.zoom || 1
                 });
                 this.layers = {};
                 var initlayers = [];
@@ -677,9 +677,9 @@ define(['openlayers',
                 var layer = this.layers[layername],
                     source = layer.getSource();
 
-                this.map.getView().fit(source.getExtent(), this.map.getSize());
-                //console.log(ol.proj.transform(this.map.getView().getCenter(), this.mapProjection, 'EPSG:4326'));
-                //console.log(this.map.getView().getZoom());
+                if (source.getFeatures().length) {
+                    this.map.getView().fit(source.getExtent(), this.map.getSize());
+                }
             }
 
             toggleDrawing(layername, options) {

@@ -125,9 +125,9 @@ define(['views/common/baseview',
                     // Center network or scroll to viz on fullscreen enter/exit:
                     document.addEventListener('fullscreenchange', (event) => {
                         if (document.fullscreenElement) {
-                            _this.NetworkMap.map.centerOnLayer('network');
+                            _this.NetworkMap.map.centerOnLayer('flows');
                         } else {
-                            _this.NetworkMap.map.centerOnLayer('network');
+                            _this.NetworkMap.map.centerOnLayer('flows');
                             _this.scrollToVisualization();
                         }
                     });
