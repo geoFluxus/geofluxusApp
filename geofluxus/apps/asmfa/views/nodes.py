@@ -6,7 +6,8 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Activity,
                                          ProcessGroup,
                                          Process,
-                                         Company)
+                                         Company,
+                                         Actor)
 from geofluxus.apps.asmfa.serializers import (ActivityGroupSerializer,
                                               ActivitySerializer,
                                               ProcessGroupSerializer,
@@ -116,6 +117,16 @@ class CompanyViewSet(PostGetViewMixin,
         query = self.request.GET.get('q')
 
         if query:
-            queryset = queryset.filter(Q(name__icontains=query))
+            # collect all user datasets
+            import json
+            datasets = json.loads(self.request.GET.get('datasets'))
+
+            # retrieve company ids from actors belonging to those datasets
+            ids = Actor.objects.filter(dataset__id__in=datasets)\
+                               .values_list('company', flat=True)
+
+            # filter companies based on id & name
+            queryset = queryset.filter(id__in=ids)\
+                               .filter(name__icontains=query)
 
         return queryset

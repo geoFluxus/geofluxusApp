@@ -1127,6 +1127,7 @@ define(['views/common/baseview',
                     // reset group areas
                     _this[group].selectedAreas = [];
                     _this[group].adminLevel = _this.idOfCountryLevel;
+                    _this[group].selectedActors = [];
 
                     // reset area selections
                     $(".areaSelections-" + group).hide();
