@@ -791,18 +791,28 @@ define(['views/common/baseview',
                     // Origin and Destination actor filter:
                     originAndDestination.forEach(function (group) {
 
+                        var actorFilter = $('#' + group + '-actor-select');
+
                         // Set actor ids:
                         var actorIds = config.flows[group + '__company__id__in'];
-                        $('#' + group + '-actor-select').val(actorIds);
-                        
+                        actorFilter.val(actorIds);
+
                         var actorObjects = config[group].actorObjects;
 
+
                         if (actorObjects !== undefined) {
+
                             var actorOptionsHtml = "";
                             actorObjects.forEach(actor => {
-                                actorOptionsHtml += '<option value="' + actor.id + '" title="' + actor.name + '" selected="selected">' + actor.name + '</option>'
+                                actorOptionsHtml += '<option value="' + actor.id + '" title="' + actor.name + '" selected="selected">' + actor.name + '</option>';
                             });
-                            $('#' + group + '-actor-select optgroup').html(actorOptionsHtml);
+                            
+                            console.log(actorOptionsHtml);
+
+                            $('#' + group + '-actor-select').html(actorOptionsHtml);
+
+                            actorFilter.append(actorOptionsHtml);
+                            // actorFilter.selectpicker("refresh");
                         }
                     })
 
