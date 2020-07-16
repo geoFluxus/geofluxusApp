@@ -97,4 +97,5 @@ class CompanySerializer(HyperlinkedModelSerializer):
 
 class CompanyListSerializer(CompanySerializer):
     class Meta(CompanySerializer.Meta):
-        fields = ('name',)
+        fields = ('id',
+                  'name',)

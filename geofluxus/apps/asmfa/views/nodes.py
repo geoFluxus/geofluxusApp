@@ -119,20 +119,3 @@ class CompanyViewSet(PostGetViewMixin,
             queryset = queryset.filter(Q(name__icontains=query))
 
         return queryset
-
-
-
-
-# from django.db.models import Q
-# from django.views.generic.list import ListView
-# from django.views.decorators.http import require_http_methods
-# from django.http import JsonResponse
-#
-# class CompanyListView(ListView):
-#     model = Company
-#     template_name = 'some_template.html'
-#
-#     def get_context_data(self, *args, **kwargs):
-#         context = super(CompanyListView, self).get_context_data(*args, **kwargs)
-#         context['query'] = self.request.GET.get('q')
-#         return context
