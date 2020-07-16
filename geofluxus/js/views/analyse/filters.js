@@ -1095,10 +1095,10 @@ define(['views/common/baseview',
                 // origin / destination role & in-or-out toggle
                 var groups = ['origin', 'destination']
                 groups.forEach(function (group) {
+                    $('#' + group + '-actor-select').val("");
                     $("#" + group + "-role-radio-both").click();
                     $(_this[group].inOrOut).bootstrapToggle("off");
                 })
-
 
                 // get all groups
                 var groups = Object.keys(this.filters);
