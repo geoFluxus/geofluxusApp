@@ -21,7 +21,7 @@ def datasets(user):
 def isDemoUser(user):
     # check all user groups
     groups = user.groups.values_list('name', flat=True)
-    print(groups)
+
     if 'Demo' in groups:
         return True
     return False
