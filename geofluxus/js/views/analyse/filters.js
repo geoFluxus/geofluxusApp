@@ -792,8 +792,8 @@ define(['views/common/baseview',
                     originAndDestination.forEach(function (group) {
 
                         // Set actor ids:
-                        var actorIds = config.flows[group + '__company__id__in']
-                        $('#' + group + '-actor-select').val(actorIds)
+                        var actorIds = config.flows[group + '__company__id__in'];
+                        $('#' + group + '-actor-select').val(actorIds);
                         
                         var actorObjects = config[group].actorObjects;
 
@@ -802,7 +802,7 @@ define(['views/common/baseview',
                             actorObjects.forEach(actor => {
                                 actorOptionsHtml += '<option value="' + actor.id + '" title="' + actor.name + '" selected="selected">' + actor.name + '</option>'
                             });
-                            $('#' + group + '-actor-select optgroup').html(actorOptionsHtml)
+                            $('#' + group + '-actor-select optgroup').html(actorOptionsHtml);
                         }
                     })
 
@@ -1127,7 +1127,6 @@ define(['views/common/baseview',
                     // reset group areas
                     _this[group].selectedAreas = [];
                     _this[group].adminLevel = _this.idOfCountryLevel;
-                    _this[group].selectedActors = [];
 
                     // reset area selections
                     $(".areaSelections-" + group).hide();
