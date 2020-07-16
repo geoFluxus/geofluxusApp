@@ -51,7 +51,7 @@ define(['views/common/baseview',
                     filtersView: this.filtersView,
                     levels: this.areaLevels,
                     mode: "impact",
-                    titleNumber: 5,
+                    titleNumber: 4,
                 });
             },
 
