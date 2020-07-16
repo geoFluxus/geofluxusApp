@@ -78,16 +78,18 @@
             <div id="collapseOriginBlock" class="collapse show" aria-labelledby="card-header-collapse-origin"
                 data-parent="#filterBlock">
                 <div class="card-body">
-
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="origin-actor-select">Select specific <strong>companies</strong>:</label>
-                            <select name="origin-actor-select" id="origin-actor-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
-                                style="resize: vertical;">
-                            </select>
+                   
+                    {% if not request.user|isDemoUser %}
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="origin-actor-select">Select specific <strong>companies</strong>:</label>
+                                <select name="origin-actor-select" id="origin-actor-select" multiple
+                                    class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
+                                    style="resize: vertical;">
+                                </select>
+                            </div>
                         </div>
-                    </div>
+                    {% endif %}
 
                     <div class="row">
                         <div class="col-md-10 mt-2">
@@ -321,15 +323,17 @@
                 data-parent="#filterBlock">
                 <div class="card-body">
 
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="destination-actor-select">Select specific <strong>companies</strong>:</label>
-                            <select name="destination-actor-select" id="destination-actor-select" multiple
+                    {% if not request.user|isDemoUser %}                  
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="destination-actor-select">Select specific <strong>companies</strong>:</label>
+                                <select name="destination-actor-select" id="destination-actor-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
                             </select>
                         </div>
                     </div>
+                    {% endif %}
 
                     <div class="row">
                         <div class="col-md-10">
