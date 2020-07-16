@@ -1,7 +1,7 @@
 define([
     'd3',
     'd3-brush',
-    'visualizations/legend.js',
+    'visualizations/d3plus/legend.js',
 ], function (d3, d3brush, legend) {
     /**
      *
