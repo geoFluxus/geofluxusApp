@@ -260,7 +260,8 @@ define(['views/common/baseview',
                             locale: {
                                 emptyTitle: 'Search for company...',
                                 searchPlaceholder: 'Search for company...',
-                                statusInitialized: 'Start typing to search...'
+                                statusInitialized: 'Start typing to search...',
+                                currentlySelected: "Currently selected:"
                             },
                             preprocessData: function (data) {
                                 var companies = [];
@@ -271,9 +272,6 @@ define(['views/common/baseview',
                                         companies.push({
                                             'value': curr.id,
                                             'text': curr.name,
-                                            'data': {
-                                                'id': curr.id,
-                                            },
                                         });
                                     }
                                 }
