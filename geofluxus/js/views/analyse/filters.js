@@ -204,7 +204,8 @@ define(['views/common/baseview',
                     // initialize group object without areas
                     _this[group] = {
                         'selectedAreas': [],
-                        'adminLevel': _this.idOfCountryLevel
+                        'adminLevel': _this.idOfCountryLevel,
+                        'selectedActors': []
                     };
 
                     // get group filters
@@ -239,8 +240,8 @@ define(['views/common/baseview',
             addEventListeners: function () {
                 var _this = this;
 
-                ["origin", "destination"].forEach(element => {
-                    $('#' + element + '-actor-select')
+                ["origin", "destination"].forEach(group => {
+                    $('#' + group + '-actor-select')
                         .selectpicker({
                             liveSearch: true
                         })
@@ -280,6 +281,11 @@ define(['views/common/baseview',
                             },
                             preserveSelected: true
                         });
+
+                    // Store selection:
+                    $("#" + group + "-actor-select").on('changed.bs.select', function () {
+                        _this[group].selectedActors = $("#" + group + "-actor-select").val();
+                    });
                 });
 
 
@@ -1163,6 +1169,12 @@ define(['views/common/baseview',
                 // origin/destination in-or-out & role
                 var groups = ['origin', 'destination']
                 groups.forEach(function (group) {
+                    // search for companies
+                    var selectedActors = _this[group].selectedActors;
+                    if (selectedActors.length) {
+                        filterParams.flows[group + '__company__id__in'] = selectedActors;
+                    }
+
                     var inOrOut = _this[group].inOrOut;
                     filterParams[group].inOrOut = $(inOrOut).prop('checked') ? 'out' : 'in';
 
