@@ -204,7 +204,8 @@ define(['views/common/baseview',
                     // initialize group object without areas
                     _this[group] = {
                         'selectedAreas': [],
-                        'adminLevel': _this.idOfCountryLevel
+                        'adminLevel': _this.idOfCountryLevel,
+                        'selectedActors': []
                     };
 
                     // get group filters
@@ -239,7 +240,9 @@ define(['views/common/baseview',
             addEventListeners: function () {
                 var _this = this;
 
-                $('#origin-actor-select')
+                ['origin', 'destination'].forEach(function(group) {
+                    _this[group].actorSelect =
+                    $('#' + group + '-actor-select')
                     .selectpicker({
                         liveSearch: true
                     })
@@ -280,15 +283,11 @@ define(['views/common/baseview',
                         preserveSelected: true
                     });
 
-
-
-                // test select
-                $("#origin-actor-select").on('changed.bs.select', function(){
-                    console.log($("#origin-actor-select").val());
-                });
-
-
-
+                    // store
+                    $("#" + group + "-actor-select").on('changed.bs.select', function(){
+                        _this[group].selectedActors = $("#" + group + "-actor-select").val();
+                    });
+                })
 
                 // render mode (monitor/impact)
                 $('.analyse-mode-radio-label').on("click", function (event) {
@@ -1170,6 +1169,12 @@ define(['views/common/baseview',
                 // origin/destination in-or-out & role
                 var groups = ['origin', 'destination']
                 groups.forEach(function (group) {
+                    // search for companies
+                    var selectedActors = _this[group].selectedActors;
+                    if (selectedActors.length) {
+                        filterParams.flows[group + '__company__id__in'] = selectedActors;
+                    }
+
                     var inOrOut = _this[group].inOrOut;
                     filterParams[group].inOrOut = $(inOrOut).prop('checked') ? 'out' : 'in';
 
