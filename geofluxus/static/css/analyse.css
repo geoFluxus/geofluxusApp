@@ -71,7 +71,7 @@
     box-shadow: none !important;
 }
 
-.flowFilterSubtitle {
+.subtitle {
     margin-top: 1.3rem !important;
     font-weight: bolder;
 }
@@ -92,7 +92,7 @@
     border-bottom-right-radius: 18px !important;
 }
 
-.flowFilterSubtitle {
+.subtitle {
     margin-top: 2em;
 }
 
