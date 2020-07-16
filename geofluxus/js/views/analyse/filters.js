@@ -261,7 +261,7 @@ define(['views/common/baseview',
                             locale: {
                                 emptyTitle: 'Search for company...',
                                 searchPlaceholder: 'Search for company...',
-                                statusInitialized: 'Start typing to search...',
+                                statusInitialized: '<span style="margin-left: 1rem;">Start typing to search...</span>',
                                 currentlySelected: "Currently selected:"
                             },
                             preprocessData: function (data) {
@@ -786,33 +786,52 @@ define(['views/common/baseview',
                     var flows = Object.assign({}, config.flows); // copy object, we will delete properties!!
                     $(this.flows.datasetSelect).val(flows.datasets);
 
-
                     var originAndDestination = ['origin', 'destination'];
                     // Origin and Destination actor filter:
                     originAndDestination.forEach(function (group) {
 
                         var actorFilter = $('#' + group + '-actor-select');
-
-                        // Set actor ids:
-                        var actorIds = config.flows[group + '__company__id__in'];
-                        actorFilter.val(actorIds);
-
                         var actorObjects = config[group].actorObjects;
 
-
-                        if (actorObjects !== undefined) {
+                        var actorIds = config.flows[group + '__company__id__in']
+                        if (actorIds !== undefined) {
+                            actorFilter.val(actorIds)
 
                             var actorOptionsHtml = "";
+                            var actorNames = [];
                             actorObjects.forEach(actor => {
                                 actorOptionsHtml += '<option value="' + actor.id + '" title="' + actor.name + '" selected="selected">' + actor.name + '</option>';
+                                actorNames.push(actor.name);
                             });
-                            
+
+                        
                             console.log(actorOptionsHtml);
 
-                            $('#' + group + '-actor-select').html(actorOptionsHtml);
+                            $.fn.ajaxSelectPickerRefresh = function () {
+                                return this.each(function () {
+                                    if (!$(this).data('AjaxBootstrapSelect')) return;
+                                    var picker = $(this).data('AjaxBootstrapSelect');
+                                    var selected = [];
+                                    var selectValues = picker.$element.find('option:selected');
+                                    for (var i = 0; i < selectValues.length; i++) {
+                                        selected.push({
+                                            value: selectValues[i].value,
+                                            text: selectValues[i].text,
+                                            class: "",
+                                            data: {},
+                                            preserved: true,
+                                            selected: true
+                                        });
+                                    }
+                                    picker.list.selected = selected;
+                                });
+                            }
+                            actorFilter.append(actorOptionsHtml).selectpicker('refresh').ajaxSelectPickerRefresh();
+                            $("." + group + "-actor-select-col button").attr("title", actorNames.join(", "));
+                            $("." + group + "-actor-select-col .filter-option-inner-inner").html(actorNames.join(", "));
 
-                            actorFilter.append(actorOptionsHtml);
-                            // actorFilter.selectpicker("refresh");
+
+                            console.log("The actor filter has this value: ", actorFilter.val());
                         }
                     })
 
