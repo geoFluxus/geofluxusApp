@@ -786,9 +786,29 @@ define(['views/common/baseview',
                     var flows = Object.assign({}, config.flows); // copy object, we will delete properties!!
                     $(this.flows.datasetSelect).val(flows.datasets);
 
+
+                    var originAndDestination = ['origin', 'destination'];
+                    // Origin and Destination actor filter:
+                    originAndDestination.forEach(function (group) {
+
+                        // Set actor ids:
+                        var actorIds = config.flows[group + '__company__id__in']
+                        $('#' + group + '-actor-select').val(actorIds)
+                        
+                        var actorObjects = config[group].actorObjects;
+
+                        if (actorObjects !== undefined) {
+                            var actorOptionsHtml = "";
+                            actorObjects.forEach(actor => {
+                                actorOptionsHtml += '<option value="' + actor.id + '" title="' + actor.name + '" selected="selected">' + actor.name + '</option>'
+                            });
+                            $('#' + group + '-actor-select optgroup').html(actorOptionsHtml)
+                        }
+                    })
+
                     // Origin and Destination role:
-                    ['origin', 'destination'].forEach(function (group) {
-                        var role = flows[group + '_role'];
+                    originAndDestination.forEach(function (group) {
+                        var role = config[group + '_role'];
                         if (role !== undefined) {
                             // Trigger click event:
                             $("#" + group + "-role-radio-" + role).click();
@@ -1172,6 +1192,17 @@ define(['views/common/baseview',
                     var selectedActors = _this[group].selectedActors;
                     if (selectedActors.length) {
                         filterParams.flows[group + '__company__id__in'] = selectedActors;
+
+                        // Save actor objects:
+                        filterParams[group].actorObjects = [];
+                        $('#' + group + '-actor-select optgroup option').each(function (index, element) {
+
+                            filterParams[group].actorObjects.push({
+                                id: $(this).val(),
+                                name: $(this).attr("title"),
+                            })
+                        });
+
                     }
 
                     var inOrOut = _this[group].inOrOut;
