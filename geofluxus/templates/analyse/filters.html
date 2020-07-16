@@ -78,6 +78,29 @@
             <div id="collapseOriginBlock" class="collapse show" aria-labelledby="card-header-collapse-origin"
                 data-parent="#filterBlock">
                 <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-md-4" id="originActorSelectRow">
+                            <!-- <div id="remote" style="height: 7rem;">
+                                <input class="typeahead" placeholder="Search a company..." />
+                            </div> -->
+
+                            <select name="origin-actor-select" id="origin-actor-select" multiple
+                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
+                                style="resize: vertical;">
+                            <!-- <option selected value="-1">All (<%= activitygroups.count %>)</option>
+                            <option data-divider="true"></option> -->
+                            <!-- <% activitygroups.forEach(function(activity){ %>
+                                <option value="<%= activity.id %>"><%= activity.get('code') %>. <%= activity.get('name')[0].toUpperCase() + activity.get('name').slice(1).toLowerCase() %>
+                                </option>
+                            <% }); %> -->
+                            </select>
+
+
+
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="col-md-10">
 
@@ -149,10 +172,6 @@
                                         <input type="radio" id="origin-role-radio-treatment">Treatment
                                     </label>
 
-                                </div>
-
-                                <div id="remote" class="twitter-typeahead">
-                                    <input type="text" class="form-control input-lg typeahead tt-input" name="q" placeholder="Search a company..." />
                                 </div>
 
                                 <div class="d-inline buttonHelpiconContainer">

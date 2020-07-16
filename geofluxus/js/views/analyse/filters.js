@@ -6,11 +6,10 @@ define(['views/common/baseview',
         'visualizations/map',
         'openlayers',
         'utils/utils',
-        'bloodhound-js',
-        'corejs-typeahead'
+        'ajax-bootstrap-select',
     ],
 
-    function (BaseView, _, MonitorView, ImpactView, Collection, Map, ol, utils, Bloodhound, typeahead) {
+    function (BaseView, _, MonitorView, ImpactView, Collection, Map, ol, utils, ajaxSelectPicker) {
 
         var FiltersView = BaseView.extend({
             initialize: function (options) {
@@ -32,62 +31,93 @@ define(['views/common/baseview',
 
                 // group filters on hierarchy
                 this.filters = {
-                    'origin': [
-                        {'activitygroup': 'origin__activity__activitygroup__in',
-                         'activity':      'origin__activity__in'},
-                        {'processgroup':  'origin__process__processgroup__in',
-                         'process':       'origin__process__in'}
+                    'origin': [{
+                            'activitygroup': 'origin__activity__activitygroup__in',
+                            'activity': 'origin__activity__in'
+                        },
+                        {
+                            'processgroup': 'origin__process__processgroup__in',
+                            'process': 'origin__process__in'
+                        }
                     ],
-                    'destination': [
-                        {'activitygroup': 'destination__activity__activitygroup__in',
-                         'activity':      'destination__activity__in'},
-                        {'processgroup':  'destination__process__processgroup__in',
-                         'process':       'destination__process__in'}
+                    'destination': [{
+                            'activitygroup': 'destination__activity__activitygroup__in',
+                            'activity': 'destination__activity__in'
+                        },
+                        {
+                            'processgroup': 'destination__process__processgroup__in',
+                            'process': 'destination__process__in'
+                        }
                     ],
-                    'flows': [
-                        {'year':        'flowchain__month__year__in',
-                         'month':       'flowchain__month__in'},
-                        {'hazardous':   'flowchain__waste06__hazardous'},
-                        {'waste02':     'flowchain__waste06__waste04__waste02__in',
-                         'waste04':     'flowchain__waste06__waste04__in',
-                         'waste06':     'flowchain__waste06__in'},
-                        {'material':    'flowchain__materials__in'},
-                        {'product':     'flowchain__products__in'},
-                        {'composites':  'flowchain__composites__in'},
-                        {'route':       'flowchain__route'},
-                        {'collector':   'flowchain__collector'},
-                        {'clean':       'clean'},
-                        {'mixed':       'mixed'},
-                        {'direct':      'direct_use'},
-                        {'isComposite': 'composite'},
-                        {'dataset':     'datasets'}
+                    'flows': [{
+                            'year': 'flowchain__month__year__in',
+                            'month': 'flowchain__month__in'
+                        },
+                        {
+                            'hazardous': 'flowchain__waste06__hazardous'
+                        },
+                        {
+                            'waste02': 'flowchain__waste06__waste04__waste02__in',
+                            'waste04': 'flowchain__waste06__waste04__in',
+                            'waste06': 'flowchain__waste06__in'
+                        },
+                        {
+                            'material': 'flowchain__materials__in'
+                        },
+                        {
+                            'product': 'flowchain__products__in'
+                        },
+                        {
+                            'composites': 'flowchain__composites__in'
+                        },
+                        {
+                            'route': 'flowchain__route'
+                        },
+                        {
+                            'collector': 'flowchain__collector'
+                        },
+                        {
+                            'clean': 'clean'
+                        },
+                        {
+                            'mixed': 'mixed'
+                        },
+                        {
+                            'direct': 'direct_use'
+                        },
+                        {
+                            'isComposite': 'composite'
+                        },
+                        {
+                            'dataset': 'datasets'
+                        }
                     ]
                 }
 
                 // template model tags
                 // singular: plural form
                 this.tags = {
-                    'dataset':       'datasets',
+                    'dataset': 'datasets',
                     'activitygroup': 'activitygroups',
-                    'activity':      'activities',
-                    'processgroup':  'processgroups',
-                    'process':       'processes',
-                    'waste02':       'wastes02',
-                    'waste04':       'wastes04',
-                    'waste06':       'wastes06',
-                    'material':      'materials',
-                    'product':       'products',
-                    'composite':     'composites',
-                    'arealevel':     'arealevels',
-                    'year':          'years',
-                    'month':         'months',
-                    'filter':        'filters',
+                    'activity': 'activities',
+                    'processgroup': 'processgroups',
+                    'process': 'processes',
+                    'waste02': 'wastes02',
+                    'waste04': 'wastes04',
+                    'waste06': 'wastes06',
+                    'material': 'materials',
+                    'product': 'products',
+                    'composite': 'composites',
+                    'arealevel': 'arealevels',
+                    'year': 'years',
+                    'month': 'months',
+                    'filter': 'filters',
                 }
 
                 // model collections
                 // refer to collection via tag
                 this.collections = {};
-                Object.values(this.tags).forEach(function(tag) {
+                Object.values(this.tags).forEach(function (tag) {
                     var collection = new Collection([], {
                         apiTag: tag
                     });
@@ -97,7 +127,7 @@ define(['views/common/baseview',
                 // fetch model data
                 this.loader.activate();
                 var promises = [];
-                Object.values(this.collections).forEach(function(collection) {
+                Object.values(this.collections).forEach(function (collection) {
                     var promise = collection.fetch();
                     promises.push(promise);
                 })
@@ -170,20 +200,22 @@ define(['views/common/baseview',
 
                 // Initialize all filters:
                 var groups = Object.keys(this.filters);
-                groups.forEach(function(group) {
+                groups.forEach(function (group) {
                     // initialize group object without areas
-                    _this[group] = {'selectedAreas': [],
-                                    'adminLevel': _this.idOfCountryLevel};
+                    _this[group] = {
+                        'selectedAreas': [],
+                        'adminLevel': _this.idOfCountryLevel
+                    };
 
                     // get group filters
                     var filters = _this.filters[group];
 
-                    filters.forEach(function(filter) {
+                    filters.forEach(function (filter) {
                         // get filter fields
                         fields = Object.keys(filter);
 
                         // initialize field selectors
-                        fields.forEach(function(field) {
+                        fields.forEach(function (field) {
                             var selector = 'select[name="' + group + '-' + field.toLowerCase() + '-select"]';
                             _this[group][field + 'Select'] = _this.el.querySelector(selector);
                         })
@@ -207,26 +239,59 @@ define(['views/common/baseview',
             addEventListeners: function () {
                 var _this = this;
 
-                var companiesDisplay = new Bloodhound({
-                    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-                    queryTokenizer: Bloodhound.tokenizers.whitespace,
-                    remote: {
-                        url: '/api/companies/',
-                        replace: function(url, query) {
-                            return url + "?q=" + query;
-                        }
-                    }
-                });
-                $('#remote .typeahead').typeahead({
-                    minLength: 1,
-                    highlight: true},
-                    {name: 'titles-display',
-                    display: 'name',
-                    source: companiesDisplay,
+                $('#origin-actor-select')
+                    .selectpicker({
+                        liveSearch: true
+                    })
+                    .ajaxSelectPicker({
+                        ajax: {
+                            url: '/api/companies/',
+                            type: "get",
+                            data: function () {
+                                var params = {
+                                    q: '{{{q}}}'
+                                };
+                                // if (gModel.selectedGroup().hasOwnProperty('ContactGroupID')) {
+                                //     params.GroupID = gModel.selectedGroup().ContactGroupID;
+                                // }
+                                return params;
+                            }
+                        },
+                        locale: {
+                            emptyTitle: 'Search for company...'
+                        },
+                        preprocessData: function (data) {
+                            var companies = [];
+                            if (data.hasOwnProperty('results')) {
+                                var len = data.results.length;
+                                for (var i = 0; i < len; i++) {
+                                    var curr = data.results[i];
+                                    companies.push({
+                                        'value': curr.id,
+                                        'text': curr.name,
+                                        'data': {
+                                            'id': curr.id,
+                                        },
+                                    });
+                                }
+                            }
+                            return companies;
+                        },
+                        preserveSelected: true
+                    });
+
+
+
+                // test select
+                $("#origin-actor-select").on('changed.bs.select', function(){
+                    console.log($("#origin-actor-select").val());
                 });
 
+
+
+
                 // render mode (monitor/impact)
-                $('.analyse-mode-radio-label').on("click", function(event) {
+                $('.analyse-mode-radio-label').on("click", function (event) {
                     let mode = $(this).attr("data-mode");
 
                     if (mode != _this.mode) {
@@ -243,13 +308,13 @@ define(['views/common/baseview',
 
                 // origin/destination role buttons
                 groups = ['origin', 'destination']
-                groups.forEach(function(group) {
-                    $('.' + group + '-role').on("click", function(event) {
-                        let role =  $(this).attr('role'),
+                groups.forEach(function (group) {
+                    $('.' + group + '-role').on("click", function (event) {
+                        let role = $(this).attr('role'),
                             containers = ['production', 'treatment'];
 
                         _this[group].role = role;
-                        containers.forEach(function(container) {
+                        containers.forEach(function (container) {
                             $("." + group + "-" + container)[(container == role) ? 'fadeIn' : 'hide']();
                         })
 
@@ -299,13 +364,13 @@ define(['views/common/baseview',
                     $(select).selectpicker('refresh');
                 }
 
-                 // create menu based on parent field selection
+                // create menu based on parent field selection
                 function filterbyParent(evt, clickedIndex, checked) {
                     let ids = $(evt.target).val(),
                         group = evt.data.group,
                         parent = evt.data.parent,
                         child = evt.data.child;
-                        picker = _this[group][child + 'Select'],
+                    picker = _this[group][child + 'Select'],
                         tag = _this.tags[child];
 
                     // find child values
@@ -315,7 +380,7 @@ define(['views/common/baseview',
                     _this.fillSelectPicker(values, picker);
 
                     // show/hide child menu column on parent selection
-                    var column  = "#" + group + "-" + tag + "Col";
+                    var column = "#" + group + "-" + tag + "Col";
                     if (ids.length == 0 || ids[0] == "-1") {
                         $(column).fadeOut("fast");
                         $(picker).trigger("changed.bs.select"); // trigger change event
@@ -326,20 +391,20 @@ define(['views/common/baseview',
 
                 // Add event listeners to all filters:
                 var groups = Object.keys(this.filters);
-                groups.forEach(function(group) {
+                groups.forEach(function (group) {
                     // Loop through all filters
                     var filters = _this.filters[group];
-                    filters.forEach(function(filter) {
+                    filters.forEach(function (filter) {
                         var fields = Object.keys(filter);
 
-                        fields.forEach(function(field, idx) {
+                        fields.forEach(function (field, idx) {
                             var selector = $(_this[group][field + 'Select']); // field selector
-                                options = selector[0].options;                // selector options
+                            options = selector[0].options; // selector options
 
                             // Exclude non-fuzzy booleans (either true or false).
                             // To find them, check if there are options, including 'both'
                             if (!(options.length > 0 && options[0].value == 'both')) {
-                                
+
                                 // Add multiCheck event listener
                                 selector.on('changed.bs.select', multiCheck);
 
@@ -349,9 +414,12 @@ define(['views/common/baseview',
                                 // If there is a child field:
                                 if (next !== undefined) {
                                     // Add filterbyParent event listener. This will render child menu, filtered by current field:
-                                    selector.on('changed.bs.select',
-                                                {group: group, parent: field, child: next},
-                                                filterbyParent);
+                                    selector.on('changed.bs.select', {
+                                            group: group,
+                                            parent: field,
+                                            child: next
+                                        },
+                                        filterbyParent);
                                 }
                             }
                         })
@@ -390,13 +458,13 @@ define(['views/common/baseview',
             fillSelectPicker: function (values, picker) {
                 var html = "<option selected value='-1'>All (" + values.length + ")</option><option data-divider='true'></option>";
 
-                values.forEach(function(item) {
+                values.forEach(function (item) {
                     var attr = item.attributes,
                         id = attr.id,
                         code = (attr.code || attr.nace || attr.ewc_code || ""),
                         name = utils.capitalizeFirstLetter(attr.name || attr.ewc_name || ""),
                         dot = name == "" ? "" : ". ";
-                        hazardous = attr.hazardous ? "*" : "";
+                    hazardous = attr.hazardous ? "*" : "";
                     html += "<option class='dropdown-item' value='" + id + "'>" + code + dot + name + hazardous + "</option>";
                 });
 
@@ -686,7 +754,7 @@ define(['views/common/baseview',
 
                     // load selected areas
                     groups = Object.keys(this.filters);
-                    groups.forEach(function(group) {
+                    groups.forEach(function (group) {
                         var savedConfig = config[group],
                             adminLevel = savedConfig.adminLevel,
                             selectedAreas = savedConfig.selectedAreas,
@@ -721,7 +789,7 @@ define(['views/common/baseview',
                     $(this.flows.datasetSelect).val(flows.datasets);
 
                     // Origin and Destination role:
-                    ['origin', 'destination'].forEach(function(group) {
+                    ['origin', 'destination'].forEach(function (group) {
                         var role = flows[group + '_role'];
                         if (role !== undefined) {
                             // Trigger click event:
@@ -754,12 +822,12 @@ define(['views/common/baseview',
                             pickers = [picker];
 
                         var tag = _this.tags[field];
-                        parents.forEach(function(parent) {
+                        parents.forEach(function (parent) {
                             // get current field collection
                             var collection = _this.collections[tag];
 
                             // filter collection with field values
-                            collection = collection.models.filter(function(item) {
+                            collection = collection.models.filter(function (item) {
                                 return val.includes(item.attributes.id.toString());
                             })
 
@@ -779,22 +847,22 @@ define(['views/common/baseview',
 
                         // update ALL selectors
                         // lowest -> highest in hierarchy
-                        pickers.reverse().forEach(function(picker) {
+                        pickers.reverse().forEach(function (picker) {
                             var field = picker[0],
                                 val = picker[1];
                             $(_this[group][field + 'Select']).selectpicker("val", val);
                         })
                     }
 
-                    groups.forEach(function(group) {
+                    groups.forEach(function (group) {
                         // get all group filters
                         var filters = _this.filters[group];
 
-                        filters.forEach(function(filter) {
+                        filters.forEach(function (filter) {
                             // get all filter fields// get all filter fields
                             fields = Object.keys(filter);
 
-                            fields.forEach(function(field, idx) {
+                            fields.forEach(function (field, idx) {
                                 // load value of filter field
                                 var val = flows[filter[field]];
 
@@ -802,10 +870,12 @@ define(['views/common/baseview',
                                 if (val !== undefined) {
                                     // if value is Array
                                     if (Array.isArray(val)) {
-                                        if (val.every(function(v) {return boolean[v] !== undefined})) {
+                                        if (val.every(function (v) {
+                                                return boolean[v] !== undefined
+                                            })) {
                                             // if so, turn into real boolean values
                                             var _val = [];
-                                            val.forEach(function(v) {
+                                            val.forEach(function (v) {
                                                 _val.push(boolean[v]);
                                             })
                                             val = _val;
@@ -1027,15 +1097,15 @@ define(['views/common/baseview',
 
                 // origin / destination role & in-or-out toggle
                 var groups = ['origin', 'destination']
-                groups.forEach(function(group) {
+                groups.forEach(function (group) {
                     $("#" + group + "-role-radio-both").click();
                     $(_this[group].inOrOut).bootstrapToggle("off");
                 })
 
-                
+
                 // get all groups
                 var groups = Object.keys(this.filters);
-                groups.forEach(function(group) {
+                groups.forEach(function (group) {
                     // reset group areas
                     _this[group].selectedAreas = [];
                     _this[group].adminLevel = _this.idOfCountryLevel;
@@ -1051,12 +1121,12 @@ define(['views/common/baseview',
 
                     // reset all group filters
                     var filters = _this.filters[group];
-                    filters.forEach(function(filter) {
+                    filters.forEach(function (filter) {
                         // get all filter fields
-                        var fields =  Object.keys(filter);
+                        var fields = Object.keys(filter);
 
                         // reset selectors
-                        fields.forEach(function(field) {
+                        fields.forEach(function (field) {
                             var selector = $(_this[group][field + 'Select']),
                                 options = selector[0];
                             if (options.length > 0) {
@@ -1098,8 +1168,8 @@ define(['views/common/baseview',
                 filterParams.flows['datasets'] = ids;
 
                 // origin/destination in-or-out & role
-                var groups= ['origin', 'destination']
-                groups.forEach(function(group) {
+                var groups = ['origin', 'destination']
+                groups.forEach(function (group) {
                     var inOrOut = _this[group].inOrOut;
                     filterParams[group].inOrOut = $(inOrOut).prop('checked') ? 'out' : 'in';
 
@@ -1115,15 +1185,17 @@ define(['views/common/baseview',
                     // might be a list of values or only one
                     if (Array.isArray(value)) {
                         // check if we have only boolean values
-                        if (value.every(function(v) {return _this.boolean[v] !== undefined})) {
+                        if (value.every(function (v) {
+                                return _this.boolean[v] !== undefined
+                            })) {
                             // if so, turn into real boolean values
                             var _value = [];
-                            value.forEach(function(v) {
+                            value.forEach(function (v) {
                                 _value.push(_this.boolean[v]);
                             })
                             value = _value;
                         }
-                    // unique value -> only non-fuzzy booleans (true or false)
+                        // unique value -> only non-fuzzy booleans (true or false)
                     } else {
                         value = _this.boolean[value];
                     }
@@ -1132,7 +1204,7 @@ define(['views/common/baseview',
 
                 // load filters to request
                 groups = Object.keys(this.filters);
-                groups.forEach(function(group) {
+                groups.forEach(function (group) {
                     // get group admin level & areas
                     filterParams[group].adminLevel = _this[group].adminLevel;
 
@@ -1146,12 +1218,12 @@ define(['views/common/baseview',
 
                     // get group filters
                     var filters = _this.filters[group];
-                    filters.forEach(function(filter) {
+                    filters.forEach(function (filter) {
                         // get filter fields
                         var fields = Object.keys(filter);
 
                         var _field = _value = null;
-                        fields.forEach(function(field) {
+                        fields.forEach(function (field) {
                             // retrieve filter value
                             var value = $(_this[group][field + 'Select']).val();
 
@@ -1172,10 +1244,14 @@ define(['views/common/baseview',
                         // if no value, do not include filter in request
                         if (_value) {
                             // save activity (group) only on 'production' role
-                            if (_this[group].role !== 'production' && _field.includes('activity')) {return;}
+                            if (_this[group].role !== 'production' && _field.includes('activity')) {
+                                return;
+                            }
 
                             // save process (group) only on 'treatment' role
-                            if (_this[group].role !== 'treatment' && _field.includes('process')) {return;}
+                            if (_this[group].role !== 'treatment' && _field.includes('process')) {
+                                return;
+                            }
 
                             // save to flows (non-spatial) fields
                             filterParams.flows[_field] = _value;
