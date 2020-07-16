@@ -80,29 +80,17 @@
                 <div class="card-body">
 
                     <div class="row">
-                        <div class="col-md-4" id="originActorSelectRow">
-                            <!-- <div id="remote" style="height: 7rem;">
-                                <input class="typeahead" placeholder="Search a company..." />
-                            </div> -->
-
+                        <div class="col-md-4">
+                            <label for="origin-actor-select">Select specific <strong>companies</strong>:</label>
                             <select name="origin-actor-select" id="origin-actor-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
-                            <!-- <option selected value="-1">All (<%= activitygroups.count %>)</option>
-                            <option data-divider="true"></option> -->
-                            <!-- <% activitygroups.forEach(function(activity){ %>
-                                <option value="<%= activity.id %>"><%= activity.get('code') %>. <%= activity.get('name')[0].toUpperCase() + activity.get('name').slice(1).toLowerCase() %>
-                                </option>
-                            <% }); %> -->
                             </select>
-
-
-
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-10">
+                        <div class="col-md-10 mt-2">
 
                             <label for="area-select-button-origin">Limit the <strong>origin</strong> of the waste flows
                                 to geographic
@@ -332,6 +320,17 @@
             <div id="collapseDestinationBlock" class="collapse" aria-labelledby="card-header-collapse-destination"
                 data-parent="#filterBlock">
                 <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="destination-actor-select">Select specific <strong>companies</strong>:</label>
+                            <select name="destination-actor-select" id="destination-actor-select" multiple
+                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
+                                style="resize: vertical;">
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="col-md-10">
 

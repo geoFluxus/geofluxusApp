@@ -239,55 +239,48 @@ define(['views/common/baseview',
             addEventListeners: function () {
                 var _this = this;
 
-                $('#origin-actor-select')
-                    .selectpicker({
-                        liveSearch: true
-                    })
-                    .ajaxSelectPicker({
-                        ajax: {
-                            url: '/api/companies/',
-                            type: "get",
-                            data: function () {
-                                var params = {
-                                    q: '{{{q}}}'
-                                };
-                                // if (gModel.selectedGroup().hasOwnProperty('ContactGroupID')) {
-                                //     params.GroupID = gModel.selectedGroup().ContactGroupID;
-                                // }
-                                return params;
-                            }
-                        },
-                        locale: {
-                            emptyTitle: 'Search for company...'
-                        },
-                        preprocessData: function (data) {
-                            var companies = [];
-                            if (data.hasOwnProperty('results')) {
-                                var len = data.results.length;
-                                for (var i = 0; i < len; i++) {
-                                    var curr = data.results[i];
-                                    companies.push({
-                                        'value': curr.id,
-                                        'text': curr.name,
-                                        'data': {
-                                            'id': curr.id,
-                                        },
-                                    });
+                ["origin", "destination"].forEach(element => {
+                    $('#' + element + '-actor-select')
+                        .selectpicker({
+                            liveSearch: true
+                        })
+                        .ajaxSelectPicker({
+                            minLength: 2,
+                            ajax: {
+                                url: '/api/companies/',
+                                type: "get",
+                                data: function () {
+                                    var params = {
+                                        q: '{{{q}}}'
+                                    }
+                                    return params;
                                 }
-                            }
-                            return companies;
-                        },
-                        preserveSelected: true
-                    });
-
-
-
-                // test select
-                $("#origin-actor-select").on('changed.bs.select', function(){
-                    console.log($("#origin-actor-select").val());
+                            },
+                            locale: {
+                                emptyTitle: 'Search for company...',
+                                searchPlaceholder: 'Search for company...',
+                                statusInitialized: 'Start typing to search...'
+                            },
+                            preprocessData: function (data) {
+                                var companies = [];
+                                if (data.hasOwnProperty('results')) {
+                                    var len = data.results.length;
+                                    for (var i = 0; i < len; i++) {
+                                        var curr = data.results[i];
+                                        companies.push({
+                                            'value': curr.id,
+                                            'text': curr.name,
+                                            'data': {
+                                                'id': curr.id,
+                                            },
+                                        });
+                                    }
+                                }
+                                return companies;
+                            },
+                            preserveSelected: true
+                        });
                 });
-
-
 
 
                 // render mode (monitor/impact)
