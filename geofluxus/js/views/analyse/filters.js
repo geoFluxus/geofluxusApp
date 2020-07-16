@@ -252,7 +252,8 @@ define(['views/common/baseview',
                                 type: "get",
                                 data: function () {
                                     var params = {
-                                        q: '{{{q}}}'
+                                        q: '{{{q}}}',
+                                        datasets: JSON.stringify(_this.getFilterParams().flows.datasets),
                                     }
                                     return params;
                                 }
