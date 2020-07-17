@@ -240,54 +240,7 @@ define(['views/common/baseview',
             addEventListeners: function () {
                 var _this = this;
 
-                ["origin", "destination"].forEach(group => {
-                    $('#' + group + '-actor-select')
-                        .selectpicker({
-                            liveSearch: true
-                        })
-                        .ajaxSelectPicker({
-                            minLength: 2,
-                            ajax: {
-                                url: '/api/companies/',
-                                type: "get",
-                                data: function () {
-                                    var params = {
-                                        q: '{{{q}}}',
-                                        datasets: JSON.stringify(_this.getFilterParams().flows.datasets),
-                                    }
-                                    return params;
-                                }
-                            },
-                            locale: {
-                                emptyTitle: 'Search for company...',
-                                searchPlaceholder: 'Search for company...',
-                                statusInitialized: '<span style="margin-left: 1rem;">Start typing to search...</span>',
-                                currentlySelected: "Currently selected:"
-                            },
-                            preprocessData: function (data) {
-                                var companies = [];
-                                if (data.hasOwnProperty('results')) {
-                                    var len = data.results.length;
-                                    for (var i = 0; i < len; i++) {
-                                        var curr = data.results[i];
-                                        companies.push({
-                                            'value': curr.id,
-                                            'text': curr.name,
-                                        });
-                                    }
-                                }
-                                return companies;
-                            },
-                            preserveSelected: true
-                        });
-
-                    // Store selection:
-                    $("#" + group + "-actor-select").on('changed.bs.select', function () {
-                        _this[group].selectedActors = $("#" + group + "-actor-select").val();
-                        $("." + group + "-actor-select-col .status").show();
-                    });
-                });
-
+                this.initializeActorFilters();
 
                 // render mode (monitor/impact)
                 $('.analyse-mode-radio-label').on("click", function (event) {
@@ -446,6 +399,57 @@ define(['views/common/baseview',
                 $(document).on('blur', 'input', function () {
                     focusedElement = null;
                 })
+            },
+
+
+            initializeActorFilters: function () {
+                ["origin", "destination"].forEach(group => {
+                    $('#' + group + '-actor-select')
+                        .selectpicker({
+                            liveSearch: true
+                        })
+                        .ajaxSelectPicker({
+                            minLength: 2,
+                            ajax: {
+                                url: '/api/companies/',
+                                type: "get",
+                                data: function () {
+                                    var params = {
+                                        q: '{{{q}}}',
+                                        datasets: JSON.stringify(_this.getFilterParams().flows.datasets),
+                                    }
+                                    return params;
+                                }
+                            },
+                            locale: {
+                                emptyTitle: 'Search for company...',
+                                searchPlaceholder: 'Search for company...',
+                                statusInitialized: '<span style="margin-left: 1rem;">Start typing to search...</span>',
+                                currentlySelected: "Currently selected:"
+                            },
+                            preprocessData: function (data) {
+                                var companies = [];
+                                if (data.hasOwnProperty('results')) {
+                                    var len = data.results.length;
+                                    for (var i = 0; i < len; i++) {
+                                        var curr = data.results[i];
+                                        companies.push({
+                                            'value': curr.id,
+                                            'text': curr.name,
+                                        });
+                                    }
+                                }
+                                return companies;
+                            },
+                            preserveSelected: true
+                        });
+
+                    // Store selection:
+                    $("#" + group + "-actor-select").on('changed.bs.select', function () {
+                        _this[group].selectedActors = $("#" + group + "-actor-select").val();
+                        $("." + group + "-actor-select-col .status").show();
+                    });
+                });
             },
 
             /**
@@ -1138,24 +1142,11 @@ define(['views/common/baseview',
             resetFiltersToDefault: function () {
                 _this = this;
 
-                // origin / destination role & in-or-out toggle
                 var groups = ['origin', 'destination']
                 groups.forEach(function (group) {
-                    $('#' + group + '-actor-select').html("");
-                    
-                    $('.' + group + '-actor-select-col optgroup').html("");
-                    
-                    $('.' + group + '-actor-select-col .dropdown-item.opt.selected').each(function (index, element) {
-                        $(this).remove();
-                    });
-                    
-                    $("." + group + "-actor-select-col button").attr("title", "Nothing selected");
-                    $("." + group + "-actor-select-col .filter-option-inner-inner").html("Search for company...");
-                    $("." + group + "-actor-select-col .dropdown-menu.inner.show").html("");
-                    $("." + group + "-actor-select-col .status").hide();
-                    
-                    $('#' + group + '-actor-select').val("");
-                    console.log($('#' + group + '-actor-select').val());
+                    $('#' + group + '-actor-select').selectpicker('val', []);
+                    $('#' + group + '-actor-select').selectpicker('deselectAll');
+                    _this[group].selectedActors = [];
 
                     $("#" + group + "-role-radio-both").click();
                     $(_this[group].inOrOut).bootstrapToggle("off");
