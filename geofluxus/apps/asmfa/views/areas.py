@@ -53,17 +53,17 @@ class AreaInLevelViewSet(PostGetViewMixin,
 
     def list(self, request, level_pk=None):
         queryset = Area.objects.simplified(level=level_pk)
-        serializer = AreaSerializer(queryset,
-                                    many=True,
-                                    context={'request': request})
+        serializer = AreaListSerializer(queryset,
+                                        many=True,
+                                        context={'request': request})
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None, level_pk=None):
         queryset = Area.objects.filter(pk=pk,
                                        adminlevel=level_pk)
-        serializer = AreaSerializer(queryset,
-                                    many=True,
-                                    context={'request': request})
+        serializer = AreaListSerializer(queryset,
+                                        many=True,
+                                        context={'request': request})
         return Response(serializer.data)
 
 
