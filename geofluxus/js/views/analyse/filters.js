@@ -4,12 +4,12 @@ define(['views/common/baseview',
         'views/analyse/impact',
         'collections/collection',
         'visualizations/map',
-        'openlayers',
         'utils/utils',
         'ajax-bootstrap-select',
+        'openlayers',
     ],
 
-    function (BaseView, _, MonitorView, ImpactView, Collection, Map, ol, utils, ajaxSelectPicker) {
+    function (BaseView, _, MonitorView, ImpactView, Collection, Map, utils) {
 
         var FiltersView = BaseView.extend({
             initialize: function (options) {
@@ -400,7 +400,6 @@ define(['views/common/baseview',
                     focusedElement = null;
                 })
             },
-
 
             initializeActorFilters: function () {
                 var _this = this;
