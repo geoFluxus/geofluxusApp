@@ -403,6 +403,7 @@ define(['views/common/baseview',
 
 
             initializeActorFilters: function () {
+                var _this = this;
                 ["origin", "destination"].forEach(group => {
                     $('#' + group + '-actor-select')
                         .selectpicker({
