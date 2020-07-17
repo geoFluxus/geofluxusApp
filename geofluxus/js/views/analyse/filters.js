@@ -838,7 +838,7 @@ define(['views/common/baseview',
 
                     // Origin and Destination role:
                     originAndDestination.forEach(function (group) {
-                        var role = config[group + '_role'];
+                        var role = flows[group + '_role'];
                         if (role !== undefined) {
                             // Trigger click event:
                             $("#" + group + "-role-radio-" + role).click();
@@ -1291,6 +1291,7 @@ define(['views/common/baseview',
 
                         var _field = _value = null;
                         fields.forEach(function (field) {
+
                             // retrieve filter value
                             var value = $(_this[group][field + 'Select']).val();
 
@@ -1309,7 +1310,7 @@ define(['views/common/baseview',
                         })
 
                         // if no value, do not include filter in request
-                        if (_value) {
+                        if (_value != null) {
                             // save activity (group) only on 'production' role
                             if (_this[group].role !== 'production' && _field.includes('activity')) {
                                 return;
