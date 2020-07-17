@@ -796,7 +796,7 @@ define(['views/common/baseview',
                         var actorIds = config.flows[group + '__company__id__in'];
                         if (actorIds !== undefined) {
                             _this[group].selectedActors = actorIds;
-                            
+
                             var actorOptionsHtml = "<optgroup label='Currently selected:'>";
                             var actorNames = [];
                             actorObjects.forEach(actor => {
@@ -1141,7 +1141,22 @@ define(['views/common/baseview',
                 // origin / destination role & in-or-out toggle
                 var groups = ['origin', 'destination']
                 groups.forEach(function (group) {
+                    $('#' + group + '-actor-select').html("");
+                    
+                    $('.' + group + '-actor-select-col optgroup').html("");
+                    
+                    $('.' + group + '-actor-select-col .dropdown-item.opt.selected').each(function (index, element) {
+                        $(this).remove();
+                    });
+                    
+                    $("." + group + "-actor-select-col button").attr("title", "Nothing selected");
+                    $("." + group + "-actor-select-col .filter-option-inner-inner").html("Search for company...");
+                    $("." + group + "-actor-select-col .dropdown-menu.inner.show").html("");
+                    $("." + group + "-actor-select-col .status").hide();
+                    
                     $('#' + group + '-actor-select').val("");
+                    console.log($('#' + group + '-actor-select').val());
+
                     $("#" + group + "-role-radio-both").click();
                     $(_this[group].inOrOut).bootstrapToggle("off");
                 })
