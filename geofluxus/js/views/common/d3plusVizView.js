@@ -3,6 +3,7 @@ define(['views/common/baseview',
         'visualizations/d3plus',
         'file-saver',
         'utils/utils',
+        'utils/enrichFlows',
     ],
 
     function (
@@ -11,6 +12,7 @@ define(['views/common/baseview',
         d3plus,
         FileSaver,
         utils,
+        enrichFlows
     ) {
         /**
          * @author Evert Van Hirtum
@@ -33,15 +35,34 @@ define(['views/common/baseview',
                     _.bindAll(this, 'exportCSV');
                     _.bindAll(this, 'toggleLegend');
 
+                    this.dimensions = {
+                        'time': {
+                            'year': 'Year',
+                            'month': 'Month',
+                        },
+                        'economicActivity': {
+                            'activitygroup': 'Activity group',
+                            'activity': 'Activity',
+                        },
+                        'treatmentMethod': {
+                            'processgroup': 'Treatment method group',
+                            'process': 'Treatment method',
+                        },
+                        'material': {
+                            'waste02': 'EWC Chapter',
+                            'waste04': 'EWC Sub-Chapter',
+                            'waste06': 'EWC Entry'
+                        }
+                    }
+
                     this.label = options.dimensions.label;
                     this.tooltipConfig = {
                         tbody: [
                             [this.label, function (d) {
                                 return d3plus.formatAbbreviate(d["amount"], utils.returnD3plusFormatLocale()) + " t"
-                            }]
+                            }]  
                         ]
                     };
-
                 },
 
                 events: {
@@ -68,7 +89,7 @@ define(['views/common/baseview',
                     event.stopImmediatePropagation();
                 },
 
-                toggleLegend: function (event) {
+                toggleLegend: function () {
                     $(this.options.el).html("");
                     this.hasLegend = !this.hasLegend;
                     this.render();
@@ -77,16 +98,27 @@ define(['views/common/baseview',
                 toggleDarkMode: function () {
                     $(this.options.el).html("");
                     this.isDarkMode = !this.isDarkMode;
-
                     $(".viz-wrapper-div").toggleClass("lightMode");
+                    this.render();
+                },
 
+                flipGrouping: function() {
+                    $(this.options.el).html("");
+                    this.groupBy = [this.x, this.x = this.groupBy][0];
+                    this.flows = enrichFlows.assignColorsByProperty(this.flows, this.groupBy);
                     this.render();
                 },
 
                 exportCSV: function (event) {
                     const items = this.options.flows;
                     const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-                    const header = Object.keys(items[0])
+
+                    let fields = ["amount", "Code", "Name"];
+                    let header = Object.keys(items[0]);
+                    header = header.filter(prop => {
+                        return fields.some(f => prop.includes(f))
+                    })
+
                     let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
                     csv.unshift(header.join(','))
                     csv = csv.join('\r\n')

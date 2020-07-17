@@ -88,6 +88,7 @@ input {
 
 .btn {
     border-radius: 18px;
+    line-height: 20px;
 }
 
 .btn-default {

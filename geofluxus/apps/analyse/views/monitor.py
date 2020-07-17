@@ -1,6 +1,7 @@
 from geofluxus.apps.asmfa.views import FilterFlowViewSet
 from geofluxus.apps.asmfa.models import (Area,
                                          AdminLevel,
+                                         Month,
                                          Activity,
                                          Process,
                                          Waste04,
@@ -8,6 +9,8 @@ from geofluxus.apps.asmfa.models import (Area,
                                          Actor)
 from collections import OrderedDict
 from django.db.models import (F, Sum, Q, Case, When, IntegerField)
+from django.db import connections
+import json
 
 
 DIMS = {
@@ -19,6 +22,7 @@ DIMS = {
 }
 
 MODELS = {
+    'month': Month,
     'activity': Activity,
     'process':  Process,
     'waste04':  Waste04,
@@ -36,9 +40,54 @@ class MonitorViewSet(FilterFlowViewSet):
         self.levels = []     # dimension granularity
         self.fields = []     # exact field to search
 
-    def annotate_amounts(self, queryset, indicator, impactSources):
+    def annotate_amounts(self, queryset, indicator, impactSources, format):
         queryset = queryset.annotate(amount=F('flowchain__amount'))
         return queryset
+
+    def process_network(self, queryset):
+        # annotate routing seq
+        # exclude flows with no routing
+        queryset = queryset.annotate(sequence=F('routing__seq'))\
+                           .values('sequence', 'amount')
+
+        # load ways with flows
+        ways = {}
+        for flow in queryset:
+            seq, amount = flow['sequence'], flow['amount']
+            if not amount: amount = 0
+            if seq:
+                seq = [int(id) for id in seq.split('@')]
+                for id in seq:
+                    if id in ways:
+                        ways[id] += amount
+                    else:
+                        ways[id] = amount
+
+        return self.serialize_network(ways)
+
+    def serialize_network(self, ways):
+        data = []
+
+        # fetch network (without distances)
+        cursor = connections['routing'].cursor()
+        query = '''
+                SELECT id,
+                       ST_AsGeoJSON(the_geom)
+                FROM ways
+                '''
+        cursor.execute(query)
+
+        # serialize
+        for way in cursor.fetchall():
+            id, geometry = way
+            if id not in ways: ways[id] = 0
+
+            flow_item = [('id', id),
+                         ('geometry', json.loads(geometry)),
+                         ('amount', ways[id])]
+            data.append(OrderedDict(flow_item))
+
+        return data
 
     def serialize(self, queryset,
                   dimensions, format, anonymous,
@@ -50,7 +99,11 @@ class MonitorViewSet(FilterFlowViewSet):
         data = []
 
         # annotate info from chains to flows
-        queryset = self.annotate_amounts(queryset, indicator, impactSources)
+        queryset = self.annotate_amounts(queryset, indicator, impactSources, format)
+
+        # process for network map
+        if format == 'networkmap':
+            return self.process_network(queryset)
 
         # process dimensions for flow groups
         queryset = self.process_dimensions(queryset, dimensions, format)

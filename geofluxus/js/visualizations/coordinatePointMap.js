@@ -1,6 +1,6 @@
 define([
     'visualizations/d3plusViz',
-    'visualizations/geomap.js',
+    'visualizations/d3plus/geomap.js',
 ], function (D3plusViz, geomap) {
     /**
      *

@@ -56,13 +56,8 @@ class AreaSerializer(HyperlinkedModelSerializer):
 class AreaListSerializer(AreaSerializer):
     class Meta(AreaSerializer.Meta):
         fields = ('id',
-                  'adminlevel',
                   'name',
-                  'code',
-                  'geom',
-                  'parent_area',
-                  'inhabitants',
-                  'dataset')
+                  'geom')
 
 
 # Actor
