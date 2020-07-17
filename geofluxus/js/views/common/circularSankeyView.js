@@ -176,8 +176,8 @@ define(['views/common/baseview',
 
                         // Data:
 
-                        let processGroups = filtersView.processgroups.models;
-                        let processes = filtersView.processes.models;
+                        let processGroups = filtersView.collections['processgroups'].models;
+                        let processes = filtersView.collections['processes'].models;
 
                         // Set value for origin and destination of nodes:
                         originNode.value = destinationNode.value = flow.amount;
@@ -207,8 +207,8 @@ define(['views/common/baseview',
                             case 2:
                                 // Econ dim1 > Treatment dim2
                                 if (dimStrings.includes("economicActivity")) {
-                                    let activityGroups = filtersView.activityGroups.models;
-                                    let activities = filtersView.activities.models;
+                                    let activityGroups = filtersView.collections['activitygroups'].models;
+                                    let activities = filtersView.collections['activities'].models;
 
                                     switch (gran1) {
                                         case "origin__activity__activitygroup":

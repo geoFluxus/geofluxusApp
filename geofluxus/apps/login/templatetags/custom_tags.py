@@ -15,3 +15,13 @@ def datasets(user):
     if datasets or user.is_superuser:
         return True
     return False
+
+
+@register.filter
+def isDemoUser(user):
+    # check all user groups
+    groups = user.groups.values_list('name', flat=True)
+
+    if 'Demo' in groups:
+        return True
+    return False
