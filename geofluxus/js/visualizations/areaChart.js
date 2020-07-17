@@ -30,11 +30,25 @@ define([
                 }
             }
 
+            var data = options.data;
+            if (options.x.includes('month')){
+                var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                data.forEach(function(d) {
+                    var code = d.monthCode,
+                        month = months.indexOf(code.substring(0, 3)),
+                        year = parseInt(code.substring(3, 8));
+                    var name = (month + 1).toString();
+                    d.month = year + (name.length == 1 ? "0" + name : name);
+                })
+                options.x = "month";
+            }
+
             new d3plus.AreaPlot()
                 .stacked(options.isStacked)
                 .tooltipConfig(options.tooltipConfig)
-                .data(options.data)
-                .groupBy(options.groupBy[0])
+                .data(data)
+                .groupBy(options.groupBy)
                 .x(options.x)
                 .y("amount")
                 .baseline(0)
