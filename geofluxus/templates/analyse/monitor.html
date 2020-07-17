@@ -1,9 +1,6 @@
-<!--Flows-->
-
-<!--Filter editing-->
 <script type="text/template" id="monitor-template">
 
-<div class="block">
+    <div class="block">
 
     <h4 class="pb-2 pl-3">Step <%= titleNumber %>: Visualize</h4>
 
@@ -221,6 +218,11 @@
                             data-viz="flowmap" style="display: none;">
                             <input type="radio" id="viz-flowmap"><span class="span-viz" id="span-viz-flowmap">Flow map</span>
                         </label>
+                        <label
+                            class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
+                            data-viz="networkmap" style="display: none;">
+                            <input type="radio" id="viz-networkmap"><span class="span-viz" id="span-viz-networkmap">Road network map</span>
+                        </label>
 
                     </div>
                 </div>
@@ -254,11 +256,12 @@
 
 <div class="row mb-5">
     <div class="col visualizationRow">
+        <div class="viz-wrapper-div no-data-found" style="height: 10rem; !important"><span class="align-self-center text-white mx-auto">The selected filters returned no data. Please adjust the filtering of the waste flows.</span></div>        
         <div class="viz-wrapper-div piechart-wrapper"></div>
         <div class="viz-wrapper-div barchart-wrapper"></div>
         <div class="viz-wrapper-div lineplot-wrapper"></div>
         <div class="viz-wrapper-div treemap-wrapper"></div>
-        <div class="viz-wrapper-div choropleth-wrapper"></div>
+        <div class="viz-wrapper-div choroplethmap-wrapper"></div>
         <div class="viz-wrapper-div coordinatepointmap-wrapper"></div>
 
         <div class="viz-wrapper-div areachart-wrapper"></div>
@@ -267,7 +270,9 @@
             <div class="flowmap-container d-block" style="width: 100%; height: 100%"></div>
             <svg class="flowmap-d3pluslegend" style="width: 100%; background-color: grey"></svg>
         </div>
-
+        <div class="viz-wrapper-div networkmap-wrapper">
+            <div></div>
+        </div>
 
         <div class="parallelsets-container p-2" style="display: none;">
             <div class="viz-wrapper-div parallelsets-wrapper"></div>

@@ -19,7 +19,6 @@ define(['views/common/d3plusVizView',
         var TreeMapView = D3plusVizView.extend(
             /** @lends module:views/TreeMapView.prototype */
             {
-
                 /**
                  * @param {Object} options
                  * @param {HTMLElement} options.el                   element the view will be rendered in
@@ -34,110 +33,20 @@ define(['views/common/d3plusVizView',
                     _.bindAll(this, 'toggleLegend');
                     _.bindAll(this, 'toggleDarkMode');
 
-                    this.hasLegend = true;
+                    var _this = this;
+                    this.options = options;
+                    this.isStacked = this.options.isStacked;
+
                     this.canHaveLegend = true;
+                    this.canFlipGrouping = false;
+                    this.hasLegend = true;
                     this.isDarkMode = true;
 
-                    this.options = options;
                     this.flows = this.options.flows;
+                    this.label = this.options.label;
+                    this.tooltipConfig.title = "";
 
-                    let dim1String = this.options.dimensions[0][0];
-                    let gran1 = this.options.dimensions[0][1];
-
-                    this.groupBy = "";
-
-                    // /////////////////////////////
-                    // Time dimension
-                    if (dim1String == "time") {
-                        // Granularity = year
-                        if (gran1 == "flowchain__month__year") {
-                            this.groupBy = ["year"];
-                            // Granularity = month:
-                        } else if (gran1 == "flowchain__month") {
-                            this.groupBy = ["year", "month"];
-                        }
-
-                        // Space dimension
-                    } else if (dim1String == "space") {
-
-                        // Areas:
-                        if (!this.options.dimensions.isActorLevel) {
-                            this.groupBy = ["areaName"];
-                        } else {
-                            // Actor level
-                            this.groupBy = ["actorName"];
-                        }
-
-                        // Economic Activity dimension
-                    } else if (dim1String == "economicActivity") {
-                        this.tooltipConfig.tbody.push(["Activity group", function (d) {
-                            return d.activityGroupCode + " " + d.activityGroupName;
-                        }]);
-
-                        // Granularity = Activity group
-                        if (gran1 == "origin__activity__activitygroup" || gran1 == "destination__activity__activitygroup") {
-                            this.groupBy = ["activityGroupCode"];
-                            // Granularity: Activity
-                        } else if (gran1 == "origin__activity" || gran1 == "destination__activity") {
-                            this.groupBy = ["activityGroupCode", "activityCode"];
-                            this.tooltipConfig.tbody.push(["Activity", function (d) {
-                                return d.activityCode + " " + d.activityName;
-                            }]);
-                        }
-
-                        // Treatment method dimension
-                    } else if (dim1String == "treatmentMethod") {
-
-                        this.tooltipConfig.tbody.push(["Treatment method group", function (d) {
-                            return d.processGroupCode + " " + d.processGroupName;
-                        }]);
-
-                        if (gran1 == "origin__process__processgroup" || gran1 == "destination__process__processgroup") {
-                            this.groupBy = ["processGroupCode"];
-
-                            // Granularity: Treatment method
-                        } else if (gran1 == "origin__process" || gran1 == "destination__process") {
-                            this.groupBy = ["processGroupCode", "processCode"];
-                            this.tooltipConfig.tbody.push(["Treatment method", function (d) {
-                                return d.processCode + " " + d.processName;
-                            }]);
-                        }
-
-                        // Material
-                    } else if (dim1String == "material") {
-                        this.tooltipConfig.tbody.push(["EWC Chapter", function (d) {
-                            return d.ewc2Code + " " + d.ewc2Name;
-                        }]);
-
-                        // ewc2
-                        if (gran1 == "flowchain__waste06__waste04__waste02") {
-                            this.groupBy = ["ewc2Code"];
-                            this.tooltipConfig.title = this.label + " per EWC Chapter";
-                            // ewc4
-                        } else if (gran1 == "flowchain__waste06__waste04") {
-                            this.groupBy = ["ewc2Code", "ewc4Code"];
-                            this.tooltipConfig.title = this.label + " per EWC Sub-Chapter";
-                            this.tooltipConfig.tbody.push(["EWC Sub-Chapter", function (d) {
-                                return d.ewc4Code + " " + d.ewc4Name;
-                            }]);
-                            // ewc6
-                        } else if (gran1 == "flowchain__waste06") {
-                            this.groupBy = ["ewc2Code", "ewc4Code", "ewc6Code"];
-                            this.tooltipConfig.title = this.label + " per Entry";
-                            this.tooltipConfig.tbody.push(
-                                ["EWC Sub-Chapter", function (d) {
-                                    return d.ewc4Code + " " + d.ewc4Name;
-                                }],
-                                ["EWC Entry", function (d) {
-                                    return d.ewc6Code + " " + d.ewc6Name;
-                                }]);
-                        }
-                    }
-
-                    // Assign colors by groupings:
-                    if (this.groupBy) {
-                        this.flows = enrichFlows.assignColorsByProperty(this.flows, this.groupBy[0])
-                    }
+                    this.preProcess();
 
                     this.render();
                 },
@@ -146,7 +55,90 @@ define(['views/common/d3plusVizView',
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
                     'click .toggle-legend': 'toggleLegend',
-                    'click .toggle-darkmode': 'toggleDarkMode',                    
+                    'click .toggle-darkmode': 'toggleDarkMode',
+                    'click .flip-grouping': 'flipGrouping',
+                },
+
+                preProcess: function () {
+                    var _this = this;
+                    let dimensions = this.options.dimensions;
+
+                    this.tooltipConfig.tbody.length = 1;
+                    var title = this.tooltipConfig.title = "";
+
+                    this.groupBy = [];
+
+                    dimensions.forEach(function (dim, index) {
+                        // choose grouping for space dimension
+                        if (dim[0] == 'space') {
+                            var actorLevel = dimensions.isActorLevel,
+                                prop = actorLevel ? "actorName" : "areaName",
+                                label = actorLevel ? 'Company' : 'Area';
+                            if (!index) {
+                                _this.groupBy.push(prop);
+                                title = _this.label + " per " + label;
+                            } else {
+                                _this.groupBy.push(prop);
+                                title = " & " + label;
+                            }
+                            _this.tooltipConfig.tbody.push([label, function (d) {
+                                return d[prop];
+                            }]);
+                        }
+
+                        var properties = _this.dimensions[dim[0]];
+                        if (properties != undefined & _this.flows.length > 0) {
+                            Object.keys(properties).forEach(function (prop) {
+                                // check if flows have code/name for current property
+                                var flow = _this.flows[0],
+                                    code = prop + 'Code',
+                                    name = prop + 'Name';
+
+                                // if code, group by
+                                if (flow[code] != undefined) {
+                                    // if name, add tooltip
+                                    if (flow[name] != undefined) {
+                                        // tooltip subtitle (body)
+                                        var sub = properties[prop];
+
+                                        // tooltip title (header)
+                                        if (!index) {
+                                            _this.groupBy.push(code);
+                                            title = _this.label + " per " + sub;
+                                        } else {
+                                            _this.groupBy.push(code);
+                                            title = " & " + sub;
+                                        }
+
+                                        // tooltip body
+                                        _this.tooltipConfig.tbody.push([sub, function (d) {
+                                            return d[code] + " " + d[name];
+                                        }]);
+                                    }
+                                }
+                            })
+                        }
+
+                        _this.tooltipConfig.title += title;
+                    })
+
+                    if (dimensions.length > 1) {
+                        this.canFlipGrouping = true;
+                    }
+
+                    // assign colors by groupings
+                    this.flows = enrichFlows.assignColorsByProperty(this.flows, this.groupBy[0]);
+                    // Disable legend there are more than fifty groups:
+                    this.canHaveLegend = this.hasLegend = enrichFlows.checkToDisableLegend(this.flows, this.groupBy[0]);
+                },
+
+                flipGrouping: function () {
+                    $(this.options.el).html("");
+
+                    this.options.dimensions.reverse();  
+                    this.preProcess();
+
+                    this.render();
                 },
 
                 /**
@@ -161,6 +153,7 @@ define(['views/common/d3plusVizView',
                         canHaveLegend: this.canHaveLegend,
                         hasLegend: this.hasLegend,
                         isDarkMode: this.isDarkMode,
+                        canFlipGrouping: this.canFlipGrouping,
                     });
                     this.scrollToVisualization();
                     this.options.flowsView.loader.deactivate();

@@ -1,5 +1,6 @@
 <!--Filters-->
 <script type="text/template" id="filter-template">
+    {% load custom_tags %}
 
     <div class="block accordion" id="filterBlock">
 
@@ -23,7 +24,6 @@
             </div>
         </div>
 
-        <% if (datasets.count != 1) { %>
         <div class="card bg-dark">
 
             <div class="card-header">
@@ -61,7 +61,6 @@
                 </div>
             </div>
         </div>
-        <% } %>
 
         <!-- ORIGIN CONTROLS -->
         <div class="card bg-dark">
@@ -80,8 +79,21 @@
             <div id="collapseOriginBlock" class="collapse show" aria-labelledby="card-header-collapse-origin"
                 data-parent="#filterBlock">
                 <div class="card-body">
+                   
+                    {% if not request.user|isDemoUser %}
+                        <div class="row">
+                            <div class="col-md-4 origin-actor-select-col">
+                                <label for="origin-actor-select">Select specific <strong>companies</strong>:</label>
+                                <select name="origin-actor-select" id="origin-actor-select" multiple
+                                    class="form-control form-control-sm" data-live-search="true" data-size="6"
+                                    style="resize: vertical;">
+                                </select>
+                            </div>
+                        </div>
+                    {% endif %}
+
                     <div class="row">
-                        <div class="col-md-10">
+                        <div class="col-md-10 mt-2">
 
                             <label for="area-select-button-origin">Limit the <strong>origin</strong> of the waste flows
                                 to geographic
@@ -139,15 +151,15 @@
 
                             <div>
                                 <div class="btn-group btn-group-toggle" id="origin-role-radio" data-toggle="buttons"
-                                    style="width: 18rem;">
+                                    style="width: 20rem;">
 
-                                    <label class="btn btn-sm btn-primary" style="width: 40%;">
-                                        <input type="radio" id="origin-role-radio-production" checked>Production
+                                    <label class="btn btn-sm btn-primary origin-role" style="width: 40%;" role="production">
+                                        <input type="radio" id="origin-role-radio-production">Production
                                     </label>
-                                    <label class="btn btn-sm btn-primary active" style="width: 20%;">
+                                    <label class="btn btn-sm btn-primary origin-role active" style="width: 20%;" role="both">
                                         <input type="radio" id="origin-role-radio-both">Both
                                     </label>
-                                    <label class="btn btn-sm btn-primary" style="width: 40%;">
+                                    <label class="btn btn-sm btn-primary origin-role" style="width: 40%;" role="treatment">
                                         <input type="radio" id="origin-role-radio-treatment">Treatment
                                     </label>
 
@@ -168,7 +180,7 @@
                         </div>
                     </div>
 
-                    <div class="row originContainerActivity" style="display: none;">
+                    <div class="row origin-production" style="display: none;">
                         <div class="col-md-4">
 
                             <label for="origin-activitygroup-select">Activity group</label>
@@ -192,25 +204,19 @@
                                 </a>
                             </div>
 
-                            <select id="origin-activitygroup-select"
-                                    class="form-control form-control-sm selectpicker"
-                                    name="origin-activitygroup-select"
-                                    multiple
-                                    data-live-search="true"
-                                    data-dropup-auto="false"
-                                    data-size="6"
-                                    style="resize: vertical;">
-                                <option selected value="-1">All (<%= activityGroups.count %>)</option>
+                            <select name="origin-activitygroup-select" id="origin-activitygroup-select" multiple
+                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
+                                style="resize: vertical;">
+                                <option selected value="-1">All (<%= activitygroups.count %>)</option>
                                 <option data-divider="true"></option>
-                                <% activityGroups.forEach(function(activitygroup){ %>
-                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>. <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
-                                </option>
+                                <% activitygroups.forEach(function(activity){ %>
+                                    <option value="<%= activity.id %>"><%= activity.get('code') %>. <%= activity.get('name')[0].toUpperCase() + activity.get('name').slice(1).toLowerCase() %>
+                                    </option>
                                 <% }); %>
                             </select>
                         </div>
 
-                        <div class="col-md-4 activitySelectContainer activitySelectContainer-origin"
-                            style="display: none">
+                        <div class="col-md-4" id="origin-activitiesCol" style="display: none">
 
                             <label for="origin-activity-select">Activity</label>
                             <div class="labelHelpiconContainer">
@@ -241,10 +247,10 @@
                         </div>
                     </div>
 
-                    <div class="row originContainerTreatmentMethod" style="display: none;">
+                    <div class="row origin-treatment" style="display: none;">
                         <div class="col-md-4">
 
-                            <label for="origin-processGroup-select">Treatment method group</label>
+                            <label for="origin-processgroup-select">Treatment method group</label>
                             <div class="labelHelpiconContainer">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover"
                                     title="Treatment method group" data-html="true" tabindex="0" data-content="
@@ -258,19 +264,19 @@
                                 </a>
                             </div>
 
-                            <select name="origin-processGroup-select" id="origin-processGroup-select" multiple
+                            <select name="origin-processgroup-select" id="origin-processgroup-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
                                 <option selected value="-1">All (<%= processgroups.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% processgroups.forEach(function(process){ %>
-                                <option value="<%= process.id %>"><%= process.get('code') %>. <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
-                                </option>
+                                    <option value="<%= process.id %>"><%= process.get('code') %>. <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
+                                    </option>
                                 <% }); %>
                             </select>
                         </div>
 
-                        <div class="col-md-4" id="originContainerProcesses" style="display: none;">
+                        <div class="col-md-4" id="origin-processesCol" style="display: none;">
 
                             <label for="origin-process-select">Treatment method</label>
                             <div class="labelHelpiconContainer">
@@ -317,6 +323,19 @@
             <div id="collapseDestinationBlock" class="collapse" aria-labelledby="card-header-collapse-destination"
                 data-parent="#filterBlock">
                 <div class="card-body">
+
+                    {% if not request.user|isDemoUser %}                  
+                        <div class="row">
+                            <div class="col-md-4 destination-actor-select-col">
+                                <label for="destination-actor-select">Select specific <strong>companies</strong>:</label>
+                                <select name="destination-actor-select" id="destination-actor-select" multiple
+                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
+                                style="resize: vertical;">
+                            </select>
+                        </div>
+                    </div>
+                    {% endif %}
+
                     <div class="row">
                         <div class="col-md-10">
 
@@ -378,15 +397,15 @@
 
                             <div>
                                 <div class="btn-group btn-group-toggle" id="destination-role-radio"
-                                    data-toggle="buttons" style="width: 18rem;">
+                                    data-toggle="buttons" style="width: 20rem;">
 
-                                    <label class="btn btn-sm btn-primary" style="width: 40%;">
+                                    <label class="btn btn-sm btn-primary destination-role" style="width: 40%;" role="production">
                                         <input type="radio" id="destination-role-radio-production" checked>Production
                                     </label>
-                                    <label class="btn btn-sm btn-primary active" style="width: 20%;">
+                                    <label class="btn btn-sm btn-primary destination-role active" style="width: 20%;" role="both">
                                         <input type="radio" id="destination-role-radio-both">Both
                                     </label>
-                                    <label class="btn btn-sm btn-primary" style="width: 40%;">
+                                    <label class="btn btn-sm btn-primary destination-role" style="width: 40%;" role="treatment">
                                         <input type="radio" id="destination-role-radio-treatment">Treatment
                                     </label>
 
@@ -406,7 +425,7 @@
                         </div>
                     </div>
 
-                    <div class="row destinationContainerActivity" style="display: none;">
+                    <div class="row destination-production" style="display: none;">
                         <div class="col-md-4">
                             <label for="destination-activitygroup-select">Activity group</label>
                             <div class="labelHelpiconContainer">
@@ -433,16 +452,15 @@
                             <select id="destination-activitygroup-select" name="destination-activitygroup-select"
                                 multiple class="form-control form-control-sm selectpicker" data-live-search="true"
                                 data-dropup-auto="false" data-size="6" style="resize: vertical;">
-                                <option selected value="-1">All (<%= activityGroups.count %>)</option>
+                                <option selected value="-1">All (<%= activitygroups.count %>)</option>
                                 <option data-divider="true"></option>
-                                <% activityGroups.forEach(function(activitygroup){ %>
-                                <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>. <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
-                                </option>
+                                <% activitygroups.forEach(function(activitygroup){ %>
+                                    <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>. <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
+                                    </option>
                                 <% }); %>
                             </select>
                         </div>
-                        <div class="col-md-4 activitySelectContainer activitySelectContainer-destination"
-                            style="display: none">
+                        <div class="col-md-4" id="destination-activitiesCol" style="display: none">
                             <label for="destination-activity-select">Activity</label>
                             <div class="labelHelpiconContainer">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Activity"
@@ -466,10 +484,10 @@
                         </div>
                     </div>
 
-                    <div class="row destinationContainerTreatmentMethod" style="display: none;">
+                    <div class="row destination-treatment" style="display: none;">
                         <div class="col-md-4">
 
-                            <label for="destination-processGroup-select">Treatment method group</label>
+                            <label for="destination-processgroup-select">Treatment method group</label>
                             <div class="labelHelpiconContainer">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover"
                                     title="Treatment method group" data-html="true" tabindex="0" data-content="
@@ -483,19 +501,19 @@
                                 </a>
                             </div>
 
-                            <select name="destination-processGroup-select" id="destination-processGroup-select" multiple
+                            <select name="destination-processgroup-select" id="destination-processgroup-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
                                 <option selected value="-1">All (<%= processgroups.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% processgroups.forEach(function(process){ %>
-                                <option value="<%= process.id %>"><%= process.get('code') %>. <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
-                                </option>
+                                    <option value="<%= process.id %>"><%= process.get('code') %>. <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
+                                    </option>
                                 <% }); %>
                             </select>
                         </div>
 
-                        <div class="col-md-4" id="destinationContainerProcesses" style="display: none;">
+                        <div class="col-md-4" id="destination-processesCol" style="display: none;">
 
                             <label for="destination-process-select">Treatment method</label>
                             <div class="labelHelpiconContainer">
@@ -563,7 +581,7 @@
 
                         </div>
                     </div>
-                    <div class='row' id="areaSelections-flows" style="display: none;">
+                    <div class="row areaSelections-flows" style="display: none;">
                         <div class="col-md-4">
 
                             <textarea class="form-control-sm textarea-autosize selections"
@@ -600,7 +618,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3" id="monthCol" style="display: none;">
+                        <div class="col-md-3" id="flows-monthsCol" style="display: none;">
 
                             <label for="monthSelect">Month</label>
                             <div class="labelHelpiconContainer">
@@ -641,7 +659,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-3" id="wastes02col">
+                        <div class="col-md-3" id="flows-wastes02Col">
 
                             <label for="flows-waste02-select">Chapter</label>
                             <div class="labelHelpiconContainer">
@@ -669,7 +687,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3" id="wastes04col" style="display: none;">
+                        <div class="col-md-3" id="flows-wastes04Col" style="display: none;">
 
                             <label for="flows-waste04-select">Sub-Chapter</label>
                             <div class="labelHelpiconContainer">
@@ -691,7 +709,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3" id="wastes06col" style="display: none;">
+                        <div class="col-md-3" id="flows-wastes06Col" style="display: none;">
 
                             <label for="flows-waste06-select" id="flows-waste06-label">EWC Entry</label>
                             <div class="labelHelpiconContainer" id="helpiconWaste06">
@@ -1002,8 +1020,8 @@
                                     class="form-control selectpicker"
                                     style="max-width: 350px;"
                                     data-none-selected-text="No saved filters found.">
-                                    <% savedFilters.forEach(function(savedFilter) { %>
-                                            <option value="<%= savedFilter.id %>"><%= savedFilter.get('name') %></option>
+                                    <% filters.forEach(function(filter) { %>
+                                            <option value="<%= filter.id %>"><%= filter.get('name') %></option>
                                     <% }) %>
                             </select>
                         </div>

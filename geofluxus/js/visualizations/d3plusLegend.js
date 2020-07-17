@@ -1,8 +1,8 @@
 define([
     'd3',
     'd3-brush',
-    'visualizations/d3plus',
-], function (d3, d3brush, d3plus) {
+    'visualizations/d3plus/legend.js',
+], function (d3, d3brush, legend) {
     /**
      *
      * D3plus legend
@@ -32,7 +32,7 @@ define([
             };
             // shapeConfig.hoverStyle = this.renderHover();
 
-            new d3plus.Legend()
+            new legend.Legend()
                 .data(options.data)
                 .select(options.el)
                 .direction(options.direction)

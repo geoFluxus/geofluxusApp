@@ -38,6 +38,8 @@ define(['views/common/d3plusVizView',
                     _.bindAll(this, 'exportCSV');
                     _.bindAll(this, 'toggleDarkMode');
 
+                    this.props = Object.assign(...Object.values(this.dimensions));
+
                     this.canHaveLegend = false;
                     this.isDarkMode = true;
                     this.options = options;
@@ -81,13 +83,8 @@ define(['views/common/d3plusVizView',
                 toggleDarkMode: function () {
                     this.isDarkMode = !this.isDarkMode;
 
-                    if (this.isDarkMode) {
-                        d3.selectAll(".d3plus-Links .d3plus-Path")
-                            .attr("stroke", "#DBDBDB")
-                    } else {
-                        d3.selectAll(".d3plus-Links .d3plus-Path")
-                            .attr("stroke", "#393939")
-                    }
+                    d3.selectAll(".d3plus-Links .d3plus-Path")
+                      .attr("stroke", this.isDarkMode ? "#DBDBDB" : "#393939")
 
                     $(".viz-wrapper-div").toggleClass("lightMode");
                     $(".parallelsets-container").toggleClass("lightMode");
@@ -101,187 +98,69 @@ define(['views/common/d3plusVizView',
                  * @param {object} filtersView Backbone.js filtersView
                  */
                 transformToLinksAndNodes: function (flows, dimensions, filtersView) {
+                    let collections = filtersView.collections,
+                        tags =  filtersView.tags;
                     let nodes = [],
                         links = [];
 
+                    // parallel sets for at least two dimensions
+                    // if only one, create a dummy
+                    if (dimensions.length == 1) {
+                        var name = dimensions[0][0],
+                            gran = dimensions[0][1].split("__");
+                        gran.shift(); // pop first element
+
+                        dimensions = [];
+                        ['origin', 'destination'].forEach(function(node) {
+                            var dimension = [name, node + "__" + gran.join("__")];
+                            dimensions.push(dimension);
+                        })
+                    }
+
+                    // convert flows to links & nodes
                     flows.forEach(function (flow, index) {
                         let link = {};
                         let originNode = {};
                         let destinationNode = {};
 
-                        // Gather dimension and gran config:
-                        let gran1 = dimensions[0][1];
-                        let gran2 = dimensions[1] ? dimensions[1][1] : {};
-                        let dimStrings = [];
-                        dimensions.forEach(dim => dimStrings.push(dim[0]));
+                        // process dimensions
+                        dimensions.forEach(function(dim, i) {
+                            // get info about node & property to search
+                            var gran = dim[1].split('__'),
+                                prop = gran.pop();
 
-                        // Data:
+                            // check node by property
+                            var is_origin = flow.origin[prop],
+                                is_destination = flow.destination[prop],
+                                node = is_origin != undefined ? 'origin' : 'destination';
 
-                        let processGroups = filtersView.processgroups.models;
-                        let processes = filtersView.processes.models;
+                            // if origin & destination have same property, fetch node from granularity
+                            var extra = "";
+                            if (is_origin != undefined && is_destination != undefined) {
+                                node = gran.shift();
 
-                        // Set value for origin and destination of nodes:
-                        originNode.value = destinationNode.value = flow.amount;
+                                // add extra character for circular nodes
+                                extra = i ? " " : "";
+                            }
 
-                        // Enrich nodes
-                        switch (dimensions.length) {
-                            case 1:
-                                // Only for Treatment method to Treatment method
+                            // get node item
+                            var item = node == 'origin' ? originNode : destinationNode;
 
-                                // Gran == Treatment method group
-                                if (gran1.includes("group")) {
-                                    let processGroupDestinationObject = processGroups.find(processGroup => processGroup.attributes.id == flow.destination.processgroup);
-                                    destinationNode.id = enrichFlows.returnCodePlusName(processGroupDestinationObject) + " ";
-                                    let processGroupOriginObject = processGroups.find(processGroup => processGroup.attributes.id == flow.origin.processgroup);
-                                    originNode.id = enrichFlows.returnCodePlusName(processGroupOriginObject);
-                                    // Gran == Treatment method
-                                } else {
-                                    let processDestinationObject = processes.find(process => process.attributes.id == flow.destination.process);
-                                    destinationNode.id = enrichFlows.returnCodePlusName(processDestinationObject) + " ";
-                                    let processOriginObject = processes.find(process => process.attributes.id == flow.origin.process);
-                                    originNode.id = enrichFlows.returnCodePlusName(processOriginObject);
-                                }
-                                break;
-                            case 2:
-                                // Econ dim1 > Treatment dim2
-                                if (dimStrings.includes("economicActivity")) {
-                                    let activityGroups = filtersView.activityGroups.models;
-                                    let activities = filtersView.activities.models;
+                            // pass amount
+                            item.value = flow.amount;
 
-                                    switch (gran1) {
-                                        case "origin__activity__activitygroup":
-                                            let activityGroupOriginObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.origin.activitygroup);
-                                            originNode.id = enrichFlows.returnCodePlusName(activityGroupOriginObject);
-                                            break;
-                                        case "origin__activity":
-                                            let activityOriginObject = activities.find(activity => activity.attributes.id == flow.origin.activity);
-                                            originNode.id = enrichFlows.returnCodePlusName(activityOriginObject);
-                                            break;
-                                        case "destination__activity__activitygroup":
-                                            let activityGroupDestinationObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.destination.activitygroup);
-                                            destinationNode.id = enrichFlows.returnCodePlusName(activityGroupDestinationObject);
-                                            break;
-                                        case "destination__activity":
-                                            let activityDestinationObject = activities.find(activity => activity.attributes.id == flow.destination.activity);
-                                            destinationNode.id = enrichFlows.returnCodePlusName(activityDestinationObject);
-                                            break;
-                                    }
+                            // retrieve property info
+                            var collection = collections[tags[prop]],
+                                obj = collection.find(model => model.attributes.id == flow[node][prop]);
 
-                                }
-                                if (dimStrings.includes("material")) {
-                                    let ewc2 = filtersView.wastes02.models;
-                                    let ewc4 = filtersView.wastes04.models;
-                                    let ewc6 = filtersView.wastes06.models;
+                            // update item
+                            var attr = obj.attributes,
+                                code = attr.code || attr.nace || attr.ewc_code,
+                                name = utils.capitalizeFirstLetter(attr.name || attr.ewc_name);
+                            item.id = code + " " + name + extra;
+                        })
 
-                                    // Econ dim1 > Material dim2
-                                    if (dimStrings.includes("economicActivity")) {
-                                        // From econ to material
-                                        if (gran1.includes("origin")) {
-                                            switch (gran2) {
-                                                case "flowchain__waste06__waste04__waste02":
-                                                    let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.destination.waste02);
-                                                    destinationNode.id = enrichFlows.returnEwcCodePlusName(ewc2Object);
-                                                    break;
-                                                case "flowchain__waste06__waste04":
-                                                    let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.destination.waste04);
-                                                    destinationNode.id = enrichFlows.returnEwcCodePlusName(ewc4Object);
-                                                    break;
-                                                case "flowchain__waste06":
-                                                    let ewc6Object = ewc6.find(ewc => ewc.attributes.id == flow.destination.waste06);
-                                                    destinationNode.id = enrichFlows.returnEwcCodePlusName(ewc6Object);
-                                                    break;
-                                            }
-                                            // From material to econ
-                                        } else if (gran1.includes("destination")) {
-                                            switch (gran2) {
-                                                case "flowchain__waste06__waste04__waste02":
-                                                    let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.origin.waste02);
-                                                    originNode.id = enrichFlows.returnEwcCodePlusName(ewc2Object);
-                                                    break;
-                                                case "flowchain__waste06__waste04":
-                                                    let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.origin.waste04);
-                                                    originNode.id = enrichFlows.returnEwcCodePlusName(ewc4Object);
-                                                    break;
-                                                case "flowchain__waste06":
-                                                    let ewc6Object = ewc6.find(ewc => ewc.attributes.id == flow.origin.waste06);
-                                                    originNode.id = enrichFlows.returnEwcCodePlusName(ewc6Object);
-                                                    break;
-                                            }
-                                        }
-
-
-                                        // Material > Treatment method OR Treatment method > Material 
-                                    } else if (dimStrings.includes("treatmentMethod")) {
-
-                                        // From treatment to material
-                                        if (gran1.includes("origin")) {
-                                            switch (gran2) {
-                                                case "flowchain__waste06__waste04__waste02":
-                                                    let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.destination.waste02);
-                                                    destinationNode.id = enrichFlows.returnEwcCodePlusName(ewc2Object);
-                                                    break;
-                                                case "flowchain__waste06__waste04":
-                                                    let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.destination.waste04);
-                                                    destinationNode.id = enrichFlows.returnEwcCodePlusName(ewc4Object);
-                                                    break;
-                                                case "flowchain__waste06":
-                                                    let ewc6Object = ewc6.find(ewc => ewc.attributes.id == flow.destination.waste06);
-                                                    destinationNode.id = enrichFlows.returnEwcCodePlusName(ewc6Object);
-                                                    break;
-                                            }
-                                            // From material to treatment
-                                        } else if (gran1.includes("destination")) {
-                                            switch (gran2) {
-                                                case "flowchain__waste06__waste04__waste02":
-                                                    let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.origin.waste02);
-                                                    originNode.id = enrichFlows.returnEwcCodePlusName(ewc2Object);
-                                                    break;
-                                                case "flowchain__waste06__waste04":
-                                                    let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.origin.waste04);
-                                                    originNode.id = enrichFlows.returnEwcCodePlusName(ewc4Object);
-                                                    break;
-                                                case "flowchain__waste06":
-                                                    let ewc6Object = ewc6.find(ewc => ewc.attributes.id == flow.origin.waste06);
-                                                    originNode.id = enrichFlows.returnEwcCodePlusName(ewc6Object);
-                                                    break;
-                                            }
-                                        }
-                                    }
-
-
-                                }
-                                if (dimStrings.includes("treatmentMethod")) {
-                                    let granularity;
-                                    // Material dim2 > Treatment dim1
-                                    if (dimStrings.includes("economicActivity")) {
-                                        granularity = gran2;
-                                    } else {
-                                        granularity = gran1;
-                                    }
-
-                                    // Material dim2 > Treatment dim1
-                                    switch (granularity) {
-                                        case "destination__process__processgroup":
-                                            let processGroupDestinationObject = processGroups.find(processGroup => processGroup.attributes.id == flow.destination.processgroup);
-                                            destinationNode.id = enrichFlows.returnCodePlusName(processGroupDestinationObject);
-                                            break;
-                                        case "destination__process":
-                                            let processDestinationObject = processes.find(process => process.attributes.id == flow.destination.process);
-                                            destinationNode.id = enrichFlows.returnCodePlusName(processDestinationObject);
-                                            break;
-                                        case "origin__process__processgroup":
-                                            let processGroupOriginObject = processGroups.find(processGroup => processGroup.attributes.id == flow.origin.processgroup);
-                                            originNode.id = enrichFlows.returnCodePlusName(processGroupOriginObject);
-                                            break;
-                                        case "origin__process":
-                                            let processOriginObject = processes.find(process => process.attributes.id == flow.origin.process);
-                                            originNode.id = enrichFlows.returnCodePlusName(processOriginObject);
-                                            break;
-                                    }
-                                }
-                                break;
-                        }
-
+                        // NODES
                         nodes.push(originNode, destinationNode)
 
                         // LINKS
@@ -290,10 +169,9 @@ define(['views/common/d3plusVizView',
                         link.value = flow.amount;
 
                         links.push(link)
-
                     }, flows);
 
-                    // Group the nodes by id and sum the values:                    
+                    // Group the nodes by id and sum the values:
                     var result = [];
                     nodes.reduce(function (res, item) {
                         if (!res[item.id]) {
@@ -311,11 +189,6 @@ define(['views/common/d3plusVizView',
 
                     // Assign colors by id:
                     nodes = enrichFlows.assignColorsByProperty(nodes, "id");
-
-                    console.log("Links:");
-                    console.log(links);
-                    console.log("Nodes:");
-                    console.log(nodes);
 
                     return {
                         links: links,

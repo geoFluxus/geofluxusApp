@@ -12,6 +12,7 @@ define(['views/common/baseview',
         'views/common/flowMapView',
         'views/common/parallelSetsView',
         'views/common/circularSankeyView',
+        'views/common/networkMapView',
     ],
     function (
         BaseView,
@@ -28,19 +29,22 @@ define(['views/common/baseview',
         FlowMapView,
         ParallelSetsView,
         CircularSankeyView,
+        NetworkMapView,
     ) {
         var MonitorView = BaseView.extend({
             initialize: function (options) {
                 var _this = this;
                 MonitorView.__super__.initialize.apply(this, [options]);
 
-                this.filtersView = options.filtersView;
                 this.el = options.el;
+                this.template = options.template;
+                this.filtersView = options.filtersView;
+                this.areaLevels = options.levels;
+                this.actorLevel = this.areaLevels.models.find(l => l.attributes.level == "1000").attributes.id;
 
-                this.mode = options.mode;
-                this.titleNumber = options.titleNumber.toString();
-                this.indicator = "waste";
-                this.impactSourceStrings = [];
+                this.mode = options.mode || 'monitor';
+                this.titleNumber = (options.titleNumber || 3).toString();
+                this.indicator = options.indicator || "waste";
 
                 this.labels = {
                     waste: "Waste",
@@ -50,20 +54,81 @@ define(['views/common/baseview',
                 }
 
                 this.dimensions = {};
-                this.maxNumberOfDimensions = options.maxNumberOfDimensions;
+                this.maxNumberOfDimensions = options.maxNumberOfDimensions || 2;
                 this.selectedDimensionStrings = [];
                 this.selectedVizName = "";
 
-                this.areaLevels = new Collection([], {
-                    apiTag: 'arealevels',
-                    comparator: "level",
-                });
-                var promises = [
-                    this.areaLevels.fetch(),
-                ];
-                Promise.all(promises).then(function () {
-                    _this.render();
-                })
+                // Dimension-Visualizations inventory
+                this.vizs = {
+                    // 1D visualizations
+                    'time': ['piechart', 'barchart', 'treemap', 'lineplot'],
+                    'economicActivity': ['piechart', 'barchart', 'treemap'],
+                    'space': ['piechart', 'barchart', 'treemap', 'networkmap'],
+                    'treatmentMethod': ['piechart', 'barchart', 'treemap', 'parallelsets'],
+                    'material': ['piechart', 'barchart', 'treemap'],
+                    // 2D visualizations
+                    'time_economicActivity': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'treemap'],
+                    'time_space': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'flowmap', 'treemap'],
+                    'time_treatmentMethod': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'treemap'],
+                    'time_material': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'treemap'],
+                    'space_economicActivity': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
+                    'space_treatmentMethod': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
+                    'space_material': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
+                    'economicActivity_treatmentMethod': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap'],
+                    'economicActivity_material': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap'],
+                    'treatmentMethod_material': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap']
+                }
+
+                // Visualization view inventory
+                this.vizViews = {
+                    'piechart': {
+                        'view': PieChartView
+                    },
+                    'barchart': {
+                        'view': BarChartView
+                    },
+                    'stackedbarchart': {
+                        'view': BarChartView,
+                        'options': {
+                            isStacked: true
+                        }
+                    },
+                    'treemap': {
+                        'view': TreeMapView
+                    },
+                    'lineplot': {
+                        'view': LinePlotView
+                    },
+                    'lineplotmultiple': {
+                        'view': LinePlotView,
+                        'options': {
+                            hasMultipleLines: true
+                        }
+                    },
+                    'areachart': {
+                        'view': AreaChartView
+                    },
+                    'choroplethmap': {
+                        'view': ChoroplethView
+                    },
+                    'coordinatepointmap': {
+                        'view': CoordinatePointMapView
+                    },
+                    'flowmap': {
+                        'view': FlowMapView
+                    },
+                    'parallelsets': {
+                        'view': ParallelSetsView
+                    },
+                    'circularsankey': {
+                        'view': CircularSankeyView
+                    },
+                    'networkmap': {
+                        'view': NetworkMapView
+                    }
+                }
+
+                this.render();
             },
 
             // DOM events
@@ -72,10 +137,10 @@ define(['views/common/baseview',
                 'click #reset-dim-viz': 'resetDimAndVizToDefault',
             },
 
-            // Rendering
+            // render
             render: function () {
                 var html = document.getElementById(this.template).innerHTML;
-                var template = _.template(html)
+                var template = _.template(html);
 
                 this.el.innerHTML = template({
                     levels: this.areaLevels,
@@ -89,33 +154,33 @@ define(['views/common/baseview',
                     trigger: "focus"
                 });
 
-
                 // Dimension and granularity controls:
                 this.initializeControls();
                 this.addEventListeners();
             },
 
             initializeControls: function () {
-                this.dimensions.timeToggle = this.el.querySelector('#dim-toggle-time');
-                this.dimensions.timeToggleGran = this.el.querySelector('#gran-toggle-time');
-                this.dimensions.spaceToggle = this.el.querySelector('#dim-toggle-space');
-                this.dimensions.spaceLevelGranSelect = this.el.querySelector('#dim-space-gran-select');
-                this.dimensions.spaceOrigDest = this.el.querySelector('#origDest-toggle-space');
-                this.dimensions.economicActivityToggle = this.el.querySelector('#dim-toggle-economic-activity');
-                this.dimensions.economicActivityToggleGran = this.el.querySelector('#gran-toggle-econ-activity');
-                this.dimensions.economicActivityOrigDest = this.el.querySelector('#origDest-toggle-econAct');
-                this.dimensions.treatmentMethodToggle = this.el.querySelector('#dim-toggle-treatment-method');
-                this.dimensions.treatmentMethodToggleGran = this.el.querySelector('#gran-toggle-treatment-method');
-                this.dimensions.treatmentMethodOrigDest = this.el.querySelector('#origDest-toggle-treatment');
-                this.dimensions.materialToggle = this.el.querySelector('#dim-toggle-material');
+                this.timeToggle = this.el.querySelector('#dim-toggle-time');
+                this.timeToggleGran = this.el.querySelector('#gran-toggle-time');
+                this.spaceToggle = this.el.querySelector('#dim-toggle-space');
+                this.spaceLevelGranSelect = this.el.querySelector('#dim-space-gran-select');
+                this.spaceOrigDest = this.el.querySelector('#origDest-toggle-space');
+                this.economicActivityToggle = this.el.querySelector('#dim-toggle-economic-activity');
+                this.economicActivityToggleGran = this.el.querySelector('#gran-toggle-econ-activity');
+                this.economicActivityOrigDest = this.el.querySelector('#origDest-toggle-econAct');
+                this.treatmentMethodToggle = this.el.querySelector('#dim-toggle-treatment-method');
+                this.treatmentMethodToggleGran = this.el.querySelector('#gran-toggle-treatment-method');
+                this.treatmentMethodOrigDest = this.el.querySelector('#origDest-toggle-treatment');
+                this.materialToggle = this.el.querySelector('#dim-toggle-material');
 
-                $(this.dimensions.spaceLevelGranSelect).selectpicker();
+                $(this.spaceLevelGranSelect).selectpicker();
                 $(".bootstrapToggle").bootstrapToggle();
             },
 
             addEventListeners: function () {
                 var _this = this;
 
+                // selected visualization
                 $('.viz-selector-button').on("click", function (event) {
                     _this.selectedVizName = $(this).attr("data-viz");
                     event.preventDefault();
@@ -139,15 +204,17 @@ define(['views/common/baseview',
                     }
                 });
 
-
                 $(".dimensionToggle").change(function (event) {
+                    // Deselect any selected Viz-buttons: 
+                    $(".viz-selector-button").removeClass("active");
+                    _this.selectedVizName = "";
+
                     if (_this.resetInProgres) {
                         return
                     }
 
                     // //////////////////////////////////////////////////////
                     // Disable dimension toggles for max number of dimensions:
-                    _this.checkedDimToggles = [];
                     _this.uncheckedDimToggles = [];
                     _this.selectedDimensionStrings = [];
 
@@ -157,14 +224,12 @@ define(['views/common/baseview',
                         if (!checked) {
                             _this.uncheckedDimToggles.push($(this));
                         } else {
-                            _this.checkedDimToggles.push($(this));
-
                             _this.selectedDimensionStrings.push($(this).attr("data-dim"));
                         }
                     });
 
                     // If the maximum number of dimensions has been selected:
-                    if (_this.maxNumberOfDimensions == _this.checkedDimToggles.length) {
+                    if (_this.maxNumberOfDimensions == _this.selectedDimensionStrings.length) {
                         // Disable the remaining unchecked toggles:
                         $(_this.uncheckedDimToggles).each(function (index, value) {
                             $(this).bootstrapToggle('disable');
@@ -177,194 +242,78 @@ define(['views/common/baseview',
                         $("#alertMaxDimensionsRow").fadeOut("fast");
                     }
 
-                    // ///////////////////////////////////////////////////////////////////
-                    // Show available visualizations based on selected dimension(s):
+                    // If dimensions are selected
+                    if (_this.selectedDimensionStrings.length) {
+                        // Show available visualizations based on selected dimension(s)
+                        $(".viz-selector-button").hide();
+                        $(".viz-container").fadeIn();
+                        _this.vizs[_this.selectedDimensionStrings.join('_')].forEach(function (viz) {
+                            $("#viz-" + viz).parent().fadeIn();
+                        })
 
-                    switch (_this.checkedDimToggles.length) {
-                        case 0: // No dimensions
-                            $("#message-container-row").fadeIn();
-                            $(".viz-container").hide();
-                            break;
-                        case 1: // One dimension selected
-                            $(".viz-selector-button").hide();
-                            $(".viz-container").fadeIn();
+                        // show lineplot multiple for month
+                        $(_this.timeToggleGran).trigger("change");
 
-                            if (_this.selectedDimensionStrings.includes("time")) {
-                                $("#viz-piechart").parent().fadeIn();
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-treemap").parent().fadeIn();
-                                $("#viz-lineplot").parent().fadeIn();
-                                if ($(_this.dimensions.timeToggleGran).prop("checked")) {
-                                    $("#viz-lineplotmultiple").parent().fadeIn();
-                                }
-                            } else if (_this.selectedDimensionStrings.includes("space")) {
-                                $("#viz-piechart").parent().fadeIn();
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-treemap").parent().fadeIn();
+                        // show choropleth / point map
+                        $(_this.spaceLevelGranSelect).trigger("change");
 
-                                let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
-                                let actorAreaLevelId = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-
-                                if (selectedAreaLevelId == actorAreaLevelId) {
-                                    $("#viz-coordinatepointmap").parent().fadeIn();
-                                } else {
-                                    $("#viz-choroplethmap").parent().fadeIn();
-                                }
-
-                            } else if (_this.selectedDimensionStrings.includes("economicActivity")) {
-                                $("#viz-piechart").parent().fadeIn();
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-treemap").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("treatmentMethod")) {
-                                $("#viz-piechart").parent().fadeIn();
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-treemap").parent().fadeIn();
-                                $("#viz-parallelsets").parent().fadeIn();
-                                $("#viz-circularsankey").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("material")) {
-                                $("#viz-piechart").parent().fadeIn();
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-treemap").parent().fadeIn();
-                            }
-                            break;
-
-                        case 2: // Two dimensions:
-                            $(".viz-selector-button").hide();
-                            $(".viz-container").fadeIn();
-
-                            // Time & Space
-                            if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("space")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-lineplotmultiple").parent().fadeIn();
-                                $("#viz-areachart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-
-                                $("#viz-flowmap").parent().fadeIn();
-                                // Time & Economic Activity
-                            } else if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("economicActivity")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-lineplotmultiple").parent().fadeIn();
-                                $("#viz-areachart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                                // Time & Treatment Method
-                            } else if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-lineplotmultiple").parent().fadeIn();
-                                $("#viz-areachart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("time") && _this.selectedDimensionStrings.includes("material")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-lineplotmultiple").parent().fadeIn();
-                                $("#viz-areachart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("space") && _this.selectedDimensionStrings.includes("economicActivity")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                                $("#viz-flowmap").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("space") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                                $("#viz-flowmap").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("space") && _this.selectedDimensionStrings.includes("material")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                                $("#viz-flowmap").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("economicActivity") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                                $("#viz-parallelsets").parent().fadeIn();
-
-                                $("#viz-circularsankey").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("economicActivity") && _this.selectedDimensionStrings.includes("material")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                                $("#viz-parallelsets").parent().fadeIn();
-                            } else if (_this.selectedDimensionStrings.includes("material") && _this.selectedDimensionStrings.includes("treatmentMethod")) {
-                                $("#viz-barchart").parent().fadeIn();
-                                $("#viz-stackedbarchart").parent().fadeIn();
-                                $("#viz-parallelsets").parent().fadeIn();
-                            }
-                            break;
-                        case 3: // Three dimensions:
-                            // $(".viz-selector-button").hide();
-                            // $(".viz-container").fadeIn();
-
-                            //console.log("Three  dimensions");
-
-                            break;
-                        default:
-                            // code block
-                    }
-
-                    // If the selected visualization type is hasFlowsFormat, and dimension == treatment method, hide origin/destination toggle:
-                    let selectedVizHasFlowsFormat = $(".viz-selector-button.active").hasClass("hasFlowsFormat")
-                    // At least two dimensions, and one is treatmentMethod:
-                    if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("treatmentMethod") && selectedVizHasFlowsFormat) {
-                        $("#origDest-toggle-treatment").parent().fadeOut();
-                    } else {
+                        // show origin / destination for space & treatment method
+                        $("#dim-space-gran-select").parent().fadeIn();
+                        $("#origDest-toggle-space").parent().fadeIn();
                         $("#origDest-toggle-treatment").parent().fadeIn();
+                    } else {
+                        $("#message-container-row").fadeIn();
+                        $(".viz-container").hide();
                     }
 
-                    // If the selected visualization type is NOT hasFlowsFormat, and dimension == space, show origin/destination toggle:
-                    if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("space") && !selectedVizHasFlowsFormat) {
-                        $("#origDest-toggle-space").parent().fadeIn();
-                    }
-                    // If the selected visualization type is hasFlowsFormat, and dimension == space, hide origin/destination toggle:
-                    if (_this.selectedDimensionStrings.includes("space") && selectedVizHasFlowsFormat) {
-                        $("#origDest-toggle-space").parent().fadeOut();
-                    } else {
-                        $("#origDest-toggle-space").parent().fadeIn();
-                    }
                     event.preventDefault();
-                });
-
-                // Disable origin/destination toggle for Space Treatment method for Flowmap and Parallel Sets
-                $(".viz-selector-button").click(function (event) {
-
-                    $('#apply-filters').popover('dispose');
-
-                    let clickedToggleHasFlowsFormat = $($(event.currentTarget)[0]).hasClass("hasFlowsFormat")
-
-                    // At least two dimensions, and one is Space:
-                    if ((_this.checkedDimToggles.length > 1) && _this.selectedDimensionStrings.includes("space") && clickedToggleHasFlowsFormat) {
-                        $("#origDest-toggle-space").parent().fadeOut();
-                    } else {
-                        $("#origDest-toggle-space").parent().fadeIn();
-                    }
-
-                    // At least two dimensions, and one is treatmentMethod:
-                    if ((_this.checkedDimToggles.length == 1) && _this.selectedDimensionStrings.includes("treatmentMethod") && clickedToggleHasFlowsFormat) {
-                        $("#origDest-toggle-treatment").parent().fadeOut();
-                    } else {
-                        $("#origDest-toggle-treatment").parent().fadeIn();
-                    }
-                    event.preventDefault();
-                });
-
-                $(_this.dimensions.spaceLevelGranSelect).change(function () {
-                    let selectedAreaLevelId = $(_this.dimensions.spaceLevelGranSelect).val();
-                    let selectedAreaLevel = _this.areaLevels.models.find(areaLevel => areaLevel.attributes.id.toString() == selectedAreaLevelId).attributes.level;
-
-                    if (_this.selectedDimensionStrings.length == 1 && _this.selectedDimensionStrings.includes("space")) {
-
-                        if (selectedAreaLevel == 1000) {
-                            $("#viz-coordinatepointmap").parent().fadeIn();
-                            $("#viz-choroplethmap").parent().hide();
-                        } else {
-                            $("#viz-coordinatepointmap").parent().hide();
-                            $("#viz-choroplethmap").parent().fadeIn();
-                        }
-                    }
                 });
 
                 // Show Multiple Line option on dimension Time, granularity Month:
-                $(_this.dimensions.timeToggleGran).change(function () {
-                    let granularityIsMonth = $(_this.dimensions.timeToggleGran).prop("checked");
-                    if (granularityIsMonth) {
-                        $("#viz-lineplotmultiple").parent().fadeIn();
-                    } else if (!granularityIsMonth && _this.selectedDimensionStrings.length == 1) {
-                        $("#viz-lineplotmultiple").parent().hide();
+                $(_this.timeToggleGran).change(function () {
+                    if (_this.selectedDimensionStrings == 'time') {
+                        let granularityIsMonth = $(_this.timeToggleGran).prop("checked");
+                        $("#viz-lineplotmultiple").parent()[granularityIsMonth ? 'fadeIn' : 'hide']();
                     }
+                });
+
+                // Show choropleth / coordinate map for space dimension
+                $(_this.spaceLevelGranSelect).change(function () {
+                    if (_this.selectedDimensionStrings == "space") {
+                        let selectedAreaLevel = $(_this.spaceLevelGranSelect).val(),
+                            actorLevel = selectedAreaLevel == _this.actorLevel;
+                        $("#viz-coordinatepointmap").parent()[actorLevel ? 'fadeIn' : 'hide']();
+                        $("#viz-choroplethmap").parent()[actorLevel ? 'hide' : 'fadeIn']();
+                    }
+                });
+
+                $(".viz-selector-button").click(function (event) {
+                    $('#apply-filters').popover('dispose');
+
+                    // Disable origin/destination toggle for Space Treatment method for Flowmap and Parallel Sets
+                    let clickedToggleHasFlowsFormat = $($(event.currentTarget)[0]).hasClass("hasFlowsFormat");
+
+                    // At least two dimensions, and one is Space:
+                    if (_this.selectedDimensionStrings.includes("space") && clickedToggleHasFlowsFormat) {
+                        $("#origDest-toggle-space").parent().fadeOut();
+                    } else {
+                        $("#dim-space-gran-select").parent().fadeIn();
+                        $("#origDest-toggle-space").parent().fadeIn();
+                    }
+
+                    // Only treatmentMethod:
+                    if (_this.selectedDimensionStrings == "treatmentMethod" && clickedToggleHasFlowsFormat) {
+                        $("#origDest-toggle-treatment").parent().fadeOut();
+                    } else {
+                        $("#origDest-toggle-treatment").parent().fadeIn();
+                    }
+
+                    // Hide space gran for Network Map:
+                    if (_this.selectedVizName == "networkmap") {
+                        $("#dim-space-gran-select").parent().fadeOut();
+                        $("#origDest-toggle-space").parent().fadeOut();
+                    }
+                    event.preventDefault();
                 });
 
                 // Show granularity on toggle change:
@@ -404,12 +353,11 @@ define(['views/common/baseview',
                     }
                 });
 
-                if (selectedVizualisationString) {
-                    if (["flowmap", "parallelsets", "circularsankey"].includes(selectedVizualisationString)) {
-                        let formatString = selectedVizualisationString;
-                        formatString = (formatString == "circularsankey") ? "parallelsets" : formatString;
-                        filterParams.format = formatString;
-                    }
+                var specialVizs = ["flowmap", "parallelsets", "circularsankey", "networkmap"];
+                if (specialVizs.includes(selectedVizualisationString)) {
+                    let formatString = selectedVizualisationString;
+                    formatString = (formatString == "circularsankey") ? "parallelsets" : formatString;
+                    filterParams.format = formatString;
                 }
 
                 // ///////////////////////////////
@@ -417,18 +365,16 @@ define(['views/common/baseview',
                 filterParams.dimensions = {};
 
                 // Time
-                if ($(this.dimensions.timeToggle).prop("checked")) {
-                    var timeFilter = 'flowchain__month',
-                        gran = $(this.dimensions.timeToggleGran).prop("checked") ? 'month' : 'year';
-                    if (gran == 'year') {
-                        timeFilter += '__year';
+                if ($(this.timeToggle).prop("checked")) {
+                    filterParams.dimensions.time = 'flowchain__month';
+                    if (!$(this.timeToggleGran).prop("checked")) {
+                        filterParams.dimensions.time += '__year';
                     }
-                    filterParams.dimensions.time = timeFilter;
                 }
 
                 // Space
-                if ($(this.dimensions.spaceToggle).prop("checked")) {
-                    let originOrDestination = $(this.dimensions.spaceOrigDest).prop("checked") ? 'destination' : 'origin',
+                if ($(this.spaceToggle).prop("checked")) {
+                    let originOrDestination = $(this.spaceOrigDest).prop("checked") ? 'destination' : 'origin',
                         gran = $('#dim-space-gran-select option:selected').val();
                     filterParams.dimensions.space = {};
                     filterParams.dimensions.space.adminlevel = gran;
@@ -436,376 +382,155 @@ define(['views/common/baseview',
                 }
 
                 // Economic activity
-                if ($(this.dimensions.economicActivityToggle).prop("checked")) {
-                    let originOrDestination = $(this.dimensions.economicActivityOrigDest).prop("checked") ? 'destination__' : 'origin__';
-                    gran = $(this.dimensions.economicActivityToggleGran).prop("checked") ? 'activity' : 'activity__activitygroup',
+                if ($(this.economicActivityToggle).prop("checked")) {
+                    let originOrDestination = $(this.economicActivityOrigDest).prop("checked") ? 'destination__' : 'origin__';
+                    gran = $(this.economicActivityToggleGran).prop("checked") ? 'activity' : 'activity__activitygroup',
                         filterParams.dimensions.economicActivity = originOrDestination + gran;
                 }
 
                 // Treatment method
-                if ($(this.dimensions.treatmentMethodToggle).prop("checked")) {
-                    let originOrDestination = $(this.dimensions.treatmentMethodOrigDest).prop("checked") ? 'destination__' : 'origin__';
-                    gran = $(this.dimensions.treatmentMethodToggleGran).prop("checked") ? 'process' : 'process__processgroup',
+                if ($(this.treatmentMethodToggle).prop("checked")) {
+                    let originOrDestination = $(this.treatmentMethodOrigDest).prop("checked") ? 'destination__' : 'origin__';
+                    gran = $(this.treatmentMethodToggleGran).prop("checked") ? 'process' : 'process__processgroup',
                         filterParams.dimensions.treatmentMethod = originOrDestination + gran;
                 }
 
-                if ($(this.dimensions.materialToggle).prop("checked")) {
-                    let gran = $($(".gran-radio-material-label.active")).attr("data-ewc"),
-                        materialFilter = 'flowchain__waste06';
+                // Material
+                if ($(this.materialToggle).prop("checked")) {
+                    let gran = $($(".gran-radio-material-label.active")).attr("data-ewc");
+                    filterParams.dimensions.material = 'flowchain__waste06';
                     if (gran === 'ewc4') {
-                        materialFilter += '__waste04'
+                        filterParams.dimensions.material += '__waste04'
                     } else if (gran === 'ewc2') {
-                        materialFilter += '__waste04__waste02'
+                        filterParams.dimensions.material += '__waste04__waste02'
                     }
-                    filterParams.dimensions.material = materialFilter;
                 }
-
 
                 // Gather impact params for impact mode:
                 if (this.mode == "impact") {
-
                     // Indicator toggle
                     $('.impact-indicator-radio-label').each(function (index, value) {
                         if ($(this).hasClass("active")) {
-                            _this.indicator = $(this).attr("data-indicator")
-                            filterParams.indicator = _this.indicator;
+                            filterParams.indicator = $(this).attr("data-indicator");
                         }
                     });
 
                     // Divide the toggles in arrays of checked and unchecked toggles:
+                    filterParams.impactSources = [];
                     $('.impactSourceToggle').each(function (index, value) {
-                        let checked = $(this.parentElement.firstChild).prop('checked')
+                        let checked = $(this.parentElement.firstChild).prop('checked');
                         if (checked) {
-                            _this.impactSourceStrings.push($(this).attr("data-source"));
+                            filterParams.impactSources.push($(this).attr("data-source"));
                         }
-                        filterParams.impactSources = _this.impactSourceStrings;
                     });
-
                 }
 
                 console.log(filterParams);
                 return filterParams;
             },
 
-            render1Dvisualizations: function (dimensions, flows) {
+            renderVisualizations: function (dimensions, flows) {
                 let _this = this;
-                let filtersView = this.filtersView;
-                let dimensionString = dimensions[0][0];
-                let granularity = dimensions[0][1];
+                let collections = this.filtersView.collections,
+                    tags = this.filtersView.tags;
 
-                switch (dimensionString) {
-                    case "time":
-                        flows = enrichFlows.enrichTime(flows, filtersView, granularity);
-                        break;
-                    case "space":
-                        // Set isActorLevel if necessary:
-                        let actorAreaLevelId = filtersView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-                        if (granularity.adminlevel == actorAreaLevelId) {
-                            dimensions.isActorLevel = true;
+                // Enrich flows with info
+                let adminlevel = null;
+                dimensions.forEach(function (dimension) {
+                    let dimensionString = dimension[0];
+                    let granularity = dimension[1];
+
+                    if (dimensionString !== 'space') {
+                        if (!['parallelsets', 'circularsankey'].includes(_this.selectedVizName)) {
+                            flows = enrichFlows.enrichFlows(flows, tags, collections, granularity);
                         }
-                        break;
-                    case "economicActivity":
-                        flows = enrichFlows.enrichEconActivity(flows, filtersView, granularity);
-                        break;
-                    case "treatmentMethod":
-                        flows = enrichFlows.enrichTreatmentMethod(flows, filtersView, granularity);
-                        break;
-                    case "material":
-                        flows = enrichFlows.enrichEWC(flows, filtersView, granularity);
-                        break;
+                    } else {
+                        adminlevel = granularity.adminlevel;
+                        dimensions.isActorLevel = (adminlevel == _this.actorLevel) ? true : false;
+                    }
+                })
+
+                // Render visualization
+                if (this.vizView != null) this.vizView.close();
+                if (_this.selectedVizName === 'parallelsets') {
+                    $(".parallelsets-container").show();
                 }
 
-                switch (_this.selectedVizName) {
-                    case "piechart":
-                        this.renderPieChart(dimensions, flows);
-                        break;
-                    case "barchart":
-                        this.renderBarChart(dimensions, flows);
-                        break;
-                    case "lineplot":
-                        this.renderLinePlot(dimensions, flows);
-                        break;
-                    case "treemap":
-                        this.renderTreeMap(dimensions, flows);
-                        break;
-                    case "lineplotmultiple":
-                        this.renderLinePlot(dimensions, flows, true);
-                        break;
-                    case "choroplethmap":
-                        let occuringAreas = [];
-                        occuringAreas = flows.map(x => x.areaId);
-                        occuringAreas = _.unique(occuringAreas);
+                let vizView = this.vizViews[_this.selectedVizName],
+                    extraOptions = vizView['options'];
 
-                        areas = new Collection([], {
-                            apiTag: 'areas',
-                            apiIds: [granularity.adminlevel]
-                        });
-                        areas.fetch({
-                            success: function () {
-                                var geoJson = {};
-                                geoJson['type'] = 'FeatureCollection';
-                                features = geoJson['features'] = [];
-                                areas.forEach(function (area) {
-                                    var feature = {};
-                                    feature['type'] = 'Feature';
-                                    feature['id'] = area.get('id')
-                                    feature['geometry'] = area.get('geom')
+                let wrapperName = _this.selectedVizName === 'lineplotmultiple' ? 'lineplot' : _this.selectedVizName;
+                $("." + wrapperName + "-wrapper").fadeIn();
+                let defaultOptions = {
+                    el: "." + wrapperName + "-wrapper",
+                    dimensions: dimensions,
+                    flows: flows,
+                    flowsView: this,
+                    label: this.labels[this.indicator],
+                };
 
-                                    if (occuringAreas.includes(feature.id)) {
-                                        features.push(feature)
-                                    }
-                                })
+                if (_this.selectedVizName === 'choroplethmap') {
+                    _this.renderChoroplethMap(flows, adminlevel, dimensions);
+                } else {
+                    this.vizView = new vizView['view'](
+                        Object.assign(defaultOptions, extraOptions)
+                    );
+                }
+            },
 
-                                flows.forEach(function (flow, index) {
-                                    this[index].id = this[index].areaId;
-                                }, flows);
+            renderChoroplethMap: function (flows, adminlevel, dimensions) {
+                var _this = this;
 
-                                _this.renderChoropleth1D(dimensions, flows, geoJson);
-                            },
-                            error: function (res) {
-                                console.log(res);
+                let occuringAreas = [];
+                occuringAreas = flows.map(x => x.areaId);
+                occuringAreas = _.unique(occuringAreas);
+
+                areas = new Collection([], {
+                    apiTag: 'areas',
+                    apiIds: [adminlevel]
+                });
+                areas.fetch({
+                    success: function () {
+                        var geoJson = {};
+                        geoJson['type'] = 'FeatureCollection';
+                        features = geoJson['features'] = [];
+                        areas.forEach(function (area) {
+                            var feature = {};
+                            feature['type'] = 'Feature';
+                            feature['id'] = area.get('id')
+                            feature['geometry'] = area.get('geom')
+
+                            if (occuringAreas.includes(feature.id)) {
+                                features.push(feature);
                             }
+                        })
+
+                        flows.forEach(function (flow, index) {
+                            this[index].id = this[index].areaId;
+                        }, flows);
+
+                        _this.vizView = new ChoroplethView({
+                            el: ".choroplethmap-wrapper",
+                            dimensions: dimensions,
+                            flows: flows,
+                            flowsView: _this,
+                            geoJson: geoJson
                         });
-                        break;
-                    case "coordinatepointmap": // Only in case of Actor
-                        _this.renderCoordinatePointMap1D(dimensions, flows);
-                        break;
-                }
-
-                // console.log(flows);
-            },
-
-            render2Dvisualizations: function (dimensions, flows) {
-                let _this = this;
-                let filtersView = this.filtersView;
-                let dimStrings = [];
-
-                let dim1String = dimensions[0][0];
-                let gran1 = dimensions[0][1];
-                let dim2String = dimensions[1][0];
-                let gran2 = dimensions[1][1];
-
-                // Array with dimension strings without Granularity:
-                dimensions.forEach(dim => dimStrings.push(dim[0]));
-
-                //console.log("Dimensions");
-                //console.log(dimStrings);
-
-                // Time & Space
-                if (dimStrings.includes("time") && dimStrings.includes("space")) {
-
-                    flows = enrichFlows.enrichTime(flows, filtersView, gran1);
-                    // Actor level:
-
-                    let actorAreaLevelId = filtersView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-                    if (dimensions[1][1].adminlevel == actorAreaLevelId) {
-                        dimensions.isActorLevel = true;
+                    },
+                    error: function (res) {
+                        console.log(res);
                     }
-
-                    // Time & Economic Activity
-                } else if (dimStrings.includes("time") && dimStrings.includes("economicActivity")) {
-
-                    flows = enrichFlows.enrichTime(flows, filtersView, gran1);
-                    flows = enrichFlows.enrichEconActivity(flows, filtersView, gran2);
-
-                    // Time & Treatment method
-                } else if (dimStrings.includes("time") && dimStrings.includes("treatmentMethod")) {
-
-                    flows = enrichFlows.enrichTime(flows, filtersView, gran1);
-                    flows = enrichFlows.enrichTreatmentMethod(flows, filtersView, gran2);
-
-                    // Time & Material
-                } else if (dimStrings.includes("time") && dimStrings.includes("material")) {
-
-                    flows = enrichFlows.enrichTime(flows, filtersView, gran1);
-                    flows = enrichFlows.enrichEWC(flows, filtersView, gran2);
-
-                    // Space & Economic Activity
-                } else if (dimStrings.includes("space") && dimStrings.includes("economicActivity")) {
-
-                    // If level == actor:
-                    let actorAreaLevelId = filtersView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-                    if (gran1.adminlevel == actorAreaLevelId) {
-                        dimensions.isActorLevel = true;
-                    }
-
-                    flows = enrichFlows.enrichEconActivity(flows, filtersView, gran2);
-
-                    // Space & Treatment Method
-                } else if (dimStrings.includes("space") && dimStrings.includes("treatmentMethod")) {
-
-                    // If level == actor:
-                    let actorAreaLevelId = filtersView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-                    if (gran1.adminlevel == actorAreaLevelId) {
-                        dimensions.isActorLevel = true;
-                    }
-
-                    flows = enrichFlows.enrichTreatmentMethod(flows, filtersView, gran2);
-
-                    // Space & Material
-                } else if (dimStrings.includes("space") && dimStrings.includes("material")) {
-
-                    // If level == actor:
-                    let actorAreaLevelId = filtersView.areaLevels.models.find(areaLevel => areaLevel.attributes.level == "1000").attributes.id;
-                    if (gran1.adminlevel == actorAreaLevelId) {
-                        dimensions.isActorLevel = true;
-                    }
-                    flows = enrichFlows.enrichEWC(flows, filtersView, gran2);
-
-                    // Economic Activity & Treatment Method
-                } else if (dimStrings.includes("economicActivity") && dimStrings.includes("treatmentMethod")) {
-                    flows = enrichFlows.enrichEconActivity(flows, filtersView, gran1);
-                    flows = enrichFlows.enrichTreatmentMethod(flows, filtersView, gran2);
-
-                    // Economic Activity & Material
-                } else if (dimStrings.includes("economicActivity") && dimStrings.includes("material")) {
-                    flows = enrichFlows.enrichEconActivity(flows, filtersView, gran1);
-                    flows = enrichFlows.enrichEWC(flows, filtersView, gran2);
-                }
-
-                switch (_this.selectedVizName) {
-                    case "lineplotmultiple":
-                        this.renderLinePlot(dimensions, flows, true);
-                        break;
-                    case "areachart":
-                        this.renderAreaChart(dimensions, flows);
-                        break;
-                    case "barchart":
-                        this.renderBarChart(dimensions, flows);
-                        break;
-                    case "stackedbarchart":
-                        this.renderBarChart(dimensions, flows, true);
-                        break;
-                    case "flowmap":
-                        this.renderFlowMap(dimensions, flows);
-                        break;
-                }
-
-                // console.log(flows);
-            },
-
-            renderPieChart: function (dimensions, flows) {
-                $(".piechart-wrapper").fadeIn();
-                this.pieChartView = new PieChartView({
-                    el: ".piechart-wrapper",
-                    dimensions: dimensions,
-                    flows: flows,
-                    flowsView: this,
-                    indicator: this.indicator,
-                });
-            },
-
-            renderTreeMap: function (dimensions, flows) {
-                $(".treemap-wrapper").fadeIn();
-                this.treeMapView = new TreeMapView({
-                    el: ".treemap-wrapper",
-                    dimensions: dimensions,
-                    flows: flows,
-                    flowsView: this,
-                    indicator: this.indicator,
-                });
-            },
-
-            renderBarChart: function (dimensions, flows, isStacked) {
-                $(".barchart-wrapper").fadeIn();
-                this.barChartView = new BarChartView({
-                    el: ".barchart-wrapper",
-                    dimensions: dimensions,
-                    flows: flows,
-                    flowsView: this,
-                    isStacked: isStacked,
-                    indicator: this.indicator,
-                });
-            },
-
-            renderLinePlot: function (dimensions, flows, hasMultipleLines) {
-                $(".lineplot-wrapper").fadeIn();
-                this.linePlotView = new LinePlotView({
-                    el: ".lineplot-wrapper",
-                    dimensions: dimensions,
-                    flows: flows,
-                    flowsView: this,
-                    hasMultipleLines: hasMultipleLines,
-                    indicator: this.indicator,
-                });
-            },
-
-            renderChoropleth1D: function (dimensions, flows, geoJson) {
-                $(".choropleth-wrapper").fadeIn();
-                this.choroplethView = new ChoroplethView({
-                    el: ".choropleth-wrapper",
-                    dimensions: dimensions,
-                    flows: flows,
-                    flowsView: this,
-                    geoJson: geoJson,
-                    indicator: this.indicator,
-                });
-            },
-
-            renderCoordinatePointMap1D: function (dimensions, flows) {
-                $(".coordinatepointmap-wrapper").fadeIn();
-                this.coordinatePointMapView = new CoordinatePointMapView({
-                    el: ".coordinatepointmap-wrapper",
-                    dimensions: dimensions,
-                    flows: flows,
-                    flowsView: this,
-                    indicator: this.indicator,
-                });
-            },
-
-            renderAreaChart: function (dimensions, flows) {
-                $(".areachart-wrapper").fadeIn();
-                this.areaChartView = new AreaChartView({
-                    el: ".areachart-wrapper",
-                    dimensions: dimensions,
-                    flows: flows,
-                    flowsView: this,
-                    indicator: this.indicator,
-                });
-            },
-
-            renderFlowMap: function (dimensions, flows) {
-                $(".flowmap-wrapper").fadeIn();
-                this.flowMapView = new FlowMapView({
-                    el: ".flowmap-wrapper",
-                    dimensions: dimensions,
-                    flows: flows,
-                    flowsView: this,
-                    indicator: this.indicator,
-                });
-            },
-
-            renderParallelSets: function (dimensions, flows) {
-                $(".parallelsets-container").show();
-                $(".parallelsets-wrapper").fadeIn();
-                this.parallelSetsView = new ParallelSetsView({
-                    el: ".parallelsets-wrapper",
-                    dimensions: dimensions,
-                    flows: flows,
-                    flowsView: this,
-                    indicator: this.indicator,
-                });
-            },
-
-            renderCircularSankey: function (dimensions, flows) {
-                $(".circularsankey-wrapper").show();
-                this.circularSankeyView = new CircularSankeyView({
-                    el: "circularsankey-wrapper",
-                    dimensions: dimensions,
-                    flows: flows,
-                    flowsView: this,
-                    indicator: this.indicator,
                 });
             },
 
             closeAllVizViews: function () {
+                $(".no-data-found").fadeOut();
+                $(".no-data-found").removeClass("d-flex");
+
                 $(".viz-wrapper-div").removeClass("lightMode");
                 $(".viz-wrapper-div").hide();
                 $(".parallelsets-container").hide();
-                let vizViews = ["barChartView", "pieChartView", "linePlotView", "treeMapView", "choroplethView", "coordinatePointMapView", "areaChartView", "flowMapView", "parallelSetsView", "circularSankeyView"];
-                vizViews.forEach(vizView => {
-                    if (this[vizView] != null) this[vizView].close();
-                });
+                if (this.vizView != null) this.vizView.close();
             },
 
             // Fetch flows and calls options.success(flows) on success
@@ -847,37 +572,17 @@ define(['views/common/baseview',
                                 this[index] = flow.attributes;
                             }, _this.flows);
 
-                            try {
+                            _this.selectedDimensions.label = _this.labels[_this.indicator];
 
-                                // Pass label onto all visualizationViews:
-                                _this.selectedDimensions.label = _this.labels[_this.indicator];
-
-                                // Some visualizations require different processing:
-                                if (["parallelsets", "circularsankey"].includes(_this.selectedVizName)) {
-                                    switch (_this.selectedVizName) {
-                                        case "parallelsets":
-                                            _this.renderParallelSets(_this.selectedDimensions, _this.flows);
-                                            break;
-                                        case "circularsankey":
-                                            _this.renderCircularSankey(_this.selectedDimensions, _this.flows);
-                                            break;
-                                    }
-                                } else {
-                                    switch (_this.selectedDimensions.length) {
-                                        case 1:
-                                            _this.render1Dvisualizations(_this.selectedDimensions, _this.flows, _this.selectedVizName);
-                                            break;
-                                        case 2:
-                                            _this.render2Dvisualizations(_this.selectedDimensions, _this.flows, _this.selectedVizName);
-                                            break;
-                                    }
-                                }
-                            } catch (renderError) {
-                                console.log("Error during rendering of visualization: " + renderError)
-                                _this.loader.deactivate();
+                            if (_this.flows.length == 0 ||
+                                _this.flows.every(function(flow) {return flow.amount == 0;})) {
+                                _this.loader.deactivate()
+                                $(".no-data-found").fadeIn();
+                                $(".no-data-found").addClass("d-flex");
+                            } else {
+                                // Render visualization
+                                _this.renderVisualizations(_this.selectedDimensions, _this.flows, _this.selectedVizName);
                             }
-
-                            //_this.loader.deactivate();
                         },
                         error: function (error) {
                             _this.loader.deactivate();
@@ -898,29 +603,29 @@ define(['views/common/baseview',
                 // //////////////////////////////////
                 // Dimension controls:
 
-                $(_this.dimensions.timeToggle).bootstrapToggle('off');
-                $(_this.dimensions.timeToggleGran).bootstrapToggle('off');
+                $(_this.timeToggle).bootstrapToggle('off');
+                $(_this.timeToggleGran).bootstrapToggle('off');
                 $("#gran-toggle-time-col").hide();
 
-                $(_this.dimensions.spaceToggle).bootstrapToggle('off');
-                $(_this.dimensions.spaceLevelGranSelect).val($('#dim-space-gran-select:first-child')[0].value);
-                $(_this.dimensions.spaceOrigDest).bootstrapToggle('off');
+                $(_this.spaceToggle).bootstrapToggle('off');
+                $(_this.spaceLevelGranSelect).val($('#dim-space-gran-select:first-child')[0].value);
+                $(_this.spaceOrigDest).bootstrapToggle('off');
                 $("#gran-toggle-space-col").hide();
                 $("#origDest-toggle-space-col").hide();
 
-                $(_this.dimensions.economicActivityToggle).bootstrapToggle('off');
-                $(_this.dimensions.economicActivityToggleGran).bootstrapToggle('off');
-                $(_this.dimensions.economicActivityOrigDest).bootstrapToggle('off');
+                $(_this.economicActivityToggle).bootstrapToggle('off');
+                $(_this.economicActivityToggleGran).bootstrapToggle('off');
+                $(_this.economicActivityOrigDest).bootstrapToggle('off');
                 $("#gran-econ-activity-col").hide();
                 $("#origDest-toggle-econAct-col").hide();
 
-                $(_this.dimensions.treatmentMethodToggle).bootstrapToggle('off');
-                $(_this.dimensions.treatmentMethodToggleGran).bootstrapToggle('off');
-                $(_this.dimensions.treatmentMethodOrigDest).bootstrapToggle('off');
+                $(_this.treatmentMethodToggle).bootstrapToggle('off');
+                $(_this.treatmentMethodToggleGran).bootstrapToggle('off');
+                $(_this.treatmentMethodOrigDest).bootstrapToggle('off');
                 $("#gran-treatment-method-col").hide();
                 $("#origDest-toggle-treatment-col").hide();
 
-                $(_this.dimensions.materialToggle).bootstrapToggle('off');
+                $(_this.materialToggle).bootstrapToggle('off');
                 $(".gran-radio-material-label").removeClass("active");
                 $($("#gran-radio-material")[0].children[0]).addClass("active");
                 $("#gran-material-col").hide();
