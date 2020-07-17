@@ -789,23 +789,20 @@ define(['views/common/baseview',
                     var originAndDestination = ['origin', 'destination'];
                     // Origin and Destination actor filter:
                     originAndDestination.forEach(function (group) {
-
                         var actorFilter = $('#' + group + '-actor-select');
                         var actorObjects = config[group].actorObjects;
 
-                        var actorIds = config.flows[group + '__company__id__in']
+                        var actorIds = config.flows[group + '__company__id__in'];
                         if (actorIds !== undefined) {
-                            actorFilter.val(actorIds)
-
-                            var actorOptionsHtml = "";
+                            _this[group].selectedActors = actorIds;
+                            
+                            var actorOptionsHtml = "<optgroup label='Currently selected:'>";
                             var actorNames = [];
                             actorObjects.forEach(actor => {
                                 actorOptionsHtml += '<option value="' + actor.id + '" title="' + actor.name + '" selected="selected">' + actor.name + '</option>';
                                 actorNames.push(actor.name);
                             });
-
-                        
-                            console.log(actorOptionsHtml);
+                            actorOptionsHtml += '</optgroup>';
 
                             $.fn.ajaxSelectPickerRefresh = function () {
                                 return this.each(function () {
@@ -829,7 +826,6 @@ define(['views/common/baseview',
                             actorFilter.append(actorOptionsHtml).selectpicker('refresh').ajaxSelectPickerRefresh();
                             $("." + group + "-actor-select-col button").attr("title", actorNames.join(", "));
                             $("." + group + "-actor-select-col .filter-option-inner-inner").html(actorNames.join(", "));
-
 
                             console.log("The actor filter has this value: ", actorFilter.val());
                         }
