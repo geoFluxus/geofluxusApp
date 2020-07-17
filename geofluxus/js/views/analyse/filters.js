@@ -284,6 +284,7 @@ define(['views/common/baseview',
                     // Store selection:
                     $("#" + group + "-actor-select").on('changed.bs.select', function () {
                         _this[group].selectedActors = $("#" + group + "-actor-select").val();
+                        $("." + group + "-actor-select-col .status").show();
                     });
                 });
 
@@ -826,8 +827,7 @@ define(['views/common/baseview',
                             actorFilter.append(actorOptionsHtml).selectpicker('refresh').ajaxSelectPickerRefresh();
                             $("." + group + "-actor-select-col button").attr("title", actorNames.join(", "));
                             $("." + group + "-actor-select-col .filter-option-inner-inner").html(actorNames.join(", "));
-
-                            console.log("The actor filter has this value: ", actorFilter.val());
+                            $("." + group + "-actor-select-col .status").hide();
                         }
                     })
 
