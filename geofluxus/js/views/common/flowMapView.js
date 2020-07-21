@@ -72,17 +72,22 @@ define(['underscore',
                         'waste06'       : 'EWC Entry'
                     }
 
-                    this.areas = new Collection([], {
-                        apiTag: 'areas',
-                        apiIds: [this.adminLevel]
-                    });
+//                    this.areas = Object.values(this.flows.pop())
 
-                    var promises = [this.areas.fetch()];
+                    this.render();
+                    this.rerender(true);
 
-                    Promise.all(promises).then(function () {
-                        _this.render();
-                        _this.rerender(true);
-                    })
+//                    this.areas = new Collection([], {
+//                        apiTag: 'areas',
+//                        apiIds: [this.adminLevel]
+//                    });
+//
+//                    var promises = [this.areas.fetch()];
+//
+//                    Promise.all(promises).then(function () {
+//                        _this.render();
+//                        _this.rerender(true);
+//                    })
                 },
 
                 /*
@@ -129,25 +134,27 @@ define(['underscore',
                     // Disable zoom on scroll:
                     this.leafletMap.scrollWheelZoom.disable();
 
-                    // Filter areas
-                    var areaIds = new Set();
-                    this.flows.forEach(function (flow) {
-                        areaIds.add(flow.origin.id);
-                        areaIds.add(flow.destination.id);
-                    })
+//                    // Filter areas
+//                    var areaIds = new Set();
+//                    this.flows.forEach(function (flow) {
+//                        areaIds.add(flow.origin.id);
+//                        areaIds.add(flow.destination.id);
+//                    })
 
                     // Retrieve area geometry
                     var areas = [];
-                    this.areas.forEach(function(area) {
-                        let newArea = {
-                            id: area.get('id'),
-                            name: area.get('name'),
-                            geom: area.get('geom').coordinates,
-                        }
-                        if (areaIds.has(newArea.id)) {
+                    if (!this.isActorLevel) {
+                        this.areas = Object.values(this.flows.pop());
+                        
+                        this.areas.forEach(function(area) {
+                            let newArea = {
+                                id: area['id'],
+                                name: area['name'],
+                                geom: area['geom'].coordinates,
+                            }
                             areas.push(newArea);
-                        }
-                    })
+                        })
+                    }
 
                     // Instantiate Flowmap object:
                     this.flowMap = new FlowMap(this.leafletMap, {
