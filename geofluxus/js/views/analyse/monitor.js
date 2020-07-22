@@ -500,48 +500,6 @@ define(['views/common/baseview',
                     flowsView: _this,
                     geoJson: geoJson
                 });
-
-
-//                let occuringAreas = [];
-//                occuringAreas = flows.map(x => x.areaId);
-//                occuringAreas = _.unique(occuringAreas);
-//
-//                areas = new Collection([], {
-//                    apiTag: 'areas',
-//                    apiIds: [adminlevel]
-//                });
-//                areas.fetch({
-//                    success: function () {
-//                        var geoJson = {};
-//                        geoJson['type'] = 'FeatureCollection';
-//                        features = geoJson['features'] = [];
-//                        areas.forEach(function (area) {
-//                            var feature = {};
-//                            feature['type'] = 'Feature';
-//                            feature['id'] = area.get('id')
-//                            feature['geometry'] = area.get('geom')
-//
-//                            if (occuringAreas.includes(feature.id)) {
-//                                features.push(feature);
-//                            }
-//                        })
-//
-//                        flows.forEach(function (flow, index) {
-//                            this[index].id = this[index].areaId;
-//                        }, flows);
-//
-//                        _this.vizView = new ChoroplethView({
-//                            el: ".choroplethmap-wrapper",
-//                            dimensions: dimensions,
-//                            flows: flows,
-//                            flowsView: _this,
-//                            geoJson: geoJson
-//                        });
-//                    },
-//                    error: function (res) {
-//                        console.log(res);
-//                    }
-//                });
             },
 
             closeAllVizViews: function () {

@@ -118,14 +118,16 @@ class MonitorViewSet(FilterFlowViewSet):
                          .order_by(*self.fields) \
                          .annotate(total=Sum('amount'))
 
+        # complete area inventory after aggregating flows
         area_ids = set()
         if self.admin.level != ACTOR_LEVEL:
+            # collect area ids for flow origin or/and destination
             for field in self.fields:
                 if field in ['origin_area', 'destination_area']:
                     area_ids.update(list(groups.filter(**{field + '__isnull': False})
                                                .values_list(field, flat=True)
                                                .distinct()))
-
+            # complete inventory for collected areas
             if area_ids:
                 self.space_inv = self.space_inv.filter(id__in=area_ids)\
                                                .values('id',
@@ -199,20 +201,27 @@ class MonitorViewSet(FilterFlowViewSet):
 
             data.append(OrderedDict(flow_item))
 
-        # serialize areas for visualization
+        # serialize areas for visualizations
         if data and format in ['choroplethmap', 'flowmap']:
             areas = []
             for id in area_ids:
+                # check for area in space inventory
                 area = next(x for x in self.space_inv if x['id'] == id)
+
+                # serialize only areas of requested admin level!!!
                 if area['adminlevel'] == self.admin.id:
+                    # simplify geometry to render
                     geom = area['geom'].simplify(tolerance=self.admin.resolution,
                                                  preserve_topology=False)
+
+                    # serialize area
                     area_item = {
                         'id': area['id'],
                         'name': area['name'],
                         'geom': json.loads(geom.geojson)
                     }
 
+                    # attention! convert all geometries to common type MULTIPOLYGON
                     if area_item['geom']['type'] == 'Polygon':
                         area_item['geom']['type'] = 'MultiPolygon'
                         area_item['geom']['coordinates'] = [area_item['geom']['coordinates']]
@@ -270,6 +279,7 @@ class MonitorViewSet(FilterFlowViewSet):
                                                       'company__name',
                                                       'geom')
             elif 'area' in self.levels[-1]:
+                # complete area inventory after aggregating flows
                 self.space_inv = Area.objects
 
         # parallel sets for treatment method (group)

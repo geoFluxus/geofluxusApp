@@ -72,22 +72,8 @@ define(['underscore',
                         'waste06'       : 'EWC Entry'
                     }
 
-//                    this.areas = Object.values(this.flows.pop())
-
                     this.render();
                     this.rerender(true);
-
-//                    this.areas = new Collection([], {
-//                        apiTag: 'areas',
-//                        apiIds: [this.adminLevel]
-//                    });
-//
-//                    var promises = [this.areas.fetch()];
-//
-//                    Promise.all(promises).then(function () {
-//                        _this.render();
-//                        _this.rerender(true);
-//                    })
                 },
 
                 /*
@@ -133,13 +119,6 @@ define(['underscore',
 
                     // Disable zoom on scroll:
                     this.leafletMap.scrollWheelZoom.disable();
-
-//                    // Filter areas
-//                    var areaIds = new Set();
-//                    this.flows.forEach(function (flow) {
-//                        areaIds.add(flow.origin.id);
-//                        areaIds.add(flow.destination.id);
-//                    })
 
                     // Retrieve area geometry
                     var areas = [];
