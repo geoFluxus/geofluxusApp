@@ -122,7 +122,7 @@ class MonitorViewSet(FilterFlowViewSet):
         if self.admin.level != ACTOR_LEVEL:
             for field in self.fields:
                 if field in ['origin_area', 'destination_area']:
-                    area_ids.update(list(queryset.filter(**{field + '__isnull': False})
+                    area_ids.update(list(groups.filter(**{field + '__isnull': False})
                                                .values_list(field, flat=True)
                                                .distinct()))
 
