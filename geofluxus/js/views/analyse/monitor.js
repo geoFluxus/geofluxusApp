@@ -74,7 +74,7 @@ define(['views/common/baseview',
                     'space_economicActivity': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
                     'space_treatmentMethod': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
                     'space_material': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
-                    'economicActivity_treatmentMethod': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap'],
+                    'economicActivity_treatmentMethod': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap', 'circularsankey'],
                     'economicActivity_material': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap'],
                     'treatmentMethod_material': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap']
                 }

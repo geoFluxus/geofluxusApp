@@ -95,6 +95,7 @@ define(['views/common/baseview',
                         data: this.flows,
                         fontColor: this.fontColor,
                         label: this.label,
+                        isDarkMode: this.isDarkMode,
                     })
 
                     utils.scrollToVizRow();
@@ -106,7 +107,7 @@ define(['views/common/baseview',
                     if (buttonFullscreen.empty()) {
 
                         let _this = this;
-                        let vizContainer = d3.select("#circularsankey-wrapper div");
+                        let vizContainer = d3.select(this.options.el +  " div");
                         vizContainer.append("div")
                             .attr("class", "sankeyControlContainer")
                             .lower();
@@ -170,358 +171,358 @@ define(['views/common/baseview',
 
                 transformToLinksAndNodes: function (flows, dimensions, filtersView) {
 
-                    // flows = [{
-                    //         "origin": "G WHOLESALE AND RETAIL TRADE (G)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 4,
-                    //         "composition": "100% Edible oils and fats"
-                    //     },
-                    //     {
-                    //         "origin": "O PUBLIC ADMINISTRATION AND DEFENCE; COMPULSORY SOCIAL SECURITY (O)",
-                    //         "destination": "F CONSTRUCTION (F)",
-                    //         "amount": 19,
-                    //         "composition": "100% Fats"
-                    //     },
-                    //     {
-                    //         "origin": "Q HUMAN HEALTH AND SOCIAL WORK ACTIVITIES (Q)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 496,
-                    //         "composition": "47.984% Fat, water and sludge | 31.048% Edible oils and fats | 20.968% Trapped grease"
-                    //     },
-                    //     {
-                    //         "origin": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "destination": "G WHOLESALE AND RETAIL TRADE (G)",
-                    //         "amount": 22,
-                    //         "composition": "100% Fats"
-                    //     },
-                    //     {
-                    //         "origin": "A AGRICULTURE, FORESTRY AND FISHING (A)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 12,
-                    //         "composition": "100% Edible oils and fats"
-                    //     },
-                    //     {
-                    //         "origin": "P EDUCATION (P)",
-                    //         "destination": "F CONSTRUCTION (F)",
-                    //         "amount": 19,
-                    //         "composition": "100% Fats"
-                    //     },
-                    //     {
-                    //         "origin": "S OTHER SERVICE ACTIVITIES (S)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 37,
-                    //         "composition": "91.892% Fat, water and sludge | 2.703% Edible oils and fats | 5.405% Trapped grease"
-                    //     },
-                    //     {
-                    //         "origin": "G WHOLESALE AND RETAIL TRADE (G)",
-                    //         "destination": "F CONSTRUCTION (F)",
-                    //         "amount": 25,
-                    //         "composition": "100% Fats"
-                    //     },
-                    //     {
-                    //         "origin": "G WHOLESALE AND RETAIL TRADE (G)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 1.307,
-                    //         "composition": "1.683% Fats | 98.317% Edible oils and fats"
-                    //     },
-                    //     {
-                    //         "origin": "G WHOLESALE AND RETAIL TRADE (G)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 1.025,
-                    //         "composition": "13.561% Fats | 86.439% Emulsion"
-                    //     },
-                    //     {
-                    //         "origin": "CA MANUFACTURE OF FOOD PRODUCTS, BEVERAGES AND TOBACCO PRODUCTS (CA)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 2,
-                    //         "composition": "100% Edible oils and fats"
-                    //     },
-                    //     {
-                    //         "origin": "N ADMINISTRATIVE AND SUPPORT SERVICE ACTIVITIES (N)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 86,
-                    //         "composition": "44.186% Fat, water and sludge | 30.233% Edible oils and fats | 25.581% Trapped grease"
-                    //     },
-                    //     {
-                    //         "origin": "J INFORMATION AND COMMUNICATION (J)",
-                    //         "destination": "F CONSTRUCTION (F)",
-                    //         "amount": 4,
-                    //         "composition": "100% Fats"
-                    //     },
-                    //     {
-                    //         "origin": "D ELECTRICITY, GAS, STEAM AND AIR CONDITIONING SUPPLY (D)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 2,
-                    //         "composition": "100% Fat, water and sludge"
-                    //     },
-                    //     {
-                    //         "origin": "K FINANCIAL AND INSURANCE ACTIVITIES (K)",
-                    //         "destination": "CA MANUFACTURE OF FOOD PRODUCTS, BEVERAGES AND TOBACCO PRODUCTS (CA)",
-                    //         "amount": 23,
-                    //         "composition": "100% Fats"
-                    //     },
-                    //     {
-                    //         "origin": "V NON-ECONOMIC ACTIVITIES (V)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 2,
-                    //         "composition": "100% Fat, water and sludge"
-                    //     },
-                    //     {
-                    //         "origin": "C MANUFACTURING (C)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 1,
-                    //         "composition": "100% Edible oils and fats"
-                    //     },
-                    //     {
-                    //         "origin": "H TRANSPORTATION AND STORAGE (H)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 17,
-                    //         "composition": "23.529% Fat, water and sludge | 76.471% Edible oils and fats"
-                    //     },
-                    //     {
-                    //         "origin": "R ARTS, ENTERTAINMENT AND RECREATION (R)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 241,
-                    //         "composition": "46.473% Fat, water and sludge | 36.929% Edible oils and fats | 16.598% Trapped grease"
-                    //     },
-                    //     {
-                    //         "origin": "G WHOLESALE AND RETAIL TRADE (G)",
-                    //         "destination": "H TRANSPORTATION AND STORAGE (H)",
-                    //         "amount": 1.434,
-                    //         "composition": "100% Sludge"
-                    //     },
-                    //     {
-                    //         "origin": "I ACCOMMODATION AND FOOD SERVICE ACTIVITIES (I)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 1.493,
-                    //         "composition": "71.132% Fat, water and sludge | 6.43% Edible oils and fats | 22.438% Trapped grease"
-                    //     },
-                    //     {
-                    //         "origin": "CA MANUFACTURE OF FOOD PRODUCTS, BEVERAGES AND TOBACCO PRODUCTS (CA)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 24,
-                    //         "composition": "100% Edible oils and fats"
-                    //     },
-                    //     {
-                    //         "origin": "L REAL ESTATE ACTIVITIES (L)",
-                    //         "destination": "I ACCOMMODATION AND FOOD SERVICE ACTIVITIES (I)",
-                    //         "amount": 1,
-                    //         "composition": "100% Fat, water and sludge"
-                    //     },
-                    //     {
-                    //         "origin": "CA MANUFACTURE OF FOOD PRODUCTS, BEVERAGES AND TOBACCO PRODUCTS (CA)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 323,
-                    //         "composition": "100% Edible oils and fats"
-                    //     },
-                    //     {
-                    //         "origin": "L REAL ESTATE ACTIVITIES (L)",
-                    //         "destination": "F CONSTRUCTION (F)",
-                    //         "amount": 10,
-                    //         "composition": "100% Fats"
-                    //     },
-                    //     {
-                    //         "origin": "G WHOLESALE AND RETAIL TRADE (G)",
-                    //         "destination": "C MANUFACTURING (C)",
-                    //         "amount": 656,
-                    //         "composition": "42.683% Used frying oil | 57.317% Recovered vegetable oil"
-                    //     },
-                    //     {
-                    //         "origin": "K FINANCIAL AND INSURANCE ACTIVITIES (K)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 217,
-                    //         "composition": "81.106% Fat, water and sludge | 11.06% Edible oils and fats | 7.834% Trapped grease"
-                    //     },
-                    //     {
-                    //         "origin": "F CONSTRUCTION (F)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 1.489,
-                    //         "composition": "100% Edible oils and fats"
-                    //     },
-                    //     {
-                    //         "origin": "O PUBLIC ADMINISTRATION AND DEFENCE; COMPULSORY SOCIAL SECURITY (O)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 426,
-                    //         "composition": "91.549% Fat, water and sludge | 6.103% Edible oils and fats | 2.347% Trapped grease"
-                    //     },
-                    //     {
-                    //         "origin": "F CONSTRUCTION (F)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 828,
-                    //         "composition": "1.932% Fat, water and sludge | 98.068% Edible oils and fats"
-                    //     },
-                    //     {
-                    //         "origin": "O PUBLIC ADMINISTRATION AND DEFENCE; COMPULSORY SOCIAL SECURITY (O)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 45,
-                    //         "composition": "100% Sludge"
-                    //     },
-                    //     {
-                    //         "origin": "CA MANUFACTURE OF FOOD PRODUCTS, BEVERAGES AND TOBACCO PRODUCTS (CA)",
-                    //         "destination": "G WHOLESALE AND RETAIL TRADE (G)",
-                    //         "amount": 521,
-                    //         "composition": "100% Trapped grease"
-                    //     },
-                    //     {
-                    //         "origin": "Q HUMAN HEALTH AND SOCIAL WORK ACTIVITIES (Q)",
-                    //         "destination": "F CONSTRUCTION (F)",
-                    //         "amount": 16,
-                    //         "composition": "100% Fats"
-                    //     },
-                    //     {
-                    //         "origin": "M PROFESSIONAL, SCIENTIFIC AND TECHNICAL ACTIVITIES (M)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 62,
-                    //         "composition": "85.484% Fat, water and sludge | 6.452% Edible oils and fats | 8.065% Trapped grease"
-                    //     },
-                    //     {
-                    //         "origin": "P EDUCATION (P)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 23,
-                    //         "composition": "100% Edible oils and fats"
-                    //     },
-                    //     {
-                    //         "origin": "S OTHER SERVICE ACTIVITIES (S)",
-                    //         "destination": "F CONSTRUCTION (F)",
-                    //         "amount": 14,
-                    //         "composition": "100% Fats"
-                    //     },
-                    //     {
-                    //         "origin": "D ELECTRICITY, GAS, STEAM AND AIR CONDITIONING SUPPLY (D)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 18,
-                    //         "composition": "100% Fat, water and sludge"
-                    //     },
-                    //     {
-                    //         "origin": "G WHOLESALE AND RETAIL TRADE (G)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 34,
-                    //         "composition": "52.941% Fat, water and sludge | 5.882% Fats | 14.706% Edible oils and fats | 26.471% Trapped grease"
-                    //     },
-                    //     {
-                    //         "origin": "K FINANCIAL AND INSURANCE ACTIVITIES (K)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 86,
-                    //         "composition": "100% Used frying oil"
-                    //     },
-                    //     {
-                    //         "origin": "CA MANUFACTURE OF FOOD PRODUCTS, BEVERAGES AND TOBACCO PRODUCTS (CA)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 674,
-                    //         "composition": "97.774% Fat, water and sludge | 2.226% Edible oils and fats"
-                    //     },
-                    //     {
-                    //         "origin": "K FINANCIAL AND INSURANCE ACTIVITIES (K)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 20,
-                    //         "composition": "100% Edible oils and fats"
-                    //     },
-                    //     {
-                    //         "origin": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "destination": "G WHOLESALE AND RETAIL TRADE (G)",
-                    //         "amount": 646,
-                    //         "composition": "100% Fats"
-                    //     },
-                    //     {
-                    //         "origin": "F CONSTRUCTION (F)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 1.51,
-                    //         "composition": "2.715% Fats | 97.285% Edible oils and fats"
-                    //     },
-                    //     {
-                    //         "origin": "F CONSTRUCTION (F)",
-                    //         "destination": "K FINANCIAL AND INSURANCE ACTIVITIES (K)",
-                    //         "amount": 1.853,
-                    //         "composition": "100% Fats"
-                    //     },
-                    //     {
-                    //         "origin": "J INFORMATION AND COMMUNICATION (J)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 126,
-                    //         "composition": "10.317% Fat, water and sludge | 64.286% Edible oils and fats | 25.397% Trapped grease"
-                    //     },
-                    //     {
-                    //         "origin": "H TRANSPORTATION AND STORAGE (H)",
-                    //         "destination": "G WHOLESALE AND RETAIL TRADE (G)",
-                    //         "amount": 1.434,
-                    //         "composition": "100% Sludge"
-                    //     },
-                    //     {
-                    //         "origin": "I ACCOMMODATION AND FOOD SERVICE ACTIVITIES (I)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 10,
-                    //         "composition": "90% Edible oils and fats | 10% Unused frying oil"
-                    //     },
-                    //     {
-                    //         "origin": "N ADMINISTRATIVE AND SUPPORT SERVICE ACTIVITIES (N)",
-                    //         "destination": "F CONSTRUCTION (F)",
-                    //         "amount": 2,
-                    //         "composition": "100% Fats"
-                    //     },
-                    //     {
-                    //         "origin": "N ADMINISTRATIVE AND SUPPORT SERVICE ACTIVITIES (N)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 68,
-                    //         "composition": "100% Vegetal oil"
-                    //     },
-                    //     {
-                    //         "origin": "CA MANUFACTURE OF FOOD PRODUCTS, BEVERAGES AND TOBACCO PRODUCTS (CA)",
-                    //         "destination": "G WHOLESALE AND RETAIL TRADE (G)",
-                    //         "amount": 1.025,
-                    //         "composition": "13.561% Fats | 86.439% Emulsion"
-                    //     },
-                    //     {
-                    //         "origin": "I ACCOMMODATION AND FOOD SERVICE ACTIVITIES (I)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 6,
-                    //         "composition": "100% Edible oils and fats"
-                    //     },
-                    //     {
-                    //         "origin": "I ACCOMMODATION AND FOOD SERVICE ACTIVITIES (I)",
-                    //         "destination": "F CONSTRUCTION (F)",
-                    //         "amount": 101,
-                    //         "composition": "100% Fats"
-                    //     },
-                    //     {
-                    //         "origin": "R ARTS, ENTERTAINMENT AND RECREATION (R)",
-                    //         "destination": "F CONSTRUCTION (F)",
-                    //         "amount": 7,
-                    //         "composition": "100% Fats"
-                    //     },
-                    //     {
-                    //         "origin": "C MANUFACTURING (C)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 75,
-                    //         "composition": "18.667% Fat, water and sludge | 12% Edible oils and fats | 69.333% Trapped grease"
-                    //     },
-                    //     {
-                    //         "origin": "K FINANCIAL AND INSURANCE ACTIVITIES (K)",
-                    //         "destination": "F CONSTRUCTION (F)",
-                    //         "amount": 15,
-                    //         "composition": "100% Fats"
-                    //     },
-                    //     {
-                    //         "origin": "L REAL ESTATE ACTIVITIES (L)",
-                    //         "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "amount": 105,
-                    //         "composition": "63.81% Fat, water and sludge | 30.476% Edible oils and fats | 5.714% Trapped grease"
-                    //     },
-                    //     {
-                    //         "origin": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
-                    //         "destination": "C MANUFACTURING (C)",
-                    //         "amount": 1,
-                    //         "composition": "100% Vegetal oil"
-                    //     }
-                    // ]
+                    flows = [{
+                            "origin": "G WHOLESALE AND RETAIL TRADE (G)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 4,
+                            "composition": "100% Edible oils and fats"
+                        },
+                        {
+                            "origin": "O PUBLIC ADMINISTRATION AND DEFENCE; COMPULSORY SOCIAL SECURITY (O)",
+                            "destination": "F CONSTRUCTION (F)",
+                            "amount": 19,
+                            "composition": "100% Fats"
+                        },
+                        {
+                            "origin": "Q HUMAN HEALTH AND SOCIAL WORK ACTIVITIES (Q)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 496,
+                            "composition": "47.984% Fat, water and sludge | 31.048% Edible oils and fats | 20.968% Trapped grease"
+                        },
+                        {
+                            "origin": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "destination": "G WHOLESALE AND RETAIL TRADE (G)",
+                            "amount": 22,
+                            "composition": "100% Fats"
+                        },
+                        {
+                            "origin": "A AGRICULTURE, FORESTRY AND FISHING (A)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 12,
+                            "composition": "100% Edible oils and fats"
+                        },
+                        {
+                            "origin": "P EDUCATION (P)",
+                            "destination": "F CONSTRUCTION (F)",
+                            "amount": 19,
+                            "composition": "100% Fats"
+                        },
+                        {
+                            "origin": "S OTHER SERVICE ACTIVITIES (S)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 37,
+                            "composition": "91.892% Fat, water and sludge | 2.703% Edible oils and fats | 5.405% Trapped grease"
+                        },
+                        {
+                            "origin": "G WHOLESALE AND RETAIL TRADE (G)",
+                            "destination": "F CONSTRUCTION (F)",
+                            "amount": 25,
+                            "composition": "100% Fats"
+                        },
+                        {
+                            "origin": "G WHOLESALE AND RETAIL TRADE (G)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 1.307,
+                            "composition": "1.683% Fats | 98.317% Edible oils and fats"
+                        },
+                        {
+                            "origin": "G WHOLESALE AND RETAIL TRADE (G)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 1.025,
+                            "composition": "13.561% Fats | 86.439% Emulsion"
+                        },
+                        {
+                            "origin": "CA MANUFACTURE OF FOOD PRODUCTS, BEVERAGES AND TOBACCO PRODUCTS (CA)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 2,
+                            "composition": "100% Edible oils and fats"
+                        },
+                        {
+                            "origin": "N ADMINISTRATIVE AND SUPPORT SERVICE ACTIVITIES (N)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 86,
+                            "composition": "44.186% Fat, water and sludge | 30.233% Edible oils and fats | 25.581% Trapped grease"
+                        },
+                        {
+                            "origin": "J INFORMATION AND COMMUNICATION (J)",
+                            "destination": "F CONSTRUCTION (F)",
+                            "amount": 4,
+                            "composition": "100% Fats"
+                        },
+                        {
+                            "origin": "D ELECTRICITY, GAS, STEAM AND AIR CONDITIONING SUPPLY (D)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 2,
+                            "composition": "100% Fat, water and sludge"
+                        },
+                        {
+                            "origin": "K FINANCIAL AND INSURANCE ACTIVITIES (K)",
+                            "destination": "CA MANUFACTURE OF FOOD PRODUCTS, BEVERAGES AND TOBACCO PRODUCTS (CA)",
+                            "amount": 23,
+                            "composition": "100% Fats"
+                        },
+                        {
+                            "origin": "V NON-ECONOMIC ACTIVITIES (V)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 2,
+                            "composition": "100% Fat, water and sludge"
+                        },
+                        {
+                            "origin": "C MANUFACTURING (C)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 1,
+                            "composition": "100% Edible oils and fats"
+                        },
+                        {
+                            "origin": "H TRANSPORTATION AND STORAGE (H)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 17,
+                            "composition": "23.529% Fat, water and sludge | 76.471% Edible oils and fats"
+                        },
+                        {
+                            "origin": "R ARTS, ENTERTAINMENT AND RECREATION (R)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 241,
+                            "composition": "46.473% Fat, water and sludge | 36.929% Edible oils and fats | 16.598% Trapped grease"
+                        },
+                        {
+                            "origin": "G WHOLESALE AND RETAIL TRADE (G)",
+                            "destination": "H TRANSPORTATION AND STORAGE (H)",
+                            "amount": 1.434,
+                            "composition": "100% Sludge"
+                        },
+                        {
+                            "origin": "I ACCOMMODATION AND FOOD SERVICE ACTIVITIES (I)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 1.493,
+                            "composition": "71.132% Fat, water and sludge | 6.43% Edible oils and fats | 22.438% Trapped grease"
+                        },
+                        {
+                            "origin": "CA MANUFACTURE OF FOOD PRODUCTS, BEVERAGES AND TOBACCO PRODUCTS (CA)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 24,
+                            "composition": "100% Edible oils and fats"
+                        },
+                        {
+                            "origin": "L REAL ESTATE ACTIVITIES (L)",
+                            "destination": "I ACCOMMODATION AND FOOD SERVICE ACTIVITIES (I)",
+                            "amount": 1,
+                            "composition": "100% Fat, water and sludge"
+                        },
+                        {
+                            "origin": "CA MANUFACTURE OF FOOD PRODUCTS, BEVERAGES AND TOBACCO PRODUCTS (CA)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 323,
+                            "composition": "100% Edible oils and fats"
+                        },
+                        {
+                            "origin": "L REAL ESTATE ACTIVITIES (L)",
+                            "destination": "F CONSTRUCTION (F)",
+                            "amount": 10,
+                            "composition": "100% Fats"
+                        },
+                        {
+                            "origin": "G WHOLESALE AND RETAIL TRADE (G)",
+                            "destination": "C MANUFACTURING (C)",
+                            "amount": 656,
+                            "composition": "42.683% Used frying oil | 57.317% Recovered vegetable oil"
+                        },
+                        {
+                            "origin": "K FINANCIAL AND INSURANCE ACTIVITIES (K)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 217,
+                            "composition": "81.106% Fat, water and sludge | 11.06% Edible oils and fats | 7.834% Trapped grease"
+                        },
+                        {
+                            "origin": "F CONSTRUCTION (F)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 1.489,
+                            "composition": "100% Edible oils and fats"
+                        },
+                        {
+                            "origin": "O PUBLIC ADMINISTRATION AND DEFENCE; COMPULSORY SOCIAL SECURITY (O)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 426,
+                            "composition": "91.549% Fat, water and sludge | 6.103% Edible oils and fats | 2.347% Trapped grease"
+                        },
+                        {
+                            "origin": "F CONSTRUCTION (F)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 828,
+                            "composition": "1.932% Fat, water and sludge | 98.068% Edible oils and fats"
+                        },
+                        {
+                            "origin": "O PUBLIC ADMINISTRATION AND DEFENCE; COMPULSORY SOCIAL SECURITY (O)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 45,
+                            "composition": "100% Sludge"
+                        },
+                        {
+                            "origin": "CA MANUFACTURE OF FOOD PRODUCTS, BEVERAGES AND TOBACCO PRODUCTS (CA)",
+                            "destination": "G WHOLESALE AND RETAIL TRADE (G)",
+                            "amount": 521,
+                            "composition": "100% Trapped grease"
+                        },
+                        {
+                            "origin": "Q HUMAN HEALTH AND SOCIAL WORK ACTIVITIES (Q)",
+                            "destination": "F CONSTRUCTION (F)",
+                            "amount": 16,
+                            "composition": "100% Fats"
+                        },
+                        {
+                            "origin": "M PROFESSIONAL, SCIENTIFIC AND TECHNICAL ACTIVITIES (M)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 62,
+                            "composition": "85.484% Fat, water and sludge | 6.452% Edible oils and fats | 8.065% Trapped grease"
+                        },
+                        {
+                            "origin": "P EDUCATION (P)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 23,
+                            "composition": "100% Edible oils and fats"
+                        },
+                        {
+                            "origin": "S OTHER SERVICE ACTIVITIES (S)",
+                            "destination": "F CONSTRUCTION (F)",
+                            "amount": 14,
+                            "composition": "100% Fats"
+                        },
+                        {
+                            "origin": "D ELECTRICITY, GAS, STEAM AND AIR CONDITIONING SUPPLY (D)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 18,
+                            "composition": "100% Fat, water and sludge"
+                        },
+                        {
+                            "origin": "G WHOLESALE AND RETAIL TRADE (G)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 34,
+                            "composition": "52.941% Fat, water and sludge | 5.882% Fats | 14.706% Edible oils and fats | 26.471% Trapped grease"
+                        },
+                        {
+                            "origin": "K FINANCIAL AND INSURANCE ACTIVITIES (K)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 86,
+                            "composition": "100% Used frying oil"
+                        },
+                        {
+                            "origin": "CA MANUFACTURE OF FOOD PRODUCTS, BEVERAGES AND TOBACCO PRODUCTS (CA)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 674,
+                            "composition": "97.774% Fat, water and sludge | 2.226% Edible oils and fats"
+                        },
+                        {
+                            "origin": "K FINANCIAL AND INSURANCE ACTIVITIES (K)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 20,
+                            "composition": "100% Edible oils and fats"
+                        },
+                        {
+                            "origin": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "destination": "G WHOLESALE AND RETAIL TRADE (G)",
+                            "amount": 646,
+                            "composition": "100% Fats"
+                        },
+                        {
+                            "origin": "F CONSTRUCTION (F)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 1.51,
+                            "composition": "2.715% Fats | 97.285% Edible oils and fats"
+                        },
+                        {
+                            "origin": "F CONSTRUCTION (F)",
+                            "destination": "K FINANCIAL AND INSURANCE ACTIVITIES (K)",
+                            "amount": 1.853,
+                            "composition": "100% Fats"
+                        },
+                        {
+                            "origin": "J INFORMATION AND COMMUNICATION (J)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 126,
+                            "composition": "10.317% Fat, water and sludge | 64.286% Edible oils and fats | 25.397% Trapped grease"
+                        },
+                        {
+                            "origin": "H TRANSPORTATION AND STORAGE (H)",
+                            "destination": "G WHOLESALE AND RETAIL TRADE (G)",
+                            "amount": 1.434,
+                            "composition": "100% Sludge"
+                        },
+                        {
+                            "origin": "I ACCOMMODATION AND FOOD SERVICE ACTIVITIES (I)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 10,
+                            "composition": "90% Edible oils and fats | 10% Unused frying oil"
+                        },
+                        {
+                            "origin": "N ADMINISTRATIVE AND SUPPORT SERVICE ACTIVITIES (N)",
+                            "destination": "F CONSTRUCTION (F)",
+                            "amount": 2,
+                            "composition": "100% Fats"
+                        },
+                        {
+                            "origin": "N ADMINISTRATIVE AND SUPPORT SERVICE ACTIVITIES (N)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 68,
+                            "composition": "100% Vegetal oil"
+                        },
+                        {
+                            "origin": "CA MANUFACTURE OF FOOD PRODUCTS, BEVERAGES AND TOBACCO PRODUCTS (CA)",
+                            "destination": "G WHOLESALE AND RETAIL TRADE (G)",
+                            "amount": 1.025,
+                            "composition": "13.561% Fats | 86.439% Emulsion"
+                        },
+                        {
+                            "origin": "I ACCOMMODATION AND FOOD SERVICE ACTIVITIES (I)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 6,
+                            "composition": "100% Edible oils and fats"
+                        },
+                        {
+                            "origin": "I ACCOMMODATION AND FOOD SERVICE ACTIVITIES (I)",
+                            "destination": "F CONSTRUCTION (F)",
+                            "amount": 101,
+                            "composition": "100% Fats"
+                        },
+                        {
+                            "origin": "R ARTS, ENTERTAINMENT AND RECREATION (R)",
+                            "destination": "F CONSTRUCTION (F)",
+                            "amount": 7,
+                            "composition": "100% Fats"
+                        },
+                        {
+                            "origin": "C MANUFACTURING (C)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 75,
+                            "composition": "18.667% Fat, water and sludge | 12% Edible oils and fats | 69.333% Trapped grease"
+                        },
+                        {
+                            "origin": "K FINANCIAL AND INSURANCE ACTIVITIES (K)",
+                            "destination": "F CONSTRUCTION (F)",
+                            "amount": 15,
+                            "composition": "100% Fats"
+                        },
+                        {
+                            "origin": "L REAL ESTATE ACTIVITIES (L)",
+                            "destination": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "amount": 105,
+                            "composition": "63.81% Fat, water and sludge | 30.476% Edible oils and fats | 5.714% Trapped grease"
+                        },
+                        {
+                            "origin": "E WATER SUPPLY, SEWERAGE, WASTE MANAGEMENT AND REMEDIATION (E)",
+                            "destination": "C MANUFACTURING (C)",
+                            "amount": 1,
+                            "composition": "100% Vegetal oil"
+                        }
+                    ]
 
-                    // flows.forEach(flow => {
-                    //     flow.origin = {
-                    //         activitygroup: flow.origin
-                    //     }
-                    //     flow.destination = {
-                    //         activitygroup: flow.destination
-                    //     }
-                    // });
+                    flows.forEach(flow => {
+                        flow.origin = {
+                            activitygroup: flow.origin
+                        }
+                        flow.destination = {
+                            activitygroup: flow.destination
+                        }
+                    });
 
                     let nodes = [],
                         links = [];
@@ -550,21 +551,34 @@ define(['views/common/baseview',
                             case 1:
                                 // Only for Treatment method to Treatment method
 
+                                // // Gran == Treatment method group
+                                // if (gran1.includes("group")) {
+                                //     let processGroupDestinationObject = processGroups.find(processGroup => processGroup.attributes.id == flow.destination.processgroup);
+                                //     destinationNode.name = enrichFlows.returnCodePlusName(processGroupDestinationObject);
+                                //     let processGroupOriginObject = processGroups.find(processGroup => processGroup.attributes.id == flow.origin.processgroup);
+                                //     originNode.name = enrichFlows.returnCodePlusName(processGroupOriginObject);
+                                //     break;
+
+                                //     // Gran == Treatment method
+                                // } else {
+                                //     let processDestinationObject = processes.find(process => process.attributes.id == flow.destination.process);
+                                //     destinationNode.name = enrichFlows.returnCodePlusName(processDestinationObject);
+                                //     let processOriginObject = processes.find(process => process.attributes.id == flow.origin.process);
+                                //     originNode.name = enrichFlows.returnCodePlusName(processOriginObject);
+                                // }
+
                                 // Gran == Treatment method group
                                 if (gran1.includes("group")) {
-                                    let processGroupDestinationObject = processGroups.find(processGroup => processGroup.attributes.id == flow.destination.processgroup);
-                                    destinationNode.name = enrichFlows.returnCodePlusName(processGroupDestinationObject);
-                                    let processGroupOriginObject = processGroups.find(processGroup => processGroup.attributes.id == flow.origin.processgroup);
-                                    originNode.name = enrichFlows.returnCodePlusName(processGroupOriginObject);
+                                    destinationNode.name = flow.destination.activitygroup;
+                                    originNode.name = flow.origin.activitygroup;
                                     break;
 
                                     // Gran == Treatment method
                                 } else {
-                                    let processDestinationObject = processes.find(process => process.attributes.id == flow.destination.process);
-                                    destinationNode.name = enrichFlows.returnCodePlusName(processDestinationObject);
-                                    let processOriginObject = processes.find(process => process.attributes.id == flow.origin.process);
-                                    originNode.name = enrichFlows.returnCodePlusName(processOriginObject);
+                                    destinationNode.name = flow.destination.activity;
+                                    originNode.name = flow.origin.activity;
                                 }
+
                                 break;
                             case 2:
                                 // Econ dim1 > Treatment dim2

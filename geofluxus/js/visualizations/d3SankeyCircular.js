@@ -1,8 +1,8 @@
 define([
     'd3',
-    'd3-sankey',
     'd3-sankey-circular',
-], function (d3, d3Sankey, SankeyCircular) {
+    'utils/utils'
+], function (d3, SankeyCircular, utils) {
     /**
      *
      * D3plus legend
@@ -19,22 +19,24 @@ define([
             var options = options || {};
 
             if (options.isDarkMode) {
-                this.elementColor = "white"
+                this.elementColor = "white";
+                this.linkColor = "#e6e6e6"
             } else {
                 this.elementColor = "black";
+                this.linkColor = "#737373";
             }
 
             var margin = {
                 top: 30,
-                right: 30,
-                bottom: 30,
-                left: 30
+                right: 20,
+                bottom: 40,
+                left: 20
             };
 
             var sankey = SankeyCircular.sankeyCircular()
                 .nodeWidth(10)
                 .nodePadding(20) //note that this will be overridden by nodePaddingRatio
-                .nodePaddingRatio(0.5)
+                // .nodePaddingRatio(0.5)
                 .size([options.width, options.height])
                 .nodeId(function (d) {
                     return d.name;
@@ -44,7 +46,7 @@ define([
                 .circularLinkGap(1)
 
             var svg = d3.select(options.el).append("svg")
-                .attr("width", options.width + margin.left + margin.right)
+                .attr("width", options.width - +margin.left + margin.right)
                 .attr("height", options.height + margin.top + margin.bottom);
 
             var g = svg.append("g")
@@ -58,7 +60,7 @@ define([
 
             var nodeG = g.append("g")
                 .attr("class", "nodes")
-                .attr("font-family", "sans-serif")
+                .attr("font-family", "Montserrat")
                 .attr("font-size", 10)
                 .selectAll("g");
 
@@ -71,8 +73,9 @@ define([
                 return d.depth;
             });
 
-            var nodeColour = d3.scaleSequential(d3.interpolateCool)
-                .domain([0, options.width]);
+            // var nodeColour = d3.scaleSequential(d3.interpolateCool).domain([0, options.width]);
+            var nodeColour = d3.scaleSequential(d3.interpolateSpectral).domain([0, options.width]);
+
 
             var node = nodeG.data(sankeyNodes)
                 .enter()
@@ -94,7 +97,7 @@ define([
                 .style("fill", function (d) {
                     return nodeColour(d.x0);
                 })
-                .style("opacity", 0.5)
+                .style("opacity", 0.9)
                 .on("mouseover", function (d) {
 
                     let thisName = d.name;
@@ -116,7 +119,7 @@ define([
                 })
                 .on("mouseout", function (d) {
                     d3.selectAll("rect").style("opacity", 0.5);
-                    d3.selectAll(".sankey-link").style("opacity", 0.7);
+                    d3.selectAll(".sankey-link").style("opacity", 0.9);
                     d3.selectAll("text").style("opacity", 1);
                 })
 
@@ -129,8 +132,9 @@ define([
                 })
                 .attr("dy", "0.35em")
                 .attr("text-anchor", "middle")
+                .attr("fill", this.elementColor)
                 .text(function (d) {
-                    return d.name;
+                    return utils.textEllipsis(d.name, 14);
                 });
 
             node.append("title")
@@ -150,10 +154,12 @@ define([
                 .style("stroke-width", function (d) {
                     return Math.max(1, d.width);
                 })
-                .style("opacity", 0.7)
-                .style("stroke", function (link, i) {
-                    return link.circular ? "red" : "black"
-                })
+                .style("opacity", 0.9)
+                .style("stroke", this.linkColor
+                // function (link, i) {
+                //     return this.linkColor //link.circular ? "red" : "black"
+                // }
+                )
 
             link.append("title")
                 .text(function (d) {
