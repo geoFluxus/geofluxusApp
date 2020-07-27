@@ -133,7 +133,7 @@ class FlowManager(models.Manager):
         ids = [c.id for c in created]
         queryset = Flow.objects.filter(id__in=ids)
 
-        # retrieve routings
+        # retrieve routing & vehicle
         routing = Routing.objects.filter(Q(origin__id=OuterRef('origin__id')) &\
                                          Q(destination__id=OuterRef('destination__id')))
 

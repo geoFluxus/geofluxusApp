@@ -120,7 +120,7 @@ class MonitorViewSet(FilterFlowViewSet):
 
         # complete area inventory after aggregating flows
         area_ids = set()
-        if self.admin.level != ACTOR_LEVEL:
+        if self.admin and self.admin.level != ACTOR_LEVEL:
             # collect area ids for flow origin or/and destination
             for field in self.fields:
                 if field in ['origin_area', 'destination_area']:
