@@ -133,13 +133,19 @@ class FlowManager(models.Manager):
         ids = [c.id for c in created]
         queryset = Flow.objects.filter(id__in=ids)
 
-        # retrieve routing & vehicle
+        # retrieve routing
         routing = Routing.objects.filter(Q(origin__id=OuterRef('origin__id')) &\
                                          Q(destination__id=OuterRef('destination__id')))
 
         # update flows
         queryset = queryset.annotate(rid=Subquery(routing.values('id')))
         queryset.update(routing=F('rid'))
+
+        # delete & reupload vehicles to update flows
+        vehicles = [v for v in Vehicle.objects.all()]
+        Vehicle.objects.all().delete()
+        Vehicle.objects.bulk_create(vehicles)
+
 
     def bulk_create(self, objs, **kwargs):
         created = super(FlowManager, self).bulk_create(objs, **kwargs)
