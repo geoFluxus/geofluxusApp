@@ -565,20 +565,6 @@ define(['views/common/baseview',
                                     let processOriginObject = processes.find(process => process.attributes.id == flow.origin.process);
                                     originNode.name = enrichFlows.returnCodePlusName(processOriginObject);
                                 }
-
-            
-                                // // Gran == Treatment method group
-                                // if (gran1.includes("group")) {
-                                //     destinationNode.name = flow.destination.activitygroup;
-                                //     originNode.name = flow.origin.activitygroup;
-                                //     break;
-
-                                //     // Gran == Treatment method
-                                // } else {
-                                //     destinationNode.name = flow.destination.activity;
-                                //     originNode.name = flow.origin.activity;
-                                // }
-
                                 break;
                             case 2:
                                 // Econ dim1 > Treatment dim2

@@ -34,15 +34,14 @@ define([
             var sankey = SankeyCircular.sankeyCircular()
                 .nodeWidth(10)
                 .nodePadding(20) //note that this will be overridden by nodePaddingRatio
-                //.nodePaddingRatio(0.5)
+                .nodePaddingRatio(0.5)
                 .size([options.width, options.height])
                 .nodeId(function (d) {
                     return d.name;
                 })
-                .nodeAlign(d3.sankeyJustify)
-                //.iterations(5)
+                .nodeAlign(SankeyCircular.sankeyJustify)
+                .iterations(5)
                 .circularLinkGap(1)
-                .sortNodes("amount")
 
             var svg = d3.select(options.el).append("svg")
                 .attr("width", options.width + margin.left + margin.right)
