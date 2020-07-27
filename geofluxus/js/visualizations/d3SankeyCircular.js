@@ -1,8 +1,13 @@
+const {
+    style
+} = require("d3");
+
 define([
     'd3',
     'd3-sankey-circular',
-    'utils/utils'
-], function (d3, SankeyCircular, utils) {
+    'utils/utils',
+    'visualizations/d3plus'
+], function (d3, SankeyCircular, utils, d3plus) {
     /**
      *
      * D3plus legend
@@ -17,6 +22,8 @@ define([
         constructor(options) {
             let _this = this;
             var options = options || {};
+            this.options = options;
+
 
             if (options.isDarkMode) {
                 this.elementColor = "white";
@@ -28,9 +35,9 @@ define([
 
             var margin = {
                 top: 30,
-                right: 20,
+                right: 40,
                 bottom: 40,
-                left: 20
+                left: 50
             };
 
             var sankey = SankeyCircular.sankeyCircular()
@@ -46,7 +53,9 @@ define([
                 .circularLinkGap(1)
 
             var svg = d3.select(options.el).append("svg")
-                .attr("width", options.width - +margin.left + margin.right)
+                .style("margin", "auto")
+                .style("overflow", "visible")
+                .attr("width", options.width + margin.left + margin.right)
                 .attr("height", options.height + margin.top + margin.bottom);
 
             var g = svg.append("g")
@@ -64,18 +73,16 @@ define([
                 .attr("font-size", 10)
                 .selectAll("g");
 
-            //run the Sankey + circular over the data 
+            // Run the Sankey + circular over the data 
             let sankeyData = sankey(options.data);
             let sankeyNodes = sankeyData.nodes;
             let sankeyLinks = sankeyData.links;
 
-            let depthExtent = d3.extent(sankeyNodes, function (d) {
-                return d.depth;
-            });
+            // let depthExtent = d3.extent(sankeyNodes, function (d) {
+            //     return d.depth;
+            // });
 
-            // var nodeColour = d3.scaleSequential(d3.interpolateCool).domain([0, options.width]);
             var nodeColour = d3.scaleSequential(d3.interpolateSpectral).domain([0, options.width]);
-
 
             var node = nodeG.data(sankeyNodes)
                 .enter()
@@ -99,7 +106,6 @@ define([
                 })
                 .style("opacity", 0.9)
                 .on("mouseover", function (d) {
-
                     let thisName = d.name;
 
                     node.selectAll("rect")
@@ -123,6 +129,7 @@ define([
                     d3.selectAll("text").style("opacity", 1);
                 })
 
+            // Add labels above nodes:
             node.append("text")
                 .attr("x", function (d) {
                     return (d.x0 + d.x1) / 2;
@@ -139,7 +146,7 @@ define([
 
             node.append("title")
                 .text(function (d) {
-                    return d.name + "\n" + (d.value);
+                    return d.name + "\n" + (d3plus.formatAbbreviate(d.value, utils.returnD3plusFormatLocale()) + " t");
                 });
 
             var link = linkG.data(sankeyLinks)
@@ -156,9 +163,9 @@ define([
                 })
                 .style("opacity", 0.9)
                 .style("stroke", this.linkColor
-                // function (link, i) {
-                //     return this.linkColor //link.circular ? "red" : "black"
-                // }
+                    // function (link, i) {
+                    //     return this.linkColor //link.circular ? "red" : "black"
+                    // }
                 )
 
             link.append("title")
@@ -166,8 +173,8 @@ define([
                     return d.source.name + " → " + d.target.name + "\n Index: " + (d.index);
                 });
 
-            function highlightNodes(node, name) {
 
+            function highlightNodes(node, name) {
                 let opacity = 0.3
 
                 if (node.name == name) {
@@ -183,12 +190,14 @@ define([
                         opacity = 1;
                     };
                 })
-
                 return opacity;
-
             }
 
 
+        }
+
+        close() {
+            $(this.options.el).html(""); //empty the DOM element
         }
     }
     return D3SankeyCircular;
