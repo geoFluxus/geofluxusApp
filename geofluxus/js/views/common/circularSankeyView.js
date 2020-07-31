@@ -70,7 +70,11 @@ define(['views/common/baseview',
 
                     this.showNodeLabels = true;
                     this.showArrows = true;
-
+                    this.linkColourOptions = {
+                        "isNone": "true",
+                        "isSource": "false",
+                        "isDestination": "false",
+                    }
 
                     this.flows = this.options.flows;
                     this.flows = this.enrichFlows(this.flows)
@@ -89,15 +93,6 @@ define(['views/common/baseview',
                     'click .export-csv': 'exportCSV',
                 },
                 render: function () {
-                    // this.circularSankey = new CircularSankeyComponent({
-                    //     el: this.options.el,
-                    //     width: this.width,
-                    //     height: this.height,
-                    //     circularData: this.flows,
-                    //     fontColor: this.fontColor,
-                    //     label: this.label,
-                    // });
-
                     if (this.circularSankey) {
                         this.circularSankey.close();
                     }
@@ -115,6 +110,7 @@ define(['views/common/baseview',
                         isDarkMode: this.isDarkMode,
                         showNodeLabels: this.showNodeLabels,
                         showArrows: this.showArrows,
+                        linkColourOptions: this.linkColourOptions,
                     })
 
                     utils.scrollToVizRow();
@@ -226,7 +222,16 @@ define(['views/common/baseview',
                 },
 
                 toggleLinkColor: function () {
-                    // this.showArrows = !this.showArrows;
+                    if (this.linkColourOptions.isNone) {
+                        this.linkColourOptions.isNone = false;
+                        this.linkColourOptions.isSource = true;
+                    } else if (this.linkColourOptions.isSource) {
+                        this.linkColourOptions.isSource = false;
+                        this.linkColourOptions.isDestination = true;
+                    } else if (this.linkColourOptions.isDestination) {
+                        this.linkColourOptions.isDestination = false;
+                        this.linkColourOptions.isNone = true;
+                    }
                     this.render();
                 },
 

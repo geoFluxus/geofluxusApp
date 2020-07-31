@@ -14,7 +14,7 @@ define([
      *
      * D3plus legend
      *
-     * @author Evert Van Hirtum
+     * @author Tom Shanley, Evert Van Hirtum
      */
     class D3SankeyCircular {
         /**
@@ -23,10 +23,8 @@ define([
          */
         constructor(options) {
             let _this = this;
-
             this.options = options;
             this.label = options.label;
-
 
             this.showNodeLabels = this.options.showNodeLabels;
             this.showArrows = this.options.showArrows;
@@ -34,11 +32,7 @@ define([
             this.islinkColorSource;
             this.islinkColorDestination;
 
-            let linkColourOptions = {
-                "isNone": "true",
-                "isSource": "false",
-                "isDestination": "false",
-            }
+            this.linkColourOptions = options.linkColourOptions;
 
             if (options.isDarkMode) {
                 this.elementColor = "white";
@@ -128,7 +122,7 @@ define([
                     return d.x1 - d.x0;
                 })
                 .style("fill", function (d) {
-                    return d.color //nodeColour(d.dimensionValue);
+                    return d.color;
                 })
                 .style("opacity", _this.defaultNodeOpacity)
                 .on("mouseover", function (d) {
@@ -170,9 +164,8 @@ define([
                         .style("opacity", 0)
                 })
 
-
+            // Add labels above nodes:
             if (this.showNodeLabels) {
-                // Add labels above nodes:
                 node.append("text")
                     .attr("class", "node-label")
                     .attr("x", function (d) {
@@ -196,7 +189,7 @@ define([
                     });;
             }
 
-            // Draw the links
+            // Draw the links:
             var link = linkG.data(sankeyLinks)
                 .enter()
                 .append("g")
@@ -210,10 +203,15 @@ define([
                     return Math.max(1, d.width);
                 })
                 .style("opacity", _this.defaultLinkOpacity)
-                .style("stroke", this.linkColor
-                    // function (link, i) {
-                    //     return this.linkColor //link.circular ? "red" : "black"
-                    // }
+                .style("stroke", function (link, i) {
+                        if (_this.linkColourOptions.isNone) {
+                            return _this.linkColor
+                        } else if (_this.linkColourOptions.isSource) {
+                            return link.source.color;
+                        } else if (_this.linkColourOptions.isDestination) {
+                            return link.target.color;
+                        }
+                    }
                 )
                 .on("mouseover", function (d, i) {
                     _this.tooltip
