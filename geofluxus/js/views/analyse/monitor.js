@@ -304,6 +304,7 @@ define(['views/common/baseview',
                     // Only treatmentMethod:
                     if (_this.selectedDimensionStrings == "treatmentMethod" && clickedToggleHasFlowsFormat) {
                         $("#origDest-toggle-treatment").parent().fadeOut();
+                        $(_this.treatmentMethodOrigDest).bootstrapToggle('off');
                     } else {
                         $("#origDest-toggle-treatment").parent().fadeIn();
                     }

@@ -8,7 +8,7 @@
     stroke-width: 0.5px;
 }
 
-.flowMapToolTipContainer {
+.customTooltipContainer {
     position: absolute;
     text-align: left;
     width: auto;
