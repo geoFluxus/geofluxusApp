@@ -463,7 +463,7 @@ class AreaCreateSerializer(BulkSerializerMixin,
                              referenced_model=Dataset,
                              allow_null=True)
     }
-    index_columns = ['name', 'code']
+    index_columns = ['name']
 
     def get_queryset(self):
         return Area.objects.all()
