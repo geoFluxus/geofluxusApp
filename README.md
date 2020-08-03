@@ -10,11 +10,11 @@ If you have Git or any other related software ([GitHub Desktop](https://desktop.
 ### Backend 
 Make sure that [Python3](https://www.python.org/downloads/) is installed in your computer. To check that, open a terminal and insert the command:
 
-```python -version```
+```python --version```
 
 If the command is recognized, the currentrly installed version of Python should appear in your screen. Once you have verified that Python3 is properly installed, enter the following command to download the necessary dependencies:
 
-```python3 install -r requirements.txt```
+```pip3 install -r requirements.txt```
 
 (If you wish to set up a Python virtual environment instead, please check the instructions [here](https://docs.python.org/3/tutorial/venv.html)).
 
