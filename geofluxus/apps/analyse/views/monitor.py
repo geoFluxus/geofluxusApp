@@ -118,6 +118,21 @@ class MonitorViewSet(FilterFlowViewSet):
                          .order_by(*self.fields) \
                          .annotate(total=Sum('amount'))
 
+        # check for groups fields with null values!
+        # these groups should be excluded entirely
+        queries = {
+            'total__isnull': False,
+            'total__gt': 0
+        }
+        for field in self.fields:
+            queries[field + '__isnull'] = False
+        groups = groups.filter(**queries)
+
+        # remove flows with same origin / destination
+        if 'origin_area' in self.fields and \
+           'destination_area' in self.fields:
+            groups = groups.exclude(origin_area=F('destination_area'))
+
         # complete area inventory after aggregating flows
         area_ids = set()
         if self.admin and self.admin.level != ACTOR_LEVEL:
@@ -138,12 +153,12 @@ class MonitorViewSet(FilterFlowViewSet):
         # serialize aggregated flow groups
         import random
         for group in groups:
-            # check for groups fields with null values!
-            # these groups should be excluded entirely
-            if any(not value for value in group.values()): continue
+            # # check for groups fields with null values!
+            # # these groups should be excluded entirely
+            # if any(not value for value in group.values()): continue
 
-            # remove flows with same origin / destination
-            if group.get('origin_area', True) == group.get('destination_area', False): continue
+            # # remove flows with same origin / destination
+            # if group.get('origin_area', True) == group.get('destination_area', False): continue
 
             # for the dimensions, return the id
             # to recover any info in the frontend
