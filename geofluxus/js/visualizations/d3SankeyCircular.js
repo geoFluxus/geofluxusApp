@@ -284,7 +284,9 @@ define([
                     .call(appendArrows)
 
                 arrowsG.selectAll("path")
-                    .style("stroke-width", "10")
+                    .style("stroke-width", function (d) {
+                        return d.width;
+                    })
                     .style("stroke-dasharray", "10,10")
 
                 arrowsG.selectAll(".arrow-head").remove()
