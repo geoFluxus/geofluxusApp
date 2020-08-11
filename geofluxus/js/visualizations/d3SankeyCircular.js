@@ -33,6 +33,7 @@ define([
             this.islinkColorDestination;
 
             this.linkColourOptions = options.linkColourOptions;
+            this.arrowOptions = options.arrowOptions;
 
             if (options.isDarkMode) {
                 this.elementColor = "white";
@@ -204,15 +205,14 @@ define([
                 })
                 .style("opacity", _this.defaultLinkOpacity)
                 .style("stroke", function (link, i) {
-                        if (_this.linkColourOptions.isNone) {
-                            return _this.linkColor
-                        } else if (_this.linkColourOptions.isSource) {
-                            return link.source.color;
-                        } else if (_this.linkColourOptions.isDestination) {
-                            return link.target.color;
-                        }
+                    if (_this.linkColourOptions.isNone) {
+                        return _this.linkColor
+                    } else if (_this.linkColourOptions.isSource) {
+                        return link.source.color;
+                    } else if (_this.linkColourOptions.isDestination) {
+                        return link.target.color;
                     }
-                )
+                })
                 .on("mouseover", function (d, i) {
                     _this.tooltip
                         .html(_this.getLinkTooltipString(d))
@@ -261,7 +261,7 @@ define([
 
 
             // Show arrows indicating the direction of the flows:
-            if (this.showArrows) {
+            if (this.arrowOptions.hasArrows) {
                 var arrowsG = linkG.data(sankeyLinks)
                     .enter()
                     .append("g")
@@ -269,9 +269,36 @@ define([
                     .call(appendArrows)
             }
 
+            if (this.arrowOptions.hasAnimatedDash) {
+                let duration = 5;
+                let maxOffset = 10;
+                let percentageOffset = 1;
+
+                var arrowsG = linkG.data(sankeyLinks)
+                    .enter()
+                    .append("g")
+                    .attr("class", "g-arrow")
+                    .call(appendArrows)
+
+                arrowsG.selectAll("path")
+                    .style("stroke-width", "10")
+                    .style("stroke-dasharray", "10,10")
+                    
+                arrowsG.selectAll(".arrow-head").remove()
+
+                var animateDash = setInterval(updateDash, duration);
+
+                function updateDash() {
+                    arrowsG.selectAll("path")
+                        .style("stroke-dashoffset", percentageOffset * maxOffset)
+
+                    percentageOffset = percentageOffset == 0 ? 1 : percentageOffset - 0.01
+
+                }
+            }
 
             function highlightNodes(node, name) {
-                let opacity = 0.3
+                let opacity = 0.3;
 
                 if (node.dimensionValue == name) {
                     opacity = 1;
@@ -290,7 +317,7 @@ define([
             }
 
             function sankeyPath(link) {
-                let path = ''
+                let path = '';
                 if (link.circular) {
                     path = link.circularPathData.path
                 } else {

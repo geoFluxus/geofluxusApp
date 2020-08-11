@@ -71,9 +71,15 @@ define(['views/common/baseview',
                     this.showNodeLabels = true;
                     this.showArrows = true;
                     this.linkColourOptions = {
-                        "isNone": "true",
-                        "isSource": "false",
-                        "isDestination": "false",
+                        "isNone": true,
+                        "isSource": false,
+                        "isDestination": false,
+                    }
+
+                    this.arrowOptions = {
+                        "isNone": true,
+                        "hasArrows": false,
+                        "hasAnimatedDash": false,  
                     }
 
                     this.flows = this.options.flows;
@@ -111,6 +117,7 @@ define(['views/common/baseview',
                         showNodeLabels: this.showNodeLabels,
                         showArrows: this.showArrows,
                         linkColourOptions: this.linkColourOptions,
+                        arrowOptions: this.arrowOptions,
                     })
 
                     utils.scrollToVizRow();
@@ -177,7 +184,7 @@ define(['views/common/baseview',
 
                         sankeyControlContainer.append("button")
                             .attr("class", "btn btn-sm btn-primary d3plus-Button toggle-linkArrows")
-                            .attr("title", "Toggle the arrows in the Sankey links.")
+                            .attr("title", "Toggle between arrows or animated dashes in the Sankey links.")
                             .attr("type", "button")
                             .html('<i class="fa fa-arrow-right icon-toggle-linkArrows"></i>')
                             .on("click", function () {
@@ -217,7 +224,17 @@ define(['views/common/baseview',
                 },
 
                 toggleArrows: function () {
-                    this.showArrows = !this.showArrows;
+                    // this.showArrows = !this.showArrows;
+                    if (this.arrowOptions.isNone) {
+                        this.arrowOptions.isNone = false;
+                        this.arrowOptions.hasArrows = true;
+                    } else if (this.arrowOptions.hasArrows) {
+                        this.arrowOptions.hasArrows = false;
+                        this.arrowOptions.hasAnimatedDash = true;
+                    } else if (this.arrowOptions.hasAnimatedDash) {
+                        this.arrowOptions.hasAnimatedDash = false;
+                        this.arrowOptions.isNone = true;
+                    }
                     this.render();
                 },
 
