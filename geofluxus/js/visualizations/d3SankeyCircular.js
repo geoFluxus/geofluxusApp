@@ -46,10 +46,13 @@ define([
             }
 
             // Tooltip
-            this.tooltip = d3.select("body")
-                .append("div")
-                .attr("class", "customTooltipContainer")
-                .style("opacity", 0);
+            this.tooltip = d3.select(".customTooltipContainer")
+            if (this.tooltip.empty()) {
+                this.tooltip = d3.select("body")
+                    .append("div")
+                    .attr("class", "customTooltipContainer")
+                    .style("opacity", 0);
+            }
 
             this.defaultNodeOpacity = 0.8;
             this.defaultLinkOpacity = 0.8;
@@ -436,7 +439,8 @@ define([
                     <tbody class="d3plus-tooltip-tbody style='display: block; padding-bottom: 0.5rem;'">
                         <tr>
                             <td>` + this.label + `</td>
-                            <td>` + d3plus.formatAbbreviate(node.value, utils.returnD3plusFormatLocale()) + ' t' + `</td>
+                            <td>` + d3plus.formatAbbreviate(node.value, utils.returnD3plusFormatLocale()) + ' t' +
+                `</td>
                         </tr>
                         <tr>
                             <td>` + node.dimensionText + `</td>
