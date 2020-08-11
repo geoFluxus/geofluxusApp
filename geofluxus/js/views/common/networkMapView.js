@@ -187,10 +187,14 @@ define(['views/common/baseview',
                 },
 
                  exportCSV: function (event) {
-                     const items = this.flows.filter(flow => flow.amount > 0);
+                     // copy links! we will modify them
+                     let items = this.flows.map(a => Object.assign({}, a));
+                     items = items.filter(flow => flow.amount > 0);
+
                      const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
                      const header = Object.keys(items[0])
 
+                     // convert geometry to WKT
                      items.forEach(function(item) {
                         var type = item.geometry.type
                             coords = item.geometry.coordinates;
@@ -202,6 +206,7 @@ define(['views/common/baseview',
                         wkt = type.toUpperCase() + '(' + wkt + ')';
                         item.geometry = wkt;
                      })
+                     console.log(this.flows)
 
                      let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
                      csv.unshift(header.join(','))
