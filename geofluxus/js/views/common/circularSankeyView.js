@@ -93,7 +93,7 @@ define(['views/common/baseview',
                 },
 
                 events: {
-                   
+
                 },
                 render: function () {
                     if (this.circularSankey) {
@@ -192,12 +192,14 @@ define(['views/common/baseview',
                 },
 
                 toggleFullscreen: function (event) {
-                    console.log('toggleFullscreen');
-
                     $(this.options.el).toggleClass('fullscreen');
                     // Only scroll when going to normal view:
                     if (!$(this.options.el).hasClass('fullscreen')) {
-                        utils.scrollToVizRow();
+                        window.scrollTo({
+                            top: $(".visualizationRow")[0].getBoundingClientRect().top + window.pageYOffset - 20,
+                            block: "start",
+                            inline: "nearest",
+                        });
                     }
                     this.render();
                 },
