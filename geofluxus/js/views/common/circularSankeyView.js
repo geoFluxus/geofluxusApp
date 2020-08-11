@@ -39,8 +39,6 @@ define(['views/common/baseview',
                  */
                 initialize: function (options) {
                     CircularSankeyView.__super__.initialize.apply(this, [options]);
-                    _.bindAll(this, 'toggleFullscreen');
-                    _.bindAll(this, 'exportCSV');
 
                     var _this = this;
                     this.options = options;
@@ -95,8 +93,7 @@ define(['views/common/baseview',
                 },
 
                 events: {
-                    'click .fullscreen-toggle': 'toggleFullscreen',
-                    'click .export-csv': 'exportCSV',
+                   
                 },
                 render: function () {
                     if (this.circularSankey) {
@@ -153,6 +150,7 @@ define(['views/common/baseview',
                             .html('<i class="fas fa-file icon-export"></i>')
                             .on("click", function () {
                                 _this.exportCSV();
+                                d3.event.preventDefault();
                             });
 
                         sankeyControlContainer.append("button")
