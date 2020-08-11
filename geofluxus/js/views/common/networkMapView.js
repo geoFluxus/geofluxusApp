@@ -59,7 +59,6 @@ define(['views/common/baseview',
 
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
-                    'click .export-csv': 'exportCSV',
                 },
 
                 render: function () {
@@ -82,6 +81,15 @@ define(['views/common/baseview',
                     fullscreenButtonDiv.appendChild(exportImgBtn);
                     exportImgBtn.addEventListener('click', function (event) {
                         _this.exportPng();
+                    })
+
+                    // Export CSV
+                    var exportCSVBtn = document.createElement('button');
+                    exportCSVBtn.classList.add('fas', 'fa-file', 'btn', 'btn-primary', 'inverted');
+                    exportCSVBtn.title = "Export this visualization as a CSV file.";
+                    fullscreenButtonDiv.appendChild(exportCSVBtn);
+                    exportCSVBtn.addEventListener('click', function(event) {
+                        _this.exportCSV();
                     })
 
                     buttons = {
@@ -178,21 +186,32 @@ define(['views/common/baseview',
                     });
                 },
 
-                // exportCSV: function (event) {
-                //     const items = this.options.flows;
-                //     const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-                //     const header = Object.keys(items[0])
-                //     let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
-                //     csv.unshift(header.join(','))
-                //     csv = csv.join('\r\n')
+                 exportCSV: function (event) {
+                     const items = this.flows.filter(flow => flow.amount > 0);
+                     const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
+                     const header = Object.keys(items[0])
 
-                //     var blob = new Blob([csv], {
-                //         type: "text/plain;charset=utf-8"
-                //     });
-                //     FileSaver.saveAs(blob, "data.csv");
+                     items.forEach(function(item) {
+                        var type = item.geometry.type
+                            coords = item.geometry.coordinates;
+                        var wkt = "";
+                        Object.values(coords).forEach(function(point) {
+                            wkt += point.join(' ') + ', ';
+                        })
+                        wkt = wkt.slice(0, -2);
+                        wkt = type.toUpperCase() + '(' + wkt + ')';
+                        item.geometry = wkt;
+                     })
 
-                //     event.stopImmediatePropagation();
-                // },
+                     let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+                     csv.unshift(header.join(','))
+                     csv = csv.join('\r\n')
+
+                     var blob = new Blob([csv], {
+                         type: "text/plain;charset=utf-8"
+                     });
+                     FileSaver.saveAs(blob, "data.csv");
+                 },
 
                 close: function () {
                     this.undelegateEvents(); // remove click events
