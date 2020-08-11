@@ -350,7 +350,7 @@ define(['views/common/baseview',
                         originNode.dimensionText = linkInfo.origin.dimensionText;
                         destinationNode.dimensionText = linkInfo.destination.dimensionText;
 
-                        originNode.amountText = destinationNode.amountText = linkInfo.amountText;
+                        //originNode.amountText = destinationNode.amountText = linkInfo.amountText;
                         originNode.opacity = destinationNode.opacity = 1;
 
                         // displayNode

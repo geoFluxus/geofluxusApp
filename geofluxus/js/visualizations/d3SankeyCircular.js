@@ -283,7 +283,7 @@ define([
                 arrowsG.selectAll("path")
                     .style("stroke-width", "10")
                     .style("stroke-dasharray", "10,10")
-                    
+
                 arrowsG.selectAll(".arrow-head").remove()
 
                 var animateDash = setInterval(updateDash, duration);
@@ -436,7 +436,7 @@ define([
                     <tbody class="d3plus-tooltip-tbody style='display: block; padding-bottom: 0.5rem;'">
                         <tr>
                             <td>` + this.label + `</td>
-                            <td>` + node.amountText + `</td>
+                            <td>` + d3plus.formatAbbreviate(node.value, utils.returnD3plusFormatLocale()) + ' t' + `</td>
                         </tr>
                         <tr>
                             <td>` + node.dimensionText + `</td>
