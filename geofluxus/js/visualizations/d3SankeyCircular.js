@@ -322,7 +322,7 @@ define([
             function sankeyPath(link) {
                 let path = '';
                 if (link.circular) {
-                    path = link.circularPathData.path
+                    path = link.path;
                 } else {
                     var normalPath = d3
                         .linkHorizontal()
