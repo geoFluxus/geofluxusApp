@@ -79,7 +79,7 @@ define(['views/common/baseview',
                     this.arrowOptions = {
                         "isNone": true,
                         "hasArrows": false,
-                        "hasAnimatedDash": false,  
+                        "hasAnimatedDash": false,
                     }
 
                     this.flows = this.options.flows;
@@ -387,6 +387,24 @@ define(['views/common/baseview',
                     console.log("Nodes:");
                     console.log(nodes);
 
+                    const getCircularReplacer = () => {
+                        const seen = new WeakSet();
+                        return (key, value) => {
+                            if (typeof value === "object" && value !== null) {
+                                if (seen.has(value)) {
+                                    return;
+                                }
+                                seen.add(value);
+                            }
+                            return value;
+                        };
+                    };
+
+                    _this.exportData = {
+                        links: JSON.parse(JSON.stringify(links, getCircularReplacer())),
+                        nodes: JSON.parse(JSON.stringify(nodes, getCircularReplacer())),
+                    }
+
                     return {
                         links: links,
                         nodes: nodes,
@@ -394,7 +412,7 @@ define(['views/common/baseview',
                 },
 
                 exportCSV: function (event) {
-                    const items = this.options.flows;
+                    const items = this.exportData.links;
                     const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
                     const header = Object.keys(items[0])
                     let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
@@ -405,8 +423,6 @@ define(['views/common/baseview',
                         type: "text/plain;charset=utf-8"
                     });
                     FileSaver.saveAs(blob, "data.csv");
-
-                    event.stopImmediatePropagation();
                 },
 
                 close: function () {
