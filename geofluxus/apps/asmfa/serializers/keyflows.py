@@ -8,7 +8,8 @@ from geofluxus.apps.asmfa.models import (Waste02,
                                          Product,
                                          Composite,
                                          Year,
-                                         Month)
+                                         Month,
+                                         TreatmentEmission)
 from calendar import month_abbr
 
 
@@ -71,6 +72,27 @@ class Waste06ListSerializer(Waste06Serializer):
                   'ewc_code',
                   'hazardous',
                   'waste04',)
+
+
+# TreatmentEmissions
+class TreatmentEmissionSerializer(HyperlinkedModelSerializer):
+    waste06 = PrimaryKeyRelatedField(read_only=True)
+    processgroup = PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = TreatmentEmission
+        fields = ('url',
+                  'id',
+                  'waste06',
+                  'processgroup',
+                  'co2')
+
+class TreatmentEmissionListSerializer(Waste06Serializer):
+    class Meta(TreatmentEmissionSerializer.Meta):
+        fields = ('id',
+                  'waste06',
+                  'process',
+                  'co2')
 
 
 # Material

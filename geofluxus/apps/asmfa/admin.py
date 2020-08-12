@@ -10,6 +10,7 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Waste02,
                                          Waste04,
                                          Waste06,
+                                         TreatmentEmission,
                                          Material,
                                          Product,
                                          Composite,
@@ -74,7 +75,7 @@ class ProcessGroupAdmin(CustomAdmin):
 
 # Process
 @admin.register(Process)
-class ProgressAdmin(CustomAdmin):
+class ProcessAdmin(CustomAdmin):
     search_fields = ['code']
 
 
@@ -106,6 +107,12 @@ class Waste04Admin(CustomAdmin):
 @admin.register(Waste06)
 class Waste06Admin(CustomAdmin):
     search_fields = ['ewc_code', 'ewc_name']
+
+
+# Treatment emissions
+@admin.register(TreatmentEmission)
+class TreatmentEmissionAdmin(CustomAdmin):
+    search_fields = ['processgroup__code', 'waste06__ewc_code']
 
 
 # Material
