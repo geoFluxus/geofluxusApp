@@ -177,7 +177,8 @@ class ProcessGroupCreateSerializer(BulkSerializerMixin,
                                    ProcessGroupSerializer):
     field_map = {
         'name': 'name',
-        'code': 'code'
+        'code': 'code',
+        'co2': 'co2'
     }
     index_columns = ['code']
 

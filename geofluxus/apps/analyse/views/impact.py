@@ -33,20 +33,21 @@ class ImpactViewSet(MonitorViewSet):
         # waste treatment emissions
         if 'treatment' in impactSources:
             # retrieve treatment emissions
-            # filter on destination processgroup!
+            # filter on waste and destination processgroup!
             treatment_emissions = TreatmentEmission.objects
             subq = treatment_emissions.filter(Q(processgroup=OuterRef('destination__process__processgroup')) &\
                                               Q(waste06=OuterRef('flowchain__waste06')))
 
             # indicator: grams per tonne
             # amount: tonnes
-            queryset = queryset.annotate(treatment_emissions=Coalesce(subq.values(indicator), 0))
+            # if not emissions for waste, check processgroup alone
+            default = F('destination__process__processgroup__' + indicator)
+            queryset = queryset.annotate(treatment_emissions=Coalesce(subq.values(indicator), default))
             expression += F('treatment_emissions') / 10**6 * F('amount')
 
         # update amounts
         amount = ExpressionWrapper(expression, output_field=FloatField())
         queryset = queryset.annotate(amount=amount)
-        amounts = queryset.values_list('amount', flat=True)
 
         return queryset
 

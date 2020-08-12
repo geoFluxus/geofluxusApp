@@ -91,7 +91,7 @@ class TreatmentEmissionListSerializer(Waste06Serializer):
     class Meta(TreatmentEmissionSerializer.Meta):
         fields = ('id',
                   'waste06',
-                  'process',
+                  'processgroup',
                   'co2')
 
 
