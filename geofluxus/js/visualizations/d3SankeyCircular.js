@@ -12,7 +12,7 @@ define([
 ], function (_, d3, SankeyCircular, utils, d3plus, enrichFlows) {
     /**
      *
-     * D3plus legend
+     * Circular Sankey visualization
      *
      * @author Tom Shanley, Evert Van Hirtum
      */
@@ -24,18 +24,13 @@ define([
         constructor(options) {
             let _this = this;
             this.options = options;
-            this.label = options.label;
-
+            this.label = this.options.label;
             this.showNodeLabels = this.options.showNodeLabels;
-            this.showArrows = this.options.showArrows;
+            this.showArrows = this.options.showArrows;       
+            this.linkColourOptions = this.options.linkColourOptions;
+            this.arrowOptions = this.options.arrowOptions;
 
-            this.islinkColorSource;
-            this.islinkColorDestination;
-
-            this.linkColourOptions = options.linkColourOptions;
-            this.arrowOptions = options.arrowOptions;
-
-            if (options.isDarkMode) {
+            if (this.options.isDarkMode) {
                 this.elementColor = "white";
                 this.linkColor = "#e6e6e6";
                 this.linkHighlightColor = "#f5f5f5";
@@ -419,14 +414,11 @@ define([
                         .style("fill", _this.elementColor)
 
                 });
-
             }
-
-
         }
 
         close() {
-            $(this.options.el).html(""); //empty the DOM element
+            $(this.options.el).html("");
         }
 
         getNodeTooltipString(node) {

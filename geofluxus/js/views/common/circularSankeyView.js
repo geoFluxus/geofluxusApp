@@ -21,7 +21,6 @@ define(['views/common/baseview',
         d3plus) {
 
         /**
-         *
          * @author Evert Van Hirtum
          * @name module:views/CircularSankeyView
          * @augments module:views/BaseView
@@ -42,10 +41,12 @@ define(['views/common/baseview',
 
                     var _this = this;
                     this.options = options;
+                    this.filtersView = this.options.flowsView.filtersView;
                     this.dim1 = this.options.dimensions[0];
                     this.dim2 = this.options.dimensions[1];
+                    this.flows = this.options.flows;
 
-                    this.label = options.dimensions.label;
+                    this.label = this.options.dimensions.label;
                     this.props = {
                         'activitygroup': 'Activity group',
                         'activity': 'Activity',
@@ -53,16 +54,11 @@ define(['views/common/baseview',
                         'process': 'Treatment method',
                     }
 
-
-                    this.filtersView = this.options.flowsView.filtersView;
-
                     $(this.options.el).css({
                         "display": "flex",
                         "align-items": "center"
                     })
 
-
-                    this.label = options.dimensions.label;
                     this.isDarkMode = true;
                     this.fontColor = "white";
 
@@ -80,7 +76,6 @@ define(['views/common/baseview',
                         "hasAnimatedDash": false,
                     }
 
-                    this.flows = this.options.flows;
                     this.flows = this.enrichFlows(this.flows)
                     this.flows = this.transformToLinksAndNodes(this.flows, this.options.dimensions, this.filtersView);
 
@@ -95,6 +90,7 @@ define(['views/common/baseview',
                 events: {
 
                 },
+
                 render: function () {
                     if (this.circularSankey) {
                         this.circularSankey.close();
@@ -206,15 +202,8 @@ define(['views/common/baseview',
 
                 toggleDarkMode: function () {
                     this.isDarkMode = !this.isDarkMode;
-
                     $(".viz-wrapper-div").toggleClass("lightMode");
-
-                    if (this.isDarkMode) {
-                        this.fontColor = "white";
-                    } else {
-                        this.fontColor = "black";
-                    }
-
+                    this.fontColor = this.isDarkMode ? "white" : "black";
                     this.render();
                 },
 
@@ -224,7 +213,6 @@ define(['views/common/baseview',
                 },
 
                 toggleArrows: function () {
-                    // this.showArrows = !this.showArrows;
                     if (this.arrowOptions.isNone) {
                         this.arrowOptions.isNone = false;
                         this.arrowOptions.hasArrows = true;
@@ -345,15 +333,13 @@ define(['views/common/baseview',
                         originNode.value = destinationNode.value = flow.amount;
 
                         originNode.dimensionValue = linkInfo.origin.dimensionValue;
-                        destinationNode.dimensionValue = linkInfo.destination.dimensionValue;
-
                         originNode.dimensionText = linkInfo.origin.dimensionText;
+                        
+                        destinationNode.dimensionValue = linkInfo.destination.dimensionValue;
                         destinationNode.dimensionText = linkInfo.destination.dimensionText;
 
-                        //originNode.amountText = destinationNode.amountText = linkInfo.amountText;
                         originNode.opacity = destinationNode.opacity = 1;
 
-                        // displayNode
                         originNode.displayNode = _this.dimensionIsOrigin;
                         destinationNode.displayNode = !_this.dimensionIsOrigin;
 
@@ -363,15 +349,11 @@ define(['views/common/baseview',
 
                         nodes.push(originNode, destinationNode)
 
-                        // LINKS
+                        // Links
                         link.source = linkInfo.origin.dimensionValue;
                         link.target = linkInfo.destination.dimensionValue;
-
                         link.value = flow.amount;
-
                         link.amountText = linkInfo.amountText;
-                        // link.dimensionText = linkInfo.dimensionText;
-                        // link.dimensionValue = linkInfo.dimensionValue;
                         links.push(link)
                     }, flows);
 
@@ -380,13 +362,13 @@ define(['views/common/baseview',
                     nodes = _.uniq(nodes, "dimensionValue");
                     nodes = _.sortBy(nodes, 'dimensionValue');
                     nodes = enrichFlows.assignColorsByProperty(nodes, "dimensionValue");
-                    //nodes = nodes.reverse();
 
-                    console.log("Links:");
-                    console.log(links);
-                    console.log("Nodes:");
-                    console.log(nodes);
+                    // console.log("Links:");
+                    // console.log(links);
+                    // console.log("Nodes:");
+                    // console.log(nodes);
 
+                    // Fix circular object reference error for export:
                     const getCircularReplacer = () => {
                         const seen = new WeakSet();
                         return (key, value) => {
@@ -400,6 +382,7 @@ define(['views/common/baseview',
                         };
                     };
 
+                    // Copy object to retain only original values:
                     _this.exportData = {
                         links: JSON.parse(JSON.stringify(links, getCircularReplacer())),
                         nodes: JSON.parse(JSON.stringify(nodes, getCircularReplacer())),
