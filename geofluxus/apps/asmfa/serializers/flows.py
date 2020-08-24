@@ -48,7 +48,8 @@ class VehicleSerializer(HyperlinkedModelSerializer):
                   'name',
                   'min',
                   'max',
-                  'co2')
+                  'co2',
+                  'nox')
 
 
 class VehicleListSerializer(VehicleSerializer):
@@ -57,7 +58,8 @@ class VehicleListSerializer(VehicleSerializer):
                   'name',
                   'min',
                   'max',
-                  'co2')
+                  'co2',
+                  'nox')
 
 
 # FlowChain

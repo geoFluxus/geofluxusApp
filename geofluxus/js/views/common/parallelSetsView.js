@@ -5,6 +5,7 @@ define(['views/common/d3plusVizView',
         'd3',
         'visualizations/d3plus',
         'utils/utils',
+        'file-saver'
     ],
 
     function (
@@ -14,7 +15,8 @@ define(['views/common/d3plusVizView',
         enrichFlows,
         d3,
         d3plus,
-        utils) {
+        utils,
+        FileSaver) {
 
         /**
          * @author Evert Van Hirtum
@@ -197,9 +199,11 @@ define(['views/common/d3plusVizView',
                 },
 
                 exportCSV: function (event) {
-                    const items = this.options.flows;
+                    const items = this.flows.links;
                     const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-                    const header = Object.keys(items[0])
+
+                    let header = Object.keys(items[0]);
+
                     let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
                     csv.unshift(header.join(','))
                     csv = csv.join('\r\n')

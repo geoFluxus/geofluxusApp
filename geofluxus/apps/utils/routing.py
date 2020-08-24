@@ -91,6 +91,17 @@ if __name__ == "__main__":
         '''
     flows = fetch(cur, query)
 
+    # Fetch EXISTING routings
+    # Compare with flows to define which routings to compute
+    query = \
+        '''
+        SELECT DISTINCT origin_id,
+                        destination_id
+        FROM asmfa_routing
+        '''
+    routings = fetch(cur, query)
+    flows = set(flows).difference(set(routings))
+
     # Establish connection to routing
     credentials = {
         'user': NET_USER,
@@ -113,7 +124,7 @@ if __name__ == "__main__":
     idx=0
     print('TOTAL: ', len(flows))
     for flow in flows:
-        print(idx)
+        print('Progress: ', idx, '/', len(flows), end='\r', flush=True)
         idx+=1
         # Fetch orig / dest geometry
         orig, dest = flow[0], flow[1]

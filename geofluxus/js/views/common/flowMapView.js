@@ -7,6 +7,7 @@ define(['underscore',
         'visualizations/d3plus',
         'utils/utils',
         'utils/enrichFlows',
+        'file-saver',
         'leaflet',
         'leaflet-easyprint',
         'leaflet-fullscreen',
@@ -18,7 +19,7 @@ define(['underscore',
         'leaflet-fullscreen/dist/leaflet.fullscreen.css'
     ],
 
-    function (_, BaseView, Collection, FlowMap, D3plusLegend, d3, d3plus, utils, enrichFlows, L) {
+    function (_, BaseView, Collection, FlowMap, D3plusLegend, d3, d3plus, utils, enrichFlows, FileSaver, L) {
 
         /**
          *
@@ -72,17 +73,8 @@ define(['underscore',
                         'waste06'       : 'EWC Entry'
                     }
 
-                    this.areas = new Collection([], {
-                        apiTag: 'areas',
-                        apiIds: [this.adminLevel]
-                    });
-
-                    var promises = [this.areas.fetch()];
-
-                    Promise.all(promises).then(function () {
-                        _this.render();
-                        _this.rerender(true);
-                    })
+                    this.render();
+                    this.rerender(true);
                 },
 
                 /*
@@ -129,25 +121,20 @@ define(['underscore',
                     // Disable zoom on scroll:
                     this.leafletMap.scrollWheelZoom.disable();
 
-                    // Filter areas
-                    var areaIds = new Set();
-                    this.flows.forEach(function (flow) {
-                        areaIds.add(flow.origin.id);
-                        areaIds.add(flow.destination.id);
-                    })
-
                     // Retrieve area geometry
                     var areas = [];
-                    this.areas.forEach(function(area) {
-                        let newArea = {
-                            id: area.get('id'),
-                            name: area.get('name'),
-                            geom: area.get('geom').coordinates,
-                        }
-                        if (areaIds.has(newArea.id)) {
+                    if (!this.isActorLevel) {
+                        this.areas = Object.values(this.flows.pop());
+                        
+                        this.areas.forEach(function(area) {
+                            let newArea = {
+                                id: area['id'],
+                                name: area['name'],
+                                geom: area['geom'].coordinates,
+                            }
                             areas.push(newArea);
-                        }
-                    })
+                        })
+                    }
 
                     // Instantiate Flowmap object:
                     this.flowMap = new FlowMap(this.leafletMap, {
@@ -199,6 +186,15 @@ define(['underscore',
                     exportImgBtn.classList.add('fas', 'fa-camera', 'btn', 'btn-primary', 'inverted');
                     exportImgBtn.title = "Export this visualization as a PNG file.";
                     topLeftControlDiv.appendChild(exportImgBtn);
+
+                    // Export CSV
+                    var exportCSVBtn = document.createElement('button');
+                    exportCSVBtn.classList.add('fas', 'fa-file', 'btn', 'btn-primary', 'inverted');
+                    exportCSVBtn.title = "Export this visualization as a CSV file.";
+                    topLeftControlDiv.appendChild(exportCSVBtn);
+                    exportCSVBtn.addEventListener('click', function(event) {
+                        _this.exportCSV();
+                    })
 
                     // HIDDEN Leaflet easyPrint button
                     this.leafletMap.addControl(new L.easyPrint({
@@ -489,6 +485,42 @@ define(['underscore',
                         flows: links,
                         nodes: nodes,
                     }
+                },
+
+                exportCSV: function () {
+                    // export nodes
+                    let items = _.uniq(this.data.nodes, 'id'),
+                        replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
+
+                    let fields = ["name", "lon", "lat"];
+                    let header = Object.keys(items[0]);
+                    header = header.filter(prop => {
+                        return fields.some(f => prop.includes(f))
+                    })
+
+                    let nodeCSV = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+                    nodeCSV.unshift(header.join(','))
+                    nodeCSV = nodeCSV.join('\r\n')
+
+                    // export flows
+                    items = this.data.flows;
+
+                    fields = ["amount", "Code", "Name"];
+                    header = Object.keys(items[0]);
+                    header = header.filter(prop => {
+                        return fields.some(f => prop.includes(f))
+                    })
+
+                    let flowCSV = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+                    flowCSV.unshift(header.join(','))
+                    flowCSV = flowCSV.join('\r\n')
+
+                    // export all
+                    let csv = nodeCSV + '\n\n' + flowCSV;
+                    var blob = new Blob([csv], {
+                        type: "text/plain;charset=utf-8"
+                    });
+                    FileSaver.saveAs(blob, "data.csv");
                 },
 
                 close: function () {

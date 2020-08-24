@@ -98,8 +98,9 @@ class ActorManager(models.Manager):
             # order areas by administrative level (descending)
             areas = queryset.filter(geom__contains=actor.geom) \
                             .order_by('-adminlevel__level')
-            actor.area = areas[0]
-            actor.save()
+            if areas:
+                actor.area = areas[0]
+                actor.save()
 
     # update actor with area
     def bulk_create(self, objs, **kwargs):

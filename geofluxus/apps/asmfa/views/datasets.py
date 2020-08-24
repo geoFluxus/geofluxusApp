@@ -41,6 +41,24 @@ class DatasetViewSet(PostGetViewMixin,
     }
 
     def list(self, request, **kwargs):
+        from django.http import HttpResponse
+        if request.query_params.get('request', None) == 'template':
+            serializer = self.serializers.get('create', None)
+            if serializer and hasattr(serializer, 'create_template'):
+                content = serializer.create_template()
+                response = HttpResponse(
+                    content_type=(
+                        'application/vnd.openxmlformats-officedocument.'
+                        'spreadsheetml.sheet'
+                    )
+                )
+                model = self.serializer_class.Meta.model
+                filename = model._meta.object_name.lower()
+                response['Content-Disposition'] = \
+                    'attachment; filename={}.xlsx'.format(filename)
+                response.write(content)
+                return response
+
         # retrieve datasets for user
         user = request.user
         groups = user.groups.values_list('id', flat=True)

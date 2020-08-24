@@ -13,6 +13,7 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Waste02,
                                          Waste04,
                                          Waste06,
+                                         TreatmentEmission,
                                          Material,
                                          Product,
                                          Composite,
@@ -37,6 +38,7 @@ from geofluxus.apps.asmfa.serializers import (ActivityGroupSerializer,
                                               Waste02Serializer,
                                               Waste04Serializer,
                                               Waste06Serializer,
+                                              TreatmentEmissionSerializer,
                                               MaterialSerializer,
                                               ProductSerializer,
                                               CompositeSerializer,
@@ -175,7 +177,8 @@ class ProcessGroupCreateSerializer(BulkSerializerMixin,
                                    ProcessGroupSerializer):
     field_map = {
         'name': 'name',
-        'code': 'code'
+        'code': 'code',
+        'co2': 'co2'
     }
     index_columns = ['code']
 
@@ -239,6 +242,23 @@ class Waste06CreateSerializer(BulkSerializerMixin,
 
     def get_queryset(self):
         return Waste06.objects.all()
+
+
+class TreatmentEmissionCreateSerializer(BulkSerializerMixin,
+                                        TreatmentEmissionSerializer):
+    field_map = {
+        'waste': Reference(name='waste06',
+                           referenced_field='ewc_code',
+                           referenced_model=Waste06),
+        'processgroup': Reference(name='processgroup',
+                                  referenced_field='code',
+                                  referenced_model=ProcessGroup),
+        'co2': 'co2'
+    }
+    index_columns = ['waste', 'processgroup']
+
+    def get_queryset(self):
+        return TreatmentEmission.objects.all()
 
 
 class MaterialCreateSerializer(BulkSerializerMixin,
@@ -463,7 +483,7 @@ class AreaCreateSerializer(BulkSerializerMixin,
                              referenced_model=Dataset,
                              allow_null=True)
     }
-    index_columns = ['name', 'code']
+    index_columns = ['name']
 
     def get_queryset(self):
         return Area.objects.all()
@@ -475,7 +495,8 @@ class VehicleCreateSerializer(BulkSerializerMixin,
         'name': 'name',
         'min': 'min',
         'max': 'max',
-        'co2': 'co2'
+        'co2': 'co2',
+        'nox': 'nox'
     }
     index_columns = ['name']
 

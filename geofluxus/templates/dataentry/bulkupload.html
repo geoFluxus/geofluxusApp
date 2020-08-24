@@ -11,7 +11,7 @@
                     <option value="utf-8">UTF 8</option>
                     <option value="cp1252">CP 1252</option>
                 </select>
-                <button id="refresh-status" class="btn" title="Refresh status" style="float: right;  margin-right: 20px;">
+                <button id="refresh-status" class="btn btn-primary upload" title="Refresh status" style="float: right;  margin-right: 20px;">
                     Refresh
                     <span class="fas fa-recycle" style="margin-left: 5px;"></span>
                 </button>
@@ -45,7 +45,7 @@
           <div class="row">
               <div class="col-md-6">
                  <label><%= label %></label>
-                 <a href="<%= templateUrl %>" class="template" title="Download template" style="margin-left: 30px;"><span class="far fa-file-alt" style="margin-right: 2px;"></span>Template</a>
+                 <a href="<%= templateUrl %>" class="btn btn-primary upload" title="Download template" style="margin-left: 30px;"><span class="far fa-file-alt" style="margin-right: 2px;"></span>Template</a>
               </div>
               <div class="col-md-6">
                 <div id="count" title="Number of entries"></div>

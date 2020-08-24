@@ -39,6 +39,7 @@ class MonitorViewSet(FilterFlowViewSet):
         super().__init__(**kwargs)
         self.levels = []     # dimension granularity
         self.fields = []     # exact field to search
+        self.admin = None    # admin level for areas
 
     def annotate_amounts(self, queryset, indicator, impactSources, format):
         queryset = queryset.annotate(amount=F('flowchain__amount'))
@@ -117,15 +118,47 @@ class MonitorViewSet(FilterFlowViewSet):
                          .order_by(*self.fields) \
                          .annotate(total=Sum('amount'))
 
+        # check for groups fields with null values!
+        # these groups should be excluded entirely
+        queries = {
+            'total__isnull': False,
+            'total__gt': 0
+        }
+        for field in self.fields:
+            queries[field + '__isnull'] = False
+        groups = groups.filter(**queries)
+
+        # remove flows with same origin / destination
+        if 'origin_area' in self.fields and \
+           'destination_area' in self.fields:
+            groups = groups.exclude(origin_area=F('destination_area'))
+
+        # complete area inventory after aggregating flows
+        area_ids = set()
+        if self.admin and self.admin.level != ACTOR_LEVEL:
+            # collect area ids for flow origin or/and destination
+            for field in self.fields:
+                if field in ['origin_area', 'destination_area']:
+                    area_ids.update(list(groups.filter(**{field + '__isnull': False})
+                                               .values_list(field, flat=True)
+                                               .distinct()))
+            # complete inventory for collected areas
+            if area_ids:
+                self.space_inv = self.space_inv.filter(id__in=area_ids)\
+                                               .values('id',
+                                                       'name',
+                                                       'geom',
+                                                       'adminlevel')
+
         # serialize aggregated flow groups
         import random
         for group in groups:
-            # check for groups fields with null values!
-            # these groups should be excluded entirely
-            if any(not value for value in group.values()): continue
+            # # check for groups fields with null values!
+            # # these groups should be excluded entirely
+            # if any(not value for value in group.values()): continue
 
-            # remove flows with same origin / destination
-            if group.get('origin_area', True) == group.get('destination_area', False): continue
+            # # remove flows with same origin / destination
+            # if group.get('origin_area', True) == group.get('destination_area', False): continue
 
             # for the dimensions, return the id
             # to recover any info in the frontend
@@ -148,7 +181,7 @@ class MonitorViewSet(FilterFlowViewSet):
                         item['lat'] += random.randint(0, 10) * 0.01
 
                     # change format for flowmap (both origin/destination)
-                    if format == 'flowmap':
+                    if format in ['flowmap', 'circularsankey']:
                         label = level.split('_')[0]
                         flow_item.append((label, item))
                     else:
@@ -183,6 +216,35 @@ class MonitorViewSet(FilterFlowViewSet):
 
             data.append(OrderedDict(flow_item))
 
+        # serialize areas for visualizations
+        if data and format in ['choroplethmap', 'flowmap']:
+            areas = []
+            for id in area_ids:
+                # check for area in space inventory
+                area = next(x for x in self.space_inv if x['id'] == id)
+
+                # serialize only areas of requested admin level!!!
+                if area['adminlevel'] == self.admin.id:
+                    # simplify geometry to render
+                    geom = area['geom'].simplify(tolerance=self.admin.resolution,
+                                                 preserve_topology=False)
+
+                    # serialize area
+                    area_item = {
+                        'id': area['id'],
+                        'name': area['name'],
+                        'geom': json.loads(geom.geojson)
+                    }
+
+                    # attention! convert all geometries to common type MULTIPOLYGON
+                    if area_item['geom']['type'] == 'Polygon':
+                        area_item['geom']['type'] = 'MultiPolygon'
+                        area_item['geom']['coordinates'] = [area_item['geom']['coordinates']]
+
+                    areas.append(area_item)
+
+            if areas: data.append(areas)
+
         return data
 
     def process_dimensions(self, queryset, dimensions, format):
@@ -212,7 +274,7 @@ class MonitorViewSet(FilterFlowViewSet):
         space = dimensions.pop('space', None)
         if space:
             # annotate spatial info to flows
-            both = format == 'flowmap'
+            both = format in ['flowmap', 'circularsankey']
             queryset = self.format_space(queryset, space, both)
 
             # create inventory to recover actors / areas
@@ -232,9 +294,8 @@ class MonitorViewSet(FilterFlowViewSet):
                                                       'company__name',
                                                       'geom')
             elif 'area' in self.levels[-1]:
-                self.space_inv = Area.objects.values('id',
-                                                     'name',
-                                                     'geom')
+                # complete area inventory after aggregating flows
+                self.space_inv = Area.objects
 
         # parallel sets for treatment method (group)
         if format == "parallelsets" and len(self.fields) == 1:
@@ -252,7 +313,8 @@ class MonitorViewSet(FilterFlowViewSet):
         # recover administrative level
         id = space.pop('adminlevel', None)
         if id:
-            admin = AdminLevel.objects.filter(id=id)[0].level
+            self.admin = AdminLevel.objects.filter(id=id)[0]
+            admin = self.admin.level
 
             # check if both origin & destination are needed
             fields = ['origin', 'destination'] if both else [space.pop('field', None)]
@@ -299,7 +361,7 @@ class MonitorViewSet(FilterFlowViewSet):
             if admin != ACTOR_LEVEL:
                 # find all areas of selected admin level
                 ids = Area.objects.filter(adminlevel=id)\
-                          .values_list('id', flat=True)
+                                  .values_list('id', flat=True)
                 # either origin / destination should belong to that level
                 if both:
                     queryset = queryset.filter(Q(origin_area__in=ids) |\
