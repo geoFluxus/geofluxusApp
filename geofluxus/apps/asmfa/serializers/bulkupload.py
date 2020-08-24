@@ -495,7 +495,8 @@ class VehicleCreateSerializer(BulkSerializerMixin,
         'name': 'name',
         'min': 'min',
         'max': 'max',
-        'co2': 'co2'
+        'co2': 'co2',
+        'nox': 'nox'
     }
     index_columns = ['name']
 

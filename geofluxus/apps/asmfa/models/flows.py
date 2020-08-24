@@ -91,7 +91,8 @@ class Vehicle(models.Model):
     name = models.CharField(max_length=255)
     min = models.FloatField()
     max = models.FloatField()
-    co2 = models.FloatField()
+    co2 = models.FloatField(default=0)
+    nox = models.FloatField(default=0)
 
     def __str__(self):
         return '{}'.format(self.name)
