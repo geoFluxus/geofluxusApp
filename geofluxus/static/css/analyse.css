@@ -584,7 +584,7 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .networkmap-wrapper .ol-zoom {
-    top: 11.75em;
+    top: 12.5em;
 }
 
 .networkmap-wrapper .oltooltip {
@@ -785,7 +785,7 @@ textarea.textarea-autosize.form-control-sm {
 }
 
 .leaflet-control-zoom {
-    top: 300px !important;
+    top: 340px !important;
     border: none !important;
     margin: 0 !important;
 }
