@@ -394,10 +394,16 @@ define(['views/common/baseview',
                     }
                 },
 
-                exportCSV: function (event) {
+                exportCSV: function () {
                     const items = this.exportData.links;
                     const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-                    const header = Object.keys(items[0])
+
+                    let fields = ["value", "source", "target"];
+                    let header = Object.keys(items[0]);
+                    header = header.filter(prop => {
+                        return fields.some(f => prop.includes(f))
+                    })
+
                     let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
                     csv.unshift(header.join(','))
                     csv = csv.join('\r\n')

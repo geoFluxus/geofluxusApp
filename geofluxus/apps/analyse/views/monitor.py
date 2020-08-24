@@ -181,7 +181,7 @@ class MonitorViewSet(FilterFlowViewSet):
                         item['lat'] += random.randint(0, 10) * 0.01
 
                     # change format for flowmap (both origin/destination)
-                    if format in ['flowmap', 'circularsankey']:
+                    if format in ['flowmap']:
                         label = level.split('_')[0]
                         flow_item.append((label, item))
                     else:
