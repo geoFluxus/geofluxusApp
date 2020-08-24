@@ -5,7 +5,7 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 var entryPoints = {
     DataEntry: './js/data-entry',
-    Analyse: './js/analyse',
+    Analyse: './js/wasteanalyse',
     Login: './js/login',
     Welcome: './js/welcome',
     Base: './js/base',
