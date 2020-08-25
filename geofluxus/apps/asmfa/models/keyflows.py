@@ -1,5 +1,5 @@
 from django.db import models
-
+from geofluxus.apps.asmfa.models import ProcessGroup
 
 # Waste02 (2-digit EWC code)
 class Waste02(models.Model):
@@ -34,6 +34,18 @@ class Waste06(models.Model):
     def __str__(self):
         return "{} - {}".format(self.ewc_code,
                                 self.ewc_name)
+
+# Waste treatment emissions
+class TreatmentEmission(models.Model):
+    waste06 = models.ForeignKey(Waste06,
+                                on_delete=models.CASCADE)
+    processgroup = models.ForeignKey(ProcessGroup,
+                                     on_delete=models.CASCADE)
+    co2 = models.FloatField(default=0)
+
+    def __str__(self):
+        return "{} - {}".format(self.waste06.ewc_code,
+                                self.processgroup.name)
 
 
 # Material

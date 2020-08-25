@@ -91,7 +91,8 @@ class Vehicle(models.Model):
     name = models.CharField(max_length=255)
     min = models.FloatField()
     max = models.FloatField()
-    co2 = models.FloatField()
+    co2 = models.FloatField(default=0)
+    nox = models.FloatField(default=0)
 
     def __str__(self):
         return '{}'.format(self.name)
@@ -133,13 +134,19 @@ class FlowManager(models.Manager):
         ids = [c.id for c in created]
         queryset = Flow.objects.filter(id__in=ids)
 
-        # retrieve routings
+        # retrieve routing
         routing = Routing.objects.filter(Q(origin__id=OuterRef('origin__id')) &\
                                          Q(destination__id=OuterRef('destination__id')))
 
         # update flows
         queryset = queryset.annotate(rid=Subquery(routing.values('id')))
         queryset.update(routing=F('rid'))
+
+        # delete & reupload vehicles to update flows
+        vehicles = [v for v in Vehicle.objects.all()]
+        Vehicle.objects.all().delete()
+        Vehicle.objects.bulk_create(vehicles)
+
 
     def bulk_create(self, objs, **kwargs):
         created = super(FlowManager, self).bulk_create(objs, **kwargs)

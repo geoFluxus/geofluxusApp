@@ -310,13 +310,6 @@ input {
     overflow: auto;
 }
 
-.modal-header,
-.modal-body,
-.modal-footer,
-.modal .row {
-    padding: 10px;
-}
-
 .modal-content {
     box-shadow: 0px 0px 5px 10px rgba(3, 3, 3, 0.4);
     background-color: #585858;
@@ -326,12 +319,6 @@ input {
 
 .modal-header {
     border-bottom: 0 none;
-}
-
-.modal-footer {
-    border-color: gray;
-    padding-right: 0px;
-    margin-right: -0.5rem;
 }
 
 .modal-backdrop {

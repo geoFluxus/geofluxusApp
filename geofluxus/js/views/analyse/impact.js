@@ -67,6 +67,17 @@ define(['views/common/baseview',
                     _this.monitorView.indicator = $(event.currentTarget).attr("data-indicator");
                     
                     $(".impactSourceContainer").fadeIn();
+                    $('.impactSourceToggle').each(function (index, value) {
+                        $(this).bootstrapToggle('off');
+                    });
+
+                    if (_this.monitorView.indicator == 'nox') {
+                        $('#impact-source-toggle-treatment').bootstrapToggle('disable');
+                    }
+                    else {
+                        $('#impact-source-toggle-treatment').bootstrapToggle('enable');
+                    }
+
                     event.preventDefault();
                 });
 

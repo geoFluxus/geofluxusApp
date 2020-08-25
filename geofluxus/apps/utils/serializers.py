@@ -826,7 +826,10 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
                     continue
                 if type(v) in [int, float] and np.isnan(v):
                     v = None
-                setattr(model, c, v)
+                try:
+                    setattr(model, c, v)
+                except TypeError:
+                    model.c = v
             model.save()
             updated.append(model)
         updated = queryset.filter(id__in=[m.id for m in updated])

@@ -28,6 +28,7 @@ class Activity(models.Model):
 class ProcessGroup(models.Model):
     name = models.CharField(max_length=255)
     code = models.CharField(max_length=255)
+    co2 = models.FloatField(default=0)
 
     def __str__(self):
         return '{} - {}'.format(self.code, self.name)

@@ -64,7 +64,7 @@ define(['views/common/baseview',
                     'time': ['piechart', 'barchart', 'treemap', 'lineplot'],
                     'economicActivity': ['piechart', 'barchart', 'treemap'],
                     'space': ['piechart', 'barchart', 'treemap', 'networkmap'],
-                    'treatmentMethod': ['piechart', 'barchart', 'treemap', 'parallelsets'],
+                    'treatmentMethod': ['piechart', 'barchart', 'treemap', 'parallelsets', 'circularsankey'],
                     'material': ['piechart', 'barchart', 'treemap'],
                     // 2D visualizations
                     'time_economicActivity': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'treemap'],
@@ -74,7 +74,7 @@ define(['views/common/baseview',
                     'space_economicActivity': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
                     'space_treatmentMethod': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
                     'space_material': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
-                    'economicActivity_treatmentMethod': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap'],
+                    'economicActivity_treatmentMethod': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap', 'circularsankey'],
                     'economicActivity_material': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap'],
                     'treatmentMethod_material': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap']
                 }
@@ -304,6 +304,7 @@ define(['views/common/baseview',
                     // Only treatmentMethod:
                     if (_this.selectedDimensionStrings == "treatmentMethod" && clickedToggleHasFlowsFormat) {
                         $("#origDest-toggle-treatment").parent().fadeOut();
+                        $(_this.treatmentMethodOrigDest).bootstrapToggle('off');
                     } else {
                         $("#origDest-toggle-treatment").parent().fadeIn();
                     }
@@ -352,13 +353,7 @@ define(['views/common/baseview',
                         selectedVizualisationString = $(this).attr("data-viz");
                     }
                 });
-
-                var specialVizs = ["flowmap", "parallelsets", "circularsankey", "networkmap"];
-                if (specialVizs.includes(selectedVizualisationString)) {
-                    let formatString = selectedVizualisationString;
-                    formatString = (formatString == "circularsankey") ? "parallelsets" : formatString;
-                    filterParams.format = formatString;
-                }
+                filterParams.format = selectedVizualisationString;
 
                 // ///////////////////////////////
                 // DIMENSIONS
@@ -481,45 +476,30 @@ define(['views/common/baseview',
             renderChoroplethMap: function (flows, adminlevel, dimensions) {
                 var _this = this;
 
-                let occuringAreas = [];
-                occuringAreas = flows.map(x => x.areaId);
-                occuringAreas = _.unique(occuringAreas);
+                var areas = Object.values(flows.pop()),
+                    geoJson = {};
 
-                areas = new Collection([], {
-                    apiTag: 'areas',
-                    apiIds: [adminlevel]
-                });
-                areas.fetch({
-                    success: function () {
-                        var geoJson = {};
-                        geoJson['type'] = 'FeatureCollection';
-                        features = geoJson['features'] = [];
-                        areas.forEach(function (area) {
-                            var feature = {};
-                            feature['type'] = 'Feature';
-                            feature['id'] = area.get('id')
-                            feature['geometry'] = area.get('geom')
+                geoJson['type'] = 'FeatureCollection';
+                features = geoJson['features'] = [];
+                areas.forEach(function (area) {
+                    var feature = {};
+                    feature['type'] = 'Feature';
+                    feature['id'] = area['id'];
+                    feature['geometry'] = area['geom'];
 
-                            if (occuringAreas.includes(feature.id)) {
-                                features.push(feature);
-                            }
-                        })
+                    features.push(feature);
+                })
 
-                        flows.forEach(function (flow, index) {
-                            this[index].id = this[index].areaId;
-                        }, flows);
+                flows.forEach(function (flow, index) {
+                    this[index].id = this[index].areaId;
+                }, flows);
 
-                        _this.vizView = new ChoroplethView({
-                            el: ".choroplethmap-wrapper",
-                            dimensions: dimensions,
-                            flows: flows,
-                            flowsView: _this,
-                            geoJson: geoJson
-                        });
-                    },
-                    error: function (res) {
-                        console.log(res);
-                    }
+                _this.vizView = new ChoroplethView({
+                    el: ".choroplethmap-wrapper",
+                    dimensions: dimensions,
+                    flows: flows,
+                    flowsView: _this,
+                    geoJson: geoJson
                 });
             },
 

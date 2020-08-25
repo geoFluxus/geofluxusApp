@@ -9,7 +9,8 @@ from geofluxus.apps.asmfa.models import (Waste02,
                                          Product,
                                          Composite,
                                          Year,
-                                         Month)
+                                         Month,
+                                         TreatmentEmission)
 from geofluxus.apps.asmfa.serializers import (Waste02Serializer,
                                               Waste04Serializer,
                                               Waste06Serializer,
@@ -17,7 +18,8 @@ from geofluxus.apps.asmfa.serializers import (Waste02Serializer,
                                               ProductSerializer,
                                               CompositeSerializer,
                                               YearSerializer,
-                                              MonthSerializer)
+                                              MonthSerializer,
+                                              TreatmentEmissionSerializer)
 from geofluxus.apps.asmfa.serializers import (Waste02ListSerializer,
                                               Waste04ListSerializer,
                                               Waste06ListSerializer,
@@ -25,7 +27,8 @@ from geofluxus.apps.asmfa.serializers import (Waste02ListSerializer,
                                               ProductListSerializer,
                                               CompositeListSerializer,
                                               YearListSerializer,
-                                              MonthListSerializer)
+                                              MonthListSerializer,
+                                              TreatmentEmissionListSerializer)
 from geofluxus.apps.asmfa.serializers import (Waste02CreateSerializer,
                                               Waste04CreateSerializer,
                                               Waste06CreateSerializer,
@@ -33,7 +36,8 @@ from geofluxus.apps.asmfa.serializers import (Waste02CreateSerializer,
                                               ProductCreateSerializer,
                                               CompositeCreateSerializer,
                                               YearCreateSerializer,
-                                              MonthCreateSerializer)
+                                              MonthCreateSerializer,
+                                              TreatmentEmissionCreateSerializer)
 
 
 # Waste02
@@ -72,6 +76,19 @@ class Waste06ViewSet(PostGetViewMixin,
     serializers = {
         'list': Waste06ListSerializer,
         'create': Waste06CreateSerializer
+    }
+
+
+# TreatmentEmission
+class TreatmentEmissionViewSet(PostGetViewMixin,
+                               ViewSetMixin,
+                               ModelPermissionViewSet):
+    queryset = TreatmentEmission.objects.order_by('id')
+    pagination_class = UnlimitedResultsSetPagination
+    serializer_class = TreatmentEmissionSerializer
+    serializers = {
+        'list': TreatmentEmissionListSerializer,
+        'create': TreatmentEmissionCreateSerializer
     }
 
 
