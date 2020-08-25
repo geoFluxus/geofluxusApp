@@ -64,7 +64,7 @@ define(['views/common/baseview',
                     'time': ['piechart', 'barchart', 'treemap', 'lineplot'],
                     'economicActivity': ['piechart', 'barchart', 'treemap'],
                     'space': ['piechart', 'barchart', 'treemap', 'networkmap'],
-                    'treatmentMethod': ['piechart', 'barchart', 'treemap', 'parallelsets'],
+                    'treatmentMethod': ['piechart', 'barchart', 'treemap', 'parallelsets', 'circularsankey'],
                     'material': ['piechart', 'barchart', 'treemap'],
                     // 2D visualizations
                     'time_economicActivity': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'treemap'],
@@ -74,7 +74,7 @@ define(['views/common/baseview',
                     'space_economicActivity': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
                     'space_treatmentMethod': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
                     'space_material': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
-                    'economicActivity_treatmentMethod': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap'],
+                    'economicActivity_treatmentMethod': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap', 'circularsankey'],
                     'economicActivity_material': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap'],
                     'treatmentMethod_material': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap']
                 }
@@ -304,6 +304,7 @@ define(['views/common/baseview',
                     // Only treatmentMethod:
                     if (_this.selectedDimensionStrings == "treatmentMethod" && clickedToggleHasFlowsFormat) {
                         $("#origDest-toggle-treatment").parent().fadeOut();
+                        $(_this.treatmentMethodOrigDest).bootstrapToggle('off');
                     } else {
                         $("#origDest-toggle-treatment").parent().fadeIn();
                     }

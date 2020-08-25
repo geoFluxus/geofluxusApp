@@ -3,9 +3,10 @@ define(['views/common/baseview',
         'save-svg-as-png',
         'file-saver',
         'utils/enrichFlows',
-        'react/circularSankey',
+        'visualizations/d3SankeyCircular',
         'underscore',
-        'd3'
+        'd3',
+        'visualizations/d3plus'
     ],
 
     function (
@@ -14,12 +15,12 @@ define(['views/common/baseview',
         saveSvgAsPng,
         FileSaver,
         enrichFlows,
-        CircularSankeyComponent,
+        D3SankeyCircular,
         _,
-        d3) {
+        d3,
+        d3plus) {
 
         /**
-         *
          * @author Evert Van Hirtum
          * @name module:views/CircularSankeyView
          * @augments module:views/BaseView
@@ -37,37 +38,49 @@ define(['views/common/baseview',
                  */
                 initialize: function (options) {
                     CircularSankeyView.__super__.initialize.apply(this, [options]);
-                    _.bindAll(this, 'toggleFullscreen');
-                    _.bindAll(this, 'exportCSV');
 
                     var _this = this;
                     this.options = options;
                     this.filtersView = this.options.flowsView.filtersView;
+                    this.dim1 = this.options.dimensions[0];
+                    this.dim2 = this.options.dimensions[1];
+                    this.flows = this.options.flows;
 
-                    this.width = $("#" + this.options.el).width();
-                    this.height = $("#" + this.options.el).height();
+                    this.label = this.options.dimensions.label;
+                    this.props = {
+                        'activitygroup': 'Activity group',
+                        'activity': 'Activity',
+                        'processgroup': 'Treatment method group',
+                        'process': 'Treatment method',
+                    }
 
-                    this.label = options.dimensions.label;
+                    $(this.options.el).css({
+                        "display": "flex",
+                        "align-items": "center"
+                    })
+
                     this.isDarkMode = true;
                     this.fontColor = "white";
 
-                    // let tooltipConfig = {
-                    //     tbody: [
-                    //         ["Waste", function (d) {
-                    //             return d3plus.formatAbbreviate(d["value"], utils.returnD3plusFormatLocale()) + " t"
-                    //         }]
-                    //     ]
-                    // };
+                    this.showNodeLabels = true;
+                    this.showArrows = true;
+                    this.linkColourOptions = {
+                        "isNone": true,
+                        "isSource": false,
+                        "isDestination": false,
+                    }
 
-                    this.flows = this.transformToLinksAndNodes(this.options.flows, this.options.dimensions, this.filtersView);
+                    this.arrowOptions = {
+                        "isNone": true,
+                        "hasArrows": false,
+                        "hasAnimatedDash": false,
+                    }
 
+                    this.flows = this.enrichFlows(this.flows)
+                    this.flows = this.transformToLinksAndNodes(this.flows, this.options.dimensions, this.filtersView);
 
                     window.addEventListener('resize', function () {
-                        if (_this.circularSankey) {
-                            _this.circularSankey.close();
-                        }
                         _this.render();
-                        console.log("Window resize > rerender");
                     })
 
                     this.render();
@@ -75,18 +88,30 @@ define(['views/common/baseview',
                 },
 
                 events: {
-                    'click .fullscreen-toggle': 'toggleFullscreen',
-                    'click .export-csv': 'exportCSV',
+
                 },
+
                 render: function () {
-                    this.circularSankey = new CircularSankeyComponent({
+                    if (this.circularSankey) {
+                        this.circularSankey.close();
+                    }
+
+                    this.width = $(this.options.el).width() - 150;
+                    this.height = $(this.options.el).height() - 150;
+
+                    this.circularSankey = new D3SankeyCircular({
                         el: this.options.el,
                         width: this.width,
                         height: this.height,
-                        circularData: this.flows,
+                        data: this.flows,
                         fontColor: this.fontColor,
                         label: this.label,
-                    });
+                        isDarkMode: this.isDarkMode,
+                        showNodeLabels: this.showNodeLabels,
+                        showArrows: this.showArrows,
+                        linkColourOptions: this.linkColourOptions,
+                        arrowOptions: this.arrowOptions,
+                    })
 
                     utils.scrollToVizRow();
                     this.addButtons();
@@ -97,9 +122,10 @@ define(['views/common/baseview',
                     if (buttonFullscreen.empty()) {
 
                         let _this = this;
-                        let vizContainer = d3.select("#circularsankey-wrapper div");
+                        let vizContainer = d3.select(this.options.el);
                         vizContainer.append("div")
                             .attr("class", "sankeyControlContainer")
+                            .style("top", "0px")
                             .lower();
 
                         let sankeyControlContainer = vizContainer.select(".sankeyControlContainer")
@@ -120,6 +146,7 @@ define(['views/common/baseview',
                             .html('<i class="fas fa-file icon-export"></i>')
                             .on("click", function () {
                                 _this.exportCSV();
+                                d3.event.preventDefault();
                             });
 
                         sankeyControlContainer.append("button")
@@ -130,251 +157,236 @@ define(['views/common/baseview',
                             .on("click", function () {
                                 _this.toggleDarkMode();
                             });
+
+                        sankeyControlContainer.append("button")
+                            .attr("class", "btn btn-sm btn-primary d3plus-Button toggle-nodelabels")
+                            .attr("title", "Toggle the labels above the nodes.")
+                            .attr("type", "button")
+                            .html('<i class="fa fa-tag icon-toggle-nodelabels"></i>')
+                            .on("click", function () {
+                                _this.toggleNodeLabels();
+                            });
+
+                        sankeyControlContainer.append("button")
+                            .attr("class", "btn btn-sm btn-primary d3plus-Button toggle-linkColor")
+                            .attr("title", "Toggle the colours of the Sankey links.")
+                            .attr("type", "button")
+                            .html('<i class="fa icon-toggle-sankey-link-color"></i>')
+                            .on("click", function () {
+                                _this.toggleLinkColor();
+                            });
+
+                        sankeyControlContainer.append("button")
+                            .attr("class", "btn btn-sm btn-primary d3plus-Button toggle-linkArrows")
+                            .attr("title", "Toggle between arrows or animated dashes in the Sankey links.")
+                            .attr("type", "button")
+                            .html('<i class="fa fa-arrow-right icon-toggle-linkArrows"></i>')
+                            .on("click", function () {
+                                _this.toggleArrows();
+                            });
                     }
                 },
 
                 toggleFullscreen: function (event) {
-                    console.log('toggleFullscreen');
-
-                    $("#circularsankey-wrapper").toggleClass('fullscreen');
+                    $(this.options.el).toggleClass('fullscreen');
                     // Only scroll when going to normal view:
-                    if (!$("#circularsankey-wrapper").hasClass('fullscreen')) {
-                        utils.scrollToVizRow();
+                    if (!$(this.options.el).hasClass('fullscreen')) {
+                        window.scrollTo({
+                            top: $(".visualizationRow")[0].getBoundingClientRect().top + window.pageYOffset - 20,
+                            block: "start",
+                            inline: "nearest",
+                        });
                     }
                     this.render();
-                    d3.event.preventDefault();
                 },
 
                 toggleDarkMode: function () {
                     this.isDarkMode = !this.isDarkMode;
-
                     $(".viz-wrapper-div").toggleClass("lightMode");
-
-                    if (this.isDarkMode) {
-                        this.fontColor = "white";
-                    } else {
-                        this.fontColor = "black";
-                    }
-
+                    this.fontColor = this.isDarkMode ? "white" : "black";
                     this.render();
                 },
 
-                transformToLinksAndNodes: function (flows, dimensions, filtersView) {
-                    let nodes = [],
+                toggleNodeLabels: function () {
+                    this.showNodeLabels = !this.showNodeLabels;
+                    this.render();
+                },
+
+                toggleArrows: function () {
+                    if (this.arrowOptions.isNone) {
+                        this.arrowOptions.isNone = false;
+                        this.arrowOptions.hasArrows = true;
+                    } else if (this.arrowOptions.hasArrows) {
+                        this.arrowOptions.hasArrows = false;
+                        this.arrowOptions.hasAnimatedDash = true;
+                    } else if (this.arrowOptions.hasAnimatedDash) {
+                        this.arrowOptions.hasAnimatedDash = false;
+                        this.arrowOptions.isNone = true;
+                    }
+                    this.render();
+                },
+
+                toggleLinkColor: function () {
+                    if (this.linkColourOptions.isNone) {
+                        this.linkColourOptions.isNone = false;
+                        this.linkColourOptions.isSource = true;
+                    } else if (this.linkColourOptions.isSource) {
+                        this.linkColourOptions.isSource = false;
+                        this.linkColourOptions.isDestination = true;
+                    } else if (this.linkColourOptions.isDestination) {
+                        this.linkColourOptions.isDestination = false;
+                        this.linkColourOptions.isNone = true;
+                    }
+                    this.render();
+                },
+
+                enrichFlows: function (flows) {
+                    let collections = this.filtersView.collections,
+                        tags = this.filtersView.tags;
+
+                    flows.forEach(function (flow, index) {
+                        var _this = this;
+
+                        // get all properties of flow
+                        ["origin", "destination"].forEach(block => {
+                            var properties = Object.keys(flow[block]);
+
+                            properties.forEach(function (property) {
+                                // fetch corresponding collection
+                                var collection = collections[tags[property]];
+
+                                if (collection != undefined) {
+                                    // find corresponding model by ID
+                                    var model = collection.find(model => model.attributes.id == flow[block][property]);
+
+                                    // fetch attributes
+                                    var attr = model.attributes,
+                                        code = attr.code || attr.nace || attr.ewc_code,
+                                        name = utils.capitalizeFirstLetter(attr.name || attr.ewc_name || "");
+
+                                    // add attributes to flows
+                                    _this[index][block][property + 'Code'] = code;
+                                    _this[index][block][property + 'Name'] = name;
+                                }
+                            })
+                        });
+                    }, flows);
+
+                    return flows
+                },
+
+                returnLinkInfo: function (link) {
+                    let linkInfo = {
+                        origin: {},
+                        destination: {}
+                    };
+
+                    let props = [{
+                        dim: this.dim1[1].split("__").pop(),
+                        direction: this.dim1[1].split("__")[0] == "origin" ? "origin" : "destination"
+                    }]
+
+                    // If there are two dimensions:
+                    if (this.dim2) {
+                        props.push({
+                            dim: this.dim2[1].split("__").pop(),
+                            direction: this.dim2[1].split("__")[0] == "origin" ? "origin" : "destination"
+                        })
+                    } else {
+                        props.push({
+                            dim: this.dim1[1].split("__").pop(),
+                            direction: "destination"
+                        })
+                    }
+                    ["origin", "destination"].forEach(block => {
+                        props.forEach(prop => {
+                            if (block == prop.direction) {
+                                linkInfo[block].dimensionText = this.props[prop.dim];
+                                linkInfo[block].dimensionId = link[block][prop.dim];
+                                linkInfo[block].dimensionCode = link[block][prop.dim + 'Code'];
+                                linkInfo[block].dimensionName = link[block][prop.dim + 'Name'];
+                                linkInfo[block].dimensionValue = linkInfo[block].dimensionCode + "." + [linkInfo[block].dimensionName != undefined ? " " + linkInfo[block].dimensionName : ""];
+                            }
+                        });
+                    });
+
+                    let originProp = props.find(prop => prop.direction == "origin");
+                    let destinationProp = props.find(prop => prop.direction == "destination");
+                    linkInfo.fromToText = link.origin[originProp.dim + "Name"] + ' &#10132; ' + link.destination[destinationProp.dim + "Name"] + '<br>';
+                    linkInfo.amountText = d3plus.formatAbbreviate(link.amount, utils.returnD3plusFormatLocale()) + ' t';
+
+                    return linkInfo
+                },
+
+                transformToLinksAndNodes: function (flows) {
+                    var _this = this,
+                        nodes = [],
                         links = [];
 
                     flows.forEach(function (flow, index) {
-                        let link = {};
-                        let originNode = {};
-                        let destinationNode = {};
+                        let originNode = flow.origin;
+                        let destinationNode = flow.destination;
+                        let link = flow;
+                        let linkInfo = _this.returnLinkInfo(this[index]);
 
-                        // Gather dimension and gran config:
-                        let gran1 = dimensions[0][1];
-                        let gran2 = dimensions[1] ? dimensions[1][1] : {};
-                        let dimStrings = [];
-                        dimensions.forEach(dim => dimStrings.push(dim[0]));
-
-                        // Data:
-
-                        let processGroups = filtersView.collections['processgroups'].models;
-                        let processes = filtersView.collections['processes'].models;
-
-                        // Set value for origin and destination of nodes:
+                        // NODES
                         originNode.value = destinationNode.value = flow.amount;
 
-                        // Enrich nodes
-                        switch (dimensions.length) {
-                            case 1:
-                                // Only for Treatment method to Treatment method
+                        originNode.dimensionValue = linkInfo.origin.dimensionValue;
+                        originNode.dimensionText = linkInfo.origin.dimensionText;
+                        
+                        destinationNode.dimensionValue = linkInfo.destination.dimensionValue;
+                        destinationNode.dimensionText = linkInfo.destination.dimensionText;
 
-                                // Gran == Treatment method group
-                                if (gran1.includes("group")) {
-                                    let processGroupDestinationObject = processGroups.find(processGroup => processGroup.attributes.id == flow.destination.processgroup);
-                                    destinationNode.name = enrichFlows.returnCodePlusName(processGroupDestinationObject);
-                                    let processGroupOriginObject = processGroups.find(processGroup => processGroup.attributes.id == flow.origin.processgroup);
-                                    originNode.name = enrichFlows.returnCodePlusName(processGroupOriginObject);
-                                    break;
+                        originNode.opacity = destinationNode.opacity = 1;
 
-                                    // Gran == Treatment method
-                                } else {
-                                    let processDestinationObject = processes.find(process => process.attributes.id == flow.destination.process);
-                                    destinationNode.name = enrichFlows.returnCodePlusName(processDestinationObject);
-                                    let processOriginObject = processes.find(process => process.attributes.id == flow.origin.process);
-                                    originNode.name = enrichFlows.returnCodePlusName(processOriginObject);
-                                }
+                        originNode.displayNode = _this.dimensionIsOrigin;
+                        destinationNode.displayNode = !_this.dimensionIsOrigin;
 
-                                break;
-                            case 2:
-                                // Econ dim1 > Treatment dim2
-                                if (dimStrings.includes("economicActivity")) {
-                                    let activityGroups = filtersView.collections['activitygroups'].models;
-                                    let activities = filtersView.collections['activities'].models;
-
-                                    switch (gran1) {
-                                        case "origin__activity__activitygroup":
-                                            let activityGroupOriginObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.origin.activitygroup);
-                                            originNode.name = enrichFlows.returnCodePlusName(activityGroupOriginObject);
-                                            break;
-                                        case "origin__activity":
-                                            let activityOriginObject = activities.find(activity => activity.attributes.id == flow.origin.activity);
-                                            originNode.name = enrichFlows.returnCodePlusName(activityOriginObject);
-                                            break;
-                                        case "destination__activity__activitygroup":
-                                            let activityGroupDestinationObject = activityGroups.find(activityGroup => activityGroup.attributes.id == flow.destination.activitygroup);
-                                            destinationNode.name = enrichFlows.returnCodePlusName(activityGroupDestinationObject);
-                                            break;
-                                        case "destination__activity":
-                                            let activityDestinationObject = activities.find(activity => activity.attributes.id == flow.destination.activity);
-                                            destinationNode.name = enrichFlows.returnCodePlusName(activityDestinationObject);
-                                            break;
-                                    }
-
-                                }
-                                if (dimStrings.includes("material")) {
-                                    let ewc2 = filtersView.wastes02.models;
-                                    let ewc4 = filtersView.wastes04.models;
-                                    let ewc6 = filtersView.wastes06.models;
-
-                                    // Econ dim1 > Material dim2
-                                    if (dimStrings.includes("economicActivity")) {
-                                        // From econ to material
-                                        if (gran1.includes("origin")) {
-                                            switch (gran2) {
-                                                case "flowchain__waste06__waste04__waste02":
-                                                    let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.destination.waste02);
-                                                    destinationNode.name = enrichFlows.returnEwcCodePlusName(ewc2Object);
-                                                    break;
-                                                case "flowchain__waste06__waste04":
-                                                    let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.destination.waste04);
-                                                    destinationNode.name = enrichFlows.returnEwcCodePlusName(ewc4Object);
-                                                    break;
-                                                case "flowchain__waste06":
-                                                    let ewc6Object = ewc6.find(ewc => ewc.attributes.id == flow.destination.waste06);
-                                                    destinationNode.name = enrichFlows.returnEwcCodePlusName(ewc6Object);
-                                                    break;
-                                            }
-                                            // From material to econ
-                                        } else if (gran1.includes("destination")) {
-                                            switch (gran2) {
-                                                case "flowchain__waste06__waste04__waste02":
-                                                    let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.origin.waste02);
-                                                    originNode.name = enrichFlows.returnEwcCodePlusName(ewc2Object);
-                                                    break;
-                                                case "flowchain__waste06__waste04":
-                                                    let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.origin.waste04);
-                                                    originNode.name = enrichFlows.returnEwcCodePlusName(ewc4Object);
-                                                    break;
-                                                case "flowchain__waste06":
-                                                    let ewc6Object = ewc6.find(ewc => ewc.attributes.id == flow.origin.waste06);
-                                                    originNode.name = enrichFlows.returnEwcCodePlusName(ewc6Object);
-                                                    break;
-                                            }
-                                        }
-
-
-                                        // Material > Treatment method OR Treatment method > Material 
-                                    } else if (dimStrings.includes("treatmentMethod")) {
-
-                                        // From treatment to material
-                                        if (gran1.includes("origin")) {
-                                            switch (gran2) {
-                                                case "flowchain__waste06__waste04__waste02":
-                                                    let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.destination.waste02);
-                                                    destinationNode.name = enrichFlows.returnEwcCodePlusName(ewc2Object);
-                                                    break;
-                                                case "flowchain__waste06__waste04":
-                                                    let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.destination.waste04);
-                                                    destinationNode.name = enrichFlows.returnEwcCodePlusName(ewc4Object);
-                                                    break;
-                                                case "flowchain__waste06":
-                                                    let ewc6Object = ewc6.find(ewc => ewc.attributes.id == flow.destination.waste06);
-                                                    destinationNode.name = enrichFlows.returnEwcCodePlusName(ewc6Object);
-                                                    break;
-                                            }
-                                            // From material to treatment
-                                        } else if (gran1.includes("destination")) {
-                                            switch (gran2) {
-                                                case "flowchain__waste06__waste04__waste02":
-                                                    let ewc2Object = ewc2.find(ewc => ewc.attributes.id == flow.origin.waste02);
-                                                    originNode.name = enrichFlows.returnEwcCodePlusName(ewc2Object);
-                                                    break;
-                                                case "flowchain__waste06__waste04":
-                                                    let ewc4Object = ewc4.find(ewc => ewc.attributes.id == flow.origin.waste04);
-                                                    originNode.name = enrichFlows.returnEwcCodePlusName(ewc4Object);
-                                                    break;
-                                                case "flowchain__waste06":
-                                                    let ewc6Object = ewc6.find(ewc => ewc.attributes.id == flow.origin.waste06);
-                                                    originNode.name = enrichFlows.returnEwcCodePlusName(ewc6Object);
-                                                    break;
-                                            }
-                                        }
-                                    }
-
-
-                                }
-                                if (dimStrings.includes("treatmentMethod")) {
-                                    let granularity;
-                                    // Material dim2 > Treatment dim1
-                                    if (dimStrings.includes("economicActivity")) {
-                                        granularity = gran2;
-                                    } else {
-                                        granularity = gran1;
-                                    }
-
-                                    // Material dim2 > Treatment dim1
-                                    switch (granularity) {
-                                        case "destination__process__processgroup":
-                                            let processGroupDestinationObject = processGroups.find(processGroup => processGroup.attributes.id == flow.destination.processgroup);
-                                            destinationNode.name = enrichFlows.returnCodePlusName(processGroupDestinationObject);
-                                            break;
-                                        case "destination__process":
-                                            let processDestinationObject = processes.find(process => process.attributes.id == flow.destination.process);
-                                            destinationNode.name = enrichFlows.returnCodePlusName(processDestinationObject);
-                                            break;
-                                        case "origin__process__processgroup":
-                                            let processGroupOriginObject = processGroups.find(processGroup => processGroup.attributes.id == flow.origin.processgroup);
-                                            originNode.name = enrichFlows.returnCodePlusName(processGroupOriginObject);
-                                            break;
-                                        case "origin__process":
-                                            let processOriginObject = processes.find(process => process.attributes.id == flow.origin.process);
-                                            originNode.name = enrichFlows.returnCodePlusName(processOriginObject);
-                                            break;
-                                    }
-                                }
-                                break;
-                        }
+                        // Store info of source/destination as prop:
+                        originNode.destination = destinationNode;
+                        destinationNode.origin = originNode;
 
                         nodes.push(originNode, destinationNode)
 
-                        // LINKS
-                        link.source = originNode.name;
-                        link.target = destinationNode.name;
+                        // Links
+                        link.source = linkInfo.origin.dimensionValue;
+                        link.target = linkInfo.destination.dimensionValue;
                         link.value = flow.amount;
-
+                        link.amountText = linkInfo.amountText;
                         links.push(link)
-
                     }, flows);
 
-                    // Group the nodes by NAME and sum the values:                    
-                    var result = [];
-                    nodes.reduce(function (res, item) {
-                        if (!res[item.name]) {
-                            res[item.name] = {
-                                name: item.name,
-                                value: 0
-                            };
-                            result.push(res[item.name])
-                        }
-                        res[item.name].value += item.value;
-                        return res;
-                    }, {});
+                    // Assign colors to links and nodes based on label-prop:
+                    links = enrichFlows.assignColorsByProperty(links, "dimensionId");
+                    nodes = _.uniq(nodes, "dimensionValue");
+                    nodes = _.sortBy(nodes, 'dimensionValue');
+                    nodes = enrichFlows.assignColorsByProperty(nodes, "dimensionValue");
 
-                    nodes = result;
+                    // console.log("Links:");
+                    // console.log(links);
+                    // console.log("Nodes:");
+                    // console.log(nodes);
 
-                    console.log("Links:");
-                    console.log(links);
-                    console.log("Nodes:");
-                    console.log(nodes);
+                    // Fix circular object reference error for export:
+                    const getCircularReplacer = () => {
+                        const seen = new WeakSet();
+                        return (key, value) => {
+                            if (typeof value === "object" && value !== null) {
+                                if (seen.has(value)) {
+                                    return;
+                                }
+                                seen.add(value);
+                            }
+                            return value;
+                        };
+                    };
+
+                    // Copy object to retain only original values:
+                    _this.exportData = {
+                        links: JSON.parse(JSON.stringify(links, getCircularReplacer())),
+                        nodes: JSON.parse(JSON.stringify(nodes, getCircularReplacer())),
+                    }
 
                     return {
                         links: links,
@@ -382,10 +394,16 @@ define(['views/common/baseview',
                     }
                 },
 
-                exportCSV: function (event) {
-                    const items = this.options.flows;
+                exportCSV: function () {
+                    const items = this.exportData.links;
                     const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-                    const header = Object.keys(items[0])
+
+                    let fields = ["value", "source", "target"];
+                    let header = Object.keys(items[0]);
+                    header = header.filter(prop => {
+                        return fields.some(f => prop.includes(f))
+                    })
+
                     let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
                     csv.unshift(header.join(','))
                     csv = csv.join('\r\n')
@@ -394,15 +412,15 @@ define(['views/common/baseview',
                         type: "text/plain;charset=utf-8"
                     });
                     FileSaver.saveAs(blob, "data.csv");
-
-                    event.stopImmediatePropagation();
                 },
 
                 close: function () {
-                    this.circularSankey.close();
+                    $(this.options.el).css({
+                        "display": "none",
+                    })
                     this.undelegateEvents(); // remove click events
                     this.unbind(); // Unbind all local event bindings
-                    $("#" + this.options.el).html(""); //empty the DOM element
+                    $(this.options.el).html(""); //empty the DOM element
                 },
 
             });

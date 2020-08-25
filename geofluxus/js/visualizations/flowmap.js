@@ -94,7 +94,7 @@ define([
             // Tooltip
             this.tooltip = d3.select("body")
                 .append("div")
-                .attr("class", "flowMapToolTipContainer")
+                .attr("class", "customTooltipContainer")
                 .style("opacity", 0);
 
             this.svg = d3.select(this.overlay).append("svg");

@@ -41,7 +41,7 @@ class ImpactViewSet(MonitorViewSet):
             # indicator: grams per tonne
             # amount: tonnes
             # if not emissions for waste, check processgroup alone
-            default = F('destination__process__processgroup__' + indicator)
+            default = Coalesce(F('destination__process__processgroup__' + indicator), 0)
             queryset = queryset.annotate(treatment_emissions=Coalesce(subq.values(indicator), default))
             expression += F('treatment_emissions') / 10**6 * F('amount')
 

@@ -66,13 +66,13 @@ define(['views/common/baseview',
                         absolutePosition: absolutePosition,
                         fontColor: this.options.fontColor,
                         unitString: this.options.label + " t",
-                    }), document.getElementById(this.options.el));
+                    }), document.querySelector(this.options.el));
                     return this;
 
                 },
 
                 close() {
-                    ReactDOM.unmountComponentAtNode(document.getElementById(this.options.el));
+                    ReactDOM.unmountComponentAtNode(document.querySelector(this.options.el));
                     Backbone.View.prototype.remove.call(this);
                 }
             });

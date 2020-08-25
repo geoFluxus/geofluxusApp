@@ -181,7 +181,7 @@ class MonitorViewSet(FilterFlowViewSet):
                         item['lat'] += random.randint(0, 10) * 0.01
 
                     # change format for flowmap (both origin/destination)
-                    if format in ['flowmap', 'circularsankey']:
+                    if format in ['flowmap']:
                         label = level.split('_')[0]
                         flow_item.append((label, item))
                     else:
@@ -192,7 +192,7 @@ class MonitorViewSet(FilterFlowViewSet):
 
                 # recover parent fields (if necessary)
                 # not required for parallel sets
-                if format != 'parallelsets' and level in INV.keys():
+                if format not in ['parallelsets', 'circularsankey'] and level in INV.keys():
                     item = next(x for x in INV[level] if x['id'] == group[field])
                     for key, value in item.items():
                         if key != 'id':
@@ -200,7 +200,7 @@ class MonitorViewSet(FilterFlowViewSet):
                             flow_item.append((label, item[key]))
 
                 # format field
-                if format == 'parallelsets':
+                if format in ['parallelsets', 'circularsankey']:
                     # for parallel sets
                     # determine if material dimension is origin or destination
                     if 'waste' in field:
@@ -298,7 +298,7 @@ class MonitorViewSet(FilterFlowViewSet):
                 self.space_inv = Area.objects
 
         # parallel sets for treatment method (group)
-        if format == "parallelsets" and len(self.fields) == 1:
+        if format in ['parallelsets', 'circularsankey'] and len(self.fields) == 1:
             field = self.fields[0].replace('origin__', '') \
                                   .replace('destination__', '')
             level = field.split('__')[-1]
