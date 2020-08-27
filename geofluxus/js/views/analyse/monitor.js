@@ -63,9 +63,9 @@ define(['views/common/baseview',
                 // Dimension-Visualizations inventory
                 this.vizs = {
                     // 1D visualizations
-                    'time': ['piechart', 'barchart', 'treemap', 'lineplot', 'geoheatmap'],
+                    'time': ['piechart', 'barchart', 'treemap', 'lineplot'],
                     'economicActivity': ['piechart', 'barchart', 'treemap'],
-                    'space': ['piechart', 'barchart', 'treemap', 'networkmap'],
+                    'space': ['piechart', 'barchart', 'treemap', 'networkmap','geoheatmap'],
                     'treatmentMethod': ['piechart', 'barchart', 'treemap', 'parallelsets', 'circularsankey'],
                     'material': ['piechart', 'barchart', 'treemap'],
                     // 2D visualizations
