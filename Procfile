@@ -1,0 +1,1 @@
+web: gunicorn --bind 127.0.0.1:8000 --workers=3 --threads=20 geofluxus.wsgi:application --log-level=debug --capture-output --error-logfile /var/app/current/gunicorn.log --log-file /var/app/current/gunicorn.log
