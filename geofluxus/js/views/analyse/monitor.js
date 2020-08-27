@@ -13,6 +13,7 @@ define(['views/common/baseview',
         'views/common/parallelSetsView',
         'views/common/circularSankeyView',
         'views/common/networkMapView',
+        'views/common/geoheatMapView',
     ],
     function (
         BaseView,
@@ -30,6 +31,7 @@ define(['views/common/baseview',
         ParallelSetsView,
         CircularSankeyView,
         NetworkMapView,
+        GeoHeatMapView,
     ) {
         var MonitorView = BaseView.extend({
             initialize: function (options) {
@@ -61,7 +63,7 @@ define(['views/common/baseview',
                 // Dimension-Visualizations inventory
                 this.vizs = {
                     // 1D visualizations
-                    'time': ['piechart', 'barchart', 'treemap', 'lineplot'],
+                    'time': ['piechart', 'barchart', 'treemap', 'lineplot', 'geoheatmap'],
                     'economicActivity': ['piechart', 'barchart', 'treemap'],
                     'space': ['piechart', 'barchart', 'treemap', 'networkmap'],
                     'treatmentMethod': ['piechart', 'barchart', 'treemap', 'parallelsets', 'circularsankey'],
@@ -125,6 +127,9 @@ define(['views/common/baseview',
                     },
                     'networkmap': {
                         'view': NetworkMapView
+                    },
+                    'geoheatmap': {
+                        'view': GeoHeatMapView
                     }
                 }
 
