@@ -48,7 +48,10 @@ define(['views/common/baseview',
 
                     var _this = this;
                     this.options = options;
-                    $(this.options.el).append('<div id="geoheatmap"></div>'); ;
+
+                    if ($(this.options.el).html() == "") {
+                        $(this.options.el).append('<div id="geoheatmap" style="width: 100% !important"></div>');;
+                    }
                     this.options.el = this.options.el + " div";
 
                     this.filtersView = this.options.flowsView.filtersView;
@@ -56,8 +59,7 @@ define(['views/common/baseview',
                     this.dim2 = this.options.dimensions[1];
                     this.flows = this.options.flows;
 
-                    this.isActorLevel = _this.options.dimensions.isActorLevel,
-
+                    this.isActorLevel = _this.options.dimensions.isActorLevel;
                     this.label = this.options.dimensions.label;
 
                     this.props = {
@@ -68,13 +70,12 @@ define(['views/common/baseview',
                     }
 
 
-
                     this.isDarkMode = true;
                     this.fontColor = "white";
 
 
                     this.flows.forEach(function (propertyName, index) {
-                        if (this.isActorLevel) {
+                        if (_this.isActorLevel) {
                             this[index] = [this[index].actorLon, this[index].actorLat, this[index].amount];
                         } else {
                             this[index] = [this[index].areaLon, this[index].areaLat, this[index].amount];
@@ -179,7 +180,7 @@ define(['views/common/baseview',
 
                 close: function () {
                     try {
-                        if (document.querySelector("#geoheatmap").html() != ""){
+                        if (document.querySelector("#geoheatmap").html() != "") {
                             console.log("closing");
                             ReactDOM.unmountComponentAtNode(document.querySelector("#geoheatmap"));
 

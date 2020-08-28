@@ -107,7 +107,7 @@ function getTooltip({ object }) {
     return `\
     latitude: ${Number.isFinite(lat) ? lat.toFixed(6) : ''}
     longitude: ${Number.isFinite(lng) ? lng.toFixed(6) : ''}
-    ${count} Accidents`;
+    ${count} Waste `;
 }
 
 /* eslint-disable react/no-deprecated */
@@ -118,13 +118,13 @@ export default function App({
     upperPercentile = 100,
     coverage = 1
 }) {
-
+    
+    var center = getCenter(data);
+    var maxValue = Math.max.apply(Math, data.map(function(o) { return o[2]; }))
 
     function getValues(points) {
         return points.reduce((a, b) => a + (b[2] || 0), 0);
     }
-
-    var center = getCenter(data);
 
     const INITIAL_VIEW_STATE = {
         longitude: center.lon, // -1.415727,
@@ -142,8 +142,8 @@ export default function App({
             colorRange,
             coverage,
             data,
-            elevationRange: [0, 100000],
-            // elevationScale: data && data.length ? 50 : 0,
+            elevationRange: [0, 3000],
+            elevationScale: data && maxValue ? 50 : 0,
             extruded: true,
             getPosition: d => d,
             getElevationValue: getValues,
