@@ -92,6 +92,7 @@ export default function App({
   mapStyle = "mapbox://styles/mapbox/dark-v9",
   radius,
   label,
+  isActorLevel,
   upperPercentile = 100,
   coverage = 1,
 }) {
@@ -126,14 +127,14 @@ export default function App({
     }
       
     const total = object.points.reduce((a, b) => a + (b[2] || 0), 0);
-    
-    // <div class="d3plus-tooltip-title"> ${node.dimensionValue}</div>
+    const tooltipTitleValue = isActorLevel ? "This area:" : object.points[0][3];
+
     var html = `<div class="d3plus-tooltip flowMapToolTip pointToolTIp" x-placement="top">
-        <div class="d3plus-tooltip-body">
-        </div>
-        <table class="d3plus-tooltip-table">
+        <div class="d3plus-tooltip-title">${tooltipTitleValue}</div>
+        <div class="d3plus-tooltip-body"></div>
+        <table class="d3plus-tooltip-table" style='display: block !important'>
             <thead class="d3plus-tooltip-thead"></thead>
-            <tbody class="d3plus-tooltip-tbody style='display: block; padding-bottom: 0.5rem;'">
+            <tbody class="d3plus-tooltip-tbody" style="display: inline-table !important; width: 100%; padding-bottom: 0.5rem;">
                 <tr>
                     <td>${label}</td>
                     <td>${d3plus.formatAbbreviate(total, utils.returnD3plusFormatLocale())} t</td>

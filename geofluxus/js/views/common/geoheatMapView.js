@@ -73,7 +73,7 @@ define(['views/common/baseview',
                         "1": 25000,
                         "2": 10000,
                         "3": 7500, 
-                        "4": 3000
+                        "1000": 3000
                     }
                     
                     this.areaLevel = this.filtersView.collections.arealevels.find(areaLevelObject => areaLevelObject.attributes.id == this.dim1[1].adminlevel).attributes.level;
@@ -84,18 +84,13 @@ define(['views/common/baseview',
                     this.fontColor = "white";
 
 
-                    this.flows.forEach(function (propertyName, index) {
+                    this.flows.forEach(function (flow, index) {
                         if (_this.isActorLevel) {
                             this[index] = [this[index].actorLon, this[index].actorLat, this[index].amount];
                         } else {
-                            this[index] = [this[index].areaLon, this[index].areaLat, this[index].amount];
+                            this[index] = [this[index].areaLon, this[index].areaLat, this[index].amount, this[index].areaName];
                         }
                     }, this.flows);
-
-
-                    window.addEventListener('resize', function () {
-                        _this.render();
-                    })
 
                     this.render();
                     this.options.flowsView.loader.deactivate();
@@ -112,6 +107,7 @@ define(['views/common/baseview',
                         data: _this.flows,
                         radius: _this.radius,
                         label: _this.label,
+                        isActorLevel: _this.isActorLevel,
                     }), document.querySelector(this.options.el));
                     utils.scrollToVizRow();
 
