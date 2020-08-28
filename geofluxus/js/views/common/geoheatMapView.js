@@ -53,22 +53,30 @@ define(['views/common/baseview',
                         $(this.options.el).append('<div id="geoheatmap" style="width: 100% !important"></div>');;
                     }
                     this.options.el = this.options.el + " div";
+                    this.flows = this.options.flows;
 
                     this.filtersView = this.options.flowsView.filtersView;
                     this.dim1 = this.options.dimensions[0];
                     this.dim2 = this.options.dimensions[1];
-                    this.flows = this.options.flows;
 
                     this.isActorLevel = _this.options.dimensions.isActorLevel;
                     this.label = this.options.dimensions.label;
 
-                    this.props = {
-                        'activitygroup': 'Activity group',
-                        'activity': 'Activity',
-                        'processgroup': 'Treatment method group',
-                        'process': 'Treatment method',
+                    // this.props = {
+                    //     'activitygroup': 'Activity group',
+                    //     'activity': 'Activity',
+                    //     'processgroup': 'Treatment method group',
+                    //     'process': 'Treatment method',
+                    // }
+
+                    this.radiusMap = {
+                        "1": 25000,
+                        "2": 10000,
+                        "3": 7500, 
+                        "4": 3000
                     }
 
+                    this.radius = this.radiusMap[this.dim1[1].adminlevel];
 
                     this.isDarkMode = true;
                     this.fontColor = "white";
@@ -100,6 +108,8 @@ define(['views/common/baseview',
 
                     ReactDOM.render(React.createElement(GeoHeatMap, {
                         data: _this.flows,
+                        radius: _this.radius,
+                        label: _this.label,
                     }), document.querySelector(this.options.el));
                     utils.scrollToVizRow();
 
