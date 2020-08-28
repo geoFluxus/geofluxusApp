@@ -52,15 +52,7 @@ const material = {
     specularColor: [51, 51, 51]
 };
 
-const INITIAL_VIEW_STATE = {
-    longitude: -1.415727,
-    latitude: 52.232395,
-    zoom: 6.6,
-    minZoom: 5,
-    maxZoom: 15,
-    pitch: 40.5,
-    bearing: -27
-};
+
 
 export const colorRange = [
     [1, 152, 189],
@@ -71,9 +63,39 @@ export const colorRange = [
     [209, 55, 78]
 ];
 
-function getTooltip({
-    object
-}) {
+/**
+ * Get the center of an array of arrays of coordinates
+ * 
+ * @param {array} data array of arrays of coordinates (first lon, then lat) 
+ */
+function getCenter(data) {
+    var latXTotal = 0;
+    var latYTotal = 0;
+    var lonDegreesTotal = 0;
+
+    data.forEach(coords => {
+        var lonDegrees = coords[0];
+        var latDegrees = coords[1];
+
+        var latRadians = Math.PI * latDegrees / 180;
+        latXTotal += Math.cos(latRadians);
+        latYTotal += Math.sin(latRadians);
+
+        lonDegreesTotal += lonDegrees;
+    });
+
+    var finalLatRadians = Math.atan2(latYTotal, latXTotal);
+
+    var finalLatDegrees = finalLatRadians * 180 / Math.PI;
+    var finalLonDegrees = lonDegreesTotal / data.length;
+
+    return {
+        lat: finalLatDegrees,
+        lon: finalLonDegrees
+    }
+}
+
+function getTooltip({ object }) {
     if (!object) {
         return null;
     }
@@ -97,10 +119,22 @@ export default function App({
     coverage = 1
 }) {
 
-   
+
     function getValues(points) {
         return points.reduce((a, b) => a + (b[2] || 0), 0);
     }
+
+    var center = getCenter(data);
+
+    const INITIAL_VIEW_STATE = {
+        longitude: center.lon, // -1.415727,
+        latitude: center.lat, // 52.232395,
+        zoom: 6.6,
+        minZoom: 5,
+        maxZoom: 15,
+        pitch: 40.5,
+        bearing: 0 // Up == north 
+    };
 
     const layers = [
         new HexagonLayer({
@@ -127,47 +161,47 @@ export default function App({
 
 
 
-    return ( <
-        DeckGL layers = {
+    return (<
+        DeckGL layers={
             layers
         }
-        effects = {
+        effects={
             [lightingEffect]
         }
-        initialViewState = {
+        initialViewState={
             INITIAL_VIEW_STATE
         }
-        controller = {
+        controller={
             true
         }
-        getTooltip = {
+        getTooltip={
             getTooltip
         } >
         <
-        StaticMap reuseMaps mapStyle = {
-            mapStyle
-        }
-        preventStyleDiffing = {
-            true
-        }
-        mapboxApiAccessToken = {
-            MAPBOX_TOKEN
-        }
+            StaticMap reuseMaps mapStyle={
+                mapStyle
+            }
+            preventStyleDiffing={
+                true
+            }
+            mapboxApiAccessToken={
+                MAPBOX_TOKEN
+            }
         /> < /
         DeckGL >
     );
 }
 
 export function renderToDOM(container) {
-    render( < App / > , container);
+            render(< App />, container);
 
     require('d3-request').csv(DATA_URL, (error, response) => {
             if (!error) {
                 const data = response.map(d => [Number(d.lng), Number(d.lat)]);
-                render( < App data = {
-                        data
-                    }
-                    />, container);
+                render( < App data={
+            data
+        }
+        />, container);
                 }
             });
     }
