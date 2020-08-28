@@ -112,15 +112,47 @@ export default function App({
     if (!object) {
       return null;
     }
-    const lat = object.position[1];
-    const lng = object.position[0];
+   
     const total = object.points.reduce((a, b) => a + (b[2] || 0), 0);
     
     // latitude: ${Number.isFinite(lat) ? lat.toFixed(6) : ""}
     // longitude: ${Number.isFinite(lng) ? lng.toFixed(6) : ""}
-    return `\
-      ${label}: ${d3plus.formatAbbreviate(total, utils.returnD3plusFormatLocale()) + " t"}`;
+    return label + `\: ${d3plus.formatAbbreviate(total, utils.returnD3plusFormatLocale()) + " t"}`;
   }
+
+  function getTooltipHtml({object}) {
+    if (!object) {
+        return null;
+    }
+      
+    const total = object.points.reduce((a, b) => a + (b[2] || 0), 0);
+    
+    // <div class="d3plus-tooltip-title"> ${node.dimensionValue}</div>
+    var html = `<div class="d3plus-tooltip flowMapToolTip pointToolTIp" x-placement="top">
+        <div class="d3plus-tooltip-body">
+        </div>
+        <table class="d3plus-tooltip-table">
+            <thead class="d3plus-tooltip-thead"></thead>
+            <tbody class="d3plus-tooltip-tbody style='display: block; padding-bottom: 0.5rem;'">
+                <tr>
+                    <td>${label}</td>
+                    <td>${d3plus.formatAbbreviate(total, utils.returnD3plusFormatLocale())} t</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>`
+
+    return {
+        html: html,
+        style: {
+            "z-index": 1,
+            "position": "absolute",
+            "color": "black",
+            "background-color": "transparent",
+            "padding": "10px",
+        }
+    }
+}
 
   const INITIAL_VIEW_STATE = {
     longitude: center.lon,
@@ -159,7 +191,7 @@ export default function App({
       effects={[lightingEffect]}
       initialViewState={INITIAL_VIEW_STATE}
       controller={true}
-      getTooltip={getTooltip}
+      getTooltip={getTooltipHtml}
     >
       <StaticMap
         reuseMaps

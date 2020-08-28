@@ -75,8 +75,10 @@ define(['views/common/baseview',
                         "3": 7500, 
                         "4": 3000
                     }
+                    
+                    this.areaLevel = this.filtersView.collections.arealevels.find(areaLevelObject => areaLevelObject.attributes.id == this.dim1[1].adminlevel).attributes.level;
 
-                    this.radius = this.radiusMap[this.dim1[1].adminlevel];
+                    this.radius = this.radiusMap[this.areaLevel];
 
                     this.isDarkMode = true;
                     this.fontColor = "white";
