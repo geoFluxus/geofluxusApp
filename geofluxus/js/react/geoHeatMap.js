@@ -1,10 +1,10 @@
 import React from "react";
 import { render } from "react-dom";
-import { StaticMap } from "react-map-gl";
+import { StaticMap, FullscreenControl } from "react-map-gl";
 import { AmbientLight, PointLight, LightingEffect } from "@deck.gl/core";
 import { HexagonLayer } from "@deck.gl/aggregation-layers";
 import DeckGL from "@deck.gl/react";
-import utils from "utils/utils"
+import utils from "utils/utils";
 
 var d3plus = require("visualizations/d3plus");
 
@@ -96,7 +96,6 @@ export default function App({
   upperPercentile = 100,
   coverage = 1,
 }) {
-
   var center = getCenter(data);
   var maxValue = Math.max.apply(
     Math,
@@ -113,19 +112,24 @@ export default function App({
     if (!object) {
       return null;
     }
-   
+
     const total = object.points.reduce((a, b) => a + (b[2] || 0), 0);
-    
+
     // latitude: ${Number.isFinite(lat) ? lat.toFixed(6) : ""}
     // longitude: ${Number.isFinite(lng) ? lng.toFixed(6) : ""}
-    return label + `\: ${d3plus.formatAbbreviate(total, utils.returnD3plusFormatLocale()) + " t"}`;
+    return (
+      label +
+      `\: ${
+        d3plus.formatAbbreviate(total, utils.returnD3plusFormatLocale()) + " t"
+      }`
+    );
   }
 
-  function getTooltipHtml({object}) {
+  function getTooltipHtml({ object }) {
     if (!object) {
-        return null;
+      return null;
     }
-      
+
     const total = object.points.reduce((a, b) => a + (b[2] || 0), 0);
     const tooltipTitleValue = isActorLevel ? "This area:" : object.points[0][3];
 
@@ -137,23 +141,26 @@ export default function App({
             <tbody class="d3plus-tooltip-tbody" style="display: inline-table !important; width: 100%; padding-bottom: 0.5rem;">
                 <tr>
                     <td>${label}</td>
-                    <td>${d3plus.formatAbbreviate(total, utils.returnD3plusFormatLocale())} t</td>
+                    <td>${d3plus.formatAbbreviate(
+                      total,
+                      utils.returnD3plusFormatLocale()
+                    )} t</td>
                 </tr>
             </tbody>
         </table>
-    </div>`
+    </div>`;
 
     return {
-        html: html,
-        style: {
-            "z-index": 1,
-            "position": "absolute",
-            "color": "black",
-            "background-color": "transparent",
-            "padding": "10px",
-        }
-    }
-}
+      html: html,
+      style: {
+        "z-index": 1,
+        position: "absolute",
+        color: "black",
+        "background-color": "transparent",
+        padding: "10px",
+      },
+    };
+  }
 
   const INITIAL_VIEW_STATE = {
     longitude: center.lon,
@@ -200,6 +207,9 @@ export default function App({
         preventStyleDiffing={true}
         mapboxApiAccessToken={MAPBOX_TOKEN}
       />{" "}
+        <div style={{position: 'absolute', left: 0}}>
+          <FullscreenControl container={document.querySelector('#geoheatmap')}/>
+        </div>
     </DeckGL>
   );
 }
