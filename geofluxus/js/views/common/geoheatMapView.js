@@ -11,7 +11,6 @@ define(['views/common/baseview',
         'visualizations/d3plus',
         'react',
         'react-dom',
-        // 'react/geoHeatMap',
     ],
 
     function (
@@ -26,7 +25,6 @@ define(['views/common/baseview',
         d3plus,
         React,
         ReactDOM,
-        // GeoHeatMap
     ) {
 
         /**
@@ -50,10 +48,15 @@ define(['views/common/baseview',
 
                     var _this = this;
                     this.options = options;
+                    $(this.options.el).append('<div id="geoheatmap"></div>'); ;
+                    this.options.el = this.options.el + " div";
+
                     this.filtersView = this.options.flowsView.filtersView;
                     this.dim1 = this.options.dimensions[0];
                     this.dim2 = this.options.dimensions[1];
                     this.flows = this.options.flows;
+
+                    this.isActorLevel = _this.options.dimensions.isActorLevel,
 
                     this.label = this.options.dimensions.label;
 
@@ -64,17 +67,20 @@ define(['views/common/baseview',
                         'process': 'Treatment method',
                     }
 
-                    $(this.options.el).css({
-                        "display": "flex",
-                        "align-items": "center"
-                    })
+
 
                     this.isDarkMode = true;
                     this.fontColor = "white";
 
 
+                    this.flows.forEach(function (propertyName, index) {
+                        if (this.isActorLevel) {
+                            this[index] = [this[index].actorLon, this[index].actorLat, this[index].amount];
+                        } else {
+                            this[index] = [this[index].areaLon, this[index].areaLat, this[index].amount];
+                        }
+                    }, this.flows);
 
-                    // this.flows = this.enrichFlows(this.flows)
 
                     window.addEventListener('resize', function () {
                         _this.render();
@@ -89,132 +95,67 @@ define(['views/common/baseview',
                 },
 
                 render: function () {
-                    // if (this.geoHeatMap) {
-                    //     this.geoHeatMap.close();
-                    // }
+                    var _this = this;
 
-                    // this.width = $(this.options.el).width() - 150;
-                    // this.height = $(this.options.el).height() - 150;
+                    ReactDOM.render(React.createElement(GeoHeatMap, {
+                        data: _this.flows,
+                    }), document.querySelector(this.options.el));
+                    utils.scrollToVizRow();
 
-                    // this.geoHeatMap = new D3SankeyCircular({
-                    //     el: this.options.el,
-                    //     // width: this.width,
-                    //     // height: this.height,
-                    //     data: this.flows,
-                    //     fontColor: this.fontColor,
-                    //     label: this.label,
-                    //     isDarkMode: this.isDarkMode,
-                    //     showNodeLabels: this.showNodeLabels,
-                    //     showArrows: this.showArrows,
-                    //     linkColourOptions: this.linkColourOptions,
-                    //     arrowOptions: this.arrowOptions,
-                    // })
-
-
-                    // Source data CSV
-                    const DATA_URL = 'http://127.0.0.1:8000/static/data.csv';
-                    var data;
-
-                    require('d3-request').csv(DATA_URL, (error, response) => {
-                        if (!error) {
-                            data = response.map(d => [Number(d.lng), Number(d.lat), Number(d.value)]);
-
-                            ReactDOM.render(React.createElement(GeoHeatMap, {
-                                data: data,
-                            }), document.querySelector(this.options.el));
-                            utils.scrollToVizRow();
-                            return this;
-
-                        }
-                    });
-
-
-
-                    //this.addButtons();
+                    setTimeout(() => {
+                        this.addButtons();
+                    }, 300);
                 },
 
-                // addButtons: function () {
-                //     let buttonFullscreen = d3.select(".fullscreen-toggle")
-                //     if (buttonFullscreen.empty()) {
+                addButtons: function () {
+                    let buttonFullscreen = d3.select(".fullscreen-toggle")
+                    if (buttonFullscreen.empty()) {
 
-                //         let _this = this;
-                //         let vizContainer = d3.select(this.options.el);
-                //         vizContainer.append("div")
-                //             .attr("class", "sankeyControlContainer")
-                //             .style("top", "0px")
-                //             .lower();
+                        let _this = this;
+                        let controlContainer = d3.select(".mapboxgl-ctrl-top-left")
 
-                //         let sankeyControlContainer = vizContainer.select(".sankeyControlContainer")
+                        controlContainer.append("button")
+                            .attr("class", "btn btn-sm btn-primary d3plus-Button fullscreen-toggle")
+                            .attr("title", "View this visualization in fullscreen mode.")
+                            .attr("type", "button")
+                            .html('<i class="fas fa-expand icon-fullscreen"></i>')
+                            .on("click", function () {
+                                _this.toggleFullscreen();
+                            });
 
-                //         sankeyControlContainer.append("button")
-                //             .attr("class", "btn btn-sm btn-primary d3plus-Button fullscreen-toggle")
-                //             .attr("title", "View this visualization in fullscreen mode.")
-                //             .attr("type", "button")
-                //             .html('<i class="fas fa-expand icon-fullscreen"></i>')
-                //             .on("click", function () {
-                //                 _this.toggleFullscreen();
-                //             });
+                        controlContainer.append("button")
+                            .attr("class", "btn btn-sm btn-primary d3plus-Button export-csv")
+                            .attr("title", "Export the data of this visualization as a CSV file.")
+                            .attr("type", "button")
+                            .html('<i class="fas fa-file icon-export"></i>')
+                            .on("click", function () {
+                                _this.exportCSV();
+                                d3.event.preventDefault();
+                            });
 
-                //         sankeyControlContainer.append("button")
-                //             .attr("class", "btn btn-sm btn-primary d3plus-Button export-csv")
-                //             .attr("title", "Export the data of this visualization as a CSV file.")
-                //             .attr("type", "button")
-                //             .html('<i class="fas fa-file icon-export"></i>')
-                //             .on("click", function () {
-                //                 _this.exportCSV();
-                //                 d3.event.preventDefault();
-                //             });
+                        controlContainer.append("button")
+                            .attr("class", "btn btn-sm btn-primary d3plus-Button toggle-darkmode")
+                            .attr("title", "Toggle light or dark mode.")
+                            .attr("type", "button")
+                            .html('<i class="fas icon-toggle-darkmode"></i>')
+                            .on("click", function () {
+                                _this.toggleDarkMode();
+                            });
+                    }
+                },
 
-                //         sankeyControlContainer.append("button")
-                //             .attr("class", "btn btn-sm btn-primary d3plus-Button toggle-darkmode")
-                //             .attr("title", "Toggle light or dark mode.")
-                //             .attr("type", "button")
-                //             .html('<i class="fas icon-toggle-darkmode"></i>')
-                //             .on("click", function () {
-                //                 _this.toggleDarkMode();
-                //             });
-
-                //         sankeyControlContainer.append("button")
-                //             .attr("class", "btn btn-sm btn-primary d3plus-Button toggle-nodelabels")
-                //             .attr("title", "Toggle the labels above the nodes.")
-                //             .attr("type", "button")
-                //             .html('<i class="fa fa-tag icon-toggle-nodelabels"></i>')
-                //             .on("click", function () {
-                //                 _this.toggleNodeLabels();
-                //             });
-
-                //         sankeyControlContainer.append("button")
-                //             .attr("class", "btn btn-sm btn-primary d3plus-Button toggle-linkColor")
-                //             .attr("title", "Toggle the colours of the Sankey links.")
-                //             .attr("type", "button")
-                //             .html('<i class="fa icon-toggle-sankey-link-color"></i>')
-                //             .on("click", function () {
-                //                 _this.toggleLinkColor();
-                //             });
-
-                //         sankeyControlContainer.append("button")
-                //             .attr("class", "btn btn-sm btn-primary d3plus-Button toggle-linkArrows")
-                //             .attr("title", "Toggle between arrows or animated dashes in the Sankey links.")
-                //             .attr("type", "button")
-                //             .html('<i class="fa fa-arrow-right icon-toggle-linkArrows"></i>')
-                //             .on("click", function () {
-                //                 _this.toggleArrows();
-                //             });
-                //     }
-                // },
-
-                // toggleFullscreen: function (event) {
-                //     $(this.options.el).toggleClass('fullscreen');
-                //     // Only scroll when going to normal view:
-                //     if (!$(this.options.el).hasClass('fullscreen')) {
-                //         window.scrollTo({
-                //             top: $(".visualizationRow")[0].getBoundingClientRect().top + window.pageYOffset - 20,
-                //             block: "start",
-                //             inline: "nearest",
-                //         });
-                //     }
-                //     this.render();
-                // },
+                toggleFullscreen: function (event) {
+                    $(this.options.el).toggleClass('fullscreen');
+                    // Only scroll when going to normal view:
+                    if (!$(this.options.el).hasClass('fullscreen')) {
+                        window.scrollTo({
+                            top: $(".visualizationRow")[0].getBoundingClientRect().top + window.pageYOffset - 20,
+                            block: "start",
+                            inline: "nearest",
+                        });
+                    }
+                    this.render();
+                },
 
                 exportCSV: function () {
                     const items = this.exportData.links;
@@ -237,12 +178,18 @@ define(['views/common/baseview',
                 },
 
                 close: function () {
-                    $(this.options.el).css({
-                        "display": "none",
-                    })
-                    this.undelegateEvents(); // remove click events
-                    this.unbind(); // Unbind all local event bindings
-                    $(this.options.el).html(""); //empty the DOM element
+                    try {
+                        if (document.querySelector("#geoheatmap").html() != ""){
+                            console.log("closing");
+                            ReactDOM.unmountComponentAtNode(document.querySelector("#geoheatmap"));
+
+                            // Backbone.View.prototype.remove.call(this);
+                            this.undelegateEvents(); // remove click events
+                            this.unbind(); // Unbind all local event bindings
+                        }
+                    } catch (error) {
+
+                    }
                 },
 
             });

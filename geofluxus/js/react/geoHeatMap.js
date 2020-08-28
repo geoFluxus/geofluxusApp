@@ -92,7 +92,7 @@ function getTooltip({
 export default function App({
     data,
     mapStyle = 'mapbox://styles/mapbox/dark-v9',
-    radius = 1000,
+    radius = 5000,
     upperPercentile = 100,
     coverage = 1
 }) {
@@ -108,14 +108,11 @@ export default function App({
             colorRange,
             coverage,
             data,
-            elevationRange: [0, 3000],
+            elevationRange: [0, 100000],
             // elevationScale: data && data.length ? 50 : 0,
             extruded: true,
             getPosition: d => d,
-            // getElevationValue: d => d.reduce((a, b) => a[2] + b[2]),
             getElevationValue: getValues,
-            // getElevationWeight: point => point.value,
-            // elevationAggregation: 'SUM',
             pickable: true,
             radius,
             upperPercentile,
