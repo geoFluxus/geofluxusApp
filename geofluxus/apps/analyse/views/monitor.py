@@ -226,14 +226,14 @@ class MonitorViewSet(FilterFlowViewSet):
                 # serialize only areas of requested admin level!!!
                 if area['adminlevel'] == self.admin.id:
                     # simplify geometry to render
-                    geom = area['geom'].simplify(tolerance=self.admin.resolution,
-                                                 preserve_topology=False)
+                    # geom = area['geom'].simplify(tolerance=self.admin.resolution,
+                    #                              preserve_topology=True)
 
                     # serialize area
                     area_item = {
                         'id': area['id'],
                         'name': area['name'],
-                        'geom': json.loads(geom.geojson)
+                        'geom': json.loads(area['geom'].geojson)
                     }
 
                     # attention! convert all geometries to common type MULTIPOLYGON
