@@ -50,7 +50,7 @@ define(['views/common/baseview',
                     this.options = options;
 
                     if ($(this.options.el).html() == "") {
-                        $(this.options.el).append('<div id="geoheatmap" style="width: 100% !important"></div>');;
+                        $(this.options.el).append('<div id="geoheatmap" style="width: 100%; height: 100%; position: relative"></div>');;
                     }
                     this.options.el = this.options.el + " div";
                     this.flows = this.options.flows;
@@ -72,10 +72,10 @@ define(['views/common/baseview',
                     this.radiusMap = {
                         "1": 25000,
                         "2": 10000,
-                        "3": 7500, 
+                        "3": 7500,
                         "1000": 3000
                     }
-                    
+
                     this.areaLevel = this.filtersView.collections.arealevels.find(areaLevelObject => areaLevelObject.attributes.id == this.dim1[1].adminlevel).attributes.level;
 
                     this.radius = this.radiusMap[this.areaLevel];
@@ -108,6 +108,7 @@ define(['views/common/baseview',
                         radius: _this.radius,
                         label: _this.label,
                         isActorLevel: _this.isActorLevel,
+                        isDarkMode: _this.isDarkMode,
                     }), document.querySelector(this.options.el));
                     utils.scrollToVizRow();
 
@@ -121,7 +122,16 @@ define(['views/common/baseview',
                     if (buttonFullscreen.empty()) {
 
                         let _this = this;
-                        let controlContainer = d3.select(".mapboxgl-ctrl-top-left")
+
+                        let vizContainer = d3.select("#geoheatmap");
+                        vizContainer.append("div")
+                            .attr("class", "controlContainer")
+                            .style("top", "0px")
+                            .style("position", "relative")
+                            .style("z-index", "100")
+                            .lower();
+
+                        let controlContainer = vizContainer.select(".controlContainer")
 
                         controlContainer.append("button")
                             .attr("class", "btn btn-sm btn-primary d3plus-Button fullscreen-toggle")
@@ -154,7 +164,7 @@ define(['views/common/baseview',
                 },
 
                 toggleFullscreen: function (event) {
-                    $(this.options.el).toggleClass('fullscreen');
+                    $("#geoheatmap").toggleClass('fullscreen');
                     // Only scroll when going to normal view:
                     if (!$(this.options.el).hasClass('fullscreen')) {
                         window.scrollTo({
@@ -166,11 +176,24 @@ define(['views/common/baseview',
                     this.render();
                 },
 
+                toggleDarkMode: function () {
+                    this.isDarkMode = !this.isDarkMode;
+                    if (this.isDarkMode) {
+                        const mapStyle = "mapbox://styles/mapbox/dark-v9"
+                    } else {
+                        const mapStyle = "mapbox://styles/mapbox/light-v9"
+                    }
+
+                    $(".viz-wrapper-div").toggleClass("lightMode");
+                    this.fontColor = this.isDarkMode ? "white" : "black";
+                    this.render();
+                },
+
                 exportCSV: function () {
-                    const items = this.exportData.links;
+                    const items = this.options.flows;
                     const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
 
-                    let fields = ["value", "source", "target"];
+                    let fields = ["amount", "Code", "Name"];
                     let header = Object.keys(items[0]);
                     header = header.filter(prop => {
                         return fields.some(f => prop.includes(f))
@@ -189,10 +212,7 @@ define(['views/common/baseview',
                 close: function () {
                     try {
                         if (document.querySelector("#geoheatmap").html() != "") {
-                            console.log("closing");
                             ReactDOM.unmountComponentAtNode(document.querySelector("#geoheatmap"));
-
-                            // Backbone.View.prototype.remove.call(this);
                             this.undelegateEvents(); // remove click events
                             this.unbind(); // Unbind all local event bindings
                         }

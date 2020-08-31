@@ -1,5 +1,4 @@
 import React from "react";
-import { render } from "react-dom";
 import { StaticMap, FullscreenControl } from "react-map-gl";
 import { AmbientLight, PointLight, LightingEffect } from "@deck.gl/core";
 import { HexagonLayer } from "@deck.gl/aggregation-layers";
@@ -89,7 +88,8 @@ function getCenter(data) {
 
 export default function App({
   data,
-  mapStyle = "mapbox://styles/mapbox/dark-v9",
+  isDarkMode,
+  mapStyle,
   radius,
   label,
   isActorLevel,
@@ -103,6 +103,12 @@ export default function App({
       return o[2];
     })
   );
+
+  if (isDarkMode) {
+    mapStyle = "mapbox://styles/mapbox/dark-v9"
+  } else {
+    mapStyle = "mapbox://styles/mapbox/light-v9" 
+  }
 
   function getValues(points) {
     return points.reduce((a, b) => a + (b[2] || 0), 0);
@@ -207,9 +213,9 @@ export default function App({
         preventStyleDiffing={true}
         mapboxApiAccessToken={MAPBOX_TOKEN}
       />{" "}
-        <div style={{position: 'absolute', left: 0}}>
+        {/* <div style={{position: 'absolute', left: 0}}>
           <FullscreenControl container={document.querySelector('#geoheatmap')}/>
-        </div>
+        </div> */}
     </DeckGL>
   );
 }

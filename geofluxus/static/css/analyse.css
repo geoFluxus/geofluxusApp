@@ -329,11 +329,18 @@ label[for="flows-waste06-select"] {
 }
 
 #span-viz-flowmap::before {
-    background-image: url('../img/viz-icons/viz-flowmap.svg');
+    background-image: url('../img/viz-icons/viz-flowmap.png');
+    border-radius: 10%;
 }
 
 #span-viz-networkmap::before {
-    background-image: url('../img/viz-icons/viz-networkmap.svg');
+    background-image: url('../img/viz-icons/viz-networkmap.png');
+    border-radius: 10%;
+}
+
+#span-viz-geoheatmap::before {
+    background-image: url('../img/viz-icons/viz-geoheatmap.png');
+    border-radius: 10%;
 }
 
 /* Circular Sankey */
@@ -353,7 +360,7 @@ label[for="flows-waste06-select"] {
     color: white
 }
 
-.controlContainer {
+.controlContainer  {
     width: 32px;
     margin-left: 5px;
     position: absolute;
