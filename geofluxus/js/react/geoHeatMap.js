@@ -1,5 +1,5 @@
 import React from "react";
-import { StaticMap, FullscreenControl } from "react-map-gl";
+import { StaticMap } from "react-map-gl";
 import { AmbientLight, PointLight, LightingEffect } from "@deck.gl/core";
 import { HexagonLayer } from "@deck.gl/aggregation-layers";
 import DeckGL from "@deck.gl/react";
@@ -213,9 +213,6 @@ export default function App({
         preventStyleDiffing={true}
         mapboxApiAccessToken={MAPBOX_TOKEN}
       />{" "}
-        {/* <div style={{position: 'absolute', left: 0}}>
-          <FullscreenControl container={document.querySelector('#geoheatmap')}/>
-        </div> */}
     </DeckGL>
   );
 }

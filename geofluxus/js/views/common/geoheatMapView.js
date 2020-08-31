@@ -191,22 +191,14 @@ define(['views/common/baseview',
 
                 exportCSV: function () {
                     const items = this.options.flows;
-                    const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-
-                    let fields = ["amount", "Code", "Name"];
-                    let header = Object.keys(items[0]);
-                    header = header.filter(prop => {
-                        return fields.some(f => prop.includes(f))
-                    })
-
-                    let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
-                    csv.unshift(header.join(','))
-                    csv = csv.join('\r\n')
+                    var csv = "Longitude,Lattitude,Amount,Name\n" + items.map(function(d){
+                        return d.join();
+                    }).join('\r\n');
 
                     var blob = new Blob([csv], {
                         type: "text/plain;charset=utf-8"
                     });
-                    FileSaver.saveAs(blob, "data.csv");
+                    FileSaver.saveAs(blob, "data.csv");                   
                 },
 
                 close: function () {
