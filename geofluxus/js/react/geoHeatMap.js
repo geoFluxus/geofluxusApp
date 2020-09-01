@@ -54,37 +54,7 @@ export const colorRange = [
   [209, 55, 78],
 ];
 
-/**
- * Get the center of an array of arrays of coordinates
- *
- * @param {array} data array of arrays of coordinates (first lon, then lat)
- */
-function getCenter(data) {
-  var latXTotal = 0;
-  var latYTotal = 0;
-  var lonDegreesTotal = 0;
 
-  data.forEach((coords) => {
-    var lonDegrees = coords[0];
-    var latDegrees = coords[1];
-
-    var latRadians = (Math.PI * latDegrees) / 180;
-    latXTotal += Math.cos(latRadians);
-    latYTotal += Math.sin(latRadians);
-
-    lonDegreesTotal += lonDegrees;
-  });
-
-  var finalLatRadians = Math.atan2(latYTotal, latXTotal);
-
-  var finalLatDegrees = (finalLatRadians * 180) / Math.PI;
-  var finalLonDegrees = lonDegreesTotal / data.length;
-
-  return {
-    lat: finalLatDegrees,
-    lon: finalLonDegrees,
-  };
-}
 
 export default function App({
   data,
@@ -96,7 +66,7 @@ export default function App({
   upperPercentile = 100,
   coverage = 1,
 }) {
-  var center = getCenter(data);
+  var center = utils.getCenter(data);
   var maxValue = Math.max.apply(
     Math,
     data.map(function (o) {

@@ -203,11 +203,11 @@ define(['views/common/baseview',
 
                 close: function () {
                     try {
-                        if (document.querySelector("#geoheatmap").html() != "") {
+                        // if (document.querySelector("#geoheatmap").html() != "") {
                             ReactDOM.unmountComponentAtNode(document.querySelector("#geoheatmap"));
                             this.undelegateEvents(); // remove click events
                             this.unbind(); // Unbind all local event bindings
-                        }
+                        // }
                     } catch (error) {
 
                     }
