@@ -191,22 +191,26 @@ define(['views/common/baseview',
 
                 exportCSV: function () {
                     const items = this.options.flows;
-                    var csv = "Longitude,Lattitude,Amount,Name\n" + items.map(function(d){
+                    var csv = "Longitude,Lattitude,Amount,Name\n" + items.map(function (d) {
                         return d.join();
                     }).join('\r\n');
 
                     var blob = new Blob([csv], {
                         type: "text/plain;charset=utf-8"
                     });
-                    FileSaver.saveAs(blob, "data.csv");                   
+                    FileSaver.saveAs(blob, "data.csv");
                 },
 
                 close: function () {
                     try {
+                        var isNotEmpty = document.querySelector("#geoheatmap").html() != "";
+                        if (isNotEmpty) {
+                            console.log("Element is not empty")
+                        }
                         // if (document.querySelector("#geoheatmap").html() != "") {
-                            ReactDOM.unmountComponentAtNode(document.querySelector("#geoheatmap"));
-                            this.undelegateEvents(); // remove click events
-                            this.unbind(); // Unbind all local event bindings
+                        ReactDOM.unmountComponentAtNode(document.querySelector("#geoheatmap"));
+                        this.undelegateEvents(); // remove click events
+                        this.unbind(); // Unbind all local event bindings
                         // }
                     } catch (error) {
 
