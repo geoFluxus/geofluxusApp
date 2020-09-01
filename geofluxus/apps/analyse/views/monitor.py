@@ -217,13 +217,14 @@ class MonitorViewSet(FilterFlowViewSet):
             data.append(OrderedDict(flow_item))
 
         # serialize areas for visualizations
-        from geofluxus.apps.asmfa.serializers import AreaListSerializer
         if data and format in ['choroplethmap', 'flowmap']:
-            area_queryset = Area.objects.simplified(level=self.admin.id,
-                                                    ids=area_ids)
-            serializer = AreaListSerializer(area_queryset,
-                                            many=True)
-            data.append(serializer.data)
+            from geofluxus.apps.asmfa.serializers import AreaListSerializer
+            if self.admin.level != ACTOR_LEVEL:
+                area_queryset = Area.objects.simplified(level=self.admin.id,
+                                                        ids=area_ids)
+                serializer = AreaListSerializer(area_queryset,
+                                                many=True)
+                data.append(serializer.data)
 
         return data
 
