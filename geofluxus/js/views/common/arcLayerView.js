@@ -1,4 +1,4 @@
-var GeoHeatMap = require('react/arcLayer').default;
+var ArcLayer = require('react/arcLayer').default;
 
 define(['views/common/deckglView',
         'utils/utils',
@@ -77,7 +77,7 @@ define(['views/common/deckglView',
                 render: function () {
                     var _this = this;
 
-                    ReactDOM.render(React.createElement(GeoHeatMap, {
+                    ReactDOM.render(React.createElement(ArcLayer, {
                         data: _this.flows,
                         label: _this.label,
                         isActorLevel: _this.isActorLevel,
