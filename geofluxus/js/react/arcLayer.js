@@ -7,7 +7,8 @@ import { scaleQuantile } from "d3-scale";
 import utils from "utils/utils";
 
 // Set your mapbox token here
-const MAPBOX_TOKEN = process.env.MapboxAccessToken; // eslint-disable-line
+const MAPBOX_TOKEN =
+  "pk.eyJ1IjoiZXZlcnR2aCIsImEiOiJja2VjaXE3MXMwaWNwMnpydmI2bXAwOTN4In0.dzmqNRHwb0qj20iHHr5K1Q"; // eslint-disable-line
 
 // Source data GeoJSON
 const DATA_URL =
@@ -80,10 +81,10 @@ export default function App({
 }) {
   const [selectedCounty, selectCounty] = useState(null);
 
-//   const arcs = useMemo(() => calculateArcs(data, selectedCounty), [
-//     data,
-//     selectedCounty,
-//   ]);
+  //   const arcs = useMemo(() => calculateArcs(data, selectedCounty), [
+  //     data,
+  //     selectedCounty,
+  //   ]);
 
   if (isDarkMode) {
     mapStyle = "mapbox://styles/mapbox/dark-v9";
@@ -92,6 +93,10 @@ export default function App({
   }
 
   var center = utils.getCenter(data);
+  center = {
+    lon: 5.587,
+    lat: 52.267,
+  };
 
   const INITIAL_VIEW_STATE = {
     longitude: center.lon,
@@ -102,6 +107,11 @@ export default function App({
     pitch: 40.5,
     bearing: 0, // Up == north
   };
+
+  function getRGB(str){
+    var match = str.match(/rgba?\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?(?:, ?(\d(?:\.\d?))\))?/);
+    return match ? [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])] : {};
+  }
 
   const layers = [
     // new GeoJsonLayer({
@@ -118,11 +128,13 @@ export default function App({
       data: data,
       getSourcePosition: (d) => [d.origin.lon, d.origin.lat],
       getTargetPosition: (d) => [d.destination.lon, d.destination.lat],
-    //   getSourceColor: (d) =>
+      getSourceColor: (d) => getRGB(d.color),
+      getTargetColor: (d) => getRGB(d.color),
+    //   getSourceColor: (d) => 
     //     (d.gain > 0 ? inFlowColors : outFlowColors)[d.quantile],
     //   getTargetColor: (d) =>
     //     (d.gain > 0 ? outFlowColors : inFlowColors)[d.quantile],
-    //   getWidth: strokeWidth,
+      //   getWidth: strokeWidth,
     }),
   ];
 

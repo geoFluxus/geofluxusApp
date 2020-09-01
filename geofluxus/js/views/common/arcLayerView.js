@@ -6,6 +6,7 @@ define(['views/common/deckglView',
         'underscore',
         'react',
         'react-dom',
+        'utils/enrichFlows'
     ],
 
     function (
@@ -15,6 +16,7 @@ define(['views/common/deckglView',
         _,
         React,
         ReactDOM,
+        enrichFlows
     ) {
 
         /**
@@ -66,6 +68,7 @@ define(['views/common/deckglView',
                     //     }
                     // }, this.flows);
 
+                    this.flows = enrichFlows.assignColorsByProperty(this.flows, "activitygroup");
                     this.render();
                     this.options.flowsView.loader.deactivate();
                 },
