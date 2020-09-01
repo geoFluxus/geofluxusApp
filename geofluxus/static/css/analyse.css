@@ -343,6 +343,12 @@ label[for="flows-waste06-select"] {
     border-radius: 10%;
 }
 
+#span-viz-arclayer::before {
+    background-image: url('../img/viz-icons/viz-arclayer.png');
+    border-radius: 10%;
+}
+
+
 /* Circular Sankey */
 
 #circularsankey-wrapper svg {

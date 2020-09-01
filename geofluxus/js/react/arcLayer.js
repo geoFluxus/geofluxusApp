@@ -77,7 +77,7 @@ export default function App({
   label,
   isActorLevel,
   coverage = 1,
-  strokeWidth = 2,
+  strokeWidth,
 }) {
   const [selectedCounty, selectCounty] = useState(null);
 
@@ -91,6 +91,17 @@ export default function App({
   } else {
     mapStyle = "mapbox://styles/mapbox/light-v9";
   }
+
+  var maxFlowValue = Math.max.apply(
+    Math,
+    data.map(function (o) {
+      return o.amount;
+    })
+  );
+
+  const maxFlowWidth = 50;
+  const minFlowWidth = 1;
+  const normFactor = maxFlowWidth / maxFlowValue;
 
   var center = utils.getCenter(data);
   center = {
@@ -108,9 +119,13 @@ export default function App({
     bearing: 0, // Up == north
   };
 
-  function getRGB(str){
-    var match = str.match(/rgba?\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?(?:, ?(\d(?:\.\d?))\))?/);
-    return match ? [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])] : {};
+  function getRgbArray(str) {
+    var match = str.match(
+      /rgba?\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?(?:, ?(\d(?:\.\d?))\))?/
+    );
+    return match
+      ? [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])]
+      : [];
   }
 
   const layers = [
@@ -128,13 +143,13 @@ export default function App({
       data: data,
       getSourcePosition: (d) => [d.origin.lon, d.origin.lat],
       getTargetPosition: (d) => [d.destination.lon, d.destination.lat],
-      getSourceColor: (d) => getRGB(d.color),
-      getTargetColor: (d) => getRGB(d.color),
-    //   getSourceColor: (d) => 
-    //     (d.gain > 0 ? inFlowColors : outFlowColors)[d.quantile],
-    //   getTargetColor: (d) =>
-    //     (d.gain > 0 ? outFlowColors : inFlowColors)[d.quantile],
-      //   getWidth: strokeWidth,
+      getSourceColor: (d) => getRgbArray(d.color),
+      getTargetColor: (d) => getRgbArray(d.color),
+      //   getSourceColor: (d) =>
+      //     (d.gain > 0 ? inFlowColors : outFlowColors)[d.quantile],
+      //   getTargetColor: (d) =>
+      //     (d.gain > 0 ? outFlowColors : inFlowColors)[d.quantile],
+      getWidth: (d) => Math.max(minFlowWidth, d.amount * normFactor),
     }),
   ];
 
