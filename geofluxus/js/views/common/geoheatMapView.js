@@ -1,28 +1,18 @@
 var GeoHeatMap = require('react/geoHeatMap').default;
 
-define(['views/common/baseview',
+define(['views/common/deckglView',
         'utils/utils',
-        'save-svg-as-png',
         'file-saver',
-        'utils/enrichFlows',
-        'visualizations/d3SankeyCircular',
         'underscore',
-        'd3',
-        'visualizations/d3plus',
         'react',
         'react-dom',
     ],
 
     function (
-        BaseView,
+        DeckglView,
         utils,
-        saveSvgAsPng,
         FileSaver,
-        enrichFlows,
-        D3SankeyCircular,
         _,
-        d3,
-        d3plus,
         React,
         ReactDOM,
     ) {
@@ -32,7 +22,7 @@ define(['views/common/baseview',
          * @name module:views/GeoHeatMapView
          * @augments module:views/BaseView
          */
-        var GeoHeatMapView = BaseView.extend(
+        var GeoHeatMapView = DeckglView.extend(
             /** @lends module:views/GeoHeatMapView.prototype */
             {
 
@@ -49,10 +39,14 @@ define(['views/common/baseview',
                     var _this = this;
                     this.options = options;
 
-                    if ($(this.options.el).html() == "") {
-                        $(this.options.el).append('<div id="geoheatmap" style="width: 100%; height: 100%; position: relative"></div>');;
-                    }
-                    this.options.el = this.options.el + " div";
+                    // this.options.subContainer = "#subContainer";
+
+                    // if ($(this.options.el).html() == "") {
+                    //     $(this.options.el).append('<div id="geoheatmap" style="width: 100%; height: 100%; position: relative"></div>');;
+                    // }
+
+                    // this.options.el = this.options.el + " div";
+
                     this.flows = this.options.flows;
 
                     this.filtersView = this.options.flowsView.filtersView;
@@ -61,6 +55,8 @@ define(['views/common/baseview',
 
                     this.isActorLevel = _this.options.dimensions.isActorLevel;
                     this.label = this.options.dimensions.label;
+                    this.isDarkMode = true;
+                    this.fontColor = "white";
 
                     // this.props = {
                     //     'activitygroup': 'Activity group',
@@ -75,14 +71,8 @@ define(['views/common/baseview',
                         "3": 7500,
                         "1000": 3000
                     }
-
                     this.areaLevel = this.filtersView.collections.arealevels.find(areaLevelObject => areaLevelObject.attributes.id == this.dim1[1].adminlevel).attributes.level;
-
                     this.radius = this.radiusMap[this.areaLevel];
-
-                    this.isDarkMode = true;
-                    this.fontColor = "white";
-
 
                     this.flows.forEach(function (flow, index) {
                         if (_this.isActorLevel) {
@@ -112,82 +102,80 @@ define(['views/common/baseview',
                     }), document.querySelector(this.options.el));
                     utils.scrollToVizRow();
 
-                    setTimeout(() => {
-                        this.addButtons();
-                    }, 300);
+                    this.addButtons();
                 },
 
-                addButtons: function () {
-                    let buttonFullscreen = d3.select(".fullscreen-toggle")
-                    if (buttonFullscreen.empty()) {
+                // addButtons: function () {
+                //     let buttonFullscreen = d3.select(".fullscreen-toggle")
+                //     if (buttonFullscreen.empty()) {
 
-                        let _this = this;
+                //         let _this = this;
 
-                        let vizContainer = d3.select("#geoheatmap");
-                        vizContainer.append("div")
-                            .attr("class", "controlContainer")
-                            .style("top", "0px")
-                            .style("position", "relative")
-                            .style("z-index", "100")
-                            .lower();
+                //         let vizContainer = d3.select("#geoheatmap");
+                //         vizContainer.append("div")
+                //             .attr("class", "controlContainer")
+                //             .style("top", "0px")
+                //             .style("position", "relative")
+                //             .style("z-index", "100")
+                //             .lower();
 
-                        let controlContainer = vizContainer.select(".controlContainer")
+                //         let controlContainer = vizContainer.select(".controlContainer")
 
-                        controlContainer.append("button")
-                            .attr("class", "btn btn-sm btn-primary d3plus-Button fullscreen-toggle")
-                            .attr("title", "View this visualization in fullscreen mode.")
-                            .attr("type", "button")
-                            .html('<i class="fas fa-expand icon-fullscreen"></i>')
-                            .on("click", function () {
-                                _this.toggleFullscreen();
-                            });
+                //         controlContainer.append("button")
+                //             .attr("class", "btn btn-sm btn-primary d3plus-Button fullscreen-toggle")
+                //             .attr("title", "View this visualization in fullscreen mode.")
+                //             .attr("type", "button")
+                //             .html('<i class="fas fa-expand icon-fullscreen"></i>')
+                //             .on("click", function () {
+                //                 _this.toggleFullscreen();
+                //             });
 
-                        controlContainer.append("button")
-                            .attr("class", "btn btn-sm btn-primary d3plus-Button export-csv")
-                            .attr("title", "Export the data of this visualization as a CSV file.")
-                            .attr("type", "button")
-                            .html('<i class="fas fa-file icon-export"></i>')
-                            .on("click", function () {
-                                _this.exportCSV();
-                                d3.event.preventDefault();
-                            });
+                //         controlContainer.append("button")
+                //             .attr("class", "btn btn-sm btn-primary d3plus-Button export-csv")
+                //             .attr("title", "Export the data of this visualization as a CSV file.")
+                //             .attr("type", "button")
+                //             .html('<i class="fas fa-file icon-export"></i>')
+                //             .on("click", function () {
+                //                 _this.exportCSV();
+                //                 d3.event.preventDefault();
+                //             });
 
-                        controlContainer.append("button")
-                            .attr("class", "btn btn-sm btn-primary d3plus-Button toggle-darkmode")
-                            .attr("title", "Toggle light or dark mode.")
-                            .attr("type", "button")
-                            .html('<i class="fas icon-toggle-darkmode"></i>')
-                            .on("click", function () {
-                                _this.toggleDarkMode();
-                            });
-                    }
-                },
+                //         controlContainer.append("button")
+                //             .attr("class", "btn btn-sm btn-primary d3plus-Button toggle-darkmode")
+                //             .attr("title", "Toggle light or dark mode.")
+                //             .attr("type", "button")
+                //             .html('<i class="fas icon-toggle-darkmode"></i>')
+                //             .on("click", function () {
+                //                 _this.toggleDarkMode();
+                //             });
+                //     }
+                // },
 
-                toggleFullscreen: function (event) {
-                    $("#geoheatmap").toggleClass('fullscreen');
-                    // Only scroll when going to normal view:
-                    if (!$(this.options.el).hasClass('fullscreen')) {
-                        window.scrollTo({
-                            top: $(".visualizationRow")[0].getBoundingClientRect().top + window.pageYOffset - 20,
-                            block: "start",
-                            inline: "nearest",
-                        });
-                    }
-                    this.render();
-                },
+                // toggleFullscreen: function (event) {
+                //     $("#geoheatmap").toggleClass('fullscreen');
+                //     // Only scroll when going to normal view:
+                //     if (!$(this.options.el).hasClass('fullscreen')) {
+                //         window.scrollTo({
+                //             top: $(".visualizationRow")[0].getBoundingClientRect().top + window.pageYOffset - 20,
+                //             block: "start",
+                //             inline: "nearest",
+                //         });
+                //     }
+                //     this.render();
+                // },
 
-                toggleDarkMode: function () {
-                    this.isDarkMode = !this.isDarkMode;
-                    if (this.isDarkMode) {
-                        const mapStyle = "mapbox://styles/mapbox/dark-v9"
-                    } else {
-                        const mapStyle = "mapbox://styles/mapbox/light-v9"
-                    }
+                // toggleDarkMode: function () {
+                //     this.isDarkMode = !this.isDarkMode;
+                //     if (this.isDarkMode) {
+                //         const mapStyle = "mapbox://styles/mapbox/dark-v9"
+                //     } else {
+                //         const mapStyle = "mapbox://styles/mapbox/light-v9"
+                //     }
 
-                    $(".viz-wrapper-div").toggleClass("lightMode");
-                    this.fontColor = this.isDarkMode ? "white" : "black";
-                    this.render();
-                },
+                //     $(".viz-wrapper-div").toggleClass("lightMode");
+                //     this.fontColor = this.isDarkMode ? "white" : "black";
+                //     this.render();
+                // },
 
                 exportCSV: function () {
                     const items = this.options.flows;
@@ -201,19 +189,19 @@ define(['views/common/baseview',
                     FileSaver.saveAs(blob, "data.csv");
                 },
 
-                close: function () {
-                    try {
-                        var isNotEmpty = document.querySelector("#geoheatmap").html() != "";
-                        if (isNotEmpty) {
-                            console.log("Element is not empty")
-                        }
-                        ReactDOM.unmountComponentAtNode(document.querySelector("#geoheatmap"));
-                        this.undelegateEvents(); // remove click events
-                        this.unbind(); // Unbind all local event bindings
-                    } catch (error) {
+                // close: function () {
+                //     try {
+                //         var isNotEmpty = document.querySelector("#geoheatmap").html() != "";
+                //         if (isNotEmpty) {
+                //             console.log("Element is not empty")
+                //         }
+                //         ReactDOM.unmountComponentAtNode(document.querySelector("#geoheatmap"));
+                //         this.undelegateEvents(); // remove click events
+                //         this.unbind(); // Unbind all local event bindings
+                //     } catch (error) {
 
-                    }
-                },
+                //     }
+                // },
 
             });
         return GeoHeatMapView;

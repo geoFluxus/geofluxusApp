@@ -55,7 +55,6 @@ export const colorRange = [
 ];
 
 
-
 export default function App({
   data,
   isDarkMode,
