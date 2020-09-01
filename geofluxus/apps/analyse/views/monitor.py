@@ -181,7 +181,7 @@ class MonitorViewSet(FilterFlowViewSet):
                         item['lat'] += random.randint(0, 10) * 0.01
 
                     # change format for flowmap (both origin/destination)
-                    if format in ['flowmap']:
+                    if format in ['flowmap', 'arclayer']:
                         label = level.split('_')[0]
                         flow_item.append((label, item))
                     else:
@@ -274,7 +274,7 @@ class MonitorViewSet(FilterFlowViewSet):
         space = dimensions.pop('space', None)
         if space:
             # annotate spatial info to flows
-            both = format in ['flowmap', 'circularsankey']
+            both = format in ['flowmap', 'arclayer']
             queryset = self.format_space(queryset, space, both)
 
             # create inventory to recover actors / areas
