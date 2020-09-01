@@ -1,4 +1,4 @@
-var GeoHeatMap = require('react/geoHeatMap').default;
+var GeoHeatMap = require('react/arcLayer').default;
 
 define(['views/common/deckglView',
         'utils/utils',
@@ -19,11 +19,11 @@ define(['views/common/deckglView',
 
         /**
          * @author Evert Van Hirtum
-         * @name module:views/GeoHeatMapView
+         * @name module:views/ArcLayerView
          * @augments module:views/BaseView
          */
-        var GeoHeatMapView = DeckglView.extend(
-            /** @lends module:views/GeoHeatMapView.prototype */
+        var ArcLayerView = DeckglView.extend(
+            /** @lends module:views/ArcLayerView.prototype */
             {
 
                 /**
@@ -34,7 +34,7 @@ define(['views/common/deckglView',
                  * @see http://backbonejs.org/#View
                  */
                 initialize: function (options) {
-                    GeoHeatMapView.__super__.initialize.apply(this, [options]);
+                    ArcLayerView.__super__.initialize.apply(this, [options]);
 
                     var _this = this;
                     this.options = options;
@@ -58,29 +58,13 @@ define(['views/common/deckglView',
                     this.isDarkMode = true;
                     this.fontColor = "white";
 
-                    // this.props = {
-                    //     'activitygroup': 'Activity group',
-                    //     'activity': 'Activity',
-                    //     'processgroup': 'Treatment method group',
-                    //     'process': 'Treatment method',
-                    // }
-
-                    this.radiusMap = {
-                        "1": 25000,
-                        "2": 10000,
-                        "3": 7500,
-                        "1000": 3000
-                    }
-                    this.areaLevel = this.filtersView.collections.arealevels.find(areaLevelObject => areaLevelObject.attributes.id == this.dim1[1].adminlevel).attributes.level;
-                    this.radius = this.radiusMap[this.areaLevel];
-
-                    this.flows.forEach(function (flow, index) {
-                        if (_this.isActorLevel) {
-                            this[index] = [this[index].actorLon, this[index].actorLat, this[index].amount];
-                        } else {
-                            this[index] = [this[index].areaLon, this[index].areaLat, this[index].amount, this[index].areaName];
-                        }
-                    }, this.flows);
+                    // this.flows.forEach(function (flow, index) {
+                    //     if (_this.isActorLevel) {
+                    //         this[index] = [this[index].actorLon, this[index].actorLat, this[index].amount];
+                    //     } else {
+                    //         this[index] = [this[index].areaLon, this[index].areaLat, this[index].amount, this[index].areaName];
+                    //     }
+                    // }, this.flows);
 
                     this.render();
                     this.options.flowsView.loader.deactivate();
@@ -95,7 +79,6 @@ define(['views/common/deckglView',
 
                     ReactDOM.render(React.createElement(GeoHeatMap, {
                         data: _this.flows,
-                        radius: _this.radius,
                         label: _this.label,
                         isActorLevel: _this.isActorLevel,
                         isDarkMode: _this.isDarkMode,
@@ -118,6 +101,6 @@ define(['views/common/deckglView',
                 // },
 
             });
-        return GeoHeatMapView;
+        return ArcLayerView;
     }
 );

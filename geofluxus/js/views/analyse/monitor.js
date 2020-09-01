@@ -14,6 +14,7 @@ define(['views/common/baseview',
         'views/common/circularSankeyView',
         'views/common/networkMapView',
         'views/common/geoheatMapView',
+        'views/common/arcLayerView',
     ],
     function (
         BaseView,
@@ -32,6 +33,7 @@ define(['views/common/baseview',
         CircularSankeyView,
         NetworkMapView,
         GeoHeatMapView,
+        ArcLayerView
     ) {
         var MonitorView = BaseView.extend({
             initialize: function (options) {
@@ -73,7 +75,7 @@ define(['views/common/baseview',
                     'time_space': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'flowmap', 'treemap'],
                     'time_treatmentMethod': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'treemap'],
                     'time_material': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'treemap'],
-                    'space_economicActivity': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
+                    'space_economicActivity': ['barchart', 'stackedbarchart', 'flowmap', 'treemap', 'arclayer'],
                     'space_treatmentMethod': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
                     'space_material': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
                     'economicActivity_treatmentMethod': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap', 'circularsankey'],
@@ -130,6 +132,9 @@ define(['views/common/baseview',
                     },
                     'geoheatmap': {
                         'view': GeoHeatMapView
+                    },
+                    'arclayer': {
+                        'view': ArcLayerView
                     }
                 }
 
