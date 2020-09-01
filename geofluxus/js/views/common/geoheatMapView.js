@@ -207,11 +207,9 @@ define(['views/common/baseview',
                         if (isNotEmpty) {
                             console.log("Element is not empty")
                         }
-                        // if (document.querySelector("#geoheatmap").html() != "") {
                         ReactDOM.unmountComponentAtNode(document.querySelector("#geoheatmap"));
                         this.undelegateEvents(); // remove click events
                         this.unbind(); // Unbind all local event bindings
-                        // }
                     } catch (error) {
 
                     }
