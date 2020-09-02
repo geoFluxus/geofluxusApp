@@ -50,7 +50,8 @@ define(['views/common/baseview',
                     waste: "Waste",
                     co2: "CO<sub>2</sub>",
                     nox: "NO<sub>x</sub>",
-                    pm: "particulate matter",
+                    so2: "SO<sub>2</sub>",
+                    pm10: "PM<sub>10</sub>",
                 }
 
                 this.dimensions = {};
