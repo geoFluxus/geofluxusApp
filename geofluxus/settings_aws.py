@@ -24,6 +24,7 @@ ROUTING = os.environ['ROUTING']
 DB_USER = os.environ['DB_USER']
 DB_PASS = os.environ['DB_PASS']
 DB_HOST = os.environ['DB_HOST']
+SECRET_KEY = os.environ['SECRET_KEY']
 
 DATABASES = {
     'default': {
