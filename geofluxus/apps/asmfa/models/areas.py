@@ -24,8 +24,8 @@ class AdminLevel(models.Model):
 # Custom AreaQueryset
 # to simplify geometry for rendering
 class AreaQueryset(models.query.QuerySet):
-    def simplified(self, tolerance=0.01, level=None):
-        return self.raw(
+    def simplified(self, tolerance=0.01, level=None, ids=[]):
+        query =\
             '''
             SELECT id,
                    ST_Simplify(geom, {tolerance})::bytea as geom
@@ -33,7 +33,10 @@ class AreaQueryset(models.query.QuerySet):
             WHERE adminlevel_id = {level}
             '''.format(tolerance=tolerance,
                        level=level)
-        )
+        if ids:
+            ids = [str(id) for id in ids]
+            query += 'AND id IN ({ids})'.format(ids=','.join(ids))
+        return self.raw(query)
 
 
 # Custom AreaManager
@@ -42,11 +45,12 @@ class AreaManager(models.Manager):
     def get_queryset(self):
         return AreaQueryset(self.model, using=self._db)
 
-    def simplified(self, level=None):
+    def simplified(self, level=None, ids=[]):
         adminLevel = AdminLevel.objects.filter(id=level)
         tolerance = adminLevel.values_list('resolution', flat=None)[0][0]
         return self.get_queryset().simplified(tolerance=tolerance,
-                                              level=level)
+                                              level=level,
+                                              ids=ids)
 
     @staticmethod
     def update_actors(created):

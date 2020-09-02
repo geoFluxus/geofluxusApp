@@ -93,6 +93,8 @@ class Vehicle(models.Model):
     max = models.FloatField()
     co2 = models.FloatField(default=0)
     nox = models.FloatField(default=0)
+    so2 = models.FloatField(default=0)
+    pm10 = models.FloatField(default=0)
 
     def __str__(self):
         return '{}'.format(self.name)

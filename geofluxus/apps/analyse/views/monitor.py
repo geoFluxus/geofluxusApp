@@ -218,32 +218,13 @@ class MonitorViewSet(FilterFlowViewSet):
 
         # serialize areas for visualizations
         if data and format in ['choroplethmap', 'flowmap']:
-            areas = []
-            for id in area_ids:
-                # check for area in space inventory
-                area = next(x for x in self.space_inv if x['id'] == id)
-
-                # serialize only areas of requested admin level!!!
-                if area['adminlevel'] == self.admin.id:
-                    # simplify geometry to render
-                    geom = area['geom'].simplify(tolerance=self.admin.resolution,
-                                                 preserve_topology=False)
-
-                    # serialize area
-                    area_item = {
-                        'id': area['id'],
-                        'name': area['name'],
-                        'geom': json.loads(geom.geojson)
-                    }
-
-                    # attention! convert all geometries to common type MULTIPOLYGON
-                    if area_item['geom']['type'] == 'Polygon':
-                        area_item['geom']['type'] = 'MultiPolygon'
-                        area_item['geom']['coordinates'] = [area_item['geom']['coordinates']]
-
-                    areas.append(area_item)
-
-            if areas: data.append(areas)
+            from geofluxus.apps.asmfa.serializers import AreaListSerializer
+            if self.admin.level != ACTOR_LEVEL:
+                area_queryset = Area.objects.simplified(level=self.admin.id,
+                                                        ids=area_ids)
+                serializer = AreaListSerializer(area_queryset,
+                                                many=True)
+                data.append(serializer.data)
 
         return data
 
