@@ -196,7 +196,7 @@ define(['views/common/baseview',
 
                 close: function () {
                     try {
-                        var isNotEmpty = document.querySelector(this.options.subContainer).html() != "";
+                        var isNotEmpty = $(this.options.subContainer).html() != "";
                         if (isNotEmpty) {
                             console.log("Element is not empty")
                         }
