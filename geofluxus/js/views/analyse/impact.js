@@ -64,6 +64,10 @@ define(['views/common/baseview',
 
                 // Indicator toggle
                 $('.impact-indicator-radio-label').on("click", function (event) {
+                    // reset dimensions & visualizations
+                    _this.monitorView.resetDimAndVizToDefault();
+                    $('#impact-source-toggle-econ-activity').bootstrapToggle('disable')
+
                     _this.monitorView.indicator = $(event.currentTarget).attr("data-indicator");
                     
                     $(".impactSourceContainer").fadeIn();
@@ -71,11 +75,11 @@ define(['views/common/baseview',
                         $(this).bootstrapToggle('off');
                     });
 
-                    if (_this.monitorView.indicator == 'nox') {
-                        $('#impact-source-toggle-treatment').bootstrapToggle('disable');
+                    if (_this.monitorView.indicator == 'co2') {
+                        $('#impact-source-toggle-treatment').bootstrapToggle('enable');
                     }
                     else {
-                        $('#impact-source-toggle-treatment').bootstrapToggle('enable');
+                        $('#impact-source-toggle-treatment').bootstrapToggle('disable');
                     }
 
                     event.preventDefault();
@@ -96,6 +100,18 @@ define(['views/common/baseview',
                     $("#impact-dimensions-container")[checkedToggles.length ? 'fadeIn' : 'fadeOut']();
                 });
 
+                // selected visualization
+                $('.viz-selector-button').on("click", function (event) {
+                    if ($(this).attr("data-viz") == 'networkmap') {
+                        $('#impact-source-toggle-treatment').bootstrapToggle('off');
+                        $('#impact-source-toggle-treatment').bootstrapToggle('disable');
+                    }
+                    else {
+                        $('#impact-source-toggle-treatment').bootstrapToggle('enable');
+                    }
+
+                    event.preventDefault();
+                });
             },
 
             close: function () {                
