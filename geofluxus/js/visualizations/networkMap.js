@@ -10,6 +10,7 @@ define([
             let _this = this;
             this.options = options || {};
             this.label = this.options.label;
+            this.unit = 't';
             this.darkMode = this.options.darkMode;
             this.showNetwork = this.options.showNetwork;
 
@@ -51,16 +52,29 @@ define([
         drawNetwork() {
             var _this = this;
 
+            // convert tonnes to other units if necessary
+            var max = Math.max.apply(Math, this.flows.map(function(o) { return o.amount; })),
+                multiplier = 1;
+            if (max <= 10**(-3)) {
+                multiplier = 10**6;
+                this.unit = 'gr';
+            } else if (max <= 1) {
+                multiplier = 10**3;
+                this.unit = 'kg';
+            }
+
+            if (multiplier != 1) {
+                this.flows.forEach(function(f) {
+                    f.amount *= multiplier;
+                })
+            }
+
             // process flows to point to amounts
-            var amounts = {};
-            this.data = [];
+            this.amounts = [];
             this.flows.forEach(function (flow) {
-                var id = flow['id'],
-                    amount = flow['amount'];
-                amounts[id] = amount;
                 // exclude zero values from scale definition
-                if (amount > 0) {
-                    _this.data.push(amount);
+                if (flow.amount > 0) {
+                    _this.amounts.push(flow.amount);
                 }
             })
 
@@ -96,7 +110,7 @@ define([
                 var id = flow.id,
                     coords = flow.geometry.coordinates,
                     type = flow.geometry.type.toLowerCase(),
-                    amount = amounts[id];
+                    amount = flow.amount;
                 _this.map.addGeometry(coords, {
                     projection: 'EPSG:4326',
                     layername: amount ? 'flows' : 'network',
@@ -124,9 +138,9 @@ define([
             var _this = this;
 
             // scale of equal frequency intervals
-            this.max = Math.max(...this.data);
+            this.max = Math.max(...this.amounts);
             var quantile = d3.scaleQuantile()
-                .domain(this.data)
+                .domain(this.amounts)
                 .range(this.colors);
 
             // prettify scale intervals
@@ -147,7 +161,7 @@ define([
         }
 
         getTooltipText(amount) {
-            return this.label + ": " + d3plus.formatAbbreviate(amount, utils.returnD3plusFormatLocale()) + " t"
+            return this.label + ": " + d3plus.formatAbbreviate(amount, utils.returnD3plusFormatLocale()) + ` ${this.unit}`;
         }
 
         drawLegend() {
@@ -167,7 +181,7 @@ define([
 
             var title = document.createElement('div');
             title.style.textAlign = "center";
-            title.innerHTML = '<span style="color: ' + this.fontColor + '; text-align: center;">' + this.label + ' (t)</span>'
+            title.innerHTML = '<span style="color: ' + this.fontColor + '; text-align: center;">' + this.label + ` (${this.unit})` +'</span>'
             legend.appendChild(title);
 
             // add color scale to legend
