@@ -124,13 +124,13 @@ define(['views/common/baseview',
                         let _this = this;
                         let vizContainer = d3.select(this.options.el);
                         vizContainer.append("div")
-                            .attr("class", "sankeyControlContainer")
+                            .attr("class", "controlContainer")
                             .style("top", "0px")
                             .lower();
 
-                        let sankeyControlContainer = vizContainer.select(".sankeyControlContainer")
+                        let controlContainer = vizContainer.select(".controlContainer")
 
-                        sankeyControlContainer.append("button")
+                        controlContainer.append("button")
                             .attr("class", "btn btn-sm btn-primary d3plus-Button fullscreen-toggle")
                             .attr("title", "View this visualization in fullscreen mode.")
                             .attr("type", "button")
@@ -139,7 +139,7 @@ define(['views/common/baseview',
                                 _this.toggleFullscreen();
                             });
 
-                        sankeyControlContainer.append("button")
+                        controlContainer.append("button")
                             .attr("class", "btn btn-sm btn-primary d3plus-Button export-csv")
                             .attr("title", "Export the data of this visualization as a CSV file.")
                             .attr("type", "button")
@@ -149,7 +149,7 @@ define(['views/common/baseview',
                                 d3.event.preventDefault();
                             });
 
-                        sankeyControlContainer.append("button")
+                        controlContainer.append("button")
                             .attr("class", "btn btn-sm btn-primary d3plus-Button toggle-darkmode")
                             .attr("title", "Toggle light or dark mode.")
                             .attr("type", "button")
@@ -158,7 +158,7 @@ define(['views/common/baseview',
                                 _this.toggleDarkMode();
                             });
 
-                        sankeyControlContainer.append("button")
+                        controlContainer.append("button")
                             .attr("class", "btn btn-sm btn-primary d3plus-Button toggle-nodelabels")
                             .attr("title", "Toggle the labels above the nodes.")
                             .attr("type", "button")
@@ -167,7 +167,7 @@ define(['views/common/baseview',
                                 _this.toggleNodeLabels();
                             });
 
-                        sankeyControlContainer.append("button")
+                        controlContainer.append("button")
                             .attr("class", "btn btn-sm btn-primary d3plus-Button toggle-linkColor")
                             .attr("title", "Toggle the colours of the Sankey links.")
                             .attr("type", "button")
@@ -176,7 +176,7 @@ define(['views/common/baseview',
                                 _this.toggleLinkColor();
                             });
 
-                        sankeyControlContainer.append("button")
+                        controlContainer.append("button")
                             .attr("class", "btn btn-sm btn-primary d3plus-Button toggle-linkArrows")
                             .attr("title", "Toggle between arrows or animated dashes in the Sankey links.")
                             .attr("type", "button")
