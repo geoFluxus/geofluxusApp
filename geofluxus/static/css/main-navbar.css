@@ -169,6 +169,14 @@
   margin-left: 0.5rem;
 }
 
+.corner-wrapper {
+  display: block;
+  overflow: hidden;
+  border-radius: 18px;
+  transform: translateZ(0px);
+  border: 3px solid rgb(24, 24, 24);
+}
+
 /* 
 
 @media screen and (max-width: 1100px) {
