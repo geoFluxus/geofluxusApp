@@ -37,53 +37,14 @@ define(['views/common/baseview',
                     var _this = this;
                     this.options = options;
 
-                    this.options.subContainer = "#subContainer";
+                    this.options.subContainer = ".subContainer";
 
                     if ($(this.options.el).html() == "") {
-                        $(this.options.el).append('<div id="subContainer" style="width: 100%; height: 100%; position: relative"></div>');;
+                        $(this.options.el).append('<div class="subContainer" style="width: 100%; height: 100%; position: relative"></div>');;
                     }
                     this.options.el = this.options.el + " div";
-                    // this.flows = this.options.flows;
 
-                    // this.filtersView = this.options.flowsView.filtersView;
-                    // this.dim1 = this.options.dimensions[0];
-                    // this.dim2 = this.options.dimensions[1];
-
-                    // this.isActorLevel = _this.options.dimensions.isActorLevel;
-                    // this.label = this.options.dimensions.label;
-
-                    // // this.props = {
-                    // //     'activitygroup': 'Activity group',
-                    // //     'activity': 'Activity',
-                    // //     'processgroup': 'Treatment method group',
-                    // //     'process': 'Treatment method',
-                    // // }
-
-                    // this.radiusMap = {
-                    //     "1": 25000,
-                    //     "2": 10000,
-                    //     "3": 7500,
-                    //     "1000": 3000
-                    // }
-
-                    // this.areaLevel = this.filtersView.collections.arealevels.find(areaLevelObject => areaLevelObject.attributes.id == this.dim1[1].adminlevel).attributes.level;
-
-                    // this.radius = this.radiusMap[this.areaLevel];
-
-                    // this.isDarkMode = true;
-                    // this.fontColor = "white";
-
-
-                    // this.flows.forEach(function (flow, index) {
-                    //     if (_this.isActorLevel) {
-                    //         this[index] = [this[index].actorLon, this[index].actorLat, this[index].amount];
-                    //     } else {
-                    //         this[index] = [this[index].areaLon, this[index].areaLat, this[index].amount, this[index].areaName];
-                    //     }
-                    // }, this.flows);
-
-                    // this.render();
-                    // this.options.flowsView.loader.deactivate();
+                    this.ReactDOM = ReactDOM;
                 },
 
                 events: {
@@ -91,29 +52,16 @@ define(['views/common/baseview',
                 },
 
                 render: function () {
-                    // var _this = this;
-
-                    // ReactDOM.render(React.createElement(GeoHeatMap, {
-                    //     data: _this.flows,
-                    //     radius: _this.radius,
-                    //     label: _this.label,
-                    //     isActorLevel: _this.isActorLevel,
-                    //     isDarkMode: _this.isDarkMode,
-                    // }), document.querySelector(this.options.el));
-                    // utils.scrollToVizRow();
-
-                    // setTimeout(() => {
-                    //     this.addButtons();
-                    // }, 300);
+                   
                 },
 
                 addButtons: function () {
-                    let buttonFullscreen = d3.select(".fullscreen-toggle")
+                    let buttonFullscreen = d3.select(this.options.el + " " +".fullscreen-toggle")
                     if (buttonFullscreen.empty()) {
 
                         let _this = this;
 
-                        let vizContainer = d3.select(this.options.subContainer);
+                        let vizContainer = d3.select(this.options.el.split(' ')[0] + " " + this.options.subContainer);
                         vizContainer.append("div")
                             .attr("class", "controlContainer")
                             .style("top", "0px")
@@ -196,15 +144,16 @@ define(['views/common/baseview',
 
                 close: function () {
                     try {
-                        var isNotEmpty = $(this.options.subContainer).html() != "";
-                        if (isNotEmpty) {
-                            console.log("Element is not empty")
-                        }
-                        ReactDOM.unmountComponentAtNode(document.querySelector(this.options.subContainer));
+                        // var isNotEmpty = $(this.options.el.split(' ')[0] + " " + this.options.subContainer).html() != "";
+                        // if (isNotEmpty) {
+                        //     console.log("Element is not empty")
+                        // }
+                        this.ReactDOM.unmountComponentAtNode(document.querySelector(this.options.subContainer));
+                        $(this.options.el).html("");
                         this.undelegateEvents(); // remove click events
                         this.unbind(); // Unbind all local event bindings
                     } catch (error) {
-
+                        console.log("Error during closing: ", error);
                     }
                 },
 
