@@ -6,6 +6,8 @@ import { GeoJsonLayer, ArcLayer } from "@deck.gl/layers";
 import { scaleQuantile } from "d3-scale";
 import utils from "utils/utils";
 
+var d3plus = require("visualizations/d3plus");
+
 // Set your mapbox token here
 const MAPBOX_TOKEN =
   "pk.eyJ1IjoiZXZlcnR2aCIsImEiOiJja2VjaXE3MXMwaWNwMnpydmI2bXAwOTN4In0.dzmqNRHwb0qj20iHHr5K1Q"; // eslint-disable-line
@@ -79,7 +81,6 @@ export default function App({
   coverage = 1,
   strokeWidth,
 }) {
-  const [selectedCounty, selectCounty] = useState(null);
 
   //   const arcs = useMemo(() => calculateArcs(data, selectedCounty), [
   //     data,
@@ -108,6 +109,43 @@ export default function App({
     lon: 5.587,
     lat: 52.267,
   };
+
+  function getTooltipHtml({ object }) {
+    if (!object) {
+      return null;
+    }
+
+    // const total = object.points.reduce((a, b) => a + (b[2] || 0), 0);
+    const tooltipTitleValue = isActorLevel ? "This area:" : object.points[0][3];
+
+    var html = `<div class="d3plus-tooltip flowMapToolTip pointToolTIp" x-placement="top">
+        <div class="d3plus-tooltip-title">Waste in tons</div>
+        <div class="d3plus-tooltip-body"></div>
+        <table class="d3plus-tooltip-table" style='display: block !important'>
+            <thead class="d3plus-tooltip-thead"></thead>
+            <tbody class="d3plus-tooltip-tbody" style="display: inline-table !important; width: 100%; padding-bottom: 0.5rem;">
+                <tr>
+                    <td>Amount</td>
+                    <td>${d3plus.formatAbbreviate(
+                      object.amount,
+                      utils.returnD3plusFormatLocale()
+                    )} t</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>`;
+
+    return {
+      html: html,
+      style: {
+        "z-index": 1,
+        position: "absolute",
+        color: "black",
+        "background-color": "transparent",
+        padding: "10px",
+      },
+    };
+  }
 
   const INITIAL_VIEW_STATE = {
     longitude: center.lon,
@@ -145,11 +183,8 @@ export default function App({
       getTargetPosition: (d) => [d.destination.lon, d.destination.lat],
       getSourceColor: (d) => getRgbArray(d.color),
       getTargetColor: (d) => getRgbArray(d.color),
-      //   getSourceColor: (d) =>
-      //     (d.gain > 0 ? inFlowColors : outFlowColors)[d.quantile],
-      //   getTargetColor: (d) =>
-      //     (d.gain > 0 ? outFlowColors : inFlowColors)[d.quantile],
       getWidth: (d) => Math.max(minFlowWidth, d.amount * normFactor),
+      getTooltip: {getTooltipHtml},
     }),
   ];
 
