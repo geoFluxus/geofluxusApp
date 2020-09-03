@@ -170,8 +170,8 @@ class MonitorViewSet(FilterFlowViewSet):
 
                     item = {
                         'id': area['id'], 'name': area['name'] if 'area' in level else area['company__name'],
-                        'lon': area['geom'].centroid.x if 'area' in level else area['geom'].x,
-                        'lat': area['geom'].centroid.y if 'area' in level else area['geom'].y
+                        'lon': area['geom'].point_on_surface.x if 'area' in level else area['geom'].x,
+                        'lat': area['geom'].point_on_surface.y if 'area' in level else area['geom'].y
                     }
 
                     # anonymize actor fields for demo mode
