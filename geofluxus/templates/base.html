@@ -8,39 +8,34 @@
 
   <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css"> {% render_bundle 'commons' %}
   {% render_bundle 'Base' %}
-  <title>{% block title %}TU Delft{% endblock %}</title>
-  <link rel="apple-touch-icon" sizes="57x57"
-    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-57x57.png">
-  <link rel="apple-touch-icon" sizes="60x60"
-    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-60x60.png">
-  <link rel="apple-touch-icon" sizes="72x72"
-    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-72x72.png">
-  <link rel="apple-touch-icon" sizes="76x76"
-    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-76x76.png">
-  <link rel="apple-touch-icon" sizes="114x114"
-    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-114x114.png">
-  <link rel="apple-touch-icon" sizes="120x120"
-    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-120x120.png">
-  <link rel="apple-touch-icon" sizes="144x144"
-    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-144x144.png">
-  <link rel="apple-touch-icon" sizes="152x152"
-    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-152x152.png">
-  <link rel="apple-touch-icon" sizes="180x180"
-    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-180x180.png">
-  <link rel="icon" type="image/png" sizes="16x16"
-    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-16x16.png">
-  <link rel="icon" type="image/png" sizes="32x32"
-    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="96x96"
-    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-96x96.png">
-  <link rel="icon" type="image/png" sizes="192x192"
-    href="https://tulib.tudelft.nl/wp-content/uploads/TU_Delft_favicon-192x192.png">
+  <title>{% block title %}geoFluxus{% endblock %}</title>
+
+<link rel="apple-touch-icon" sizes="57x57" href="../static/img/favicons../static/img/nav/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="../static/img/favicons/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../static/img/favicons/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="../static/img/favicons/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../static/img/favicons/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="../static/img/favicons/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="../static/img/favicons/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="../static/img/favicons/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../static/img/favicons/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="../static/img/favicons/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../static/img/favicons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="../static/img/favicons/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../static/img/favicons/favicon-16x16.png">
+<link rel="manifest" href="../static/img/favicons/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+
+
 </head>
 
 <body>
   <!--Navbar-->
   <nav class="navbar navbar-expand-md" id="navbarID">
-    <!-- <a class="navbar-brand" href="/"><img src="../static/img/nav/tudelft.png"></a> -->
+    <a class="navbar-brand" href="/"><img src="../static/img/nav/nav-logo.png"></a>
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item {% if request.resolver_match.url_name == 'analyse' %} active{% endif %}"
@@ -114,13 +109,14 @@
       <hr class="clearfix w-100 d-md-none pb-3">
 
       <div class="row pt-5 align-items-center ">
-
-        <!-- <div class="col-md-6 mt-md-0 mt-3 text-center border-top" style="margin: auto; padding-top: 2.5rem;">
+        <div class="col-md-6 mt-md-0 mt-3 text-center border-top" style="margin: auto; padding-top: 2.5rem;">
           <h5>geoFluxus</h5>
           <p style="font-size: small; max-width: 26rem; margin: auto; margin-top: 1rem; ">The open-source platform that
             maps, analyses and predicts resource flows as the essential trigger for a Circular Economy.</p>
-        </div> -->
+        </div>
+      </div>
 
+      <div class="row pt-5 align-items-center ">
         <ul class="list-unstyled footer-logos mx-auto d-block">
           <li>
             <a href="https://ec.europa.eu/programmes/horizon2020/"><img src="../static/img/footer/eu.jpg"></a>
@@ -152,8 +148,8 @@
 
     <div class="footer-copyright mt-4 pt-5 pb-4 text-center">
       <span>License: <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"><u>GNU GPLv2</u></a></span>
-      <!-- <span>© {%now "Y"%} </span>
-      <a href="http://tudelft.nl/" style="font-size: small;">tudelft.nl</a> -->
+      <span class="copyleft">&copy;</span><span> {%now "Y"%} </span>
+      <a href="http://geofluxus.com/">geofluxus.com</a>
     </div>
 
   </footer>

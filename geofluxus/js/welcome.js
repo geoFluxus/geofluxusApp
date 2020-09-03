@@ -1,17 +1,18 @@
 // Welcome
 require(['leaflet', 'leaflet/dist/leaflet.css'],
 function (L) {
-    var map = L.map('welcome-map', { zoomControl: false })
-               .setView([52, 5], 8);
 
-    var background = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png',
-        attribution = '© OpenStreetMap contributors, © CartoDB';
+    // var map = L.map('welcome-map', { zoomControl: false })
+    //            .setView([52, 5], 8);
 
-    L.tileLayer(background, {
-                attribution: attribution,
-                minZoom: 1,
-                maxZoom: 20,
-    }).addTo(map);
+    // var background = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png',
+    //     attribution = '© OpenStreetMap contributors, © CartoDB';
+
+    // L.tileLayer(background, {
+    //             attribution: attribution,
+    //             minZoom: 1,
+    //             maxZoom: 20,
+    // }).addTo(map);
 
 //    // Interactive non-responsive
 //    map._handlers.forEach(function(handler) {
