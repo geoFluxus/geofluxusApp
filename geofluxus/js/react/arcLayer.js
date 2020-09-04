@@ -121,15 +121,18 @@ export default function App({
     [applyToArray(Math.max, pointsLong), applyToArray(Math.max, pointsLat)],
   ];
 
-  const viewportWidth = $(element).width();
-  const viewportHeight = $(element).height();
+  // const viewportWidth = $(element).width();
+  // const viewportHeight = $(element).height();
 
+  // const viewport = new WebMercatorViewport({
+  //   width: viewportWidth,
+  //   height: viewportHeight,
+  // })
   // Use WebMercatorViewport to get center longitude/latitude and zoom
-  // const viewport = new WebMercatorViewport({ width: 800, height: 600 })
   const viewport = new WebMercatorViewport({
-    width: viewportWidth,
-    height: viewportHeight,
-  }).fitBounds(cornersLongLat, { padding: 150 }); // Can also use option: offset: [0, -100]
+    width: 800,
+    height: 600,
+  }).fitBounds(cornersLongLat, { padding: 0 }); // Can also use option: offset: [0, -100]
   var longitude = viewport.longitude,
     latitude = viewport.latitude,
     zoom = viewport.zoom;
