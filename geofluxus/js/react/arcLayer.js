@@ -122,7 +122,7 @@ export default function App({
       ]
       // Use WebMercatorViewport to get center longitude/latitude and zoom
       const viewport = new WebMercatorViewport({ width: 800, height: 600 })
-        .fitBounds(cornersLongLat, { padding: 200 }) // Can also use option: offset: [0, -100]
+        .fitBounds(cornersLongLat, { padding: 25 }) // Can also use option: offset: [0, -100]
       var longitude = viewport.longitude,
           latitude = viewport.latitude,
           zoom = viewport.zoom
