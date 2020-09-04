@@ -81,6 +81,7 @@ define(['views/common/deckglView',
                     var _this = this;
 
                     this.ReactDOM.render(React.createElement(ArcLayer, {
+                        element: _this.options.el,
                         data: _this.flows,
                         label: _this.label,
                         isActorLevel: _this.isActorLevel,
