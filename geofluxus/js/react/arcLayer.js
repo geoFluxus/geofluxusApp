@@ -136,7 +136,7 @@ export default function App({
   var longitude = viewport.longitude,
     latitude = viewport.latitude,
     zoom = viewport.zoom;
-  console.log(longitude, latitude, zoom);
+  // console.log(longitude, latitude, zoom);
 
   function getTooltipHtml({ object }) {
     if (!object) {
@@ -144,11 +144,12 @@ export default function App({
     }
 
     // const total = object.points.reduce((a, b) => a + (b[2] || 0), 0);
-    const tooltipTitleValue = isActorLevel ? "This area:" : object.points[0][3];
+    const tooltipTitleValue =
+      object.origin.name + " &#10132; " + object.destination.name;
 
     var html = `<div class="d3plus-tooltip flowMapToolTip pointToolTIp" x-placement="top">
-        <div class="d3plus-tooltip-title">Waste in tons</div>
-        <div class="d3plus-tooltip-body"></div>
+    <div class="d3plus-tooltip-title">${tooltipTitleValue}</div>
+    <div class="d3plus-tooltip-body"></div>
         <table class="d3plus-tooltip-table" style='display: block !important'>
             <thead class="d3plus-tooltip-thead"></thead>
             <tbody class="d3plus-tooltip-tbody" style="display: inline-table !important; width: 100%; padding-bottom: 0.5rem;">
@@ -212,7 +213,8 @@ export default function App({
       getSourceColor: (d) => getRgbArray(d.color),
       getTargetColor: (d) => getRgbArray(d.color),
       getWidth: (d) => Math.max(minFlowWidth, d.amount * normFactor),
-      getTooltip: { getTooltipHtml },
+      autoHighlight: true,
+      pickable: true,
     }),
   ];
 
@@ -221,7 +223,9 @@ export default function App({
       layers={layers}
       initialViewState={INITIAL_VIEW_STATE}
       controller={true}
-      getTooltip={getTooltip}
+      // getTooltip={getTooltipHtml}
+      getTooltip={(d) => getTooltipHtml(d)} //{getTooltipHtml}
+      // getTooltip={(object) => object && `${object} to ${object}`}
     >
       <StaticMap
         reuseMaps
