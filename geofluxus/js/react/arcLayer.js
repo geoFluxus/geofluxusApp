@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { render } from "react-dom";
-import { StaticMap } from "react-map-gl";
+import { StaticMap, WebMercatorViewport } from "react-map-gl";
 import DeckGL from "@deck.gl/react";
 import { GeoJsonLayer, ArcLayer } from "@deck.gl/layers";
 import { scaleQuantile } from "d3-scale";
@@ -36,35 +36,35 @@ export const outFlowColors = [
   [177, 0, 38],
 ];
 
-function calculateArcs(data, selectedCounty) {
-  if (!data || !data.length) {
-    return null;
-  }
-  if (!selectedCounty) {
-    selectedCounty = data.find((f) => f.properties.name === "Los Angeles, CA");
-  }
-  const { flows, centroid } = selectedCounty.properties;
+// function calculateArcs(data, selectedCounty) {
+//   if (!data || !data.length) {
+//     return null;
+//   }
+//   if (!selectedCounty) {
+//     selectedCounty = data.find((f) => f.properties.name === "Los Angeles, CA");
+//   }
+//   const { flows, centroid } = selectedCounty.properties;
 
-  const arcs = Object.keys(flows).map((toId) => {
-    const f = data[toId];
-    return {
-      source: centroid,
-      target: f.properties.centroid,
-      value: flows[toId],
-    };
-  });
+//   const arcs = Object.keys(flows).map((toId) => {
+//     const f = data[toId];
+//     return {
+//       source: centroid,
+//       target: f.properties.centroid,
+//       value: flows[toId],
+//     };
+//   });
 
-  const scale = scaleQuantile()
-    .domain(arcs.map((a) => Math.abs(a.value)))
-    .range(inFlowColors.map((c, i) => i));
+//   const scale = scaleQuantile()
+//     .domain(arcs.map((a) => Math.abs(a.value)))
+//     .range(inFlowColors.map((c, i) => i));
 
-  arcs.forEach((a) => {
-    a.gain = Math.sign(a.value);
-    a.quantile = scale(Math.abs(a.value));
-  });
+//   arcs.forEach((a) => {
+//     a.gain = Math.sign(a.value);
+//     a.quantile = scale(Math.abs(a.value));
+//   });
 
-  return arcs;
-}
+//   return arcs;
+// }
 
 function getTooltip({ object }) {
   return object && object.properties.name;
@@ -104,11 +104,29 @@ export default function App({
   const minFlowWidth = 1;
   const normFactor = maxFlowWidth / maxFlowValue;
 
-  var center = utils.getCenter(data);
-  center = {
-    lon: 5.587,
-    lat: 52.267,
-  };
+  // Calculate center of the map based on all coordinates of origin and destination of the flows/arcs:
+  var points = [];
+  data.forEach(item => {
+    points.push([item.origin.lon, item.origin.lat]);
+    points.push([item.destination.lon, item.destination.lat]);
+  });
+
+      const applyToArray = (func, array) => func.apply(Math, array)
+
+      // Calculate corner values of bounds
+      const pointsLong = points.map(point => point[0])
+      const pointsLat = points.map(point => point[1])
+      const cornersLongLat = [
+        [applyToArray(Math.min, pointsLong), applyToArray(Math.min, pointsLat)],
+        [applyToArray(Math.max, pointsLong), applyToArray(Math.max, pointsLat)]
+      ]
+      // Use WebMercatorViewport to get center longitude/latitude and zoom
+      const viewport = new WebMercatorViewport({ width: 800, height: 600 })
+        .fitBounds(cornersLongLat, { padding: 200 }) // Can also use option: offset: [0, -100]
+      var longitude = viewport.longitude,
+          latitude = viewport.latitude,
+          zoom = viewport.zoom
+      console.log(longitude, latitude, zoom)
 
   function getTooltipHtml({ object }) {
     if (!object) {
@@ -146,11 +164,11 @@ export default function App({
       },
     };
   }
-
+  console.log(longitude, latitude, zoom)
   const INITIAL_VIEW_STATE = {
-    longitude: center.lon,
-    latitude: center.lat,
-    zoom: 6.6,
+    longitude: longitude,
+    latitude: latitude,
+    zoom: zoom,
     minZoom: 5,
     maxZoom: 15,
     pitch: 40.5,
