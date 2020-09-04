@@ -144,12 +144,8 @@ define(['views/common/baseview',
 
                 close: function () {
                     try {
-                        // var isNotEmpty = $(this.options.el.split(' ')[0] + " " + this.options.subContainer).html() != "";
-                        // if (isNotEmpty) {
-                        //     console.log("Element is not empty")
-                        // }
                         this.ReactDOM.unmountComponentAtNode(document.querySelector(this.options.subContainer));
-                        $(this.options.el).html("");
+                        $(this.options.subContainer + " .controlContainer").html("");
                         this.undelegateEvents(); // remove click events
                         this.unbind(); // Unbind all local event bindings
                     } catch (error) {
