@@ -213,6 +213,7 @@ export default function App({
       getSourceColor: (d) => getRgbArray(d.color),
       getTargetColor: (d) => getRgbArray(d.color),
       getWidth: (d) => Math.max(minFlowWidth, d.amount * normFactor),
+      // getHeight: (d) => Math.max(minFlowWidth, d.amount * normFactor) / 10,
       autoHighlight: true,
       pickable: true,
     }),
@@ -223,9 +224,7 @@ export default function App({
       layers={layers}
       initialViewState={INITIAL_VIEW_STATE}
       controller={true}
-      // getTooltip={getTooltipHtml}
-      getTooltip={(d) => getTooltipHtml(d)} //{getTooltipHtml}
-      // getTooltip={(object) => object && `${object} to ${object}`}
+      getTooltip={getTooltipHtml}
     >
       <StaticMap
         reuseMaps
