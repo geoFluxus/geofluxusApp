@@ -36,35 +36,35 @@ export const outFlowColors = [
   [177, 0, 38],
 ];
 
-function calculateArcs(data, selectedCounty) {
-  if (!data || !data.length) {
-    return null;
-  }
-  if (!selectedCounty) {
-    selectedCounty = data.find((f) => f.properties.name === "Los Angeles, CA");
-  }
-  const { flows, centroid } = selectedCounty.properties;
+// function calculateArcs(data, selectedCounty) {
+//   if (!data || !data.length) {
+//     return null;
+//   }
+//   if (!selectedCounty) {
+//     selectedCounty = data.find((f) => f.properties.name === "Los Angeles, CA");
+//   }
+//   const { flows, centroid } = selectedCounty.properties;
 
-  const arcs = Object.keys(flows).map((toId) => {
-    const f = data[toId];
-    return {
-      source: centroid,
-      target: f.properties.centroid,
-      value: flows[toId],
-    };
-  });
+//   const arcs = Object.keys(flows).map((toId) => {
+//     const f = data[toId];
+//     return {
+//       source: centroid,
+//       target: f.properties.centroid,
+//       value: flows[toId],
+//     };
+//   });
 
-  const scale = scaleQuantile()
-    .domain(arcs.map((a) => Math.abs(a.value)))
-    .range(inFlowColors.map((c, i) => i));
+//   const scale = scaleQuantile()
+//     .domain(arcs.map((a) => Math.abs(a.value)))
+//     .range(inFlowColors.map((c, i) => i));
 
-  arcs.forEach((a) => {
-    a.gain = Math.sign(a.value);
-    a.quantile = scale(Math.abs(a.value));
-  });
+//   arcs.forEach((a) => {
+//     a.gain = Math.sign(a.value);
+//     a.quantile = scale(Math.abs(a.value));
+//   });
 
-  return arcs;
-}
+//   return arcs;
+// }
 
 function getTooltip({ object }) {
   return object && object.properties.name;
@@ -103,12 +103,14 @@ export default function App({
   const maxFlowWidth = 50;
   const minFlowWidth = 1;
   const normFactor = maxFlowWidth / maxFlowValue;
-
-  var center = utils.getCenter(data);
-  center = {
-    lon: 5.587,
-    lat: 52.267,
-  };
+  
+  // Calculate center of the map based on all coordinates of origin and destination of the flows/arcs:
+  var coords = [];
+  data.forEach(item => {
+    coords.push([item.origin.lon, item.origin.lat]);
+    coords.push([item.destination.lon, item.destination.lat]);
+  });
+  var center = utils.getCenter(coords);
 
   function getTooltipHtml({ object }) {
     if (!object) {

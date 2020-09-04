@@ -162,14 +162,17 @@ module.exports = {
      *
      * @param {array} data array of arrays of coordinates (first lon, then lat)
      */
-    getCenter: function (data) {
+    getCenter: function (data, latProp, lonProp) {
         var latXTotal = 0;
         var latYTotal = 0;
         var lonDegreesTotal = 0;
 
+        var lat = latProp ? latProp : 1;
+        var lon = lonProp ? lonProp : 0;
+
         data.forEach((coords) => {
-            var lonDegrees = coords[0];
-            var latDegrees = coords[1];
+            var lonDegrees = coords[lon];
+            var latDegrees = coords[lat];
 
             var latRadians = (Math.PI * latDegrees) / 180;
             latXTotal += Math.cos(latRadians);
