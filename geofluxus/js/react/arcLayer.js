@@ -72,6 +72,7 @@ function getTooltip({ object }) {
 
 /* eslint-disable react/no-deprecated */
 export default function App({
+  element,
   data,
   isDarkMode,
   mapStyle,
@@ -81,7 +82,6 @@ export default function App({
   coverage = 1,
   strokeWidth,
 }) {
-
   //   const arcs = useMemo(() => calculateArcs(data, selectedCounty), [
   //     data,
   //     selectedCounty,
@@ -106,27 +106,34 @@ export default function App({
 
   // Calculate center of the map based on all coordinates of origin and destination of the flows/arcs:
   var points = [];
-  data.forEach(item => {
+  data.forEach((item) => {
     points.push([item.origin.lon, item.origin.lat]);
     points.push([item.destination.lon, item.destination.lat]);
   });
 
-      const applyToArray = (func, array) => func.apply(Math, array)
+  const applyToArray = (func, array) => func.apply(Math, array);
 
-      // Calculate corner values of bounds
-      const pointsLong = points.map(point => point[0])
-      const pointsLat = points.map(point => point[1])
-      const cornersLongLat = [
-        [applyToArray(Math.min, pointsLong), applyToArray(Math.min, pointsLat)],
-        [applyToArray(Math.max, pointsLong), applyToArray(Math.max, pointsLat)]
-      ]
-      // Use WebMercatorViewport to get center longitude/latitude and zoom
-      const viewport = new WebMercatorViewport({ width: 800, height: 600 })
-        .fitBounds(cornersLongLat, { padding: 25 }) // Can also use option: offset: [0, -100]
-      var longitude = viewport.longitude,
-          latitude = viewport.latitude,
-          zoom = viewport.zoom
-      console.log(longitude, latitude, zoom)
+  // Calculate corner values of bounds
+  const pointsLong = points.map((point) => point[0]);
+  const pointsLat = points.map((point) => point[1]);
+  const cornersLongLat = [
+    [applyToArray(Math.min, pointsLong), applyToArray(Math.min, pointsLat)],
+    [applyToArray(Math.max, pointsLong), applyToArray(Math.max, pointsLat)],
+  ];
+
+  const viewportWidth = $(element).width();
+  const viewportHeight = $(element).height();
+
+  // Use WebMercatorViewport to get center longitude/latitude and zoom
+  // const viewport = new WebMercatorViewport({ width: 800, height: 600 })
+  const viewport = new WebMercatorViewport({
+    width: viewportWidth,
+    height: viewportHeight,
+  }).fitBounds(cornersLongLat, { padding: 150 }); // Can also use option: offset: [0, -100]
+  var longitude = viewport.longitude,
+    latitude = viewport.latitude,
+    zoom = viewport.zoom;
+  console.log(longitude, latitude, zoom);
 
   function getTooltipHtml({ object }) {
     if (!object) {
@@ -164,7 +171,7 @@ export default function App({
       },
     };
   }
-  console.log(longitude, latitude, zoom)
+  console.log(longitude, latitude, zoom);
   const INITIAL_VIEW_STATE = {
     longitude: longitude,
     latitude: latitude,
@@ -202,7 +209,7 @@ export default function App({
       getSourceColor: (d) => getRgbArray(d.color),
       getTargetColor: (d) => getRgbArray(d.color),
       getWidth: (d) => Math.max(minFlowWidth, d.amount * normFactor),
-      getTooltip: {getTooltipHtml},
+      getTooltip: { getTooltipHtml },
     }),
   ];
 
@@ -223,12 +230,12 @@ export default function App({
   );
 }
 
-export function renderToDOM(container) {
-  render(<App />, container);
+// export function renderToDOM(container) {
+//   render(<App />, container);
 
-  fetch(DATA_URL)
-    .then((response) => response.json())
-    .then(({ features }) => {
-      render(<App data={features} />, container);
-    });
-}
+//   fetch(DATA_URL)
+//     .then((response) => response.json())
+//     .then(({ features }) => {
+//       render(<App data={features} />, container);
+//     });
+// }
