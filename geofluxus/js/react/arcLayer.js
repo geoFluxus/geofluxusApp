@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { render } from "react-dom";
-import { StaticMap } from "react-map-gl";
+import { StaticMap, WebMercatorViewport } from "react-map-gl";
 import DeckGL from "@deck.gl/react";
 import { GeoJsonLayer, ArcLayer } from "@deck.gl/layers";
 import { scaleQuantile } from "d3-scale";
@@ -103,14 +103,30 @@ export default function App({
   const maxFlowWidth = 50;
   const minFlowWidth = 1;
   const normFactor = maxFlowWidth / maxFlowValue;
-  
+
   // Calculate center of the map based on all coordinates of origin and destination of the flows/arcs:
-  var coords = [];
+  var points = [];
   data.forEach(item => {
-    coords.push([item.origin.lon, item.origin.lat]);
-    coords.push([item.destination.lon, item.destination.lat]);
+    points.push([item.origin.lon, item.origin.lat]);
+    points.push([item.destination.lon, item.destination.lat]);
   });
-  var center = utils.getCenter(coords);
+
+      const applyToArray = (func, array) => func.apply(Math, array)
+
+      // Calculate corner values of bounds
+      const pointsLong = points.map(point => point[0])
+      const pointsLat = points.map(point => point[1])
+      const cornersLongLat = [
+        [applyToArray(Math.min, pointsLong), applyToArray(Math.min, pointsLat)],
+        [applyToArray(Math.max, pointsLong), applyToArray(Math.max, pointsLat)]
+      ]
+      // Use WebMercatorViewport to get center longitude/latitude and zoom
+      const viewport = new WebMercatorViewport({ width: 800, height: 600 })
+        .fitBounds(cornersLongLat, { padding: 25 }) // Can also use option: offset: [0, -100]
+      var longitude = viewport.longitude,
+          latitude = viewport.latitude,
+          zoom = viewport.zoom
+      console.log(longitude, latitude, zoom)
 
   function getTooltipHtml({ object }) {
     if (!object) {
@@ -148,11 +164,11 @@ export default function App({
       },
     };
   }
-
+  console.log(longitude, latitude, zoom)
   const INITIAL_VIEW_STATE = {
-    longitude: center.lon,
-    latitude: center.lat,
-    zoom: 6.6,
+    longitude: longitude,
+    latitude: latitude,
+    zoom: zoom,
     minZoom: 5,
     maxZoom: 15,
     pitch: 40.5,
