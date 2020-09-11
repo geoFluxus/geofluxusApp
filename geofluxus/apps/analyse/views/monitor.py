@@ -122,7 +122,7 @@ class MonitorViewSet(FilterFlowViewSet):
         # these groups should be excluded entirely
         queries = {
             'total__isnull': False,
-            'total__gt': 0
+            # 'total__gt': 0
         }
         for field in self.fields:
             queries[field + '__isnull'] = False

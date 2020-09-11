@@ -113,11 +113,13 @@ define(['views/common/baseview',
                     const items = this.options.flows;
                     const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
 
-                    let fields = ["amount", "Code", "Name"];
+                    let fields = ["actorId", "Code", "Name", "actorLon", "actorLat", "amount"];
                     let header = Object.keys(items[0]);
+
                     header = header.filter(prop => {
                         return fields.some(f => prop.includes(f))
                     })
+                    console.log(header)
 
                     let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
                     csv.unshift(header.join(','))

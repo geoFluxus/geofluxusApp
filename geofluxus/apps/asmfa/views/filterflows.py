@@ -142,6 +142,10 @@ class FilterFlowViewSet(PostGetViewMixin,
         if len(queries) > 1:
             queryset = queryset.filter(np.bitwise_and.reduce(queries))
 
+        # filter by location
+        #from django.contrib.gis.geos import Point
+        #queryset = queryset.filter(origin_geom=Point(0, 0, srid=4326))
+
         return queryset
 
     # spatial filtering
