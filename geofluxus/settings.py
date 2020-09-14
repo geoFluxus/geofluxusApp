@@ -36,6 +36,7 @@ SECRET_KEY = 'b48^-g4x&z8b)6c*j9%#cr^mtlnaaz36y)0xqlr3isqrh1td2t'
 
 ALLOWED_HOSTS = ['slca.h2020cinderela.bk.tudelft.nl',
                  'test.geofluxus.com',
+                 'app.geofluxus.com',
                  '127.0.0.1',
                  'localhost']
 
