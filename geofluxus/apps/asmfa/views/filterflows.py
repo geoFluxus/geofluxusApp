@@ -4,7 +4,7 @@ from geofluxus.apps.utils.views import (PostGetViewMixin,
 from geofluxus.apps.asmfa.models import (Flow,
                                          Classification,
                                          Area,
-                                         Routing,)
+                                         Routing)
 from geofluxus.apps.asmfa.serializers import (FlowSerializer)
 import json
 import numpy as np

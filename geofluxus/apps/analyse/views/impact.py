@@ -61,26 +61,29 @@ class ImpactViewSet(MonitorViewSet):
         # queryset = queryset.annotate(amount=subq.values('total'))
 
         f = open('/home/geofluxus/Desktop/data.csv', 'w')
-        f.write('id;processes;trips\n')
+        f.write('id;processes;trips;descriptions\n')
         from django.contrib.postgres.aggregates import StringAgg
         from django.db.models.functions import Cast
         from django.db.models import CharField
         groups = flows.values('flowchain') \
                       .order_by('flowchain') \
                       .annotate(amounts=StringAgg(Cast('amount', output_field=CharField()), delimiter=";"),
-                                processes=StringAgg('destination__process__name', delimiter=";"))
+                                processes=StringAgg('destination__process__name', delimiter=";"),
+                                descriptions=StringAgg('flowchain__description', delimiter=","))
         subq = groups.filter(flowchain=OuterRef('flowchain'))
         queryset = queryset.values('origin__id')\
                            .order_by('origin__id')\
                            .annotate(total=Sum('flowchain__amount'),
                                      amounts=StringAgg(subq.values('amounts'), delimiter=";"),
                                      processes=StringAgg(subq.values('processes'), delimiter=";"),
-                                     trips=Sum('flowchain__trips'))
+                                     trips=Sum('flowchain__trips'),
+                                     descriptions=StringAgg(subq.values('descriptions'), delimiter=","))
         for item in queryset.values('origin__id',
                                     'total',
                                     'amounts',
                                     'processes',
-                                    'trips'):
+                                    'trips',
+                                    'descriptions'):
             amounts = [float(o) for o in item['amounts'].split(';')]
             processes = item['processes'].split(';')
             inv = {}
@@ -91,10 +94,14 @@ class ImpactViewSet(MonitorViewSet):
                 else:
                     inv[process] = amount
             for key, value in inv.items():
-                inv[key] = round(value / float(item['total']) * 100, 2)
-            line = '{};{};{}\n'.format(item['origin__id'],
+                if item['total']:
+                    inv[key] = round(value / float(item['total']) * 100, 2)
+                else:
+                    inv[key] = 0
+            line = '{};{};{};{}\n'.format(item['origin__id'],
                                        inv,
-                                       item['trips'])
+                                       item['trips'],
+                                       item['descriptions'])
             f.write(line)
         f.close()
 
