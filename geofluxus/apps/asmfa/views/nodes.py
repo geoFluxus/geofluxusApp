@@ -39,13 +39,6 @@ class ActivityGroupViewSet(PostGetViewMixin,
         'create': ActivityGroupCreateSerializer
     }
 
-    def get_queryset(self):
-        queryset = ActivityGroup.objects
-        queryset = queryset.annotate(
-            flow_count=Count('activity__actor__outputs', distinct=True) +
-                       Count('activity__actor__inputs', distinct=True))
-        return queryset.order_by('id')
-
 
 # Activity
 class ActivityViewSet(PostGetViewMixin,
@@ -59,13 +52,6 @@ class ActivityViewSet(PostGetViewMixin,
         'create': ActivityCreateSerializer
     }
 
-    def get_queryset(self):
-        queryset = Activity.objects.order_by('id')
-        queryset = queryset.annotate(
-            flow_count=Count('actor__outputs', distinct=True) +
-                       Count('actor__inputs', distinct=True))
-        return queryset
-
 
 # Process group
 class ProcessGroupViewSet(PostGetViewMixin,
@@ -78,13 +64,6 @@ class ProcessGroupViewSet(PostGetViewMixin,
         'list': ProcessGroupListSerializer,
         'create': ProcessGroupCreateSerializer
     }
-
-    def get_queryset(self):
-        queryset = ProcessGroup.objects
-        queryset = queryset.annotate(
-            flow_count=Value(0, output_field=IntegerField())
-        )
-        return queryset.order_by('id')
 
 
 # Process
