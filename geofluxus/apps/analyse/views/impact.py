@@ -49,61 +49,79 @@ class ImpactViewSet(MonitorViewSet):
             flows = flows.annotate(treatment_emissions=Coalesce(subq.values(indicator), default))
             expression += F('treatment_emissions') / 10**6 * F('amount')
 
-        # # update amounts
-        # amount = ExpressionWrapper(expression, output_field=FloatField())
-        # flows = flows.annotate(amount=amount)
-        # # group flows by chain
-        # groups = flows.values('flowchain') \
-        #               .order_by('flowchain') \
-        #               .annotate(total=Sum('amount'))
-        # # annotate chain totals to original flows
-        # subq = groups.filter(flowchain=OuterRef('flowchain'))
-        # queryset = queryset.annotate(amount=subq.values('total'))
-
-        f = open('/home/geofluxus/Desktop/data.csv', 'w')
-        f.write('id;processes;trips;descriptions\n')
-        from django.contrib.postgres.aggregates import StringAgg
-        from django.db.models.functions import Cast
-        from django.db.models import CharField
+        # update amounts
+        amount = ExpressionWrapper(expression, output_field=FloatField())
+        flows = flows.annotate(amount=amount)
+        # group flows by chain
         groups = flows.values('flowchain') \
                       .order_by('flowchain') \
-                      .annotate(amounts=StringAgg(Cast('amount', output_field=CharField()), delimiter=";"),
-                                processes=StringAgg('destination__process__name', delimiter=";"),
-                                descriptions=StringAgg('flowchain__description', delimiter=","))
+                      .annotate(total=Sum('amount'))
+        # annotate chain totals to original flows
         subq = groups.filter(flowchain=OuterRef('flowchain'))
-        queryset = queryset.values('origin__id')\
-                           .order_by('origin__id')\
-                           .annotate(total=Sum('flowchain__amount'),
-                                     amounts=StringAgg(subq.values('amounts'), delimiter=";"),
-                                     processes=StringAgg(subq.values('processes'), delimiter=";"),
-                                     trips=Sum('flowchain__trips'),
-                                     descriptions=StringAgg(subq.values('descriptions'), delimiter=","))
-        for item in queryset.values('origin__id',
-                                    'total',
-                                    'amounts',
-                                    'processes',
-                                    'trips',
-                                    'descriptions'):
-            amounts = [float(o) for o in item['amounts'].split(';')]
-            processes = item['processes'].split(';')
-            inv = {}
-            for process, amount in zip(processes, amounts):
-                if process == 'Unknown': continue
-                if process in inv:
-                    inv[process] += amount
-                else:
-                    inv[process] = amount
-            for key, value in inv.items():
-                if item['total']:
-                    inv[key] = round(value / float(item['total']) * 100, 2)
-                else:
-                    inv[key] = 0
-            line = '{};{};{};{}\n'.format(item['origin__id'],
-                                       inv,
-                                       item['trips'],
-                                       item['descriptions'])
-            f.write(line)
-        f.close()
+        queryset = queryset.annotate(amount=subq.values('total'))
+
+        # f = open('/home/geofluxus/Desktop/data.csv', 'w')
+        # f.write('id@processes@trips@descriptions@cleans\n')
+        # from django.contrib.postgres.aggregates import StringAgg
+        # from django.db.models.functions import Cast
+        # from django.db.models import CharField
+        # groups = flows.values('flowchain') \
+        #               .order_by('flowchain') \
+        #               .annotate(amounts=StringAgg(Cast('amount', output_field=CharField()), delimiter=";"),
+        #                         processes=StringAgg('destination__process__name', delimiter=";"),
+        #                         descriptions=StringAgg('flowchain__description', delimiter=","),
+        #                         cleans=StringAgg(Cast('flowchain__classification__clean', output_field=CharField()), delimiter=","))
+        # subq = groups.filter(flowchain=OuterRef('flowchain'))
+        # queryset = queryset.values('origin__id')\
+        #                    .order_by('origin__id')\
+        #                    .annotate(total=Sum('flowchain__amount'),
+        #                              amounts=StringAgg(subq.values('amounts'), delimiter=";"),
+        #                              processes=StringAgg(subq.values('processes'), delimiter=";"),
+        #                              trips=Sum('flowchain__trips'),
+        #                              descriptions=StringAgg(subq.values('descriptions'), delimiter=","),
+        #                              cleans=StringAgg(subq.values('cleans'), delimiter=","))
+        # # print(queryset.query)
+        # for item in queryset.values('origin__id',
+        #                             'total',
+        #                             'amounts',
+        #                             'processes',
+        #                             'trips',
+        #                             'descriptions',
+        #                             'cleans'):
+        #     amounts = [float(o) for o in item['amounts'].split(';')]
+        #     processes = item['processes'].split(';')
+        #     inv = {}
+        #     for process, amount in zip(processes, amounts):
+        #         if process == 'Unknown': continue
+        #         if process in inv:
+        #             inv[process] += amount
+        #         else:
+        #             inv[process] = amount
+        #     for key, value in inv.items():
+        #         if item['total']:
+        #             inv[key] = round(value / float(item['total']) * 100, 2)
+        #         else:
+        #             inv[key] = 0
+        #     cleans = {'true': 0, 'false': 0, 'blank': 0}
+        #     for clean in item['cleans'].split(","):
+        #         if clean:
+        #             cleans[clean] +=1
+        #         else:
+        #             cleans['blank'] += 1
+        #     total = cleans['true'] + cleans['false'] + cleans['blank']
+        #     if total:
+        #         cleans['true'] = round(float(cleans['true']/ total) * 100, 2)
+        #         cleans['false'] = round(float(cleans['false']/total) * 100, 2)
+        #         cleans['blank'] = round(float(cleans['blank']/total) * 100, 2)
+        #     else:
+        #         cleans['blank'] =  100.00
+        #     line = '{}@{}@{}@{}@{}\n'.format(item['origin__id'],
+        #                                inv,
+        #                                item['trips'],
+        #                                item['descriptions'],
+        #                                cleans)
+        #     f.write(line)
+        # f.close()
 
         return queryset
 
