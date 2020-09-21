@@ -271,7 +271,7 @@ define(['views/common/baseview',
                             $("." + group + "-" + container)[(container == role) ? 'fadeIn' : 'hide']();
                         })
 
-                        // update log
+                        // update filter logs on selection
                         _this.getFilterParams();
 
                         event.preventDefault(); // avoid firing twice!
@@ -318,8 +318,6 @@ define(['views/common/baseview',
                         select.value = -1;
                     }
                     $(select).selectpicker('refresh');
-
-                    _this.getFilterParams();
                 }
 
                 // create menu based on parent field selection
@@ -347,6 +345,11 @@ define(['views/common/baseview',
                     }
                 }
 
+                // update filter logs on selection
+                function updateLogs() {
+                    _this.getFilterParams();
+                }
+
                 // Add event listeners to all filters:
                 var groups = Object.keys(this.filters);
                 groups.forEach(function (group) {
@@ -358,6 +361,7 @@ define(['views/common/baseview',
                         fields.forEach(function (field, idx) {
                             var selector = $(_this[group][field + 'Select']); // field selector
                             options = selector[0].options; // selector options
+                            selector.on('changed.bs.select', updateLogs)
 
                             // Exclude non-fuzzy booleans (either true or false).
                             // To find them, check if there are options, including 'both'
@@ -521,6 +525,9 @@ define(['views/common/baseview',
                                     labels.push(areaFeat.label);
                                     _this[block].selectedAreas.push(areas.get(areaFeat.id));
                                 });
+
+                                // Update filters logs on selection
+                                _this.getFilterParams();
 
                                 $(".areaSelections-" + block)[_this[block].selectedAreas.length > 0 ? 'fadeIn' : 'fadeOut']();
                                 $("#areaSelections-Textarea-" + block).html(labels.join('; '))
