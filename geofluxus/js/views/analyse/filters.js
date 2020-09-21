@@ -276,6 +276,11 @@ define(['views/common/baseview',
 
                         event.preventDefault(); // avoid firing twice!
                     })
+
+                    // update filter logs on selection
+                    $('#' + group + '-area-in-or-out').change(function(event) {
+                        _this.getFilterParams();
+                    })
                 })
 
                 // render ewc codes based on hazardous selection
@@ -458,6 +463,9 @@ define(['views/common/baseview',
                     $("#" + group + "-actor-select").on('changed.bs.select', function () {
                         _this[group].selectedActors = $("#" + group + "-actor-select").val();
                         $("." + group + "-actor-select-col .status").show();
+                        setTimeout(function () {
+                            _this.getFilterParams();
+                        }, 50);
                     });
                 });
             },
