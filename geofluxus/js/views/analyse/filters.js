@@ -1203,21 +1203,29 @@ define(['views/common/baseview',
                     destination: {},
                     flows: {},
                 }
+                var log = {
+                    "origin": {},
+                    "destination": {},
+                    "flows": {}
+                };
 
                 // dataset filter -> to flows filters
                 var datasets = this.collections['datasets'],
                     ids = $(this.flows.datasetSelect).val();
                 // if 'all' is selected
                 if (ids[0] == '-1') {
-                    ids = [];
+                    ids = [], titles = [];
                     datasets.forEach(dataset => {
                         ids.push(dataset.get("id"));
+                        titles.push(dataset.get("title"))
                     });
+
+                    filterParams.flows['datasets'] = ids;
+                    log.datasets = titles;
                 }
-                filterParams.flows['datasets'] = ids;
 
                 // origin/destination in-or-out & role
-                var groups = ['origin', 'destination']
+                var groups = ['origin', 'destination'];
                 groups.forEach(function (group) {
                     // search for companies
                     var selectedActors = _this[group].selectedActors;
@@ -1227,22 +1235,19 @@ define(['views/common/baseview',
                         // Save actor objects:
                         filterParams[group].actorObjects = [];
                         $('#' + group + '-actor-select optgroup option').each(function (index, element) {
-
                             filterParams[group].actorObjects.push({
                                 id: $(this).val(),
                                 name: $(this).attr("title"),
                             })
                         });
 
+                        log[group]['companies'] = filterParams[group].actorObjects.map(a => a.name);
                     }
 
-                    var inOrOut = _this[group].inOrOut;
-                    filterParams[group].inOrOut = $(inOrOut).prop('checked') ? 'out' : 'in';
-
                     var role = _this[group].role;
-                    if (role != 'both') {
+                    if (role != 'both' && role != undefined) {
                         // save to flows (non-spatial) filters
-                        filterParams.flows[group + '_role'] = role;
+                        filterParams.flows[group + '_role'] = log[group].role = role;
                     }
                 })
 
@@ -1271,15 +1276,21 @@ define(['views/common/baseview',
                 // load filters to request
                 groups = Object.keys(this.filters);
                 groups.forEach(function (group) {
-                    // get group admin level & areas
-                    filterParams[group].adminLevel = _this[group].adminLevel;
-
                     var selectedAreas = _this[group].selectedAreas;
                     if (selectedAreas !== undefined && selectedAreas.length > 0) {
+                        // get group admin level & areas
+                        filterParams[group].adminLevel = _this[group].adminLevel;
+                        log[group].adminlevel = _this.collections['arealevels'].find(model => model.attributes.id == _this[group].adminLevel).get("name");
+
                         filterParams[group].selectedAreas = [];
+                        log[group].selectedAreas = [];
                         selectedAreas.forEach(function (area) {
                             filterParams[group].selectedAreas.push(area.id);
+                            log[group].selectedAreas.push(area.get('name'));
                         });
+
+                        var inOrOut = _this[group].inOrOut;
+                        filterParams[group].inOrOut = log[group].inOrOut = $(inOrOut).prop('checked') ? 'out' : 'in';
                     }
 
                     // get group filters
@@ -1288,9 +1299,8 @@ define(['views/common/baseview',
                         // get filter fields
                         var fields = Object.keys(filter);
 
-                        var _field = _value = null;
+                        var _field = _value = _name = null;
                         fields.forEach(function (field) {
-
                             // retrieve filter value
                             var value = $(_this[group][field + 'Select']).val();
 
@@ -1305,11 +1315,20 @@ define(['views/common/baseview',
                             if (!conditions.includes(false)) {
                                 _field = filter[field];
                                 _value = process(value);
+                                _name = field.toLowerCase();
                             }
                         })
 
                         // if no value, do not include filter in request
                         if (_value != null) {
+                            var options = $('#' + group + '-' + _name + '-select option:selected');
+
+                            log[group][_name] = [];
+                            $(options).each(function(){
+                                formatted_text = $(this).text().replace(/[\r\n]+/g, "").replace(/\s{2,}/g, "");
+                                log[group][_name].push(formatted_text);
+                            });
+
                             // save activity (group) only on 'production' role
                             if (_this[group].role !== 'production' && _field.includes('activity')) {
                                 return;
