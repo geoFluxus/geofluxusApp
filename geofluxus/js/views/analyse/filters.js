@@ -265,10 +265,14 @@ define(['views/common/baseview',
                         let role = $(this).attr('role'),
                             containers = ['production', 'treatment'];
 
+                        // show role containers
                         _this[group].role = role;
                         containers.forEach(function (container) {
                             $("." + group + "-" + container)[(container == role) ? 'fadeIn' : 'hide']();
                         })
+
+                        // update log
+                        _this.getFilterParams();
 
                         event.preventDefault(); // avoid firing twice!
                     })
@@ -314,6 +318,8 @@ define(['views/common/baseview',
                         select.value = -1;
                     }
                     $(select).selectpicker('refresh');
+
+                    _this.getFilterParams();
                 }
 
                 // create menu based on parent field selection
@@ -1344,6 +1350,8 @@ define(['views/common/baseview',
                         }
                     })
                 })
+
+                console.log(_this.log);
 
                 return filterParams;
             },
