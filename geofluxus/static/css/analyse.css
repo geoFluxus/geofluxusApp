@@ -107,7 +107,7 @@ label[for="origin-activity-select"],
 label[for="destination-activity-select"],
 label[for="origin-process-select"],
 label[for="destination-process-select"],
-label[for="monthSelect"],
+label[for="flows-month-select"],
 label[for="flows-waste04-select"],
 label[for="flows-waste06-select"] {
     position: relative;

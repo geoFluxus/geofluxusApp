@@ -431,7 +431,6 @@ define(['views/common/baseview',
                     });
                 }
 
-                console.log(filterParams);
                 return filterParams;
             },
 

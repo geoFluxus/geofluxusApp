@@ -1203,7 +1203,7 @@ define(['views/common/baseview',
                     destination: {},
                     flows: {},
                 }
-                var log = {
+                this.log = {
                     "origin": {},
                     "destination": {},
                     "flows": {}
@@ -1221,7 +1221,7 @@ define(['views/common/baseview',
                     });
 
                     filterParams.flows['datasets'] = ids;
-                    log.datasets = titles;
+                    _this.log.datasets = titles;
                 }
 
                 // origin/destination in-or-out & role
@@ -1241,13 +1241,13 @@ define(['views/common/baseview',
                             })
                         });
 
-                        log[group]['companies'] = filterParams[group].actorObjects.map(a => a.name);
+                        _this.log[group]['companies'] = filterParams[group].actorObjects.map(a => a.name);
                     }
 
                     var role = _this[group].role;
                     if (role != 'both' && role != undefined) {
                         // save to flows (non-spatial) filters
-                        filterParams.flows[group + '_role'] = log[group].role = role;
+                        filterParams.flows[group + '_role'] = _this.log[group].role = role;
                     }
                 })
 
@@ -1280,17 +1280,17 @@ define(['views/common/baseview',
                     if (selectedAreas !== undefined && selectedAreas.length > 0) {
                         // get group admin level & areas
                         filterParams[group].adminLevel = _this[group].adminLevel;
-                        log[group].adminlevel = _this.collections['arealevels'].find(model => model.attributes.id == _this[group].adminLevel).get("name");
+                        _this.log[group].adminlevel = _this.collections['arealevels'].find(model => model.attributes.id == _this[group].adminLevel).get("name");
 
                         filterParams[group].selectedAreas = [];
-                        log[group].selectedAreas = [];
+                        _this.log[group].selectedAreas = [];
                         selectedAreas.forEach(function (area) {
                             filterParams[group].selectedAreas.push(area.id);
-                            log[group].selectedAreas.push(area.get('name'));
+                            _this.log[group].selectedAreas.push(area.get('name'));
                         });
 
                         var inOrOut = _this[group].inOrOut;
-                        filterParams[group].inOrOut = log[group].inOrOut = $(inOrOut).prop('checked') ? 'out' : 'in';
+                        filterParams[group].inOrOut = _this.log[group].inOrOut = $(inOrOut).prop('checked') ? 'out' : 'in';
                     }
 
                     // get group filters
@@ -1323,10 +1323,10 @@ define(['views/common/baseview',
                         if (_value != null) {
                             var options = $('#' + group + '-' + _name + '-select option:selected');
 
-                            log[group][_name] = [];
+                            _this.log[group][_name] = [];
                             $(options).each(function(){
                                 formatted_text = $(this).text().replace(/[\r\n]+/g, "").replace(/\s{2,}/g, "");
-                                log[group][_name].push(formatted_text);
+                                _this.log[group][_name].push(formatted_text);
                             });
 
                             // save activity (group) only on 'production' role

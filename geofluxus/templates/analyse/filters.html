@@ -39,14 +39,14 @@
             <div class="card-body">
                 <div class="row pb-4">
                     <div class="col-md-4">
-                        <label for="datasetSelect">Data set</label>
+                        <label for="flows-dataset-select">Data set</label>
                         <div class="labelHelpiconContainer">
                             <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Data set"
                                 data-html="true" tabindex="0" data-content="Select the data set you want to analyse.">
                             </a>
                         </div>
 
-                        <select name="flows-dataset-select" id="datasetSelect" multiple
+                        <select name="flows-dataset-select" id="flows-dataset-select" multiple
                             class="form-control form-control-sm selectpicker" data-size="4"
                             style="resize: vertical;">
                             <option selected value="-1">All (<%= datasets.count %>)</option>
@@ -598,7 +598,7 @@
                     <div class="row">
                         <div class="col-md-3">
 
-                            <label for="yearSelect">Year</label>
+                            <label for="flows-year-select">Year</label>
                             <div class="labelHelpiconContainer">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Year"
                                     data-html="true" tabindex="0" data-content="Select the year in which the waste flow has been reported.<br>
@@ -607,7 +607,7 @@
                                 </a>
                             </div>
 
-                            <select name="flows-year-select" id="yearSelect" multiple
+                            <select name="flows-year-select" id="flows-year-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
                                 <option selected value="-1">All (<%= years.count %>)</option>
@@ -620,7 +620,7 @@
 
                         <div class="col-md-3" id="flows-monthsCol" style="display: none;">
 
-                            <label for="monthSelect">Month</label>
+                            <label for="flows-month-select">Month</label>
                             <div class="labelHelpiconContainer">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Month"
                                     data-html="true" tabindex="0"
@@ -629,7 +629,7 @@
                             </div>
 
                             <i class="fas fa-angle-double-right filterDoubleChevron"></i>
-                            <select name="flows-month-select" id="monthSelect" multiple
+                            <select name="flows-month-select" id="flows-month-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
                             </select>
@@ -763,7 +763,7 @@
                                     which are considered directly reusable.">
                                 </a>
                             </div>
-                            <select name="flows-product-select" multiple
+                            <select name="flows-product-select" id="flows-product-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
                                 <option selected value="-1">All (<%= products.count %>)</option>
@@ -784,7 +784,7 @@
                                     making up the composite.">
                                 </a>
                             </div>
-                            <select name="flows-composites-select" multiple
+                            <select name="flows-composites-select" id="flows-composites-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
                                 <option selected value="-1">All (<%= composites.count %>)</option>
