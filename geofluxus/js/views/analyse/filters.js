@@ -643,6 +643,9 @@ define(['views/common/baseview',
                     setTimeout(function () {
                         $(".areaSelections-" + buttonClicked).fadeOut();
                     }, 400);
+
+                    // update filter logs
+                    _this.getFilterParams();
                 }
             },
 
@@ -1342,14 +1345,6 @@ define(['views/common/baseview',
 
                         // if no value, do not include filter in request
                         if (_value != null) {
-                            var options = $('#' + group + '-' + _name + '-select option:selected');
-
-                            _this.log[group][_name] = [];
-                            $(options).each(function(){
-                                formatted_text = $(this).text().replace(/[\r\n]+/g, "").replace(/\s{2,}/g, "");
-                                _this.log[group][_name].push(formatted_text);
-                            });
-
                             // save activity (group) only on 'production' role
                             if (_this[group].role !== 'production' && _field.includes('activity')) {
                                 return;
@@ -1362,6 +1357,14 @@ define(['views/common/baseview',
 
                             // save to flows (non-spatial) fields
                             filterParams.flows[_field] = _value;
+
+                            var options = $('#' + group + '-' + _name + '-select option:selected');
+
+                            _this.log[group][_name] = [];
+                            $(options).each(function(){
+                                formatted_text = $(this).text().replace(/[\r\n]+/g, "").replace(/\s{2,}/g, "");
+                                _this.log[group][_name].push(formatted_text);
+                            });
                         }
                     })
                 })
