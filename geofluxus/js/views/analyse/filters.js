@@ -156,6 +156,7 @@ define(['views/common/baseview',
                 "click .hide-filter-name-button": "hideFilterNameInput",
 
                 'click #reset-filters': 'resetFiltersToDefault',
+                'click #summarize-filters': 'updateLogs',
             },
 
             render: function () {
@@ -278,7 +279,7 @@ define(['views/common/baseview',
                     })
 
                     // update filter logs on selection
-                    $('#' + group + '-area-in-or-out').change(function(event) {
+                    $('#' + group + '-area-in-or-out').change(function (event) {
                         _this.getFilterParams();
                     })
                 })
@@ -350,11 +351,6 @@ define(['views/common/baseview',
                     }
                 }
 
-                // update filter logs on selection
-                function updateLogs() {
-                    _this.getFilterParams();
-                }
-
                 // Add event listeners to all filters:
                 var groups = Object.keys(this.filters);
                 groups.forEach(function (group) {
@@ -366,7 +362,9 @@ define(['views/common/baseview',
                         fields.forEach(function (field, idx) {
                             var selector = $(_this[group][field + 'Select']); // field selector
                             options = selector[0].options; // selector options
-                            selector.on('changed.bs.select', updateLogs)
+
+
+                            // selector.on('changed.bs.select', updateLogs)
 
                             // Exclude non-fuzzy booleans (either true or false).
                             // To find them, check if there are options, including 'both'
@@ -706,7 +704,6 @@ define(['views/common/baseview',
                 $(".selections").trigger('input');
             },
             // AREA MODAL //
-
 
             // FILTER MODAL //
             renderSavedFiltersModal: function () {
@@ -1162,7 +1159,6 @@ define(['views/common/baseview',
             },
             // FILTER MODAL //
 
-
             resetFiltersToDefault: function () {
                 _this = this;
 
@@ -1217,6 +1213,7 @@ define(['views/common/baseview',
                 // Refresh all selectpickers:
                 $(".selectpicker").selectpicker('refresh');
             },
+
 
             getFilterParams: function () {
                 var _this = this;
@@ -1361,7 +1358,7 @@ define(['views/common/baseview',
                             var options = $('#' + group + '-' + _name + '-select option:selected');
 
                             _this.log[group][_name] = [];
-                            $(options).each(function(){
+                            $(options).each(function () {
                                 formatted_text = $(this).text().replace(/[\r\n]+/g, "").replace(/\s{2,}/g, "");
                                 _this.log[group][_name].push(formatted_text);
                             });
@@ -1372,6 +1369,122 @@ define(['views/common/baseview',
                 console.log(_this.log);
 
                 return filterParams;
+            },
+
+            // update filter logs on selection
+            updateLogs: function () {
+                var _this = this;
+
+                var filterNameMap = {
+                    origDest: {
+                        "companies": "Companies",
+                        "adminLevel": "Administrative level",
+                        "selectedAreas": "Areas",
+                        "inOrOut": "inside or outside",
+                        "role": "Role",
+                        "activitygroup": "Activity group",
+                        "activity": "Activity",
+                        "processgroup": "Treatment method group",
+                        "process": "Treatment method",
+                    },
+                    flows: {
+                        "dataset": [
+                            "Registry of all companies in the Netherlands"
+                        ],
+                        "selectedAreas": "Areas",
+                        "inOrOut": "inside or outside",
+                        "year": "Year",
+                        "hazardous": "Hazardous",
+                        "waste02": "EWC Chapter",
+                        "waste04": "EWC Sub-Chapter",
+                        "waste06": "EWC Entry",
+                        "material": "Material",
+                        "product": "Product",
+                        "composites": "Composites",
+                    }
+                }
+
+                var logInfo = {
+                    "origin": {
+                        "companies": [
+                            "Frites uit Zuyd B.V."
+                        ],
+                        "role": "production",
+                        "adminlevel": "Country",
+                        "selectedAreas": [
+                            "France"
+                        ],
+                        "inOrOut": "out",
+                        "activitygroup": [
+                            "D. Electricity, gas, steam and air conditioning supply"
+                        ]
+                    },
+                    "destination": {
+                        "companies": [
+                            "ADM WILD Netherlands"
+                        ],
+                        "role": "treatment",
+                        "adminlevel": "Country",
+                        "selectedAreas": [
+                            "Belgium"
+                        ],
+                        "inOrOut": "out",
+                        "processgroup": [
+                            "B. Reuse"
+                        ]
+                    },
+                    "flows": {
+                        "adminlevel": "Country",
+                        "selectedAreas": [
+                            "The Netherlands",
+                            "Belgium"
+                        ],
+                        "inOrOut": "in",
+                        "year": [
+                            "2014"
+                        ],
+                        "hazardous": [
+                            "Hazardous"
+                        ],
+                        "waste06": [
+                            "010305. Other tailings containing dangerous substances*"
+                        ],
+                        "material": [
+                            "Bier"
+                        ],
+                        "product": [
+                            "Bleekaarde"
+                        ],
+                        "composites": [
+                            "Composiet"
+                        ],
+                        "dataset": [
+                            "Registry of all companies in the Netherlands"
+                        ]
+                    }
+                }
+
+                var blocks = ["origin", "destination"];
+
+                // blocks.forEach(block => {
+                //     for (const property in logInfo[block]) {
+
+                //         if (!["adminlevel",].includes(property))
+                //         console.log(`${property}: ${logInfo[block][property]}`);
+                //     }
+                // });
+
+                _this.getFilterParams();
+
+
+
+                var html = document.getElementById("filter-log-template").innerHTML;
+                var template = _.template(html);
+
+                document.getElementById("filter-log-container").innerHTML = template({
+                    log: _this.log,
+                    flows: _this.log.flows
+                });
             },
 
             close: function () {

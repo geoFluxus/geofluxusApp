@@ -922,8 +922,16 @@
 
         </div>
 
-        <div class="row mt-1">
+        <div id="filter-log-container"></div>
+
+        <div class="row mt-1 d-flex justify-content-between">
             <button id='reset-filters' class="btn btn-secondary resetButton" title="Reset all the filters">RESET
+            </button>
+
+
+            <button id='summarize-filters' class="btn btn-primary"
+                title="Summarize the selected filters and check if there is data that matches."
+                style="margin-left: 10px; float: right; width: 10em">SUMMARIZE
             </button>
         </div>
 
@@ -1117,4 +1125,45 @@
             </div>
         </div>
     </div>
+</script>
+
+<script type="text/template" id="filter-log-template">
+    {% load custom_tags %}
+
+    <div class="card bg-dark">
+
+            <div class="card-header">
+                <h4 class="mt-2 ml-3">
+                    <button class="btn btn-link collapsingHeaderButton" id="btn-collapse-header-origin"
+                        title="">
+                        Selected filters
+                    </button>
+                </h4>
+            </div>
+
+            <div class="card-body">
+                <div class="row pb-4">
+                    <div class="col-md-4 filterLog text-white">
+
+                        <h5 class="subtitle">Data sets</h5>
+                        <ul>
+                            <% if (log.datasets != undefined) { %>
+                            <li><strong>Data sets: </strong><span><% log.datasets.join(', ') %></span></li>
+                            <% } %>
+                        </ul> 
+
+                        <h5 class="subtitle">Origin</h5>
+                        <ul>
+                            <% if (log.origin.activitygroup != undefined) { %>
+                            <li><strong>Activity groups: </strong><span><% log.origin.activitygroup.join(", ") %></span></li>
+                            <% } %>
+                        </ul>
+                        
+
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
 </script>
