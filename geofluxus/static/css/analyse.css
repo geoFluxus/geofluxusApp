@@ -72,8 +72,9 @@
 }
 
 .subtitle {
-    margin-top: 1.3rem !important;
+    margin-top: 1.3rem;
     font-weight: bolder;
+    text-transform: capitalize;
 }
 
 #filterBlock .dropdown-menu {
@@ -92,9 +93,6 @@
     border-bottom-right-radius: 18px !important;
 }
 
-.subtitle {
-    margin-top: 2em;
-}
 
 label[for="origin-processGroup-select"],
 label[for="destination-processGroup-select"] {
@@ -1189,6 +1187,8 @@ div.fullscreen {
     top: 0;
     left: 0;
 }
+
+
 
 .mapboxgl-map {
     border-radius: 18px !important;

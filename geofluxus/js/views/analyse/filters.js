@@ -799,7 +799,9 @@ define(['views/common/baseview',
                                 $(".areaSelections-" + group).fadeIn();
                                 $("#areaSelections-Textarea-" + group).html(labelStringArray.join('; '));
                                 $(".selections").trigger('input');
-                                $(".selections").textareaAutoSize();
+                                setTimeout(() => {
+                                    $(".selections").textareaAutoSize();
+                                }, 200);
 
                                 // in-or-out toggle
                                 $(_this[group].inOrOut).bootstrapToggle(inOrOut == 'in' ? "off" : "on");
@@ -1162,6 +1164,8 @@ define(['views/common/baseview',
             resetFiltersToDefault: function () {
                 _this = this;
 
+                $("#filter-log-container").fadeOut();
+
                 var groups = ['origin', 'destination']
                 groups.forEach(function (group) {
                     $('#' + group + '-actor-select').selectpicker('val', []);
@@ -1382,10 +1386,12 @@ define(['views/common/baseview',
                         "selectedAreas": "Areas",
                         "inOrOut": "inside or outside",
                         "role": "Role",
-                        "activitygroup": "Activity group",
-                        "activity": "Activity",
-                        "processgroup": "Treatment method group",
-                        "process": "Treatment method",
+                        "activitygroup": "Activity groups",
+                        "activity": "Activities",
+                        "processgroup": "Treatment method groups",
+                        "process": "Treatment methods",
+                        "in": "Within these areas",
+                        "out": "Outside these areas",
                     },
                     flows: {
                         "dataset": [
@@ -1477,14 +1483,22 @@ define(['views/common/baseview',
                 _this.getFilterParams();
 
 
+                if ((Object.keys(_this.log.origin).length > 0 ) || (Object.keys(_this.log.destination).length > 0 ) || (Object.keys(_this.log.flows).length > 0 )) {
+                    var html = document.getElementById("filter-log-template").innerHTML;
+                    var template = _.template(html);
+    
+                    document.querySelector(".filterLog").innerHTML = template({
+                        blocks: ["origin", "destination"],
+                        log: _this.log,
+                        filterNameMap: filterNameMap,
+                        flows: _this.log.flows
+                    });
+    
+                } else {
+                    $(".filterLog").html("<span>You haven't selected any filters.</span>")
+                }
+                $("#filter-log-container").fadeIn();
 
-                var html = document.getElementById("filter-log-template").innerHTML;
-                var template = _.template(html);
-
-                document.getElementById("filter-log-container").innerHTML = template({
-                    log: _this.log,
-                    flows: _this.log.flows
-                });
             },
 
             close: function () {
