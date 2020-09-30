@@ -325,7 +325,7 @@ input {
     background-color: rgba(0, 0, 0, .3);
 }
 
-.modal .close {
+.close {
     color: white;
     font-size: 38px;
     padding: 0 !important;
@@ -339,13 +339,14 @@ input {
     -ms-transition-duration: 0.4s;
 }
 
-.modal .close:hover {
+.close:hover {
+    color: white;
     transform: rotate(180deg);
     -webkit-transform: rotate(180deg);
     -ms-transform: rotate(180deg);
 }
 
-.modal .close:focus {
+.close:focus {
     outline: none;
 }
 

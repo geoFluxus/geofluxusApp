@@ -157,6 +157,7 @@ define(['views/common/baseview',
 
                 'click #reset-filters': 'resetFiltersToDefault',
                 'click #summarize-filters': 'updateLogs',
+                'click .closeFilterLog': 'closeFilterLog',
             },
 
             render: function () {
@@ -1499,6 +1500,10 @@ define(['views/common/baseview',
                 }
                 $("#filter-log-container").fadeIn();
 
+            },
+
+            closeFilterLog: function(){
+                $("#filter-log-container").fadeOut();
             },
 
             close: function () {

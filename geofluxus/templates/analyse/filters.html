@@ -932,6 +932,8 @@
                             title="">
                             Selected filters
                         </button>
+
+                        <button type="button" class="close text-white closeFilterLog" data-dismiss="modal"><i class="fas fa-times"></i></button>
                     </h4>
                 </div>
 
@@ -1154,7 +1156,7 @@
 <script type="text/template" id="filter-log-template">
   {% load custom_tags %}
 
-    <% if ((log.datasets != undefined) || log.flows.year != undefined) %>
+    <% if ((log.datasets != undefined) || (log.flows.year != undefined)) %>
     <h5 class="subtitle mt-0">General</h5>
     <ul>
         <% if (log.flows.dataset != undefined) { %>
@@ -1167,14 +1169,13 @@
             <% if (log.flows.month != undefined) { %>
             <li><strong>Months: </strong><span><%= log.flows.month.join(', ') %></span></li>
         <% } %>
-        </ul>
+    </ul>
 
     <% blocks.forEach(function(block) { %>
         <% if (Object.keys(log[block]).length > 0) %>
             <h5 class="subtitle"><%= block %></h5>
             <ul>
                 <% for (const property in log[block]) { %>
-                    <% console.log(property) %>
                     <% if (!["adminlevel", "inOrOut"].includes(property)) %>
                         <li><strong><%= (property == "selectedAreas") ? filterNameMap.origDest[log[block].inOrOut] :  filterNameMap.origDest[property] %>: </strong><span><%= log[block][property].isArray ? log[block][property].join(', ') : log[block][property] %></span></li>
                 <% } %>
@@ -1182,7 +1183,4 @@
     <% }); %>
 
 
-        {% comment %} <% if (log.origin.activitygroup != undefined) { %>
-        <li><strong>Activity groups: </strong><span><%= log.origin.activitygroup.join(', ') %></span></li>
-        <% } %> {% endcomment %}
 </script>
