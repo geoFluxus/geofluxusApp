@@ -1454,7 +1454,6 @@ define(['views/common/baseview',
                     body: params,
                     success: function (response) {
                         response = response.models[0].attributes;
-                        console.log(response);
 
                         let final_count = parseInt(response.final_count);
                         let final_amount = d3plus.formatAbbreviate(response.final_amount, utils.returnD3plusFormatLocale());
