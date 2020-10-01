@@ -1156,8 +1156,8 @@
 <script type="text/template" id="filter-log-template">
   {% load custom_tags %}
 
-    <% if ((log.datasets != undefined) || (log.flows.year != undefined)) %>
-    <h5 class="subtitle mt-0">General</h5>
+    <% if ((log.flows.dataset) || (log.flows.year) || (log.flows.month)) %>
+        <h5 class="subtitle mt-0">General</h5>
     <ul>
         <% if (log.flows.dataset != undefined) { %>
             <li><strong>Data sets: </strong><span><%= log.flows.dataset.join(', ') %></span></li>
@@ -1166,7 +1166,8 @@
         <% if (log.flows.year != undefined) { %>
             <li><strong>Years: </strong><span><%= log.flows.year.join(', ') %></span></li>
         <% } %>
-            <% if (log.flows.month != undefined) { %>
+
+        <% if (log.flows.month != undefined) { %>
             <li><strong>Months: </strong><span><%= log.flows.month.join(', ') %></span></li>
         <% } %>
     </ul>
@@ -1181,6 +1182,15 @@
                 <% } %>
             </ul>
     <% }); %>
+
+    <% if (Object.keys(log.flows).length > 0) %>
+    <h5 class="subtitle">Flows</h5>
+    <ul>
+        <% for (const property in log.flows) { %>
+            <% if (!["adminlevel", "inOrOut", "dataset", "year", 'month'].includes(property)) %>
+                <li><strong><%= (property == "selectedAreas") ? filterNameMap.flows[log.flows.inOrOut] :  filterNameMap.flows[property] %>: </strong><span><%= log.flows[property].isArray ? log.flows[property].join(', ') : log.flows[property] %></span></li>
+        <% } %>
+    </ul>
 
 
 </script>

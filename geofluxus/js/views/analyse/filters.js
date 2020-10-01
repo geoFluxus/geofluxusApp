@@ -1385,7 +1385,6 @@ define(['views/common/baseview',
                         "companies": "Companies",
                         "adminLevel": "Administrative level",
                         "selectedAreas": "Areas",
-                        "inOrOut": "inside or outside",
                         "role": "Role",
                         "activitygroup": "Activity groups",
                         "activity": "Activities",
@@ -1395,11 +1394,8 @@ define(['views/common/baseview',
                         "out": "Outside these areas",
                     },
                     flows: {
-                        "dataset": [
-                            "Registry of all companies in the Netherlands"
-                        ],
+                        "dataset": "Dataset",
                         "selectedAreas": "Areas",
-                        "inOrOut": "inside or outside",
                         "year": "Year",
                         "hazardous": "Hazardous",
                         "waste02": "EWC Chapter",
@@ -1408,6 +1404,8 @@ define(['views/common/baseview',
                         "material": "Material",
                         "product": "Product",
                         "composites": "Composites",
+                        "in": "Within these areas",
+                        "out": "Outside these areas",
                     }
                 }
 
@@ -1506,13 +1504,10 @@ define(['views/common/baseview',
             },
 
             getFlowCount: function () {
-
-                if (options.requestFlowCount) {
-                    filterParams.requestFlowCount = true;
-                }
                 let flows = new Collection([], {
                     apiTag: 'monitorflows',
                 });
+
                 flows.postfetch({
                     data: {},
                     body: {
