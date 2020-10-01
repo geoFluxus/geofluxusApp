@@ -527,6 +527,7 @@ define(['views/common/baseview',
             fetchFlows: function (options) {
                 var _this = this;
                 let filterParams = this.getFilterAndDimParams();
+
                 let data = {};
                 this.selectedDimensions = Object.entries(filterParams.dimensions);
 

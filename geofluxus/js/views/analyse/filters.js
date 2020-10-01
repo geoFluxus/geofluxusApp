@@ -1484,25 +1484,66 @@ define(['views/common/baseview',
                 _this.getFilterParams();
 
 
-                if ((Object.keys(_this.log.origin).length > 0 ) || (Object.keys(_this.log.destination).length > 0 ) || (Object.keys(_this.log.flows).length > 0 )) {
+                if ((Object.keys(_this.log.origin).length > 0) || (Object.keys(_this.log.destination).length > 0) || (Object.keys(_this.log.flows).length > 0)) {
                     var html = document.getElementById("filter-log-template").innerHTML;
                     var template = _.template(html);
-    
+
                     document.querySelector(".filterLog").innerHTML = template({
                         blocks: ["origin", "destination"],
                         log: _this.log,
                         filterNameMap: filterNameMap,
                         flows: _this.log.flows
                     });
-    
+
                 } else {
                     $(".filterLog").html("<span>You haven't selected any filters.</span>")
                 }
                 $("#filter-log-container").fadeIn();
 
+
+                this.getFlowCount()
+
             },
 
-            closeFilterLog: function(){
+            getFlowCount: function () {
+
+                if (options.requestFlowCount) {
+                    filterParams.requestFlowCount = true;
+                }
+                let flows = new Collection([], {
+                    apiTag: 'monitorflows',
+                });
+                flows.postfetch({
+                    data: {},
+                    body: {
+                        "requestFlowCount": true
+                    },
+                    success: function (response) {
+                        _this.flows = flows.models;
+
+                        // _this.flows.forEach(function (flow, index) {
+                        //     this[index] = flow.attributes;
+                        // }, _this.flows);
+
+                        // _this.selectedDimensions.label = _this.labels[_this.indicator];
+
+                        // if (_this.flows.length == 0 ||
+                        //     _this.flows.every(function(flow) {return flow.amount == 0;})) {
+                        //     _this.loader.deactivate()
+                        //     $(".no-data-found").fadeIn();
+                        //     $(".no-data-found").addClass("d-flex");
+                        // } else {
+                        //     // Render visualization
+                        //     _this.renderVisualizations(_this.selectedDimensions, _this.flows, _this.selectedVizName);
+                        // }
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            },
+
+            closeFilterLog: function () {
                 $("#filter-log-container").fadeOut();
             },
 
