@@ -1506,18 +1506,14 @@ define(['views/common/baseview',
             },
 
             getFlowCount: function () {
-
-                if (options.requestFlowCount) {
-                    filterParams.requestFlowCount = true;
-                }
+                var params = this.getFilterParams();
+                params.requestFlowCount = true;
                 let flows = new Collection([], {
                     apiTag: 'monitorflows',
                 });
                 flows.postfetch({
                     data: {},
-                    body: {
-                        "requestFlowCount": true
-                    },
+                    body: params,
                     success: function (response) {
                         
                     },
