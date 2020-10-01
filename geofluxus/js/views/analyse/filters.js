@@ -5,11 +5,12 @@ define(['views/common/baseview',
         'collections/collection',
         'visualizations/map',
         'utils/utils',
+        'visualizations/d3plus',
         'ajax-bootstrap-select',
         'openlayers',
     ],
 
-    function (BaseView, _, MonitorView, ImpactView, Collection, Map, utils) {
+    function (BaseView, _, MonitorView, ImpactView, Collection, Map, utils, d3plus) {
 
         var FiltersView = BaseView.extend({
             initialize: function (options) {
@@ -1316,7 +1317,9 @@ define(['views/common/baseview',
                         });
 
                         var inOrOut = _this[group].inOrOut;
-                        filterParams[group].inOrOut = _this.log[group].inOrOut = $(inOrOut).prop('checked') ? 'out' : 'in';
+                        if (group != "flows") {
+                            filterParams[group].inOrOut = _this.log[group].inOrOut = $(inOrOut).prop('checked') ? 'out' : 'in';
+                        }
                     }
 
                     // get group filters
@@ -1404,87 +1407,23 @@ define(['views/common/baseview',
                         "material": "Material",
                         "product": "Product",
                         "composites": "Composites",
+                        "clean": "Clean",
+                        "collector": "Collector",
+                        "direct": "Direct use",
+                        "iscomposite": "Composite",
+                        "mixed": "Mixed",
+                        "route": "Route",
                         "in": "Within these areas",
                         "out": "Outside these areas",
                     }
                 }
 
-                var logInfo = {
-                    "origin": {
-                        "companies": [
-                            "Frites uit Zuyd B.V."
-                        ],
-                        "role": "production",
-                        "adminlevel": "Country",
-                        "selectedAreas": [
-                            "France"
-                        ],
-                        "inOrOut": "out",
-                        "activitygroup": [
-                            "D. Electricity, gas, steam and air conditioning supply"
-                        ]
-                    },
-                    "destination": {
-                        "companies": [
-                            "ADM WILD Netherlands"
-                        ],
-                        "role": "treatment",
-                        "adminlevel": "Country",
-                        "selectedAreas": [
-                            "Belgium"
-                        ],
-                        "inOrOut": "out",
-                        "processgroup": [
-                            "B. Reuse"
-                        ]
-                    },
-                    "flows": {
-                        "adminlevel": "Country",
-                        "selectedAreas": [
-                            "The Netherlands",
-                            "Belgium"
-                        ],
-                        "inOrOut": "in",
-                        "year": [
-                            "2014"
-                        ],
-                        "hazardous": [
-                            "Hazardous"
-                        ],
-                        "waste06": [
-                            "010305. Other tailings containing dangerous substances*"
-                        ],
-                        "material": [
-                            "Bier"
-                        ],
-                        "product": [
-                            "Bleekaarde"
-                        ],
-                        "composites": [
-                            "Composiet"
-                        ],
-                        "dataset": [
-                            "Registry of all companies in the Netherlands"
-                        ]
-                    }
-                }
-
-                var blocks = ["origin", "destination"];
-
-                // blocks.forEach(block => {
-                //     for (const property in logInfo[block]) {
-
-                //         if (!["adminlevel",].includes(property))
-                //         console.log(`${property}: ${logInfo[block][property]}`);
-                //     }
-                // });
-
                 _this.getFilterParams();
-
 
                 if ((Object.keys(_this.log.origin).length > 0) || (Object.keys(_this.log.destination).length > 0) || (Object.keys(_this.log.flows).length > 0)) {
                     var html = document.getElementById("filter-log-template").innerHTML;
                     var template = _.template(html);
+                    this.hasFilters = true;
 
                     document.querySelector(".filterLog").innerHTML = template({
                         blocks: ["origin", "destination"],
@@ -1494,16 +1433,16 @@ define(['views/common/baseview',
                     });
 
                 } else {
+                    this.hasFilters = false;
                     $(".filterLog").html("<span>You haven't selected any filters.</span>")
                 }
                 $("#filter-log-container").fadeIn();
 
-
                 this.getFlowCount()
-
             },
 
             getFlowCount: function () {
+                var _this = this;
                 var params = this.getFilterParams();
                 params.requestFlowCount = true;
                 let flows = new Collection([], {
@@ -1514,7 +1453,17 @@ define(['views/common/baseview',
                     data: {},
                     body: params,
                     success: function (response) {
-                        
+                        response = response.models[0].attributes;
+                        console.log(response);
+
+                        let final_count = parseInt(response.final_count);
+                        let final_amount = d3plus.formatAbbreviate(response.final_amount, utils.returnD3plusFormatLocale());
+
+                        if (_this.hasFilters) {
+                            $(".filterLog").append(`<span id="filterSummaryResponse">The selected filter configuration matches <strong>${final_count} flows</strong> accounting for <strong>${final_amount} tonnes</strong> of waste.</span>`);
+                        } else {
+                            $(".filterLog").append(`<br><br><span id="filterSummaryResponse">You will query <strong>${final_count} flows</strong> accounting for <strong>${final_amount} tonnes</strong> of waste.</span>`);
+                        }
                     },
                     error: function (error) {
                         console.log(error);

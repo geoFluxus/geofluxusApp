@@ -957,7 +957,8 @@
 
           <button id='summarize-filters' class="btn btn-primary"
               title="Summarize the selected filters and check if there is data that matches."
-              style="margin-left: 10px; float: right; width: 10em">SUMMARIZE
+              style="margin-left: 10px; float: right; width: 10em">
+              TEST FILTERS
           </button>
       </div>
 
@@ -1183,12 +1184,13 @@
             </ul>
     <% }); %>
 
-    <% if (Object.keys(log.flows).length > 0) %>
+    <% let { dataset, year, month, ...rest} = log.flows %>
+    <% if (Object.keys(rest).length > 0) %>
     <h5 class="subtitle">Flows</h5>
     <ul>
         <% for (const property in log.flows) { %>
             <% if (!["adminlevel", "inOrOut", "dataset", "year", 'month'].includes(property)) %>
-                <li><strong><%= (property == "selectedAreas") ? filterNameMap.flows[log.flows.inOrOut] :  filterNameMap.flows[property] %>: </strong><span><%= log.flows[property].isArray ? log.flows[property].join(', ') : log.flows[property] %></span></li>
+                <li><strong><%= (property == "selectedAreas") ? "Pass through these areas" :  filterNameMap.flows[property] %>: </strong><span><%= log.flows[property].isArray ? log.flows[property].join(', ') : log.flows[property] %></span></li>
         <% } %>
     </ul>
 
