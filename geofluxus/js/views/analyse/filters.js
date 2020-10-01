@@ -1519,23 +1519,7 @@ define(['views/common/baseview',
                         "requestFlowCount": true
                     },
                     success: function (response) {
-                        _this.flows = flows.models;
-
-                        // _this.flows.forEach(function (flow, index) {
-                        //     this[index] = flow.attributes;
-                        // }, _this.flows);
-
-                        // _this.selectedDimensions.label = _this.labels[_this.indicator];
-
-                        // if (_this.flows.length == 0 ||
-                        //     _this.flows.every(function(flow) {return flow.amount == 0;})) {
-                        //     _this.loader.deactivate()
-                        //     $(".no-data-found").fadeIn();
-                        //     $(".no-data-found").addClass("d-flex");
-                        // } else {
-                        //     // Render visualization
-                        //     _this.renderVisualizations(_this.selectedDimensions, _this.flows, _this.selectedVizName);
-                        // }
+                        
                     },
                     error: function (error) {
                         console.log(error);
