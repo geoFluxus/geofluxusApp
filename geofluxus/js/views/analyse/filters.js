@@ -414,6 +414,16 @@ define(['views/common/baseview',
                 $(document).on('blur', 'input', function () {
                     focusedElement = null;
                 })
+
+                // Show dataset note attribute as title for mouseover in dropdown:
+                $(".flows-dataset-select-col button").click(function () {
+                    $(".flows-dataset-select-col .dropdown-menu ul li").each(function (index) {
+                        if (index >= 2) {
+                            $(this).prop('title', _this.collections.datasets.models[index - 2].get("note"));
+                        }
+                    })
+                })
+               
             },
 
             initializeActorFilters: function () {

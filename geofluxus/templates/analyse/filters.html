@@ -39,7 +39,7 @@
           <div class="card-body">
 
               <div class="row">
-                  <div class="col-md-4">
+                  <div class="col-md-4 flows-dataset-select-col">
                       <label for="flows-dataset-select">Data set</label>
                       <div class="labelHelpiconContainer">
                           <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Data set"
@@ -55,7 +55,8 @@
                           <% datasets.forEach(function(dataset){ %>
                           <option value="<%= dataset.id %>"><%= dataset.get('title') %></option>
                           <% }); %>
-                      </select>
+                          </select>
+                        <p id="tooltipBox" class="col-sm-6" style="z-index:9999;"></p>
 
 
                   </div>
