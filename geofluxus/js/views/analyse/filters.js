@@ -419,11 +419,16 @@ define(['views/common/baseview',
                 $(".flows-dataset-select-col button").click(function () {
                     $(".flows-dataset-select-col .dropdown-menu ul li").each(function (index) {
                         if (index >= 2) {
-                            $(this).prop('title', _this.collections.datasets.models[index - 2].get("note"));
+                            $(this).prop('id', _this.collections.datasets.models[index - 2].get("id"));
+
+                            $(this).tooltip({
+                                title: _this.collections.datasets.models[index - 2].get("note"),
+                                placement: "left",
+                            })
                         }
                     })
                 })
-               
+
             },
 
             initializeActorFilters: function () {

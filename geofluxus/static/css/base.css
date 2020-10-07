@@ -263,6 +263,9 @@ input {
     text-decoration: underline;
 }
 
+.tooltip-inner {
+    border-radius: 0.5rem !important;
+}
 
 /* Helpicons to open popover tooltips */
 

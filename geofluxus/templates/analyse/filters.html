@@ -39,7 +39,7 @@
           <div class="card-body">
 
               <div class="row">
-                  <div class="col-md-4 flows-dataset-select-col">
+                  <div class="col-md-3 flows-dataset-select-col">
                       <label for="flows-dataset-select">Data set</label>
                       <div class="labelHelpiconContainer">
                           <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Data set"
@@ -57,13 +57,20 @@
                           <% }); %>
                           </select>
                         <p id="tooltipBox" class="col-sm-6" style="z-index:9999;"></p>
+                  </div>
+
+                  <div class="col-md-3"></div>
+
+                  <div class="col-md-6 flows-dataset-description-col text-white" style="display: none;">
+                    <span>
+                    </span>
 
 
                   </div>
               </div>
 
               <div class="row pb-4">
-                      <div class="col-md-4">
+                      <div class="col-md-3">
 
                           <label for="flows-year-select">Year</label>
                           <div class="labelHelpiconContainer">
@@ -85,7 +92,7 @@
                           </select>
                       </div>
 
-                      <div class="col-md-4" id="flows-monthsCol" style="display: none;">
+                      <div class="col-md-3" id="flows-monthsCol" style="display: none;">
 
                           <label for="flows-month-select">Month</label>
                           <div class="labelHelpiconContainer">
