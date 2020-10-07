@@ -424,6 +424,28 @@ define(['views/common/baseview',
                             $(this).tooltip({
                                 title: _this.collections.datasets.models[index - 2].get("note"),
                                 placement: "left",
+                                boundary: "window",
+                            })
+                        }
+                    })
+                })
+
+                $('.flows-dataset-select-col').on('hide.bs.dropdown', function () {
+                    $(".flows-dataset-select-col .dropdown-menu ul li").each(function (index) {
+                        $(this).tooltip('dispose')
+                    });
+                })
+
+                $(this.flows.datasetSelect).on('changed.bs.select', function(){
+                    $(".tooltip").remove();
+                    $(".flows-dataset-select-col .dropdown-menu ul li").each(function (index) {
+                        if (index >= 2) {
+                            $(this).prop('id', _this.collections.datasets.models[index - 2].get("id"));
+
+                            $(this).tooltip({
+                                title: _this.collections.datasets.models[index - 2].get("note"),
+                                placement: "left",
+                                boundary: "window",
                             })
                         }
                     })
