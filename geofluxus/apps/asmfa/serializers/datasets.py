@@ -1,5 +1,6 @@
 from rest_framework.serializers import (HyperlinkedModelSerializer,
-                                        PrimaryKeyRelatedField)
+                                        PrimaryKeyRelatedField,
+                                        CharField)
 from geofluxus.apps.asmfa.models import (DatasetType,
                                          Dataset)
 
@@ -22,6 +23,7 @@ class DatasetTypeListSerializer(DatasetTypeSerializer):
 # Dataset
 class DatasetSerializer(HyperlinkedModelSerializer):
     datasettype = PrimaryKeyRelatedField(read_only=True)
+    note = CharField()
 
     class Meta:
         model = Dataset
