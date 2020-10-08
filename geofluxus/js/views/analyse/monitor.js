@@ -612,7 +612,7 @@ define(['views/common/baseview',
 
                 $(_this.treatmentMethodToggle).bootstrapToggle('off');
                 $(_this.treatmentMethodToggleGran).bootstrapToggle('off');
-                $(_this.treatmentMethodOrigDest).bootstrapToggle('off');
+                $(_this.treatmentMethodOrigDest).bootstrapToggle('on');
                 $("#gran-treatment-method-col").hide();
                 $("#origDest-toggle-treatment-col").hide();
 
