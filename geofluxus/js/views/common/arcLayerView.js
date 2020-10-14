@@ -88,7 +88,6 @@ define(['views/common/deckglView',
                         isDarkMode: _this.isDarkMode,
                     }), document.querySelector(this.options.el));
                     utils.scrollToVizRow();
-
                     this.addButtons();
                 },
 
