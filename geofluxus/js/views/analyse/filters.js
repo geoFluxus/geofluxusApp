@@ -363,32 +363,35 @@ define(['views/common/baseview',
 
                         fields.forEach(function (field, idx) {
                             var selector = $(_this[group][field + 'Select']); // field selector
-                            options = selector[0].options; // selector options
 
-
-                            selector.on('changed.bs.select', _this.closeFilterLog)
-
-                            // Exclude non-fuzzy booleans (either true or false).
-                            // To find them, check if there are options, including 'both'
-                            if (!(options.length > 0 && options[0].value == 'both')) {
-
-                                // Add multiCheck event listener
-                                selector.on('changed.bs.select', multiCheck);
-
-                                // For hierarchical fields, check if there is a child field
-                                var next = fields[idx + 1]; // next field in order
-
-                                // If there is a child field:
-                                if (next !== undefined) {
-                                    // Add filterbyParent event listener. This will render child menu, filtered by current field:
-                                    selector.on('changed.bs.select', {
-                                            group: group,
-                                            parent: field,
-                                            child: next
-                                        },
-                                        filterbyParent);
+                            if (!_.isEmpty(selector)) {
+                                options = selector[0].options; // selector options
+        
+                                selector.on('changed.bs.select', _this.closeFilterLog)
+    
+                                // Exclude non-fuzzy booleans (either true or false).
+                                // To find them, check if there are options, including 'both'
+                                if (!(options.length > 0 && options[0].value == 'both')) {
+    
+                                    // Add multiCheck event listener
+                                    selector.on('changed.bs.select', multiCheck);
+    
+                                    // For hierarchical fields, check if there is a child field
+                                    var next = fields[idx + 1]; // next field in order
+    
+                                    // If there is a child field:
+                                    if (next !== undefined) {
+                                        // Add filterbyParent event listener. This will render child menu, filtered by current field:
+                                        selector.on('changed.bs.select', {
+                                                group: group,
+                                                parent: field,
+                                                child: next
+                                            },
+                                            filterbyParent);
+                                    }
                                 }
                             }
+
                         })
                     })
                 })

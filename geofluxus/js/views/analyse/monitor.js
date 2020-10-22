@@ -595,7 +595,7 @@ define(['views/common/baseview',
                 // Dimension controls:
 
                 $(_this.timeToggle).bootstrapToggle('off');
-                $(_this.timeToggleGran).bootstrapToggle('off');
+                $(_this.timeToggleGran).bootstrapToggle('on');
                 $("#gran-toggle-time-col").hide();
 
                 $(_this.spaceToggle).bootstrapToggle('off');

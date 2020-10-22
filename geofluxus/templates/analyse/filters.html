@@ -36,10 +36,13 @@
               </h4>
           </div>
 
-          <div class="card-body">
+          <div class="card-body" style="min-height: 10rem;">
 
-                {% if request.user|isExpertUser %}
-                <div class="row">
+                <div class="row" 
+                    {% if not request.user|isExpertUser %}
+                    style="display: none;"
+                    {% endif %}                
+                    >
                     <div class="col-md-3 flows-dataset-select-col">
                       <label for="flows-dataset-select">Data set</label>
                       <div class="labelHelpiconContainer">
@@ -59,7 +62,7 @@
                           </select>
                   </div>
               </div>
-              {% endif %}
+
 
               <div class="row pb-4">
                       <div class="col-md-3">
@@ -74,7 +77,7 @@
                           </div>
 
                           <select name="flows-year-select" id="flows-year-select" multiple
-                              class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
+                              class="form-control form-control-sm selectpicker" data-size="6"
                               style="resize: vertical;">
                               <option selected value="-1">All (<%= years.count %>)</option>
                               <option data-divider="true"></option>
@@ -96,7 +99,7 @@
 
                           <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                           <select name="flows-month-select" id="flows-month-select" multiple
-                              class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
+                              class="form-control form-control-sm selectpicker" data-live-search="true" data-size="4"
                               style="resize: vertical;">
                           </select>
                       </div>
@@ -193,16 +196,16 @@
 
                           <div>
                               <div class="btn-group btn-group-toggle" id="origin-role-radio" data-toggle="buttons"
-                                  style="width: 20rem;">
+                                  style="width: 25rem;">
 
                                   <label class="btn btn-sm btn-primary origin-role" style="width: 40%;" role="production">
-                                      <input type="radio" id="origin-role-radio-production">Production
+                                      <input type="radio" id="origin-role-radio-production">Waste production
                                   </label>
                                   <label class="btn btn-sm btn-primary origin-role active" style="width: 20%;" role="both">
                                       <input type="radio" id="origin-role-radio-both">Both
                                   </label>
                                   <label class="btn btn-sm btn-primary origin-role" style="width: 40%;" role="treatment">
-                                      <input type="radio" id="origin-role-radio-treatment">Treatment
+                                      <input type="radio" id="origin-role-radio-treatment">Waste treatment
                                   </label>
 
                               </div>
@@ -439,16 +442,16 @@
 
                           <div>
                               <div class="btn-group btn-group-toggle" id="destination-role-radio"
-                                  data-toggle="buttons" style="width: 20rem;">
+                                  data-toggle="buttons" style="width: 25rem;">
 
                                   <label class="btn btn-sm btn-primary destination-role" style="width: 40%;" role="production">
-                                      <input type="radio" id="destination-role-radio-production" checked>Production
+                                      <input type="radio" id="destination-role-radio-production" checked>Waste production
                                   </label>
                                   <label class="btn btn-sm btn-primary destination-role active" style="width: 20%;" role="both">
                                       <input type="radio" id="destination-role-radio-both">Both
                                   </label>
                                   <label class="btn btn-sm btn-primary destination-role" style="width: 40%;" role="treatment">
-                                      <input type="radio" id="destination-role-radio-treatment">Treatment
+                                      <input type="radio" id="destination-role-radio-treatment">Waste treatment
                                   </label>
 
                               </div>
@@ -799,122 +802,127 @@
                       </div>
                   </div>
 
-                  <h5 class="subtitle">Characteristics</h5>
-                  <div class="row">
-                      <div class="col-md-3">
-                          <label for="flows-clean-select">Clean</label>
-                          <div class="labelHelpiconContainer">
-                              <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Clean"
-                                  data-html="true" tabindex="0"
-                                  data-content="The Clean filter indicates the extent to which a
-                                  flow is expected to be contaminated with another substance. ‘Mono’ streams are considered
-                                  clean streams since they consist of one material and are not contaminated, i.e. clean.">
-                              </a>
-                          </div>
-                          <select id="flows-clean-select" name="flows-clean-select"
-                              class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
-                              <option selected value='-1'>Ignore</option>
-                              <option data-divider="true"></option>
-                              <option value='unknown'>Unknown</option>
-                              <option value='no'>Not clean</option>
-                              <option value='yes'>Clean</option>
-                          </select>
-                      </div>
-                      <div class="col-md-3">
-                          <label for="flows-mixed-select">Mixed</label>
-                          <div class="labelHelpiconContainer">
-                              <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Mixed"
-                                  data-html="true" tabindex="0" data-content="The Mixed category indicates whether the flow
-                                  contains two or more materials. A mixed flow could consist of two or more clean materials
-                                  (masonry and concrete rubble, f.e.), but also two materials of which one is an identified
-                                  pollutant (soil containing mineral oil, f.e.). All non-clean flows are by definition mixed,
-                                  indicating they contain two or more materials.">
-                              </a>
-                          </div>
-                          <select id="flows-mixed-select" name="flows-mixed-select"
-                              class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
-                              <option selected value='-1'>Ignore</option>
-                              <option data-divider="true"></option>
-                              <option value='unknown'>Unknown</option>
-                              <option value='no'>Not mixed</option>
-                              <option value='yes'>Mixed</option>
-                          </select>
-                      </div>
-                      <div class="col-md-3">
-                          <label for="flows-direct-select">Direct use</label>
-                          <div class="labelHelpiconContainer">
-                              <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Direct use"
-                                  data-html="true" tabindex="0" data-content="The Direct use filter indicates whether
-                                  a flow is (expected to be) directly reusable in its current form and no additional
-                                  processing is required. ">
-                              </a>
-                          </div>
-                          <select id="flows-direct-select" name="flows-direct-select"
-                              class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
-                              <option selected value='-1'>Ignore</option>
-                              <option data-divider="true"></option>
-                              <option value='unknown'>Unknown</option>
-                              <option value='no'>Not direct</option>
-                              <option value='yes'>Direct</option>
-                          </select>
-                      </div>
-                      <div class="col-md-3">
-                          <label for="flows-iscomposite-select">Composite</label>
-                          <div class="labelHelpiconContainer">
-                              <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Composite"
-                                  data-html="true" tabindex="0" data-content="The Composite filter indicates whether a flow contains a
-                                  known composite consisting of two or more materials.">
-                              </a>
-                          </div>
-                          <select id="flows-iscomposite-select" name="flows-iscomposite-select"
-                              class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
-                              <option selected value='-1'>Ignore</option>
-                              <option data-divider="true"></option>
-                              <option value='unknown'>Unknown</option>
-                              <option value='no'>Product</option>
-                              <option value='yes'>Composite</option>
-                          </select>
-                      </div>
-                  </div>
-                  <div class="row pb-4">
-                      <div class="col-md-3">
-                          <label for="flows-route-select">Route</label>
-                          <div class="labelHelpiconContainer">
-                              <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Route"
-                                  data-html="true" tabindex="0" data-content="The Route property indicates whether a waste collection company has collected the same type of waste
-                                      from multiple different producers of waste. During the waste collection process, the waste from
-                                      all sources is combined.
-                                      <br>
-                                      An example would be municipal waste collection in which the waste from every building is collected by a truck.
-                                  ">
-                              </a>
-                          </div>
-                          <select name="flows-route-select" id="flows-route-select"
-                              class="form-control form-control-sm selectpicker">
-                              <option value='both'>Ignore</option>
-                              <option value='no'>Not route</option>
-                              <option value='yes'>Route</option>
-                          </select>
-                      </div>
-                      <div class="col-md-3">
-                          <label for="flows-collector-select">Collector</label>
-                          <div class="labelHelpiconContainer">
-                              <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Collector"
-                                  data-html="true" tabindex="0" data-content="<span>The Collector property indicates whether
-                                      a waste collection company has collected the same type of waste from different sources.
-                                      In this case, the waste from the different sources has not been combined,
-                                      and may only consist of certain types of waste, which can be consulted
-                                      <a href='https://www.lma.nl/publish/pages/105041/5-bijlage-a-van-de-regeling2.pdf'>here</a>.</span>
-                                  ">
-                              </a>
-                          </div>
-                          <select name="flows-collector-select" id="flows-collector-select"
-                              class="form-control form-control-sm selectpicker">
-                              <option value='both'>Ignore</option>
-                              <option value='no'>Not collector</option>
-                              <option value='yes'>Collector</option>
-                          </select>
-                      </div>
+                  <div {% if not request.user|isExpertUser %}
+                    style="display: none;"
+                    {% endif %}>
+                  
+                    <h5 class="subtitle">Characteristics</h5>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="flows-clean-select">Clean</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Clean"
+                                    data-html="true" tabindex="0"
+                                    data-content="The Clean filter indicates the extent to which a
+                                    flow is expected to be contaminated with another substance. ‘Mono’ streams are considered
+                                    clean streams since they consist of one material and are not contaminated, i.e. clean.">
+                                </a>
+                            </div>
+                            <select id="flows-clean-select" name="flows-clean-select"
+                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
+                                <option selected value='-1'>Ignore</option>
+                                <option data-divider="true"></option>
+                                <option value='unknown'>Unknown</option>
+                                <option value='no'>Not clean</option>
+                                <option value='yes'>Clean</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="flows-mixed-select">Mixed</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Mixed"
+                                    data-html="true" tabindex="0" data-content="The Mixed category indicates whether the flow
+                                    contains two or more materials. A mixed flow could consist of two or more clean materials
+                                    (masonry and concrete rubble, f.e.), but also two materials of which one is an identified
+                                    pollutant (soil containing mineral oil, f.e.). All non-clean flows are by definition mixed,
+                                    indicating they contain two or more materials.">
+                                </a>
+                            </div>
+                            <select id="flows-mixed-select" name="flows-mixed-select"
+                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
+                                <option selected value='-1'>Ignore</option>
+                                <option data-divider="true"></option>
+                                <option value='unknown'>Unknown</option>
+                                <option value='no'>Not mixed</option>
+                                <option value='yes'>Mixed</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="flows-direct-select">Direct use</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Direct use"
+                                    data-html="true" tabindex="0" data-content="The Direct use filter indicates whether
+                                    a flow is (expected to be) directly reusable in its current form and no additional
+                                    processing is required. ">
+                                </a>
+                            </div>
+                            <select id="flows-direct-select" name="flows-direct-select"
+                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
+                                <option selected value='-1'>Ignore</option>
+                                <option data-divider="true"></option>
+                                <option value='unknown'>Unknown</option>
+                                <option value='no'>Not direct</option>
+                                <option value='yes'>Direct</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="flows-iscomposite-select">Composite</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Composite"
+                                    data-html="true" tabindex="0" data-content="The Composite filter indicates whether a flow contains a
+                                    known composite consisting of two or more materials.">
+                                </a>
+                            </div>
+                            <select id="flows-iscomposite-select" name="flows-iscomposite-select"
+                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
+                                <option selected value='-1'>Ignore</option>
+                                <option data-divider="true"></option>
+                                <option value='unknown'>Unknown</option>
+                                <option value='no'>Product</option>
+                                <option value='yes'>Composite</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row pb-4">
+                        <div class="col-md-3">
+                            <label for="flows-route-select">Route</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Route"
+                                    data-html="true" tabindex="0" data-content="The Route property indicates whether a waste collection company has collected the same type of waste
+                                        from multiple different producers of waste. During the waste collection process, the waste from
+                                        all sources is combined.
+                                        <br>
+                                        An example would be municipal waste collection in which the waste from every building is collected by a truck.
+                                    ">
+                                </a>
+                            </div>
+                            <select name="flows-route-select" id="flows-route-select"
+                                class="form-control form-control-sm selectpicker">
+                                <option value='both'>Ignore</option>
+                                <option value='no'>Not route</option>
+                                <option value='yes'>Route</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="flows-collector-select">Collector</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Collector"
+                                    data-html="true" tabindex="0" data-content="<span>The Collector property indicates whether
+                                        a waste collection company has collected the same type of waste from different sources.
+                                        In this case, the waste from the different sources has not been combined,
+                                        and may only consist of certain types of waste, which can be consulted
+                                        <a href='https://www.lma.nl/publish/pages/105041/5-bijlage-a-van-de-regeling2.pdf'>here</a>.</span>
+                                    ">
+                                </a>
+                            </div>
+                            <select name="flows-collector-select" id="flows-collector-select"
+                                class="form-control form-control-sm selectpicker">
+                                <option value='both'>Ignore</option>
+                                <option value='no'>Not collector</option>
+                                <option value='yes'>Collector</option>
+                            </select>
+                        </div>
+                    </div>
                   </div>
 
 
