@@ -12,14 +12,14 @@
                   <% if (maxNumberOfDimensions == 1) { %>
                       <span style="color: white">Select at least one dimension.</span>
                   <% } else { %>
-                      <span style="color: white">Select between 1 and <%= maxNumberOfDimensions %> dimensions in order to aggregate the data.</span>
+                      <span style="color: white">Select between 1 and <%= maxNumberOfDimensions %> properties of the waste flows by which the waste flow data will be aggregated.</span>
                   <% } %>
                   </div>
           </div>
           <div class="row" id="alertMaxDimensionsRow" style="display: none;">
               <div class="col mt-3 text-center">
                   <div class="alert alert-warning fade show" id="alertMaxDimensions" role="alert">
-                      You can select up to <strong><%= maxNumberOfDimensions %> dimensions</strong> at the same time.
+                      You can select up to <strong><%= maxNumberOfDimensions %> properties</strong> at the same time.
                   </div>
               </div>
           </div>
@@ -250,17 +250,17 @@
           </button>
 
           <div>
+              <button id='apply-filters' class="btn btn-primary"
+                  title="Apply the filters and render the selected visualization."
+                  style="margin-left: 10px; float: left; width: 10em">VISUALIZE
+              </button>
               <div class="helpIconContainer d-inline-flex align-items-center">
                   <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Visualize"
-                      style="float: left;" data-html="true" tabindex="0"
+                      style="float: right; margin-left: 4px !important;" data-html="true" tabindex="0"
                       data-content="<b>Filter</b> the waste flows according to the filters in Origin, Destination,
                       and Flows, and <b>render</b> the selected visualization based on the chosen dimensions and granularity.">
                   </a>
               </div>
-              <button id='apply-filters' class="btn btn-primary"
-                  title="Apply the filters and render the selected visualization."
-                  style="margin-left: 10px; float: right; width: 10em">VISUALIZE
-              </button>
           </div>
       </div>
   </div>

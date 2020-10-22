@@ -571,6 +571,8 @@ define(['views/common/baseview',
                                 var areas = _this.areas[levelId];
                                 var block = _this.areaMap.block;
 
+                                _this.closeFilterLog();
+
                                 // The user has selected an area for the Origin block:
                                 _this[block].selectedAreas = [];
                                 areaFeats.forEach(function (areaFeat) {
@@ -589,7 +591,9 @@ define(['views/common/baseview',
 
                                 // Trigger input event on textareas in order to autoresize if needed:
                                 $(".selections").trigger('input');
-                                $(".selections").textareaAutoSize();
+                                setTimeout(() => {
+                                    $(".selections").textareaAutoSize();
+                                }, 100);
                             }
                         }
                     });
@@ -1507,7 +1511,7 @@ define(['views/common/baseview',
                             if (response.final_count == 0) {
                                 $(".filterLog").append(`<br><br><span class="filterSummaryResponse nodata">The filters you selected match <strong>no data</strong>. Please <strong>adjust the filtering</strong> of the waste flows.<strong></strong></span>`);
                                 _this.filtersMatchAnyData = false;
-                                $(".goalblock").fadeOut();
+                                $(".goalContainer").fadeOut();
                             } else {
                                 $(".filterLog").append(`<br><br><span class="filterSummaryResponse data">You will query <strong>${final_count} flows</strong> accounting for <strong>${final_amount} tonnes</strong> of waste.</span>`);
                                 _this.filtersMatchAnyData = true;
@@ -1526,7 +1530,7 @@ define(['views/common/baseview',
 
             closeFilterLog: function () {
                 $(".filter-log-container").fadeOut();
-                $(".goalblock").show();
+                $(".goalContainer").show();
             },
 
             close: function () {

@@ -60,6 +60,10 @@
   text-decoration: none !important;
 }
 
+.collapsingHeaderButton i.fa-chevron-down {
+  color: var(--primary-focus-bg) !important;
+}
+
 .collapsingHeaderButton:hover {
   background-color: inherit;
   color: white;
