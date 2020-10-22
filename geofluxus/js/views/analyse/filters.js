@@ -366,7 +366,7 @@ define(['views/common/baseview',
                             options = selector[0].options; // selector options
 
 
-                            // selector.on('changed.bs.select', updateLogs)
+                            selector.on('changed.bs.select', _this.closeFilterLog)
 
                             // Exclude non-fuzzy booleans (either true or false).
                             // To find them, check if there are options, including 'both'
@@ -1492,13 +1492,19 @@ define(['views/common/baseview',
                     success: function (response) {
                         response = response.models[0].attributes;
 
-                        let final_count = parseInt(response.final_count);
+                        let final_count = d3plus.formatAbbreviate(parseInt(response.final_count), utils.returnD3plusFormatLocale());
                         let final_amount = d3plus.formatAbbreviate(response.final_amount, utils.returnD3plusFormatLocale());
 
                         if (_this.hasFilters) {
                             $(".filterLog").append(`<span id="filterSummaryResponse">The selected filter configuration matches <strong>${final_count} flows</strong> accounting for <strong>${final_amount} tonnes</strong> of waste.</span>`);
                         } else {
-                            $(".filterLog").append(`<br><br><span id="filterSummaryResponse">You will query <strong>${final_count} flows</strong> accounting for <strong>${final_amount} tonnes</strong> of waste.</span>`);
+
+                            if (response.final_count == 0) {
+                                $(".filterLog").append(`<br><br><span id="filterSummaryResponse">You will query <strong>${final_count} flows</strong> accounting for <strong>${final_amount} tonnes</strong> of waste.</span>`);
+                            } else {
+
+                            }
+
                         }
                     },
                     error: function (error) {
