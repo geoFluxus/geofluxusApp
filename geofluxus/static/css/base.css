@@ -2,11 +2,15 @@
   --primary: #97bea9;
   --primary-border: rgb(114, 145, 128);
   --font-color: white;
+
+  --primary-hover-bg: rgb(62, 107, 82);
+  --primary-hover-border: rgb(71, 109, 88);
+
   --primary-focus-bg: rgb(89, 155, 119);
   --primary-focus-border: rgb(71, 109, 88);
 
   /* orange */
-  --secondary: #F7F7D5;
+  --secondary: #f7f7d5;
 }
 
 a {
@@ -159,6 +163,13 @@ input {
   border-color: grey;
   color: white;
   box-shadow: none;
+}
+
+
+.btn-primary:hover,
+.toggle-group label.active:hover {
+  background-color: var(--primary-hover-bg);
+  border-color: var(--primary-hover-border);
 }
 
 .btn:focus {
