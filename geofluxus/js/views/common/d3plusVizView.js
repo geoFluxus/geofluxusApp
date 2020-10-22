@@ -84,6 +84,9 @@ define(['views/common/baseview',
                     // Only scroll when going to normal view:
                     if (!$(this.el).hasClass('fullscreen')) {
                         utils.scrollToVizRow();
+                        $("body").css("overflow", "visible");
+                    } else {
+                        $("body").css("overflow", "hidden");
                     }
                     window.dispatchEvent(new Event('resize'));
                     event.stopImmediatePropagation();

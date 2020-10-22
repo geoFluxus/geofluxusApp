@@ -104,14 +104,17 @@ define(['views/common/baseview',
                 toggleFullscreen: function (event) {
                     $(this.options.subContainer).toggleClass('fullscreen');
                     // Only scroll when going to normal view:
+                    
                     if (!$(this.options.el).hasClass('fullscreen')) {
                         window.scrollTo({
                             top: $(".visualizationRow")[0].getBoundingClientRect().top + window.pageYOffset - 20,
                             block: "start",
                             inline: "nearest",
                         });
+                        $("body").css("overflow", "visible");
+                    } else {
+                        $("body").css("overflow", "hidden");
                     }
-                    // this.render();
                 },
 
                 toggleDarkMode: function () {
