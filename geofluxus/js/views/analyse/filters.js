@@ -276,13 +276,15 @@ define(['views/common/baseview',
 
                         // update filter logs on selection
                         _this.getFilterParams();
-
+                        _this.closeFilterLog();
+                        
                         event.preventDefault(); // avoid firing twice!
                     })
 
                     // update filter logs on selection
                     $('#' + group + '-area-in-or-out').change(function (event) {
                         _this.getFilterParams();
+                        _this.closeFilterLog();
                     })
                 })
 
@@ -306,6 +308,7 @@ define(['views/common/baseview',
                     }
                 }
                 $(this.flows.hazardousSelect).on('changed.bs.select', filterHazardous);
+                $(this.flows.hazardousSelect).on('changed.bs.select',  _this.closeFilterLog());
 
                 // Enable multiple check for selectors
                 function multiCheck(evt, clickedIndex, checked) {
@@ -367,7 +370,7 @@ define(['views/common/baseview',
                             if (!_.isEmpty(selector)) {
                                 options = selector[0].options; // selector options
         
-                                selector.on('changed.bs.select', _this.closeFilterLog)
+                                selector.on('changed.bs.select', _this.closeFilterLog);
     
                                 // Exclude non-fuzzy booleans (either true or false).
                                 // To find them, check if there are options, including 'both'
@@ -501,6 +504,7 @@ define(['views/common/baseview',
 
                     // Store selection:
                     $("#" + group + "-actor-select").on('changed.bs.select', function () {
+                        _this.closeFilterLog();
                         _this[group].selectedActors = $("#" + group + "-actor-select").val();
                         $("." + group + "-actor-select-col .status").show();
                         setTimeout(function () {
@@ -686,6 +690,7 @@ define(['views/common/baseview',
 
                     // update filter logs
                     _this.getFilterParams();
+                    _this.closeFilterLog();
                 }
             },
 
@@ -1206,7 +1211,7 @@ define(['views/common/baseview',
             resetFiltersToDefault: function () {
                 _this = this;
 
-                $("#filter-log-container").fadeOut();
+                $(".filter-log-container").fadeOut();
 
                 var groups = ['origin', 'destination']
                 groups.forEach(function (group) {
@@ -1476,7 +1481,7 @@ define(['views/common/baseview',
                     this.hasFilters = false;
                     $(".filterLog").html("<span>You haven't selected any filters.</span>")
                 }
-                $("#filter-log-container").fadeIn();
+                $(".filter-log-container").fadeIn();
 
                 this.getFlowCount()
             },
@@ -1499,15 +1504,18 @@ define(['views/common/baseview',
                         let final_amount = d3plus.formatAbbreviate(response.final_amount, utils.returnD3plusFormatLocale());
 
                         if (_this.hasFilters) {
-                            $(".filterLog").append(`<span id="filterSummaryResponse">The selected filter configuration matches <strong>${final_count} flows</strong> accounting for <strong>${final_amount} tonnes</strong> of waste.</span>`);
-                        } else {
-
                             if (response.final_count == 0) {
-                                $(".filterLog").append(`<br><br><span id="filterSummaryResponse">You will query <strong>${final_count} flows</strong> accounting for <strong>${final_amount} tonnes</strong> of waste.</span>`);
+                                $(".filterLog").append(`<br><br><span class="filterSummaryResponse nodata">The filters you selected match <strong>no data</strong>. Please <strong>adjust the filtering</strong> of the waste flows.<strong></strong></span>`);
+                                _this.filtersMatchAnyData = false;
+                                $(".goalblock").fadeOut();
                             } else {
-
+                                $(".filterLog").append(`<br><br><span class="filterSummaryResponse data">You will query <strong>${final_count} flows</strong> accounting for <strong>${final_amount} tonnes</strong> of waste.</span>`);
+                                _this.filtersMatchAnyData = true;
                             }
 
+                        } else {
+                            $(".filterLog").append(`<br><br><span class="filterSummaryResponse data">You will query <strong>${final_count} flows</strong> accounting for <strong>${final_amount} tonnes</strong> of waste.</span>`);
+                            _this.filtersMatchAnyData = true;
                         }
                     },
                     error: function (error) {
@@ -1517,7 +1525,8 @@ define(['views/common/baseview',
             },
 
             closeFilterLog: function () {
-                $("#filter-log-container").fadeOut();
+                $(".filter-log-container").fadeOut();
+                $(".goalblock").show();
             },
 
             close: function () {

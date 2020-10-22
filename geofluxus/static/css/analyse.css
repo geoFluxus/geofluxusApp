@@ -1168,7 +1168,22 @@ div.fullscreen {
   border-radius: 18px !important;
 }
 
+.filterLog * {
+  color: white !important;
+}
+
+.filterSummaryResponse.data,
+.filterSummaryResponse.data strong {
+  color: rgb(89, 155, 119) !important;
+}
+
+.filterSummaryResponse.nodata,
+.filterSummaryResponse.nodata strong {
+  color: #B2726A !important;
+}
+
 .closeFilterLog {
   position: relative;
   right: 0.8rem;
 }
+

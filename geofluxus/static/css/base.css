@@ -4,6 +4,9 @@
   --font-color: white;
   --primary-focus-bg: rgb(89, 155, 119);
   --primary-focus-border: rgb(71, 109, 88);
+
+  /* orange */
+  --secondary: #F7F7D5;
 }
 
 a {
@@ -274,7 +277,7 @@ body .tooltip .arrow::before {
 .help-icon.fa-question-circle {
   margin-left: 10px;
   font-size: 25px;
-  color: grey;
+  color: var(--secondary);
 }
 
 .help-icon.fa-question-circle:hover {
