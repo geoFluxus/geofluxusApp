@@ -102,6 +102,7 @@ define(['views/common/baseview',
                     $(this.options.el).html("");
                     this.isDarkMode = !this.isDarkMode;
                     $(".viz-wrapper-div").toggleClass("lightMode");
+                    $(".visualizationBlock .card").toggleClass("lightMode");
                     this.render();
                 },
 

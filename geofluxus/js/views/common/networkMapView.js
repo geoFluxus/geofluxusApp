@@ -174,6 +174,7 @@ define(['views/common/baseview',
 
                 toggleDarkMode: function () {
                     $(this.options.el).html("");
+                    $(".visualizationBlock .card").toggleClass("lightMode");
                     this.isDarkMode = !this.isDarkMode;
                     this.render();
                 },

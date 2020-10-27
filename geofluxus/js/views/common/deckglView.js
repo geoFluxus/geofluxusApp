@@ -126,6 +126,7 @@ define(['views/common/baseview',
                     }
 
                     $(".viz-wrapper-div").toggleClass("lightMode");
+                    $(".visualizationBlock .card").toggleClass("lightMode");
                     this.fontColor = this.isDarkMode ? "white" : "black";
                     this.render();
                 },

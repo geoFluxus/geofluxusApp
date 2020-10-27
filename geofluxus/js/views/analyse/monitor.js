@@ -455,6 +455,9 @@ define(['views/common/baseview',
                 let collections = this.filtersView.collections,
                     tags = this.filtersView.tags;
 
+                $(".visualizationBlock .card").removeClass("lightMode");
+                $(".visualizationBlock").fadeIn();
+
                 // Enrich flows with info
                 let adminlevel = null;
                 dimensions.forEach(function (dimension) {
@@ -530,6 +533,9 @@ define(['views/common/baseview',
             },
 
             closeAllVizViews: function () {
+
+                $(".visualizationBlock").fadeOut();
+
                 $(".no-data-found").fadeOut();
                 $(".no-data-found").removeClass("d-flex");
 

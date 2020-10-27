@@ -203,6 +203,7 @@ define(['views/common/baseview',
                 toggleDarkMode: function () {
                     this.isDarkMode = !this.isDarkMode;
                     $(".viz-wrapper-div").toggleClass("lightMode");
+                    $(".visualizationBlock .card").toggleClass("lightMode");
                     this.fontColor = this.isDarkMode ? "white" : "black";
                     this.render();
                 },
