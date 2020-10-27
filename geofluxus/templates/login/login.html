@@ -13,7 +13,7 @@
 
         <div class="card-body px-4">
           <h5 class="card-title text-center mt-4 text-white">Login</h5>
-          <form class="form-signin w-100" method="post" action="/login/?next={{next}}">
+          <form class="form-signin w-100" method="post" action="/login/?next=/analyse/">
             {% csrf_token %}
             <div class="form-label-group">
               <input id="id_username" name="username" placeholder="Username" type="text"
