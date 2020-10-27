@@ -10,7 +10,7 @@ define([
          */
         constructor(options) {
             this.options = options;
-            this.exportPngIconHtml = "<i class='fas fa-camera icon-save-image' title='Export this visualization as a PNG file.'></i>"
+            this.exportPngIconHtml = "<div class='icon-save-image'></div>";//"<i class='fas fa-camera icon-save-image' title='Export this visualization as a PNG file.'></i>"
             this.loadingHTML =
                 `<div style="left: 50%; top: 50%; position: absolute; transform: translate(-50%, -50%); font-family: 'Montserrat', sans-serif;">
                   <strong>Loading Visualization</strong>
@@ -27,6 +27,12 @@ define([
         addButtons() {
             let _this = this;
             let svg = d3.select(".d3plus-viz");
+
+            $(".icon-save-image").parent().css({
+                "opacity": "0",
+                "z-index": "-1000",
+            });
+
             svg.select(".d3plus-Form.d3plus-Form-Button")
                 .append("button")
                 .attr("class", "d3plus-Button fullscreen-toggle")
@@ -34,12 +40,12 @@ define([
                 .attr("type", "button")
                 .html('<i class="fas fa-expand icon-fullscreen"></i>')
 
-            svg.select(".d3plus-Form.d3plus-Form-Button")
-                .append("button")
-                .attr("class", "d3plus-Button export-csv")
-                .attr("title", "Export the data of this visualization as a CSV file.")
-                .attr("type", "button")
-                .html('<i class="fas fa-file icon-export"></i>');
+            // svg.select(".d3plus-Form.d3plus-Form-Button")
+            //     .append("button")
+            //     .attr("class", "d3plus-Button export-csv")
+            //     .attr("title", "Export the data of this visualization as a CSV file.")
+            //     .attr("type", "button")
+            //     .html('<i class="fas fa-file icon-export"></i>');
 
             svg.select(".d3plus-Form.d3plus-Form-Button")
                 .append("button")

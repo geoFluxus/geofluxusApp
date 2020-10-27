@@ -31,6 +31,7 @@
     "d3-scale-chromatic": "^1.5.0",
     "d3-tip": "^0.7.1",
     "d3plus": "^2.0.0-alpha.29",
+    "d3plus-export": "0.3",
     "datatables.net": "^1.10.16",
     "datatables.net-bs": "^1.10.16",
     "datatables.net-buttons-bs": "^1.5.1",

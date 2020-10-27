@@ -129,7 +129,7 @@
               </div>
 
               <div class="col-md-3" id="gran-treatment-method-col" style="display: none">
-                  
+
                    <div class="btn-group btn-group-toggle" id="gran-radio-treatment-method" data-toggle="buttons"
                       style="width: 100%; max-width: 30rem">
                         <label class="btn btn-default gran-radio-treatment-method-label active" data-treatment-method="process__processgroup">
@@ -139,8 +139,8 @@
                            <input type="radio" class="gran-radio-treatment-method-input" id="gran-radio-treatment-method">Treatment method
                         </label>
                     </div>
-                  
-                  
+
+
                   {% comment %} <div class="checkbox">
                       <input name="gran-toggle-treatment-method" id="gran-toggle-treatment-method" class="bootstrapToggle" type="checkbox"
                           data-width="100%" data-height="21" data-toggle="toggle" data-on="Treatment method"
@@ -334,7 +334,27 @@
                     <div class="viz-wrapper-div arclayer-wrapper"></div>
 
                 </div>
-            </div>                
+            </div>
         </div>
+
+
+        <div class="row mt-1 d-flex justify-content-end export-button-row">
+
+            <button id='viz-export-csv' class="btn btn-primary mr-1 export-csv"
+                title="Export the data of this visualization as a CSV file."
+                style="width: 10em;"
+                >SAVE CSV
+            </button>
+
+            <button id='viz-export-png' class="btn btn-primary export-png"
+                title="Export this visualization as a PNG file."
+                style="width: 10em;"
+                >SAVE IMAGE
+            </button>
+
+        </div>
+
+
+
     </div>
 </script>

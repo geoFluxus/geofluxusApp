@@ -214,7 +214,7 @@ define(['views/common/d3plusVizView',
                     });
                     FileSaver.saveAs(blob, "data.csv");
 
-                    event.stopImmediatePropagation();
+                    //event.stopImmediatePropagation();
                 },
 
                 close: function () {

@@ -4,6 +4,7 @@ define(['views/common/baseview',
         'file-saver',
         'utils/utils',
         'utils/enrichFlows',
+        'd3plus-export'
     ],
 
     function (
@@ -12,7 +13,8 @@ define(['views/common/baseview',
         d3plus,
         FileSaver,
         utils,
-        enrichFlows
+        enrichFlows,
+        d3plusExport
     ) {
         /**
          * @author Evert Van Hirtum
@@ -32,8 +34,10 @@ define(['views/common/baseview',
                 initialize: function (options) {
                     D3plusVizView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
-                    _.bindAll(this, 'exportCSV');
+                    // _.bindAll(this, 'exportCSV');
                     _.bindAll(this, 'toggleLegend');
+
+                    var _this = this;
 
                     this.dimensions = {
                         'time': {
@@ -63,11 +67,20 @@ define(['views/common/baseview',
                             }]  
                         ]
                     };
+
+                    $(".export-csv").on("click", function() {
+                        _this.exportCSV();
+                    })
+
+                    $(".export-png").on("click", function() {
+                        _this.exportPNG();
+                    })
+
                 },
 
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
-                    'click .export-csv': 'exportCSV',
+                    // 'click .export-csv': 'exportCSV',
                     'click .toggle-legend': 'toggleLegend',
                 },
 
@@ -132,7 +145,11 @@ define(['views/common/baseview',
                     });
                     FileSaver.saveAs(blob, "data.csv");
 
-                    event.stopImmediatePropagation();
+                    // event.stopImmediatePropagation();
+                },
+
+                exportPNG: function() {
+                    d3plusExport.saveElement(this.el);
                 },
 
                 close: function () {

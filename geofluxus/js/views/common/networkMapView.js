@@ -75,21 +75,29 @@ define(['views/common/baseview',
                     // Add extra buttons to fullscreenButton container on the top left of the map:
                     let fullscreenButtonDiv = document.querySelector(".networkmap-wrapper .ol-full-screen");
 
-                    var exportImgBtn = document.createElement('button');
-                    exportImgBtn.classList.add('fas', 'fa-camera', 'btn', 'btn-primary', 'inverted');
-                    exportImgBtn.title = "Export this visualization as a PNG file.";
-                    fullscreenButtonDiv.appendChild(exportImgBtn);
-                    exportImgBtn.addEventListener('click', function (event) {
-                        _this.exportPng();
+                    // var exportImgBtn = document.createElement('button');
+                    // exportImgBtn.classList.add('fas', 'fa-camera', 'btn', 'btn-primary', 'inverted');
+                    // exportImgBtn.title = "Export this visualization as a PNG file.";
+                    // fullscreenButtonDiv.appendChild(exportImgBtn);
+                    // exportImgBtn.addEventListener('click', function (event) {
+                    //     _this.exportPNG();
+                    // })
+
+                    // // Export CSV
+                    // var exportCSVBtn = document.createElement('button');
+                    // exportCSVBtn.classList.add('fas', 'fa-file', 'btn', 'btn-primary', 'inverted');
+                    // exportCSVBtn.title = "Export this visualization as a CSV file.";
+                    // fullscreenButtonDiv.appendChild(exportCSVBtn);
+                    // exportCSVBtn.addEventListener('click', function(event) {
+                    //     _this.exportCSV();
+                    // })
+
+                    $(".export-csv").on("click", function() {
+                        _this.exportCSV();
                     })
 
-                    // Export CSV
-                    var exportCSVBtn = document.createElement('button');
-                    exportCSVBtn.classList.add('fas', 'fa-file', 'btn', 'btn-primary', 'inverted');
-                    exportCSVBtn.title = "Export this visualization as a CSV file.";
-                    fullscreenButtonDiv.appendChild(exportCSVBtn);
-                    exportCSVBtn.addEventListener('click', function(event) {
-                        _this.exportCSV();
+                    $(".export-png").on("click", function() {
+                        _this.exportPNG();
                     })
 
                     buttons = {
@@ -179,7 +187,7 @@ define(['views/common/baseview',
                     this.render();
                 },
 
-                exportPng: function () {
+                exportPNG: function () {
                     var c = document.querySelector(".networkmap-wrapper canvas");
                     var d = c.toDataURL("image/png");
                     var w = window.open('about:blank', 'image from canvas');

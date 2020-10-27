@@ -533,8 +533,10 @@ define(['views/common/baseview',
             },
 
             closeAllVizViews: function () {
+                $(".export-csv").off();
+                $(".export-png").off();
 
-                $(".visualizationBlock").fadeOut();
+                $(".visualizationBlock").hide();
 
                 $(".no-data-found").fadeOut();
                 $(".no-data-found").removeClass("d-flex");
