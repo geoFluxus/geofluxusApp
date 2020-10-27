@@ -674,8 +674,8 @@ textarea.textarea-autosize.form-control-sm {
 
 .d3plus-viz-controls-container {
   min-height: 100px;
-  position: relative;
-  top: -40px;
+  position: relative !important;
+  top: -39px;
 }
 
 .d3plus-viz-controls-container .d3plus-Button {
