@@ -94,6 +94,7 @@ input {
 }
 
 .btn-default {
+  background-color: rgb(85, 85, 85);
   border-color: white;
   color: white;
 }
