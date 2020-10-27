@@ -1191,3 +1191,11 @@ div.fullscreen {
   right: 0.8rem;
 }
 
+#visualization-type label {
+  background-color: rgb(85, 85, 85);
+}
+
+#visualization-type label.active {
+  background-color: var(--primary) !important;
+  border-color: var(--primary-border) !important;
+}

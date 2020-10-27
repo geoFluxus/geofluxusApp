@@ -41,7 +41,7 @@ body {
 }
 
 .block {
-  background-color: #393939;
+    background-color: #393939;
   border-radius: 30px;
   padding: 1.5rem;
   padding-bottom: 1rem;
@@ -165,17 +165,21 @@ input {
   box-shadow: none;
 }
 
-
-.btn-primary:hover,
+.btn-default:hover,
 .toggle-group label.active:hover {
-  background-color: var(--primary-hover-bg);
-  border-color: var(--primary-hover-border);
+  background-color: var(--primary-hover-bg) !important;
+  border-color: var(--primary-hover-border) !important;
 }
 
 .btn:focus {
   background-color: primary;
   border-color: primary;
   color: black;
+}
+
+.btn-group.btn-group-toggle label.active {
+  background-color: var(--primary) !important;
+  border-color: var(--primary-border) !important;
 }
 
 /* Dropdown for Bootstrap Select */
