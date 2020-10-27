@@ -225,15 +225,19 @@ label[for="flows-waste06-select"] {
   min-width: 14rem !important;
 }
 
+.bootstrapToggle[disabled] + .toggle-group:hover {
+  border-color: rgb(24, 24, 24) !important;
+}
+
 .bootstrapToggle[disabled] + .toggle-group label {
-  color: rgb(63, 62, 62);
-  /* border-color: rgb(107, 107, 107) !important; */
-  border-color: red !important;
+  color: rgb(39, 39, 39);
+  background-color:  rgb(56, 56, 56) !important;
 }
 
 .bootstrapToggle[disabled] + .toggle-group label:hover {
   color: rgb(63, 62, 62);
-  background: black !important;
+  background: rgb(56, 37, 37) !important;
+  border-color: rgb(59, 4, 4) !important;
 }
 
 /* Radio buttons for Mode Type selection */

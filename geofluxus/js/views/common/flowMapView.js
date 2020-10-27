@@ -73,6 +73,16 @@ define(['underscore',
                         'waste06'       : 'EWC Entry'
                     }
 
+                    $(".export-csv").on("click", function() {
+                        _this.exportCSV();
+                    })
+
+                    $(".export-png").on("click", function(event) {
+                        // _this.exportPNG();
+                        _this.easyprintCsBtn.click();
+                        event.preventDefault();
+                    })
+
                     this.render();
                     this.rerender(true);
                 },
@@ -182,19 +192,19 @@ define(['underscore',
                     topLeftControlDiv.classList.add("leaflet-control-custom-buttons");
 
                     // Actual export PNG button:
-                    var exportImgBtn = document.createElement('button');
-                    exportImgBtn.classList.add('fas', 'fa-camera', 'btn', 'btn-primary', 'inverted');
-                    exportImgBtn.title = "Export this visualization as a PNG file.";
-                    topLeftControlDiv.appendChild(exportImgBtn);
+                    // var exportImgBtn = document.createElement('button');
+                    // exportImgBtn.classList.add('fas', 'fa-camera', 'btn', 'btn-primary', 'inverted');
+                    // exportImgBtn.title = "Export this visualization as a PNG file.";
+                    // topLeftControlDiv.appendChild(exportImgBtn);
 
-                    // Export CSV
-                    var exportCSVBtn = document.createElement('button');
-                    exportCSVBtn.classList.add('fas', 'fa-file', 'btn', 'btn-primary', 'inverted');
-                    exportCSVBtn.title = "Export this visualization as a CSV file.";
-                    topLeftControlDiv.appendChild(exportCSVBtn);
-                    exportCSVBtn.addEventListener('click', function(event) {
-                        _this.exportCSV();
-                    })
+                    // // Export CSV
+                    // var exportCSVBtn = document.createElement('button');
+                    // exportCSVBtn.classList.add('fas', 'fa-file', 'btn', 'btn-primary', 'inverted');
+                    // exportCSVBtn.title = "Export this visualization as a CSV file.";
+                    // topLeftControlDiv.appendChild(exportCSVBtn);
+                    // exportCSVBtn.addEventListener('click', function(event) {
+                    //     _this.exportCSV();
+                    // })
 
                     // HIDDEN Leaflet easyPrint button
                     this.leafletMap.addControl(new L.easyPrint({
@@ -206,13 +216,13 @@ define(['underscore',
                     }));
                     // Easyprint is not customizable enough (buttons, remove menu etc.) and not touch friendly
                     // Workaround: hide and pass on click (actually strange, but easyprint was still easiest to use export plugin out there)
-                    var easyprintCtrl = this.el.querySelector('.leaflet-control-easyPrint'),
-                        easyprintCsBtn = this.el.querySelector('.easyPrintHolder .A4Landscape');
+                    var easyprintCtrl = this.el.querySelector('.leaflet-control-easyPrint');
+                    this.easyprintCsBtn = this.el.querySelector('.easyPrintHolder .A4Landscape');
                     easyprintCtrl.style.display = 'none';
-                    exportImgBtn.addEventListener('click', function (event) {
-                        easyprintCsBtn.click();
-                        event.preventDefault();
-                    })
+                    // exportImgBtn.addEventListener('click', function (event) {
+                    //     easyprintCsBtn.click();
+                    //     event.preventDefault();
+                    // })
 
                     buttons = {
                         'legend':            'Toggle the legend on or off.',
