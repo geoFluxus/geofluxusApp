@@ -83,7 +83,7 @@ define(['views/common/deckglView',
                     }, this.flows);
 
                     this.render();
-                    this.options.flowsView.loader.deactivate();
+                    this.loader.deactivate();
                 },
 
                 events: {

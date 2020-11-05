@@ -5,30 +5,36 @@ let occurances = []
 
 module.exports = {
     enrichFlows: function(flows, tags, collections, granularity) {
+        blocks = flows[0]['origin'] != undefined ? ['origin', 'destination'] : ['origin'];
+
         flows.forEach(function (flow, index) {
             var _this = this;
 
             // get all properties of flow
-            var properties = Object.keys(flow);
+            blocks.forEach(block => {
+                var node = flow[block] || flow,
+                    properties = Object.keys(node);
 
-            properties.forEach(function(property) {
-                // fetch corresponding collection
-                var collection = collections[tags[property]];
+                properties.forEach(function (property) {
+                    // fetch corresponding collection
+                    var collection = collections[tags[property]];
 
-                if (collection != undefined) {
-                    // find corresponding model by ID
-                    var model = collection.find(model => model.attributes.id == flow[property]);
+                    if (collection != undefined) {
+                        // find corresponding model by ID
+                        var model = collection.find(model => model.attributes.id == node[property]);
 
-                    // fetch attributes
-                    var attr = model.attributes,
-                        code = attr.code || attr.nace || attr.ewc_code,
-                        name = utils.capitalizeFirstLetter(attr.name || attr.ewc_name || "");
+                        // fetch attributes
+                        var attr = model.attributes,
+                            code = attr.code || attr.nace || attr.ewc_code,
+                            name = utils.capitalizeFirstLetter(attr.name || attr.ewc_name || "");
 
-                    // add attributes to flows
-                    _this[index][property + 'Code'] = code;
-                    _this[index][property + 'Name'] = name;
-                }
-            })
+                        // add attributes to flows
+                        idx = _this[index][block] || _this[index];
+                        idx[property + 'Code'] = code;
+                        idx[property + 'Name'] = name;
+                    }
+                })
+            });
         }, flows);
 
         return flows

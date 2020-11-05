@@ -269,7 +269,7 @@ define(['underscore',
                     setTimeout(() => {
                         utils.scrollToVizRow();
                     }, 500);
-                    this.options.flowsView.loader.deactivate();
+                    this.loader.deactivate();
                 },
 
                 toggleLegend() {

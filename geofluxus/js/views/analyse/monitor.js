@@ -465,9 +465,7 @@ define(['views/common/baseview',
                     let granularity = dimension[1];
 
                     if (dimensionString !== 'space') {
-                        if (!['parallelsets', 'circularsankey'].includes(_this.selectedVizName)) {
-                            flows = enrichFlows.enrichFlows(flows, tags, collections, granularity);
-                        }
+                        flows = enrichFlows.enrichFlows(flows, tags, collections, granularity);
                     } else {
                         adminlevel = granularity.adminlevel;
                         dimensions.isActorLevel = (adminlevel == _this.actorLevel) ? true : false;
@@ -489,7 +487,7 @@ define(['views/common/baseview',
                     el: "." + wrapperName + "-wrapper",
                     dimensions: dimensions,
                     flows: flows,
-                    flowsView: this,
+                    loader: this.loader,
                     label: this.labels[this.indicator],
                 };
 
@@ -527,7 +525,7 @@ define(['views/common/baseview',
                     el: ".choroplethmap-wrapper",
                     dimensions: dimensions,
                     flows: flows,
-                    flowsView: _this,
+                    loader: _this.loader,
                     geoJson: geoJson
                 });
             },
