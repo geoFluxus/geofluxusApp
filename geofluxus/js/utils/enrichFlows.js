@@ -4,8 +4,8 @@ var colorArray = [];
 let occurances = []
 
 module.exports = {
-    enrichFlows: function(flows, tags, collections, granularity) {
-        blocks = flows[0]['origin'] != undefined ? ['origin', 'destination'] : ['origin'];
+    enrichFlows: function(flows, tags, collections, granularity, both) {
+        blocks = both ? ['origin', 'destination'] : [''];
 
         flows.forEach(function (flow, index) {
             var _this = this;

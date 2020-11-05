@@ -465,7 +465,8 @@ define(['views/common/baseview',
                     let granularity = dimension[1];
 
                     if (dimensionString !== 'space') {
-                        flows = enrichFlows.enrichFlows(flows, tags, collections, granularity);
+                        both = ['parallelsets', 'circularsankey'].includes(_this.selectedVizName) ? true : false;
+                        flows = enrichFlows.enrichFlows(flows, tags, collections, granularity, both);
                     } else {
                         adminlevel = granularity.adminlevel;
                         dimensions.isActorLevel = (adminlevel == _this.actorLevel) ? true : false;
