@@ -492,43 +492,9 @@ define(['views/common/baseview',
                     label: this.labels[this.indicator],
                 };
 
-                if (_this.selectedVizName === 'choroplethmap') {
-                    _this.renderChoroplethMap(flows, adminlevel, dimensions);
-                } else {
-                    this.vizView = new vizView['view'](
-                        Object.assign(defaultOptions, extraOptions)
-                    );
-                }
-            },
-
-            renderChoroplethMap: function (flows, adminlevel, dimensions) {
-                var _this = this;
-
-                var areas = Object.values(flows.pop()),
-                    geoJson = {};
-
-                geoJson['type'] = 'FeatureCollection';
-                features = geoJson['features'] = [];
-                areas.forEach(function (area) {
-                    var feature = {};
-                    feature['type'] = 'Feature';
-                    feature['id'] = area['id'];
-                    feature['geometry'] = area['geom'];
-
-                    features.push(feature);
-                })
-
-                flows.forEach(function (flow, index) {
-                    this[index].id = this[index].areaId;
-                }, flows);
-
-                _this.vizView = new ChoroplethView({
-                    el: ".choroplethmap-wrapper",
-                    dimensions: dimensions,
-                    flows: flows,
-                    loader: _this.loader,
-                    geoJson: geoJson
-                });
+                this.vizView = new vizView['view'](
+                    Object.assign(defaultOptions, extraOptions)
+                );
             },
 
             closeAllVizViews: function () {

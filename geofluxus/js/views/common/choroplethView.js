@@ -48,16 +48,39 @@ define(['views/common/d3plusVizView',
                     'click .toggle-darkmode': 'toggleDarkMode',
                 },
 
+                to_geojson: function () {
+                    var areas = Object.values(this.flows.pop()),
+                    geoJson = {};
+
+                    geoJson['type'] = 'FeatureCollection';
+                    features = geoJson['features'] = [];
+                    areas.forEach(function (area) {
+                        var feature = {};
+                        feature['type'] = 'Feature';
+                        feature['id'] = area['id'];
+                        feature['geometry'] = area['geom'];
+
+                        features.push(feature);
+                    })
+
+                    this.flows.forEach(function (flow, index) {
+                        this[index].id = this[index].areaId;
+                    }, this.flows);
+
+                    return geoJson;
+                },
+
                 /**
                  * Create a new D3Plus ChoroplethMap object which will be rendered in this.options.el:
                  */
                 render: function () {
+                    var geoJson = this.to_geojson();
                     this.choroplethMap = new ChoroplethMap({
                         el: this.options.el,
                         data: this.flows,
                         tooltipConfig: this.tooltipConfig,
                         canHaveLegend: this.canHaveLegend,
-                        geoJson: this.options.geoJson,
+                        geoJson: geoJson,
                         isDarkMode: this.isDarkMode,
                     });
                     this.scrollToVisualization();
