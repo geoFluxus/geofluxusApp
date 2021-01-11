@@ -88,26 +88,21 @@ define(['views/common/deckglView',
                         isDarkMode: _this.isDarkMode,
                     }), document.querySelector(this.options.el));
                     utils.scrollToVizRow();
+
                     this.addButtons();
                 },
 
-                exportCSV: function (event) {
-                    const items = this.flows;
-                    const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
+                // exportCSV: function () {
+                //     const items = this.options.flows;
+                //     var csv = "Longitude,Lattitude,Amount,Name\n" + items.map(function (d) {
+                //         return d.join();
+                //     }).join('\r\n');
 
-                    let header = Object.keys(items[0]);
-
-                    let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
-                    csv.unshift(header.join(','))
-                    csv = csv.join('\r\n')
-
-                    var blob = new Blob([csv], {
-                        type: "text/plain;charset=utf-8"
-                    });
-                    FileSaver.saveAs(blob, "data.csv");
-
-                    event.stopImmediatePropagation();
-                },
+                //     var blob = new Blob([csv], {
+                //         type: "text/plain;charset=utf-8"
+                //     });
+                //     FileSaver.saveAs(blob, "data.csv");
+                // },
 
             });
         return ArcLayerView;

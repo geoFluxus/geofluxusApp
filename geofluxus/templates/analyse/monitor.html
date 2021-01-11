@@ -1,5 +1,4 @@
 <script type="text/template" id="monitor-template">
-  {% load custom_tags %}
 
       <div class="block">
 
@@ -13,14 +12,14 @@
                   <% if (maxNumberOfDimensions == 1) { %>
                       <span style="color: white">Select at least one dimension.</span>
                   <% } else { %>
-                      <span style="color: white">Select between 1 and <%= maxNumberOfDimensions %> properties of the waste flows by which the waste flow data will be aggregated.</span>
+                      <span style="color: white">Select between 1 and <%= maxNumberOfDimensions %> dimensions.</span>
                   <% } %>
                   </div>
           </div>
           <div class="row" id="alertMaxDimensionsRow" style="display: none;">
               <div class="col mt-3 text-center">
                   <div class="alert alert-warning fade show" id="alertMaxDimensions" role="alert">
-                      You can select up to <strong><%= maxNumberOfDimensions %> properties</strong> at the same time.
+                      You can select up to <strong><%= maxNumberOfDimensions %> dimensions</strong> at the same time.
                   </div>
               </div>
           </div>
@@ -35,22 +34,10 @@
                   </div>
               </div>
               <div class="col-md-3" id="gran-toggle-time-col" style="display: none">
-
-                 <div class="btn-group btn-group-toggle" id="gran-radio-time" data-toggle="buttons"
-                      style="width: 100%; max-width: 30rem">
-                      <label class="btn btn-default gran-radio-time-label" data-time="year">
-                          <input type="radio" class="gran-radio-time-input" id="gran-radio-time-year">Year
-                      </label>
-                      <label class="btn btn-default gran-radio-time-label active" data-time="month">
-                          <input type="radio" class="gran-radio-time-input" id="gran-radio-time-month" checked>Month
-                      </label>
-                  </div>
-
-                  {% comment %} <div class="checkbox">
+                  <div class="checkbox">
                       <input name="gran-toggle-time" id="gran-toggle-time" class="bootstrapToggle" type="checkbox" data-width="100%"
-                          data-height="21" data-toggle="toggle" checked data-on="Month" data-off="Year">
-                  </div> {% endcomment %}
-
+                          data-height="21" data-toggle="toggle" data-on="Month" data-off="Year">
+                  </div>
               </div>
           </div>
 
@@ -92,22 +79,11 @@
                   </div>
               </div>
               <div class="col-md-3" id="gran-econ-activity-col" style="display: none">
-
-                    <div class="btn-group btn-group-toggle" id="gran-radio-econ-activity" data-toggle="buttons"
-                      style="width: 100%; max-width: 30rem">
-                        <label class="btn btn-default gran-radio-econ-activity-label active" data-econ-activity="activity__activitygroup">
-                            <input type="radio" class="gran-radio-econ-activity-input" id="gran-radio-econ-activity-group"checked>Activity group
-                        </label>
-                        <label class="btn btn-default gran-radio-econ-activity-label" data-econ-activity="activity">
-                           <input type="radio" class="gran-radio-econ-activity-input" id="gran-radio-econ-activity">Activity
-                        </label>
-                    </div>
-
-                  {% comment %} <div class="checkbox">
+                  <div class="checkbox">
                       <input name="gran-toggle-econ-activity" id="gran-toggle-econ-activity" class="bootstrapToggle" type="checkbox"
                           data-width="100%" data-height="21" data-toggle="toggle" data-on="Activity"
                           data-off="Activity group">
-                  </div> {% endcomment %}
+                  </div>
               </div>
               <div class="col-md-3" id="origDest-toggle-econAct-col" style="display: none">
                   <div class="checkbox">
@@ -127,31 +103,17 @@
                           data-off="Treatment method">
                   </div>
               </div>
-
               <div class="col-md-3" id="gran-treatment-method-col" style="display: none">
-
-                   <div class="btn-group btn-group-toggle" id="gran-radio-treatment-method" data-toggle="buttons"
-                      style="width: 100%; max-width: 30rem">
-                        <label class="btn btn-default gran-radio-treatment-method-label active" data-treatment-method="process__processgroup">
-                            <input type="radio" class="gran-radio-treatment-method-input" id="gran-radio-treatment-method-group"checked>Treatment method group
-                        </label>
-                        <label class="btn btn-default gran-radio-treatment-method-label" data-treatment-method="process">
-                           <input type="radio" class="gran-radio-treatment-method-input" id="gran-radio-treatment-method">Treatment method
-                        </label>
-                    </div>
-
-
-                  {% comment %} <div class="checkbox">
+                  <div class="checkbox">
                       <input name="gran-toggle-treatment-method" id="gran-toggle-treatment-method" class="bootstrapToggle" type="checkbox"
                           data-width="100%" data-height="21" data-toggle="toggle" data-on="Treatment method"
                           data-off="Treatment method group">
-                  </div> {% endcomment %}
+                  </div>
               </div>
-
               <div class="col-md-3" id="origDest-toggle-treatment-col" style="display: none">
                   <div class="checkbox">
                       <input name="origDest-toggle-treatment" id="origDest-toggle-treatment" type="checkbox" class="bootstrapToggle"
-                          data-width="100%" data-height="21" data-toggle="toggle" checked data-on="Destination" data-off="Origin">
+                          data-width="100%" data-height="21" data-toggle="toggle" data-on="Destination" data-off="Origin">
                   </div>
               </div>
           </div>
@@ -162,21 +124,21 @@
                   <div class="checkbox">
                       <input name="dim-toggle-material" class="bootstrapToggle dimensionToggle" id="dim-toggle-material"
                           type="checkbox" data-width="100%" data-height="21" data-toggle="toggle" data-dim="material"
-                          data-on="Material (EuralCode)" data-off="EWC (EuralCode)">
+                          data-on="Material" data-off="Material">
                   </div>
               </div>
               <div class="col-md-9" id="gran-material-col" style="display: none">
                   <div class="btn-group btn-group-toggle" id="gran-radio-material" data-toggle="buttons"
                       style="width: 100%; max-width: 30rem">
-                      <label class="btn btn-default gran-radio-material-label active" data-ewc="ewc2">
+                      <label class="btn btn-sm btn-primary gran-radio-material-label active" data-ewc="ewc2">
                           <input type="radio" class="gran-radio-material-input" id="gran-radio-material-ewc2"
-                              checked>EWC Chapter
+                              checked>Chapter
                       </label>
-                      <label class="btn btn-default gran-radio-material-label" data-ewc="ewc4">
-                          <input type="radio" class="gran-radio-material-input" id="gran-radio-material-ewc4">EWC Sub-Chapter
+                      <label class="btn btn-sm btn-primary gran-radio-material-label" data-ewc="ewc4">
+                          <input type="radio" class="gran-radio-material-input" id="gran-radio-material-ewc4">Sub-Chapter
                       </label>
-                      <label class="btn btn-default gran-radio-material-label" data-ewc="ewc6">
-                          <input type="radio" class="gran-radio-material-input" id="gran-radio-material-ewc6">EWC Entry
+                      <label class="btn btn-sm btn-primary gran-radio-material-label" data-ewc="ewc6">
+                          <input type="radio" class="gran-radio-material-input" id="gran-radio-material-ewc6">Entry
                       </label>
                   </div>
               </div>
@@ -194,82 +156,82 @@
                   <div class="col d-flex align-items-center mr-auto">
                       <div class="btn-group btn-group-toggle flex-wrap justify-content-center" id="visualization-type"
                           data-toggle="buttons" style="margin: auto">
-                          <label class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                          <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
                               data-viz="piechart" style="display: none;">
                               <input type="radio" id="viz-piechart"><span class="span-viz" id="span-viz-piechart">Pie
                                   chart</span>
                           </label>
-                          <label class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                          <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
                               data-viz="treemap" style="display: none;">
                               <input type="radio" id="viz-treemap"><span class="span-viz" id="span-viz-treemap">Treemap</span>
                           </label>
-                          <label class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                          <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
                               data-viz="barchart" style="display: none;">
                               <input type="radio" id="viz-barchart"><span class="span-viz" id="span-viz-barchart">Bar
                                   chart</span>
                           </label>
-                          <label class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                          <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
                               data-viz="lineplot" style="display: none;">
                               <input type="radio" id="viz-lineplot"><span class="span-viz" id="span-viz-lineplot">Line
                                   plot</span>
                           </label>
-                          <label class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                          <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
                               data-viz="choroplethmap" style="display: none;">
                               <input type="radio" id="viz-choroplethmap"><span class="span-viz"
                                   id="span-viz-choroplethmap">Choropleth map</span>
                           </label>
-                          <label class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                          <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
                               data-viz="coordinatepointmap" style="display: none;">
                               <input type="radio" id="viz-coordinatepointmap"><span class="span-viz"
                                   id="span-viz-coordinatepointmap">Dot map</span>
                           </label>
 
-                          <label class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                          <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
                               data-viz="lineplotmultiple" style="display: none;">
                               <input type="radio" id="viz-lineplotmultiple"><span class="span-viz"
                                   id="span-viz-lineplotmultiple">Multiple line plot</span>
                           </label>
-                          <label class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                          <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
                               data-viz="areachart" style="display: none;">
                               <input type="radio" id="viz-areachart"><span class="span-viz" id="span-viz-areachart">Stacked
                                   area chart</span>
                           </label>
-                          <label class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                          <label class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
                               data-viz="stackedbarchart" style="display: none;">
                               <input type="radio" id="viz-stackedbarchart"><span class="span-viz"
                                   id="span-viz-stackedbarchart">Stacked bar chart</span>
                           </label>
 
                           <label
-                              class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button hasFlowsFormat"
+                              class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button hasFlowsFormat"
                               data-viz="parallelsets" style="display: none;">
                               <input type="radio" id="viz-parallelsets"><span class="span-viz"
                                   id="span-viz-parallelsets">Parallel sets</span>
                           </label>
                           <label
-                              class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button hasFlowsFormat"
+                              class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button hasFlowsFormat"
                               data-viz="circularsankey" style="display: none;">
                               <input type="radio" id="viz-circularsankey"><span class="span-viz" id="span-viz-circularsankey">Circular Sankey</span>
                           </label>
                           <label
-                              class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button hasFlowsFormat"
+                              class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button hasFlowsFormat"
                               data-viz="flowmap" style="display: none;">
                               <input type="radio" id="viz-flowmap"><span class="span-viz" id="span-viz-flowmap">Flow map</span>
                           </label>
                           <label
-                              class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                              class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
                               data-viz="networkmap" style="display: none;">
                               <input type="radio" id="viz-networkmap"><span class="span-viz" id="span-viz-networkmap">Road network map</span>
                           </label>
 
                             <label
-                              class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                              class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
                               data-viz="geoheatmap" style="display: none;">
                               <input type="radio" id="viz-geoheatmap"><span class="span-viz" id="span-viz-geoheatmap">Geo Heatmap</span>
                             </label>
 
                              <label
-                              class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                              class="btn btn-sm btn-primary justify-content-center align-items-end viz-selector-button"
                               data-viz="arclayer" style="display: none;">
                               <input type="radio" id="viz-arclayer"><span class="span-viz" id="span-viz-arclayer">Arc map</span>
                             </label>
@@ -282,79 +244,55 @@
 
       </div>
 
-      <div class="row mt-1 d-flex justify-content-end">
+      <div class="row mt-1 d-flex justify-content-between">
 
           <button id='reset-dim-viz' class="btn btn-secondary resetButton" title="Reset all dimension and visualization settings">RESET
           </button>
 
           <div>
-              <button id='apply-filters' class="btn btn-primary"
-                  title="Apply the filters and render the selected visualization."
-                  style="margin-left: 10px; float: left; width: 10em">VISUALIZE
-              </button>
               <div class="helpIconContainer d-inline-flex align-items-center">
-                  <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Visualize"
-                      style="float: right; margin-left: 4px !important;" data-html="true" tabindex="0"
+                  <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Filter & Render"
+                      style="float: left;" data-html="true" tabindex="0"
                       data-content="<b>Filter</b> the waste flows according to the filters in Origin, Destination,
                       and Flows, and <b>render</b> the selected visualization based on the chosen dimensions and granularity.">
                   </a>
               </div>
+              <button id='apply-filters' class="btn btn-primary"
+                  title="Apply the filters and render the selected visualization."
+                  style="margin-left: 10px; float: right; width: 10em">VISUALIZE
+              </button>
           </div>
       </div>
   </div>
 
 
-    <div class="block visualizationBlock" style="display: none;">
-        <div class="card">
-            <div class="row">
-                <div class="col px-1 visualizationRow">
-                    <div class="viz-wrapper-div no-data-found" style="height: 10rem; !important"><span class="align-self-center text-white mx-auto">The selected filters returned no data. Please adjust the filtering of the waste flows.</span></div>
-                    <div class="viz-wrapper-div piechart-wrapper"></div>
-                    <div class="viz-wrapper-div barchart-wrapper"></div>
-                    <div class="viz-wrapper-div lineplot-wrapper"></div>
-                    <div class="viz-wrapper-div treemap-wrapper"></div>
-                    <div class="viz-wrapper-div choroplethmap-wrapper"></div>
-                    <div class="viz-wrapper-div coordinatepointmap-wrapper"></div>
+  <div class="row mb-5">
+      <div class="col visualizationRow">
+          <div class="viz-wrapper-div no-data-found" style="height: 10rem; !important"><span class="align-self-center text-white mx-auto">The selected filters returned no data. Please adjust the filtering of the waste flows.</span></div>
+          <div class="viz-wrapper-div piechart-wrapper"></div>
+          <div class="viz-wrapper-div barchart-wrapper"></div>
+          <div class="viz-wrapper-div lineplot-wrapper"></div>
+          <div class="viz-wrapper-div treemap-wrapper"></div>
+          <div class="viz-wrapper-div choroplethmap-wrapper"></div>
+          <div class="viz-wrapper-div coordinatepointmap-wrapper"></div>
 
-                    <div class="viz-wrapper-div areachart-wrapper"></div>
-                    <div class="viz-wrapper-div stackedbarchart-wrapper"></div>
-                    <div class="viz-wrapper-div flowmap-wrapper">
-                        <div class="flowmap-container d-block" style="width: 100%; height: 100%"></div>
-                        <svg class="flowmap-d3pluslegend" style="width: 100%; background-color: grey"></svg>
-                    </div>
-                    <div class="viz-wrapper-div networkmap-wrapper">
-                        <div></div>
-                    </div>
+          <div class="viz-wrapper-div areachart-wrapper"></div>
+          <div class="viz-wrapper-div stackedbarchart-wrapper"></div>
+          <div class="viz-wrapper-div flowmap-wrapper">
+              <div class="flowmap-container d-block" style="width: 100%; height: 100%"></div>
+              <svg class="flowmap-d3pluslegend" style="width: 100%; background-color: grey"></svg>
+          </div>
+          <div class="viz-wrapper-div networkmap-wrapper">
+              <div></div>
+          </div>
 
-                    <div class="parallelsets-container p-2" style="display: none;">
-                        <div class="viz-wrapper-div parallelsets-wrapper"></div>
-                    </div>
-                    <div class="viz-wrapper-div circularsankey-wrapper"></div>
-                    <div class="viz-wrapper-div geoheatmap-wrapper"></div>
-                    <div class="viz-wrapper-div arclayer-wrapper"></div>
+          <div class="parallelsets-container p-2" style="display: none;">
+              <div class="viz-wrapper-div parallelsets-wrapper"></div>
+          </div>
+          <div class="viz-wrapper-div circularsankey-wrapper"></div>
+          <div class="viz-wrapper-div geoheatmap-wrapper"></div>
+          <div class="viz-wrapper-div arclayer-wrapper"></div>
 
-                </div>
-            </div>
-        </div>
-
-
-        <div class="row mt-1 d-flex justify-content-end export-button-row">
-
-            <button id='viz-export-csv' class="btn btn-primary mr-1 export-csv"
-                title="Export the data of this visualization as a CSV file."
-                style="width: 10em;"
-                >SAVE CSV
-            </button>
-
-            <button id='viz-export-png' class="btn btn-primary export-png"
-                title="Export this visualization as a PNG file."
-                style="width: 10em;"
-                >SAVE IMAGE
-            </button>
-
-        </div>
-
-
-
-    </div>
+      </div>
+  </div>
 </script>

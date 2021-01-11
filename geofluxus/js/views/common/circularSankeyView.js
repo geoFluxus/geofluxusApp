@@ -6,8 +6,7 @@ define(['views/common/baseview',
         'visualizations/d3SankeyCircular',
         'underscore',
         'd3',
-        'visualizations/d3plus',
-        'd3plus-export'
+        'visualizations/d3plus'
     ],
 
     function (
@@ -19,8 +18,7 @@ define(['views/common/baseview',
         D3SankeyCircular,
         _,
         d3,
-        d3plus,
-        d3plusExport) {
+        d3plus) {
 
         /**
          * @author Evert Van Hirtum
@@ -85,14 +83,6 @@ define(['views/common/baseview',
                         _this.render();
                     })
 
-                    $(".export-csv").on("click", function() {
-                        _this.exportCSV();
-                    })
-
-                    $(".export-png").on("click", function() {
-                        _this.exportPNG();
-                    })
-
                     this.render();
                     this.options.flowsView.loader.deactivate();
                 },
@@ -149,15 +139,15 @@ define(['views/common/baseview',
                                 _this.toggleFullscreen();
                             });
 
-                        // controlContainer.append("button")
-                        //     .attr("class", "btn btn-sm btn-primary d3plus-Button export-csv")
-                        //     .attr("title", "Export the data of this visualization as a CSV file.")
-                        //     .attr("type", "button")
-                        //     .html('<i class="fas fa-file icon-export"></i>')
-                        //     .on("click", function () {
-                        //         _this.exportCSV();
-                        //         d3.event.preventDefault();
-                        //     });
+                        controlContainer.append("button")
+                            .attr("class", "btn btn-sm btn-primary d3plus-Button export-csv")
+                            .attr("title", "Export the data of this visualization as a CSV file.")
+                            .attr("type", "button")
+                            .html('<i class="fas fa-file icon-export"></i>')
+                            .on("click", function () {
+                                _this.exportCSV();
+                                d3.event.preventDefault();
+                            });
 
                         controlContainer.append("button")
                             .attr("class", "btn btn-sm btn-primary d3plus-Button toggle-darkmode")
@@ -213,7 +203,6 @@ define(['views/common/baseview',
                 toggleDarkMode: function () {
                     this.isDarkMode = !this.isDarkMode;
                     $(".viz-wrapper-div").toggleClass("lightMode");
-                    $(".visualizationBlock .card").toggleClass("lightMode");
                     this.fontColor = this.isDarkMode ? "white" : "black";
                     this.render();
                 },
@@ -423,10 +412,6 @@ define(['views/common/baseview',
                         type: "text/plain;charset=utf-8"
                     });
                     FileSaver.saveAs(blob, "data.csv");
-                },
-
-                exportPNG: function() {
-                    d3plusExport.saveElement(this.el);
                 },
 
                 close: function () {

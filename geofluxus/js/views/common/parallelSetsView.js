@@ -89,7 +89,6 @@ define(['views/common/d3plusVizView',
                       .attr("stroke", this.isDarkMode ? "#DBDBDB" : "#393939")
 
                     $(".viz-wrapper-div").toggleClass("lightMode");
-                    $(".visualizationBlock .card").toggleClass("lightMode");
                     $(".parallelsets-container").toggleClass("lightMode");
                 },
 
@@ -214,7 +213,7 @@ define(['views/common/d3plusVizView',
                     });
                     FileSaver.saveAs(blob, "data.csv");
 
-                    //event.stopImmediatePropagation();
+                    event.stopImmediatePropagation();
                 },
 
                 close: function () {

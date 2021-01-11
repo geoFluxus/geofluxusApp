@@ -372,15 +372,9 @@ define(['views/common/baseview',
 
                 // Time
                 if ($(this.timeToggle).prop("checked")) {
-                    // filterParams.dimensions.time = 'flowchain__month';
-                    // if (!$(this.timeToggleGran).prop("checked")) {
-                    //     filterParams.dimensions.time += '__year';
-                    // }
-
-                    let gran = $($(".gran-radio-time-label.active")).attr("data-time");
                     filterParams.dimensions.time = 'flowchain__month';
-                    if (gran === 'year') {
-                        filterParams.dimensions.time += '__year'
+                    if (!$(this.timeToggleGran).prop("checked")) {
+                        filterParams.dimensions.time += '__year';
                     }
                 }
 
@@ -396,25 +390,15 @@ define(['views/common/baseview',
                 // Economic activity
                 if ($(this.economicActivityToggle).prop("checked")) {
                     let originOrDestination = $(this.economicActivityOrigDest).prop("checked") ? 'destination__' : 'origin__';
-                    // gran = $(this.economicActivityToggleGran).prop("checked") ? 'activity' : 'activity__activitygroup',
-                    
-                    let gran = $($(".gran-radio-econ-activity-label.active")).attr("data-econ-activity");
-                    // filterParams.dimensions.economicActivity = 'activity';
-                    // if (gran === 'activity-group') {
-                    //     filterParams.dimensions.economicActivity += '__activitygroup'
-                    // }
-
-                    filterParams.dimensions.economicActivity = originOrDestination + gran;
+                    gran = $(this.economicActivityToggleGran).prop("checked") ? 'activity' : 'activity__activitygroup',
+                        filterParams.dimensions.economicActivity = originOrDestination + gran;
                 }
 
                 // Treatment method
                 if ($(this.treatmentMethodToggle).prop("checked")) {
                     let originOrDestination = $(this.treatmentMethodOrigDest).prop("checked") ? 'destination__' : 'origin__';
-                    // gran = $(this.treatmentMethodToggleGran).prop("checked") ? 'process' : 'process__processgroup',
-                    
-                    let gran = $($(".gran-radio-treatment-method-label.active")).attr("data-treatment-method");
-
-                    filterParams.dimensions.treatmentMethod = originOrDestination + gran;
+                    gran = $(this.treatmentMethodToggleGran).prop("checked") ? 'process' : 'process__processgroup',
+                        filterParams.dimensions.treatmentMethod = originOrDestination + gran;
                 }
 
                 // Material
@@ -447,6 +431,7 @@ define(['views/common/baseview',
                     });
                 }
 
+                console.log(filterParams);
                 return filterParams;
             },
 
@@ -454,9 +439,6 @@ define(['views/common/baseview',
                 let _this = this;
                 let collections = this.filtersView.collections,
                     tags = this.filtersView.tags;
-
-                $(".visualizationBlock .card").removeClass("lightMode");
-                $(".visualizationBlock").fadeIn();
 
                 // Enrich flows with info
                 let adminlevel = null;
@@ -533,11 +515,6 @@ define(['views/common/baseview',
             },
 
             closeAllVizViews: function () {
-                $(".export-csv").off();
-                $(".export-png").off();
-
-                $(".visualizationBlock").hide();
-
                 $(".no-data-found").fadeOut();
                 $(".no-data-found").removeClass("d-flex");
 
@@ -551,7 +528,6 @@ define(['views/common/baseview',
             fetchFlows: function (options) {
                 var _this = this;
                 let filterParams = this.getFilterAndDimParams();
-
                 let data = {};
                 this.selectedDimensions = Object.entries(filterParams.dimensions);
 
@@ -619,9 +595,7 @@ define(['views/common/baseview',
                 // Dimension controls:
 
                 $(_this.timeToggle).bootstrapToggle('off');
-                //$(_this.timeToggleGran).bootstrapToggle('on');           
-                $(".gran-radio-time-label").removeClass("active");
-                $($("#gran-radio-time")[0].children[1]).addClass("active");
+                $(_this.timeToggleGran).bootstrapToggle('off');
                 $("#gran-toggle-time-col").hide();
 
                 $(_this.spaceToggle).bootstrapToggle('off');
@@ -631,18 +605,14 @@ define(['views/common/baseview',
                 $("#origDest-toggle-space-col").hide();
 
                 $(_this.economicActivityToggle).bootstrapToggle('off');
-                // $(_this.economicActivityToggleGran).bootstrapToggle('off');
-                $(".gran-radio-econ-activity-label").removeClass("active");
-                $($("#gran-radio-econ-activity")[0].children[0]).addClass("active");
+                $(_this.economicActivityToggleGran).bootstrapToggle('off');
                 $(_this.economicActivityOrigDest).bootstrapToggle('off');
                 $("#gran-econ-activity-col").hide();
                 $("#origDest-toggle-econAct-col").hide();
 
                 $(_this.treatmentMethodToggle).bootstrapToggle('off');
-                // $(_this.treatmentMethodToggleGran).bootstrapToggle('off');
-                $(".gran-radio-treatment-method-label").removeClass("active");
-                $($("#gran-radio-treatment-method")[0].children[0]).addClass("active");
-                $(_this.treatmentMethodOrigDest).bootstrapToggle('on');
+                $(_this.treatmentMethodToggleGran).bootstrapToggle('off');
+                $(_this.treatmentMethodOrigDest).bootstrapToggle('off');
                 $("#gran-treatment-method-col").hide();
                 $("#origDest-toggle-treatment-col").hide();
 
