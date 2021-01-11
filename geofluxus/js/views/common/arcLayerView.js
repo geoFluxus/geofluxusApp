@@ -51,7 +51,6 @@ define(['views/common/deckglView',
 
                     this.flows = this.options.flows;
 
-                    this.filtersView = this.options.flowsView.filtersView;
                     this.dim1 = this.options.dimensions[0];
                     this.dim2 = this.options.dimensions[1];
 
@@ -70,7 +69,7 @@ define(['views/common/deckglView',
 
                     this.flows = enrichFlows.assignColorsByProperty(this.flows, "activitygroup");
                     this.render();
-                    this.options.flowsView.loader.deactivate();
+                    this.loader.deactivate();
                 },
 
                 events: {

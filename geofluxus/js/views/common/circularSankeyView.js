@@ -41,7 +41,7 @@ define(['views/common/baseview',
 
                     var _this = this;
                     this.options = options;
-                    this.filtersView = this.options.flowsView.filtersView;
+
                     this.dim1 = this.options.dimensions[0];
                     this.dim2 = this.options.dimensions[1];
                     this.flows = this.options.flows;
@@ -76,7 +76,6 @@ define(['views/common/baseview',
                         "hasAnimatedDash": false,
                     }
 
-                    this.flows = this.enrichFlows(this.flows)
                     this.flows = this.transformToLinksAndNodes(this.flows, this.options.dimensions, this.filtersView);
 
                     window.addEventListener('resize', function () {
@@ -84,7 +83,7 @@ define(['views/common/baseview',
                     })
 
                     this.render();
-                    this.options.flowsView.loader.deactivate();
+                    this.loader.deactivate();
                 },
 
                 events: {
@@ -238,41 +237,6 @@ define(['views/common/baseview',
                         this.linkColourOptions.isNone = true;
                     }
                     this.render();
-                },
-
-                enrichFlows: function (flows) {
-                    let collections = this.filtersView.collections,
-                        tags = this.filtersView.tags;
-
-                    flows.forEach(function (flow, index) {
-                        var _this = this;
-
-                        // get all properties of flow
-                        ["origin", "destination"].forEach(block => {
-                            var properties = Object.keys(flow[block]);
-
-                            properties.forEach(function (property) {
-                                // fetch corresponding collection
-                                var collection = collections[tags[property]];
-
-                                if (collection != undefined) {
-                                    // find corresponding model by ID
-                                    var model = collection.find(model => model.attributes.id == flow[block][property]);
-
-                                    // fetch attributes
-                                    var attr = model.attributes,
-                                        code = attr.code || attr.nace || attr.ewc_code,
-                                        name = utils.capitalizeFirstLetter(attr.name || attr.ewc_name || "");
-
-                                    // add attributes to flows
-                                    _this[index][block][property + 'Code'] = code;
-                                    _this[index][block][property + 'Name'] = name;
-                                }
-                            })
-                        });
-                    }, flows);
-
-                    return flows
                 },
 
                 returnLinkInfo: function (link) {

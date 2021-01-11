@@ -141,7 +141,7 @@ define(['views/common/baseview',
                     });
 
                     this.scrollToVisualization();
-                    this.options.flowsView.loader.deactivate();
+                    this.loader.deactivate();
                 },
 
                 scrollToVisualization: function () {

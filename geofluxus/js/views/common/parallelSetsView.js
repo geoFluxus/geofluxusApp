@@ -46,8 +46,7 @@ define(['views/common/d3plusVizView',
                     this.isDarkMode = true;
                     this.options = options;
 
-                    this.filtersView = this.options.flowsView.filtersView;
-                    this.flows = this.transformToLinksAndNodes(this.options.flows, this.options.dimensions, this.filtersView);
+                    this.flows = this.transformToLinksAndNodes(this.options.flows, this.options.dimensions);
 
                     this.tooltipConfig = {
                         tbody: [
@@ -79,7 +78,7 @@ define(['views/common/d3plusVizView',
                         isDarkMode: this.isDarkMode,
                     });
                     this.scrollToVisualization();
-                    this.options.flowsView.loader.deactivate();
+                    this.loader.deactivate();
                 },
 
                 toggleDarkMode: function () {
@@ -99,9 +98,7 @@ define(['views/common/d3plusVizView',
                  * @param {object} dimensions object containing dimension information
                  * @param {object} filtersView Backbone.js filtersView
                  */
-                transformToLinksAndNodes: function (flows, dimensions, filtersView) {
-                    let collections = filtersView.collections,
-                        tags =  filtersView.tags;
+                transformToLinksAndNodes: function (flows, dimensions) {
                     let nodes = [],
                         links = [];
 
@@ -151,14 +148,10 @@ define(['views/common/d3plusVizView',
                             // pass amount
                             item.value = flow.amount;
 
-                            // retrieve property info
-                            var collection = collections[tags[prop]],
-                                obj = collection.find(model => model.attributes.id == flow[node][prop]);
-
-                            // update item
-                            var attr = obj.attributes,
-                                code = attr.code || attr.nace || attr.ewc_code,
-                                name = utils.capitalizeFirstLetter(attr.name || attr.ewc_name);
+                            // retrieve property info & update item
+                            var attr = Object.getOwnPropertyNames(flow[node]),
+                                code = flow[node][attr.find(a => a.includes("Code"))]
+                                name = flow[node][attr.find(a => a.includes("Name"))];
                             item.id = code + " " + name + extra;
                         })
 
