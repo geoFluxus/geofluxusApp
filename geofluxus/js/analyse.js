@@ -1,5 +1,5 @@
-// Analyse
 define(['views/analyse/filters'],
+
 function (FiltersView) {
     var filtersView;
 

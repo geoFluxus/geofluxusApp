@@ -10,7 +10,7 @@ define([
          */
         constructor(options) {
             this.options = options;
-            this.exportPngIconHtml = "<i class='fas fa-camera icon-save-image' title='Export this visualization as a PNG file.'></i>"
+            this.exportPngIconHtml = "<div class='icon-save-image'></div>"; //"<i class='fas fa-camera icon-save-image' title='Export this visualization as a PNG file.'></i>"
             this.loadingHTML =
                 `<div style="left: 50%; top: 50%; position: absolute; transform: translate(-50%, -50%); font-family: 'Montserrat', sans-serif;">
                   <strong>Loading Visualization</strong>
@@ -26,53 +26,65 @@ define([
 
         addButtons() {
             let _this = this;
-            let svg = d3.select(".d3plus-viz");
-            svg.select(".d3plus-Form.d3plus-Form-Button")
-                .append("button")
-                .attr("class", "d3plus-Button fullscreen-toggle")
-                .attr("title", "View this visualization in fullscreen mode.")
-                .attr("type", "button")
-                .html('<i class="fas fa-expand icon-fullscreen"></i>')
 
-            svg.select(".d3plus-Form.d3plus-Form-Button")
-                .append("button")
-                .attr("class", "d3plus-Button export-csv")
-                .attr("title", "Export the data of this visualization as a CSV file.")
-                .attr("type", "button")
-                .html('<i class="fas fa-file icon-export"></i>');
+            let buttonFullscreen = d3.select(this.options.el + " " + ".fullscreen-toggle")
+            if (buttonFullscreen.empty()) {
 
-            svg.select(".d3plus-Form.d3plus-Form-Button")
-                .append("button")
-                .attr("class", "d3plus-Button toggle-darkmode")
-                .attr("title", "Toggle light or dark mode.")
-                .attr("type", "button")
-                .html('<i class="fas icon-toggle-darkmode"></i>');
+                let svg = d3.select(".d3plus-viz");
 
-            if (this.options.canHaveLegend) {
+                $(".icon-save-image").parent().css({
+                    "opacity": "0",
+                    "z-index": "-1000",
+                });
+
                 svg.select(".d3plus-Form.d3plus-Form-Button")
                     .append("button")
-                    .attr("class", "d3plus-Button toggle-legend")
-                    .attr("title", "Toggle the legend on or off.")
+                    .attr("class", "d3plus-Button fullscreen-toggle")
+                    .attr("title", "View this visualization in fullscreen mode.")
                     .attr("type", "button")
-                    .html('<i class="fas icon-toggle-legend"></i>');
-            }
+                    .html('<i class="fas fa-expand icon-fullscreen"></i>')
 
-            if (this.options.canFlipGrouping) {
+                // svg.select(".d3plus-Form.d3plus-Form-Button")
+                //     .append("button")
+                //     .attr("class", "d3plus-Button export-csv")
+                //     .attr("title", "Export the data of this visualization as a CSV file.")
+                //     .attr("type", "button")
+                //     .html('<i class="fas fa-file icon-export"></i>');
+
                 svg.select(".d3plus-Form.d3plus-Form-Button")
                     .append("button")
-                    .attr("class", "d3plus-Button flip-grouping")
-                    .attr("title", "Inverts the dimensions.")
+                    .attr("class", "d3plus-Button toggle-darkmode")
+                    .attr("title", "Toggle light or dark mode.")
                     .attr("type", "button")
-                    .html('<i class="fas icon-flip-grouping"></i>');
-            }
+                    .html('<i class="fas icon-toggle-darkmode"></i>');
 
-            // Check on hover over Viz if it still contains Fullscreen button, if not, readd:
-            svg.on("mouseover", function () {
-                let buttonFullscreen = d3.select(".fullscreen-toggle")
-                if (buttonFullscreen.empty()) {
-                    _this.addButtons();
+                if (this.options.canHaveLegend) {
+                    svg.select(".d3plus-Form.d3plus-Form-Button")
+                        .append("button")
+                        .attr("class", "d3plus-Button toggle-legend")
+                        .attr("title", "Toggle the legend on or off.")
+                        .attr("type", "button")
+                        .html('<i class="fas icon-toggle-legend"></i>');
                 }
-            })
+
+                if (this.options.canFlipGrouping) {
+                    svg.select(".d3plus-Form.d3plus-Form-Button")
+                        .append("button")
+                        .attr("class", "d3plus-Button flip-grouping")
+                        .attr("title", "Inverts the dimensions.")
+                        .attr("type", "button")
+                        .html('<i class="fas icon-flip-grouping"></i>');
+                }
+
+                // Check on hover over Viz if it still contains Fullscreen button, if not, readd:
+                svg.on("mouseover", function () {
+                    let buttonFullscreen = d3.select(".fullscreen-toggle")
+                    if (buttonFullscreen.empty()) {
+                        _this.addButtons();
+                    }
+                })
+
+            }
         }
     }
     return D3plusViz;
