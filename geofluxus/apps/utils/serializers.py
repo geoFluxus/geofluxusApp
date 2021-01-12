@@ -772,7 +772,6 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
             cols.append(name)
             data = df[cols]
             m2m_values = {m.name: m.id for m in model.objects.all()}
-            print(name)
 
             # First clear all previous data
             through_objs = []
@@ -791,7 +790,7 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
                             )
                         )
             getattr(self.Meta.model, name).through.objects.bulk_create(through_objs)
-            print('Done!')
+            print('m2m fields created')
 
     @property
     def index_fields(self):
@@ -815,19 +814,43 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
         model = self.Meta.model
         queryset = self.get_queryset()
         # only fields defined in field_map will be written to database
-        fields = [getattr(v, 'name', None) or v
-                  for v in self.field_map.values()]
-        updated = []
+        # ignore m2m fields -> processed in later stage
+        fields, m2m_fields = [], []
+        for v in self.field_map.values():
+            if isinstance(v, Reference):
+                name  = getattr(v, 'name', None)
+                if v.many:
+                    m2m_fields.append(name)
+                else:
+                    fields.append(name)
+            else:
+                fields.append(v)
+
+        print(fields)
+        print(m2m_fields)
 
         dataframe = self._set_defaults(dataframe, model)
 
-        idx = 0
+        # retrieve all models based on index fields(*)
+        filter_kwargs = []
+        for c in self.index_fields:
+            kwargs = []
+            for row in dataframe.itertuples(index=False):
+                kwargs.append(getattr(row, c))
+            filter_kwargs.append(Q(**{f"{c}__in": kwargs}))
+        updated = queryset.filter(np.bitwise_and.reduce(filter_kwargs))
+        models = {
+            tuple([getattr(model, field) for field in self.index_fields]): model
+            for model in updated
+        }
+
+        objs = []
         for row in dataframe.itertuples(index=False):
-            idx+=1
-            print(idx)
-            filter_kwargs = {c: getattr(row, c) for c in self.index_fields}
-            model = queryset.get(**filter_kwargs)
+            key = tuple([getattr(row, c) for c in self.index_fields])
+            model = models[key]
             for c, v in row._asdict().items():
+                if c in m2m_fields:
+                    getattr(model, c).clear()
                 if c not in fields:
                     continue
                 if type(v) in [int, float] and np.isnan(v):
@@ -836,9 +859,9 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
                     setattr(model, c, v)
                 except TypeError:
                     model.c = v
-            model.save()
-            updated.append(model)
-        updated = queryset.filter(id__in=[m.id for m in updated])
+            objs.append(model)
+        self.Meta.model.objects.bulk_update(objs, fields)
+        print('updated')
         return updated
 
     def _set_defaults(self, dataframe, model):
