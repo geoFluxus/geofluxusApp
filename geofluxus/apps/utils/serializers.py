@@ -895,6 +895,7 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
         # create the new rows
         bulk = []
         m = None
+        print('Collect models...')
         for row in df_save.itertuples(index=False):
             #row_dict = row._asdict()
             row_dict = {}
@@ -905,6 +906,7 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
                     row_dict[k] = v
             m = model(**row_dict)
             bulk.append(m)
+        print('Upload...')
         try:
             created = model.objects.bulk_create(bulk)
         except ValueError:
@@ -913,13 +915,14 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
             created = bulk
         except Error as e:
             raise ValidationError(str(e))
-        # only postgres returns ids after bulk creation
-        # workaround for non postgres: create queryset based on index_columns
-        if created and created[0].id == None:
-            filter_kwargs = {}
-            for field in self.index_fields:
-                filter_kwargs[field + '__in'] = dataframe[field].values
-            created = self.get_queryset().filter(**filter_kwargs)
+        print('Upload complete!')
+        # # only postgres returns ids after bulk creation
+        # # workaround for non postgres: create queryset based on index_columns
+        # if created and created[0].id == None:
+        #     filter_kwargs = {}
+        #     for field in self.index_fields:
+        #         filter_kwargs[field + '__in'] = dataframe[field].values
+        #     created = self.get_queryset().filter(**filter_kwargs)
         return created
 
     def create(self, validated_data):
