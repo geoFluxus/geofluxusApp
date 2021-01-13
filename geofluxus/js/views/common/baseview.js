@@ -8,7 +8,7 @@ var BaseView = Backbone.View.extend({
         _.bindAll(this, 'alert');
         var _this = this;
         this.template = options.template;
-        this.loader = options.loader || new utils.Loader(options.el, {disable: true});
+        this.loader = new utils.Loader(options.el, {disable: true});
     },
 
     events: {

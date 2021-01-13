@@ -46,7 +46,8 @@ define(['views/common/d3plusVizView',
                     this.isDarkMode = true;
                     this.options = options;
 
-                    this.flows = this.transformToLinksAndNodes(this.options.flows, this.options.dimensions);
+                    this.filtersView = this.options.flowsView.filtersView;
+                    this.flows = this.transformToLinksAndNodes(this.options.flows, this.options.dimensions, this.filtersView);
 
                     this.tooltipConfig = {
                         tbody: [
@@ -78,7 +79,7 @@ define(['views/common/d3plusVizView',
                         isDarkMode: this.isDarkMode,
                     });
                     this.scrollToVisualization();
-                    this.loader.deactivate();
+                    this.options.flowsView.loader.deactivate();
                 },
 
                 toggleDarkMode: function () {
@@ -88,6 +89,7 @@ define(['views/common/d3plusVizView',
                       .attr("stroke", this.isDarkMode ? "#DBDBDB" : "#393939")
 
                     $(".viz-wrapper-div").toggleClass("lightMode");
+                    $(".visualizationBlock .card").toggleClass("lightMode");
                     $(".parallelsets-container").toggleClass("lightMode");
                 },
 
@@ -98,7 +100,9 @@ define(['views/common/d3plusVizView',
                  * @param {object} dimensions object containing dimension information
                  * @param {object} filtersView Backbone.js filtersView
                  */
-                transformToLinksAndNodes: function (flows, dimensions) {
+                transformToLinksAndNodes: function (flows, dimensions, filtersView) {
+                    let collections = filtersView.collections,
+                        tags =  filtersView.tags;
                     let nodes = [],
                         links = [];
 
@@ -148,10 +152,14 @@ define(['views/common/d3plusVizView',
                             // pass amount
                             item.value = flow.amount;
 
-                            // retrieve property info & update item
-                            var attr = Object.getOwnPropertyNames(flow[node]),
-                                code = flow[node][attr.find(a => a.includes("Code"))]
-                                name = flow[node][attr.find(a => a.includes("Name"))];
+                            // retrieve property info
+                            var collection = collections[tags[prop]],
+                                obj = collection.find(model => model.attributes.id == flow[node][prop]);
+
+                            // update item
+                            var attr = obj.attributes,
+                                code = attr.code || attr.nace || attr.ewc_code,
+                                name = utils.capitalizeFirstLetter(attr.name || attr.ewc_name);
                             item.id = code + " " + name + extra;
                         })
 
@@ -206,7 +214,7 @@ define(['views/common/d3plusVizView',
                     });
                     FileSaver.saveAs(blob, "data.csv");
 
-                    event.stopImmediatePropagation();
+                    //event.stopImmediatePropagation();
                 },
 
                 close: function () {

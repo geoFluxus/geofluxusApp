@@ -59,7 +59,7 @@ define(['views/common/d3plusVizView',
                         canHaveLegend: this.canHaveLegend,
                     });
                     this.scrollToVisualization();
-                    this.loader.deactivate();
+                    this.options.flowsView.loader.deactivate();
                 }
             });
         return CoordinatePointMapView;

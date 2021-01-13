@@ -1,19 +1,25 @@
 :root {
-    --primary: #97BEA9;
-    --primary-border: rgb(114, 145, 128);
-    --font-color: white;
-    --primary-focus-bg: rgb(89, 155, 119);
-    --primary-focus-border: rgb(71, 109, 88);
+  --primary: #97bea9;
+  --primary-border: rgb(114, 145, 128);
+  --font-color: white;
+
+  --primary-hover-bg: rgb(62, 107, 82);
+  --primary-hover-border: rgb(71, 109, 88);
+
+  --primary-focus-bg: rgb(89, 155, 119);
+  --primary-focus-border: rgb(71, 109, 88);
+
+  /* orange */
+  --secondary: #f7f7d5;
 }
 
 a {
-    color: var(--font-color);
+  color: var(--font-color);
 }
 
 p {
-    color: white;
+  color: white;
 }
-
 
 h1,
 h2,
@@ -21,382 +27,394 @@ h3,
 h4,
 h5,
 h6 {
-    color: white;
+  color: white;
 }
 
 label {
-    color: white;
+  color: white;
 }
 
 body {
-    font-family: Montserrat, sans-serif;
-    background-color: rgb(24, 24, 24);
-    z-index: 0;
+  font-family: Montserrat, sans-serif;
+  background-color: rgb(24, 24, 24);
+  z-index: 0;
 }
 
 .block {
     background-color: #393939;
-    border-radius: 30px;
-    padding: 1.5rem;
-    padding-bottom: 1rem;
-    margin: 1.5rem;
+  border-radius: 30px;
+  padding: 1.5rem;
+  padding-bottom: 1rem;
+  margin: 1.5rem;
 }
 
 .card {
-    background-color: #252525 !important;
-    border-radius: 30px !important;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
+  background-color: #252525 !important;
+  border-radius: 30px !important;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .card-body {
-    padding-top: 0em !important;
+  padding-top: 0em !important;
 }
 
-
-
-
 #wrapper {
-    padding-top: 80px;
-    z-index: 800;
+  padding-top: 80px;
+  z-index: 800;
 }
 
 #page-content-wrapper {
-    padding-left: 20px;
-    margin-right: 20px;
-    padding-top: 10px;
-    z-index: 400;
+  padding-left: 20px;
+  margin-right: 20px;
+  padding-top: 10px;
+  z-index: 400;
 }
 
 /* BORDER RADIUS */
 
-
 input {
-    border-radius: 18px;
+  border-radius: 18px;
 }
 
 .alert {
-    border-radius: 25px;
+  border-radius: 25px;
 }
 
 .filter-option {
-    padding-right: 0.5rem;
-    padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
 }
 
 /* BUTTON STYLES */
 
 .btn {
-    border-radius: 18px;
-    line-height: 20px;
+  border-radius: 18px;
+  line-height: 20px;
 }
 
 .btn-default {
-    border-color: white;
-    color: white;
+  background-color: rgb(85, 85, 85);
+  border-color: white;
+  color: white;
 }
 
 .btn-primary {
-    background-color: var(--primary);
-    border-color: var(--primary-border);
+  background-color: var(--primary);
+  border-color: var(--primary-border);
 }
 
 .btn.focus,
 .btn:focus {
-    border-color: var(--primary-focus-border) !important;
-    box-shadow: 0 0 0 .2rem rgba(112, 141, 125, .5);
+  border-color: var(--primary-focus-border) !important;
+  box-shadow: 0 0 0 0.2rem rgba(112, 141, 125, 0.5);
 }
 
 .btn-primary.focus,
 .btn-primary:focus,
 .btn-outline-primary.focus,
 .btn-outline-primary:focus {
-    background-color: var(--primary-focus-bg) !important;
+  background-color: var(--primary-focus-bg) !important;
 }
-
 
 .btn-primary:not(:disabled):not(.disabled).active,
 .btn-primary:not(:disabled):not(.disabled):active,
-.show>.btn-primary.dropdown-toggle {
-    background-color: var(--primary-focus-bg) !important;
-    border-color: var(--primary-focus-border) !important;
+.show > .btn-primary.dropdown-toggle {
+  background-color: var(--primary-focus-bg) !important;
+  border-color: var(--primary-focus-border) !important;
 }
 
 .btn-primary:not(:disabled):not(.disabled).active:focus,
 .btn-primary:not(:disabled):not(.disabled):active:focus,
-.show>.btn-primary.dropdown-toggle:focus {
-    box-shadow: 0 0 0 .2rem rgba(112, 141, 125, .5);
+.show > .btn-primary.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(112, 141, 125, 0.5);
 }
 
 .btn-primary:not(:disabled):not(.disabled).active.focus,
 .btn-primary:not(:disabled):not(.disabled):active.focus,
-.show>.btn-primary.dropdown-toggle:focus,
+.show > .btn-primary.dropdown-toggle:focus,
 .btn-outline-primary:not(:disabled):not(.disabled).active.focus,
 .btn-outline-primary:not(:disabled):not(.disabled):active.focus,
 .btn-outline-primary:not(:disabled):not(.disabled):active:focus {
-    box-shadow: 0 0 0 .2rem rgba(112, 141, 125, .5);
+  box-shadow: 0 0 0 0.2rem rgba(112, 141, 125, 0.5);
 }
 
-
 .btn.active {
-    border-color: var(--primary-border) !important;
+  border-color: var(--primary-border) !important;
 }
 
 .btn-primary.active,
 .btn-primary:active {
-    background-color: rgb(112, 141, 125) !important;
+  background-color: rgb(112, 141, 125) !important;
 }
 
 .btn-outline-primary {
-    color: white;
-    border-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
 }
 
 .btn-outline-primary.active,
 .btn-outline-primary:active {
-    background-color: var(--primary-focus-bg) !important;
-    border-color: var(--primary-focus-border) !important;
+  background-color: var(--primary-focus-bg) !important;
+  border-color: var(--primary-focus-border) !important;
 }
 
 .btn:hover {
-    background-color: grey;
-    border-color: grey;
-    color: white;
-    box-shadow: none;
+  background-color: grey;
+  border-color: grey;
+  color: white;
+  box-shadow: none;
+}
+
+.btn-default:hover,
+.toggle-group label.active:hover {
+  background-color: var(--primary-hover-bg) !important;
+  border-color: var(--primary-hover-border) !important;
 }
 
 .btn:focus {
-    background-color: primary;
-    border-color: primary;
-    color: black;
+  background-color: primary;
+  border-color: primary;
+  color: black;
 }
 
-
-
+.btn-group.btn-group-toggle label.active {
+  background-color: var(--primary) !important;
+  border-color: var(--primary-border) !important;
+}
 
 /* Dropdown for Bootstrap Select */
 
 .dropdown-button {
-    border-color: black;
-    background-color: transparent;
-    font-size: 16px;
-    color: white;
-    cursor: pointer;
+  border-color: black;
+  background-color: transparent;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
 }
 
 .dropdown {
-    position: relative;
-    display: inline-block;
-    border-radius: 18px;
+  position: relative;
+  display: inline-block;
+  border-radius: 18px;
 }
 
 .dropdown-content {
-    display: none;
-    position: absolute;
-    min-width: 160px;
-    border-radius: 18px !important;
+  display: none;
+  position: absolute;
+  min-width: 160px;
+  border-radius: 18px !important;
 }
 
 .dropdown-content a {
-    color: white;
-    font-size: 16px;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
+  color: white;
+  font-size: 16px;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
 }
 
 .dropdown-content a:hover {
-    background-color: white;
-    color: black;
+  background-color: white;
+  color: black;
 }
 
 .dropdown:hover .dropdown-content {
-    display: block;
+  display: block;
 }
 
-.bootstrap-select>.dropdown-toggle::after {
-    font-size: x-large;
-    margin-top: 0px;
+.bootstrap-select > .dropdown-toggle::after {
+  font-size: x-large;
+  margin-top: 0px;
 }
 
 .dropdown-menu.show {
-    border-radius: 18px;
+  border-radius: 18px;
 }
 
 .dropdown-menu.show .bs-searchbox input {
-    border-radius: 18px !important;
+  border-radius: 18px !important;
 }
 
 .dropdown-item {
-    padding-left: 1rem;
-    padding-right: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 .dropdown-item.active {
-    background-color: grey !important;
+  background-color: grey !important;
 }
 
 .form-control-sm {
-    border-radius: 18px;
+  border-radius: 18px;
 }
 
 /* Popover Tooltips */
 
 .popover {
-    border-radius: 18px;
-    max-width: 350px;
+  border-radius: 18px;
+  max-width: 350px;
 }
 
 .popover-header {
-    border-top-right-radius: 18px;
-    border-top-left-radius: 18px;
-    color: black;
+  border-top-right-radius: 18px;
+  border-top-left-radius: 18px;
+  color: black;
 }
 
 .popover-body {
-    text-align: justify;
-    text-justify: inter-word;
+  text-align: justify;
+  text-justify: inter-word;
 }
 
 .popover-body span a {
-    color: black !important;
-    text-decoration: underline;
+  color: black !important;
+  text-decoration: underline;
 }
 
+/* .tooltip */
+body .tooltip-inner {
+  border-radius: 0.5rem !important;
+  background: rgb(226, 224, 224);
+  color: black;
+}
+body .tooltip .arrow::before {
+  border-right-color: rgb(226, 224, 224);
+}
 
 /* Helpicons to open popover tooltips */
 
 .buttonHelpiconContainer a {
-    position: relative;
-    top: 0.32rem;
-    margin-left: 0px !important;
+  position: relative;
+  top: 0.32rem;
+  margin-left: 0px !important;
 }
 
 .help-icon.fa-question-circle {
-    margin-left: 10px;
-    font-size: 25px;
-    color: grey;
+  margin-left: 10px;
+  font-size: 25px;
+  color: var(--secondary);
 }
 
 .help-icon.fa-question-circle:hover {
-    margin-left: 10px;
-    font-size: 25px;
-    color: white;
-    cursor: pointer;
+  margin-left: 10px;
+  font-size: 25px;
+  color: white;
+  cursor: pointer;
 }
 
 .help-icon.fa-question-circle:focus {
-    outline: none;
+  outline: none;
 }
-
 
 /* SCROLLBAR STYLING */
 
 ::-webkit-scrollbar {
-    z-index: 800;
-    width: 10px;
-    background: grey;
-    -webkit-box-shadow: inset 10px 0 10px rgba(255, 255, 255, 0.3);
+  z-index: 800;
+  width: 10px;
+  background: grey;
+  -webkit-box-shadow: inset 10px 0 10px rgba(255, 255, 255, 0.3);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: white;
-    border-radius: 10px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+  background: white;
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
 }
 
 .modal {
-    top: 10%;
-    overflow: auto;
+  top: 10%;
+  overflow: auto;
 }
 
 .modal-content {
-    box-shadow: 0px 0px 5px 10px rgba(3, 3, 3, 0.4);
-    background-color: #585858;
-    color: white;
-    border-radius: 24px;
+  box-shadow: 0px 0px 5px 10px rgba(3, 3, 3, 0.4);
+  background-color: #585858;
+  color: white;
+  border-radius: 24px;
 }
 
 .modal-header {
-    border-bottom: 0 none;
+  border-bottom: 0 none;
 }
 
 .modal-backdrop {
-    background-color: rgba(0, 0, 0, .3);
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
-.modal .close {
-    color: white;
-    font-size: 38px;
-    padding: 0 !important;
-    margin: 0 !important;
-    margin-right: -0.25em !important;
-    transition-property: transform;
-    transition-duration: 0.4s;
-    -webkit-transition-property: -webkit-transform;
-    -webkit-transition-duration: 0.4s;
-    -ms-transition-property: -ms-transform;
-    -ms-transition-duration: 0.4s;
+.close {
+  color: white;
+  font-size: 38px;
+  padding: 0 !important;
+  margin: 0 !important;
+  margin-right: -0.25em !important;
+  transition-property: transform;
+  transition-duration: 0.4s;
+  -webkit-transition-property: -webkit-transform;
+  -webkit-transition-duration: 0.4s;
+  -ms-transition-property: -ms-transform;
+  -ms-transition-duration: 0.4s;
 }
 
-.modal .close:hover {
-    transform: rotate(180deg);
-    -webkit-transform: rotate(180deg);
-    -ms-transform: rotate(180deg);
+.close:hover {
+  color: white;
+  transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
 }
 
-.modal .close:focus {
-    outline: none;
+.close:focus {
+  outline: none;
 }
 
 .modal-footer button {
-    width: 5rem;
+  width: 5rem;
 }
 
 .loader {
-    position: fixed;
-    top: 45%;
-    left: 45%;
-    z-index: 50000000;
-    width: 150px;
-    height: 150px;
-    border: 16px solid black;
-    border-radius: 50%;
-    border-top: 16px solid rgb(179, 178, 178);
-    box-shadow: 0 0 20px rgb(107, 106, 106), inset 0 0 15px rgb(151, 151, 151);
-    -webkit-animation: spin 2s linear infinite;
-    animation: spin 2s linear infinite;
+  position: fixed;
+  top: 45%;
+  left: 45%;
+  z-index: 50000000;
+  width: 150px;
+  height: 150px;
+  border: 16px solid black;
+  border-radius: 50%;
+  border-top: 16px solid rgb(179, 178, 178);
+  box-shadow: 0 0 20px rgb(107, 106, 106), inset 0 0 15px rgb(151, 151, 151);
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
 }
 
 #navbarID {
-    /* Transition effect when sliding down (and up) */
-    transition: top 0.3s;
+  /* Transition effect when sliding down (and up) */
+  transition: top 0.3s;
 }
 
 .warning-no-datasets {
-    position: relative;
-    z-index: 999;
-    margin: auto;
-    width: 30rem;
-    top: 6rem;
+  position: relative;
+  z-index: 999;
+  margin: auto;
+  width: 30rem;
+  top: 6rem;
 }
 
 @-webkit-keyframes spin {
-    0% {
-        -webkit-transform: rotate(0deg);
-    }
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
 
-    100% {
-        -webkit-transform: rotate(360deg);
-    }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
 }
 
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
 
-    100% {
-        transform: rotate(360deg);
-    }
+  100% {
+    transform: rotate(360deg);
+  }
 }

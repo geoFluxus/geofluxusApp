@@ -25,3 +25,13 @@ def isDemoUser(user):
     if 'Demo' in groups:
         return True
     return False
+
+
+@register.filter
+def isExpertUser(user):
+    # check all user groups
+    groups = user.groups.values_list('name', flat=True)
+
+    if 'Expert' in groups:
+        return True
+    return False

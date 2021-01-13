@@ -1,7 +1,10 @@
 define([
     'visualizations/d3plusViz',
     'visualizations/d3plus',
-], function (D3plusViz, d3plus) {
+
+], function (
+    D3plusViz,
+    d3plus) {
     /**
      *
      * Bar chart to display Flows data
@@ -31,10 +34,11 @@ define([
             }
 
             var data = options.data;
-            if (options.x.includes('month')){
+            if (options.x.includes('month')) {
                 var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                data.forEach(function(d) {
+                    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                ];
+                data.forEach(function (d) {
                     var code = d.monthCode,
                         month = months.indexOf(code.substring(0, 3)),
                         year = parseInt(code.substring(3, 8));

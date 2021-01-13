@@ -1,26 +1,26 @@
 <!--Filters-->
 <script type="text/template" id="filter-template">
-    {% load custom_tags %}
+  {% load custom_tags %}
 
     <div class="block accordion" id="filterBlock">
 
         <div class="row justify-content-between">
-            <h4 class="pb-1 pl-3">Step 1: Filter the waste flows</h4>
+            <h4 class="pb-1 pl-3">Step 1: Filter the waste flows (optional)</h4>
 
             <div>
                 <button
                     id='view-saved-filters'
-                    class="btn btn-primary openSavedFilterModal"
+                    class="btn btn-secondary openSavedFilterModal"
                     data-filter-modal-mode="savedMode"
-                    title="View and set a saved filter configuration."
-                    style="height: 38px; width: 6em">SAVED</button>
+                    title="Load saved filter configurations."
+                    style="height: 38px; width: 10rem">LOAD FILTERS</button>
 
                 <button
                     id='save-filters'
                     class="btn btn-primary openSavedFilterModal"
                     data-filter-modal-mode="newMode"
                     title="Save the current filter configuration."
-                    style="height: 38px; width: 6em">NEW</button>
+                    style="height: 38px; width: 10rem">SAVE FILTERS</button>
             </div>
         </div>
 
@@ -31,22 +31,27 @@
                     <button class="btn btn-link collapsingHeaderButton" id="btn-collapse-header-origin"
                         title="">
                         <!-- <i class="fa fa-chevron-down pull-right"></i> -->
-                        Data set
+                        General
                     </button>
                 </h4>
             </div>
 
-            <div class="card-body">
-                <div class="row pb-4">
-                    <div class="col-md-4">
-                        <label for="datasetSelect">Data set</label>
+            <div class="card-body" style="min-height: 10rem;">
+
+                    <div class="row" 
+                        {% if not request.user|isExpertUser %}
+                        style="display: none;"
+                        {% endif %}                
+                        >
+                        <div class="col-md-3 flows-dataset-select-col">
+                        <label for="flows-dataset-select">Data set</label>
                         <div class="labelHelpiconContainer">
                             <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Data set"
                                 data-html="true" tabindex="0" data-content="Select the data set you want to analyse.">
                             </a>
                         </div>
 
-                        <select name="flows-dataset-select" id="datasetSelect" multiple
+                        <select name="flows-dataset-select" id="flows-dataset-select" multiple
                             class="form-control form-control-sm selectpicker" data-size="4"
                             style="resize: vertical;">
                             <option selected value="-1">All (<%= datasets.count %>)</option>
@@ -54,11 +59,51 @@
                             <% datasets.forEach(function(dataset){ %>
                             <option value="<%= dataset.id %>"><%= dataset.get('title') %></option>
                             <% }); %>
-                        </select>
-
-                        
+                            </select>
                     </div>
                 </div>
+
+
+                <div class="row pb-4">
+                        <div class="col-md-3">
+
+                            <label for="flows-year-select">Year</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Year"
+                                    data-html="true" tabindex="0" data-content="Select the year in which the waste flow has been reported.<br>
+                                    Upon selecting a Year, the Month filter will become available, containing the months belonging to the selection made in this filter.
+                                    ">
+                                </a>
+                            </div>
+
+                            <select name="flows-year-select" id="flows-year-select" multiple
+                                class="form-control form-control-sm selectpicker" data-size="5"
+                                style="resize: vertical;">
+                                <option selected value="-1">All (<%= years.count %>)</option>
+                                <option data-divider="true"></option>
+                                <% years.forEach(function(year){ %>
+                                <option value="<%= year.id %>"><%= year.get('code') %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3" id="flows-monthsCol" style="display: none;">
+
+                            <label for="flows-month-select">Month</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Month"
+                                    data-html="true" tabindex="0"
+                                    data-content="Select the month in which the waste flow has been reported.">
+                                </a>
+                            </div>
+
+                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
+                            <select name="flows-month-select" id="flows-month-select" multiple
+                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="4"
+                                style="resize: vertical;">
+                            </select>
+                        </div>
+                    </div>
             </div>
         </div>
 
@@ -79,7 +124,7 @@
             <div id="collapseOriginBlock" class="collapse show" aria-labelledby="card-header-collapse-origin"
                 data-parent="#filterBlock">
                 <div class="card-body">
-                   
+
                     {% if not request.user|isDemoUser %}
                         <div class="row">
                             <div class="col-md-4 origin-actor-select-col">
@@ -151,16 +196,16 @@
 
                             <div>
                                 <div class="btn-group btn-group-toggle" id="origin-role-radio" data-toggle="buttons"
-                                    style="width: 20rem;">
+                                    style="width: 30rem;">
 
-                                    <label class="btn btn-sm btn-primary origin-role" style="width: 40%;" role="production">
-                                        <input type="radio" id="origin-role-radio-production">Production
+                                    <label class="btn btn-default origin-role" style="width: 40%;" role="production">
+                                        <input type="radio" id="origin-role-radio-production">Waste production
                                     </label>
-                                    <label class="btn btn-sm btn-primary origin-role active" style="width: 20%;" role="both">
+                                    <label class="btn btn-default origin-role active" style="width: 20%;" role="both">
                                         <input type="radio" id="origin-role-radio-both">Both
                                     </label>
-                                    <label class="btn btn-sm btn-primary origin-role" style="width: 40%;" role="treatment">
-                                        <input type="radio" id="origin-role-radio-treatment">Treatment
+                                    <label class="btn btn-default origin-role" style="width: 40%;" role="treatment">
+                                        <input type="radio" id="origin-role-radio-treatment">Waste treatment
                                     </label>
 
                                 </div>
@@ -169,7 +214,7 @@
                                     <a class="help-icon fas fa-question-circle" data-toggle="popover"
                                         title="Origin role" data-html="true" tabindex="0"
                                         data-content="Choose the role of the Origin of the waste flow: waste production, waste treatment, or both.<br>
-                                            If you select waste production, the filters for economic activities will appear. 
+                                            If you select waste production, the filters for economic activities will appear.
                                             If you choose waste treatment, the filters for the different waste treatment methods will become available.">
                                     </a>
                                 </div>
@@ -189,7 +234,7 @@
                                     data-html="true" tabindex="0" data-content="
                                     <span>The Activity group indicates the economic activity of the Origin of the waste flow.</span>
                                     <br>
-                                    <span>This classification is based on the Statistical Classification of Economic Activities in the European Community, 
+                                    <span>This classification is based on the Statistical Classification of Economic Activities in the European Community,
                                     also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL&StrNom=NACE_REV2&StrLanguageCode=EN&IntPcKey=&StrLayoutCode=HIERARCHIC'>here</a>.</span>
                                     <br>
                                     <span>This filter also contains four additional custom entries:</span>
@@ -225,7 +270,7 @@
                                     <span>The Activity indicates the economic activity of the Origin of the waste flow on the most detailed level.
                                     This filter contains the Activities belonging to the selection made in the Activity group filter.</span>
                                     <br>
-                                    <span>This classification is based on the Statistical Classification of Economic Activities in the European Community, 
+                                    <span>This classification is based on the Statistical Classification of Economic Activities in the European Community,
                                     also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL_LINEAR&StrNom=NACE_REV2&StrLanguageCode=EN'>here</a>.</span>
                                     <br>
                                     <span>This filter also contains several additional custom entries belonging to the custom Activity groups.</span>
@@ -324,7 +369,7 @@
                 data-parent="#filterBlock">
                 <div class="card-body">
 
-                    {% if not request.user|isDemoUser %}                  
+                    {% if not request.user|isDemoUser %}
                         <div class="row">
                             <div class="col-md-4 destination-actor-select-col">
                                 <label for="destination-actor-select">Select specific <strong>companies</strong>:</label>
@@ -397,16 +442,16 @@
 
                             <div>
                                 <div class="btn-group btn-group-toggle" id="destination-role-radio"
-                                    data-toggle="buttons" style="width: 20rem;">
+                                    data-toggle="buttons" style="width: 30rem;">
 
-                                    <label class="btn btn-sm btn-primary destination-role" style="width: 40%;" role="production">
-                                        <input type="radio" id="destination-role-radio-production" checked>Production
+                                    <label class="btn btn-default destination-role" style="width: 40%;" role="production">
+                                        <input type="radio" id="destination-role-radio-production" checked>Waste production
                                     </label>
-                                    <label class="btn btn-sm btn-primary destination-role active" style="width: 20%;" role="both">
+                                    <label class="btn btn-default destination-role active" style="width: 20%;" role="both">
                                         <input type="radio" id="destination-role-radio-both">Both
                                     </label>
-                                    <label class="btn btn-sm btn-primary destination-role" style="width: 40%;" role="treatment">
-                                        <input type="radio" id="destination-role-radio-treatment">Treatment
+                                    <label class="btn btn-default destination-role" style="width: 40%;" role="treatment">
+                                        <input type="radio" id="destination-role-radio-treatment">Waste treatment
                                     </label>
 
                                 </div>
@@ -415,7 +460,7 @@
                                     <a class="help-icon fas fa-question-circle" data-toggle="popover"
                                         title="Origin role" data-html="true" tabindex="0"
                                         data-content="Choose the role of the Destination of the waste flow: waste production, waste treatment, or both.<br>
-                                                If you select waste production, the filters for economic activities will appear. 
+                                                If you select waste production, the filters for economic activities will appear.
                                                 If you choose waste treatment, the filters for the different waste treatment methods will become available.">
                                     </a>
                                 </div>
@@ -433,7 +478,7 @@
                                     data-html="true" tabindex="0" data-content="
                                     <span>The Activity group indicates the economic activity of the Destination of the waste flow.</span>
                                     <br>
-                                    <span>This classification is based on the Statistical Classification of Economic Activities in the European Community, 
+                                    <span>This classification is based on the Statistical Classification of Economic Activities in the European Community,
                                     also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL&StrNom=NACE_REV2&StrLanguageCode=EN&IntPcKey=&StrLayoutCode=HIERARCHIC'>here</a>.</span>
                                     <br>
                                     <span>This filter also contains four additional custom entries:</span>
@@ -468,7 +513,7 @@
                                     <span>The Activity indicates the economic activity of the Destination of the waste flow  on the most detailed level.
                                     This filter contains the Activities belonging to the selection made in the Activity group filter.</span>
                                     <br>
-                                    <span>This classification is based on the Statistical Classification of Economic Activities in the European Community, 
+                                    <span>This classification is based on the Statistical Classification of Economic Activities in the European Community,
                                     also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL_LINEAR&StrNom=NACE_REV2&StrLanguageCode=EN'>here</a>.</span>
                                     <br>
                                     <span>This filter also contains several additional custom entries belonging to the custom Activity groups.</span>
@@ -559,11 +604,11 @@
                 data-parent="#filterBlock">
                 <div class="card-body">
 
-                    <h5 class="subtitle">General</h5>
+                    <h5 class="subtitle">Geographical</h5>
 
                     <div class="row">
                         <div class="col-md-10">
-                            <label style="width: 450px" for="area-select-button-flows">Select the area(s) through which
+                            <label style="width: 450px" for="area-select-button-flows">Select area(s) through which
                                 the flows must pass:</label>
 
                             <div class="d-block">
@@ -595,48 +640,7 @@
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-3">
-
-                            <label for="yearSelect">Year</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Year"
-                                    data-html="true" tabindex="0" data-content="Select the year in which the waste flow has been reported.<br>
-                                    Upon selecting a Year, the Month filter will become available, containing the months belonging to the selection made in this filter.
-                                    ">
-                                </a>
-                            </div>
-
-                            <select name="flows-year-select" id="yearSelect" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
-                                style="resize: vertical;">
-                                <option selected value="-1">All (<%= years.count %>)</option>
-                                <option data-divider="true"></option>
-                                <% years.forEach(function(year){ %>
-                                <option value="<%= year.id %>"><%= year.get('code') %></option>
-                                <% }); %>
-                            </select>
-                        </div>
-
-                        <div class="col-md-3" id="flows-monthsCol" style="display: none;">
-
-                            <label for="monthSelect">Month</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Month"
-                                    data-html="true" tabindex="0"
-                                    data-content="Select the month in which the waste flow has been reported.">
-                                </a>
-                            </div>
-
-                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
-                            <select name="flows-month-select" id="monthSelect" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
-                                style="resize: vertical;">
-                            </select>
-                        </div>
-                    </div>
-
-                    <h5 class="subtitle">European Waste Catalogue Codes</h5>
+                    <h5 class="subtitle">European Waste Catalogue Codes (EuralCode)</h5>
 
                     <div class="row">
                         <div class="col-md-3">
@@ -736,10 +740,10 @@
                             <label for="flows-material-select">Materials</label>
                             <div class="labelHelpiconContainer">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Materials"
-                                    data-html="true" tabindex="0" data-content="Filter the flows based on their material content. 
-                                    Selecting one or more materials will return all flows containing the selected material(s), 
-                                    meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows 
-                                    consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting 
+                                    data-html="true" tabindex="0" data-content="Filter the flows based on their material content.
+                                    Selecting one or more materials will return all flows containing the selected material(s),
+                                    meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
+                                    consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
                                     to only include non-mixed material flows.">
                                 </a>
                             </div>
@@ -759,11 +763,11 @@
                             <label>Products</label>
                             <div class="labelHelpiconContainer">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Products"
-                                    data-html="true" tabindex="0" data-content="The Products filter allows for the filtering of materials 
+                                    data-html="true" tabindex="0" data-content="The Products filter allows for the filtering of materials
                                     which are considered directly reusable.">
                                 </a>
                             </div>
-                            <select name="flows-product-select" multiple
+                            <select name="flows-product-select" id="flows-product-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
                                 <option selected value="-1">All (<%= products.count %>)</option>
@@ -778,13 +782,13 @@
                             <label>Composites</label>
                             <div class="labelHelpiconContainer">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Composites"
-                                    data-html="true" tabindex="0" data-content="The Composites filter allows for the filtering of 
-                                    waste flows consisting of more than two materials that are not directly usable. These flows 
-                                    will require an additional processing step in order to separate the individual materials 
+                                    data-html="true" tabindex="0" data-content="The Composites filter allows for the filtering of
+                                    waste flows consisting of more than two materials that are not directly usable. These flows
+                                    will require an additional processing step in order to separate the individual materials
                                     making up the composite.">
                                 </a>
                             </div>
-                            <select name="flows-composites-select" multiple
+                            <select name="flows-composites-select" id="flows-composites-select" multiple
                                 class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                                 style="resize: vertical;">
                                 <option selected value="-1">All (<%= composites.count %>)</option>
@@ -798,121 +802,126 @@
                         </div>
                     </div>
 
-                    <h5 class="subtitle">Characteristics</h5>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <label for="flows-clean-select">Clean</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Clean"
-                                    data-html="true" tabindex="0"
-                                    data-content="The Clean filter indicates the extent to which a 
-                                    flow is expected to be contaminated with another substance. ‘Mono’ streams are considered 
-                                    clean streams since they consist of one material and are not contaminated, i.e. clean.">
-                                </a>
+                    <div {% if not request.user|isExpertUser %}
+                        style="display: none;"
+                        {% endif %}>
+                    
+                        <h5 class="subtitle">Characteristics</h5>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="flows-clean-select">Clean</label>
+                                <div class="labelHelpiconContainer">
+                                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Clean"
+                                        data-html="true" tabindex="0"
+                                        data-content="The Clean filter indicates the extent to which a
+                                        flow is expected to be contaminated with another substance. ‘Mono’ streams are considered
+                                        clean streams since they consist of one material and are not contaminated, i.e. clean.">
+                                    </a>
+                                </div>
+                                <select id="flows-clean-select" name="flows-clean-select"
+                                    class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
+                                    <option selected value='-1'>Ignore</option>
+                                    <option data-divider="true"></option>
+                                    <option value='unknown'>Unknown</option>
+                                    <option value='no'>Not clean</option>
+                                    <option value='yes'>Clean</option>
+                                </select>
                             </div>
-                            <select id="flows-clean-select" name="flows-clean-select"
-                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
-                                <option selected value='-1'>Ignore</option>
-                                <option data-divider="true"></option>
-                                <option value='unknown'>Unknown</option>
-                                <option value='no'>Not clean</option>
-                                <option value='yes'>Clean</option>
-                            </select>
+                            <div class="col-md-3">
+                                <label for="flows-mixed-select">Mixed</label>
+                                <div class="labelHelpiconContainer">
+                                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Mixed"
+                                        data-html="true" tabindex="0" data-content="The Mixed category indicates whether the flow
+                                        contains two or more materials. A mixed flow could consist of two or more clean materials
+                                        (masonry and concrete rubble, f.e.), but also two materials of which one is an identified
+                                        pollutant (soil containing mineral oil, f.e.). All non-clean flows are by definition mixed,
+                                        indicating they contain two or more materials.">
+                                    </a>
+                                </div>
+                                <select id="flows-mixed-select" name="flows-mixed-select"
+                                    class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
+                                    <option selected value='-1'>Ignore</option>
+                                    <option data-divider="true"></option>
+                                    <option value='unknown'>Unknown</option>
+                                    <option value='no'>Not mixed</option>
+                                    <option value='yes'>Mixed</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="flows-direct-select">Direct use</label>
+                                <div class="labelHelpiconContainer">
+                                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Direct use"
+                                        data-html="true" tabindex="0" data-content="The Direct use filter indicates whether
+                                        a flow is (expected to be) directly reusable in its current form and no additional
+                                        processing is required. ">
+                                    </a>
+                                </div>
+                                <select id="flows-direct-select" name="flows-direct-select"
+                                    class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
+                                    <option selected value='-1'>Ignore</option>
+                                    <option data-divider="true"></option>
+                                    <option value='unknown'>Unknown</option>
+                                    <option value='no'>Not direct</option>
+                                    <option value='yes'>Direct</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="flows-iscomposite-select">Composite</label>
+                                <div class="labelHelpiconContainer">
+                                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Composite"
+                                        data-html="true" tabindex="0" data-content="The Composite filter indicates whether a flow contains a
+                                        known composite consisting of two or more materials.">
+                                    </a>
+                                </div>
+                                <select id="flows-iscomposite-select" name="flows-iscomposite-select"
+                                    class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
+                                    <option selected value='-1'>Ignore</option>
+                                    <option data-divider="true"></option>
+                                    <option value='unknown'>Unknown</option>
+                                    <option value='no'>Product</option>
+                                    <option value='yes'>Composite</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-md-3">
-                            <label for="flows-mixed-select">Mixed</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Mixed"
-                                    data-html="true" tabindex="0" data-content="The Mixed category indicates whether the flow 
-                                    contains two or more materials. A mixed flow could consist of two or more clean materials 
-                                    (masonry and concrete rubble, f.e.), but also two materials of which one is an identified 
-                                    pollutant (soil containing mineral oil, f.e.). All non-clean flows are by definition mixed, 
-                                    indicating they contain two or more materials.">
-                                </a>
+                        <div class="row pb-4">
+                            <div class="col-md-3">
+                                <label for="flows-route-select">Route</label>
+                                <div class="labelHelpiconContainer">
+                                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Route"
+                                        data-html="true" tabindex="0" data-content="The Route property indicates whether a waste collection company has collected the same type of waste
+                                            from multiple different producers of waste. During the waste collection process, the waste from
+                                            all sources is combined.
+                                            <br>
+                                            An example would be municipal waste collection in which the waste from every building is collected by a truck.
+                                        ">
+                                    </a>
+                                </div>
+                                <select name="flows-route-select" id="flows-route-select"
+                                    class="form-control form-control-sm selectpicker">
+                                    <option value='both'>Ignore</option>
+                                    <option value='no'>Not route</option>
+                                    <option value='yes'>Route</option>
+                                </select>
                             </div>
-                            <select id="flows-mixed-select" name="flows-mixed-select"
-                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
-                                <option selected value='-1'>Ignore</option>
-                                <option data-divider="true"></option>
-                                <option value='unknown'>Unknown</option>
-                                <option value='no'>Not mixed</option>
-                                <option value='yes'>Mixed</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="flows-direct-select">Direct use</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Direct use"
-                                    data-html="true" tabindex="0" data-content="The Direct use filter indicates whether 
-                                    a flow is (expected to be) directly reusable in its current form and no additional 
-                                    processing is required. ">
-                                </a>
+                            <div class="col-md-3">
+                                <label for="flows-collector-select">Collector</label>
+                                <div class="labelHelpiconContainer">
+                                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Collector"
+                                        data-html="true" tabindex="0" data-content="<span>The Collector property indicates whether
+                                            a waste collection company has collected the same type of waste from different sources.
+                                            In this case, the waste from the different sources has not been combined,
+                                            and may only consist of certain types of waste, which can be consulted
+                                            <a href='https://www.lma.nl/publish/pages/105041/5-bijlage-a-van-de-regeling2.pdf'>here</a>.</span>
+                                        ">
+                                    </a>
+                                </div>
+                                <select name="flows-collector-select" id="flows-collector-select"
+                                    class="form-control form-control-sm selectpicker">
+                                    <option value='both'>Ignore</option>
+                                    <option value='no'>Not collector</option>
+                                    <option value='yes'>Collector</option>
+                                </select>
                             </div>
-                            <select id="flows-direct-select" name="flows-direct-select"
-                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
-                                <option selected value='-1'>Ignore</option>
-                                <option data-divider="true"></option>
-                                <option value='unknown'>Unknown</option>
-                                <option value='no'>Not direct</option>
-                                <option value='yes'>Direct</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="flows-iscomposite-select">Composite</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Composite"
-                                    data-html="true" tabindex="0" data-content="The Composite filter indicates whether a flow contains a 
-                                    known composite consisting of two or more materials.">
-                                </a>
-                            </div>
-                            <select id="flows-iscomposite-select" name="flows-iscomposite-select"
-                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
-                                <option selected value='-1'>Ignore</option>
-                                <option data-divider="true"></option>
-                                <option value='unknown'>Unknown</option>
-                                <option value='no'>Product</option>
-                                <option value='yes'>Composite</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row pb-4">
-                        <div class="col-md-3">
-                            <label for="flows-route-select">Route</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Route"
-                                    data-html="true" tabindex="0" data-content="The Route property indicates whether a waste collection company has collected the same type of waste
-                                        from multiple different producers of waste. During the waste collection process, the waste from 
-                                        all sources is combined.
-                                        <br>
-                                        An example would be municipal waste collection in which the waste from every building is collected by a truck.                                        
-                                    ">
-                                </a>
-                            </div>
-                            <select name="flows-route-select" id="flows-route-select"
-                                class="form-control form-control-sm selectpicker">
-                                <option value='both'>Ignore</option>
-                                <option value='no'>Not route</option>
-                                <option value='yes'>Route</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="flows-collector-select">Collector</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Collector"
-                                    data-html="true" tabindex="0" data-content="<span>The Collector property indicates whether 
-                                        a waste collection company has collected the same type of waste from different sources.
-                                        In this case, the waste from the different sources has not been combined, 
-                                        and may only consist of certain types of waste, which can be consulted 
-                                        <a href='https://www.lma.nl/publish/pages/105041/5-bijlage-a-van-de-regeling2.pdf'>here</a>.</span>
-                                    ">
-                                </a>
-                            </div>
-                            <select name="flows-collector-select" id="flows-collector-select"
-                                class="form-control form-control-sm selectpicker">
-                                <option value='both'>Ignore</option>
-                                <option value='no'>Not collector</option>
-                                <option value='yes'>Collector</option>
-                            </select>
                         </div>
                     </div>
 
@@ -922,199 +931,277 @@
 
         </div>
 
-        <div class="row mt-1">
-            <button id='reset-filters' class="btn btn-secondary resetButton" title="Reset all the filters">RESET
+        <div class="filter-log-container" style="display: none;">
+                <div class="card bg-dark">
+
+                    <div class="card-header">
+                        <h4 class="mt-2 ml-3">
+                            <button class="btn btn-link collapsingHeaderButton" id="btn-collapse-header-origin"
+                                title="">
+                                Selected filters
+                            </button>
+
+                            <button type="button" class="close text-white closeFilterLog" data-dismiss="modal"><i class="fas fa-times"></i></button>
+                        </h4>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row pb-4">
+                            <div class="col-md-10 filterLog">
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+
+
+        <div class="row mt-1 d-flex justify-content-end">
+            <button id='reset-filters' class="btn btn-secondary resetButton" title="Reset all the filters">RESET FILTERS
+            </button>
+
+
+            <button id='summarize-filters' class="btn btn-primary"
+                title="Summarize the selected filters and check if there is data that matches."
+                style="margin-left: 10px; float: right; width: 10em">
+                TEST FILTERS
             </button>
         </div>
 
     </div>
 
-    <div class="block">
-        <h4 class="pb-2 pl-3">Step 2: Define your goal</h4>
 
-        <div class="card bg-dark">
-            <div class="row">
-                <div class="col mt-3">
-                    <span style="color: white">I want to:</span>
+    <div class="goalContainer">
+        <div class="block">
+            <h4 class="pb-2 pl-3">Step 2: Define your goal</h4>
+
+            <div class="card bg-dark">
+                <div class="row">
+                    <div class="col mt-3">
+                        <span style="color: white">I want to:</span>
+                    </div>
                 </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col d-flex align-items-center mr-auto">
-                    <div class="btn-group btn-group-toggle flex-wrap justify-content-center" id="radio-group-analyse-mode"
-                    data-toggle="buttons" style="margin: auto">
-                
-                    <label class="btn btn-sm btn-primary justify-content-center align-items-center big-radio-no-image analyse-mode-radio-label" data-mode="monitor">
-                        <input type="radio">
-                        <span>Monitor waste flows</span>
-                    </label>
-                    <label class="btn btn-sm btn-primary justify-content-center align-items-center big-radio-no-image analyse-mode-radio-label" data-mode="impact">
-                        <input type="radio">
-                        <span>Perform environmental impact assessment</span>
-                    </label>
+                <div class="row mt-3">
+                    <div class="col d-flex align-items-center mr-auto">
+                        <div class="btn-group btn-group-toggle flex-wrap justify-content-center" id="radio-group-analyse-mode"
+                        data-toggle="buttons" style="margin: auto">
 
+                        <label class="btn btn-sm btn-default justify-content-center align-items-center big-radio-no-image analyse-mode-radio-label" data-mode="monitor">
+                            <input type="radio">
+                            <span>Monitor waste flows</span>
+                        </label>
+                        <label class="btn btn-sm btn-default justify-content-center align-items-center big-radio-no-image analyse-mode-radio-label" data-mode="impact">
+                            <input type="radio">
+                            <span>Perform environmental impact assessment</span>
+                        </label>
+
+                        </div>
                     </div>
                 </div>
             </div>
+
         </div>
 
+        <div id="monitor-content" class="analyse-content-container" style="display: none;"></div>
+        <div id="impact-content" class="analyse-content-container" style="display: none;"></div>
     </div>
 
+  <!--Area selection-->
+  <div class="area-filter modal fade" role="dialog"></div>
 
-    <div id="monitor-content" class="analyse-content-container" style="display: none;"></div>
-    <div id="impact-content" class="analyse-content-container" style="display: none;"></div>
-
-
-    <!--Area selection-->
-    <div class="area-filter modal fade" role="dialog"></div>
-
-    <!-- Saved filter modal-->
-    <div class="saved-filters modal fade" role="dialog"></div>
+  <!-- Saved filter modal-->
+  <div class="saved-filters modal fade" role="dialog"></div>
 </script>
 
 <!-- Saved filter modal-->
 <script type="text/template" id="saved-filters-modal-template">
-    <div class="modal-dialog modal-lg" style="max-width: 650px">
-        <!-- Modal content-->
-        <div class="modal-content col-md-12 pt-1">
-            <div class="modal-header pt-2 pb-1 ml-2">
-                <h4 class="modal-title savedMode">Saved filters</h4>
-                <h4 class="modal-title newMode">Save this set of filters</h4>
-                <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body pt-0">
+  <div class="modal-dialog modal-lg" style="max-width: 650px">
+      <!-- Modal content-->
+      <div class="modal-content col-md-12 pt-1">
+          <div class="modal-header pt-2 pb-1 ml-2">
+              <h4 class="modal-title savedMode">Saved filters</h4>
+              <h4 class="modal-title newMode">Save this set of filters</h4>
+              <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="modal-body pt-0">
 
-                <form class="newMode needs-validation" novalidate>
-                    <div class='row pt-3 pb-0'>
-                        <div class="col d-flex mb-1">
-                            <div class="form-group w-100 mb-0">
-                                <input 
-                                    type="text"
-                                    id="new-filter-name-input"
-                                    class="form-control-sm w-100 pl-3"
-                                    title="The name of the new saved filter configuration."
-                                    placeholder="New filter name"
-                                    style="height: 38px; border: none;" 
-                                    maxlength="255"
-                                    required>
-                                <div class="invalid-feedback w-100 text-center mt-4">Please fill in a filter name.</div>
-                                <div id="filterNameExists" class="invalid-feedback w-100 text-center mt-4" style="display: none;"></div>
-                                <small id="newFilterAdded" class="form-text text-white w-100 text-center mt-4" style="display: none;">New filter has been saved!</small>
-                            </div>             
-                            <button
-                                id='new-filter-name-btn'
-                                class="btn btn-primary"
-                                type="submit"
-                                title="Save the filter name"
-                                style="width: 6.65rem; height: 38px; margin-left: 4px;"
-                                >Save</button>
-                        </div>                        
-                    </div>
-                </form>
-                
-                <form class="savedMode needs-validation" novalidate>
-                    
-                    <div class='row pt-3 savedMode'>
-                        <div class="col">
-                            <select name="saved-filters-select"
-                                    id="saved-filters-select"
-                                    class="form-control selectpicker"
-                                    style="max-width: 350px;"
-                                    data-none-selected-text="No saved filters found.">
-                                    <% filters.forEach(function(filter) { %>
-                                            <option value="<%= filter.id %>"><%= filter.get('name') %></option>
-                                    <% }) %>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class='row pt-1 pb-2 savedMode'>
-                        <div class="col d-flex justify-content-between fourButtons">
-                            <button id='delete-filter-config' class="btn btn-secondary w-25" title="Delete the selected filter configuration.">Delete</button>
-                            <button id='edit-filter-name' class="btn btn-secondary w-25" title="Rename the selected filter configuration.">Rename</button>
-                            <button id='update-filter-config' class="btn btn-secondary w-25" title="Update this filter with the current filter configuration.">Update</button>
-                            <button id='load-filter-config' class="btn btn-primary w-25" title="Load the selected filter configuration.">Load</button>
-                        </div>
-                    </div>
+              <form class="newMode needs-validation" novalidate>
+                  <div class='row pt-3 pb-0'>
+                      <div class="col d-flex mb-1">
+                          <div class="form-group w-100 mb-0">
+                              <input
+                                  type="text"
+                                  id="new-filter-name-input"
+                                  class="form-control-sm w-100 pl-3"
+                                  title="The name of the new saved filter configuration."
+                                  placeholder="New filter name"
+                                  style="height: 38px; border: none;"
+                                  maxlength="255"
+                                  required>
+                              <div class="invalid-feedback w-100 text-center mt-4">Please fill in a filter name.</div>
+                              <div id="filterNameExists" class="invalid-feedback w-100 text-center mt-4" style="display: none;"></div>
+                              <small id="newFilterAdded" class="form-text text-white w-100 text-center mt-4" style="display: none;">New filter has been saved!</small>
+                          </div>
+                          <button
+                              id='new-filter-name-btn'
+                              class="btn btn-primary"
+                              type="submit"
+                              title="Save the filter name"
+                              style="width: 6.65rem; height: 38px; margin-left: 4px;"
+                              >Save</button>
+                      </div>
+                  </div>
+              </form>
 
-                    <div class='row pt-4 pb-2 mb-3 filterUpdated' style="display: none;">
-                        <div class="col d-flex">
-                            <small class="text-white w-100 text-center">Filter has been updated!</small>
-                        </div>
-                    </div>
+              <form class="savedMode needs-validation" novalidate>
 
-                    <div class='row pt-4 pb-2 mb-3 filterLoaded' style="display: none;">
-                        <div class="col d-flex">
-                            <small class="text-white w-100 text-center">Filters have been loaded!</small>
-                        </div>
-                    </div>
+                  <div class='row pt-3 savedMode'>
+                      <div class="col">
+                          <select name="saved-filters-select"
+                                  id="saved-filters-select"
+                                  class="form-control selectpicker"
+                                  style="max-width: 350px;"
+                                  data-none-selected-text="No saved filters found.">
+                                  <% filters.forEach(function(filter) { %>
+                                          <option value="<%= filter.id %>"><%= filter.get('name') %></option>
+                                  <% }) %>
+                          </select>
+                      </div>
+                  </div>
 
-                    <div class='row pt-4 pb-0 mb-2 filterEdit' style="display: none;">
-                        <div class="col d-flex">
+                  <div class='row pt-1 pb-2 savedMode'>
+                      <div class="col d-flex justify-content-between fourButtons">
+                          <button id='delete-filter-config' class="btn btn-secondary w-25" title="Delete the selected filter configuration.">Delete</button>
+                          <button id='edit-filter-name' class="btn btn-secondary w-25" title="Rename the selected filter configuration.">Rename</button>
+                          <button id='update-filter-config' class="btn btn-secondary w-25" title="Update this filter with the current filter configuration.">Update</button>
+                          <button id='load-filter-config' class="btn btn-primary w-25" title="Load the selected filter configuration.">Load</button>
+                      </div>
+                  </div>
 
-                            <div class="form-group w-75">
-                                <input type="text" class="form-control-sm w-100" maxlength="255" id="update-filter-name" placeholder="Filter name" style="height: 38px; border: none; padding-left: 1rem;" required>
-                                <div class="invalid-feedback w-100 text-center mt-4">Please fill in a filter name.</div>
-                                <div id="filterNameExists" class="invalid-feedback w-100 text-center mt-4" style="display: none;"></div>
-                                <small id="filterNameUpdated" class="form-text text-white w-100 text-center mt-4" style="display: none;">Filter has been renamed!</small>
-                            </div>
+                  <div class='row pt-4 pb-2 mb-3 filterUpdated' style="display: none;">
+                      <div class="col d-flex">
+                          <small class="text-white w-100 text-center">Filter has been updated!</small>
+                      </div>
+                  </div>
 
-                            <div class="w-25 d-flex justify-content-between">
-                                <button class="btn btn-sm btn-secondary hide-filter-name-button" type="submit">Cancel</button>
-                                <button id='save-filter-name'
-                                        type="submit"
-                                        class="btn btn-primary"
-                                        title="Save the filter name">Save</button>
-                            </div>
+                  <div class='row pt-4 pb-2 mb-3 filterLoaded' style="display: none;">
+                      <div class="col d-flex">
+                          <small class="text-white w-100 text-center">Filters have been loaded!</small>
+                      </div>
+                  </div>
 
-                        </div>
-                    </div>
-                </form>
+                  <div class='row pt-4 pb-0 mb-2 filterEdit' style="display: none;">
+                      <div class="col d-flex">
+
+                          <div class="form-group w-75">
+                              <input type="text" class="form-control-sm w-100" maxlength="255" id="update-filter-name" placeholder="Filter name" style="height: 38px; border: none; padding-left: 1rem;" required>
+                              <div class="invalid-feedback w-100 text-center mt-4">Please fill in a filter name.</div>
+                              <div id="filterNameExists" class="invalid-feedback w-100 text-center mt-4" style="display: none;"></div>
+                              <small id="filterNameUpdated" class="form-text text-white w-100 text-center mt-4" style="display: none;">Filter has been renamed!</small>
+                          </div>
+
+                          <div class="w-25 d-flex justify-content-between">
+                              <button class="btn btn-sm btn-secondary hide-filter-name-button" type="submit">Cancel</button>
+                              <button id='save-filter-name'
+                                      type="submit"
+                                      class="btn btn-primary"
+                                      title="Save the filter name">Save</button>
+                          </div>
+
+                      </div>
+                  </div>
+              </form>
 
 
-            </div>
-            <div class="modal-footer">
-                <!-- <button type="button" class="btn cancel btn-secondary savedMode" data-dismiss="modal">Cancel</button> -->
-                <button class="btn btn-primary confirm" data-dismiss="modal" aria-hidden="true">OK</button>
-            </div>
-        </div>
-    </div>
+          </div>
+          <div class="modal-footer">
+              <!-- <button type="button" class="btn cancel btn-secondary savedMode" data-dismiss="modal">Cancel</button> -->
+              <button class="btn btn-primary confirm" data-dismiss="modal" aria-hidden="true">OK</button>
+          </div>
+      </div>
+  </div>
 </script>
 
 <!--Area selection-->
 <script type="text/template" id="area-select-modal-template">
-    <div class="modal-dialog modal-lg">
-        <!-- Modal content-->
-        <div class="modal-content col-md-12 pt-1 ml-2">
-            <div class="modal-header pt-2 pb-1">
-                <h4 class="modal-title">Select areas</h4>
-                <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class='row pt-1'>
-                    <div class="col">
-                        <label for="area-level-select" class="input-label">Geographic level:</label>
-                        <select name="area-level-select" id="area-level-select" class="form-control form-control-sm selectpicker" style="max-width: 350px;">
-                            <% levels.forEach(function(level) { %>
-                                <% if (level.get('level') != "1000") %>
-                                    <option value="<%= level.id %>"><%= level.get('name') %></option>
-                            <% }) %>
-                        </select>
-                    </div>
-                </div>
-                <div class='row'>
-                    <div class='areaModalMapRow map'></div>
-                </div>
-                <div class='row pt-0'>
-                    <div class="col">
-                        <label for="areaSelectionsModalTextarea">Selected areas:</label>
-                        <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsModalTextarea" style="width: 100%" type="text" readonly></textarea>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <!-- <button type="button" class="btn cancel btn-secondary" data-dismiss="modal">Cancel</button> -->
-                <button class="btn btn-primary confirm" data-dismiss="modal" aria-hidden="true">OK</button>
-            </div>
-        </div>
-    </div>
+  <div class="modal-dialog modal-lg">
+      <!-- Modal content-->
+      <div class="modal-content col-md-12 pt-1 ml-2">
+          <div class="modal-header pt-2 pb-1">
+              <h4 class="modal-title">Select areas</h4>
+              <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="modal-body">
+              <div class='row pt-1'>
+                  <div class="col">
+                      <label for="area-level-select" class="input-label">Geographic level:</label>
+                      <select name="area-level-select" id="area-level-select" class="form-control form-control-sm selectpicker" style="max-width: 350px;">
+                          <% levels.forEach(function(level) { %>
+                              <% if (level.get('level') != "1000") %>
+                                  <option value="<%= level.id %>"><%= level.get('name') %></option>
+                          <% }) %>
+                      </select>
+                  </div>
+              </div>
+              <div class='row'>
+                  <div class='areaModalMapRow map'></div>
+              </div>
+              <div class='row pt-0'>
+                  <div class="col">
+                      <label for="areaSelectionsModalTextarea">Selected areas:</label>
+                      <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsModalTextarea" style="width: 100%" type="text" readonly></textarea>
+                  </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+              <!-- <button type="button" class="btn cancel btn-secondary" data-dismiss="modal">Cancel</button> -->
+              <button class="btn btn-primary confirm" data-dismiss="modal" aria-hidden="true">OK</button>
+          </div>
+      </div>
+  </div>
+</script>
+
+<script type="text/template" id="filter-log-template">
+  {% load custom_tags %}
+
+    <% if ((log.flows.dataset) || (log.flows.year) || (log.flows.month)) %>
+        <h5 class="subtitle mt-0">General</h5>
+    <ul>
+        <% if (log.flows.dataset != undefined) { %>
+            <li><strong>Data sets: </strong><span><%= log.flows.dataset.join(', ') %></span></li>
+        <% } %>
+
+        <% if (log.flows.year != undefined) { %>
+            <li><strong>Years: </strong><span><%= log.flows.year.join(', ') %></span></li>
+        <% } %>
+
+        <% if (log.flows.month != undefined) { %>
+            <li><strong>Months: </strong><span><%= log.flows.month.join(', ') %></span></li>
+        <% } %>
+    </ul>
+
+    <% blocks.forEach(function(block) { %>
+        <% if (Object.keys(log[block]).length > 0) %>
+            <h5 class="subtitle"><%= block %></h5>
+            <ul>
+                <% for (const property in log[block]) { %>
+                    <% if (!["adminlevel", "inOrOut"].includes(property)) %>
+                        <li><strong><%= (property == "selectedAreas") ? filterNameMap.origDest[log[block].inOrOut] :  filterNameMap.origDest[property] %>: </strong><span><%= log[block][property].isArray ? log[block][property].join(', ') : log[block][property] %></span></li>
+                <% } %>
+            </ul>
+    <% }); %>
+
+    <% let { dataset, year, month, ...rest} = log.flows %>
+    <% if (Object.keys(rest).length > 0) %>
+    <h5 class="subtitle">Flows</h5>
+    <ul>
+        <% for (const property in log.flows) { %>
+            <% if (!["adminlevel", "inOrOut", "dataset", "year", 'month'].includes(property)) %>
+                <li><strong><%= (property == "selectedAreas") ? "Pass through these areas" :  filterNameMap.flows[property] %>: </strong><span><%= log.flows[property].isArray ? log.flows[property].join(', ') : log.flows[property] %></span></li>
+        <% } %>
+    </ul>
+
+
 </script>

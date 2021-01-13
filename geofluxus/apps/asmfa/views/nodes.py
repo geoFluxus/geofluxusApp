@@ -23,15 +23,13 @@ from geofluxus.apps.asmfa.serializers import (ActivityGroupCreateSerializer,
                                               ProcessGroupCreateSerializer,
                                               ProcessCreateSerializer,
                                               CompanyCreateSerializer)
-from django.db.models import Count, Value, IntegerField
-from django.db.models import Q
 
 
 # Activity group
 class ActivityGroupViewSet(PostGetViewMixin,
                            ViewSetMixin,
                            ModelPermissionViewSet):
-    queryset = ActivityGroup.objects.order_by('id')
+    queryset = ActivityGroup.objects.order_by('code')
     pagination_class = UnlimitedResultsSetPagination
     serializer_class = ActivityGroupSerializer
     serializers = {
@@ -44,7 +42,7 @@ class ActivityGroupViewSet(PostGetViewMixin,
 class ActivityViewSet(PostGetViewMixin,
                       ViewSetMixin,
                       ModelPermissionViewSet):
-    queryset = Activity.objects.order_by('id')
+    queryset = Activity.objects.order_by('nace')
     pagination_class = UnlimitedResultsSetPagination
     serializer_class = ActivitySerializer
     serializers = {
@@ -57,7 +55,7 @@ class ActivityViewSet(PostGetViewMixin,
 class ProcessGroupViewSet(PostGetViewMixin,
                           ViewSetMixin,
                           ModelPermissionViewSet):
-    queryset = ProcessGroup.objects.order_by('id')
+    queryset = ProcessGroup.objects.order_by('code')
     pagination_class = UnlimitedResultsSetPagination
     serializer_class = ProcessGroupSerializer
     serializers = {
@@ -70,7 +68,7 @@ class ProcessGroupViewSet(PostGetViewMixin,
 class ProcessViewSet(PostGetViewMixin,
                      ViewSetMixin,
                      ModelPermissionViewSet):
-    queryset = Process.objects.order_by('id')
+    queryset = Process.objects.order_by('code')
     pagination_class = UnlimitedResultsSetPagination
     serializer_class = ProcessSerializer
     serializers = {

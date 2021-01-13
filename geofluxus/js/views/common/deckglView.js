@@ -5,6 +5,7 @@ define(['views/common/baseview',
         'underscore',
         'd3',
         'react-dom',
+        'd3plus-export'
     ],
 
     function (
@@ -13,6 +14,7 @@ define(['views/common/baseview',
         _,
         d3,
         ReactDOM,
+        d3plusExport
     ) {
 
         /**
@@ -45,6 +47,15 @@ define(['views/common/baseview',
                     this.options.el = this.options.el + " div";
 
                     this.ReactDOM = ReactDOM;
+
+                    
+                    $(".export-csv").on("click", function() {
+                        _this.exportCSV();
+                    })
+
+                    $(".export-png").on("click", function() {
+                        _this.exportPNG();
+                    })
                 },
 
                 events: {
@@ -80,15 +91,15 @@ define(['views/common/baseview',
                                 _this.toggleFullscreen();
                             });
 
-                        controlContainer.append("button")
-                            .attr("class", "btn btn-sm btn-primary d3plus-Button export-csv")
-                            .attr("title", "Export the data of this visualization as a CSV file.")
-                            .attr("type", "button")
-                            .html('<i class="fas fa-file icon-export"></i>')
-                            .on("click", function () {
-                                _this.exportCSV();
-                                d3.event.preventDefault();
-                            });
+                        // controlContainer.append("button")
+                        //     .attr("class", "btn btn-sm btn-primary d3plus-Button export-csv")
+                        //     .attr("title", "Export the data of this visualization as a CSV file.")
+                        //     .attr("type", "button")
+                        //     .html('<i class="fas fa-file icon-export"></i>')
+                        //     .on("click", function () {
+                        //         _this.exportCSV();
+                        //         d3.event.preventDefault();
+                        //     });
 
                         controlContainer.append("button")
                             .attr("class", "btn btn-sm btn-primary d3plus-Button toggle-darkmode")
@@ -104,14 +115,17 @@ define(['views/common/baseview',
                 toggleFullscreen: function (event) {
                     $(this.options.subContainer).toggleClass('fullscreen');
                     // Only scroll when going to normal view:
+                    
                     if (!$(this.options.el).hasClass('fullscreen')) {
                         window.scrollTo({
                             top: $(".visualizationRow")[0].getBoundingClientRect().top + window.pageYOffset - 20,
                             block: "start",
                             inline: "nearest",
                         });
+                        $("body").css("overflow", "visible");
+                    } else {
+                        $("body").css("overflow", "hidden");
                     }
-                    // this.render();
                 },
 
                 toggleDarkMode: function () {
@@ -123,6 +137,7 @@ define(['views/common/baseview',
                     }
 
                     $(".viz-wrapper-div").toggleClass("lightMode");
+                    $(".visualizationBlock .card").toggleClass("lightMode");
                     this.fontColor = this.isDarkMode ? "white" : "black";
                     this.render();
                 },
@@ -140,6 +155,10 @@ define(['views/common/baseview',
                     //     type: "text/plain;charset=utf-8"
                     // });
                     // FileSaver.saveAs(blob, "data.csv");
+                },
+
+                exportPNG: function() {
+                    d3plusExport.saveElement(this.el);
                 },
 
                 close: function () {
