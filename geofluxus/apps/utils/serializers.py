@@ -752,43 +752,45 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
                     field.many:
                 m2m_fields.append(field)
 
+        if len(m2m_fields) == 0: return
+
         # Retrieve model entries
         queryset = self.Meta.model.objects
+
+        # recover new entries
+        ids = df[self.index_columns]
+        to_get = []
+        for id in ids.itertuples(index=False):
+            for k, v in id._asdict().items():
+                to_get.append(v)
+        entries = {m.identifier: m.id for m in queryset.filter(**{f"{k}__in": to_get})}
 
         for field in m2m_fields:
             # check the column name, model
             name, model = field.name, field.referenced_model
-            # recover from dataframe:
-            # unique identifiers to recover each entry from queryset,
-            # m2m field data
-            ids = df[df.columns.intersection(self.index_columns)]
-            data = df[name]
+            cols = self.index_columns.copy()
+            cols.append(name)
+            data = df[cols]
+            m2m_values = {m.name: m.id for m in model.objects.all()}
 
-            # Update each entry
-            for id, row in zip(ids.itertuples(index=False), data):
-                for k, v in id._asdict().items():
-                    entry = queryset.filter(**{k : v})[0] # has to be unique!
-                    # First clear all previous data
-                    attr = getattr(entry, name) # Recover the m2m field
-                    attr.clear()
-                    # Add new values to m2m attribute
-                    if type(row) in [int, float] and \
-                            np.isnan(row): # NaN values
-                        attr.add()
-                    else:
-                        # Retrieve all values
-                        values = row.replace(', ', ',') \
-                                    .replace(' ,', ',') \
-                                    .replace(' , ', ',') \
-                                    .split(',')
-                        for val in values:
-                            try:
-                                m2m_value = model.objects.get(name=val)
-                                attr.add(m2m_value)
-                            except model.DoesNotExist:
-                                msg = _('"{v}" does not exist in "{m}"')\
-                                    .format(v=val, m=model.__name__)
-                                raise ValidationError(msg)
+            # First clear all previous data
+            through_objs = []
+            for d in data.iterrows():
+                index, row = d
+                id, values = row['identifier'], row[name]
+                if pd.notnull(values):
+                    values = [val.strip() for val in values.split(',')]
+                    for val in values:
+                        through_objs.append(
+                            getattr(self.Meta.model, name).through(
+                                **{
+                                    f"{self.Meta.model.__name__.lower()}_id": entries[id],
+                                    f"{model.__name__.lower()}_id": m2m_values[val]
+                                }
+                            )
+                        )
+            getattr(self.Meta.model, name).through.objects.bulk_create(through_objs)
+            print('m2m fields created')
 
     @property
     def index_fields(self):
@@ -812,16 +814,43 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
         model = self.Meta.model
         queryset = self.get_queryset()
         # only fields defined in field_map will be written to database
-        fields = [getattr(v, 'name', None) or v
-                  for v in self.field_map.values()]
-        updated = []
+        # ignore m2m fields -> processed in later stage
+        fields, m2m_fields = [], []
+        for v in self.field_map.values():
+            if isinstance(v, Reference):
+                name  = getattr(v, 'name', None)
+                if v.many:
+                    m2m_fields.append(name)
+                else:
+                    fields.append(name)
+            else:
+                fields.append(v)
+
+        print(fields)
+        print(m2m_fields)
 
         dataframe = self._set_defaults(dataframe, model)
 
+        # retrieve all models based on index fields(*)
+        filter_kwargs = []
+        for c in self.index_fields:
+            kwargs = []
+            for row in dataframe.itertuples(index=False):
+                kwargs.append(getattr(row, c))
+            filter_kwargs.append(Q(**{f"{c}__in": kwargs}))
+        updated = queryset.filter(np.bitwise_and.reduce(filter_kwargs))
+        models = {
+            tuple([getattr(model, field) for field in self.index_fields]): model
+            for model in updated
+        }
+
+        objs = []
         for row in dataframe.itertuples(index=False):
-            filter_kwargs = {c: getattr(row, c) for c in self.index_fields}
-            model = queryset.get(**filter_kwargs)
+            key = tuple([getattr(row, c) for c in self.index_fields])
+            model = models[key]
             for c, v in row._asdict().items():
+                if c in m2m_fields:
+                    getattr(model, c).clear()
                 if c not in fields:
                     continue
                 if type(v) in [int, float] and np.isnan(v):
@@ -830,9 +859,9 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
                     setattr(model, c, v)
                 except TypeError:
                     model.c = v
-            model.save()
-            updated.append(model)
-        updated = queryset.filter(id__in=[m.id for m in updated])
+            objs.append(model)
+        self.Meta.model.objects.bulk_update(objs, fields)
+        print('updated')
         return updated
 
     def _set_defaults(self, dataframe, model):
@@ -866,6 +895,7 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
         # create the new rows
         bulk = []
         m = None
+        print('Collect models...')
         for row in df_save.itertuples(index=False):
             #row_dict = row._asdict()
             row_dict = {}
@@ -876,6 +906,7 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
                     row_dict[k] = v
             m = model(**row_dict)
             bulk.append(m)
+        print('Upload...')
         try:
             created = model.objects.bulk_create(bulk)
         except ValueError:
@@ -884,13 +915,14 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
             created = bulk
         except Error as e:
             raise ValidationError(str(e))
-        # only postgres returns ids after bulk creation
-        # workaround for non postgres: create queryset based on index_columns
-        if created and created[0].id == None:
-            filter_kwargs = {}
-            for field in self.index_fields:
-                filter_kwargs[field + '__in'] = dataframe[field].values
-            created = self.get_queryset().filter(**filter_kwargs)
+        print('Upload complete!')
+        # # only postgres returns ids after bulk creation
+        # # workaround for non postgres: create queryset based on index_columns
+        # if created and created[0].id == None:
+        #     filter_kwargs = {}
+        #     for field in self.index_fields:
+        #         filter_kwargs[field + '__in'] = dataframe[field].values
+        #     created = self.get_queryset().filter(**filter_kwargs)
         return created
 
     def create(self, validated_data):
@@ -931,22 +963,22 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
         """
         if isinstance(instance, BulkResult):
             ret = {
-                'count': len(instance.updated) + len(instance.created),
+                'updated': len(instance.updated),
+                'created': len(instance.created),
                 'message': instance.message
             }
-            created = ret['created'] = []
-            updated = ret['updated'] = []
-            for model in instance.created:
-                # bulk created objects don't retrieve their new ids
-                # (at least in sqlite) -> assign one for representation after
-                # creation
-                if model.id is None:
-                    model.id = -1
-                created.append(super().to_representation(model))
-            for model in instance.updated:
-                updated.append(super().to_representation(model))
-            return ret
-        return super().to_representation(instance)
+        #     created = ret['created'] = []
+        #     updated = ret['updated'] = []
+        #     for model in instance.created:
+        #         # bulk created objects don't retrieve their new ids
+        #         # (at least in sqlite) -> assign one for representation after
+        #         # creation
+        #         if model.id is None:
+        #             model.id = -1
+        #         created.append(super().to_representation(model))
+        #     for model in instance.updated:
+        #         updated.append(super().to_representation(model))
+        return ret
 
 
 class EnumField(serializers.ChoiceField):

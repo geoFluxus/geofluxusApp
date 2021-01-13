@@ -140,7 +140,7 @@ var BulkUploadView = BaseView.extend({
 //                updated.forEach(function(m){
 //                    _this.log(JSON.stringify(m), 'no');
 //                })
-                msg = res.created.length + ' entries created, ' + res.updated.length + ' entries updated';
+                msg = created + ' entries created, ' + updated + ' entries updated';
                 _this.log(msg, 'yes', 'green');
                 _this.log('-'.repeat(u_msg.length*1.5), 'no');
                 _this.refreshStatus(tag);

@@ -4,12 +4,12 @@ from geofluxus.apps.utils.views import (PostGetViewMixin,
 from geofluxus.apps.asmfa.models import (Flow,
                                          Classification,
                                          Area,
-                                         Routing,)
+                                         Routing)
 from geofluxus.apps.asmfa.serializers import (FlowSerializer)
 import json
 import numpy as np
 from rest_framework.response import Response
-from django.db.models import (Q, OuterRef, Subquery, Sum)
+from django.db.models import (Q, OuterRef, Subquery)
 from django.contrib.gis.db.models import Union
 
 
@@ -65,27 +65,11 @@ class FilterFlowViewSet(PostGetViewMixin,
                         'destination': destination_areas,
                         'flows': flow_areas}
 
-        # record flow number & amount
-        requestFlowCount = params.get('requestFlowCount', None)
-        if requestFlowCount:
-            original_amount = queryset.aggregate(total=Sum('flowchain__amount'))['total']
-            data = {
-                'original_count': queryset.count(),
-                'original_amount': original_amount
-            }
-
         # filter flows with non-spatial filters
         queryset = self.filter(queryset, filters)
 
         # filter flows with spatial filters
         queryset = self.filter_areas(queryset, area_filters)
-
-        # if request for flow count, send data now
-        if requestFlowCount:
-            final_amount = queryset.aggregate(total=Sum('flowchain__amount'))['total']
-            data['final_count'] = queryset.count()
-            data['final_amount'] = final_amount
-            return Response(data)
 
         # serialization parameters
         serials = {'anonymous': anonymous}  # anonymize data for demo
@@ -100,6 +84,7 @@ class FilterFlowViewSet(PostGetViewMixin,
 
         # serialize data
         data = self.serialize(queryset, **serials)
+
         return Response(data)
 
     # filter chain classifications
@@ -156,6 +141,10 @@ class FilterFlowViewSet(PostGetViewMixin,
             queryset = queryset.filter(queries[0])
         if len(queries) > 1:
             queryset = queryset.filter(np.bitwise_and.reduce(queries))
+
+        # filter by location
+        #from django.contrib.gis.geos import Point
+        #queryset = queryset.filter(origin_geom=Point(0, 0, srid=4326))
 
         return queryset
 

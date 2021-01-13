@@ -156,7 +156,7 @@ define(['views/common/d3plusVizView',
                         isDarkMode: this.isDarkMode,
                     });
                     this.scrollToVisualization();
-                    this.options.flowsView.loader.deactivate();
+                    this.loader.deactivate();
                 }
             });
         return LinePlotView;

@@ -4,7 +4,6 @@ define(['views/common/baseview',
         'file-saver',
         'utils/utils',
         'utils/enrichFlows',
-        'd3plus-export'
     ],
 
     function (
@@ -13,8 +12,7 @@ define(['views/common/baseview',
         d3plus,
         FileSaver,
         utils,
-        enrichFlows,
-        d3plusExport
+        enrichFlows
     ) {
         /**
          * @author Evert Van Hirtum
@@ -34,10 +32,8 @@ define(['views/common/baseview',
                 initialize: function (options) {
                     D3plusVizView.__super__.initialize.apply(this, [options]);
                     _.bindAll(this, 'toggleFullscreen');
-                    // _.bindAll(this, 'exportCSV');
+                    _.bindAll(this, 'exportCSV');
                     _.bindAll(this, 'toggleLegend');
-
-                    var _this = this;
 
                     this.dimensions = {
                         'time': {
@@ -67,20 +63,11 @@ define(['views/common/baseview',
                             }]  
                         ]
                     };
-
-                    $(".export-csv").on("click", function() {
-                        _this.exportCSV();
-                    })
-
-                    $(".export-png").on("click", function() {
-                        _this.exportPNG();
-                    })
-
                 },
 
                 events: {
                     'click .fullscreen-toggle': 'toggleFullscreen',
-                    // 'click .export-csv': 'exportCSV',
+                    'click .export-csv': 'exportCSV',
                     'click .toggle-legend': 'toggleLegend',
                 },
 
@@ -97,9 +84,6 @@ define(['views/common/baseview',
                     // Only scroll when going to normal view:
                     if (!$(this.el).hasClass('fullscreen')) {
                         utils.scrollToVizRow();
-                        $("body").css("overflow", "visible");
-                    } else {
-                        $("body").css("overflow", "hidden");
                     }
                     window.dispatchEvent(new Event('resize'));
                     event.stopImmediatePropagation();
@@ -115,7 +99,6 @@ define(['views/common/baseview',
                     $(this.options.el).html("");
                     this.isDarkMode = !this.isDarkMode;
                     $(".viz-wrapper-div").toggleClass("lightMode");
-                    $(".visualizationBlock .card").toggleClass("lightMode");
                     this.render();
                 },
 
@@ -130,11 +113,13 @@ define(['views/common/baseview',
                     const items = this.options.flows;
                     const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
 
-                    let fields = ["amount", "Code", "Name"];
+                    let fields = ["actorId", "Code", "Name", "actorLon", "actorLat", "amount"];
                     let header = Object.keys(items[0]);
+
                     header = header.filter(prop => {
                         return fields.some(f => prop.includes(f))
                     })
+                    console.log(header)
 
                     let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
                     csv.unshift(header.join(','))
@@ -145,11 +130,7 @@ define(['views/common/baseview',
                     });
                     FileSaver.saveAs(blob, "data.csv");
 
-                    // event.stopImmediatePropagation();
-                },
-
-                exportPNG: function() {
-                    d3plusExport.saveElement(this.el);
+                    event.stopImmediatePropagation();
                 },
 
                 close: function () {
