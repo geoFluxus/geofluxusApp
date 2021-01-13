@@ -146,7 +146,7 @@ define(['views/common/d3plusVizView',
                         isDarkMode: this.isDarkMode,
                     });
                     this.scrollToVisualization();
-                    this.loader.deactivate();
+                    this.options.flowsView.loader.deactivate();
                 }
             });
         return BarChartView;

@@ -1,28 +1,24 @@
 from geofluxus.apps.analyse.views import MonitorViewSet
 from django.db.models import (F, FloatField, Value,
-                              ExpressionWrapper, OuterRef, Q, Sum)
+                              ExpressionWrapper, OuterRef, Q)
 from django.db.models.functions import Coalesce
 from django.db import connections
 from collections import OrderedDict
 import json
-from geofluxus.apps.asmfa.models import TreatmentEmission, FlowChain, Flow
+from geofluxus.apps.asmfa.models import TreatmentEmission
 
 
 class ImpactViewSet(MonitorViewSet):
     def annotate_amounts(self, queryset, indicator, impactSources, format):
-        # retrieve chains from filtered flows
-        chains = queryset.values_list('flowchain', flat=True)
-        flows = Flow.objects.filter(flowchain__id__in=chains)
-
         expression = Value(0) # default emissionvalue
 
         # annotate amount from chains to flows
-        flows = flows.annotate(amount=F('flowchain__amount'))
+        queryset = queryset.annotate(amount=F('flowchain__amount'))
 
         # transportation emissions
         if 'transportation' in impactSources:
             # based on vehicle, annotate emissions to flows
-            flows = flows.annotate(transportation_emissions=Coalesce(F('vehicle__' + indicator), 0))
+            queryset = queryset.annotate(transportation_emissions=Coalesce(F('vehicle__' + indicator), 0))
 
             # if network map, emission computed based on way length
             # indicator: grams per tonne kilometer
@@ -31,7 +27,7 @@ class ImpactViewSet(MonitorViewSet):
             expression += F('transportation_emissions') / 10**6 * F('amount')
             if format != 'networkmap':
                 # annotate routing distance
-                flows = flows.annotate(distance=Coalesce(F('routing__distance'), 0))
+                queryset = queryset.annotate(distance=Coalesce(F('routing__distance'), 0))
                 expression *= F('distance') / 10**3
 
         # waste treatment emissions
@@ -46,82 +42,12 @@ class ImpactViewSet(MonitorViewSet):
             # amount: tonnes
             # if not emissions for waste, check processgroup alone
             default = Coalesce(F('destination__process__processgroup__' + indicator), 0)
-            flows = flows.annotate(treatment_emissions=Coalesce(subq.values(indicator), default))
+            queryset = queryset.annotate(treatment_emissions=Coalesce(subq.values(indicator), default))
             expression += F('treatment_emissions') / 10**6 * F('amount')
 
         # update amounts
         amount = ExpressionWrapper(expression, output_field=FloatField())
-        flows = flows.annotate(amount=amount)
-        # group flows by chain
-        groups = flows.values('flowchain') \
-                      .order_by('flowchain') \
-                      .annotate(total=Sum('amount'))
-        # annotate chain totals to original flows
-        subq = groups.filter(flowchain=OuterRef('flowchain'))
-        queryset = queryset.annotate(amount=subq.values('total'))
-
-        # f = open('/home/geofluxus/Desktop/data.csv', 'w')
-        # f.write('id@processes@trips@descriptions@cleans\n')
-        # from django.contrib.postgres.aggregates import StringAgg
-        # from django.db.models.functions import Cast
-        # from django.db.models import CharField
-        # groups = flows.values('flowchain') \
-        #               .order_by('flowchain') \
-        #               .annotate(amounts=StringAgg(Cast('amount', output_field=CharField()), delimiter=";"),
-        #                         processes=StringAgg('destination__process__name', delimiter=";"),
-        #                         descriptions=StringAgg('flowchain__description', delimiter=","),
-        #                         cleans=StringAgg(Cast('flowchain__classification__clean', output_field=CharField()), delimiter=","))
-        # subq = groups.filter(flowchain=OuterRef('flowchain'))
-        # queryset = queryset.values('origin__id')\
-        #                    .order_by('origin__id')\
-        #                    .annotate(total=Sum('flowchain__amount'),
-        #                              amounts=StringAgg(subq.values('amounts'), delimiter=";"),
-        #                              processes=StringAgg(subq.values('processes'), delimiter=";"),
-        #                              trips=Sum('flowchain__trips'),
-        #                              descriptions=StringAgg(subq.values('descriptions'), delimiter=","),
-        #                              cleans=StringAgg(subq.values('cleans'), delimiter=","))
-        # # print(queryset.query)
-        # for item in queryset.values('origin__id',
-        #                             'total',
-        #                             'amounts',
-        #                             'processes',
-        #                             'trips',
-        #                             'descriptions',
-        #                             'cleans'):
-        #     amounts = [float(o) for o in item['amounts'].split(';')]
-        #     processes = item['processes'].split(';')
-        #     inv = {}
-        #     for process, amount in zip(processes, amounts):
-        #         if process == 'Unknown': continue
-        #         if process in inv:
-        #             inv[process] += amount
-        #         else:
-        #             inv[process] = amount
-        #     for key, value in inv.items():
-        #         if item['total']:
-        #             inv[key] = round(value / float(item['total']) * 100, 2)
-        #         else:
-        #             inv[key] = 0
-        #     cleans = {'true': 0, 'false': 0, 'blank': 0}
-        #     for clean in item['cleans'].split(","):
-        #         if clean:
-        #             cleans[clean] +=1
-        #         else:
-        #             cleans['blank'] += 1
-        #     total = cleans['true'] + cleans['false'] + cleans['blank']
-        #     if total:
-        #         cleans['true'] = round(float(cleans['true']/ total) * 100, 2)
-        #         cleans['false'] = round(float(cleans['false']/total) * 100, 2)
-        #         cleans['blank'] = round(float(cleans['blank']/total) * 100, 2)
-        #     else:
-        #         cleans['blank'] =  100.00
-        #     line = '{}@{}@{}@{}@{}\n'.format(item['origin__id'],
-        #                                inv,
-        #                                item['trips'],
-        #                                item['descriptions'],
-        #                                cleans)
-        #     f.write(line)
-        # f.close()
+        queryset = queryset.annotate(amount=amount)
 
         return queryset
 

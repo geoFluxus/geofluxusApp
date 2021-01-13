@@ -5,11 +5,12 @@ define(['views/common/baseview',
         'collections/collection',
         'visualizations/map',
         'utils/utils',
+        'visualizations/d3plus',
         'ajax-bootstrap-select',
         'openlayers',
     ],
 
-    function (BaseView, _, MonitorView, ImpactView, Collection, Map, utils) {
+    function (BaseView, _, MonitorView, ImpactView, Collection, Map, utils, d3plus) {
 
         var FiltersView = BaseView.extend({
             initialize: function (options) {
@@ -156,6 +157,8 @@ define(['views/common/baseview',
                 "click .hide-filter-name-button": "hideFilterNameInput",
 
                 'click #reset-filters': 'resetFiltersToDefault',
+                'click #summarize-filters': 'updateLogs',
+                'click .closeFilterLog': 'closeFilterLog',
             },
 
             render: function () {
@@ -265,12 +268,23 @@ define(['views/common/baseview',
                         let role = $(this).attr('role'),
                             containers = ['production', 'treatment'];
 
+                        // show role containers
                         _this[group].role = role;
                         containers.forEach(function (container) {
                             $("." + group + "-" + container)[(container == role) ? 'fadeIn' : 'hide']();
                         })
 
+                        // update filter logs on selection
+                        _this.getFilterParams();
+                        _this.closeFilterLog();
+                        
                         event.preventDefault(); // avoid firing twice!
+                    })
+
+                    // update filter logs on selection
+                    $('#' + group + '-area-in-or-out').change(function (event) {
+                        _this.getFilterParams();
+                        _this.closeFilterLog();
                     })
                 })
 
@@ -294,6 +308,7 @@ define(['views/common/baseview',
                     }
                 }
                 $(this.flows.hazardousSelect).on('changed.bs.select', filterHazardous);
+                $(this.flows.hazardousSelect).on('changed.bs.select',  _this.closeFilterLog());
 
                 // Enable multiple check for selectors
                 function multiCheck(evt, clickedIndex, checked) {
@@ -351,29 +366,35 @@ define(['views/common/baseview',
 
                         fields.forEach(function (field, idx) {
                             var selector = $(_this[group][field + 'Select']); // field selector
-                            options = selector[0].options; // selector options
 
-                            // Exclude non-fuzzy booleans (either true or false).
-                            // To find them, check if there are options, including 'both'
-                            if (!(options.length > 0 && options[0].value == 'both')) {
-
-                                // Add multiCheck event listener
-                                selector.on('changed.bs.select', multiCheck);
-
-                                // For hierarchical fields, check if there is a child field
-                                var next = fields[idx + 1]; // next field in order
-
-                                // If there is a child field:
-                                if (next !== undefined) {
-                                    // Add filterbyParent event listener. This will render child menu, filtered by current field:
-                                    selector.on('changed.bs.select', {
-                                            group: group,
-                                            parent: field,
-                                            child: next
-                                        },
-                                        filterbyParent);
+                            if (!_.isEmpty(selector)) {
+                                options = selector[0].options; // selector options
+        
+                                selector.on('changed.bs.select', _this.closeFilterLog);
+    
+                                // Exclude non-fuzzy booleans (either true or false).
+                                // To find them, check if there are options, including 'both'
+                                if (!(options.length > 0 && options[0].value == 'both')) {
+    
+                                    // Add multiCheck event listener
+                                    selector.on('changed.bs.select', multiCheck);
+    
+                                    // For hierarchical fields, check if there is a child field
+                                    var next = fields[idx + 1]; // next field in order
+    
+                                    // If there is a child field:
+                                    if (next !== undefined) {
+                                        // Add filterbyParent event listener. This will render child menu, filtered by current field:
+                                        selector.on('changed.bs.select', {
+                                                group: group,
+                                                parent: field,
+                                                child: next
+                                            },
+                                            filterbyParent);
+                                    }
                                 }
                             }
+
                         })
                     })
                 })
@@ -399,6 +420,43 @@ define(['views/common/baseview',
                 $(document).on('blur', 'input', function () {
                     focusedElement = null;
                 })
+
+                // Show dataset note attribute as title for mouseover in dropdown:
+                $(".flows-dataset-select-col button").click(function () {
+                    $(".flows-dataset-select-col .dropdown-menu ul li").each(function (index) {
+                        if (index >= 2) {
+                            $(this).prop('id', _this.collections.datasets.models[index - 2].get("id"));
+
+                            $(this).tooltip({
+                                title: _this.collections.datasets.models[index - 2].get("note"),
+                                placement: "left",
+                                boundary: "window",
+                            })
+                        }
+                    })
+                })
+
+                $('.flows-dataset-select-col').on('hide.bs.dropdown', function () {
+                    $(".flows-dataset-select-col .dropdown-menu ul li").each(function (index) {
+                        $(this).tooltip('dispose')
+                    });
+                })
+
+                $(this.flows.datasetSelect).on('changed.bs.select', function(){
+                    $(".tooltip").remove();
+                    $(".flows-dataset-select-col .dropdown-menu ul li").each(function (index) {
+                        if (index >= 2) {
+                            $(this).prop('id', _this.collections.datasets.models[index - 2].get("id"));
+
+                            $(this).tooltip({
+                                title: _this.collections.datasets.models[index - 2].get("note"),
+                                placement: "left",
+                                boundary: "window",
+                            })
+                        }
+                    })
+                })
+
             },
 
             initializeActorFilters: function () {
@@ -446,8 +504,12 @@ define(['views/common/baseview',
 
                     // Store selection:
                     $("#" + group + "-actor-select").on('changed.bs.select', function () {
+                        _this.closeFilterLog();
                         _this[group].selectedActors = $("#" + group + "-actor-select").val();
                         $("." + group + "-actor-select-col .status").show();
+                        setTimeout(function () {
+                            _this.getFilterParams();
+                        }, 50);
                     });
                 });
             },
@@ -509,12 +571,17 @@ define(['views/common/baseview',
                                 var areas = _this.areas[levelId];
                                 var block = _this.areaMap.block;
 
+                                _this.closeFilterLog();
+
                                 // The user has selected an area for the Origin block:
                                 _this[block].selectedAreas = [];
                                 areaFeats.forEach(function (areaFeat) {
                                     labels.push(areaFeat.label);
                                     _this[block].selectedAreas.push(areas.get(areaFeat.id));
                                 });
+
+                                // Update filters logs on selection
+                                _this.getFilterParams();
 
                                 $(".areaSelections-" + block)[_this[block].selectedAreas.length > 0 ? 'fadeIn' : 'fadeOut']();
                                 $("#areaSelections-Textarea-" + block).html(labels.join('; '))
@@ -524,7 +591,9 @@ define(['views/common/baseview',
 
                                 // Trigger input event on textareas in order to autoresize if needed:
                                 $(".selections").trigger('input');
-                                $(".selections").textareaAutoSize();
+                                setTimeout(() => {
+                                    $(".selections").textareaAutoSize();
+                                }, 100);
                             }
                         }
                     });
@@ -622,6 +691,10 @@ define(['views/common/baseview',
                     setTimeout(function () {
                         $(".areaSelections-" + buttonClicked).fadeOut();
                     }, 400);
+
+                    // update filter logs
+                    _this.getFilterParams();
+                    _this.closeFilterLog();
                 }
             },
 
@@ -682,7 +755,6 @@ define(['views/common/baseview',
                 $(".selections").trigger('input');
             },
             // AREA MODAL //
-
 
             // FILTER MODAL //
             renderSavedFiltersModal: function () {
@@ -778,7 +850,9 @@ define(['views/common/baseview',
                                 $(".areaSelections-" + group).fadeIn();
                                 $("#areaSelections-Textarea-" + group).html(labelStringArray.join('; '));
                                 $(".selections").trigger('input');
-                                $(".selections").textareaAutoSize();
+                                setTimeout(() => {
+                                    $(".selections").textareaAutoSize();
+                                }, 200);
 
                                 // in-or-out toggle
                                 $(_this[group].inOrOut).bootstrapToggle(inOrOut == 'in' ? "off" : "on");
@@ -1138,9 +1212,10 @@ define(['views/common/baseview',
             },
             // FILTER MODAL //
 
-
             resetFiltersToDefault: function () {
                 _this = this;
+
+                $(".filter-log-container").fadeOut();
 
                 var groups = ['origin', 'destination']
                 groups.forEach(function (group) {
@@ -1194,6 +1269,7 @@ define(['views/common/baseview',
                 $(".selectpicker").selectpicker('refresh');
             },
 
+
             getFilterParams: function () {
                 var _this = this;
 
@@ -1203,21 +1279,29 @@ define(['views/common/baseview',
                     destination: {},
                     flows: {},
                 }
+                this.log = {
+                    "origin": {},
+                    "destination": {},
+                    "flows": {}
+                };
 
                 // dataset filter -> to flows filters
                 var datasets = this.collections['datasets'],
                     ids = $(this.flows.datasetSelect).val();
                 // if 'all' is selected
                 if (ids[0] == '-1') {
-                    ids = [];
+                    ids = [], titles = [];
                     datasets.forEach(dataset => {
                         ids.push(dataset.get("id"));
+                        titles.push(dataset.get("title"))
                     });
+
+                    filterParams.flows['datasets'] = ids;
+                    _this.log.datasets = titles;
                 }
-                filterParams.flows['datasets'] = ids;
 
                 // origin/destination in-or-out & role
-                var groups = ['origin', 'destination']
+                var groups = ['origin', 'destination'];
                 groups.forEach(function (group) {
                     // search for companies
                     var selectedActors = _this[group].selectedActors;
@@ -1227,22 +1311,19 @@ define(['views/common/baseview',
                         // Save actor objects:
                         filterParams[group].actorObjects = [];
                         $('#' + group + '-actor-select optgroup option').each(function (index, element) {
-
                             filterParams[group].actorObjects.push({
                                 id: $(this).val(),
                                 name: $(this).attr("title"),
                             })
                         });
 
+                        _this.log[group]['companies'] = filterParams[group].actorObjects.map(a => a.name);
                     }
 
-                    var inOrOut = _this[group].inOrOut;
-                    filterParams[group].inOrOut = $(inOrOut).prop('checked') ? 'out' : 'in';
-
                     var role = _this[group].role;
-                    if (role != 'both') {
+                    if (role != 'both' && role != undefined) {
                         // save to flows (non-spatial) filters
-                        filterParams.flows[group + '_role'] = role;
+                        filterParams.flows[group + '_role'] = _this.log[group].role = role;
                     }
                 })
 
@@ -1271,15 +1352,23 @@ define(['views/common/baseview',
                 // load filters to request
                 groups = Object.keys(this.filters);
                 groups.forEach(function (group) {
-                    // get group admin level & areas
-                    filterParams[group].adminLevel = _this[group].adminLevel;
-
                     var selectedAreas = _this[group].selectedAreas;
                     if (selectedAreas !== undefined && selectedAreas.length > 0) {
+                        // get group admin level & areas
+                        filterParams[group].adminLevel = _this[group].adminLevel;
+                        _this.log[group].adminlevel = _this.collections['arealevels'].find(model => model.attributes.id == _this[group].adminLevel).get("name");
+
                         filterParams[group].selectedAreas = [];
+                        _this.log[group].selectedAreas = [];
                         selectedAreas.forEach(function (area) {
                             filterParams[group].selectedAreas.push(area.id);
+                            _this.log[group].selectedAreas.push(area.get('name'));
                         });
+
+                        var inOrOut = _this[group].inOrOut;
+                        if (group != "flows") {
+                            filterParams[group].inOrOut = _this.log[group].inOrOut = $(inOrOut).prop('checked') ? 'out' : 'in';
+                        }
                     }
 
                     // get group filters
@@ -1288,9 +1377,8 @@ define(['views/common/baseview',
                         // get filter fields
                         var fields = Object.keys(filter);
 
-                        var _field = _value = null;
+                        var _field = _value = _name = null;
                         fields.forEach(function (field) {
-
                             // retrieve filter value
                             var value = $(_this[group][field + 'Select']).val();
 
@@ -1305,6 +1393,7 @@ define(['views/common/baseview',
                             if (!conditions.includes(false)) {
                                 _field = filter[field];
                                 _value = process(value);
+                                _name = field.toLowerCase();
                             }
                         })
 
@@ -1322,11 +1411,126 @@ define(['views/common/baseview',
 
                             // save to flows (non-spatial) fields
                             filterParams.flows[_field] = _value;
+
+                            var options = $('#' + group + '-' + _name + '-select option:selected');
+
+                            _this.log[group][_name] = [];
+                            $(options).each(function () {
+                                formatted_text = $(this).text().replace(/[\r\n]+/g, "").replace(/\s{2,}/g, "");
+                                _this.log[group][_name].push(formatted_text);
+                            });
                         }
                     })
                 })
 
+                console.log(_this.log);
+
                 return filterParams;
+            },
+
+            // update filter logs on selection
+            updateLogs: function () {
+                var _this = this;
+
+                var filterNameMap = {
+                    origDest: {
+                        "companies": "Companies",
+                        "adminLevel": "Administrative level",
+                        "selectedAreas": "Areas",
+                        "role": "Role",
+                        "activitygroup": "Activity groups",
+                        "activity": "Activities",
+                        "processgroup": "Treatment method groups",
+                        "process": "Treatment methods",
+                        "in": "Within these areas",
+                        "out": "Outside these areas",
+                    },
+                    flows: {
+                        "dataset": "Dataset",
+                        "selectedAreas": "Areas",
+                        "year": "Year",
+                        "hazardous": "Hazardous",
+                        "waste02": "EWC Chapter",
+                        "waste04": "EWC Sub-Chapter",
+                        "waste06": "EWC Entry",
+                        "material": "Material",
+                        "product": "Product",
+                        "composites": "Composites",
+                        "clean": "Clean",
+                        "collector": "Collector",
+                        "direct": "Direct use",
+                        "iscomposite": "Composite",
+                        "mixed": "Mixed",
+                        "route": "Route",
+                        "in": "Within these areas",
+                        "out": "Outside these areas",
+                    }
+                }
+
+                _this.getFilterParams();
+
+                if ((Object.keys(_this.log.origin).length > 0) || (Object.keys(_this.log.destination).length > 0) || (Object.keys(_this.log.flows).length > 0)) {
+                    var html = document.getElementById("filter-log-template").innerHTML;
+                    var template = _.template(html);
+                    this.hasFilters = true;
+
+                    document.querySelector(".filterLog").innerHTML = template({
+                        blocks: ["origin", "destination"],
+                        log: _this.log,
+                        filterNameMap: filterNameMap,
+                        flows: _this.log.flows
+                    });
+
+                } else {
+                    this.hasFilters = false;
+                    $(".filterLog").html("<span>You haven't selected any filters.</span>")
+                }
+                $(".filter-log-container").fadeIn();
+
+                this.getFlowCount()
+            },
+
+            getFlowCount: function () {
+                var _this = this;
+                var params = this.getFilterParams();
+                params.requestFlowCount = true;
+                let flows = new Collection([], {
+                    apiTag: 'monitorflows',
+                });
+
+                flows.postfetch({
+                    data: {},
+                    body: params,
+                    success: function (response) {
+                        response = response.models[0].attributes;
+
+                        let final_count = d3plus.formatAbbreviate(parseInt(response.final_count), utils.returnD3plusFormatLocale());
+                        let final_amount = d3plus.formatAbbreviate(response.final_amount, utils.returnD3plusFormatLocale());
+
+                        if (_this.hasFilters) {
+                            if (response.final_count == 0) {
+                                $(".filterLog").append(`<br><br><span class="filterSummaryResponse nodata">The filters you selected match <strong>no data</strong>. Please <strong>adjust the filtering</strong> of the waste flows.<strong></strong></span>`);
+                                _this.filtersMatchAnyData = false;
+                                $(".goalContainer").fadeOut();
+                            } else {
+                                $(".filterLog").append(`<br><br><span class="filterSummaryResponse data">You will query <strong>${final_count} flows</strong> accounting for <strong>${final_amount} tonnes</strong> of waste.</span>`);
+                                _this.filtersMatchAnyData = true;
+                            }
+
+                        } else {
+                            $(".filterLog").append(`<br><br><span class="filterSummaryResponse data">You will query <strong>${final_count} flows</strong> accounting for <strong>${final_amount} tonnes</strong> of waste.</span>`);
+                            _this.filtersMatchAnyData = true;
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            },
+
+            closeFilterLog: function () {
+                $(".filter-log-container").fadeOut();
+                $(".goalContainer").show();
             },
 
             close: function () {

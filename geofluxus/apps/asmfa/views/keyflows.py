@@ -135,7 +135,7 @@ class CompositeViewSet(PostGetViewMixin,
 class YearViewSet(PostGetViewMixin,
                   ViewSetMixin,
                   ModelPermissionViewSet):
-    queryset = Year.objects.order_by('code')
+    queryset = Year.objects.order_by('-code')
     pagination_class = UnlimitedResultsSetPagination
     serializer_class = YearSerializer
     serializers = {
@@ -148,7 +148,7 @@ class YearViewSet(PostGetViewMixin,
 class MonthViewSet(PostGetViewMixin,
                    ViewSetMixin,
                    ModelPermissionViewSet):
-    queryset = Month.objects.order_by('year__code', 'code')
+    queryset = Month.objects.order_by('-year__code', '-code')
     pagination_class = UnlimitedResultsSetPagination
     serializer_class = MonthSerializer
     serializers = {

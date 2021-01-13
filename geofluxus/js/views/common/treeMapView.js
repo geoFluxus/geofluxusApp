@@ -156,7 +156,7 @@ define(['views/common/d3plusVizView',
                         canFlipGrouping: this.canFlipGrouping,
                     });
                     this.scrollToVisualization();
-                    this.loader.deactivate();
+                    this.options.flowsView.loader.deactivate();
                 }
             });
         return TreeMapView;

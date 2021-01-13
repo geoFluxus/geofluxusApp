@@ -83,7 +83,7 @@ define(['views/common/deckglView',
                     }, this.flows);
 
                     this.render();
-                    this.loader.deactivate();
+                    this.options.flowsView.loader.deactivate();
                 },
 
                 events: {
@@ -104,78 +104,6 @@ define(['views/common/deckglView',
 
                     this.addButtons();
                 },
-
-                // addButtons: function () {
-                //     let buttonFullscreen = d3.select(".fullscreen-toggle")
-                //     if (buttonFullscreen.empty()) {
-
-                //         let _this = this;
-
-                //         let vizContainer = d3.select("#geoheatmap");
-                //         vizContainer.append("div")
-                //             .attr("class", "controlContainer")
-                //             .style("top", "0px")
-                //             .style("position", "relative")
-                //             .style("z-index", "100")
-                //             .lower();
-
-                //         let controlContainer = vizContainer.select(".controlContainer")
-
-                //         controlContainer.append("button")
-                //             .attr("class", "btn btn-sm btn-primary d3plus-Button fullscreen-toggle")
-                //             .attr("title", "View this visualization in fullscreen mode.")
-                //             .attr("type", "button")
-                //             .html('<i class="fas fa-expand icon-fullscreen"></i>')
-                //             .on("click", function () {
-                //                 _this.toggleFullscreen();
-                //             });
-
-                //         controlContainer.append("button")
-                //             .attr("class", "btn btn-sm btn-primary d3plus-Button export-csv")
-                //             .attr("title", "Export the data of this visualization as a CSV file.")
-                //             .attr("type", "button")
-                //             .html('<i class="fas fa-file icon-export"></i>')
-                //             .on("click", function () {
-                //                 _this.exportCSV();
-                //                 d3.event.preventDefault();
-                //             });
-
-                //         controlContainer.append("button")
-                //             .attr("class", "btn btn-sm btn-primary d3plus-Button toggle-darkmode")
-                //             .attr("title", "Toggle light or dark mode.")
-                //             .attr("type", "button")
-                //             .html('<i class="fas icon-toggle-darkmode"></i>')
-                //             .on("click", function () {
-                //                 _this.toggleDarkMode();
-                //             });
-                //     }
-                // },
-
-                // toggleFullscreen: function (event) {
-                //     $("#geoheatmap").toggleClass('fullscreen');
-                //     // Only scroll when going to normal view:
-                //     if (!$(this.options.el).hasClass('fullscreen')) {
-                //         window.scrollTo({
-                //             top: $(".visualizationRow")[0].getBoundingClientRect().top + window.pageYOffset - 20,
-                //             block: "start",
-                //             inline: "nearest",
-                //         });
-                //     }
-                //     this.render();
-                // },
-
-                // toggleDarkMode: function () {
-                //     this.isDarkMode = !this.isDarkMode;
-                //     if (this.isDarkMode) {
-                //         const mapStyle = "mapbox://styles/mapbox/dark-v9"
-                //     } else {
-                //         const mapStyle = "mapbox://styles/mapbox/light-v9"
-                //     }
-
-                //     $(".viz-wrapper-div").toggleClass("lightMode");
-                //     this.fontColor = this.isDarkMode ? "white" : "black";
-                //     this.render();
-                // },
 
                 exportCSV: function () {
                     const items = this.options.flows;
