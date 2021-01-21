@@ -123,7 +123,7 @@ define(['underscore',
                         center: [52.1326, 5.2913], // Center of Netherlands
                             zoomSnap: 0.25,
                             zoom: 10.5,
-                            minZoom: 5,
+                            minZoom: 2,
                             maxZoom: 25
                         })
                     .addLayer(this.backgroundLayer);
@@ -135,7 +135,7 @@ define(['underscore',
                     var areas = [];
                     if (!this.isActorLevel) {
                         this.areas = Object.values(this.flows.pop());
-                        
+
                         this.areas.forEach(function(area) {
                             let newArea = {
                                 id: area['id'],

@@ -10,6 +10,7 @@ from django.db.models import (Q, ExpressionWrapper, F, FloatField,
                               OuterRef, Subquery)
 from django.contrib.gis.db import models as gis
 from django.contrib.gis.db.models.functions import Length
+from django.db import connections
 
 
 # Routing
@@ -20,15 +21,28 @@ class RoutingManager(models.Manager):
     def update_flows(created):
         # compute distance
         ids = [c.id for c in created]
-        routings = Routing.objects.filter(id__in=ids)
-        routings.update(distance=Length(F('geom')))
+        with connections['default'].cursor() as cursor:
+            query = f'''
+                CREATE TABLE flows2routings AS (
+                    SELECT flow.id AS flow_id, routing.id AS routing_id
+                    FROM asmfa_flow flow
+                    JOIN asmfa_routing routing
+                    ON (flow.origin_id = routing.origin_id 
+                    AND flow.destination_id = routing.destination_id)
+                    WHERE routing.id IN {tuple(ids)}
+                );
 
-        queryset = Flow.objects
-        for c in created:
-            # fetch all flows with origin / destination & update
-            flows = queryset.filter(Q(origin__id=c.origin.id) &\
-                                    Q(destination__id=c.destination.id))
-            flows.update(routing=c.pk)
+                UPDATE asmfa_flow
+                SET routing_id = flows2routings.routing_id
+                FROM flows2routings
+                WHERE asmfa_flow.id = flows2routings.flow_id;
+
+                DROP TABLE flows2routings;
+                
+                UPDATE asmfa_routing
+                SET distance = ST_Length(asmfa_routing.geom, true); 
+            '''
+            cursor.execute(query)
 
     def bulk_create(self, objs, **kwargs):
         created = super(RoutingManager, self).bulk_create(objs, **kwargs)
@@ -61,23 +75,30 @@ class Routing(models.Model):
 class VehicleManager(models.Manager):
     @staticmethod
     def update_flows(created):
-        queryset = Flow.objects
-        # annotate amount/trips from chains to flows
-        # exclude flows with no trips
-        queryset = queryset.annotate(amount=F('flowchain__amount'),
-                                     trips=F('flowchain__trips')) \
-                           .exclude(trips=0)
-
-        # compute capacity
-        capacity = ExpressionWrapper((F('amount') / F('trips')),
-                                     output_field=FloatField())
-        queryset = queryset.annotate(capacity=capacity)
-
-        for c in created:
-            # fetch all flows with capacity & update
-            flows = queryset.filter(capacity__gte=c.min,
-                                    capacity__lt=c.max)
-            flows.update(vehicle=c.pk)
+        with connections['default'].cursor() as cursor:
+            query = f'''
+                CREATE TABLE tmp AS (
+                    SELECT flow.id AS flow_id, flowchain.amount / flowchain.trips as capacity
+                    FROM asmfa_flow flow
+                    JOIN asmfa_flowchain flowchain
+                    ON flow.flowchain_id = flowchain.id
+                );
+                
+                CREATE TABLE flows2vehicles AS (
+                    SELECT flow_id, vehicle.id AS vehicle_id
+                    FROM tmp
+                    JOIN asmfa_vehicle vehicle
+                    ON (tmp.capacity >= vehicle.min AND tmp.capacity < vehicle.max)
+                );
+                
+                UPDATE asmfa_flow
+                SET vehicle_id = flows2vehicles.vehicle_id
+                FROM flows2vehicles
+                WHERE asmfa_flow.id = flows2vehicles.flow_id;
+                                
+                DROP TABLE tmp, flows2vehicles;    
+            '''
+            cursor.execute(query)
 
     def bulk_create(self, objs, **kwargs):
         created = super(VehicleManager, self).bulk_create(objs, **kwargs)
@@ -134,21 +155,47 @@ class FlowManager(models.Manager):
     def update_flows(created):
         # retrieve created flows as queryset
         ids = [c.id for c in created]
-        queryset = Flow.objects.filter(id__in=ids)
+        with connections['default'].cursor() as cursor:
+            query = f'''
+                CREATE TABLE tmp AS (
+                    SELECT flow.id AS flow_id, flowchain.amount / flowchain.trips as capacity
+                    FROM asmfa_flow flow
+                    JOIN asmfa_flowchain flowchain
+                    ON flow.flowchain_id = flowchain.id
+                    WHERE flow.id IN {tuple(ids)}
+                );
 
-        # retrieve routing
-        routing = Routing.objects.filter(Q(origin__id=OuterRef('origin__id')) &\
-                                         Q(destination__id=OuterRef('destination__id')))
+                CREATE TABLE flows2vehicles AS (
+                    SELECT flow_id, vehicle.id AS vehicle_id
+                    FROM tmp
+                    JOIN asmfa_vehicle vehicle
+                    ON (tmp.capacity >= vehicle.min AND tmp.capacity < vehicle.max)
+                );
 
-        # update flows
-        queryset = queryset.annotate(rid=Subquery(routing.values('id')))
-        queryset.update(routing=F('rid'))
+                UPDATE asmfa_flow
+                SET vehicle_id = flows2vehicles.vehicle_id
+                FROM flows2vehicles
+                WHERE asmfa_flow.id = flows2vehicles.flow_id;
 
-        # delete & reupload vehicles to update flows
-        vehicles = [v for v in Vehicle.objects.all()]
-        Vehicle.objects.all().delete()
-        Vehicle.objects.bulk_create(vehicles)
+                DROP TABLE tmp, flows2vehicles;
+                
+                CREATE TABLE flows2routings AS (
+                    SELECT flow.id AS flow_id, routing.id AS routing_id
+                    FROM asmfa_flow flow
+                    JOIN asmfa_routing routing
+                    ON (flow.origin_id = routing.origin_id 
+                    AND flow.destination_id = routing.destination_id)
+                    WHERE flow.id IN {tuple(ids)}
+                );
 
+                UPDATE asmfa_flow
+                SET routing_id = flows2routings.routing_id
+                FROM flows2routings
+                WHERE asmfa_flow.id = flows2routings.flow_id;
+
+                DROP TABLE flows2routings;
+            '''
+            cursor.execute(query)
 
     def bulk_create(self, objs, **kwargs):
         created = super(FlowManager, self).bulk_create(objs, **kwargs)
