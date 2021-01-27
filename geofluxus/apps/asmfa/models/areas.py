@@ -4,6 +4,7 @@ from geofluxus.apps.asmfa.models import (Dataset,
                                          Activity,
                                          Process,
                                          Company)
+from django.db import connections
 
 
 # AdminLevel
@@ -66,7 +67,7 @@ class AreaManager(models.Manager):
     # update actor on area bulk upload
     def bulk_create(self, objs, **kwargs):
         created = super(AreaManager, self).bulk_create(objs, **kwargs)
-        self.update_actors(created)
+        # self.update_actors(created)
         return created
 
 
@@ -78,7 +79,7 @@ class Area(models.Model):
                                    null=True, blank=True,
                                    on_delete=models.CASCADE)
     name = models.TextField(null=True, blank=True)
-    code = models.TextField()
+    code = models.TextField(null=True, blank=True)
     geom = gis.MultiPolygonField(null=True, blank=True)
     parent_area = models.ForeignKey("self", null=True, blank=True,
                                      on_delete=models.CASCADE)
@@ -97,14 +98,38 @@ class Area(models.Model):
 class ActorManager(models.Manager):
     @staticmethod
     def update_actors(created):
-        queryset = Area.objects
-        for actor in created:
-            # order areas by administrative level (descending)
-            areas = queryset.filter(geom__contains=actor.geom) \
-                            .order_by('-adminlevel__level')
-            if areas:
-                actor.area = areas[0]
-                actor.save()
+        ids = [c.id for c in created]
+
+        with connections['default'].cursor() as cursor:
+            query = f'''
+                CREATE TABLE tmp AS (
+                    SELECT actor.id AS actor, area.id AS area, level.level AS level
+                    FROM asmfa_actor actor
+                    JOIN asmfa_area area
+                    ON ST_Contains(area.geom, actor.geom)
+                    JOIN asmfa_adminlevel level
+                    ON area.adminlevel_id = level.id
+                    WHERE actor.id IN {tuple(ids)}
+                );
+                
+                CREATE TABLE actors2areas AS (
+                    SELECT tmp.actor, tmp.area, tmp.level
+                    FROM tmp
+                    WHERE (tmp.actor, tmp.level) IN
+                    (SELECT tmp.actor, max(tmp.level)
+                     FROM tmp
+                     GROUP BY tmp.actor)
+                    ORDER BY tmp.level
+                );
+                
+                UPDATE asmfa_actor
+                SET area_id = actors2areas.area
+                FROM actors2areas
+                WHERE asmfa_actor.id = actors2areas.actor;
+                
+                DROP TABLE tmp, actors2areas;    
+            '''
+            cursor.execute(query)
 
     # update actor with area
     def bulk_create(self, objs, **kwargs):

@@ -663,17 +663,19 @@ define(['views/common/baseview',
                 var _this = this;
                 this.areaMap.clearLayer('areas');
                 areas.forEach(function (area) {
-                    var coords = area.get('geom').coordinates,
-                        name = area.get('name');
-                    _this.areaMap.addPolygon(coords, {
-                        projection: 'EPSG:4326',
-                        layername: 'areas',
-                        type: 'MultiPolygon',
-                        tooltip: name,
-                        label: name,
-                        id: area.id,
-                        renderOSM: false
-                    });
+                    if (area.get('geom') !== null) {
+                        var coords = area.get('geom').coordinates,
+                            name = area.get('name');
+                        _this.areaMap.addPolygon(coords, {
+                            projection: 'EPSG:4326',
+                            layername: 'areas',
+                            type: 'MultiPolygon',
+                            tooltip: name,
+                            label: name,
+                            id: area.id,
+                            renderOSM: false
+                        });
+                    }
                 })
                 this.areaMap.centerOnLayer('areas');
             },

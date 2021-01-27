@@ -13,10 +13,10 @@ FLOW_PORT = os.environ['FLOW_PORT']
 
 # Network
 NET_DB = os.environ['NET_DB']
-NET_USER = os.environ['NET_USER']
-NET_PASS = os.environ['NET_PASS']
-NET_HOST = os.environ['NET_HOST']
-NET_PORT = os.environ['NET_PORT']
+NET_USER = os.environ['FLOW_USER']
+NET_PASS = os.environ['FLOW_PASS']
+NET_HOST = os.environ['FLOW_HOST']
+NET_PORT = os.environ['FLOW_PORT']
 
 FILENAME = os.environ['FILENAME']
 
@@ -124,7 +124,7 @@ if __name__ == "__main__":
     idx=0
     print('TOTAL: ', len(flows))
     for flow in flows:
-        print('Progress: ', idx, '/', len(flows), end='\r', flush=True)
+        print('Progress: ', idx, '/', len(flows))
         idx+=1
         # Fetch orig / dest geometry
         orig, dest = flow[0], flow[1]
