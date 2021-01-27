@@ -45,5 +45,3 @@ WEBPACK_LOADER = {
     }
 }
 
-CONN_MAX_AGE = 60
-

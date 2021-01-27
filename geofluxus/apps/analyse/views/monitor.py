@@ -126,7 +126,6 @@ class MonitorViewSet(FilterFlowViewSet):
         # aggregate flows into groups
         # groups = queryset.values(*fields).distinct()
         groups = queryset.values(*self.fields) \
-                         .order_by(*self.fields) \
                          .annotate(total=Sum('amount'))
 
         # check for groups fields with null values!

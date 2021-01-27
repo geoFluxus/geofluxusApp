@@ -137,12 +137,14 @@ define(['underscore',
                         this.areas = Object.values(this.flows.pop());
 
                         this.areas.forEach(function(area) {
-                            let newArea = {
-                                id: area['id'],
-                                name: area['name'],
-                                geom: area['geom'].coordinates,
+                            if (area['geom'] != null) {
+                                let newArea = {
+                                    id: area['id'],
+                                    name: area['name'],
+                                    geom: area['geom'].coordinates,
+                                }
+                                areas.push(newArea);
                             }
-                            areas.push(newArea);
                         })
                     }
 
