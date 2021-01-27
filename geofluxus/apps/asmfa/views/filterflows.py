@@ -4,7 +4,9 @@ from geofluxus.apps.utils.views import (PostGetViewMixin,
 from geofluxus.apps.asmfa.models import (Flow,
                                          Classification,
                                          Area,
-                                         Routing,)
+                                         Routing,
+                                         Month,
+                                         Waste06)
 from geofluxus.apps.asmfa.serializers import (FlowSerializer)
 import json
 import numpy as np
@@ -146,6 +148,10 @@ class FilterFlowViewSet(PostGetViewMixin,
             if func in lookups:
                 queryset = self.filter_classif(queryset, (func, val))
                 continue
+
+            if 'year' in func:
+                val = list(Month.objects.filter(year__in=val).values_list('id', flat=True))
+                func = 'flowchain__month__in'
 
             # form query & append
             query = Q(**{func: val})

@@ -6,7 +6,8 @@ from geofluxus.apps.asmfa.models import (Area,
                                          Process,
                                          Waste04,
                                          Waste06,
-                                         Actor)
+                                         Actor,
+                                         Routing)
 from collections import OrderedDict
 from django.db.models import (F, Sum, Q, Case, When, IntegerField)
 from django.db import connections
@@ -46,23 +47,32 @@ class MonitorViewSet(FilterFlowViewSet):
         return queryset
 
     def process_network(self, queryset):
-        # annotate routing seq
-        # exclude flows with no routing
-        queryset = queryset.annotate(sequence=F('routing__seq'))\
-                           .values('sequence', 'amount')
+        # group flow by routings & aggregate amount
+        queryset = queryset.values('routing')\
+                           .order_by('routing')\
+                           .annotate(total=Sum('amount'))
+
+        # recover segment sequence for all routings
+        routings = {
+            r['id']: r['seq'] for r in
+            Routing.objects.values('id', 'seq')
+        }
 
         # load ways with flows
         ways = {}
         for flow in queryset:
-            seq, amount = flow['sequence'], flow['amount']
+            id, amount = flow['routing'], flow['total']
             if not amount: amount = 0
-            if seq:
-                seq = [int(id) for id in seq.split('@')]
-                for id in seq:
-                    if id in ways:
-                        ways[id] += amount
-                    else:
-                        ways[id] = amount
+
+            if id is not None:
+                seq = routings[id]
+                if seq is not None:
+                    seq = [id for id in seq.split('@')]
+                    for id in seq:
+                        if id in ways:
+                            ways[id] += amount
+                        else:
+                            ways[id] = amount
 
         return self.serialize_network(ways)
 
@@ -70,23 +80,24 @@ class MonitorViewSet(FilterFlowViewSet):
         data = []
 
         # fetch network (without distances)
-        cursor = connections['routing'].cursor()
-        query = '''
-                SELECT id,
-                       ST_AsGeoJSON(the_geom)
-                FROM ways
-                '''
-        cursor.execute(query)
+        with connections['routing'].cursor() as cursor:
+            query = '''
+                    SELECT id,
+                           ST_AsGeoJSON(the_geom)
+                    FROM ways
+                    '''
+            cursor.execute(query)
 
-        # serialize
-        for way in cursor.fetchall():
-            id, geometry = way
-            if id not in ways: ways[id] = 0
+            # serialize
+            for way in cursor.fetchall():
+                id, geometry = way
+                id = str(id)
+                if id not in ways: ways[id] = 0
 
-            flow_item = [('id', id),
-                         ('geometry', json.loads(geometry)),
-                         ('amount', ways[id])]
-            data.append(OrderedDict(flow_item))
+                flow_item = [('id', id),
+                             ('geometry', json.loads(geometry)),
+                             ('amount', ways[id])]
+                data.append(OrderedDict(flow_item))
 
         return data
 
@@ -115,7 +126,6 @@ class MonitorViewSet(FilterFlowViewSet):
         # aggregate flows into groups
         # groups = queryset.values(*fields).distinct()
         groups = queryset.values(*self.fields) \
-                         .order_by(*self.fields) \
                          .annotate(total=Sum('amount'))
 
         # check for groups fields with null values!
