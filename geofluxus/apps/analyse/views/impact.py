@@ -55,24 +55,25 @@ class ImpactViewSet(MonitorViewSet):
         data = []
 
         # fetch network (with distances)
-        cursor = connections['routing'].cursor()
-        query = '''
-                SELECT id,
-                       ST_AsGeoJSON(the_geom),
-                       ST_LengthSpheroid(the_geom,
-                                         'SPHEROID["GRS_1980",6378137,298.257222101]')
-                FROM ways
-                '''
-        cursor.execute(query)
+        with connections['routing'].cursor() as cursor:
+            query = '''
+                    SELECT id,
+                           ST_AsGeoJSON(the_geom),
+                           ST_LengthSpheroid(the_geom,
+                                             'SPHEROID["GRS_1980",6378137,298.257222101]')
+                    FROM ways
+                    '''
+            cursor.execute(query)
 
-        # serialize
-        for way in cursor.fetchall():
-            id, geometry, distance = way
-            if id not in ways: ways[id] = 0
+            # serialize
+            for way in cursor.fetchall():
+                id, geometry, distance = way
+                id = str(id)
+                if id not in ways: ways[id] = 0
 
-            flow_item = [('id', id),
-                         ('geometry', json.loads(geometry)),
-                         ('amount', ways[id] * distance / 10**3)]
-            data.append(OrderedDict(flow_item))
+                flow_item = [('id', id),
+                             ('geometry', json.loads(geometry)),
+                             ('amount', ways[id] * distance / 10**3)]
+                data.append(OrderedDict(flow_item))
 
         return data
