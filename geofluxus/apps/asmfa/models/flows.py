@@ -46,7 +46,7 @@ class RoutingManager(models.Manager):
 
     def bulk_create(self, objs, **kwargs):
         created = super(RoutingManager, self).bulk_create(objs, **kwargs)
-        self.update_flows(created)
+        # self.update_flows(created)
         return created
 
 
@@ -102,7 +102,7 @@ class VehicleManager(models.Manager):
 
     def bulk_create(self, objs, **kwargs):
         created = super(VehicleManager, self).bulk_create(objs, **kwargs)
-        self.update_flows(created)
+        # self.update_flows(created)
         return created
 
 
