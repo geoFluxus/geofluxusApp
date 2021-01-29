@@ -149,9 +149,8 @@ class MonitorViewSet(FilterFlowViewSet):
             # collect area ids for flow origin or/and destination
             for field in self.fields:
                 if field in ['origin_area', 'destination_area']:
-                    area_ids.update(list(groups.filter(**{field + '__isnull': False})
-                                               .values_list(field, flat=True)
-                                               .distinct()))
+                    for group in groups:
+                        area_ids.add(group[field])
             # complete inventory for collected areas
             if area_ids:
                 self.space_inv = self.space_inv.filter(id__in=area_ids)\
