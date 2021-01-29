@@ -134,7 +134,7 @@ class ActorManager(models.Manager):
     # update actor with area
     def bulk_create(self, objs, **kwargs):
         created = super(ActorManager, self).bulk_create(objs, ** kwargs)
-        self.update_actors(created)
+        # self.update_actors(created)
         return created
 
 # Actor
