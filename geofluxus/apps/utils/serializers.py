@@ -123,21 +123,25 @@ class Reference:
         # ignore the null rows
         if self.allow_null:
             data = data[data[referencing_column].notnull()]
-        if self.filter_args:
-            filter_args = self.filter_args.copy()
-            for k, v in filter_args.items():
-                if v.startswith('@'):
-                    if not rel:
-                        raise Exception('You defined a related keyword in the '
-                                        'filter_args but did not pass the '
-                                        'related object')
-                    filter_args[k] = getattr(rel, v[1:])
-            referenced_queryset = objects.filter(**filter_args)
-        else:
-            referenced_queryset = objects.all()
-        if keyflow and hasattr(self.referenced_model, 'keyflow'):
-            referenced_queryset = referenced_queryset.filter(
-                Q(keyflow=keyflow) | Q(keyflow__isnull=True))
+        values_in = data[referencing_column].drop_duplicates().to_list()
+        filter_args = {f"{self.referenced_column}__in": values_in}
+        # if self.filter_args:
+        #     filter_args = self.filter_args.copy()
+        #     for k, v in filter_args.items():
+        #         if v.startswith('@'):
+        #             if not rel:
+        #                 raise Exception('You defined a related keyword in the '
+        #                                 'filter_args but did not pass the '
+        #                                 'related object')
+        #             filter_args[k] = getattr(rel, v[1:])
+        #     referenced_queryset = objects.filter(**filter_args)
+        # else:
+        #     referenced_queryset = objects.all()
+        # if keyflow and hasattr(self.referenced_model, 'keyflow'):
+        #     referenced_queryset = referenced_queryset.filter(
+        #         Q(keyflow=keyflow) | Q(keyflow__isnull=True))
+        referenced_queryset = objects.filter(**filter_args)
+        print(len(referenced_queryset.values_list(self.referenced_column)))
         # find unique referenced values
         u_ref, counts = np.unique(np.array(referenced_queryset.values_list(
             self.referenced_column)).astype('str'), return_counts=True)
@@ -737,14 +741,15 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
                 df_update = df_mapped.loc[idx_both]
             else:
                 new_models = self._create_models(df_new)
-            updated_models = self._update_models(df_update)
+            # updated_models = self._update_models(df_update)
+            updated_models = []
         except Error as e:
             # ToDo: formatted message
             raise ValidationError(str(e))
 
         return new_models, updated_models
 
-    def save_m2mdata(self, df):
+    def save_m2mdata(self, df, new, updated):
         m2m_fields = []
         for field in self.field_map.values():
             # Check for m2m references
@@ -754,16 +759,17 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
 
         if len(m2m_fields) == 0: return
 
-        # Retrieve model entries
-        queryset = self.Meta.model.objects
-
-        # recover new entries
-        ids = df[self.index_columns]
-        to_get = []
-        for id in ids.itertuples(index=False):
-            for k, v in id._asdict().items():
-                to_get.append(v)
-        entries = {m.identifier: m.id for m in queryset.filter(**{f"{k}__in": to_get})}
+        # # Retrieve model entries
+        # queryset = self.Meta.model.objects
+        #
+        # # recover new entries
+        # ids = df[self.index_columns]
+        # to_get = []
+        # for id in ids.itertuples(index=False):
+        #     for k, v in id._asdict().items():
+        #         to_get.append(v)
+        entries = {m.identifier: m.id for m in new}
+        entries.update({m.identifier: m.id for m in updated})
 
         for field in m2m_fields:
             # check the column name, model
@@ -957,7 +963,7 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
         dataframe = validated_data['dataframe']
         dataframe = self.parse_dataframe(dataframe)
         new, updated = self.save_data(dataframe)
-        self.save_m2mdata(dataframe)
+        self.save_m2mdata(dataframe, new, updated)
         result = BulkResult(created=new, updated=updated)
         return result
 
