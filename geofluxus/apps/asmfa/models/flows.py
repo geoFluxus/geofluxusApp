@@ -199,7 +199,7 @@ class FlowManager(models.Manager):
 
     def bulk_create(self, objs, **kwargs):
         created = super(FlowManager, self).bulk_create(objs, **kwargs)
-        self.update_flows(created)
+        # self.update_flows(created)
         return created
 
 
