@@ -41,6 +41,7 @@ var BulkUploadView = BaseView.extend({
             ['wastes02', 'Wastes (2-digit)'],
             ['wastes04', 'Wastes (4-digit)'],
             ['wastes06', 'Wastes (6-digit)'],
+            ['gncodes', 'GN codes'],
             ['materials', 'Materials'],
             ['products', 'Products'],
             ['composites', 'Composites'],
@@ -147,19 +148,18 @@ var BulkUploadView = BaseView.extend({
                 _this.loader.deactivate();
             },
             error: function (res) {
-                console.log(res);
                 if (res.responseJSON) {
-                    var msg = res.responseJSON.message;
-                    if (msg) {
-                        var url = res.responseJSON.file_url;
-                        if (url){
-                            msg += '<br><a href='+url+' style="color: rgb(255,0,0)">' +
-                                   '<span class="far fa-file-alt" style="margin-right: 2px;">' +
-                                   '</span><strong>Download here</strong></a>';
-                        }
-                    } else {
-                        msg = JSON.stringify(res.responseJSON)
-                    }
+                    var msg = JSON.stringify(res.responseJSON.message);
+//                    if (msg) {
+//                        var url = res.responseJSON.file_url;
+//                        if (url){
+//                            msg += '<br><a href='+url+' style="color: rgb(255,0,0)">' +
+//                                   '<span class="far fa-file-alt" style="margin-right: 2px;">' +
+//                                   '</span><strong>Download here</strong></a>';
+//                        }
+//                    } else {
+//                        msg = JSON.stringify(res.responseJSON)
+//                    }
                 } else {
                     msg = res.responseText;
                 }

@@ -63,6 +63,9 @@ define(['views/common/baseview',
                             'waste06': 'flowchain__waste06__in'
                         },
                         {
+                            'gncode': 'flowchain__gncode__in',
+                        },
+                        {
                             'material': 'flowchain__materials__in'
                         },
                         {
@@ -106,6 +109,7 @@ define(['views/common/baseview',
                     'waste02': 'wastes02',
                     'waste04': 'wastes04',
                     'waste06': 'wastes06',
+                    'gncode': 'gncodes',
                     'material': 'materials',
                     'product': 'products',
                     'composite': 'composites',
@@ -1381,7 +1385,7 @@ define(['views/common/baseview',
 
                         var _field = _value = _name = null;
                         fields.forEach(function (field) {
-                            // retrieve filter value
+                            // retrieve filter valuez
                             var value = $(_this[group][field + 'Select']).val();
 
                             // forbidden values

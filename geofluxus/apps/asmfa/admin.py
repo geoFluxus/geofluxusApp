@@ -10,6 +10,7 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Waste02,
                                          Waste04,
                                          Waste06,
+                                         GNcode,
                                          TreatmentEmission,
                                          Material,
                                          Product,
@@ -107,6 +108,12 @@ class Waste04Admin(CustomAdmin):
 @admin.register(Waste06)
 class Waste06Admin(CustomAdmin):
     search_fields = ['ewc_code', 'ewc_name']
+
+
+# GNcode
+@admin.register(GNcode)
+class GNcodeAdmin(CustomAdmin):
+    search_fields = ['code', 'name']
 
 
 # Treatment emissions
