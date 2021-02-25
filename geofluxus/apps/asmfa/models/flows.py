@@ -5,7 +5,8 @@ from geofluxus.apps.asmfa.models import (Waste06,
                                          Product,
                                          Composite,
                                          Actor,
-                                         Dataset)
+                                         Dataset,
+                                         GNcode)
 from django.db.models import (Q, ExpressionWrapper, F, FloatField,
                               OuterRef, Subquery)
 from django.contrib.gis.db import models as gis
@@ -124,15 +125,19 @@ class Vehicle(models.Model):
 # FlowChain
 class FlowChain(models.Model):
     identifier = models.CharField(max_length=255)
-    route = models.BooleanField()
-    collector = models.BooleanField()
+    route = models.BooleanField(null=True, blank=True)
+    collector = models.BooleanField(null=True, blank=True)
     description = models.TextField()
     amount = models.DecimalField(max_digits=12, decimal_places=3)
     trips = models.IntegerField()
     month = models.ForeignKey(Month,
                               on_delete=models.CASCADE)
     waste06 = models.ForeignKey(Waste06,
-                                on_delete=models.CASCADE)
+                                on_delete=models.CASCADE,
+                                null=True, blank=True)
+    gncode = models.ForeignKey(GNcode,
+                               on_delete=models.CASCADE,
+                               null=True, blank=True)
     materials = models.ManyToManyField(Material,
                                        through='MaterialInChain')
     products = models.ManyToManyField(Product,
@@ -162,7 +167,7 @@ class FlowManager(models.Manager):
                     FROM asmfa_flow flow
                     JOIN asmfa_flowchain flowchain
                     ON flow.flowchain_id = flowchain.id
-                    WHERE flow.id IN {tuple(ids)}
+                    WHERE flow.vehicle_id IS NULL
                 );
 
                 CREATE TABLE flows2vehicles AS (
@@ -185,7 +190,7 @@ class FlowManager(models.Manager):
                     JOIN asmfa_routing routing
                     ON (flow.origin_id = routing.origin_id 
                     AND flow.destination_id = routing.destination_id)
-                    WHERE flow.id IN {tuple(ids)}
+                    WHERE flow.routing_id IS NULL
                 );
 
                 UPDATE asmfa_flow
@@ -194,6 +199,10 @@ class FlowManager(models.Manager):
                 WHERE asmfa_flow.id = flows2routings.flow_id;
 
                 DROP TABLE flows2routings;
+                
+                UPDATE asmfa_routing
+                SET distance = ST_Length(asmfa_routing.geom, true)
+                WHERE asmfa_routing.distance = 0; 
             '''
             cursor.execute(query)
 

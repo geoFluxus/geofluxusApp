@@ -109,7 +109,7 @@ class ActorManager(models.Manager):
                     ON ST_Contains(area.geom, actor.geom)
                     JOIN asmfa_adminlevel level
                     ON area.adminlevel_id = level.id
-                    WHERE actor.id IN {tuple(ids)}
+                    WHERE actor.area_id is NULL
                 );
                 
                 CREATE TABLE actors2areas AS (

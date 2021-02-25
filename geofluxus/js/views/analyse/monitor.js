@@ -425,6 +425,8 @@ define(['views/common/baseview',
                         filterParams.dimensions.material += '__waste04'
                     } else if (gran === 'ewc2') {
                         filterParams.dimensions.material += '__waste04__waste02'
+                    } else if (gran == 'gncode') {
+                        filterParams.dimensions.material = 'flowchain__gncode'
                     }
                 }
 
@@ -592,6 +594,8 @@ define(['views/common/baseview',
                             if (_this.flows.length == 0 ||
                                 _this.flows.every(function(flow) {return flow.amount == 0;})) {
                                 _this.loader.deactivate()
+                                $(".visualizationBlock .card").removeClass("lightMode");
+                                $(".visualizationBlock").fadeIn();
                                 $(".no-data-found").fadeIn();
                                 $(".no-data-found").addClass("d-flex");
                             } else {

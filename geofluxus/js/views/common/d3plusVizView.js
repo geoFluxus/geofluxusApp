@@ -55,7 +55,8 @@ define(['views/common/baseview',
                         'material': {
                             'waste02': 'EWC Chapter',
                             'waste04': 'EWC Sub-Chapter',
-                            'waste06': 'EWC Entry'
+                            'waste06': 'EWC Entry',
+                            'gncode': 'GN Code'
                         }
                     }
 

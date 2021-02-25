@@ -212,7 +212,7 @@ class MonitorViewSet(FilterFlowViewSet):
                 if format in ['parallelsets', 'circularsankey']:
                     # for parallel sets
                     # determine if material dimension is origin or destination
-                    if 'waste' in field:
+                    if 'waste' in field or 'gncode' in field:
                         if any('origin' in f for f in self.fields):
                             flow_item.append(('destination', {level: group[field]}))
                         elif any('destination' in f for f in self.fields):

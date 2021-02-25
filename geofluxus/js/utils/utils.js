@@ -93,7 +93,9 @@ module.exports = {
     },
 
     capitalizeFirstLetter: function (inputString) {
-        return inputString.charAt(0).toUpperCase() + inputString.slice(1).toLowerCase();
+        if (inputString != undefined) {
+            return inputString.charAt(0).toUpperCase() + inputString.slice(1).toLowerCase();
+        }
     },
 
     calculatePoint: function (i, intervalSize, colorRangeInfo) {
