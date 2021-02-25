@@ -4,6 +4,7 @@ from rest_framework.serializers import (HyperlinkedModelSerializer,
 from geofluxus.apps.asmfa.models import (Waste02,
                                          Waste04,
                                          Waste06,
+                                         GNcode,
                                          Material,
                                          Product,
                                          Composite,
@@ -72,6 +73,23 @@ class Waste06ListSerializer(Waste06Serializer):
                   'ewc_code',
                   'hazardous',
                   'waste04',)
+
+
+# GNcode
+class GNcodeSerializer(HyperlinkedModelSerializer):
+    class Meta:
+        model = GNcode
+        fields = ('url',
+                  'id',
+                  'name',
+                  'code')
+
+
+class GNcodeListSerializer(GNcodeSerializer):
+    class Meta(GNcodeSerializer.Meta):
+        fields = ('id',
+                  'name',
+                  'code')
 
 
 # TreatmentEmissions

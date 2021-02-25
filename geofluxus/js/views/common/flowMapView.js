@@ -70,7 +70,8 @@ define(['underscore',
                         'process'       : 'Treatment method',
                         'waste02'       : 'EWC Chapter',
                         'waste04'       : 'EWC Sub-Chapter',
-                        'waste06'       : 'EWC Entry'
+                        'waste06'       : 'EWC Entry',
+                        'gncode'        : 'GN Code'
                     }
 
                     $(".export-csv").on("click", function() {

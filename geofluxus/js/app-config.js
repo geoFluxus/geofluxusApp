@@ -23,6 +23,7 @@ function(Session) {
         wastes02:          '/api/wastes02/',
         wastes04:          '/api/wastes04/',
         wastes06:          '/api/wastes06/',
+        gncodes:           '/api/gncodes/',
         treatmentemissions:'/api/treatmentemissions/',
         materials:         '/api/materials/',
         products:          '/api/products/',

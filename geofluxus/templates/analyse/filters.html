@@ -38,10 +38,10 @@
 
             <div class="card-body" style="min-height: 10rem;">
 
-                    <div class="row" 
+                    <div class="row"
                         {% if not request.user|isExpertUser %}
                         style="display: none;"
-                        {% endif %}                
+                        {% endif %}
                         >
                         <div class="col-md-3 flows-dataset-select-col">
                         <label for="flows-dataset-select">Data set</label>
@@ -734,6 +734,38 @@
                         </div>
                     </div>
 
+                    <h5 class="subtitle">GN codes</h5>
+
+                    <div class="row">
+                        <div class="col-md-3" id="flows-gncodesCol">
+
+                            <label for="flows-gncode-select">Code</label>
+<!--                            <div class="labelHelpiconContainer">-->
+<!--                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="EWC Chapter"-->
+<!--                                    data-html="true" tabindex="0" data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.-->
+<!--                                    EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>-->
+<!--                                    <br>-->
+<!--                                    <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a>.</span>-->
+<!--                                    <br>-->
+<!--                                    <span>Upon selecting an EWC Chapter, the Sub-Chapter filter will become available, containing the Sub-Chapters belonging to the selection made in this filter.</span>-->
+<!--                                    ">-->
+<!--                                </a>-->
+<!--                            </div>-->
+
+                            <select name="flows-gncode-select" id="flows-gncode-select" multiple
+                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
+                                style="resize: vertical;">
+                                <option selected value="-1">All (<%= gncodes.count %>)</option>
+                                <option data-divider="true"></option>
+                                <% gncodes.forEach(function(gncode){ %>
+                                <option value="<%= gncode.id %>"><%= gncode.get('code') %>
+                                    <%= gncode.get('name') %>
+                                </option>
+                                <% }); %>
+                            </select>
+                        </div>
+                    </div>
+
                     <h5 class="subtitle">Contents</h5>
                     <div class="row">
                         <div class="col-md-3">
@@ -805,7 +837,7 @@
                     <div {% if not request.user|isExpertUser %}
                         style="display: none;"
                         {% endif %}>
-                    
+
                         <h5 class="subtitle">Characteristics</h5>
                         <div class="row">
                             <div class="col-md-3">
@@ -885,7 +917,7 @@
                         </div>
                         <div class="row pb-4">
                             <div class="col-md-3">
-                                <label for="flows-route-select">Route</label>
+                                <label for="flows-route-select">Collected en route</label>
                                 <div class="labelHelpiconContainer">
                                     <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Route"
                                         data-html="true" tabindex="0" data-content="The Route property indicates whether a waste collection company has collected the same type of waste

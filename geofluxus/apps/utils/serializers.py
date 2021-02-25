@@ -141,7 +141,6 @@ class Reference:
         #     referenced_queryset = referenced_queryset.filter(
         #         Q(keyflow=keyflow) | Q(keyflow__isnull=True))
         referenced_queryset = objects.filter(**filter_args)
-        print(len(referenced_queryset.values_list(self.referenced_column)))
         # find unique referenced values
         u_ref, counts = np.unique(np.array(referenced_queryset.values_list(
             self.referenced_column)).astype('str'), return_counts=True)
@@ -278,29 +277,40 @@ class ErrorMask:
         if errors is not None:
             for column in errors.columns:
                 error_idx = errors[column] != 0
-                data['error'][error_idx] += '{}: '.format(column)
+                data['error'][error_idx] += "Column '{}' -> ".format(column)
                 data['error'][error_idx] += errors[column][error_idx]
-                data['error'][error_idx] += error_sep
+                # data['error'][error_idx] += error_sep
             # RangeIndex is the auto created one, we don't want that in the
             # response file
             if not isinstance(data.index, pd.RangeIndex):
                 data.reset_index(inplace=True)
-            if file_type == 'xlsx':
-                data = data.style.apply(highlight_errors, errors=errors)
+            # if file_type == 'xlsx':
+            #     data = data.style.apply(highlight_errors, errors=errors)
+
+        # def write(df):
+        #     with TemporaryMediaFile() as f:
+        #         if file_type == 'xlsx':
+        #             pass
+        #         else:
+        #             sep = '\t' if file_type == 'tsv' else ';'
+        #             df.to_csv(f, sep=sep, encoding=encoding, index=False)
+        #     if file_type == 'xlsx':
+        #         writer = pd.ExcelWriter(f.name, engine='openpyxl')
+        #         df.to_excel(writer, index=False)
+        #         writer.save()
+        #     os.chmod(f.name, 0o777)
+        #     return f
 
         def write(df):
-            with TemporaryMediaFile() as f:
-                if file_type == 'xlsx':
-                    pass
-                else:
-                    sep = '\t' if file_type == 'tsv' else ';'
-                    df.to_csv(f, sep=sep, encoding=encoding, index=False)
-            if file_type == 'xlsx':
-                writer = pd.ExcelWriter(f.name, engine='openpyxl')
-                df.to_excel(writer, index=False)
-                writer.save()
-            os.chmod(f.name, 0o777)
-            return f
+            errors = df['error'].drop_duplicates()
+            response = {}
+            for error in errors:
+                if len(error):
+                    idx = df.index[df['error'] == error]
+                    idx = idx + 2
+                    idx = idx.tolist()
+                    response[error] = 'All rows' if len(idx) == len(df.index) else idx
+            return response
 
         def encode(df):
             df = df.copy()
@@ -312,18 +322,21 @@ class ErrorMask:
             return df
 
         # try to write file with encoding of dataframe, encode if problems occur
-        try:
-            f = write(data)
-        except:
-            data = encode(data)
-            f = write(data)
+        # try:
+        #     f = write(data)
+        # except:
+        #     data = encode(data)
+        #     f = write(data)
+
+        f = write(data)
 
         # TemporaryFile creates files with no extension,
         # keep file extension of input file
-        fn = '.'.join([f.name, file_type])
-        os.rename(f.name, fn)
-        url = '.'.join([f.url, file_type])
-        return fn, url
+        # fn = '.'.join([f.name, file_type])
+        # os.rename(f.name, fn)
+        # url = '.'.join([f.url, file_type])
+
+        return f
 
 
 class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
@@ -460,12 +473,12 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
         df_parsed = self._parse_columns(df_mapped)
 
         if self.error_mask.count > 0:
-            fn, url = self.error_mask.to_file(
+            response = self.error_mask.to_file(
                 file_type=self.input_file_ext.replace('.', ''),
                 encoding=self.encoding
             )
             raise ValidationError(
-                self.error_mask.messages, url
+                response
             )
 
         df_done = df_parsed
@@ -727,12 +740,12 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
                     # rollback on error
                     for m in new_models:
                         m.delete()
-                    fn, url = self.error_mask.to_file(
+                    response = self.error_mask.to_file(
                         file_type=self.input_file_ext.replace('.', ''),
                         encoding=self.encoding
                     )
                     raise ValidationError(
-                        self.error_mask.messages, url
+                        response
                     )
                 # renaming was skipped before
                 rename = {v: self.field_map[v].name for v in refs}
@@ -771,32 +784,32 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
         entries = {m.identifier: m.id for m in new}
         entries.update({m.identifier: m.id for m in updated})
 
-        for field in m2m_fields:
-            # check the column name, model
-            name, model = field.name, field.referenced_model
-            cols = self.index_columns.copy()
-            cols.append(name)
-            data = df[cols]
-            m2m_values = {m.name: m.id for m in model.objects.all()}
+        if len(entries):
+            for field in m2m_fields:
+                # check the column name, model
+                name, model = field.name, field.referenced_model
+                cols = self.index_columns.copy()
+                cols.append(name)
+                data = df[cols]
+                m2m_values = {m.name: m.id for m in model.objects.all()}
 
-            # First clear all previous data
-            through_objs = []
-            for d in data.iterrows():
-                index, row = d
-                id, values = row['identifier'], row[name]
-                if pd.notnull(values):
-                    values = [val.strip() for val in values.split(',')]
-                    for val in values:
-                        through_objs.append(
-                            getattr(self.Meta.model, name).through(
-                                **{
-                                    f"{self.Meta.model.__name__.lower()}_id": entries[id],
-                                    f"{model.__name__.lower()}_id": m2m_values[val]
-                                }
+                # First clear all previous data
+                through_objs = []
+                for d in data.iterrows():
+                    index, row = d
+                    id, values = row['identifier'], row[name]
+                    if pd.notnull(values):
+                        values = [val.strip() for val in values.split(',')]
+                        for val in values:
+                            through_objs.append(
+                                getattr(self.Meta.model, name).through(
+                                    **{
+                                        f"{self.Meta.model.__name__.lower()}_id": entries[id],
+                                        f"{model.__name__.lower()}_id": m2m_values[val]
+                                    }
+                                )
                             )
-                        )
-            getattr(self.Meta.model, name).through.objects.bulk_create(through_objs)
-            print('m2m fields created')
+                getattr(self.Meta.model, name).through.objects.bulk_create(through_objs)
 
     @property
     def index_fields(self):
@@ -832,9 +845,6 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
             else:
                 fields.append(v)
 
-        print(fields)
-        print(m2m_fields)
-
         dataframe = self._set_defaults(dataframe, model)
 
         # retrieve all models based on index fields(*)
@@ -867,7 +877,7 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
                     model.c = v
             objs.append(model)
         self.Meta.model.objects.bulk_update(objs, fields)
-        print('updated')
+
         return updated
 
     def _set_defaults(self, dataframe, model):
@@ -901,7 +911,6 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
         # create the new rows
         bulk = []
         m = None
-        print('Collect models...')
         for row in df_save.itertuples(index=False):
             #row_dict = row._asdict()
             row_dict = {}
@@ -912,9 +921,7 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
                     row_dict[k] = v
             m = model(**row_dict)
             bulk.append(m)
-        import time
-        start = time.time()
-        print('Upload...')
+
         try:
             created = model.objects.bulk_create(bulk)
         except ValueError:
@@ -923,9 +930,7 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
             created = bulk
         except Error as e:
             raise ValidationError(str(e))
-        print('Upload complete!')
-        end = time.time()
-        print(f'Time: {end-start} secs')
+
         # # only postgres returns ids after bulk creation
         # # workaround for non postgres: create queryset based on index_columns
         # if created and created[0].id == None:
