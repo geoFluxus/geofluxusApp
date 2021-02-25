@@ -13,6 +13,7 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Waste02,
                                          Waste04,
                                          Waste06,
+                                         GNcode,
                                          TreatmentEmission,
                                          Material,
                                          Product,
@@ -38,6 +39,7 @@ from geofluxus.apps.asmfa.serializers import (ActivityGroupSerializer,
                                               Waste02Serializer,
                                               Waste04Serializer,
                                               Waste06Serializer,
+                                              GNcodeSerializer,
                                               TreatmentEmissionSerializer,
                                               MaterialSerializer,
                                               ProductSerializer,
@@ -128,18 +130,19 @@ class ActorCreateSerializer(BulkSerializerMixin,
         df = attrs['dataframe']
 
         # activity & process cannot be both nan!
-        both_nan = pd.isnull(df['activity']) == (pd.isnull(df['process']))
-        if both_nan.sum() > 0:
-            message = _("Actor should belong to either activity or process.")
-            error_mask = ErrorMask(df)
-            error_mask.set_error(df.index[both_nan], 'activity', message)
-            fn, url = error_mask.to_file(
-                file_type=self.input_file_ext.replace('.', ''),
-                encoding=self.encoding
-            )
-            raise ValidationError(
-                message, url
-            )
+        if all(x in df.columns for x in ['activity', 'process']):
+            both_nan = pd.isnull(df['activity']) & pd.isnull(df['process'])
+            if len(df[both_nan].index) > 0:
+                message = _("Actor should belong to either activity or process.")
+                error_mask = ErrorMask(df)
+                error_mask.set_error(df.index[both_nan], 'activity', message)
+                response = error_mask.to_file(
+                    file_type=self.input_file_ext.replace('.', ''),
+                    encoding=self.encoding
+                )
+                raise ValidationError(
+                    response
+                )
         return super().validate(attrs)
 
 
@@ -244,6 +247,18 @@ class Waste06CreateSerializer(BulkSerializerMixin,
         return Waste06.objects.all()
 
 
+class GNcodeCreateSerializer(BulkSerializerMixin,
+                             GNcodeSerializer):
+    field_map = {
+        'name': 'name',
+        'code': 'code'
+    }
+    index_columns = ['code']
+
+    def get_queryset(self):
+        return GNcode.objects.all()
+
+
 class TreatmentEmissionCreateSerializer(BulkSerializerMixin,
                                         TreatmentEmissionSerializer):
     field_map = {
@@ -333,7 +348,12 @@ class FlowChainCreateSerializer(BulkSerializerMixin,
                            referenced_model=Month),
         'waste': Reference(name='waste06',
                            referenced_field='ewc_code',
-                           referenced_model=Waste06),
+                           referenced_model=Waste06,
+                           allow_null=True),
+        'gncode': Reference(name='gncode',
+                            referenced_field='code',
+                            referenced_model=GNcode,
+                            allow_null=True),
         'materials': Reference(name='materials',
                                referenced_field='name',
                                referenced_model=Material,
@@ -357,6 +377,25 @@ class FlowChainCreateSerializer(BulkSerializerMixin,
 
     def get_queryset(self):
         return FlowChain.objects.all()
+
+    def validate(self, attrs):
+        df = attrs['dataframe']
+
+        # activity & process cannot be both nan!
+        if all(x in df.columns for x in ['waste', 'gncode']):
+            both_nan = pd.isnull(df['waste']) & (pd.isnull(df['gncode']))
+            if len(df[both_nan].index) > 0:
+                message = _("Flowchain should have either EWC or GN code.")
+                error_mask = ErrorMask(df)
+                error_mask.set_error(df.index[both_nan], 'waste', message)
+                response = error_mask.to_file(
+                    file_type=self.input_file_ext.replace('.', ''),
+                    encoding=self.encoding
+                )
+                raise ValidationError(
+                    response
+                )
+        return super().validate(attrs)
 
 
 class FlowCreateSerializer(BulkSerializerMixin,

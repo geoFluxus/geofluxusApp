@@ -5,7 +5,7 @@ New implementation of geoFluxus website
 ### Clone repo
 If you have Git or any other related software ([GitHub Desktop](https://desktop.github.com/), [GitKraken](https://www.gitkraken.com/) etc.), clone the repo in your computer with the command:
 
-```(git clone) https://github.com/VasileiosBouzas/geoflux.git```
+```(git clone) https://github.com/geoFluxus/geofluxusApp.git```
 
 ### Backend 
 Make sure that [Python3](https://www.python.org/downloads/) is installed in your computer. To check that, open a terminal and insert the command:

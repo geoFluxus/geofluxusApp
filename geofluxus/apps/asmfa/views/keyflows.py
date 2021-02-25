@@ -5,6 +5,7 @@ from geofluxus.apps.utils.views import (PostGetViewMixin,
 from geofluxus.apps.asmfa.models import (Waste02,
                                          Waste04,
                                          Waste06,
+                                         GNcode,
                                          Material,
                                          Product,
                                          Composite,
@@ -14,6 +15,7 @@ from geofluxus.apps.asmfa.models import (Waste02,
 from geofluxus.apps.asmfa.serializers import (Waste02Serializer,
                                               Waste04Serializer,
                                               Waste06Serializer,
+                                              GNcodeSerializer,
                                               MaterialSerializer,
                                               ProductSerializer,
                                               CompositeSerializer,
@@ -23,6 +25,7 @@ from geofluxus.apps.asmfa.serializers import (Waste02Serializer,
 from geofluxus.apps.asmfa.serializers import (Waste02ListSerializer,
                                               Waste04ListSerializer,
                                               Waste06ListSerializer,
+                                              GNcodeListSerializer,
                                               MaterialListSerializer,
                                               ProductListSerializer,
                                               CompositeListSerializer,
@@ -32,6 +35,7 @@ from geofluxus.apps.asmfa.serializers import (Waste02ListSerializer,
 from geofluxus.apps.asmfa.serializers import (Waste02CreateSerializer,
                                               Waste04CreateSerializer,
                                               Waste06CreateSerializer,
+                                              GNcodeCreateSerializer,
                                               MaterialCreateSerializer,
                                               ProductCreateSerializer,
                                               CompositeCreateSerializer,
@@ -76,6 +80,19 @@ class Waste06ViewSet(PostGetViewMixin,
     serializers = {
         'list': Waste06ListSerializer,
         'create': Waste06CreateSerializer
+    }
+
+
+# GNcode
+class GNcodeViewSet(PostGetViewMixin,
+                    ViewSetMixin,
+                    ModelPermissionViewSet):
+    queryset = GNcode.objects.order_by('id')
+    pagination_class = UnlimitedResultsSetPagination
+    serializer_class = GNcodeSerializer
+    serializers = {
+        'list': GNcodeListSerializer,
+        'create': GNcodeCreateSerializer
     }
 
 
