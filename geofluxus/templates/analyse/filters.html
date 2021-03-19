@@ -225,6 +225,7 @@
                         </div>
                     </div>
 
+                    {% if not request.user|isDemoUser %}
                     <div class="row origin-production" style="display: none;">
                         <div class="col-md-4">
 
@@ -291,6 +292,7 @@
                             </select>
                         </div>
                     </div>
+                    {% endif %}
 
                     <div class="row origin-treatment" style="display: none;">
                         <div class="col-md-4">
@@ -470,6 +472,7 @@
                         </div>
                     </div>
 
+                    {% if not request.user|isDemoUser %}
                     <div class="row destination-production" style="display: none;">
                         <div class="col-md-4">
                             <label for="destination-activitygroup-select">Activity group</label>
@@ -528,6 +531,7 @@
                             </select>
                         </div>
                     </div>
+                    {% endif %}
 
                     <div class="row destination-treatment" style="display: none;">
                         <div class="col-md-4">
