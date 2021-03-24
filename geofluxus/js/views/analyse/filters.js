@@ -378,7 +378,7 @@ define(['views/common/baseview',
     
                                 // Exclude non-fuzzy booleans (either true or false).
                                 // To find them, check if there are options, including 'both'
-                                if (!(options.length > 0 && options[0].value == 'both')) {
+                                if (!(options && options.length > 0 && options[0].value == 'both')) {
     
                                     // Add multiCheck event listener
                                     selector.on('changed.bs.select', multiCheck);
@@ -1259,7 +1259,7 @@ define(['views/common/baseview',
                         fields.forEach(function (field) {
                             var selector = $(_this[group][field + 'Select']),
                                 options = selector[0];
-                            if (options.length > 0) {
+                            if (options && options.length > 0) {
                                 selector.selectpicker('deselectAll');
                                 options[0].selected = true;
                             }
@@ -1387,6 +1387,9 @@ define(['views/common/baseview',
                         fields.forEach(function (field) {
                             // retrieve filter valuez
                             var value = $(_this[group][field + 'Select']).val();
+                            if (value === undefined) {
+                                return;
+                            }
 
                             // forbidden values
                             var conditions = [
