@@ -54,6 +54,8 @@ from geofluxus.apps.asmfa.serializers import (ActivityGroupSerializer,
                                               AdminLevelSerializer,
                                               AreaSerializer,
                                               VehicleSerializer)
+from geofluxus.apps.fileshare.models import (SharedFile)
+from geofluxus.apps.fileshare.serializers import (SharedFileSerializer)
 import pandas as pd
 from django.utils.translation import ugettext as _
 
@@ -543,3 +545,19 @@ class VehicleCreateSerializer(BulkSerializerMixin,
 
     def get_queryset(self):
         return Vehicle.objects.all()
+
+
+class SharedFileCreateSerializer(BulkSerializerMixin,
+                                 SharedFileSerializer):
+    field_map = {
+        'name': 'name',
+        'url': 'url',
+        'dataset': Reference(name='dataset',
+                             referenced_field='citekey',
+                             referenced_model=Dataset,
+                             allow_null=True)
+    }
+    index_columns = ['name']
+
+    def get_queryset(self):
+        return SharedFile.objects.all()
