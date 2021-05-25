@@ -86,7 +86,7 @@ level_router = NestedSimpleRouter(router, r'levels', lookup='level')
 level_router.register(r'areas', AreaInLevelViewSet)
 
 # SharedFile
-router.register(r'sharedfile', SharedFileViewSet)
+router.register(r'sharedfiles', SharedFileViewSet)
 
 urlpatterns = [
     url(r'^', include(router.urls)),

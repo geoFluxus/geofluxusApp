@@ -1,0 +1,21 @@
+.row {
+    padding: 1.5rem;
+}
+
+#dataset-column {
+    width: 100%;
+    max-height: 700px;
+    overflow-y: auto;
+    box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.3);
+}
+
+.dataset-row {
+    box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.3);
+}
+
+label {
+    width: 80%;
+    margin-bottom: 0;
+    font-weight: bold;
+    font-size: 20px;
+}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}geoFluxus | Datasets{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/fileshare.css" />
+    <div class="tab-content">
+      <!-- Filters -->
+      <div id="datasets"></div>
+    </div>
+    {% include "fileshare/fileshare.html" %}
+    {% render_bundle 'Fileshare' %}
+{% endblock %}

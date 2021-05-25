@@ -1,0 +1,24 @@
+<script type="text/template" id="fileshare-template">
+    <div class="row">
+        <div class='col-md-5' id="datasets">
+          <h2>Datasets</h2>
+          <br>
+          <div id="dataset-column" class="bordered sunken">
+          </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/template" id="dataset-row-template">
+  <div class="dataset-row">
+      <div class="container">
+          <div class="row">
+                 <label><%= label %></label>
+                 <button class="btn btn-primary float-right download-button" id="<%= id %>" title="Upload template" style="float: right;">
+                    Download
+                 </button>
+              </div>
+          </div>
+      </div>
+  </div>
+</script>
