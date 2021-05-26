@@ -55,10 +55,10 @@ define(['views/common/baseview',
                 this.el.innerHTML = template(this.collections);
 
                 // Activate help icons
-//                var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
-//                $(popovers).popover({
-//                    trigger: "focus"
-//                });
+                //var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
+                //$(popovers).popover({
+                //    trigger: "focus"
+                //});
 
                 // Render all datasets
                 var datasets = this.collections['sharedfiles'];
@@ -95,10 +95,15 @@ define(['views/common/baseview',
 
                 // download file from link
                 request.done(function (response, textStatus, jqXHR){
-                    var link = document.createElement('a');
-                    document.body.appendChild(link);
-                    link.href = response;
-                    link.click();
+                    if (response) {
+                        var link = document.createElement('a');
+                        document.body.appendChild(link);
+                        link.href = response;
+                        link.click();
+                    }
+                    else {
+                        alert('File does not exist')
+                    }
                     _this.loader.deactivate();
                 });
             },
