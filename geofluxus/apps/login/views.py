@@ -10,16 +10,26 @@ from geofluxus.apps.login.serializers import (UserFilterListSerializer)
 import json
 from django.utils import timezone
 from rest_framework.response import Response
+from django.contrib.sessions.models import Session
 
 
 # Login/Logout
 class LoginView(auth_views.LoginView):
     def form_valid(self, form):
         response = super().form_valid(form)
+        # clear all user sessions
+        user = User.objects.filter(username=form.data['username']).first()
+        for session in Session.objects.all():
+            if str(user.pk) == session.get_decoded().get('_auth_user_id'):
+                session.delete()
         return response
 
 
 def logout_view(request):
+    # clear all user sessions
+    for session in Session.objects.all():
+        if str(request.user.pk) == session.get_decoded().get('_auth_user_id'):
+            session.delete()
     logout(request)
     return redirect('/')
 
