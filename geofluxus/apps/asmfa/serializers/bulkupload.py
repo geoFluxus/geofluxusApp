@@ -551,6 +551,7 @@ class SharedFileCreateSerializer(BulkSerializerMixin,
                                  SharedFileSerializer):
     field_map = {
         'name': 'name',
+        'type': 'type',
         'url': 'url',
         'dataset': Reference(name='dataset',
                              referenced_field='citekey',

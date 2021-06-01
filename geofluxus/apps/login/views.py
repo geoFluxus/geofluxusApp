@@ -26,10 +26,6 @@ class LoginView(auth_views.LoginView):
 
 
 def logout_view(request):
-    # clear all user sessions
-    for session in Session.objects.all():
-        if str(request.user.pk) == session.get_decoded().get('_auth_user_id'):
-            session.delete()
     logout(request)
     return redirect('/')
 

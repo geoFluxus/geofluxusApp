@@ -12,6 +12,7 @@ class SharedFileSerializer(HyperlinkedModelSerializer):
         fields = ('url',
                   'id',
                   'name',
+                  'type',
                   'url',
                   'dataset')
 
@@ -20,5 +21,6 @@ class SharedFileListSerializer(SharedFileSerializer):
     class Meta(SharedFileSerializer.Meta):
         fields = ('id',
                   'name',
+                  'type',
                   'url',
                   'dataset')

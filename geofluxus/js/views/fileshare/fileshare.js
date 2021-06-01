@@ -62,8 +62,9 @@ define(['views/common/baseview',
 
                 // Render all datasets
                 var datasets = this.collections['sharedfiles'];
-                var datasetCol = this.el.querySelector('#dataset-column');
                 function renderRow(dataset){
+                    var type = dataset.get('type');
+                    var datasetCol = _this.el.querySelector(`#${type}-column`);
                     var html = document.getElementById('dataset-row-template').innerHTML,
                         template = _.template(html),
                         div = document.createElement('div'),
