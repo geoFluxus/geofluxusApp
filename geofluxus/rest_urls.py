@@ -32,6 +32,7 @@ from geofluxus.apps.asmfa.views import (ActivityGroupViewSet,
 from geofluxus.apps.login.views import (UserFilterViewSet)
 from geofluxus.apps.analyse.views import (MonitorViewSet,)
 from geofluxus.apps.analyse.views import (ImpactViewSet,)
+from geofluxus.apps.fileshare.views import (SharedFileViewSet)
 
 
 router = DefaultRouter()
@@ -83,6 +84,9 @@ router.register(r'filters', UserFilterViewSet)
 # Areas in Level
 level_router = NestedSimpleRouter(router, r'levels', lookup='level')
 level_router.register(r'areas', AreaInLevelViewSet)
+
+# SharedFile
+router.register(r'sharedfiles', SharedFileViewSet)
 
 urlpatterns = [
     url(r'^', include(router.urls)),
