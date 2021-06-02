@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
 from geofluxus.apps.asmfa.models import Dataset
+from django.contrib import auth
 
 
 # Save / edit user filters
@@ -28,3 +29,13 @@ class GroupDataset(models.Model):
 
     def __str__(self):
         return f'{self.group}: {self.dataset}'
+
+
+# get user datasets
+def get_datasets(self):
+    groups = self.groups.values_list('id', flat=True)
+    ids = GroupDataset.objects.filter(group__id__in=groups) \
+                              .values_list('dataset__id', flat=True) \
+                              .distinct()
+    return ids
+auth.models.User.add_to_class('get_datasets', get_datasets)

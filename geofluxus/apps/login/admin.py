@@ -1,6 +1,6 @@
 from django.contrib import admin
 from geofluxus.apps.asmfa.admin import CustomAdmin
-from django.contrib.admin import TabularInline, StackedInline
+from django.contrib.admin import TabularInline
 from geofluxus.apps.login.models import (UserFilter,
                                          GroupDataset,)
 from django.contrib.auth.models import Group
@@ -17,28 +17,29 @@ class UserFilterAdmin(CustomAdmin):
 class GroupDatasetInline(TabularInline):
     model = GroupDataset
 
-# Filter between dataset / non-dataset groups
+
+# Filter between user / dataset groups
 class GroupFilter(admin.SimpleListFilter):
-    title = 'dataset groups'
+    title = 'group type'
 
     parameter_name = 'datasets'
 
     def lookups(self, request, model_admin):
         return (
-            ('Yes', 'Datasets'),
-            ('No', 'No datasets')
+            ('user', 'User groups'),
+            ('dataset', 'Dataset groups')
         )
 
     def queryset(self, request, queryset):
         ids = []
-        if self.value() == 'Yes':
-            for group in queryset:
-                if group.groupdataset_set.count() > 0:
-                    ids.append(group.id)
-            return queryset.filter(id__in=ids)
-        if self.value() == 'No':
+        if self.value() == 'user':
             for group in queryset:
                 if group.groupdataset_set.count() == 0:
+                    ids.append(group.id)
+            return queryset.filter(id__in=ids)
+        if self.value() == 'dataset':
+            for group in queryset:
+                if group.groupdataset_set.count() > 0:
                     ids.append(group.id)
             print(ids)
             return queryset.filter(id__in=ids)
@@ -50,6 +51,7 @@ class GroupsAdmin(GroupAdmin):
 
     class Meta:
         model = Group
+
 
 admin.site.unregister(Group)
 admin.site.register(Group, GroupsAdmin)

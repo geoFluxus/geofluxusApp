@@ -203,7 +203,10 @@ class AreaAdmin(CustomAdmin):
     search_fields = ['name']
 
 
-admin.site.register(Dataset, CustomAdmin)
+# Dataset
+admin.site.register(Dataset)
+class DatasetAdmin(CustomAdmin):
+    search_fields = ['title']
 admin.site.register(DatasetType, CustomAdmin)
 
 

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'geofluxus.apps.asmfa',
     'geofluxus.apps.login',
+    'geofluxus.apps.fileshare',
     'django.contrib.gis',
     'django.contrib.admin',
     'django.contrib.auth',

@@ -39,7 +39,8 @@ function(Session) {
         routings:          '/api/routings/',
         ways:              '/api/ways/',
         vehicles:          '/api/vehicles/',
-        filters:           '/api/filters/'
+        filters:           '/api/filters/',
+        sharedfiles:       '/api/sharedfiles/'
     }
 
     return config;
