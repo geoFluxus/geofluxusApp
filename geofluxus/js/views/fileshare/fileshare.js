@@ -54,12 +54,6 @@ define(['views/common/baseview',
                 // Add to template context:
                 this.el.innerHTML = template(this.collections);
 
-                // Activate help icons
-                //var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
-                //$(popovers).popover({
-                //    trigger: "focus"
-                //});
-
                 // Render all datasets
                 var datasets = this.collections['sharedfiles'];
                 function renderRow(dataset){
@@ -80,6 +74,12 @@ define(['views/common/baseview',
                 datasets.forEach(function(dataset) {
                     renderRow(dataset);
                 })
+
+                // Activate help icons
+                var popovers = this.el.querySelectorAll('[data-toggle="popover"]');
+                $(popovers).popover({
+                    trigger: "focus"
+                });
             },
 
             downloadFile(evt) {

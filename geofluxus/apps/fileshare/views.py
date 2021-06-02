@@ -42,17 +42,17 @@ class SharedFileViewSet(PostGetViewMixin,
         try:
             client = boto3.client(
                 'workdocs',
-                aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
-                aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
                 region_name='eu-west-1'
             )
             response = client.get_document(
+                AuthenticationToken=os.environ['TOKEN'],
                 DocumentId=filename,
                 IncludeCustomMetadata=True
             )
             version = response['Metadata']['LatestVersionMetadata']
 
             response = client.get_document_version(
+                AuthenticationToken=os.environ['TOKEN'],
                 DocumentId=filename,
                 VersionId=version['Id'],
                 Fields='SOURCE'
