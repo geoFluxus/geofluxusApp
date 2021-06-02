@@ -35,10 +35,13 @@
     <a class="navbar-brand" href="/"><img src="../static/img/nav/nav-logo.png"></a>
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item {% if request.resolver_match.url_name == 'analyse' %} active{% endif %}"
+        <li class="nav-item {% if request.resolver_match.url_name == 'analyse' %}active{% endif %}"
           id="analyse-link">
           <a class="nav-link" href="/analyse">Analyse</a>
         </li>
+        {% if request.user|isExpertUser %}
+          <a class="nav-link" href="/datasets">Datasets</a>
+        {% endif %}
       </ul>
 
       <ul class="navbar-nav ml-auto">

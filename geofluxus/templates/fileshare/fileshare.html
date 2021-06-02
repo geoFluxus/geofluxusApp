@@ -1,0 +1,34 @@
+<script type="text/template" id="fileshare-template">
+    <div class="row">
+        <div class='col-md-5 ml-auto' id="datasets">
+          <h2>Datasets</h2>
+          <br>
+          <div id="dataset-column" class="bordered sunken">
+          </div>
+        </div>
+        <div class='col-md-5 mr-auto offset-md-1' id="documentations">
+          <h2>Documentations</h2>
+          <br>
+          <div id="documentation-column" class="bordered sunken">
+          </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/template" id="dataset-row-template">
+  <div class="dataset-row">
+      <div class="container">
+          <div class="row">
+                <div class="col-md-8">
+                    <label><%= label %></label>
+                </div>
+                <div class="col-md-2 ml-auto">
+                    <button class="btn btn-primary float-right download-button" id="<%= id %>" title="Upload template">
+                        Download
+                    </button>
+                </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</script>

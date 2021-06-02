@@ -49,3 +49,7 @@ SESSION_COOKIE_SECURE = True
 
 # enables persistant db connections (if > 0)
 CONN_MAX_AGE = 0
+
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# SESSION_COOKIE_AGE = 15 * 60
+# SESSION_SAVE_EVERY_REQUEST = True

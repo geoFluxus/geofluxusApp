@@ -32,6 +32,7 @@ var BulkUploadView = BaseView.extend({
         var ups = [
             ['datasettypes', 'Dataset types'],
             ['datasets', 'Datasets'],
+            ['sharedfiles', 'Workdocs files'],
             ['activitygroups', 'Activity groups'],
             ['activities', 'Activities'],
             ['processgroups', 'Process groups'],
