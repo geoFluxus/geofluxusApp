@@ -39,6 +39,7 @@ class SharedFileViewSet(PostGetViewMixin,
     }
 
     def download_file(self, filename):
+        #workdocs
         try:
             client = boto3.client(
                 'workdocs',
