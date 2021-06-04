@@ -58,7 +58,7 @@ class SharedFileViewSet(PostGetViewMixin,
                 Fields='SOURCE'
             )
             url = response['Metadata']['Source']['ORIGINAL']
-            
+
             return url
         except:
             return
