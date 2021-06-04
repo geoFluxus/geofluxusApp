@@ -1,12 +1,12 @@
 <script type="text/template" id="fileshare-template">
     <div class="row">
-        <div class='col-md-5 ml-auto' id="datasets">
+        <div class='col-md-5 ml-auto' id="datasets" style="margin-top: 40px;">
           <h2>Datasets</h2>
           <br>
           <div id="dataset-column" class="bordered sunken">
           </div>
         </div>
-        <div class='col-md-5 mr-auto offset-md-1' id="documentations">
+        <div class='col-md-5 mr-auto offset-md-1' id="documentations" style="margin-top: 40px;">
           <h2>Documentations</h2>
           <br>
           <div id="documentation-column" class="bordered sunken">
@@ -19,10 +19,10 @@
   <div class="dataset-row">
       <div class="container">
           <div class="row">
-                <div class="col-md-8">
+                <div style="width: 50%;">
                     <label><%= label %></label>
                 </div>
-                <div class="col-md-2 ml-auto">
+                <div style="width: 50%;">
                     <button class="btn btn-primary float-right download-button" id="<%= id %>" title="Upload template">
                         Download
                     </button>
