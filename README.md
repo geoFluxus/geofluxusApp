@@ -40,7 +40,7 @@ If the command is recognized, the currentrly installed version of Python should 
   ```
   
 ### Database
-You need to create a local database for tha application. After making sure you have [PostgreSQL](https://www.postgresql.org/) and 
+You need to create a local database for the application. After making sure you have [PostgreSQL](https://www.postgresql.org/) and 
 [PostGIS](https://postgis.net/) installed in your system, create two databases (remember to include the PostGIS extension
 to both databases!). The first one is for the general app data and the second for maintaining the road network (you should also request sample
 data for both databases).
