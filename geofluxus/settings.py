@@ -18,15 +18,30 @@ PUBLIC_ROOT = os.path.abspath(os.path.join(PROJECT_DIR, 'public'))
 
 # Windows settings
 if os.name == 'nt':
-    import platform
-    OSGEO4W = r"C:\OSGeo4W"
-    if '64' in platform.architecture()[0]:
-        OSGEO4W += "64"
-    assert os.path.isdir(OSGEO4W), "Directory does not exist: " + OSGEO4W
-    os.environ['OSGEO4W_ROOT'] = OSGEO4W
-    os.environ['GDAL_DATA'] = OSGEO4W + r"\share\epsg_csv"
-    os.environ['PROJ_LIB'] = OSGEO4W + r"\share\proj"
-    os.environ['PATH'] = OSGEO4W + r"\bin;" + os.environ['PATH']
+    try:
+        # checks if the GDAL library is installed and importing correctly
+        # if it is, sets all variables according to its location.
+        import gdal
+        venv_pckpath = os.path.dirname(gdal.__file__)
+        OSGEO4W = os.path.join(venv_pckpath, 'osgeo')
+        os.environ['OSGEO4W_ROOT'] = OSGEO4W
+        os.environ['GDAL_DATA'] = os.path.join(OSGEO4W, 'data', 'gdal')
+        os.environ['PROJ_LIB'] = os.path.join(OSGEO4W, 'data', 'proj')
+        os.environ['PATH'] = OSGEO4W + ";" + os.environ['PATH']
+        GEOS_LIBRARY_PATH = str(os.path.join(OSGEO4W, 'geos_c.dll'))
+        GDAL_LIBRARY_PATH = str(os.path.join(OSGEO4W, 'gdal204.dll'))
+    except ImportError:
+        # loads geolibraries from OSGeo package
+        import platform
+        OSGEO4W = r"C:\OSGeo4W"
+        # if '64' in platform.architecture()[0]:
+        #     OSGEO4W += "64"
+        assert os.path.isdir(OSGEO4W), "Directory does not exist: " + OSGEO4W
+        os.environ['OSGEO4W_ROOT'] = OSGEO4W
+        os.environ['GDAL_DATA'] = OSGEO4W + r"\share\epsg_csv"
+        os.environ['PROJ_LIB'] = OSGEO4W + r"\share\proj"
+        os.environ['PATH'] = OSGEO4W + r"\bin;" + os.environ['PATH']
+        # GDAL_LIBRARY_PATH = OSGEO4W + r"\bin\gdal302.dll"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
