@@ -3,7 +3,7 @@ from django.http import (HttpResponse,
                          HttpResponseForbidden,
                          JsonResponse)
 from django.db.models import ProtectedError
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext_lazy as _
 from abc import ABC
 
 from django.shortcuts import get_object_or_404

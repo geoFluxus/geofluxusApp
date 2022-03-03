@@ -41,7 +41,7 @@ if os.name == 'nt':
         os.environ['GDAL_DATA'] = OSGEO4W + r"\share\epsg_csv"
         os.environ['PROJ_LIB'] = OSGEO4W + r"\share\proj"
         os.environ['PATH'] = OSGEO4W + r"\bin;" + os.environ['PATH']
-        # GDAL_LIBRARY_PATH = OSGEO4W + r"\bin\gdal302.dll"
+        GDAL_LIBRARY_PATH = OSGEO4W + r"\bin\gdal304.dll"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -159,8 +159,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_L10N = True
-
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
