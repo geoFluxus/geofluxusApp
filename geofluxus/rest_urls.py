@@ -1,6 +1,6 @@
 from rest_framework_nested.routers import (DefaultRouter,
                                            NestedSimpleRouter)
-from django.conf.urls import url, include
+from django.urls import re_path, include
 from geofluxus.apps.asmfa.views import (ActivityGroupViewSet,
                                         ActivityViewSet,
                                         CompanyViewSet,
@@ -89,6 +89,6 @@ level_router.register(r'areas', AreaInLevelViewSet)
 router.register(r'sharedfiles', SharedFileViewSet)
 
 urlpatterns = [
-    url(r'^', include(router.urls)),
-    url(r'^', include(level_router.urls)),
+    re_path(r'^', include(router.urls)),
+    re_path(r'^', include(level_router.urls)),
 ]

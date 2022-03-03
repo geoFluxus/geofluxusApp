@@ -203,7 +203,7 @@ define(['views/common/baseview',
 
                 // Set default admin level to Country:
                 var areaLevels = this.collections['arealevels'];
-                this.idOfCountryLevel = areaLevels.find(level => level.attributes.level == 1).id;
+                this.idOfCountryLevel = areaLevels.find(level => level.attributes.level == 2).id;
 
                 // Initialize all filters:
                 var groups = Object.keys(this.filters);
