@@ -7,7 +7,7 @@ from django.db.models.fields import NOT_PROVIDED
 import numpy as np
 import os
 import re
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
 from tempfile import NamedTemporaryFile
 from rest_framework import serializers
@@ -239,7 +239,7 @@ class ErrorMask:
         self._messages.append(msg)
 
     def set_error(self, indices, column, message):
-        self.error_matrix.loc[indices, column] = message
+        self.error_matrix.loc[indices, column] = str(message)
 
     @property
     def messages(self):

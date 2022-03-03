@@ -57,7 +57,7 @@ from geofluxus.apps.asmfa.serializers import (ActivityGroupSerializer,
 from geofluxus.apps.fileshare.models import (SharedFile)
 from geofluxus.apps.fileshare.serializers import (SharedFileSerializer)
 import pandas as pd
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext_lazy as _
 
 
 class ActivityGroupCreateSerializer(BulkSerializerMixin,
