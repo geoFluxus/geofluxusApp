@@ -795,6 +795,7 @@
                                 <% }); %>
                             </select>
                         </div>
+                        {% comment %}
                         <div class="col-md-3">
                             <label>Products</label>
                             <div class="labelHelpiconContainer">
@@ -836,6 +837,7 @@
                                 <% }); %>
                             </select>
                         </div>
+                        {% endcomment %}
                     </div>
 
                     <div {% if not request.user|isExpertUser %}

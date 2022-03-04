@@ -68,12 +68,12 @@ define(['views/common/baseview',
                         {
                             'material': 'flowchain__materials__in'
                         },
-                        {
-                            'product': 'flowchain__products__in'
-                        },
-                        {
-                            'composites': 'flowchain__composites__in'
-                        },
+//                        {
+//                            'product': 'flowchain__products__in'
+//                        },
+//                        {
+//                            'composites': 'flowchain__composites__in'
+//                        },
                         {
                             'route': 'flowchain__route'
                         },
@@ -111,8 +111,8 @@ define(['views/common/baseview',
                     'waste06': 'wastes06',
                     'gncode': 'gncodes',
                     'material': 'materials',
-                    'product': 'products',
-                    'composite': 'composites',
+                    //'product': 'products',
+                    //'composite': 'composites',
                     'arealevel': 'arealevels',
                     'year': 'years',
                     'month': 'months',
