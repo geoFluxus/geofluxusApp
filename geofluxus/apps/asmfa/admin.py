@@ -119,7 +119,7 @@ class GNcodeAdmin(CustomAdmin):
 # Treatment emissions
 @admin.register(TreatmentEmission)
 class TreatmentEmissionAdmin(CustomAdmin):
-    search_fields = ['processgroup__code', 'waste06__ewc_code']
+    search_fields = ['processgroup__name', 'waste06__ewc_code']
 
 
 # Material

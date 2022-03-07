@@ -267,7 +267,7 @@ class TreatmentEmissionCreateSerializer(BulkSerializerMixin,
                            referenced_field='ewc_code',
                            referenced_model=Waste06),
         'processgroup': Reference(name='processgroup',
-                                  referenced_field='code',
+                                  referenced_field='name',
                                   referenced_model=ProcessGroup),
         'co2': 'co2'
     }
