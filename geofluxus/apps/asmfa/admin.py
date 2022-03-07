@@ -71,7 +71,7 @@ class ActivityAdmin(CustomAdmin):
 # ProcessGroup
 @admin.register(ProcessGroup)
 class ProcessGroupAdmin(CustomAdmin):
-    search_fields = ['code']
+    search_fields = ['name']
 
 
 # Process

@@ -30,7 +30,7 @@ class ProcessGroup(models.Model):
     co2 = models.FloatField(default=0)
 
     def __str__(self):
-        return '{} - {}'.format(self.name)
+        return '{}'.format(self.name)
 
 
 # Process

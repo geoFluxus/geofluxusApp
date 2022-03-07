@@ -184,7 +184,7 @@ class ProcessGroupCreateSerializer(BulkSerializerMixin,
         'name': 'name',
         'co2': 'co2'
     }
-    index_columns = ['code']
+    index_columns = ['name']
 
     def get_queryset(self):
         return ProcessGroup.objects.all()
