@@ -182,7 +182,6 @@ class ProcessGroupCreateSerializer(BulkSerializerMixin,
                                    ProcessGroupSerializer):
     field_map = {
         'name': 'name',
-        'code': 'code',
         'co2': 'co2'
     }
     index_columns = ['code']
@@ -197,7 +196,7 @@ class ProcessCreateSerializer(BulkSerializerMixin,
         'name': 'name',
         'code': 'code',
         'processgroup': Reference(name='processgroup',
-                                  referenced_field='code',
+                                  referenced_field='name',
                                   referenced_model=ProcessGroup)
     }
     index_columns = ['code']

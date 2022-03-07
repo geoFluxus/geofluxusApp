@@ -292,6 +292,10 @@ define(['views/common/baseview',
                     })
                 })
 
+                // pre-select origin: production & destination: treatment
+                $('.origin-role[role="production"]').trigger("click")
+                $('.destination-role[role="treatment"]').trigger("click")
+
                 // render ewc codes based on hazardous selection
                 function filterHazardous(evt) {
                     let select = evt.target.value;
