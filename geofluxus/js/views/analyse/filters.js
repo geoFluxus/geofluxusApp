@@ -50,7 +50,8 @@ define(['views/common/baseview',
                             'process': 'destination__process__in'
                         }
                     ],
-                    'flows': [{
+                    'flows': [
+                        {
                             'year': 'flowchain__month__year__in',
                             'month': 'flowchain__month__in'
                         },
@@ -63,17 +64,14 @@ define(['views/common/baseview',
                             'waste06': 'flowchain__waste06__in'
                         },
                         {
-                            'gncode': 'flowchain__gncode__in',
+                            'agenda': 'agendas'
                         },
                         {
-                            'material': 'flowchain__materials__in'
+                            'industry': 'industries'
                         },
-//                        {
-//                            'product': 'flowchain__products__in'
-//                        },
-//                        {
-//                            'composites': 'flowchain__composites__in'
-//                        },
+                        {
+                            'gncode': 'flowchain__gncode__in',
+                        },
                         {
                             'route': 'flowchain__route'
                         },
@@ -109,10 +107,9 @@ define(['views/common/baseview',
                     'waste02': 'wastes02',
                     'waste04': 'wastes04',
                     'waste06': 'wastes06',
+                    'agenda': 'agendas',
+                    'industry': 'industries',
                     'gncode': 'gncodes',
-                    'material': 'materials',
-                    //'product': 'products',
-                    //'composite': 'composites',
                     'arealevel': 'arealevels',
                     'year': 'years',
                     'month': 'months',
@@ -1467,6 +1464,8 @@ define(['views/common/baseview',
                         "waste04": "EWC Sub-Chapter",
                         "waste06": "EWC Entry",
                         "material": "Material",
+                        "agenda": "Agendas",
+                        "industry": "Industries",
                         "product": "Product",
                         "composites": "Composites",
                         "clean": "Clean",

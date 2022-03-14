@@ -103,19 +103,30 @@ class FilterFlowViewSet(PostGetViewMixin,
         data = self.serialize(queryset, **serials)
         return Response(data)
 
-    # filter chain classifications
+    # filter on ewc lookup
     @staticmethod
-    def filter_classif(queryset, filter):
+    def filter_ewc(queryset, filter):
+        func, vals = filter
+        search = list(Waste06.objects.values_list(func, flat=True) \
+                                     .order_by(func) \
+                                     .distinct())
+        vals = [int(v) for v in vals]
+
+        func = f'flowchain__waste06__{func}__in'
+        vals = [v for v in search if search.index(v) in vals]
+        queryset = queryset.filter(**{func: vals})
+
+        return queryset
+
+    # filter on multiple boolean
+    @staticmethod
+    def filter_boolean(queryset, filter):
         '''
         Filter booleans with multiple selections
         '''
         queries = []
         func, vals = filter
-
-        # annotate classification field to flows
-        classifs = Classification.objects
-        subq = classifs.filter(flowchain__id=OuterRef('flowchain__id'))
-        queryset = queryset.annotate(**{func: Subquery(subq.values(func))})
+        func = f'flowchain__waste06__{func}'
 
         # filter
         for val in vals:
@@ -133,19 +144,28 @@ class FilterFlowViewSet(PostGetViewMixin,
         (non-spatial filtering)
         '''
 
-        # classification lookups
-        # these should be handled separately!
-        lookups = ['clean',
-                   'mixed',
-                   'direct_use',
-                   'composite']
+        # lookups for special fields
+        ewc_lookups = [
+            'agendas'
+        ]
+        multiple_booleans = [
+            'clean',
+            'mixed',
+            'direct_use',
+            'composite'
+        ]
 
         # form queries
         queries = []
         for func, val in filters.items():
-            # handle classifications (multiple booleans!)
-            if func in lookups:
-                queryset = self.filter_classif(queryset, (func, val))
+            # handle ewc lookups
+            if func in ewc_lookups:
+                queryset = self.filter_ewc(queryset, (func, val))
+                continue
+
+            # handle multiple booleans
+            if func in multiple_booleans:
+                queryset = self.filter_boolean(queryset, (func, val))
                 continue
 
             if 'year' in func:

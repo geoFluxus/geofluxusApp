@@ -30,6 +30,9 @@ from geofluxus.apps.asmfa.serializers import (Waste02CreateSerializer,
                                               YearCreateSerializer,
                                               MonthCreateSerializer,
                                               TreatmentEmissionCreateSerializer)
+from rest_framework.response import Response
+from collections import OrderedDict
+import re
 
 
 # Waste02
@@ -69,6 +72,54 @@ class Waste06ViewSet(PostGetViewMixin,
         'list': Waste06ListSerializer,
         'create': Waste06CreateSerializer
     }
+
+
+# Waste06 Field Viewset
+class Waste06FieldViewSet(PostGetViewMixin,
+                          ViewSetMixin,
+                          ModelPermissionViewSet):
+    field = None
+    queryset = Waste06.objects.all()
+
+    @staticmethod
+    def format_name(name):
+        exclude = [
+            'TransitieAgenda',
+            'Industrie'
+        ]
+
+        def replace(name):
+            for e in exclude:
+                name = name.replace(e, '')
+            return name
+
+        name = " ".join(
+            re.findall('[A-Z&][^A-Z&]*', replace(name))
+        ) \
+            if any(char.isupper() for char in name) else name.capitalize().replace('_', ' ')
+        return name
+
+    def list(self, request, **kwargs):
+        queryset = Waste06.objects.values(self.field) \
+                                  .order_by(self.field) \
+                                  .distinct()
+        data = []
+        for idx, item in enumerate(queryset):
+            data.append(OrderedDict({
+                'id': idx,
+                'name': self.format_name(item[self.field])
+            }))
+        return Response(data)
+
+
+# Agendas
+class AgendaViewSet(Waste06FieldViewSet):
+    field = 'agendas'
+
+
+# Industries
+class IndustryViewSet(Waste06FieldViewSet):
+    field = 'industries'
 
 
 # GNcode
