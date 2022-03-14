@@ -122,6 +122,11 @@ class IndustryViewSet(Waste06FieldViewSet):
     field = 'industries'
 
 
+# Chains
+class ChainViewSet(Waste06FieldViewSet):
+    field = 'chains'
+
+
 # GNcode
 class GNcodeViewSet(PostGetViewMixin,
                     ViewSetMixin,

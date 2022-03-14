@@ -70,6 +70,9 @@ define(['views/common/baseview',
                             'industry': 'industries'
                         },
                         {
+                            'chain': 'chains'
+                        },
+                        {
                             'gncode': 'flowchain__gncode__in',
                         },
                         {
@@ -109,6 +112,7 @@ define(['views/common/baseview',
                     'waste06': 'wastes06',
                     'agenda': 'agendas',
                     'industry': 'industries',
+                    'chain': 'chains',
                     'gncode': 'gncodes',
                     'arealevel': 'arealevels',
                     'year': 'years',
@@ -1466,6 +1470,7 @@ define(['views/common/baseview',
                         "material": "Material",
                         "agenda": "Agendas",
                         "industry": "Industries",
+                        "chain": "Chains",
                         "product": "Product",
                         "composites": "Composites",
                         "clean": "Clean",

@@ -146,7 +146,9 @@ class FilterFlowViewSet(PostGetViewMixin,
 
         # lookups for special fields
         ewc_lookups = [
-            'agendas'
+            'agendas',
+            'industries',
+            'chains'
         ]
         multiple_booleans = [
             'clean',

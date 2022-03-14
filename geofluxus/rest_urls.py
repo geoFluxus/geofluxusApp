@@ -12,6 +12,7 @@ from geofluxus.apps.asmfa.views import (ActivityGroupViewSet,
                                         Waste06ViewSet,
                                         AgendaViewSet,
                                         IndustryViewSet,
+                                        ChainViewSet,
                                         GNcodeViewSet,
                                         TreatmentEmissionViewSet,
                                         YearViewSet,
@@ -61,6 +62,7 @@ router.register(r'wastes06', Waste06ViewSet)
 # router.register(r'materials', MaterialViewSet)
 router.register(r'agendas', AgendaViewSet)
 router.register(r'industries', IndustryViewSet)
+router.register(r'chains', ChainViewSet)
 router.register(r'gncodes', GNcodeViewSet)
 router.register(r'treatmentemissions', TreatmentEmissionViewSet)
 router.register(r'years', YearViewSet)

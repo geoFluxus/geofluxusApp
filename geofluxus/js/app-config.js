@@ -25,6 +25,7 @@ function(Session) {
         wastes06:          '/api/wastes06/',
         agendas:           '/api/agendas/',
         industries:        '/api/industries',
+        chains:            '/api/chains',
         gncodes:           '/api/gncodes/',
         treatmentemissions:'/api/treatmentemissions/',
         materials:         '/api/materials/',
