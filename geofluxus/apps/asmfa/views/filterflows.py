@@ -2,7 +2,6 @@ from geofluxus.apps.utils.views import (PostGetViewMixin,
                                         ViewSetMixin,
                                         ModelPermissionViewSet)
 from geofluxus.apps.asmfa.models import (Flow,
-                                         Classification,
                                          Area,
                                          Routing,
                                          Month,

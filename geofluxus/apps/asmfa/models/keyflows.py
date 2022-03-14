@@ -65,30 +65,6 @@ class TreatmentEmission(models.Model):
                                 self.processgroup.name)
 
 
-# Material
-class Material(models.Model):
-    name = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.name
-
-
-# Product
-class Product(models.Model):
-    name = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.name
-
-
-# Composite
-class Composite(models.Model):
-    name = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.name
-
-
 # Year
 class Year(models.Model):
     code = models.CharField(max_length=255)

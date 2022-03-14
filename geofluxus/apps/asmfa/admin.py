@@ -12,18 +12,10 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Waste06,
                                          GNcode,
                                          TreatmentEmission,
-                                         Material,
-                                         Product,
-                                         Composite,
                                          Year,
                                          Month,
                                          FlowChain,
-                                         MaterialInChain,
-                                         ProductInChain,
-                                         CompositeInChain,
                                          Flow,
-                                         Classification,
-                                         ExtraDescription,
                                          AdminLevel,
                                          Area,
                                          Dataset,
@@ -122,24 +114,6 @@ class TreatmentEmissionAdmin(CustomAdmin):
     search_fields = ['processgroup__name', 'waste06__ewc_code']
 
 
-# Material
-@admin.register(Material)
-class MaterialAdmin(CustomAdmin):
-    search_fields = ['name']
-
-
-# Product
-@admin.register(Product)
-class ProductAdmin(CustomAdmin):
-    search_fields = ['name']
-
-
-# Composite
-@admin.register(Composite)
-class CompositeAdmin(CustomAdmin):
-    search_fields = ['name']
-
-
 # Year
 @admin.register(Year)
 class YearAdmin(CustomAdmin):
@@ -152,42 +126,14 @@ class MonthAdmin(CustomAdmin):
     search_fields = ['year__code', 'code']
 
 
-# Flowchain
-class MaterialInChainInline(TabularInline):
-    model = MaterialInChain
-
-
-class ProductInChainInline(TabularInline):
-    model = ProductInChain
-
-
-class CompositeInChainInline(TabularInline):
-    model = CompositeInChain
-
-
 @admin.register(FlowChain)
 class FlowChainAdmin(CustomAdmin):
-    inlines = (MaterialInChainInline,
-               ProductInChainInline,
-               CompositeInChainInline)
     search_fields = ['identifier']
 
 
 # Flow
 @admin.register(Flow)
 class FlowAdmin(CustomAdmin):
-    search_fields = ['flowchain__identifier']
-
-
-# Classification
-@admin.register(Classification)
-class ClassificationAdmin(CustomAdmin):
-    search_fields = ['flowchain__identifier']
-
-
-# ExtraDescription
-@admin.register(ExtraDescription)
-class ExtraDescriptionAdmin(CustomAdmin):
     search_fields = ['flowchain__identifier']
 
 

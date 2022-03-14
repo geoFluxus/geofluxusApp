@@ -6,9 +6,6 @@ from geofluxus.apps.asmfa.models import (Waste02,
                                          Waste04,
                                          Waste06,
                                          GNcode,
-                                         Material,
-                                         Product,
-                                         Composite,
                                          Year,
                                          Month,
                                          TreatmentEmission)
@@ -16,9 +13,6 @@ from geofluxus.apps.asmfa.serializers import (Waste02Serializer,
                                               Waste04Serializer,
                                               Waste06Serializer,
                                               GNcodeSerializer,
-                                              MaterialSerializer,
-                                              ProductSerializer,
-                                              CompositeSerializer,
                                               YearSerializer,
                                               MonthSerializer,
                                               TreatmentEmissionSerializer)
@@ -26,9 +20,6 @@ from geofluxus.apps.asmfa.serializers import (Waste02ListSerializer,
                                               Waste04ListSerializer,
                                               Waste06ListSerializer,
                                               GNcodeListSerializer,
-                                              MaterialListSerializer,
-                                              ProductListSerializer,
-                                              CompositeListSerializer,
                                               YearListSerializer,
                                               MonthListSerializer,
                                               TreatmentEmissionListSerializer)
@@ -36,9 +27,6 @@ from geofluxus.apps.asmfa.serializers import (Waste02CreateSerializer,
                                               Waste04CreateSerializer,
                                               Waste06CreateSerializer,
                                               GNcodeCreateSerializer,
-                                              MaterialCreateSerializer,
-                                              ProductCreateSerializer,
-                                              CompositeCreateSerializer,
                                               YearCreateSerializer,
                                               MonthCreateSerializer,
                                               TreatmentEmissionCreateSerializer)
@@ -106,45 +94,6 @@ class TreatmentEmissionViewSet(PostGetViewMixin,
     serializers = {
         'list': TreatmentEmissionListSerializer,
         'create': TreatmentEmissionCreateSerializer
-    }
-
-
-# Material
-class MaterialViewSet(PostGetViewMixin,
-                      ViewSetMixin,
-                      ModelPermissionViewSet):
-    queryset = Material.objects.order_by('name')
-    pagination_class = UnlimitedResultsSetPagination
-    serializer_class = MaterialSerializer
-    serializers = {
-        'list': MaterialListSerializer,
-        'create': MaterialCreateSerializer
-    }
-
-
-# Product
-class ProductViewSet(PostGetViewMixin,
-                     ViewSetMixin,
-                     ModelPermissionViewSet):
-    queryset = Product.objects.order_by('name')
-    pagination_class = UnlimitedResultsSetPagination
-    serializer_class = ProductSerializer
-    serializers = {
-        'list': ProductListSerializer,
-        'create': ProductCreateSerializer
-    }
-
-
-# Composite
-class CompositeViewSet(PostGetViewMixin,
-                       ViewSetMixin,
-                       ModelPermissionViewSet):
-    queryset = Composite.objects.order_by('name')
-    pagination_class = UnlimitedResultsSetPagination
-    serializer_class = CompositeSerializer
-    serializers = {
-        'list': CompositeListSerializer,
-        'create': CompositeCreateSerializer
     }
 
 

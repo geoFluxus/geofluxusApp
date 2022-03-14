@@ -5,9 +5,6 @@ from geofluxus.apps.asmfa.models import (Waste02,
                                          Waste04,
                                          Waste06,
                                          GNcode,
-                                         Material,
-                                         Product,
-                                         Composite,
                                          Year,
                                          Month,
                                          TreatmentEmission)
@@ -123,53 +120,6 @@ class TreatmentEmissionListSerializer(Waste06Serializer):
                   'waste06',
                   'processgroup',
                   'co2')
-
-
-# Material
-class MaterialSerializer(HyperlinkedModelSerializer):
-    class Meta:
-        model = Material
-        fields = ('url',
-                  'id',
-                  'name',)
-
-
-class MaterialListSerializer(MaterialSerializer):
-    class Meta(MaterialSerializer.Meta):
-        fields = ('id',
-                  'name',)
-
-
-# Product
-class ProductSerializer(HyperlinkedModelSerializer):
-
-    class Meta:
-        model = Product
-        fields = ('url',
-                  'id',
-                  'name',)
-
-
-class ProductListSerializer(ProductSerializer):
-    class Meta(ProductSerializer.Meta):
-        fields = ('id',
-                  'name',)
-
-
-# Composite
-class CompositeSerializer(HyperlinkedModelSerializer):
-
-    class Meta:
-        model = Composite
-        fields = ('url',
-                  'id',
-                  'name',)
-
-
-class CompositeListSerializer(CompositeSerializer):
-    class Meta(CompositeSerializer.Meta):
-        fields = ('id',
-                  'name',)
 
 
 # Year

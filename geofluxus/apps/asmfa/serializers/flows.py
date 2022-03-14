@@ -2,13 +2,8 @@ from rest_framework.serializers import (HyperlinkedModelSerializer,
                                         PrimaryKeyRelatedField,)
 from geofluxus.apps.asmfa.models import (FlowChain,
                                          Flow,
-                                         Classification,
-                                         ExtraDescription,
                                          Routing,
                                          Vehicle)
-from geofluxus.apps.asmfa.serializers import (MaterialSerializer,
-                                              ProductSerializer,
-                                              CompositeSerializer)
 from rest_framework_gis.serializers import (GeometryField)
 
 
@@ -69,9 +64,6 @@ class VehicleListSerializer(VehicleSerializer):
 # FlowChain
 class FlowChainSerializer(HyperlinkedModelSerializer):
     waste = PrimaryKeyRelatedField(read_only=True)
-    materials = MaterialSerializer(read_only=True, many=True)
-    products = ProductSerializer(read_only=True, many=True)
-    composites = CompositeSerializer(read_only=True, many=True)
     dataset = PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
@@ -86,9 +78,6 @@ class FlowChainSerializer(HyperlinkedModelSerializer):
                   'trips',
                   'month',
                   'waste06',
-                  'materials',
-                  'products',
-                  'composites',
                   'dataset')
 
 
@@ -103,9 +92,6 @@ class FlowChainListSerializer(FlowChainSerializer):
                   'trips',
                   'month',
                   'waste06',
-                  'materials',
-                  'products',
-                  'composites',
                   'dataset')
 
 
@@ -140,49 +126,3 @@ class FlowListSerializer(FlowSerializer):
                   'destination_role',
                   'routing',
                   'vehicle')
-
-
-# Classification
-class ClassificationSerializer(HyperlinkedModelSerializer):
-    flowchain = PrimaryKeyRelatedField(read_only=True)
-
-    class Meta:
-        model = Classification
-        fields = ('url',
-                  'id',
-                  'flowchain',
-                  'clean',
-                  'mixed',
-                  'direct_use',
-                  'composite')
-
-
-class ClassificationListSerializer(ClassificationSerializer):
-    class Meta(ClassificationSerializer.Meta):
-        fields = ('id',
-                  'flowchain',
-                  'clean',
-                  'mixed',
-                  'direct_use',
-                  'composite')
-
-
-# ExtraDescription
-class ExtraDescriptionSerializer(HyperlinkedModelSerializer):
-    flowchain = PrimaryKeyRelatedField(read_only=True)
-
-    class Meta:
-        model = ExtraDescription
-        fields = ('url',
-                  'id',
-                  'flowchain',
-                  'type',
-                  'description')
-
-
-class ExtraDescriptionListSerializer(ExtraDescriptionSerializer):
-    class Meta(ExtraDescriptionSerializer.Meta):
-        fields = ('id',
-                  'flowchain',
-                  'type',
-                  'description')
