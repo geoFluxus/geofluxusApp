@@ -241,6 +241,12 @@ class Waste06CreateSerializer(BulkSerializerMixin,
         'waste04': Reference(name='waste04',
                              referenced_field='ewc_code',
                              referenced_model=Waste04),
+        'materials': 'materials',
+        'industries': 'industries',
+        'agendas': 'agendas',
+        'chains': 'chains',
+        'clean': 'clean',
+        'mixed': 'mixed'
     }
     index_columns = ['ewc_code']
 

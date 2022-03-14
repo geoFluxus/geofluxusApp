@@ -63,7 +63,13 @@ class Waste06Serializer(HyperlinkedModelSerializer):
                   'ewc_name',
                   'ewc_code',
                   'hazardous',
-                  'waste04',)
+                  'waste04',
+                  'materials',
+                  'industries',
+                  'agendas',
+                  'chains',
+                  'clean',
+                  'mixed')
 
 
 class Waste06ListSerializer(Waste06Serializer):
@@ -72,7 +78,13 @@ class Waste06ListSerializer(Waste06Serializer):
                   'ewc_name',
                   'ewc_code',
                   'hazardous',
-                  'waste04',)
+                  'waste04',
+                  'materials',
+                  'industries',
+                  'agendas',
+                  'chains',
+                  'clean',
+                  'mixed')
 
 
 # GNcode

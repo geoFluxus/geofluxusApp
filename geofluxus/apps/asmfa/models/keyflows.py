@@ -30,6 +30,12 @@ class Waste06(models.Model):
     waste04 = models.ForeignKey(Waste04,
                                 on_delete=models.CASCADE)
     hazardous = models.BooleanField()
+    materials = models.TextField(default='Onbekend')
+    industries = models.TextField(default='Onbekend')
+    agendas = models.TextField(default='Onbekend')
+    chains = models.TextField(default='Onbekend')
+    clean = models.BooleanField(null=True)
+    mixed = models.BooleanField(null=True)
 
     def __str__(self):
         return "{} - {}".format(self.ewc_code,

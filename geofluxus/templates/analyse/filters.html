@@ -688,7 +688,7 @@
                                 <option selected value="-1">All (<%= wastes02.count %>)</option>
                                 <option data-divider="true"></option>
                                 <% wastes02.forEach(function(waste){ %>
-                                <option value="<%= waste.id %>"><%= waste.get('ewc_code') %>
+                                <option value="<%= waste.id %>"><%= waste.get('ewc_code') + ". "%>
                                     <%= waste.get('ewc_name')[0].toUpperCase() + waste.get('ewc_name').slice(1).toLowerCase() %>
                                 </option>
                                 <% }); %>
