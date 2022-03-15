@@ -355,6 +355,12 @@ define(['views/common/baseview',
 
                 // Prepare filters for request
                 let filterParams = this.filtersView.getFilterParams();
+                this.mode = this.filtersView.mode;
+                if (this.mode == 'impact') {
+                    filterParams.indicator = 'co2';
+                    filterParams.impactSources = ['transportation'];
+                }
+                console.log(this.mode, filterParams)
 
                 // ///////////////////////////////
                 // Format
@@ -428,25 +434,6 @@ define(['views/common/baseview',
                     } else if (gran == 'gncode') {
                         filterParams.dimensions.material = 'flowchain__gncode'
                     }
-                }
-
-                // Gather impact params for impact mode:
-                if (this.mode == "impact") {
-                    // Indicator toggle
-                    $('.impact-indicator-radio-label').each(function (index, value) {
-                        if ($(this).hasClass("active")) {
-                            filterParams.indicator = $(this).attr("data-indicator");
-                        }
-                    });
-
-                    // Divide the toggles in arrays of checked and unchecked toggles:
-                    filterParams.impactSources = [];
-                    $('.impactSourceToggle').each(function (index, value) {
-                        let checked = $(this.parentElement.firstChild).prop('checked');
-                        if (checked) {
-                            filterParams.impactSources.push($(this).attr("data-source"));
-                        }
-                    });
                 }
 
                 return filterParams;

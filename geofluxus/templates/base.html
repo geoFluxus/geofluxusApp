@@ -39,9 +39,11 @@
           id="analyse-link">
           <a class="nav-link" href="/analyse">Analyse</a>
         </li>
+        {% comment %}
         {% if request.user|isExpertUser %}
           <a class="nav-link" href="/datasets">Datasets</a>
         {% endif %}
+        {% endcomment %}
       </ul>
 
       <ul class="navbar-nav ml-auto">

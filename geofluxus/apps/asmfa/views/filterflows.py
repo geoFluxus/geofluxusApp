@@ -49,6 +49,7 @@ class FilterFlowViewSet(PostGetViewMixin,
                 params[key] = json.loads(value)
             except json.decoder.JSONDecodeError:
                 params[key] = value
+        print(params)
 
         # retrieve non-spatial filters
         filters = params.pop('flows', {})

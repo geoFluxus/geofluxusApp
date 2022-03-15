@@ -186,12 +186,14 @@ define(['views/common/baseview',
                 this.renderSavedFiltersModal();
                 this.renderAreaSelectModal();
                 this.renderConfirmModal();
+                this.renderModeView();
 
                 this.initializeControls();
                 this.addEventListeners();
             },
 
             renderModeView: function () {
+                this.mode = 'monitor';
                 var el = document.querySelector('#' + this.mode + '-content'),
                     options = {
                         el: el,
@@ -199,8 +201,7 @@ define(['views/common/baseview',
                         filtersView: this,
                         levels: this.collections['arealevels'],
                     };
-
-                this.modeView = this.mode == 'monitor' ? new MonitorView(options) : new ImpactView(options);
+                this.modeView = new MonitorView(options);
             },
 
             initializeControls: function () {
@@ -260,12 +261,6 @@ define(['views/common/baseview',
 
                     if (mode != _this.mode) {
                         _this.mode = mode;
-
-                        $(".analyse-content-container").hide();
-                        if (_this.modeView) _this.modeView.close();
-
-                        _this.renderModeView();
-                        $("#" + _this.mode + "-content").fadeIn();
                     }
                     event.preventDefault(); // avoid firing twice!
                 });
@@ -1440,8 +1435,6 @@ define(['views/common/baseview',
                         }
                     })
                 })
-
-                console.log(_this.log);
 
                 return filterParams;
             },
