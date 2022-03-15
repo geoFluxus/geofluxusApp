@@ -789,7 +789,7 @@
                                 <option selected value="-1">All (<%= materials.length %>)</option>
                                 <option data-divider="true"></option>
                                 <% materials.forEach(function(material){ %>
-                                <option value="<%= material.id %>"><%= material.get('name') %>
+                                <option value="<%= material.id %>"><%= '&emsp;'.repeat(material.get('level')) + material.get('name') %>
                                 </option>
                                 <% }); %>
                             </select>

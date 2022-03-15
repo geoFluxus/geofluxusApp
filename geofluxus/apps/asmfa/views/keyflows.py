@@ -132,10 +132,12 @@ class MaterialViewSet(Waste06FieldViewSet):
 
         # serialize
         data = []
-        for idx, name in enumerate(flatten_nested(hierarchy, [], indent=True)):
+        for idx, tup in enumerate(flatten_nested(hierarchy, [])):
+            name, lvl = tup
             data.append(OrderedDict({
                 'id': idx,
-                'name': self.format_name(name)
+                'name': self.format_name(name).capitalize(),
+                'level': lvl
             }))
         return Response(data)
 

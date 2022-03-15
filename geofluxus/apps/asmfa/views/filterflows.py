@@ -123,7 +123,7 @@ class FilterFlowViewSet(PostGetViewMixin,
             # special conversion for material hierarchy
             if func == 'materials':
                 hierarchy = get_material_hierarchy(search)
-                search = flatten_nested(hierarchy, [])
+                search = [name for name, lvl in flatten_nested(hierarchy, [])]
 
             func = f'flowchain__waste06__{func}__contains'
             vals = [int(v) for v in vals]

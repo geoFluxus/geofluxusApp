@@ -24,15 +24,14 @@ def merge_nested(add, ref):
     return res
 
 
-def flatten_nested(dic, keys, lvl=0, indent=False):
+def flatten_nested(dic, keys, lvl=0):
     """
     get all keys of nested dict
     """
     for key in dic.keys():
-        formatted_val = lvl * '&emsp;' + key if indent else key
-        keys.append(formatted_val)
+        keys.append((key, lvl))
         if isinstance(dic[key], dict):
-            flatten_nested(dic[key], keys=keys, lvl=lvl+1, indent=indent)
+            flatten_nested(dic[key], keys=keys, lvl=lvl+1)
     return keys
 
 
