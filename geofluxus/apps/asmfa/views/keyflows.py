@@ -33,6 +33,7 @@ from geofluxus.apps.asmfa.serializers import (Waste02CreateSerializer,
 from rest_framework.response import Response
 from collections import OrderedDict
 import re
+from geofluxus.apps.utils.utils import get_material_hierarchy, flatten_nested
 
 
 # Waste02
@@ -84,6 +85,7 @@ class Waste06FieldViewSet(PostGetViewMixin,
     @staticmethod
     def format_name(name):
         exclude = [
+            'Materiaal',
             'TransitieAgenda',
             'Industrie'
         ]
@@ -100,14 +102,40 @@ class Waste06FieldViewSet(PostGetViewMixin,
         return name
 
     def list(self, request, **kwargs):
+        # get all values from ewc
         queryset = Waste06.objects.values(self.field) \
                                   .order_by(self.field) \
                                   .distinct()
+
+        # serialize
         data = []
         for idx, item in enumerate(queryset):
             data.append(OrderedDict({
                 'id': idx,
                 'name': self.format_name(item[self.field])
+            }))
+        return Response(data)
+
+
+# Materials
+class MaterialViewSet(Waste06FieldViewSet):
+    field = 'materials'
+
+    def list(self, request, **kwargs):
+        # retrieve all materials from ewc
+        queryset = Waste06.objects.values_list(self.field, flat=True) \
+                                  .order_by(self.field) \
+                                  .distinct()
+
+        # build material hierarchy
+        hierarchy = get_material_hierarchy(queryset)
+
+        # serialize
+        data = []
+        for idx, name in enumerate(flatten_nested(hierarchy, [], indent=True)):
+            data.append(OrderedDict({
+                'id': idx,
+                'name': self.format_name(name)
             }))
         return Response(data)
 

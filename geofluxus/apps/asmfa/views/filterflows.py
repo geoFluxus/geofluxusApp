@@ -12,6 +12,7 @@ import numpy as np
 from rest_framework.response import Response
 from django.db.models import (Q, OuterRef, Subquery, Sum)
 from django.contrib.gis.db.models import Union
+from geofluxus.apps.utils.utils import get_material_hierarchy, flatten_nested
 
 
 # Filter Flow View
@@ -105,36 +106,36 @@ class FilterFlowViewSet(PostGetViewMixin,
 
     # filter on ewc lookup
     @staticmethod
-    def filter_ewc(queryset, filter):
-        func, vals = filter
-        search = list(Waste06.objects.values_list(func, flat=True) \
-                                     .order_by(func) \
-                                     .distinct())
-        vals = [int(v) for v in vals]
-
-        func = f'flowchain__waste06__{func}__in'
-        vals = [v for v in search if search.index(v) in vals]
-        queryset = queryset.filter(**{func: vals})
-
-        return queryset
-
-    # filter on multiple boolean
-    @staticmethod
-    def filter_boolean(queryset, filter):
-        '''
-        Filter booleans with multiple selections
-        '''
+    def filter_lookup(queryset, filter, boolean=False):
         queries = []
         func, vals = filter
-        func = f'flowchain__waste06__{func}'
 
-        # filter
+        # multiple boolean
+        if boolean:
+            func = f'flowchain__waste06__{func}'
+        # ewc classifications
+        else:
+            # convert id to name
+            search = list(Waste06.objects.values_list(func, flat=True) \
+                                         .order_by(func) \
+                                         .distinct())
+
+            # special conversion for material hierarchy
+            if func == 'materials':
+                hierarchy = get_material_hierarchy(search)
+                search = flatten_nested(hierarchy, [])
+
+            func = f'flowchain__waste06__{func}__contains'
+            vals = [int(v) for v in vals]
+            vals = [v for v in search if search.index(v) in vals]
+
         for val in vals:
             queries.append(Q(**{func: val}))
         if len(queries) == 1:
             queryset = queryset.filter(queries[0])
         if len(queries) > 1:
             queryset = queryset.filter(np.bitwise_or.reduce(queries))
+
         return queryset
 
     # non-spatial filtering
@@ -145,29 +146,28 @@ class FilterFlowViewSet(PostGetViewMixin,
         '''
 
         # lookups for special fields
-        ewc_lookups = [
+        multiple_booleans = [
+            'clean',
+            'mixed'
+        ]
+        lookups = [
+            'materials',
             'agendas',
             'industries',
             'chains'
-        ]
-        multiple_booleans = [
-            'clean',
-            'mixed',
-            'direct_use',
-            'composite'
         ]
 
         # form queries
         queries = []
         for func, val in filters.items():
-            # handle ewc lookups
-            if func in ewc_lookups:
-                queryset = self.filter_ewc(queryset, (func, val))
-                continue
-
             # handle multiple booleans
             if func in multiple_booleans:
-                queryset = self.filter_boolean(queryset, (func, val))
+                queryset = self.filter_lookup(queryset, (func, val), boolean=True)
+                continue
+
+            # handle ewc lookups
+            if func in lookups:
+                queryset = self.filter_lookup(queryset, (func, val))
                 continue
 
             if 'year' in func:

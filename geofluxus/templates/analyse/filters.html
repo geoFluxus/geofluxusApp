@@ -773,6 +773,28 @@
                     <h5 class="subtitle">Contents</h5>
                     <div class="row">
                         <div class="col-md-3">
+                            <label for="flows-material-select">Materials</label>
+                            <div class="labelHelpiconContainer">
+                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Materials"
+                                    data-html="true" tabindex="0" data-content="Filter the flows based on their material content.
+                                    Selecting one or more materials will return all flows containing the selected material(s),
+                                    meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
+                                    consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
+                                    to only include non-mixed material flows.">
+                                </a>
+                            </div>
+                            <select id="flows-material-select" name="flows-material-select" multiple
+                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
+                                style="resize: vertical;">
+                                <option selected value="-1">All (<%= materials.length %>)</option>
+                                <option data-divider="true"></option>
+                                <% materials.forEach(function(material){ %>
+                                <option value="<%= material.id %>"><%= material.get('name') %>
+                                </option>
+                                <% }); %>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
                             <label for="flows-agenda-select">Agendas</label>
                             <div class="labelHelpiconContainer">
                                 <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Materials"
@@ -839,29 +861,6 @@
                             </select>
                         </div>
                         {% comment %}
-                        <div class="col-md-3">
-                            <label for="flows-material-select">Materials</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Materials"
-                                    data-html="true" tabindex="0" data-content="Filter the flows based on their material content.
-                                    Selecting one or more materials will return all flows containing the selected material(s),
-                                    meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
-                                    consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
-                                    to only include non-mixed material flows.">
-                                </a>
-                            </div>
-                            <select id="flows-material-select" name="flows-material-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
-                                style="resize: vertical;">
-                                <option selected value="-1">All (<%= materials.count %>)</option>
-                                <option data-divider="true"></option>
-                                <% materials.forEach(function(material){ %>
-                                <option value="<%= material.id %>"><%= material.get('name')[0].toUpperCase() +
-                                    material.get('name').slice(1) %>
-                                </option>
-                                <% }); %>
-                            </select>
-                        </div>
                         <div class="col-md-3">
                             <label>Products</label>
                             <div class="labelHelpiconContainer">

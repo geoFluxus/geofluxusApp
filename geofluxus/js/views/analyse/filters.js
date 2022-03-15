@@ -64,6 +64,9 @@ define(['views/common/baseview',
                             'waste06': 'flowchain__waste06__in'
                         },
                         {
+                            'material': 'materials'
+                        },
+                        {
                             'agenda': 'agendas'
                         },
                         {
@@ -110,6 +113,7 @@ define(['views/common/baseview',
                     'waste02': 'wastes02',
                     'waste04': 'wastes04',
                     'waste06': 'wastes06',
+                    'material': 'materials',
                     'agenda': 'agendas',
                     'industry': 'industries',
                     'chain': 'chains',
@@ -1467,7 +1471,7 @@ define(['views/common/baseview',
                         "waste02": "EWC Chapter",
                         "waste04": "EWC Sub-Chapter",
                         "waste06": "EWC Entry",
-                        "material": "Material",
+                        "material": "Materials",
                         "agenda": "Agendas",
                         "industry": "Industries",
                         "chain": "Chains",
