@@ -5,103 +5,121 @@
     <div class="block accordion" id="filterBlock">
 
         <div class="row justify-content-between">
-            <h4 class="pb-1 pl-3">Step 1: Filter the waste flows (optional)</h4>            
+          <h4 class="pb-1 pl-3">Step 1: Filter the waste flows (optional)</h4>            
         </div>
 
         <div class="card bg-dark">
-          <div class="card-header">
+          <div class="card-header" id="card-header-collapse-general">
             <h4 class="mt-2 ml-3">
               <button 
                 class="btn btn-link collapsingHeaderButton" 
                 id="btn-collapse-header-origin"
+                data-toggle="collapse" 
+                data-target="#collapseGeneralBlock" 
+                aria-expanded="true"
+                aria-controls="collapseGeneralBlock"
                 title="">
-                <!-- <i class="fa fa-chevron-down pull-right"></i> -->
+                <i class="fa fa-chevron-down pull-right"></i>
                   General
               </button>
             </h4>
-            <button
-              id='view-saved-filters'
-              class="btn btn-secondary openSavedFilterModal"
-              data-filter-modal-mode="savedMode"
-              title="Load saved filter configurations."
-              style="margin: 10px; height: 38px; width: 10rem">
-                LOAD FILTERS
-            </button>
           </div>
 
-          <div class="card-body" style="min-height: 10rem;">
-            <div class="row"
-              {% if not request.user|isExpertUser %}
-              style="display: none;"
-              {% endif %}>
+          <div 
+            id="collapseGeneralBlock" 
+            class="collapse show" 
+            aria-labelledby="card-header-collapse-general"
+            data-parent="#filterBlock">
 
-              <div class="col-md-3 flows-dataset-select-col">
-                <label for="flows-dataset-select">Data set</label>
-                <div class="labelHelpiconContainer">
-                  <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Data set"
-                    data-html="true" tabindex="0" data-content="Select the data set you want to analyse.">
-                  </a>
+            <div class="card-body" style="min-height: 10rem;">            
+              <button
+                id='view-saved-filters'
+                class="btn btn-secondary openSavedFilterModal"
+                data-filter-modal-mode="savedMode"
+                title="Load saved filter configurations."
+                style="margin: 10px; height: 38px; width: 10rem">
+                  LOAD FILTERS
+              </button>
+
+              <div class="row"
+                {% if not request.user|isExpertUser %}
+                style="display: none;"
+                {% endif %}>
+  
+                <div class="col-md-3 flows-dataset-select-col">
+                  <label for="flows-dataset-select">Data set</label>
+                  <div class="labelHelpiconContainer">
+                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Data set"
+                      data-html="true" tabindex="0" data-content="Select the data set you want to analyse.">
+                    </a>
+                  </div>
+  
+                  <select name="flows-dataset-select" id="flows-dataset-select" multiple
+                    class="form-control form-control-sm selectpicker" data-size="4"
+                    style="resize: vertical;">
+                    <option selected value="-1">All (<%= datasets.count %>)</option>
+                    <option data-divider="true"></option>
+                    <% datasets.forEach(function(dataset){ %>
+                    <option value="<%= dataset.id %>"><%= dataset.get('title') %></option>
+                    <% }); %>
+                  </select>
                 </div>
-
-                <select name="flows-dataset-select" id="flows-dataset-select" multiple
-                  class="form-control form-control-sm selectpicker" data-size="4"
-                  style="resize: vertical;">
-                  <option selected value="-1">All (<%= datasets.count %>)</option>
-                  <option data-divider="true"></option>
-                  <% datasets.forEach(function(dataset){ %>
-                  <option value="<%= dataset.id %>"><%= dataset.get('title') %></option>
-                  <% }); %>
-                </select>
               </div>
-            </div>
-
-            <div class="row pb-4">
-              <div class="col-md-3">
-                <label for="flows-year-select">Year</label>
-                <div class="labelHelpiconContainer">
-                  <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Year"
-                    data-html="true" tabindex="0" data-content="Select the year in which the waste flow has been reported.<br>
-                    Upon selecting a Year, the Month filter will become available, containing the months belonging to the selection made in this filter.
-                    ">
-                  </a>
+  
+              <div class="row pb-4">
+                <div class="col-md-3">
+                  <label for="flows-year-select">Year</label>
+                  <div class="labelHelpiconContainer">
+                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Year"
+                      data-html="true" tabindex="0" data-content="Select the year in which the waste flow has been reported.<br>
+                      Upon selecting a Year, the Month filter will become available, containing the months belonging to the selection made in this filter.
+                      ">
+                    </a>
+                  </div>
+  
+                  <select name="flows-year-select" id="flows-year-select" multiple
+                    class="form-control form-control-sm selectpicker" data-size="5"
+                    style="resize: vertical;">
+                    <option selected value="-1">All (<%= years.count %>)</option>
+                    <option data-divider="true"></option>
+                    <% years.forEach(function(year){ %>
+                      <option value="<%= year.id %>"><%= year.get('code') %></option>
+                    <% }); %>
+                  </select>
                 </div>
-
-                <select name="flows-year-select" id="flows-year-select" multiple
-                  class="form-control form-control-sm selectpicker" data-size="5"
-                  style="resize: vertical;">
-                  <option selected value="-1">All (<%= years.count %>)</option>
-                  <option data-divider="true"></option>
-                  <% years.forEach(function(year){ %>
-                    <option value="<%= year.id %>"><%= year.get('code') %></option>
-                  <% }); %>
-                </select>
-              </div>
-
-              <div class="col-md-3" id="flows-monthsCol" style="display: none;">
-                <label for="flows-month-select">Month</label>
-                <div class="labelHelpiconContainer">
-                  <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Month"
-                    data-html="true" tabindex="0"
-                    data-content="Select the month in which the waste flow has been reported.">
-                  </a>
+  
+                <div class="col-md-3" id="flows-monthsCol" style="display: none;">
+                  <label for="flows-month-select">Month</label>
+                  <div class="labelHelpiconContainer">
+                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Month"
+                      data-html="true" tabindex="0"
+                      data-content="Select the month in which the waste flow has been reported.">
+                    </a>
+                  </div>
+  
+                  <i class="fas fa-angle-double-right filterDoubleChevron"></i>
+                  <select name="flows-month-select" id="flows-month-select" multiple
+                    class="form-control form-control-sm selectpicker" data-live-search="true" data-size="4"
+                    style="resize: vertical;">
+                  </select>
                 </div>
-
-                <i class="fas fa-angle-double-right filterDoubleChevron"></i>
-                <select name="flows-month-select" id="flows-month-select" multiple
-                  class="form-control form-control-sm selectpicker" data-live-search="true" data-size="4"
-                  style="resize: vertical;">
-                </select>
               </div>
             </div>
           </div>
+
+          
         </div>
 
         <!-- ORIGIN CONTROLS -->
         <div class="card bg-dark">
           <div class="card-header" id="card-header-collapse-origin">
             <h4 class="mb-1">
-              <button class="btn btn-link collapsingHeaderButton" id="btn-collapse-header-origin"
-                data-toggle="collapse" data-target="#collapseOriginBlock" aria-expanded="true"
+              <button 
+                class="btn btn-link collapsingHeaderButton" 
+                id="btn-collapse-header-origin"
+                data-toggle="collapse" 
+                data-target="#collapseOriginBlock" 
+                aria-expanded="true"
                 aria-controls="collapseOriginBlock"
                 title="The filters related to the Origin of the waste flow.">
                 <i class="fa fa-chevron-down pull-right"></i>
@@ -116,19 +134,8 @@
             aria-labelledby="card-header-collapse-origin"
             data-parent="#filterBlock">
             
+            <!-- Select Areas -->
             <div class="card-body">
-              {% if not request.user|isDemoUser %}
-                <div class="row">
-                  <div class="col-md-4 origin-actor-select-col">
-                    <label for="origin-actor-select">Select specific <strong>companies</strong>:</label>
-                    <select name="origin-actor-select" id="origin-actor-select" multiple
-                      class="form-control form-control-sm" data-live-search="true" data-size="6"
-                      style="resize: vertical;">
-                    </select>
-                  </div>
-                </div>
-              {% endif %}
-
               <div class="row">
                 <div class="col-md-10 mt-2">
                   <label for="area-select-button-origin">Limit the <strong>origin</strong> of the waste flows
@@ -136,8 +143,13 @@
                     areas:</label>
 
                   <div class="d-block">
-                    <button id="area-select-button-origin" class="btn btn-sm btn-primary area-select-button"
-                      data-width="100%" style="width: 13em" data-area-select-block="origin">Select areas
+                    <button 
+                      id="area-select-button-origin" 
+                      class="btn btn-sm btn-primary area-select-button"
+                      data-width="100%" 
+                      style="width: 13em" 
+                      data-area-select-block="origin">
+                        Select areas
                     </button>
 
                     <div class="d-inline buttonHelpiconContainer">
@@ -150,6 +162,18 @@
                 </div>
               </div>
 
+              {% if not request.user|isDemoUser %}
+                <div class="row">
+                  <div class="col-md-4 origin-actor-select-col">
+                    <label for="origin-actor-select">Select specific <strong>companies</strong>:</label>
+                    <select name="origin-actor-select" id="origin-actor-select" multiple
+                      class="form-control form-control-sm" data-live-search="true" data-size="6"
+                      style="resize: vertical;">
+                    </select>
+                  </div>
+                </div>
+              {% endif %}
+              
               <div class='row areaSelections-origin' style="display: none;">
                 <div class="col-md-4">
                   <textarea class="form-control-sm textarea-autosize selections"
@@ -367,19 +391,26 @@
         <!-- DESTINATION CONTROLS -->
         <div class="card bg-dark">
             <div class="card-header" id="card-header-collapse-destination">
-                <h4 class="mb-1">
-                    <button class="btn btn-link collapsed collapsingHeaderButton" id="btn-collapse-header-destination"
-                        data-toggle="collapse" data-target="#collapseDestinationBlock" aria-expanded="false"
-                        aria-controls="collapseDestinationBlock"
-                        title="The filters related to the Destination of the waste flow.">
-                        <i class="fa fa-chevron-down pull-right"></i>
-                        Destination
-                    </button>
-                </h4>
+              <h4 class="mb-1">
+                <button 
+                  class="btn btn-link collapsed collapsingHeaderButton" 
+                  id="btn-collapse-header-destination"
+                  data-toggle="collapse" 
+                  data-target="#collapseDestinationBlock" 
+                  aria-expanded="false"
+                  aria-controls="collapseDestinationBlock"
+                  title="The filters related to the Destination of the waste flow.">
+                    <i class="fa fa-chevron-down pull-right"></i>
+                    Destination
+                </button>
+              </h4>
             </div>
 
-            <div id="collapseDestinationBlock" class="collapse" aria-labelledby="card-header-collapse-destination"
-                data-parent="#filterBlock">
+            <div 
+              id="collapseDestinationBlock" 
+              class="collapse" 
+              aria-labelledby="card-header-collapse-destination"
+              data-parent="#filterBlock">
                 <div class="card-body">
 
                     {% if not request.user|isDemoUser %}
