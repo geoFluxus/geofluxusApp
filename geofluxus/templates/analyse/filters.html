@@ -197,57 +197,7 @@
                 </div>
               </div>
 
-              <!-- Select specific companies -->
-              {% if not request.user|isDemoUser %}
-                <div class="row">
-                  <div class="col-md-4 origin-actor-select-col">
-                    <label for="origin-actor-select">Select specific <strong>companies</strong>:</label>
-                    <select name="origin-actor-select" id="origin-actor-select" multiple
-                      class="form-control form-control-sm" data-live-search="true" data-size="6"
-                      style="resize: vertical;">
-                    </select>
-                  </div>
-                </div>
-              {% endif %}
-
-              <!-- Origin Role -->
-              <div class="row mt-3" style="display: none;">
-                <div class="col-md-12">
-                  <label for="origin-role-radio">Origin role</label>
-                  <div>
-                    <div 
-                      class="btn-group btn-group-toggle" 
-                      id="origin-role-radio" 
-                      data-toggle="buttons"
-                      style="width: 30rem;">
-
-                      <label class="btn btn-default origin-role" style="width: 40%;" role="production">
-                        <input type="radio" id="origin-role-radio-production">Waste production
-                      </label>
-                      <label class="btn btn-default origin-role active" style="width: 20%;" role="both">
-                        <input type="radio" id="origin-role-radio-both">Both
-                      </label>
-                      <label class="btn btn-default origin-role" style="width: 40%;" role="treatment">
-                        <input type="radio" id="origin-role-radio-treatment">Waste treatment
-                      </label>
-                    </div>
-
-                    <div class="d-inline buttonHelpiconContainer">
-                      <a 
-                        class="help-icon fas fa-question-circle" 
-                        data-toggle="popover"
-                        title="Origin role" 
-                        data-html="true" 
-                        tabindex="0"
-                        data-content="Choose the role of the Origin of the waste flow: waste production, waste treatment, or both.<br>
-                          If you select waste production, the filters for economic activities will appear.
-                          If you choose waste treatment, the filters for the different waste treatment methods will become available.">
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
+              <!-- Select Activity group -->
               {% if not request.user|isDemoUser %}
                 <div class="row origin-production" style="display: none;">
                   <div class="col-md-4">
@@ -325,6 +275,57 @@
                   </div>
                 </div>
               {% endif %}
+
+              <!-- Select specific companies -->
+              {% if not request.user|isDemoUser %}
+                <div class="row">
+                  <div class="col-md-4 origin-actor-select-col">
+                    <label for="origin-actor-select">Select specific <strong>companies</strong>:</label>
+                    <select name="origin-actor-select" id="origin-actor-select" multiple
+                      class="form-control form-control-sm" data-live-search="true" data-size="6"
+                      style="resize: vertical;">
+                    </select>
+                  </div>
+                </div>
+              {% endif %}
+
+              <!-- Origin Role -->
+              <div class="row mt-3" style="display: none;">
+                <div class="col-md-12">
+                  <label for="origin-role-radio">Origin role</label>
+                  <div>
+                    <div 
+                      class="btn-group btn-group-toggle" 
+                      id="origin-role-radio" 
+                      data-toggle="buttons"
+                      style="width: 30rem;">
+
+                      <label class="btn btn-default origin-role" style="width: 40%;" role="production">
+                        <input type="radio" id="origin-role-radio-production">Waste production
+                      </label>
+                      <label class="btn btn-default origin-role active" style="width: 20%;" role="both">
+                        <input type="radio" id="origin-role-radio-both">Both
+                      </label>
+                      <label class="btn btn-default origin-role" style="width: 40%;" role="treatment">
+                        <input type="radio" id="origin-role-radio-treatment">Waste treatment
+                      </label>
+                    </div>
+
+                    <div class="d-inline buttonHelpiconContainer">
+                      <a 
+                        class="help-icon fas fa-question-circle" 
+                        data-toggle="popover"
+                        title="Origin role" 
+                        data-html="true" 
+                        tabindex="0"
+                        data-content="Choose the role of the Origin of the waste flow: waste production, waste treatment, or both.<br>
+                          If you select waste production, the filters for economic activities will appear.
+                          If you choose waste treatment, the filters for the different waste treatment methods will become available.">
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               <div class="row origin-treatment" style="display: none;">
                 <div class="col-md-4">
