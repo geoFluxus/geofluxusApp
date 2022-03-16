@@ -492,23 +492,6 @@
             data-parent="#filterBlock">
               <div class="card-body">
 
-                {% if not request.user|isDemoUser %}
-                  <div class="row">
-                    <div class="col-md-4 destination-actor-select-col">
-                      <label for="destination-actor-select">Select specific <strong>companies</strong>:</label>
-                      <select 
-                        name="destination-actor-select" 
-                        id="destination-actor-select" 
-                        multiple
-                        class="form-control form-control-sm selectpicker" 
-                        data-live-search="true" 
-                        data-size="6"
-                        style="resize: vertical;">
-                      </select>
-                    </div>
-                  </div>
-                {% endif %}
-
                 <div class="row">
                   <div class="col-md-10">
                     <label for="area-select-button-destination">Limit the <strong>destination</strong> of the
@@ -766,6 +749,24 @@
                     </select>
                   </div>
                 </div>
+
+                <!-- Select Companies -->
+                {% if not request.user|isDemoUser %}
+                  <div class="row">
+                    <div class="col-md-4 destination-actor-select-col">
+                      <label for="destination-actor-select">Select specific <strong>companies</strong>:</label>
+                      <select 
+                        name="destination-actor-select" 
+                        id="destination-actor-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                      </select>
+                    </div>
+                  </div>
+                {% endif %}
               </div>
           </div>
         </div>
