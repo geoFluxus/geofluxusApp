@@ -138,8 +138,8 @@
               <div class="row">
                 <div class="col-md-10 mt-2">
                   <label for="area-select-button-origin">Limit the <strong>origin</strong> of the waste flows
-                    to geographic
-                    areas:</label>
+                    to geographic areas:
+                  </label>
 
                   <div class="d-block">
                     <button 
@@ -152,8 +152,12 @@
                     </button>
 
                     <div class="d-inline buttonHelpiconContainer">
-                      <a class="help-icon fas fa-question-circle" data-toggle="popover"
-                        title="Select areas" data-html="true" tabindex="0"
+                      <a 
+                        class="help-icon fas fa-question-circle" 
+                        data-toggle="popover"
+                        title="Select areas" 
+                        data-html="true" 
+                        tabindex="0"
                         data-content="Clicking the <b>Select areas</b> button opens a dialog in which you can select one or more geographic areas.<br> The selected areas will be used to filter the waste flows based on the coordinates of the Origin of the waste flow.">
                       </a>
                     </div>
@@ -163,9 +167,13 @@
 
               <div class='row areaSelections-origin' style="display: none;">
                 <div class="col-md-4">
-                  <textarea class="form-control-sm textarea-autosize selections"
-                    id="areaSelections-Textarea-origin" style="width: 100% !important; display: inline-block"
-                    type="text" readonly></textarea>
+                  <textarea 
+                    class="form-control-sm textarea-autosize selections"
+                    id="areaSelections-Textarea-origin" 
+                    style="width: 100% !important; display: inline-block"
+                    type="text" 
+                    readonly>
+                  </textarea>
 
                   <button 
                     id="clear-origin-areas-button" 
@@ -276,9 +284,11 @@
                 </div>
               {% endif %}
 
-              <!-- Select specific companies -->
-              {% if not request.user|isDemoUser %}
-                <div class="row">
+              
+              
+              <div class="row">
+                <!-- Select specific companies -->
+                {% if not request.user|isDemoUser %}
                   <div class="col-md-4 origin-actor-select-col">
                     <label for="origin-actor-select">Select specific <strong>companies</strong>:</label>
                     <select name="origin-actor-select" id="origin-actor-select" multiple
@@ -286,35 +296,43 @@
                       style="resize: vertical;">
                     </select>
                   </div>
-                </div>
-              {% endif %}
+                {% endif %}
 
-              <!-- Collected en Route -->
-              <div class="col-md-3">
-                <label for="flows-route-select">Collected en route</label>
-                <div class="labelHelpiconContainer">
-                  <a 
-                    class="help-icon fas fa-question-circle" 
-                    data-toggle="popover" 
-                    title="Route"
-                    data-html="true" 
-                    tabindex="0" 
-                    data-content="The Route property indicates whether a waste collection company has collected the same type of waste
-                      from multiple different producers of waste. During the waste collection process, the waste from
-                      all sources is combined.
-                      <br>
-                      An example would be municipal waste collection in which the waste from every building is collected by a truck.
-                    ">
-                  </a>
+                <!-- Collected en Route -->
+                <div class="col-md-6">
+                  <label for="flows-route-select">Collected en route</label>
+                  <div class="row" style="padding: 0">
+                    <div class="col-md-5">
+                      <select 
+                        name="flows-route-select" 
+                        id="flows-route-select"
+                        class="form-control form-control-sm selectpicker">
+                          <option value='both'>Ignore</option>
+                          <option value='no'>Not route</option>
+                          <option value='yes'>Route</option>
+                      </select>
+                    </div>
+                    <div class="col-md-1" style="padding: 0">
+                      <div class="labelHelpiconContainer" style="padding: 0">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover" 
+                          title="Route"
+                          data-html="true" 
+                          tabindex="0" 
+                          data-content="The Route property indicates whether a waste collection company has collected the same type of waste
+                            from multiple different producers of waste. During the waste collection process, the waste from
+                            all sources is combined.
+                            <br>
+                            An example would be municipal waste collection in which the waste from every building is collected by a truck.
+                          ">
+                        </a>
+                      </div>
+                    </div>
+                    
+                    
+                  </div>                
                 </div>
-                <select 
-                  name="flows-route-select" 
-                  id="flows-route-select"
-                  class="form-control form-control-sm selectpicker">
-                    <option value='both'>Ignore</option>
-                    <option value='no'>Not route</option>
-                    <option value='yes'>Route</option>
-                </select>
               </div>
 
               <!-- Origin Role -->
