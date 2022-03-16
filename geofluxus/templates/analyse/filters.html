@@ -8,19 +8,19 @@
             <h4 class="pb-1 pl-3">Step 1: Filter the waste flows (optional)</h4>
 
             <div>
-                <button
+                <!-- <button
                     id='view-saved-filters'
                     class="btn btn-secondary openSavedFilterModal"
                     data-filter-modal-mode="savedMode"
                     title="Load saved filter configurations."
-                    style="height: 38px; width: 10rem">LOAD FILTERS</button>
+                    style="height: 38px; width: 10rem">LOAD FILTERS</button> -->
 
-                <button
+                <!-- <button
                     id='save-filters'
                     class="btn btn-primary openSavedFilterModal"
                     data-filter-modal-mode="newMode"
                     title="Save the current filter configuration."
-                    style="height: 38px; width: 10rem">SAVE FILTERS</button>
+                    style="height: 38px; width: 10rem">SAVE FILTERS</button> -->
             </div>
         </div>
 
@@ -34,6 +34,14 @@
                         General
                     </button>
                 </h4>
+                <button
+                  id='view-saved-filters'
+                  class="btn btn-secondary openSavedFilterModal"
+                  data-filter-modal-mode="savedMode"
+                  title="Load saved filter configurations."
+                  style="margin: 10px; height: 38px; width: 10rem">
+                    LOAD FILTERS
+                </button>
             </div>
 
             <div class="card-body" style="min-height: 10rem;">
@@ -1063,15 +1071,26 @@
 
 
 
-        <div class="row mt-1 d-flex justify-content-end">
-            <button id='reset-filters' class="btn btn-secondary resetButton" title="Reset all the filters">RESET FILTERS
-            </button>
-
-
+        <div class="row mt-1 d-flex justify-content-start">
             <button id='summarize-filters' class="btn btn-primary"
-                title="Summarize the selected filters and check if there is data that matches."
-                style="margin-left: 10px; float: right; width: 10em">
+              title="Summarize the selected filters and check if there is data that matches."
+              style="margin-left: 10px; float: right; width: 10em; margin: 0.2rem">
                 TEST FILTERS
+            </button>
+            <button
+              id='save-filters'
+              class="btn btn-primary openSavedFilterModal"
+              data-filter-modal-mode="newMode"
+              title="Save the current filter configuration."
+              style="height: 38px; width: 10rem; margin: 0.2rem">
+                SAVE FILTERS
+            </button>
+            <button 
+              id='reset-filters' 
+              class="btn btn-secondary resetButton" 
+              style="margin: 0.2rem"
+              title="Reset all the filters">
+                RESET FILTERS
             </button>
         </div>
 
