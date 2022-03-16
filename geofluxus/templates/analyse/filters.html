@@ -485,234 +485,289 @@
             </h4>
           </div>
 
-            <div 
-              id="collapseDestinationBlock" 
-              class="collapse" 
-              aria-labelledby="card-header-collapse-destination"
-              data-parent="#filterBlock">
-                <div class="card-body">
+          <div 
+            id="collapseDestinationBlock" 
+            class="collapse" 
+            aria-labelledby="card-header-collapse-destination"
+            data-parent="#filterBlock">
+              <div class="card-body">
 
-                  {% if not request.user|isDemoUser %}
-                    <div class="row">
-                      <div class="col-md-4 destination-actor-select-col">
-                        <label for="destination-actor-select">Select specific <strong>companies</strong>:</label>
-                        <select 
-                          name="destination-actor-select" 
-                          id="destination-actor-select" 
-                          multiple
-                          class="form-control form-control-sm selectpicker" 
-                          data-live-search="true" 
-                          data-size="6"
-                          style="resize: vertical;">
-                        </select>
+                {% if not request.user|isDemoUser %}
+                  <div class="row">
+                    <div class="col-md-4 destination-actor-select-col">
+                      <label for="destination-actor-select">Select specific <strong>companies</strong>:</label>
+                      <select 
+                        name="destination-actor-select" 
+                        id="destination-actor-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                      </select>
+                    </div>
+                  </div>
+                {% endif %}
+
+                <div class="row">
+                  <div class="col-md-10">
+                    <label for="area-select-button-destination">Limit the <strong>destination</strong> of the
+                      waste flows to geographic areas:
+                    </label>
+
+                    <div class="d-block">
+                      <button id="area-select-button-destination"
+                        class="btn btn-sm btn-primary area-select-button" data-width="100%"
+                        style="width: 13em" data-area-select-block="destination">Select areas
+                      </button>
+
+                      <div class="d-inline buttonHelpiconContainer">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover"
+                          title="Select areas" 
+                          data-html="true" 
+                          tabindex="0"
+                          data-content="Clicking the <b>Select areas</b> button opens a dialog in which you can select one or more geographic areas.<br> The selected areas will be used to filter the waste flows based on the coordinates of the Destination of the waste flow.">
+                        </a>
                       </div>
                     </div>
-                  {% endif %}
-
-                    <div class="row">
-                        <div class="col-md-10">
-
-                            <label for="area-select-button-destination">Limit the <strong>destination</strong> of the
-                                waste flows to
-                                geographic areas:</label>
-
-                            <div class="d-block">
-                                <button id="area-select-button-destination"
-                                    class="btn btn-sm btn-primary area-select-button" data-width="100%"
-                                    style="width: 13em" data-area-select-block="destination">Select areas
-                                </button>
-
-                                <div class="d-inline buttonHelpiconContainer">
-                                    <a class="help-icon fas fa-question-circle" data-toggle="popover"
-                                        title="Select areas" data-html="true" tabindex="0"
-                                        data-content="Clicking the <b>Select areas</b> button opens a dialog in which you can select one or more geographic areas.<br> The selected areas will be used to filter the waste flows based on the coordinates of the Destination of the waste flow.">
-                                    </a>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div class='row areaSelections-destination' style="display: none;">
-                        <div class="col-md-4">
-
-                            <textarea class="form-control-sm textarea-autosize selections"
-                                id="areaSelections-Textarea-destination"
-                                style="width: 100% !important; display: inline-block" type="text" readonly></textarea>
-
-                            <button id="clear-destination-areas-button"
-                                class="btn btn-sm btn-primary clear-areas-button" data-area-clear-button="destination"
-                                title="Clear the selected areas.">
-                                <i class="fas fa-times"></i>
-                            </button>
-
-                        </div>
-                    </div>
-                    <div class="row mt-2 areaSelections-destination" style="display: none;">
-                        <div class="col">
-                            <div style="display: block;">
-                                <label style="display: inline-block;">The destination of the flows must be</label>
-                                <div class="checkbox in-or-out-container">
-                                    <input name="in-or-out-destination" id="destination-area-in-or-out" type="checkbox"
-                                        data-height="24" data-toggle="toggle" data-on="outside" data-off="within"
-                                        class="in-out-toggle bootstrapToggle">
-                                    <label style="display: inline-block;">the selected area(s).</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="row mt-3" style="display: none;">
-                        <div class="col-md-12">
-
-                            <label for="destination-role-radio">Destination role</label>
-
-                            <div>
-                                <div class="btn-group btn-group-toggle" id="destination-role-radio"
-                                    data-toggle="buttons" style="width: 30rem;">
-
-                                    <label class="btn btn-default destination-role" style="width: 40%;" role="production">
-                                        <input type="radio" id="destination-role-radio-production" checked>Waste production
-                                    </label>
-                                    <label class="btn btn-default destination-role active" style="width: 20%;" role="both">
-                                        <input type="radio" id="destination-role-radio-both">Both
-                                    </label>
-                                    <label class="btn btn-default destination-role" style="width: 40%;" role="treatment">
-                                        <input type="radio" id="destination-role-radio-treatment">Waste treatment
-                                    </label>
-
-                                </div>
-
-                                <div class="d-inline buttonHelpiconContainer">
-                                    <a class="help-icon fas fa-question-circle" data-toggle="popover"
-                                        title="Origin role" data-html="true" tabindex="0"
-                                        data-content="Choose the role of the Destination of the waste flow: waste production, waste treatment, or both.<br>
-                                                If you select waste production, the filters for economic activities will appear.
-                                                If you choose waste treatment, the filters for the different waste treatment methods will become available.">
-                                    </a>
-                                </div>
-
-                            </div>
-
-                        </div>
-                    </div>
-
-                    {% if not request.user|isDemoUser %}
-                    <div class="row destination-production" style="display: none;">
-                        <div class="col-md-4">
-                            <label for="destination-activitygroup-select">Activity group</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Activity group"
-                                    data-html="true" tabindex="0" data-content="
-                                    <span>The Activity group indicates the economic activity of the Destination of the waste flow.</span>
-                                    <br>
-                                    <span>This classification is based on the Statistical Classification of Economic Activities in the European Community,
-                                    also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL&StrNom=NACE_REV2&StrLanguageCode=EN&IntPcKey=&StrLayoutCode=HIERARCHIC'>here</a>.</span>
-                                    <br>
-                                    <span>This filter also contains four additional custom entries:</span>
-                                    <ul>
-                                        <li>V - Onbekend</li>
-                                        <li>WT - Unknown waste treatment</li>
-                                        <li>WU - Unknown</li>
-                                        <li>X - Route inzameling</li>
-                                    </ul>
-                                    <span>Upon selecting an Activity group, the Activity filter will become available, containing the Activities belonging to the selection made in this filter.</span>
-                                    ">
-                                </a>
-                            </div>
-
-
-                            <select id="destination-activitygroup-select" name="destination-activitygroup-select"
-                                multiple class="form-control form-control-sm selectpicker" data-live-search="true"
-                                data-dropup-auto="false" data-size="6" style="resize: vertical;">
-                                <option selected value="-1">All (<%= activitygroups.count %>)</option>
-                                <option data-divider="true"></option>
-                                <% activitygroups.forEach(function(activitygroup){ %>
-                                    <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>. <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
-                                    </option>
-                                <% }); %>
-                            </select>
-                        </div>
-                        <div class="col-md-4" id="destination-activitiesCol" style="display: none">
-                            <label for="destination-activity-select">Activity</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Activity"
-                                    data-html="true" tabindex="0" data-content="
-                                    <span>The Activity indicates the economic activity of the Destination of the waste flow  on the most detailed level.
-                                    This filter contains the Activities belonging to the selection made in the Activity group filter.</span>
-                                    <br>
-                                    <span>This classification is based on the Statistical Classification of Economic Activities in the European Community,
-                                    also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL_LINEAR&StrNom=NACE_REV2&StrLanguageCode=EN'>here</a>.</span>
-                                    <br>
-                                    <span>This filter also contains several additional custom entries belonging to the custom Activity groups.</span>
-                                    ">
-                                </a>
-                            </div>
-
-                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
-                            <select id="destination-activity-select" name="destination-activity-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true"
-                                data-dropup-auto="false" data-size="6" style="resize: vertical;">
-                            </select>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    <div class="row destination-treatment" style="display: none;">
-                        <div class="col-md-4">
-
-                            <label for="destination-processgroup-select">Treatment method group</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover"
-                                    title="Treatment method group" data-html="true" tabindex="0" data-content="
-                                    <span>The Treatment method group indicates the general treatment method group used by the Destination of the flows.</span>
-                                    <br>
-                                    <span>This classification is based on the classification system of the Dutch government agency 'Landelijk Meldpunt Afvalstoffen'.
-                                    The full list of entries can be consulted <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a>.</span>
-                                    <br>
-                                    <span>Upon selecting a Treatment method group, the Treatment method filter will become available, containing the Treatment methods belonging to the selection made in this filter.</span>
-                                    ">
-                                </a>
-                            </div>
-
-                            <select name="destination-processgroup-select" id="destination-processgroup-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
-                                style="resize: vertical;">
-                                <option selected value="-1">All (<%= processgroups.count %>)</option>
-                                <option data-divider="true"></option>
-                                <% processgroups.forEach(function(process){ %>
-                                    <option value="<%= process.id %>"><%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
-                                    </option>
-                                <% }); %>
-                            </select>
-                        </div>
-
-                        <div class="col-md-4" id="destination-processesCol" style="display: none;">
-
-                            <label for="destination-process-select">Treatment method</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover"
-                                    title="Treatment method" data-html="true" tabindex="0" data-content="
-                                    <span>The Treatment method indicates the specific treatment method used by the Destination of the flows.</span>
-                                    <br>
-                                    <span>This classification is based on the classification system of the Dutch government agency 'Landelijk Meldpunt Afvalstoffen'.
-                                    The full list of entries can be consulted <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a>.</span>
-                                    ">
-                                </a>
-                            </div>
-
-                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
-                            <select name="destination-process-select" id="destination-process-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
-                                style="resize: vertical;">
-                            </select>
-                        </div>
-                    </div>
-
+                  </div>
                 </div>
-            </div>
 
+                <div class='row areaSelections-destination' style="display: none;">
+                  <div class="col-md-4">
+                    <textarea 
+                      class="form-control-sm textarea-autosize selections"
+                      id="areaSelections-Textarea-destination"
+                      style="width: 100% !important; display: inline-block" 
+                      type="text" 
+                      readonly>
+                    </textarea>
+
+                    <button 
+                      id="clear-destination-areas-button"
+                      class="btn btn-sm btn-primary clear-areas-button" 
+                      data-area-clear-button="destination"
+                      title="Clear the selected areas.">
+                        <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="row mt-2 areaSelections-destination" style="display: none;">
+                  <div class="col">
+                    <div style="display: block;">
+                      <label style="display: inline-block;">The destination of the flows must be</label>
+                      <div class="checkbox in-or-out-container">
+                        <input 
+                          name="in-or-out-destination" 
+                          id="destination-area-in-or-out" 
+                          type="checkbox"
+                          data-height="24" 
+                          data-toggle="toggle" 
+                          data-on="outside" 
+                          data-off="within"
+                          class="in-out-toggle bootstrapToggle">
+                        <label style="display: inline-block;">the selected area(s).</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row mt-3" style="display: none;">
+                  <div class="col-md-12">
+                    <label for="destination-role-radio">Destination role</label>
+
+                    <div>
+                      <div 
+                        class="btn-group btn-group-toggle" 
+                        id="destination-role-radio"
+                        data-toggle="buttons" 
+                        style="width: 30rem;">
+
+                        <label class="btn btn-default destination-role" style="width: 40%;" role="production">
+                          <input type="radio" id="destination-role-radio-production" checked>Waste production
+                        </label>
+                        <label class="btn btn-default destination-role active" style="width: 20%;" role="both">
+                          <input type="radio" id="destination-role-radio-both">Both
+                        </label>
+                        <label class="btn btn-default destination-role" style="width: 40%;" role="treatment">
+                          <input type="radio" id="destination-role-radio-treatment">Waste treatment
+                        </label>
+                      </div>
+
+                      <div class="d-inline buttonHelpiconContainer">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover"
+                          title="Origin role" 
+                          data-html="true" 
+                          tabindex="0"
+                          data-content="Choose the role of the Destination of the waste flow: waste production, waste treatment, or both.<br>
+                            If you select waste production, the filters for economic activities will appear.
+                            If you choose waste treatment, the filters for the different waste treatment methods will become available.">
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {% if not request.user|isDemoUser %}
+                <div class="row destination-production" style="display: none;">
+                  <div class="col-md-4">
+                    <label for="destination-activitygroup-select">Activity group</label>
+                    <div class="labelHelpiconContainer">
+                      <a 
+                        class="help-icon fas fa-question-circle" 
+                        data-toggle="popover" 
+                        title="Activity group"
+                        data-html="true" 
+                        tabindex="0" 
+                        data-content="
+                          <span>The Activity group indicates the economic activity of the Destination of the waste flow.</span>
+                          <br>
+                          <span>This classification is based on the Statistical Classification of Economic Activities in the European Community,
+                          also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL&StrNom=NACE_REV2&StrLanguageCode=EN&IntPcKey=&StrLayoutCode=HIERARCHIC'>here</a>.</span>
+                          <br>
+                          <span>This filter also contains four additional custom entries:</span>
+                          <ul>
+                            <li>V - Onbekend</li>
+                            <li>WT - Unknown waste treatment</li>
+                            <li>WU - Unknown</li>
+                            <li>X - Route inzameling</li>
+                          </ul>
+                          <span>Upon selecting an Activity group, the Activity filter will become available, containing the Activities belonging to the selection made in this filter.</span>
+                          ">
+                      </a>
+                    </div>
+
+
+                      <select 
+                        id="destination-activitygroup-select" 
+                        name="destination-activitygroup-select"
+                        multiple class="form-control form-control-sm selectpicker" 
+                        data-live-search="true"
+                        data-dropup-auto="false" 
+                        data-size="6" 
+                        style="resize: vertical;">
+                          <option selected value="-1">All (<%= activitygroups.count %>)</option>
+                          <option data-divider="true"></option>
+                          <% activitygroups.forEach(function(activitygroup){ %>
+                            <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>. <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
+                            </option>
+                          <% }); %>
+                      </select>
+                  </div>
+
+                  <div class="col-md-4" id="destination-activitiesCol" style="display: none">
+                    <label for="destination-activity-select">Activity</label>
+                    <div class="labelHelpiconContainer">
+                      <a 
+                        class="help-icon fas fa-question-circle" 
+                        data-toggle="popover" 
+                        title="Activity"
+                        data-html="true" 
+                        tabindex="0" 
+                        data-content="
+                          <span>The Activity indicates the economic activity of the Destination of the waste flow  on the most detailed level.
+                          This filter contains the Activities belonging to the selection made in the Activity group filter.</span>
+                          <br>
+                          <span>This classification is based on the Statistical Classification of Economic Activities in the European Community,
+                          also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL_LINEAR&StrNom=NACE_REV2&StrLanguageCode=EN'>here</a>.</span>
+                          <br>
+                          <span>This filter also contains several additional custom entries belonging to the custom Activity groups.</span>
+                          ">
+                      </a>
+                    </div>
+
+                    <i class="fas fa-angle-double-right filterDoubleChevron"></i>
+                    <select 
+                      id="destination-activity-select" 
+                      name="destination-activity-select" 
+                      multiple
+                      class="form-control form-control-sm selectpicker" 
+                      data-live-search="true"
+                      data-dropup-auto="false" 
+                      data-size="6" 
+                      style="resize: vertical;">
+                    </select>
+                  </div>
+                </div>
+                {% endif %}
+
+                <!-- Treatment Method -->
+                <div class="row destination-treatment" style="display: none;">
+                  <div class="col-md-4">                          
+                    <label for="destination-processgroup-select">Treatment method group</label>
+                    <div class="labelHelpiconContainer">
+                      <a 
+                        class="help-icon fas fa-question-circle" 
+                        data-toggle="popover"
+                        title="Treatment method group" 
+                        data-html="true" 
+                        tabindex="0" 
+                        data-content="
+                          <span>The Treatment method group indicates the general treatment method group used by the Destination of the flows.</span>
+                          <br>
+                          <span>This classification is based on the classification system of the Dutch government agency 'Landelijk Meldpunt Afvalstoffen'.
+                          The full list of entries can be consulted <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a>.</span>
+                          <br>
+                          <span>Upon selecting a Treatment method group, the Treatment method filter will become available, containing the Treatment methods belonging to the selection made in this filter.</span>
+                          ">
+                      </a>
+                    </div>
+
+                    <select 
+                      name="destination-processgroup-select" 
+                      id="destination-processgroup-select" 
+                      multiple
+                      class="form-control form-control-sm selectpicker" 
+                      data-live-search="true" 
+                      data-size="6"
+                      style="resize: vertical;">
+                      <option selected value="-1">All (<%= processgroups.count %>)</option>
+                      <option data-divider="true"></option>
+                      <% processgroups.forEach(function(process){ %>
+                        <option value="<%= process.id %>"><%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
+                        </option>
+                      <% }); %>
+                    </select>
+                  </div>
+
+                  <div class="col-md-4" id="destination-processesCol" style="display: none;">
+
+                    <label for="destination-process-select">Treatment method</label>
+                    <div class="labelHelpiconContainer">
+                      <a 
+                        class="help-icon fas fa-question-circle" 
+                        data-toggle="popover"
+                        title="Treatment method" 
+                        data-html="true" 
+                        tabindex="0" 
+                        data-content="
+                          <span>The Treatment method indicates the specific treatment method used by the Destination of the flows.</span>
+                          <br>
+                          <span>This classification is based on the classification system of the Dutch government agency 'Landelijk Meldpunt Afvalstoffen'.
+                          The full list of entries can be consulted <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a>.</span>
+                          ">
+                      </a>
+                    </div>
+
+                    <i class="fas fa-angle-double-right filterDoubleChevron"></i>
+                    <select 
+                      name="destination-process-select" 
+                      id="destination-process-select"
+                        multiple
+                      class="form-control form-control-sm selectpicker" 
+                      data-live-search="true" 
+                      data-size="6"
+                      style="resize: vertical;">
+                    </select>
+                  </div>
+                </div>
+              </div>
+          </div>
         </div>
 
         <!-- FLOWS CONTROLS -->
