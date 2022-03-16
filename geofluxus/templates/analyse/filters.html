@@ -1,7 +1,6 @@
 <!--Filters-->
 <script type="text/template" id="filter-template">
   {% load custom_tags %}
-
     <div class="block accordion" id="filterBlock">
 
         <div class="row justify-content-between">
@@ -162,18 +161,6 @@
                 </div>
               </div>
 
-              {% if not request.user|isDemoUser %}
-                <div class="row">
-                  <div class="col-md-4 origin-actor-select-col">
-                    <label for="origin-actor-select">Select specific <strong>companies</strong>:</label>
-                    <select name="origin-actor-select" id="origin-actor-select" multiple
-                      class="form-control form-control-sm" data-live-search="true" data-size="6"
-                      style="resize: vertical;">
-                    </select>
-                  </div>
-                </div>
-              {% endif %}
-              
               <div class='row areaSelections-origin' style="display: none;">
                 <div class="col-md-4">
                   <textarea class="form-control-sm textarea-autosize selections"
@@ -210,6 +197,20 @@
                 </div>
               </div>
 
+              <!-- Select specific companies -->
+              {% if not request.user|isDemoUser %}
+                <div class="row">
+                  <div class="col-md-4 origin-actor-select-col">
+                    <label for="origin-actor-select">Select specific <strong>companies</strong>:</label>
+                    <select name="origin-actor-select" id="origin-actor-select" multiple
+                      class="form-control form-control-sm" data-live-search="true" data-size="6"
+                      style="resize: vertical;">
+                    </select>
+                  </div>
+                </div>
+              {% endif %}
+
+              <!-- Origin Role -->
               <div class="row mt-3" style="display: none;">
                 <div class="col-md-12">
                   <label for="origin-role-radio">Origin role</label>
