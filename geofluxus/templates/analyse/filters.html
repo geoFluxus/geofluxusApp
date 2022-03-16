@@ -289,12 +289,29 @@
               <div class="row">
                 <!-- Select specific companies -->
                 {% if not request.user|isDemoUser %}
-                  <div class="col-md-4 origin-actor-select-col">
+                  <div class="col-md-6 origin-actor-select-col">
                     <label for="origin-actor-select">Select specific <strong>companies</strong>:</label>
-                    <select name="origin-actor-select" id="origin-actor-select" multiple
-                      class="form-control form-control-sm" data-live-search="true" data-size="6"
-                      style="resize: vertical;">
-                    </select>
+                    <div class="row" style="padding: 0">
+                      <div class="col-md-8">
+                        <select name="origin-actor-select" id="origin-actor-select" multiple
+                          class="form-control form-control-sm" data-live-search="true" data-size="6"
+                          style="resize: vertical;">
+                        </select>
+                      </div>
+                      <div class="col-md-1" style="padding: 0">
+                        <div class="labelHelpiconContainer" style="padding: 0">
+                          <a 
+                            class="help-icon fas fa-question-circle" 
+                            data-toggle="popover" 
+                            title="Companies"
+                            data-html="true" 
+                            tabindex="0" 
+                            data-content="Help content here">
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                    
                   </div>
                 {% endif %}
 
