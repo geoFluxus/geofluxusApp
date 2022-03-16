@@ -50,7 +50,8 @@ define(['views/common/baseview',
                             'process': 'destination__process__in'
                         }
                     ],
-                    'flows': [{
+                    'flows': [
+                        {
                             'year': 'flowchain__month__year__in',
                             'month': 'flowchain__month__in'
                         },
@@ -63,17 +64,20 @@ define(['views/common/baseview',
                             'waste06': 'flowchain__waste06__in'
                         },
                         {
-                            'gncode': 'flowchain__gncode__in',
+                            'material': 'materials'
                         },
                         {
-                            'material': 'flowchain__materials__in'
+                            'agenda': 'agendas'
                         },
-//                        {
-//                            'product': 'flowchain__products__in'
-//                        },
-//                        {
-//                            'composites': 'flowchain__composites__in'
-//                        },
+                        {
+                            'industry': 'industries'
+                        },
+                        {
+                            'chain': 'chains'
+                        },
+                        {
+                            'gncode': 'flowchain__gncode__in',
+                        },
                         {
                             'route': 'flowchain__route'
                         },
@@ -109,10 +113,11 @@ define(['views/common/baseview',
                     'waste02': 'wastes02',
                     'waste04': 'wastes04',
                     'waste06': 'wastes06',
-                    'gncode': 'gncodes',
                     'material': 'materials',
-                    //'product': 'products',
-                    //'composite': 'composites',
+                    'agenda': 'agendas',
+                    'industry': 'industries',
+                    'chain': 'chains',
+                    'gncode': 'gncodes',
                     'arealevel': 'arealevels',
                     'year': 'years',
                     'month': 'months',
@@ -181,12 +186,14 @@ define(['views/common/baseview',
                 this.renderSavedFiltersModal();
                 this.renderAreaSelectModal();
                 this.renderConfirmModal();
+                this.renderModeView();
 
                 this.initializeControls();
                 this.addEventListeners();
             },
 
             renderModeView: function () {
+                this.mode = 'monitor';
                 var el = document.querySelector('#' + this.mode + '-content'),
                     options = {
                         el: el,
@@ -194,8 +201,7 @@ define(['views/common/baseview',
                         filtersView: this,
                         levels: this.collections['arealevels'],
                     };
-
-                this.modeView = this.mode == 'monitor' ? new MonitorView(options) : new ImpactView(options);
+                this.modeView = new MonitorView(options);
             },
 
             initializeControls: function () {
@@ -255,12 +261,6 @@ define(['views/common/baseview',
 
                     if (mode != _this.mode) {
                         _this.mode = mode;
-
-                        $(".analyse-content-container").hide();
-                        if (_this.modeView) _this.modeView.close();
-
-                        _this.renderModeView();
-                        $("#" + _this.mode + "-content").fadeIn();
                     }
                     event.preventDefault(); // avoid firing twice!
                 });
@@ -291,6 +291,10 @@ define(['views/common/baseview',
                         _this.closeFilterLog();
                     })
                 })
+
+                // pre-select origin: production & destination: treatment
+                $('.origin-role[role="production"]').trigger("click")
+                $('.destination-role[role="treatment"]').trigger("click")
 
                 // render ewc codes based on hazardous selection
                 function filterHazardous(evt) {
@@ -1432,8 +1436,6 @@ define(['views/common/baseview',
                     })
                 })
 
-                console.log(_this.log);
-
                 return filterParams;
             },
 
@@ -1462,7 +1464,10 @@ define(['views/common/baseview',
                         "waste02": "EWC Chapter",
                         "waste04": "EWC Sub-Chapter",
                         "waste06": "EWC Entry",
-                        "material": "Material",
+                        "material": "Materials",
+                        "agenda": "Agendas",
+                        "industry": "Industries",
+                        "chain": "Chains",
                         "product": "Product",
                         "composites": "Composites",
                         "clean": "Clean",

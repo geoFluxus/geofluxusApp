@@ -55,14 +55,12 @@ class ProcessGroupSerializer(HyperlinkedModelSerializer):
         fields = ('url',
                   'id',
                   'name',
-                  'code',
                   'co2')
 
 class ProcessGroupListSerializer(ProcessGroupSerializer):
     class Meta(ProcessGroupSerializer.Meta):
         fields = ('id',
                   'name',
-                  'code',
                   'co2')
 
 

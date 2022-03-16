@@ -15,15 +15,10 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Waste06,
                                          GNcode,
                                          TreatmentEmission,
-                                         Material,
-                                         Product,
-                                         Composite,
                                          Year,
                                          Month,
                                          FlowChain,
                                          Flow,
-                                         Classification,
-                                         ExtraDescription,
                                          Routing,
                                          AdminLevel,
                                          Area,
@@ -41,15 +36,10 @@ from geofluxus.apps.asmfa.serializers import (ActivityGroupSerializer,
                                               Waste06Serializer,
                                               GNcodeSerializer,
                                               TreatmentEmissionSerializer,
-                                              MaterialSerializer,
-                                              ProductSerializer,
-                                              CompositeSerializer,
                                               YearSerializer,
                                               MonthSerializer,
                                               FlowChainSerializer,
                                               FlowSerializer,
-                                              ClassificationSerializer,
-                                              ExtraDescriptionSerializer,
                                               RoutingSerializer,
                                               AdminLevelSerializer,
                                               AreaSerializer,
@@ -182,10 +172,9 @@ class ProcessGroupCreateSerializer(BulkSerializerMixin,
                                    ProcessGroupSerializer):
     field_map = {
         'name': 'name',
-        'code': 'code',
         'co2': 'co2'
     }
-    index_columns = ['code']
+    index_columns = ['name']
 
     def get_queryset(self):
         return ProcessGroup.objects.all()
@@ -197,7 +186,7 @@ class ProcessCreateSerializer(BulkSerializerMixin,
         'name': 'name',
         'code': 'code',
         'processgroup': Reference(name='processgroup',
-                                  referenced_field='code',
+                                  referenced_field='name',
                                   referenced_model=ProcessGroup)
     }
     index_columns = ['code']
@@ -242,6 +231,12 @@ class Waste06CreateSerializer(BulkSerializerMixin,
         'waste04': Reference(name='waste04',
                              referenced_field='ewc_code',
                              referenced_model=Waste04),
+        'materials': 'materials',
+        'industries': 'industries',
+        'agendas': 'agendas',
+        'chains': 'chains',
+        'clean': 'clean',
+        'mixed': 'mixed'
     }
     index_columns = ['ewc_code']
 
@@ -268,7 +263,7 @@ class TreatmentEmissionCreateSerializer(BulkSerializerMixin,
                            referenced_field='ewc_code',
                            referenced_model=Waste06),
         'processgroup': Reference(name='processgroup',
-                                  referenced_field='code',
+                                  referenced_field='name',
                                   referenced_model=ProcessGroup),
         'co2': 'co2'
     }
@@ -276,39 +271,6 @@ class TreatmentEmissionCreateSerializer(BulkSerializerMixin,
 
     def get_queryset(self):
         return TreatmentEmission.objects.all()
-
-
-class MaterialCreateSerializer(BulkSerializerMixin,
-                               MaterialSerializer):
-    field_map = {
-        'name': 'name'
-    }
-    index_columns = ['name']
-
-    def get_queryset(self):
-        return Material.objects.all()
-
-
-class ProductCreateSerializer(BulkSerializerMixin,
-                              ProductSerializer):
-    field_map = {
-        'name': 'name'
-    }
-    index_columns = ['name']
-
-    def get_queryset(self):
-        return Product.objects.all()
-
-
-class CompositeCreateSerializer(BulkSerializerMixin,
-                                CompositeSerializer):
-    field_map = {
-        'name': 'name'
-    }
-    index_columns = ['name']
-
-    def get_queryset(self):
-        return Composite.objects.all()
 
 
 class YearCreateSerializer(BulkSerializerMixin,
@@ -356,21 +318,6 @@ class FlowChainCreateSerializer(BulkSerializerMixin,
                             referenced_field='code',
                             referenced_model=GNcode,
                             allow_null=True),
-        'materials': Reference(name='materials',
-                               referenced_field='name',
-                               referenced_model=Material,
-                               many=True,
-                               allow_null=True),
-        'products': Reference(name='products',
-                              referenced_field='name',
-                              referenced_model=Product,
-                              many=True,
-                              allow_null=True),
-        'composites': Reference(name='composites',
-                                referenced_field='name',
-                                referenced_model=Composite,
-                                many=True,
-                                allow_null=True),
         'dataset': Reference(name='dataset',
                              referenced_field='citekey',
                              referenced_model=Dataset)
@@ -440,38 +387,6 @@ class FlowCreateSerializer(BulkSerializerMixin,
                 message, url
             )
         return super().validate(attrs)
-
-
-class ClassificationCreateSerializer(BulkSerializerMixin,
-                                     ClassificationSerializer):
-    field_map = {
-        'flowchain': Reference(name='flowchain',
-                               referenced_field='identifier',
-                               referenced_model=FlowChain),
-        'clean': 'clean',
-        'mixed': 'mixed',
-        'direct_use': 'direct_use',
-        'is_composite': 'composite'
-    }
-    index_columns = ['flowchain']
-
-    def get_queryset(self):
-        return Classification.objects.all()
-
-
-class ExtraDescriptionCreateSerializer(BulkSerializerMixin,
-                                       ExtraDescriptionSerializer):
-    field_map = {
-        'flowchain': Reference(name='flowchain',
-                               referenced_field='identifier',
-                               referenced_model=FlowChain),
-        'type': 'type',
-        'description': 'description'
-    }
-    index_columns = ['flowchain', 'type']
-
-    def get_queryset(self):
-        return ExtraDescription.objects.all()
 
 
 class RoutingCreateSerializer(BulkSerializerMixin,
