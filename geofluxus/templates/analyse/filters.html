@@ -289,6 +289,34 @@
                 </div>
               {% endif %}
 
+              <!-- Collected en Route -->
+              <div class="col-md-3">
+                <label for="flows-route-select">Collected en route</label>
+                <div class="labelHelpiconContainer">
+                  <a 
+                    class="help-icon fas fa-question-circle" 
+                    data-toggle="popover" 
+                    title="Route"
+                    data-html="true" 
+                    tabindex="0" 
+                    data-content="The Route property indicates whether a waste collection company has collected the same type of waste
+                      from multiple different producers of waste. During the waste collection process, the waste from
+                      all sources is combined.
+                      <br>
+                      An example would be municipal waste collection in which the waste from every building is collected by a truck.
+                    ">
+                  </a>
+                </div>
+                <select 
+                  name="flows-route-select" 
+                  id="flows-route-select"
+                  class="form-control form-control-sm selectpicker">
+                    <option value='both'>Ignore</option>
+                    <option value='no'>Not route</option>
+                    <option value='yes'>Route</option>
+                </select>
+              </div>
+
               <!-- Origin Role -->
               <div class="row mt-3" style="display: none;">
                 <div class="col-md-12">
@@ -392,21 +420,21 @@
 
         <!-- DESTINATION CONTROLS -->
         <div class="card bg-dark">
-            <div class="card-header" id="card-header-collapse-destination">
-              <h4 class="mb-1">
-                <button 
-                  class="btn btn-link collapsed collapsingHeaderButton" 
-                  id="btn-collapse-header-destination"
-                  data-toggle="collapse" 
-                  data-target="#collapseDestinationBlock" 
-                  aria-expanded="false"
-                  aria-controls="collapseDestinationBlock"
-                  title="The filters related to the Destination of the waste flow.">
-                    <i class="fa fa-chevron-down pull-right"></i>
-                    Destination
-                </button>
-              </h4>
-            </div>
+          <div class="card-header" id="card-header-collapse-destination">
+            <h4 class="mb-1">
+              <button 
+                class="btn btn-link collapsed collapsingHeaderButton" 
+                id="btn-collapse-header-destination"
+                data-toggle="collapse" 
+                data-target="#collapseDestinationBlock" 
+                aria-expanded="false"
+                aria-controls="collapseDestinationBlock"
+                title="The filters related to the Destination of the waste flow.">
+                  <i class="fa fa-chevron-down pull-right"></i>
+                  Destination
+              </button>
+            </h4>
+          </div>
 
             <div 
               id="collapseDestinationBlock" 
@@ -415,17 +443,22 @@
               data-parent="#filterBlock">
                 <div class="card-body">
 
-                    {% if not request.user|isDemoUser %}
-                        <div class="row">
-                            <div class="col-md-4 destination-actor-select-col">
-                                <label for="destination-actor-select">Select specific <strong>companies</strong>:</label>
-                                <select name="destination-actor-select" id="destination-actor-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
-                                style="resize: vertical;">
-                            </select>
-                        </div>
+                  {% if not request.user|isDemoUser %}
+                    <div class="row">
+                      <div class="col-md-4 destination-actor-select-col">
+                        <label for="destination-actor-select">Select specific <strong>companies</strong>:</label>
+                        <select 
+                          name="destination-actor-select" 
+                          id="destination-actor-select" 
+                          multiple
+                          class="form-control form-control-sm selectpicker" 
+                          data-live-search="true" 
+                          data-size="6"
+                          style="resize: vertical;">
+                        </select>
+                      </div>
                     </div>
-                    {% endif %}
+                  {% endif %}
 
                     <div class="row">
                         <div class="col-md-10">
@@ -1033,25 +1066,6 @@
                             {% endcomment %}
                         </div>
                         <div class="row pb-4">
-                            <div class="col-md-3">
-                                <label for="flows-route-select">Collected en route</label>
-                                <div class="labelHelpiconContainer">
-                                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Route"
-                                        data-html="true" tabindex="0" data-content="The Route property indicates whether a waste collection company has collected the same type of waste
-                                            from multiple different producers of waste. During the waste collection process, the waste from
-                                            all sources is combined.
-                                            <br>
-                                            An example would be municipal waste collection in which the waste from every building is collected by a truck.
-                                        ">
-                                    </a>
-                                </div>
-                                <select name="flows-route-select" id="flows-route-select"
-                                    class="form-control form-control-sm selectpicker">
-                                    <option value='both'>Ignore</option>
-                                    <option value='no'>Not route</option>
-                                    <option value='yes'>Route</option>
-                                </select>
-                            </div>
                             <div class="col-md-3">
                                 <label for="flows-collector-select">Collector</label>
                                 <div class="labelHelpiconContainer">
