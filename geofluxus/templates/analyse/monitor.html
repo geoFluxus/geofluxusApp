@@ -3,7 +3,7 @@
 
       <div class="block">
 
-      <h4 class="pb-2 pl-3">Step <%= titleNumber %>: Visualize</h4>
+      <h4 class="pb-2 pl-3">Step 2: Visualize</h4>
 
       <div class="card bg-dark" id="dimensionsCard">
 
@@ -298,24 +298,35 @@
 
       </div>
 
-      <div class="row mt-1 d-flex justify-content-end">
+      <div class="row mt-1 d-flex justify-content-start">
+        <!-- <button 
+          id='reset-dim-viz' 
+          class="btn btn-secondary resetButton" 
+          title="Reset all dimension and visualization settings">
+            RESET
+        </button> -->
 
-          <button id='reset-dim-viz' class="btn btn-secondary resetButton" title="Reset all dimension and visualization settings">RESET
+        <div>
+          <button 
+            id='apply-filters' 
+            class="btn btn-primary"
+            title="Apply the filters and render the selected visualization."
+            style="margin-left: 10px; float: left; width: 10em">
+              VISUALIZEER
           </button>
-
-          <div>
-              <button id='apply-filters' class="btn btn-primary"
-                  title="Apply the filters and render the selected visualization."
-                  style="margin-left: 10px; float: left; width: 10em">VISUALIZE
-              </button>
-              <div class="helpIconContainer d-inline-flex align-items-center">
-                  <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Visualize"
-                      style="float: right; margin-left: 4px !important;" data-html="true" tabindex="0"
-                      data-content="<b>Filter</b> the waste flows according to the filters in Origin, Destination,
-                      and Flows, and <b>render</b> the selected visualization based on the chosen dimensions and granularity.">
-                  </a>
-              </div>
+          <div class="helpIconContainer d-inline-flex align-items-center">
+            <a 
+              class="help-icon fas fa-question-circle" 
+              data-toggle="popover" 
+              title="Visualize"
+              style="float: right; margin-left: 4px !important;" 
+              data-html="true" 
+              tabindex="0"
+              data-content="<b>Filter</b> the waste flows according to the filters in Origin, Destination,
+                and Flows, and <b>render</b> the selected visualization based on the chosen dimensions and granularity.">
+            </a>
           </div>
+        </div>
       </div>
   </div>
 
@@ -354,7 +365,7 @@
         </div>
 
 
-        <div class="row mt-1 d-flex justify-content-end export-button-row">
+        <div class="row mt-1 d-flex justify-content-start export-button-row">
 
             <button id='viz-export-csv' class="btn btn-primary mr-1 export-csv"
                 title="Export the data of this visualization as a CSV file."
