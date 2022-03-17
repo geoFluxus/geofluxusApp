@@ -4,7 +4,7 @@
     <div class="block accordion" id="filterBlock">
 
         <div class="row justify-content-between">
-          <h4 class="pb-1 pl-3">Step 1: Filter the waste flows (optional)</h4>            
+          <h4 class="pb-1 pl-3">Stap 1: Selecteer de afvalstromen</h4>            
         </div>
 
         <div class="card bg-dark">
@@ -18,8 +18,8 @@
                 aria-expanded="true"
                 aria-controls="collapseGeneralBlock"
                 title="">
-                <i class="fa fa-chevron-down pull-right"></i>
-                  General
+                  <i class="fa fa-chevron-down pull-right"></i>
+                  Algemeen
               </button>
             </h4>
           </div>
@@ -36,8 +36,8 @@
                 class="btn btn-secondary openSavedFilterModal"
                 data-filter-modal-mode="savedMode"
                 title="Load saved filter configurations."
-                style="margin: 10px; height: 38px; width: 10rem">
-                  LOAD FILTERS
+                style="margin: 10px; height: 38px; width: 12rem">
+                  Laad voorselectie
               </button>
 
               <div class="row"
@@ -46,40 +46,51 @@
                 {% endif %}>
   
                 <div class="col-md-3 flows-dataset-select-col">
-                  <label for="flows-dataset-select">Data set</label>
+                  <label for="flows-dataset-select">Databron</label>
                   <div class="labelHelpiconContainer">
-                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Data set"
-                      data-html="true" tabindex="0" data-content="Select the data set you want to analyse.">
+                    <a 
+                      class="help-icon fas fa-question-circle" 
+                      data-toggle="popover" 
+                      title="Data set"
+                      data-html="true" 
+                      tabindex="0" 
+                      data-content="Select the data set you want to analyse.">
                     </a>
                   </div>
   
-                  <select name="flows-dataset-select" id="flows-dataset-select" multiple
-                    class="form-control form-control-sm selectpicker" data-size="4"
+                  <select 
+                    name="flows-dataset-select" 
+                    id="flows-dataset-select"
+                     multiple
+                    class="form-control form-control-sm selectpicker" 
+                    data-size="4"
                     style="resize: vertical;">
-                    <option selected value="-1">All (<%= datasets.count %>)</option>
-                    <option data-divider="true"></option>
-                    <% datasets.forEach(function(dataset){ %>
-                    <option value="<%= dataset.id %>"><%= dataset.get('title') %></option>
-                    <% }); %>
+                      <option selected value="-1">Alle (<%= datasets.count %>)</option>
+                      <option data-divider="true"></option>
+                      <% datasets.forEach(function(dataset){ %>
+                      <option value="<%= dataset.id %>"><%= dataset.get('title') %></option>
+                      <% }); %>
                   </select>
                 </div>
-              </div>
-  
-              <div class="row pb-4">
+
                 <div class="col-md-3">
-                  <label for="flows-year-select">Year</label>
+                  <label for="flows-year-select">Jaar</label>
                   <div class="labelHelpiconContainer">
-                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Year"
-                      data-html="true" tabindex="0" data-content="Select the year in which the waste flow has been reported.<br>
-                      Upon selecting a Year, the Month filter will become available, containing the months belonging to the selection made in this filter.
-                      ">
+                    <a 
+                      class="help-icon fas fa-question-circle" 
+                      data-toggle="popover" 
+                      title="Year"
+                      data-html="true" 
+                      tabindex="0" 
+                      data-content="Select the year in which the waste flow has been reported.<br>
+                        Upon selecting a Year, the Month filter will become available, containing the months belonging to the selection made in this filter.">
                     </a>
                   </div>
   
                   <select name="flows-year-select" id="flows-year-select" multiple
                     class="form-control form-control-sm selectpicker" data-size="5"
                     style="resize: vertical;">
-                    <option selected value="-1">All (<%= years.count %>)</option>
+                    <option selected value="-1">Alle (<%= years.count %>)</option>
                     <option data-divider="true"></option>
                     <% years.forEach(function(year){ %>
                       <option value="<%= year.id %>"><%= year.get('code') %></option>
@@ -88,7 +99,7 @@
                 </div>
   
                 <div class="col-md-3" id="flows-monthsCol" style="display: none;">
-                  <label for="flows-month-select">Month</label>
+                  <label for="flows-month-select">Maand</label>
                   <div class="labelHelpiconContainer">
                     <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Month"
                       data-html="true" tabindex="0"
@@ -103,6 +114,8 @@
                   </select>
                 </div>
               </div>
+  
+              
             </div>
           </div>
 
@@ -1409,12 +1422,14 @@
         <div class="filter-log-container" style="display: none;">
           <div class="card bg-dark">
 
-                    <div class="card-header">
-                        <h4 class="mt-2 ml-3">
-                            <button class="btn btn-link collapsingHeaderButton" id="btn-collapse-header-origin"
-                                title="">
-                                Uw selectie
-                            </button>
+            <div class="card-header">
+              <h4 class="mt-2 ml-3">
+                <button 
+                  class="btn btn-link collapsingHeaderButton" 
+                  id="btn-collapse-header-origin"
+                  title="">
+                    Uw selectie
+                </button>
 
                 <button 
                   type="button" 
