@@ -50,8 +50,13 @@
                 <div class="col-md-3 flows-dataset-select-col">
                   <label for="flows-dataset-select">Data set</label>
                   <div class="labelHelpiconContainer">
-                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Data set"
-                      data-html="true" tabindex="0" data-content="Select the data set you want to analyse.">
+                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Databron"
+                      data-html="true" tabindex="0" data-content="
+                        Selecteer een of meerdere de databronnen voor de analyse.
+                        Standaard worden alle datasets geselecteerd.
+                        “Ontvangst” representeert de totale gerapporteerde hoeveelheid primair bedrijfsafval.
+                        “Afgifte” representeert de totale hoeveelheid gerapporteerd secundair bedrijfsafval waarvan de status is veranderd van afval naar (bij)product.
+                      ">
                     </a>
                   </div>
   
@@ -71,9 +76,10 @@
                 <div class="col-md-3">
                   <label for="flows-year-select">Year</label>
                   <div class="labelHelpiconContainer">
-                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Year"
-                      data-html="true" tabindex="0" data-content="Select the year in which the waste flow has been reported.<br>
-                      Upon selecting a Year, the Month filter will become available, containing the months belonging to the selection made in this filter.
+                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Jaar"
+                      data-html="true" tabindex="0" data-content="
+                      Selecteer een of meerdere jaren voor analyse. Standaard worden alle jaren geselecteerd.
+                      Vervolgens kunt u een of meerdere maanden selecteren. Standaard worden alle maanden geselecteerd.
                       ">
                     </a>
                   </div>
@@ -92,9 +98,12 @@
                 <div class="col-md-3" id="flows-monthsCol" style="display: none;">
                   <label for="flows-month-select">Month</label>
                   <div class="labelHelpiconContainer">
-                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Month"
+                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Maand"
                       data-html="true" tabindex="0"
-                      data-content="Select the month in which the waste flow has been reported.">
+                      data-content="
+                      Selecteer een of meerdere maanden voor analyse.
+                      Standaard worden alle maanden geselecteerd.
+                    ">
                     </a>
                   </div>
   
@@ -157,10 +166,14 @@
                       <a 
                         class="help-icon fas fa-question-circle" 
                         data-toggle="popover"
-                        title="Select areas" 
+                        title="Selecteer gebied"
                         data-html="true" 
                         tabindex="0"
-                        data-content="Clicking the <b>Select areas</b> button opens a dialog in which you can select one or more geographic areas.<br> The selected areas will be used to filter the waste flows based on the coordinates of the Origin of the waste flow.">
+                        data-content="
+                        Selecteer een of meerdere gebieden van herkomst van afval op een kaart.
+                        Standaard worden alle gebieden geselecteerd waarvan de herkomst of bestemming uw provincie is,
+                        dit geldt zowel voor afvalproductie en afvalverwerking. Kies uit de schaalniveau’s land, provincie, of gemeente.
+                        ">
                       </a>
                     </div>
                   </div>
@@ -232,24 +245,15 @@
                           <a 
                             class="help-icon fas fa-question-circle" 
                             data-toggle="popover" 
-                            title="Activity group"
-                            data-html="true" 
-                            tabindex="0" 
+                            title="Economische sectoren"
+                            data-html="true"
+                            tabindex="0"
                             data-content="
-                              <span>The Activity group indicates the economic activity of the Origin of the waste flow.</span>
-                              <br>
-                              <span>This classification is based on the Statistical Classification of Economic Activities in the European Community,
-                              also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL&StrNom=NACE_REV2&StrLanguageCode=EN&IntPcKey=&StrLayoutCode=HIERARCHIC'>here</a>.</span>
-                              <br>
-                              <span>This filter also contains four additional custom entries:</span>
-                              <ul>
-                                  <li>V - Onbekend</li>
-                                  <li>WT - Unknown waste treatment</li>
-                                  <li>WU - Unknown</li>
-                                  <li>X - Route inzameling</li>
-                              </ul>
-                              <span>Upon selecting an Activity group, the Activity filter will become available, containing the Activities belonging to the selection made in this filter.</span>
-                              ">
+                             Selecteer een of meerdere economische sectoren die het afval hebben gemeld.
+                             Standaard worden alle economische sectoren geselecteerd.
+                             Na een selectie van een of meerdere hoofdsectoren kunt u een of meerdere sub-sectoren selecteren.
+                             De economische sectoren zijn gebaseerd op Standaard Bedrijfsindeling (SBI) codes.
+                             ">
                           </a>
                         </div>
                       </div>
@@ -280,17 +284,11 @@
                           <a 
                             class="help-icon fas fa-question-circle" 
                             data-toggle="popover" 
-                            title="Activity"
+                            title="Economische sub-sectoren"
                             data-html="true" 
                             tabindex="0" 
                             data-content="
-                              <span>The Activity indicates the economic activity of the Origin of the waste flow on the most detailed level.
-                              This filter contains the Activities belonging to the selection made in the Activity group filter.</span>
-                              <br>
-                              <span>This classification is based on the Statistical Classification of Economic Activities in the European Community,
-                              also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL_LINEAR&StrNom=NACE_REV2&StrLanguageCode=EN'>here</a>.</span>
-                              <br>
-                              <span>This filter also contains several additional custom entries belonging to the custom Activity groups.</span>
+                              De economische sub-sectoren zijn gebaseerd op Standaard Bedrijfsindeling (SBI) codes.
                               ">
                           </a>
                         </div>
@@ -319,10 +317,13 @@
                           <a 
                             class="help-icon fas fa-question-circle" 
                             data-toggle="popover" 
-                            title="Companies"
+                            title="Bedrijven"
                             data-html="true" 
                             tabindex="0" 
-                            data-content="Help content here">
+                            data-content="
+                            Zoek en selecteer een of meerdere bedrijven die afval hebben gemeld.
+                            Standaard zijn alle bedrijven geselecteerd.
+                            ">
                           </a>
                         </div>
                       </div>
@@ -347,17 +348,18 @@
                     </div>
                     <div class="col-md-1" style="padding: 0">
                       <div class="labelHelpiconContainer" style="padding: 0">
-                        <a 
-                          class="help-icon fas fa-question-circle" 
-                          data-toggle="popover" 
-                          title="Route"
-                          data-html="true" 
-                          tabindex="0" 
-                          data-content="The Route property indicates whether a waste collection company has collected the same type of waste
-                            from multiple different producers of waste. During the waste collection process, the waste from
-                            all sources is combined.
-                            <br>
-                            An example would be municipal waste collection in which the waste from every building is collected by a truck.
+                        <a
+                          class="help-icon fas fa-question-circle"
+                          data-toggle="popover"
+                          title="Inzamelmethode"
+                          data-html="true"
+                          tabindex="0"
+                          data-content="
+                          Route-inzameling betekent dat een inzamelaar hetzelfde soort afval in een route bij verschillende adressen ophaalt.
+                          Standaard is deze methode niet geselecteerd. Tijdens de rit voegt de inzamelaar het afval samen.
+                          Een voorbeeld van route-inzameling is huis-aan-huis-inzameling van huishoudelijk afval.
+                          In dit geval meldt de inzamelaar zich als ontdoener van het afval terwijl het vanuit meerdere locaties afkomstig is
+                          <span><a href='https://www.lma.nl/faq/melden-afval/afval-inzamelen/route-inzameling/' style='background-color: black;'>(LMA, 2022)</a></span>.
                           ">
                         </a>
                       </div>
@@ -394,8 +396,8 @@
                       <a 
                         class="help-icon fas fa-question-circle" 
                         data-toggle="popover"
-                        title="Origin role" 
-                        data-html="true" 
+                        title="Origin role"
+                        data-html="true"
                         tabindex="0"
                         data-content="Choose the role of the Origin of the waste flow: waste production, waste treatment, or both.<br>
                           If you select waste production, the filters for economic activities will appear.
@@ -508,13 +510,17 @@
                       </button>
 
                       <div class="d-inline buttonHelpiconContainer">
-                        <a 
-                          class="help-icon fas fa-question-circle" 
+                        <a
+                          class="help-icon fas fa-question-circle"
                           data-toggle="popover"
-                          title="Select areas" 
-                          data-html="true" 
+                          title="Selecteer gebied"
+                          data-html="true"
                           tabindex="0"
-                          data-content="Clicking the <b>Select areas</b> button opens a dialog in which you can select one or more geographic areas.<br> The selected areas will be used to filter the waste flows based on the coordinates of the Destination of the waste flow.">
+                          data-content="
+                          Selecteer een of meerdere gebieden van herkomst van afval op een kaart.
+                          Standaard worden alle gebieden geselecteerd waarvan de herkomst of bestemming uw provincie is,
+                          dit geldt zowel voor afvalproductie en afvalverwerking. Kies uit de schaalniveau’s land, provincie, of gemeente.
+                          ">
                         </a>
                       </div>
                     </div>
@@ -713,16 +719,15 @@
                           <a 
                             class="help-icon fas fa-question-circle" 
                             data-toggle="popover"
-                            title="Treatment method group" 
+                            title="Verwerkingsmethoden"
                             data-html="true" 
                             tabindex="0" 
                             data-content="
-                              <span>The Treatment method group indicates the general treatment method group used by the Destination of the flows.</span>
-                              <br>
-                              <span>This classification is based on the classification system of the Dutch government agency 'Landelijk Meldpunt Afvalstoffen'.
-                              The full list of entries can be consulted <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a>.</span>
-                              <br>
-                              <span>Upon selecting a Treatment method group, the Treatment method filter will become available, containing the Treatment methods belonging to the selection made in this filter.</span>
+                              Selecteer een of meerdere verwerkingsmethoden.
+                              Standaard zijn alle verwerkingsmethoden geselecteerd.
+                              Na een selectie van een of meerdere hoofdmethoden kunt u een of meerdere sub-methoden selecteren.
+                              Raadpleeg de website van het Landelijk Meldpunt Afvalstoffen voor meer informatie over de definities van verwerkingsmethoden
+                              <span><a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>hier</a></span>.
                               ">
                           </a>
                         </div>
@@ -752,14 +757,14 @@
                           <a 
                             class="help-icon fas fa-question-circle" 
                             data-toggle="popover"
-                            title="Treatment method" 
+                            title="Sub-verwerkingsmethoden"
                             data-html="true" 
                             tabindex="0" 
                             data-content="
-                              <span>The Treatment method indicates the specific treatment method used by the Destination of the flows.</span>
-                              <br>
-                              <span>This classification is based on the classification system of the Dutch government agency 'Landelijk Meldpunt Afvalstoffen'.
-                              The full list of entries can be consulted <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a>.</span>
+                              Selecteer een of meerdere sub-verwerkingsmethoden.
+                              Standaard zijn alle sub-verwerkingsmethoden geselecteerd.
+                              Raadpleeg de website van het Landelijk Meldpunt Afvalstoffen voor meer informatie over de definities van verwerkingsmethoden
+                              <span><a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a></span>.
                               ">
                           </a>
                         </div>
@@ -789,12 +794,15 @@
                         <div class="col-md-1">
                           <div class="labelHelpiconContainer" style="padding: 0">
                             <a 
-                              class="help-icon fas fa-question-circle" 
-                              data-toggle="popover" 
-                              title="Companies"
-                              data-html="true" 
-                              tabindex="0" 
-                              data-content="Help content here">
+                              class="help-icon fas fa-question-circle"
+                              data-toggle="popover"
+                              title="Bedrijven"
+                              data-html="true"
+                              tabindex="0"
+                              data-content="
+                              Zoek en selecteer een of meerdere bedrijven die afval hebben gemeld.
+                              Standaard zijn alle bedrijven geselecteerd.
+                              ">
                             </a>
                           </div>
                         </div>
@@ -834,7 +842,7 @@
 
                 <!-- Flow type -->
                 <div class="row">
-                  <div class="col-md-3">
+                  <div class="col-md-3.5">
                     <div
                       class="btn-group btn-group-toggle"
                       id="flow-type-radio"
@@ -850,6 +858,22 @@
                       <label class="btn btn-default flow-type" style="width: 40%;" type="product">
                         <input type="radio" id="flow-type-radio-treatment">Waste treatment
                       </label>
+                    </div>
+                  </div>
+                  <div class="col-md-1">
+                    <div class="labelHelpiconContainer">
+                      <a
+                        class="help-icon fas fa-question-circle"
+                        data-toggle="popover"
+                        title="Materials"
+                        data-html="true"
+                        tabindex="0"
+                        data-content="Filter the flows based on their material content.
+                          Selecting one or more materials will return all flows containing the selected material(s),
+                          meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
+                          consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
+                          to only include non-mixed material flows.">
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -1640,13 +1664,13 @@
       <!-- Modal content-->
       <div class="modal-content col-md-12 pt-1 ml-2">
           <div class="modal-header pt-2 pb-1">
-              <h4 class="modal-title">Select areas</h4>
+              <h4 class="modal-title">Selecteer gebieden</h4>
               <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times"></i></button>
           </div>
           <div class="modal-body">
               <div class='row pt-1'>
                   <div class="col">
-                      <label for="area-level-select" class="input-label">Geographic level:</label>
+                      <label for="area-level-select" class="input-label">Schaalniveau:</label>
                       <select name="area-level-select" id="area-level-select" class="form-control form-control-sm selectpicker" style="max-width: 350px;">
                           <% levels.forEach(function(level) { %>
                               <% if (level.get('level') != "1000") %>
@@ -1660,7 +1684,7 @@
               </div>
               <div class='row pt-0'>
                   <div class="col">
-                      <label for="areaSelectionsModalTextarea">Selected areas:</label>
+                      <label for="areaSelectionsModalTextarea">Geselecteerde gebieden:</label>
                       <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsModalTextarea" style="width: 100%" type="text" readonly></textarea>
                   </div>
               </div>
