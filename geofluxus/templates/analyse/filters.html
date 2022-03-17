@@ -880,106 +880,109 @@
                   <div id="container-waste">
                     <!-- <h5 class="subtitle">European Waste Catalogue Codes (EuralCode)</h5> -->
 
-                    <!-- Chain Position -->
-                    <div class="col-md-3">
-                      <label for="flows-chain-select">Chain position</label>
-                      <div class="labelHelpiconContainer">
-                        <a 
-                          class="help-icon fas fa-question-circle" 
-                          data-toggle="popover" 
-                          title="Materials"
-                          data-html="true" 
-                          tabindex="0" 
-                          data-content="Filter the flows based on their material content.
-                            Selecting one or more materials will return all flows containing the selected material(s),
-                            meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
-                            consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
-                            to only include non-mixed material flows.">
-                        </a>
+                    <div class="row">
+                      
+                      <!-- Chain Position -->
+                      <div class="col-md-3">
+                        <label for="flows-chain-select">Chain position</label>
+                        <div class="labelHelpiconContainer">
+                          <a 
+                            class="help-icon fas fa-question-circle" 
+                            data-toggle="popover" 
+                            title="Materials"
+                            data-html="true" 
+                            tabindex="0" 
+                            data-content="Filter the flows based on their material content.
+                              Selecting one or more materials will return all flows containing the selected material(s),
+                              meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
+                              consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
+                              to only include non-mixed material flows.">
+                          </a>
+                        </div>
+                        <select 
+                          id="flows-chain-select" 
+                          name="flows-chain-select" 
+                          multiple
+                          class="form-control form-control-sm selectpicker" 
+                          data-live-search="true" 
+                          data-size="6"
+                          style="resize: vertical;">
+                            <option selected value="-1">All (<%= chains.length %>)</option>
+                            <option data-divider="true"></option>
+                            <% chains.forEach(function(chain){ %>
+                            <option value="<%= chain.id %>"><%= chain.get('name') %>
+                            </option>
+                            <% }); %>
+                        </select>
                       </div>
-                      <select 
-                        id="flows-chain-select" 
-                        name="flows-chain-select" 
-                        multiple
-                        class="form-control form-control-sm selectpicker" 
-                        data-live-search="true" 
-                        data-size="6"
-                        style="resize: vertical;">
-                          <option selected value="-1">All (<%= chains.length %>)</option>
-                          <option data-divider="true"></option>
-                          <% chains.forEach(function(chain){ %>
-                          <option value="<%= chain.id %>"><%= chain.get('name') %>
-                          </option>
-                          <% }); %>
-                      </select>
-                    </div>
 
-                    <!-- Agendas -->
-                    <div class="col-md-3">
-                      <label for="flows-agenda-select">Transition Agenda</label>
-                      <div class="labelHelpiconContainer">
-                        <a 
-                          class="help-icon fas fa-question-circle" 
-                          data-toggle="popover" 
-                          title="Materials"
-                          data-html="true" 
-                          tabindex="0" 
-                          data-content="Filter the flows based on their material content.
-                            Selecting one or more materials will return all flows containing the selected material(s),
-                            meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
-                            consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
-                            to only include non-mixed material flows.">
-                        </a>
-                      </div>
-                      <select 
-                        id="flows-agenda-select" 
-                        name="flows-agenda-select" 
-                        multiple
-                        class="form-control form-control-sm selectpicker" 
-                        data-live-search="true" 
-                        data-size="6"
-                        style="resize: vertical;">
-                          <option selected value="-1">All (<%= agendas.length %>)</option>
-                          <option data-divider="true"></option>
-                          <% agendas.forEach(function(agenda){ %>
-                          <option value="<%= agenda.id %>"><%= agenda.get('name') %>
-                          </option>
-                          <% }); %>
-                      </select>
-                    </div>  
+                      <!-- Agendas -->
+                      <div class="col-md-3">
+                        <label for="flows-agenda-select">Transition Agenda</label>
+                        <div class="labelHelpiconContainer">
+                          <a 
+                            class="help-icon fas fa-question-circle" 
+                            data-toggle="popover" 
+                            title="Materials"
+                            data-html="true" 
+                            tabindex="0" 
+                            data-content="Filter the flows based on their material content.
+                              Selecting one or more materials will return all flows containing the selected material(s),
+                              meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
+                              consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
+                              to only include non-mixed material flows.">
+                          </a>
+                        </div>
+                        <select 
+                          id="flows-agenda-select" 
+                          name="flows-agenda-select" 
+                          multiple
+                          class="form-control form-control-sm selectpicker" 
+                          data-live-search="true" 
+                          data-size="6"
+                          style="resize: vertical;">
+                            <option selected value="-1">All (<%= agendas.length %>)</option>
+                            <option data-divider="true"></option>
+                            <% agendas.forEach(function(agenda){ %>
+                            <option value="<%= agenda.id %>"><%= agenda.get('name') %>
+                            </option>
+                            <% }); %>
+                        </select>
+                      </div>  
 
-                    <!-- Industries -->
-                    <div class="col-md-3">
-                      <label for="flows-industry-select">Industries</label>
-                      <div class="labelHelpiconContainer">
-                        <a 
-                          class="help-icon fas fa-question-circle" 
-                          data-toggle="popover" 
-                          title="Materials"
-                          data-html="true" 
-                          tabindex="0" 
-                          data-content="Filter the flows based on their material content.
-                            Selecting one or more materials will return all flows containing the selected material(s),
-                            meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
-                            consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
-                            to only include non-mixed material flows.">
-                        </a>
+                      <!-- Industries -->
+                      <div class="col-md-3">
+                        <label for="flows-industry-select">Industries</label>
+                        <div class="labelHelpiconContainer">
+                          <a 
+                            class="help-icon fas fa-question-circle" 
+                            data-toggle="popover" 
+                            title="Materials"
+                            data-html="true" 
+                            tabindex="0" 
+                            data-content="Filter the flows based on their material content.
+                              Selecting one or more materials will return all flows containing the selected material(s),
+                              meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
+                              consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
+                              to only include non-mixed material flows.">
+                          </a>
+                        </div>
+                        <select 
+                          id="flows-industry-select" 
+                          name="flows-industry-select" 
+                          multiple
+                          class="form-control form-control-sm selectpicker" 
+                          data-live-search="true" 
+                          data-size="6"
+                          style="resize: vertical;">
+                            <option selected value="-1">All (<%= industries.length %>)</option>
+                            <option data-divider="true"></option>
+                            <% industries.forEach(function(industry){ %>
+                            <option value="<%= industry.id %>"><%= industry.get('name') %>
+                            </option>
+                            <% }); %>
+                        </select>
                       </div>
-                      <select 
-                        id="flows-industry-select" 
-                        name="flows-industry-select" 
-                        multiple
-                        class="form-control form-control-sm selectpicker" 
-                        data-live-search="true" 
-                        data-size="6"
-                        style="resize: vertical;">
-                          <option selected value="-1">All (<%= industries.length %>)</option>
-                          <option data-divider="true"></option>
-                          <% industries.forEach(function(industry){ %>
-                          <option value="<%= industry.id %>"><%= industry.get('name') %>
-                          </option>
-                          <% }); %>
-                      </select>
                     </div>
 
                     <!-- Chapter -->
