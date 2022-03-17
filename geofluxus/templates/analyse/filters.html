@@ -806,599 +806,604 @@
 
         <!-- FLOWS CONTROLS -->
         <div class="card bg-dark"
-            style="border-bottom-left-radius: 30px !important; border-bottom-right-radius: 30px !important">
-            <div class="card-header" id="card-header-collapse-flows">
-                <h4 class="mb-1">
-                    <button class="btn btn-link collapsed collapsingHeaderButton" id="btn-collapse-header-flows"
-                        data-toggle="collapse" data-target="#collapseFlowsBlock" aria-expanded="false"
-                        aria-controls="collapseFlowsBlock"
-                        title="The filters related to the properties of the waste flow itself.">
-                        <i class="fa fa-chevron-down pull-right"></i>
-                        Flows
-                    </button>
-                </h4>
-            </div>
+          style="border-bottom-left-radius: 30px !important; border-bottom-right-radius: 30px !important">
 
-            <div id="collapseFlowsBlock" 
-              class="collapse" 
-              aria-labelledby="card-header-collapse-flows"
-              data-parent="#filterBlock">
-                <div class="card-body">
+          <div class="card-header" id="card-header-collapse-flows">
+            <h4 class="mb-1">
+              <button 
+                class="btn btn-link collapsed collapsingHeaderButton" 
+                id="btn-collapse-header-flows"
+                data-toggle="collapse" 
+                data-target="#collapseFlowsBlock" 
+                aria-expanded="false"
+                aria-controls="collapseFlowsBlock"
+                title="The filters related to the properties of the waste flow itself.">
+                <i class="fa fa-chevron-down pull-right"></i>
+                  Flows
+              </button>
+            </h4>
+          </div>
 
-                  <!-- WASTE | BOTH | PRODUCT -->
-                  <h5 class="subtitle" style="background-color: purple; color: yellow">( WASTE | BOTH | PRODUCT ) <-- toggle goes here</h5>
+          <div id="collapseFlowsBlock" 
+            class="collapse" 
+            aria-labelledby="card-header-collapse-flows"
+            data-parent="#filterBlock">
+              <div class="card-body">
 
-                  <!-- Geographical Areas -->
-                  <div style="display: none;">
+                <!-- WASTE | BOTH | PRODUCT -->
+                <h5 class="subtitle" style="background-color: purple; color: yellow">( WASTE | BOTH | PRODUCT ) <-- toggle goes here</h5>
 
-                    <h5 class="subtitle">Geographical</h5>
+                <!-- Geographical Areas -->
+                <div style="display: none;">
 
-                    <div class="row">
-                      <div class="col-md-10">
-                        <label style="width: 450px" for="area-select-button-flows">Select area(s) through which
-                          the flows must pass:
-                        </label>
+                  <h5 class="subtitle">Geographical</h5>
 
-                        <div class="d-block">
-                          <button 
-                            id="area-select-button-flows" 
-                            class="btn btn-sm btn-primary area-select-button"
-                            data-width="100%" 
-                            style="width: 13em" 
-                            data-area-select-block="flows">
-                              Select areas
-                          </button>
+                  <div class="row">
+                    <div class="col-md-10">
+                      <label style="width: 450px" for="area-select-button-flows">Select area(s) through which
+                        the flows must pass:
+                      </label>
 
-                          <div class="d-inline buttonHelpiconContainer">
-                            <a class="help-icon fas fa-question-circle" 
-                              data-toggle="popover"
-                              title="Select areas" 
-                              data-html="true" 
-                              tabindex="0"
-                              data-content="Clicking the <b>Select areas</b> button opens a dialog in which you can select one or more geographic areas.<br> The selected areas will be used to filter the waste flows based on the <b>estimated route</b> of the waste transport.">
-                            </a>
-                          </div>
-                        </div>
+                      <div class="d-block">
+                        <button 
+                          id="area-select-button-flows" 
+                          class="btn btn-sm btn-primary area-select-button"
+                          data-width="100%" 
+                          style="width: 13em" 
+                          data-area-select-block="flows">
+                            Select areas
+                        </button>
 
-                      </div>
-                    </div>
-                    <div class="row areaSelections-flows" style="display: none;">
-                        <div class="col-md-4">
-
-                            <textarea class="form-control-sm textarea-autosize selections"
-                                id="areaSelections-Textarea-flows" style="width: 100% !important; display: inline-block"
-                                type="text" readonly></textarea>
-                            <button id="clear-flows-areas-button" class="btn btn-sm btn-primary clear-areas-button"
-                                data-area-clear-button="flows">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                  </div>
-
-                  <!-- Waste-related selectors -->
-                  <div id="container-waste">
-                    <!-- <h5 class="subtitle">European Waste Catalogue Codes (EuralCode)</h5> -->
-
-                    <div class="row">
-                      
-                      <!-- Chain Position -->
-                      <div class="col-md-3">
-                        <label for="flows-chain-select">Chain position</label>
-                        <div class="labelHelpiconContainer">
-                          <a 
-                            class="help-icon fas fa-question-circle" 
-                            data-toggle="popover" 
-                            title="Materials"
-                            data-html="true" 
-                            tabindex="0" 
-                            data-content="Filter the flows based on their material content.
-                              Selecting one or more materials will return all flows containing the selected material(s),
-                              meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
-                              consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
-                              to only include non-mixed material flows.">
-                          </a>
-                        </div>
-                        <select 
-                          id="flows-chain-select" 
-                          name="flows-chain-select" 
-                          multiple
-                          class="form-control form-control-sm selectpicker" 
-                          data-live-search="true" 
-                          data-size="6"
-                          style="resize: vertical;">
-                            <option selected value="-1">All (<%= chains.length %>)</option>
-                            <option data-divider="true"></option>
-                            <% chains.forEach(function(chain){ %>
-                            <option value="<%= chain.id %>"><%= chain.get('name') %>
-                            </option>
-                            <% }); %>
-                        </select>
-                      </div>
-
-                      <!-- Agendas -->
-                      <div class="col-md-3">
-                        <label for="flows-agenda-select">Transition Agenda</label>
-                        <div class="labelHelpiconContainer">
-                          <a 
-                            class="help-icon fas fa-question-circle" 
-                            data-toggle="popover" 
-                            title="Materials"
-                            data-html="true" 
-                            tabindex="0" 
-                            data-content="Filter the flows based on their material content.
-                              Selecting one or more materials will return all flows containing the selected material(s),
-                              meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
-                              consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
-                              to only include non-mixed material flows.">
-                          </a>
-                        </div>
-                        <select 
-                          id="flows-agenda-select" 
-                          name="flows-agenda-select" 
-                          multiple
-                          class="form-control form-control-sm selectpicker" 
-                          data-live-search="true" 
-                          data-size="6"
-                          style="resize: vertical;">
-                            <option selected value="-1">All (<%= agendas.length %>)</option>
-                            <option data-divider="true"></option>
-                            <% agendas.forEach(function(agenda){ %>
-                            <option value="<%= agenda.id %>"><%= agenda.get('name') %>
-                            </option>
-                            <% }); %>
-                        </select>
-                      </div>  
-
-                      <!-- Industries -->
-                      <div class="col-md-3">
-                        <label for="flows-industry-select">Industries</label>
-                        <div class="labelHelpiconContainer">
-                          <a 
-                            class="help-icon fas fa-question-circle" 
-                            data-toggle="popover" 
-                            title="Materials"
-                            data-html="true" 
-                            tabindex="0" 
-                            data-content="Filter the flows based on their material content.
-                              Selecting one or more materials will return all flows containing the selected material(s),
-                              meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
-                              consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
-                              to only include non-mixed material flows.">
-                          </a>
-                        </div>
-                        <select 
-                          id="flows-industry-select" 
-                          name="flows-industry-select" 
-                          multiple
-                          class="form-control form-control-sm selectpicker" 
-                          data-live-search="true" 
-                          data-size="6"
-                          style="resize: vertical;">
-                            <option selected value="-1">All (<%= industries.length %>)</option>
-                            <option data-divider="true"></option>
-                            <% industries.forEach(function(industry){ %>
-                            <option value="<%= industry.id %>"><%= industry.get('name') %>
-                            </option>
-                            <% }); %>
-                        </select>
-                      </div>
-                    </div>
-
-                    <!-- Chapter -->
-                    <div class="row">
-                      <div class="col-md-3" id="flows-wastes02Col">
-
-                        <label for="flows-waste02-select">Chapter</label>
-                        <div class="labelHelpiconContainer">
-                          <a 
-                            class="help-icon fas fa-question-circle" 
-                            data-toggle="popover" 
-                            title="EWC Chapter"
-                            data-html="true" 
-                            tabindex="0" 
-                            data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
-                              EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
-                              <br>
-                              <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a>.</span>
-                              <br>
-                              <span>Upon selecting an EWC Chapter, the Sub-Chapter filter will become available, containing the Sub-Chapters belonging to the selection made in this filter.</span>
-                              ">
-                          </a>
-                        </div>
-
-                        <select 
-                          name="flows-waste02-select" 
-                          id="flows-waste02-select" 
-                          multiple
-                          class="form-control form-control-sm selectpicker" 
-                          data-live-search="true" 
-                          data-size="6"
-                          style="resize: vertical;">
-                            <option selected value="-1">All (<%= wastes02.count %>)</option>
-                            <option data-divider="true"></option>
-                            <% wastes02.forEach(function(waste){ %>
-                            <option value="<%= waste.id %>"><%= waste.get('ewc_code') + ". "%>
-                              <%= waste.get('ewc_name')[0].toUpperCase() + waste.get('ewc_name').slice(1).toLowerCase() %>
-                            </option>
-                            <% }); %>
-                        </select>
-                      </div>
-
-                      <div class="col-md-3" id="flows-wastes04Col" style="display: none;">
-                        <label for="flows-waste04-select">Sub-Chapter</label>
-                        <div class="labelHelpiconContainer">
-                          <a 
-                            class="help-icon fas fa-question-circle" 
+                        <div class="d-inline buttonHelpiconContainer">
+                          <a class="help-icon fas fa-question-circle" 
                             data-toggle="popover"
-                            title="EWC Sub-Chapter" 
+                            title="Select areas" 
                             data-html="true" 
-                            tabindex="0" 
-                            data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
-                              EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
-                              <br>
-                              <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a>.</span>
-                              <br>
-                              <span>Upon selecting an EWC Sub-Chapter, the EWC Entry filter will become available, containing the EWC Entries belonging to the selection made in this filter.</span>
-                              ">
+                            tabindex="0"
+                            data-content="Clicking the <b>Select areas</b> button opens a dialog in which you can select one or more geographic areas.<br> The selected areas will be used to filter the waste flows based on the <b>estimated route</b> of the waste transport.">
                           </a>
                         </div>
-
-                        <i class="fas fa-angle-double-right filterDoubleChevron"></i>
-                        <select 
-                          name="flows-waste04-select" 
-                          id="flows-waste04-select" 
-                          multiple
-                          class="form-control form-control-sm selectpicker" 
-                          data-live-search="true" 
-                          data-size="6"
-                          style="resize: vertical;">
-                        </select>
                       </div>
 
-                      <div class="col-md-3" id="flows-wastes06Col" style="display: none;">
-                        <label for="flows-waste06-select" id="flows-waste06-label">EWC Entry</label>
-                        <div class="labelHelpiconContainer" id="helpiconWaste06">
-                          <a 
-                            class="help-icon fas fa-question-circle" 
-                            data-toggle="popover" 
-                            title="EWC Entry"
-                            data-html="true" 
-                            tabindex="0" 
-                            data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
-                              EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
-                              <br>
-                              <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a>.</span>
-                              ">
-                          </a>
-                        </div>
-
-                        <i class="fas fa-angle-double-right filterDoubleChevron chevronEwc06"></i>
-                        <select 
-                          name="flows-waste06-select" 
-                          id="flows-waste06-select" 
-                          multiple
-                          class="form-control form-control-sm selectpicker" 
-                          data-live-search="true" 
-                          data-size="6"
-                          style="resize: vertical;">
-                        </select>
-                      </div>
                     </div>
-
-                    <!-- <h5 class="subtitle">Contents</h5> -->
-                    <div class="row">
-
-                      <!-- Materials -->
-                      <div class="col-md-3">
-                        <label for="flows-material-select">Materials</label>
-                        <div class="labelHelpiconContainer">
-                          <a 
-                            class="help-icon fas fa-question-circle" 
-                            data-toggle="popover" 
-                            title="Materials"
-                            data-html="true" 
-                            tabindex="0" 
-                            data-content="Filter the flows based on their material content.
-                              Selecting one or more materials will return all flows containing the selected material(s),
-                              meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
-                              consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
-                              to only include non-mixed material flows.">
-                          </a>
-                        </div>
-                        <select 
-                          id="flows-material-select" 
-                          name="flows-material-select" 
-                          multiple
-                          class="form-control form-control-sm selectpicker" 
-                          data-live-search="true" 
-                          data-size="6"
-                          style="resize: vertical;">
-                            <option selected value="-1">All (<%= materials.length %>)</option>
-                            <option data-divider="true"></option>
-                            <% materials.forEach(function(material){ %>
-                            <option value="<%= material.id %>"><%= '&emsp;'.repeat(material.get('level')) + material.get('name') %>
-                            </option>
-                            <% }); %>
-                        </select>
-                      </div>                                      
-                    </div>
-
-                    
-                    <!-- Characteristics -->
-                    <div 
-                      {% if not request.user|isExpertUser %}
-                        style="display: none;"
-                      {% endif %}>
-
-                      <!-- <h5 class="subtitle">Characteristics</h5> -->
-                      <div class="row">
-
-                        <!-- Clean -->
-                        <div class="col-md-3">
-                          <label for="flows-clean-select">Clean</label>
-                          <div class="labelHelpiconContainer">
-                            <a 
-                              class="help-icon fas fa-question-circle" 
-                              data-toggle="popover" 
-                              title="Clean"
-                              data-html="true" 
-                              tabindex="0"
-                              data-content="The Clean filter indicates the extent to which a
-                                flow is expected to be contaminated with another substance. ‘Mono’ streams are considered
-                                clean streams since they consist of one material and are not contaminated, i.e. clean.">
-                            </a>
-                          </div>
-                          <select 
-                            id="flows-clean-select" 
-                            name="flows-clean-select"
-                            class="form-control form-control-sm selectpicker" 
-                            multiple style="resize: vertical;">
-                              <option selected value='-1'>Ignore</option>
-                              <option data-divider="true"></option>
-                              <option value='unknown'>Unknown</option>
-                              <option value='no'>Not clean</option>
-                              <option value='yes'>Clean</option>
-                          </select>
-                        </div>
-
-                        <!-- Mixed -->
-                        <div class="col-md-3">
-                          <label for="flows-mixed-select">Mixed</label>
-                          <div class="labelHelpiconContainer">
-                            <a 
-                              class="help-icon fas fa-question-circle" 
-                              data-toggle="popover" 
-                              title="Mixed"
-                              data-html="true" 
-                              tabindex="0" 
-                              data-content="The Mixed category indicates whether the flow
-                                contains two or more materials. A mixed flow could consist of two or more clean materials
-                                (masonry and concrete rubble, f.e.), but also two materials of which one is an identified
-                                pollutant (soil containing mineral oil, f.e.). All non-clean flows are by definition mixed,
-                                indicating they contain two or more materials.">
-                            </a>
-                          </div>
-                          <select 
-                            id="flows-mixed-select" 
-                            name="flows-mixed-select"
-                            class="form-control form-control-sm selectpicker" 
-                            multiple style="resize: vertical;">
-                              <option selected value='-1'>Ignore</option>
-                              <option data-divider="true"></option>
-                              <option value='unknown'>Unknown</option>
-                              <option value='no'>Not mixed</option>
-                              <option value='yes'>Mixed</option>
-                          </select>
-                        </div>
-
-                        <!-- Hazardous -->
-                        <div class="col-md-3">
-                          <label for="flows-hazardous-select">Hazardous</label>
-                          <div class="labelHelpiconContainer">
-                            <a 
-                              class="help-icon fas fa-question-circle" 
-                              data-toggle="popover" 
-                              title="Hazardous"
-                              data-html="true" 
-                              tabindex="0" 
-                              data-content="<span>The European Waste Catalogue (EWC) Code of a waste flow contains an asterisk (*) to indicate whether the waste is considered to be hazardous.
-                                This filter allows you to include or exclude flows containing hazardous materials. By default, this filter ignores this property and returns both options.</span>
-                                <span>The full list of EWC Entries, including the hazardous entries, can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a></span>
-                                ">
-                            </a>
-                          </div>
-                          <select name="flows-hazardous-select" id="flows-hazardous-select"
-                            class="form-control form-control-sm selectpicker">
-                            <option value='both'>Ignore</option>
-                            <option value='no'>Not hazardous</option>
-                            <option value='yes'>Hazardous</option>
-                          </select>
-                        </div>
-
-                        <!-- !! No longer used !!-->
-                        <!-- {% comment %}
-                        <div class="col-md-3">
-                            <label for="flows-direct-select">(An)organic</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Direct use"
-                                    data-html="true" tabindex="0" data-content="The Direct use filter indicates whether
-                                    a flow is (expected to be) directly reusable in its current form and no additional
-                                    processing is required. ">
-                                </a>
-                            </div>
-                            <select id="flows-direct-select" name="flows-direct-select"
-                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
-                                <option selected value='-1'>Ignore</option>
-                                <option data-divider="true"></option>
-                                <option value='unknown'>Unknown</option>
-                                <option value='no'>Anorganic</option>
-                                <option value='yes'>Organic</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="flows-iscomposite-select">(A)biotic</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Composite"
-                                    data-html="true" tabindex="0" data-content="The Composite filter indicates whether a flow contains a
-                                    known composite consisting of two or more materials.">
-                                </a>
-                            </div>
-                            <select id="flows-iscomposite-select" name="flows-iscomposite-select"
-                                class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
-                                <option selected value='-1'>Ignore</option>
-                                <option data-divider="true"></option>
-                                <option value='unknown'>Unknown</option>
-                                <option value='no'>Biotic</option>
-                                <option value='yes'>Abiotic</option>
-                            </select>
-                        </div>
-                        {% endcomment %} -->
-                      </div>
-
-                      <!-- Collector -->
-                      <!-- <div class="row pb-4">
-                        <div class="col-md-3">
-                          <label for="flows-collector-select">Collector</label>
-                          <div class="labelHelpiconContainer">
-                            <a 
-                              class="help-icon fas fa-question-circle" 
-                              data-toggle="popover" 
-                              title="Collector"
-                              data-html="true" 
-                              tabindex="0" 
-                              data-content="<span>The Collector property indicates whether
-                                a waste collection company has collected the same type of waste from different sources.
-                                In this case, the waste from the different sources has not been combined,
-                                and may only consist of certain types of waste, which can be consulted
-                                <a href='https://www.lma.nl/publish/pages/105041/5-bijlage-a-van-de-regeling2.pdf'>here</a>.</span>">
-                            </a>
-                          </div>
-                          <select 
-                            name="flows-collector-select" 
-                            id="flows-collector-select"
-                            class="form-control form-control-sm selectpicker">
-                              <option value='both'>Ignore</option>
-                              <option value='no'>Not collector</option>
-                              <option value='yes'>Collector</option>
-                          </select>
-                        </div>
-                      </div> -->
-                    </div>                    
                   </div>
+                  <div class="row areaSelections-flows" style="display: none;">
+                      <div class="col-md-4">
 
-                  <!-- Product-related selectors -->
-                  <div id="container-product" style="display: none;">
-
-                    <!-- <h5 class="subtitle">GN codes</h5> -->
-                    <div class="row">
-                      <div class="col-md-3" id="flows-gncodesCol">
-                        <!-- <label for="flows-gncode-select">GN Codes</label>
-                        <div class="labelHelpiconContainer">
-                          <a 
-                            class="help-icon fas fa-question-circle" 
-                            data-toggle="popover" 
-                            title="EWC Chapter"
-                            data-html="true" 
-                            tabindex="0" 
-                            data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
-                              EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
-                              <br>
-                              <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a>.</span>
-                              <br>
-                              <span>Upon selecting an EWC Chapter, the Sub-Chapter filter will become available, containing the Sub-Chapters belonging to the selection made in this filter.</span>
-                              ">
-                          </a>
-                        </div> -->
-
-                        <select 
-                          name="flows-gncode-select" 
-                          id="flows-gncode-select" 
-                          multiple
-                          class="form-control form-control-sm selectpicker" 
-                          data-live-search="true" 
-                          data-size="6"
-                          style="resize: vertical;">
-                            <option selected value="-1">All (<%= gncodes.count %>)</option>
-                            <option data-divider="true"></option>
-                            <% gncodes.forEach(function(gncode){ %>
-                            <option value="<%= gncode.id %>"><%= gncode.get('code') %>
-                              <%= gncode.get('name') %>
-                            </option>
-                            <% }); %>
-                        </select>
+                          <textarea class="form-control-sm textarea-autosize selections"
+                              id="areaSelections-Textarea-flows" style="width: 100% !important; display: inline-block"
+                              type="text" readonly></textarea>
+                          <button id="clear-flows-areas-button" class="btn btn-sm btn-primary clear-areas-button"
+                              data-area-clear-button="flows">
+                              <i class="fas fa-times"></i>
+                          </button>
                       </div>
-                    </div>
-
-                    <!-- Products -->
-                    {% comment %}
-                      <div class="col-md-3">
-                        <label>Products</label>
-                        <div class="labelHelpiconContainer">
-                          <a 
-                            class="help-icon fas fa-question-circle" 
-                            data-toggle="popover" 
-                            title="Products"
-                            data-html="true" 
-                            tabindex="0" 
-                            data-content="The Products filter allows for the filtering of materials
-                              which are considered directly reusable.">
-                          </a>
-                        </div>
-                        <select 
-                          name="flows-product-select" 
-                          id="flows-product-select" 
-                          multiple
-                          class="form-control form-control-sm selectpicker" 
-                          data-live-search="true" 
-                          data-size="6"
-                          style="resize: vertical;">
-                            <option selected value="-1">All (<%= products.count %>)</option>
-                            <option data-divider="true"></option>
-                            <% products.forEach(function(product){ %>
-                            <option value="<%= product.id %>">
-                              <%= product.get('name')[0].toUpperCase() + product.get('name').slice(1) %></option>
-                            <% }); %>
-                        </select>
-                      </div>
-
-                      <!-- Composites -->
-                      <div class="col-md-3">
-                        <label>Composites</label>
-                        <div class="labelHelpiconContainer">
-                          <a 
-                            class="help-icon fas fa-question-circle" 
-                            data-toggle="popover" 
-                            title="Composites"
-                            data-html="true" 
-                            tabindex="0" 
-                            data-content="The Composites filter allows for the filtering of
-                              waste flows consisting of more than two materials that are not directly usable. These flows
-                              will require an additional processing step in order to separate the individual materials
-                              making up the composite.">
-                          </a>
-                        </div>
-                        <select 
-                          name="flows-composites-select" 
-                          id="flows-composites-select" 
-                          multiple
-                          class="form-control form-control-sm selectpicker" 
-                          data-live-search="true" 
-                          data-size="6"
-                          style="resize: vertical;">
-                            <option selected value="-1">All (<%= composites.count %>)</option>
-                            <option data-divider="true"></option>
-                            <% composites.forEach(function(composite){ %>
-                            <option value="<%= composite.id %>">
-                              <%= composite.get('name')[0].toUpperCase() + composite.get('name').slice(1) %>
-                            </option>
-                            <% }); %>
-                        </select>
-                      </div>
-                    {% endcomment %}
                   </div>
                 </div>
-            </div>
+
+                <!-- Waste-related selectors -->
+                <div id="container-waste">
+                  <!-- <h5 class="subtitle">European Waste Catalogue Codes (EuralCode)</h5> -->
+
+                  <div class="row">
+                    
+                    <!-- Chain Position -->
+                    <div class="col-md-3">
+                      <label for="flows-chain-select">Chain position</label>
+                      <div class="labelHelpiconContainer">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover" 
+                          title="Materials"
+                          data-html="true" 
+                          tabindex="0" 
+                          data-content="Filter the flows based on their material content.
+                            Selecting one or more materials will return all flows containing the selected material(s),
+                            meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
+                            consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
+                            to only include non-mixed material flows.">
+                        </a>
+                      </div>
+                      <select 
+                        id="flows-chain-select" 
+                        name="flows-chain-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                          <option selected value="-1">All (<%= chains.length %>)</option>
+                          <option data-divider="true"></option>
+                          <% chains.forEach(function(chain){ %>
+                          <option value="<%= chain.id %>"><%= chain.get('name') %>
+                          </option>
+                          <% }); %>
+                      </select>
+                    </div>
+
+                    <!-- Agendas -->
+                    <div class="col-md-3">
+                      <label for="flows-agenda-select">Transition Agenda</label>
+                      <div class="labelHelpiconContainer">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover" 
+                          title="Materials"
+                          data-html="true" 
+                          tabindex="0" 
+                          data-content="Filter the flows based on their material content.
+                            Selecting one or more materials will return all flows containing the selected material(s),
+                            meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
+                            consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
+                            to only include non-mixed material flows.">
+                        </a>
+                      </div>
+                      <select 
+                        id="flows-agenda-select" 
+                        name="flows-agenda-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                          <option selected value="-1">All (<%= agendas.length %>)</option>
+                          <option data-divider="true"></option>
+                          <% agendas.forEach(function(agenda){ %>
+                          <option value="<%= agenda.id %>"><%= agenda.get('name') %>
+                          </option>
+                          <% }); %>
+                      </select>
+                    </div>  
+
+                    <!-- Industries -->
+                    <div class="col-md-3">
+                      <label for="flows-industry-select">Industries</label>
+                      <div class="labelHelpiconContainer">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover" 
+                          title="Materials"
+                          data-html="true" 
+                          tabindex="0" 
+                          data-content="Filter the flows based on their material content.
+                            Selecting one or more materials will return all flows containing the selected material(s),
+                            meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
+                            consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
+                            to only include non-mixed material flows.">
+                        </a>
+                      </div>
+                      <select 
+                        id="flows-industry-select" 
+                        name="flows-industry-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                          <option selected value="-1">All (<%= industries.length %>)</option>
+                          <option data-divider="true"></option>
+                          <% industries.forEach(function(industry){ %>
+                          <option value="<%= industry.id %>"><%= industry.get('name') %>
+                          </option>
+                          <% }); %>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Chapter -->
+                  <div class="row">
+                    <div class="col-md-3" id="flows-wastes02Col">
+
+                      <label for="flows-waste02-select">Chapter</label>
+                      <div class="labelHelpiconContainer">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover" 
+                          title="EWC Chapter"
+                          data-html="true" 
+                          tabindex="0" 
+                          data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
+                            EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
+                            <br>
+                            <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a>.</span>
+                            <br>
+                            <span>Upon selecting an EWC Chapter, the Sub-Chapter filter will become available, containing the Sub-Chapters belonging to the selection made in this filter.</span>
+                            ">
+                        </a>
+                      </div>
+
+                      <select 
+                        name="flows-waste02-select" 
+                        id="flows-waste02-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                          <option selected value="-1">All (<%= wastes02.count %>)</option>
+                          <option data-divider="true"></option>
+                          <% wastes02.forEach(function(waste){ %>
+                          <option value="<%= waste.id %>"><%= waste.get('ewc_code') + ". "%>
+                            <%= waste.get('ewc_name')[0].toUpperCase() + waste.get('ewc_name').slice(1).toLowerCase() %>
+                          </option>
+                          <% }); %>
+                      </select>
+                    </div>
+
+                    <div class="col-md-3" id="flows-wastes04Col" style="display: none;">
+                      <label for="flows-waste04-select">Sub-Chapter</label>
+                      <div class="labelHelpiconContainer">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover"
+                          title="EWC Sub-Chapter" 
+                          data-html="true" 
+                          tabindex="0" 
+                          data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
+                            EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
+                            <br>
+                            <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a>.</span>
+                            <br>
+                            <span>Upon selecting an EWC Sub-Chapter, the EWC Entry filter will become available, containing the EWC Entries belonging to the selection made in this filter.</span>
+                            ">
+                        </a>
+                      </div>
+
+                      <i class="fas fa-angle-double-right filterDoubleChevron"></i>
+                      <select 
+                        name="flows-waste04-select" 
+                        id="flows-waste04-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                      </select>
+                    </div>
+
+                    <div class="col-md-3" id="flows-wastes06Col" style="display: none;">
+                      <label for="flows-waste06-select" id="flows-waste06-label">EWC Entry</label>
+                      <div class="labelHelpiconContainer" id="helpiconWaste06">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover" 
+                          title="EWC Entry"
+                          data-html="true" 
+                          tabindex="0" 
+                          data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
+                            EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
+                            <br>
+                            <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a>.</span>
+                            ">
+                        </a>
+                      </div>
+
+                      <i class="fas fa-angle-double-right filterDoubleChevron chevronEwc06"></i>
+                      <select 
+                        name="flows-waste06-select" 
+                        id="flows-waste06-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- <h5 class="subtitle">Contents</h5> -->
+                  <div class="row">
+
+                    <!-- Materials -->
+                    <div class="col-md-3">
+                      <label for="flows-material-select">Materials</label>
+                      <div class="labelHelpiconContainer">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover" 
+                          title="Materials"
+                          data-html="true" 
+                          tabindex="0" 
+                          data-content="Filter the flows based on their material content.
+                            Selecting one or more materials will return all flows containing the selected material(s),
+                            meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
+                            consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
+                            to only include non-mixed material flows.">
+                        </a>
+                      </div>
+                      <select 
+                        id="flows-material-select" 
+                        name="flows-material-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                          <option selected value="-1">All (<%= materials.length %>)</option>
+                          <option data-divider="true"></option>
+                          <% materials.forEach(function(material){ %>
+                          <option value="<%= material.id %>"><%= '&emsp;'.repeat(material.get('level')) + material.get('name') %>
+                          </option>
+                          <% }); %>
+                      </select>
+                    </div>                                      
+                  </div>
+
+                  
+                  <!-- Characteristics -->
+                  <div 
+                    {% if not request.user|isExpertUser %}
+                      style="display: none;"
+                    {% endif %}>
+
+                    <!-- <h5 class="subtitle">Characteristics</h5> -->
+                    <div class="row">
+
+                      <!-- Clean -->
+                      <div class="col-md-3">
+                        <label for="flows-clean-select">Clean</label>
+                        <div class="labelHelpiconContainer">
+                          <a 
+                            class="help-icon fas fa-question-circle" 
+                            data-toggle="popover" 
+                            title="Clean"
+                            data-html="true" 
+                            tabindex="0"
+                            data-content="The Clean filter indicates the extent to which a
+                              flow is expected to be contaminated with another substance. ‘Mono’ streams are considered
+                              clean streams since they consist of one material and are not contaminated, i.e. clean.">
+                          </a>
+                        </div>
+                        <select 
+                          id="flows-clean-select" 
+                          name="flows-clean-select"
+                          class="form-control form-control-sm selectpicker" 
+                          multiple style="resize: vertical;">
+                            <option selected value='-1'>Ignore</option>
+                            <option data-divider="true"></option>
+                            <option value='unknown'>Unknown</option>
+                            <option value='no'>Not clean</option>
+                            <option value='yes'>Clean</option>
+                        </select>
+                      </div>
+
+                      <!-- Mixed -->
+                      <div class="col-md-3">
+                        <label for="flows-mixed-select">Mixed</label>
+                        <div class="labelHelpiconContainer">
+                          <a 
+                            class="help-icon fas fa-question-circle" 
+                            data-toggle="popover" 
+                            title="Mixed"
+                            data-html="true" 
+                            tabindex="0" 
+                            data-content="The Mixed category indicates whether the flow
+                              contains two or more materials. A mixed flow could consist of two or more clean materials
+                              (masonry and concrete rubble, f.e.), but also two materials of which one is an identified
+                              pollutant (soil containing mineral oil, f.e.). All non-clean flows are by definition mixed,
+                              indicating they contain two or more materials.">
+                          </a>
+                        </div>
+                        <select 
+                          id="flows-mixed-select" 
+                          name="flows-mixed-select"
+                          class="form-control form-control-sm selectpicker" 
+                          multiple style="resize: vertical;">
+                            <option selected value='-1'>Ignore</option>
+                            <option data-divider="true"></option>
+                            <option value='unknown'>Unknown</option>
+                            <option value='no'>Not mixed</option>
+                            <option value='yes'>Mixed</option>
+                        </select>
+                      </div>
+
+                      <!-- Hazardous -->
+                      <div class="col-md-3">
+                        <label for="flows-hazardous-select">Hazardous</label>
+                        <div class="labelHelpiconContainer">
+                          <a 
+                            class="help-icon fas fa-question-circle" 
+                            data-toggle="popover" 
+                            title="Hazardous"
+                            data-html="true" 
+                            tabindex="0" 
+                            data-content="<span>The European Waste Catalogue (EWC) Code of a waste flow contains an asterisk (*) to indicate whether the waste is considered to be hazardous.
+                              This filter allows you to include or exclude flows containing hazardous materials. By default, this filter ignores this property and returns both options.</span>
+                              <span>The full list of EWC Entries, including the hazardous entries, can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a></span>
+                              ">
+                          </a>
+                        </div>
+                        <select name="flows-hazardous-select" id="flows-hazardous-select"
+                          class="form-control form-control-sm selectpicker">
+                          <option value='both'>Ignore</option>
+                          <option value='no'>Not hazardous</option>
+                          <option value='yes'>Hazardous</option>
+                        </select>
+                      </div>
+
+                      <!-- !! No longer used !!-->
+                      <!-- {% comment %}
+                      <div class="col-md-3">
+                          <label for="flows-direct-select">(An)organic</label>
+                          <div class="labelHelpiconContainer">
+                              <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Direct use"
+                                  data-html="true" tabindex="0" data-content="The Direct use filter indicates whether
+                                  a flow is (expected to be) directly reusable in its current form and no additional
+                                  processing is required. ">
+                              </a>
+                          </div>
+                          <select id="flows-direct-select" name="flows-direct-select"
+                              class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
+                              <option selected value='-1'>Ignore</option>
+                              <option data-divider="true"></option>
+                              <option value='unknown'>Unknown</option>
+                              <option value='no'>Anorganic</option>
+                              <option value='yes'>Organic</option>
+                          </select>
+                      </div>
+                      <div class="col-md-3">
+                          <label for="flows-iscomposite-select">(A)biotic</label>
+                          <div class="labelHelpiconContainer">
+                              <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Composite"
+                                  data-html="true" tabindex="0" data-content="The Composite filter indicates whether a flow contains a
+                                  known composite consisting of two or more materials.">
+                              </a>
+                          </div>
+                          <select id="flows-iscomposite-select" name="flows-iscomposite-select"
+                              class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
+                              <option selected value='-1'>Ignore</option>
+                              <option data-divider="true"></option>
+                              <option value='unknown'>Unknown</option>
+                              <option value='no'>Biotic</option>
+                              <option value='yes'>Abiotic</option>
+                          </select>
+                      </div>
+                      {% endcomment %} -->
+                    </div>
+
+                    <!-- Collector -->
+                    <!-- <div class="row pb-4">
+                      <div class="col-md-3">
+                        <label for="flows-collector-select">Collector</label>
+                        <div class="labelHelpiconContainer">
+                          <a 
+                            class="help-icon fas fa-question-circle" 
+                            data-toggle="popover" 
+                            title="Collector"
+                            data-html="true" 
+                            tabindex="0" 
+                            data-content="<span>The Collector property indicates whether
+                              a waste collection company has collected the same type of waste from different sources.
+                              In this case, the waste from the different sources has not been combined,
+                              and may only consist of certain types of waste, which can be consulted
+                              <a href='https://www.lma.nl/publish/pages/105041/5-bijlage-a-van-de-regeling2.pdf'>here</a>.</span>">
+                          </a>
+                        </div>
+                        <select 
+                          name="flows-collector-select" 
+                          id="flows-collector-select"
+                          class="form-control form-control-sm selectpicker">
+                            <option value='both'>Ignore</option>
+                            <option value='no'>Not collector</option>
+                            <option value='yes'>Collector</option>
+                        </select>
+                      </div>
+                    </div> -->
+                  </div>                    
+                </div>
+
+                <!-- Product-related selectors -->
+                <div id="container-product" style="display: none;">
+
+                  <!-- <h5 class="subtitle">GN codes</h5> -->
+                  <div class="row">
+                    <div class="col-md-3" id="flows-gncodesCol">
+                      <!-- <label for="flows-gncode-select">GN Codes</label>
+                      <div class="labelHelpiconContainer">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover" 
+                          title="EWC Chapter"
+                          data-html="true" 
+                          tabindex="0" 
+                          data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
+                            EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
+                            <br>
+                            <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a>.</span>
+                            <br>
+                            <span>Upon selecting an EWC Chapter, the Sub-Chapter filter will become available, containing the Sub-Chapters belonging to the selection made in this filter.</span>
+                            ">
+                        </a>
+                      </div> -->
+
+                      <select 
+                        name="flows-gncode-select" 
+                        id="flows-gncode-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                          <option selected value="-1">All (<%= gncodes.count %>)</option>
+                          <option data-divider="true"></option>
+                          <% gncodes.forEach(function(gncode){ %>
+                          <option value="<%= gncode.id %>"><%= gncode.get('code') %>
+                            <%= gncode.get('name') %>
+                          </option>
+                          <% }); %>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Products -->
+                  {% comment %}
+                    <div class="col-md-3">
+                      <label>Products</label>
+                      <div class="labelHelpiconContainer">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover" 
+                          title="Products"
+                          data-html="true" 
+                          tabindex="0" 
+                          data-content="The Products filter allows for the filtering of materials
+                            which are considered directly reusable.">
+                        </a>
+                      </div>
+                      <select 
+                        name="flows-product-select" 
+                        id="flows-product-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                          <option selected value="-1">All (<%= products.count %>)</option>
+                          <option data-divider="true"></option>
+                          <% products.forEach(function(product){ %>
+                          <option value="<%= product.id %>">
+                            <%= product.get('name')[0].toUpperCase() + product.get('name').slice(1) %></option>
+                          <% }); %>
+                      </select>
+                    </div>
+
+                    <!-- Composites -->
+                    <div class="col-md-3">
+                      <label>Composites</label>
+                      <div class="labelHelpiconContainer">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover" 
+                          title="Composites"
+                          data-html="true" 
+                          tabindex="0" 
+                          data-content="The Composites filter allows for the filtering of
+                            waste flows consisting of more than two materials that are not directly usable. These flows
+                            will require an additional processing step in order to separate the individual materials
+                            making up the composite.">
+                        </a>
+                      </div>
+                      <select 
+                        name="flows-composites-select" 
+                        id="flows-composites-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                          <option selected value="-1">All (<%= composites.count %>)</option>
+                          <option data-divider="true"></option>
+                          <% composites.forEach(function(composite){ %>
+                          <option value="<%= composite.id %>">
+                            <%= composite.get('name')[0].toUpperCase() + composite.get('name').slice(1) %>
+                          </option>
+                          <% }); %>
+                      </select>
+                    </div>
+                  {% endcomment %}
+                </div>
+              </div>
+          </div>
         </div>
 
         <div class="filter-log-container" style="display: none;">
