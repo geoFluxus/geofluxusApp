@@ -49,7 +49,6 @@ class FilterFlowViewSet(PostGetViewMixin,
                 params[key] = json.loads(value)
             except json.decoder.JSONDecodeError:
                 params[key] = value
-        print(params)
 
         # retrieve non-spatial filters
         filters = params.pop('flows', {})
@@ -125,8 +124,10 @@ class FilterFlowViewSet(PostGetViewMixin,
             if func == 'materials':
                 hierarchy = get_material_hierarchy(search)
                 search = [name for name, lvl in flatten_nested(hierarchy, [])]
+                func = f'flowchain__waste06__{func}__contains'
+            else:
+                func = f'flowchain__waste06__{func}'
 
-            func = f'flowchain__waste06__{func}__contains'
             vals = [int(v) for v in vals]
             vals = [v for v in search if search.index(v) in vals]
 
