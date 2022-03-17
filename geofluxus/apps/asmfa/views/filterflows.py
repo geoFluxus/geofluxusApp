@@ -10,7 +10,7 @@ from geofluxus.apps.asmfa.serializers import (FlowSerializer)
 import json
 import numpy as np
 from rest_framework.response import Response
-from django.db.models import (Q, OuterRef, Subquery, Sum)
+from django.db.models import (Q, OuterRef, Subquery, Sum, Count)
 from django.contrib.gis.db.models import Union
 from geofluxus.apps.utils.utils import get_material_hierarchy, flatten_nested
 
@@ -70,10 +70,11 @@ class FilterFlowViewSet(PostGetViewMixin,
         # record flow number & amount
         requestFlowCount = params.get('requestFlowCount', None)
         if requestFlowCount:
-            original_amount = queryset.aggregate(total=Sum('flowchain__amount'))['total']
+            original_amount = queryset.aggregate(count=Count('pk'),
+                                                 amount=Sum('flowchain__amount'))
             data = {
-                'original_count': queryset.count(),
-                'original_amount': original_amount
+                'original_count': original_amount['count'],
+                'original_amount': original_amount['amount']
             }
 
         # filter flows with non-spatial filters
@@ -84,9 +85,10 @@ class FilterFlowViewSet(PostGetViewMixin,
 
         # if request for flow count, send data now
         if requestFlowCount:
-            final_amount = queryset.aggregate(total=Sum('flowchain__amount'))['total']
-            data['final_count'] = queryset.count()
-            data['final_amount'] = final_amount
+            final_amount = queryset.aggregate(count=Count('pk'),
+                                              amount=Sum('flowchain__amount'))
+            data['final_count'] = final_amount['count']
+            data['final_amount'] = final_amount['amount']
             return Response(data)
 
         # serialization parameters
