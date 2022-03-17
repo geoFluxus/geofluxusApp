@@ -492,6 +492,7 @@
             data-parent="#filterBlock">
               <div class="card-body">
 
+                <!-- Select Areas -->
                 <div class="row">
                   <div class="col-md-10">
                     <label for="area-select-button-destination">Limit the <strong>destination</strong> of the
@@ -538,6 +539,7 @@
                   </div>
                 </div>
 
+                <!-- Areas: second level -->
                 <div class="row mt-2 areaSelections-destination" style="display: none;">
                   <div class="col">
                     <div style="display: block;">
@@ -558,6 +560,7 @@
                   </div>
                 </div>
 
+                <!-- Destination Role -->
                 <div class="row mt-3" style="display: none;">
                   <div class="col-md-12">
                     <label for="destination-role-radio">Destination role</label>
@@ -596,6 +599,7 @@
                   </div>
                 </div>
 
+                <!-- Activity Group -->
                 {% if not request.user|isDemoUser %}
                 <div class="row destination-production" style="display: none;">
                   <div class="col-md-4">
@@ -625,24 +629,24 @@
                       </a>
                     </div>
 
-
-                      <select 
-                        id="destination-activitygroup-select" 
-                        name="destination-activitygroup-select"
-                        multiple class="form-control form-control-sm selectpicker" 
-                        data-live-search="true"
-                        data-dropup-auto="false" 
-                        data-size="6" 
-                        style="resize: vertical;">
-                          <option selected value="-1">All (<%= activitygroups.count %>)</option>
-                          <option data-divider="true"></option>
-                          <% activitygroups.forEach(function(activitygroup){ %>
-                            <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>. <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
-                            </option>
-                          <% }); %>
-                      </select>
+                    <select 
+                      id="destination-activitygroup-select" 
+                      name="destination-activitygroup-select"
+                      multiple class="form-control form-control-sm selectpicker" 
+                      data-live-search="true"
+                      data-dropup-auto="false" 
+                      data-size="6" 
+                      style="resize: vertical;">
+                        <option selected value="-1">All (<%= activitygroups.count %>)</option>
+                        <option data-divider="true"></option>
+                        <% activitygroups.forEach(function(activitygroup){ %>
+                          <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>. <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
+                          </option>
+                        <% }); %>
+                    </select>
                   </div>
 
+                  <!-- Activity -->
                   <div class="col-md-4" id="destination-activitiesCol" style="display: none">
                     <label for="destination-activity-select">Activity</label>
                     <div class="labelHelpiconContainer">
@@ -679,91 +683,120 @@
                 </div>
                 {% endif %}
 
-                <!-- Treatment Method -->
+                <!-- Treatment Method Group -->
                 <div class="row destination-treatment" style="display: none;">
-                  <div class="col-md-4">                          
-                    <label for="destination-processgroup-select">Treatment method group</label>
-                    <div class="labelHelpiconContainer">
-                      <a 
-                        class="help-icon fas fa-question-circle" 
-                        data-toggle="popover"
-                        title="Treatment method group" 
-                        data-html="true" 
-                        tabindex="0" 
-                        data-content="
-                          <span>The Treatment method group indicates the general treatment method group used by the Destination of the flows.</span>
-                          <br>
-                          <span>This classification is based on the classification system of the Dutch government agency 'Landelijk Meldpunt Afvalstoffen'.
-                          The full list of entries can be consulted <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a>.</span>
-                          <br>
-                          <span>Upon selecting a Treatment method group, the Treatment method filter will become available, containing the Treatment methods belonging to the selection made in this filter.</span>
-                          ">
-                      </a>
-                    </div>
+                  <div class="col-md-6">                          
+                    <label for="destination-processgroup-select">Treatment method group</label>                    
 
-                    <select 
-                      name="destination-processgroup-select" 
-                      id="destination-processgroup-select" 
-                      multiple
-                      class="form-control form-control-sm selectpicker" 
-                      data-live-search="true" 
-                      data-size="6"
-                      style="resize: vertical;">
-                      <option selected value="-1">All (<%= processgroups.count %>)</option>
-                      <option data-divider="true"></option>
-                      <% processgroups.forEach(function(process){ %>
-                        <option value="<%= process.id %>"><%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
-                        </option>
-                      <% }); %>
-                    </select>
+                    <div class="row" style="padding: 0">
+                      <div class="col-md-8">
+                        <select 
+                          name="destination-processgroup-select" 
+                          id="destination-processgroup-select" 
+                          multiple
+                          class="form-control form-control-sm selectpicker" 
+                          data-live-search="true" 
+                          data-size="6"
+                          style="resize: vertical;">
+                          <option selected value="-1">All (<%= processgroups.count %>)</option>
+                          <option data-divider="true"></option>
+                          <% processgroups.forEach(function(process){ %>
+                            <option value="<%= process.id %>"><%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
+                            </option>
+                          <% }); %>
+                        </select>
+                      </div>
+                      <div class="col-md-1">
+                        <div class="labelHelpiconContainer">
+                          <a 
+                            class="help-icon fas fa-question-circle" 
+                            data-toggle="popover"
+                            title="Treatment method group" 
+                            data-html="true" 
+                            tabindex="0" 
+                            data-content="
+                              <span>The Treatment method group indicates the general treatment method group used by the Destination of the flows.</span>
+                              <br>
+                              <span>This classification is based on the classification system of the Dutch government agency 'Landelijk Meldpunt Afvalstoffen'.
+                              The full list of entries can be consulted <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a>.</span>
+                              <br>
+                              <span>Upon selecting a Treatment method group, the Treatment method filter will become available, containing the Treatment methods belonging to the selection made in this filter.</span>
+                              ">
+                          </a>
+                        </div>
+                      </div>
+                    </div>                    
                   </div>
 
-                  <div class="col-md-4" id="destination-processesCol" style="display: none;">
+                  <!-- Treatment Method -->
+                  <div class="col-md-6" id="destination-processesCol" style="display: none;">
+                    <label for="destination-process-select">Treatment method</label>                    
 
-                    <label for="destination-process-select">Treatment method</label>
-                    <div class="labelHelpiconContainer">
-                      <a 
-                        class="help-icon fas fa-question-circle" 
-                        data-toggle="popover"
-                        title="Treatment method" 
-                        data-html="true" 
-                        tabindex="0" 
-                        data-content="
-                          <span>The Treatment method indicates the specific treatment method used by the Destination of the flows.</span>
-                          <br>
-                          <span>This classification is based on the classification system of the Dutch government agency 'Landelijk Meldpunt Afvalstoffen'.
-                          The full list of entries can be consulted <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a>.</span>
-                          ">
-                      </a>
-                    </div>
-
-                    <i class="fas fa-angle-double-right filterDoubleChevron"></i>
-                    <select 
-                      name="destination-process-select" 
-                      id="destination-process-select"
-                        multiple
-                      class="form-control form-control-sm selectpicker" 
-                      data-live-search="true" 
-                      data-size="6"
-                      style="resize: vertical;">
-                    </select>
+                    <div class="row" style="padding: 0">
+                      <div class="col-md-8">
+                        <!-- <i class="fas fa-angle-double-right filterDoubleChevron"></i> -->
+                        <select 
+                          name="destination-process-select" 
+                          id="destination-process-select"
+                            multiple
+                          class="form-control form-control-sm selectpicker" 
+                          data-live-search="true" 
+                          data-size="6"
+                          style="resize: vertical;">
+                        </select>
+                      </div>
+                      <div class="col-md-1">
+                        <div class="labelHelpiconContainer">
+                          <a 
+                            class="help-icon fas fa-question-circle" 
+                            data-toggle="popover"
+                            title="Treatment method" 
+                            data-html="true" 
+                            tabindex="0" 
+                            data-content="
+                              <span>The Treatment method indicates the specific treatment method used by the Destination of the flows.</span>
+                              <br>
+                              <span>This classification is based on the classification system of the Dutch government agency 'Landelijk Meldpunt Afvalstoffen'.
+                              The full list of entries can be consulted <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a>.</span>
+                              ">
+                          </a>
+                        </div>
+                      </div>
+                    </div>                    
                   </div>
                 </div>
 
                 <!-- Select Companies -->
                 {% if not request.user|isDemoUser %}
                   <div class="row">
-                    <div class="col-md-4 destination-actor-select-col">
+                    <div class="col-md-6 destination-actor-select-col">
                       <label for="destination-actor-select">Select specific <strong>companies</strong>:</label>
-                      <select 
-                        name="destination-actor-select" 
-                        id="destination-actor-select" 
-                        multiple
-                        class="form-control form-control-sm selectpicker" 
-                        data-live-search="true" 
-                        data-size="6"
-                        style="resize: vertical;">
-                      </select>
+
+                      <div class="row" style="padding: 0;">
+                        <div class="col-md-8">
+                          <select 
+                            name="destination-actor-select" 
+                            id="destination-actor-select" 
+                            multiple
+                            class="form-control form-control-sm selectpicker" 
+                            data-live-search="true" 
+                            data-size="6"
+                            style="resize: vertical;">
+                          </select>
+                        </div>
+                        <div class="col-md-1">
+                          <div class="labelHelpiconContainer" style="padding: 0">
+                            <a 
+                              class="help-icon fas fa-question-circle" 
+                              data-toggle="popover" 
+                              title="Companies"
+                              data-html="true" 
+                              tabindex="0" 
+                              data-content="Help content here">
+                            </a>
+                          </div>
+                        </div>
+                      </div>                      
                     </div>
                   </div>
                 {% endif %}
