@@ -1445,39 +1445,38 @@ define(['views/common/baseview',
 
                 var filterNameMap = {
                     origDest: {
-                        "companies": "Companies",
-                        "adminLevel": "Administrative level",
-                        "selectedAreas": "Areas",
-                        "role": "Role",
-                        "activitygroup": "Activity groups",
-                        "activity": "Activities",
-                        "processgroup": "Treatment method groups",
-                        "process": "Treatment methods",
-                        "in": "Within these areas",
-                        "out": "Outside these areas",
+                        "companies": "Bedrijven",
+                        "adminLevel": "Niveau",
+                        "selectedAreas": "Gebieden",
+                        "activitygroup": "Economische sectoren",
+                        "activity": "Economische sectorcodes",
+                        "processgroup": "Verwerkingsmethoden",
+                        "process": "Verwerkingsmethode codes",
+                        "in": "Binnen deze gebieden",
+                        "out": "Buiten deze gebieden",
                     },
                     flows: {
-                        "dataset": "Dataset",
-                        "selectedAreas": "Areas",
-                        "year": "Year",
-                        "hazardous": "Hazardous",
-                        "waste02": "EWC Chapter",
-                        "waste04": "EWC Sub-Chapter",
-                        "waste06": "EWC Entry",
-                        "material": "Materials",
-                        "agenda": "Agendas",
-                        "industry": "Industries",
-                        "chain": "Chains",
-                        "product": "Product",
-                        "composites": "Composites",
-                        "clean": "Clean",
-                        "collector": "Collector",
-                        "direct": "Direct use",
-                        "iscomposite": "Composite",
-                        "mixed": "Mixed",
-                        "route": "Route",
-                        "in": "Within these areas",
-                        "out": "Outside these areas",
+                        "origin": "Herkomst van afval",
+                        "destination": "Bestemming van afval",
+                        "flows": "Kenmerken afvalstroom",
+                        "dataset": "Databronnen",
+                        "selectedAreas": "Gebieden",
+                        "year": "Jaren",
+                        "month": "Maanden",
+                        "hazardous": "Gevaarlijk",
+                        "waste02": "EURAL Hoofdstukken",
+                        "waste04": "EURAL Subhoofdstukken",
+                        "waste06": "EURAL Codes",
+                        "material": "Materialen in afval",
+                        "agenda": "Transitieagendas",
+                        "industry": "Alle Industrieën",
+                        "chain": "Ketenposities",
+                        "clean": "Schoon",
+                        "mixed": "Gemengd",
+                        //"collector": "Collector",
+                        "route": "Inzamelingsmethode",
+                        "in": "Binnen deze gebieden",
+                        "out": "Buiten deze gebieden",
                     }
                 }
 
@@ -1523,16 +1522,16 @@ define(['views/common/baseview',
 
                         if (_this.hasFilters) {
                             if (response.final_count == 0) {
-                                $(".filterLog").append(`<br><br><span class="filterSummaryResponse nodata">The filters you selected match <strong>no data</strong>. Please <strong>adjust the filtering</strong> of the waste flows.<strong></strong></span>`);
+                                $(".filterLog").append(`<br><br><span class="filterSummaryResponse nodata">Uw selectie krijgt <strong>geen gegevens</strong>. Wijzig uw selecties a.u.b.<strong></strong></span>`);
                                 _this.filtersMatchAnyData = false;
                                 $(".goalContainer").fadeOut();
                             } else {
-                                $(".filterLog").append(`<br><br><span class="filterSummaryResponse data">You will query <strong>${final_count} flows</strong> accounting for <strong>${final_amount} tonnes</strong> of waste.</span>`);
+                                $(".filterLog").append(`<br><br><span class="filterSummaryResponse data">Uw selectie krijgt <strong>${final_count} stromen</strong> met <strong>${final_amount} ton</strong> afval.</span>`);
                                 _this.filtersMatchAnyData = true;
                             }
 
                         } else {
-                            $(".filterLog").append(`<br><br><span class="filterSummaryResponse data">You will query <strong>${final_count} flows</strong> accounting for <strong>${final_amount} tonnes</strong> of waste.</span>`);
+                            $(".filterLog").append(`<br><br><span class="filterSummaryResponse data">Uw selectie krijgt <strong>${final_count} stromen</strong> met <strong>${final_amount} ton</strong> afval.</span>`);
                             _this.filtersMatchAnyData = true;
                         }
                     },

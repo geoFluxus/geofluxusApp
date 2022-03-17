@@ -24,16 +24,16 @@
           <div class="row" id="message-container-row">
               <div class="col mt-3">
                   <% if (maxNumberOfDimensions == 1) { %>
-                      <span style="color: white">Select at least one dimension.</span>
+                      <span style="color: white">Selecteer minimaal één variabele.</span>
                   <% } else { %>
-                      <span style="color: white">Select between 1 and <%= maxNumberOfDimensions %> properties of the waste flows by which the waste flow data will be aggregated.</span>
+                      <span style="color: white">Selecteer 1 of 2 variabelen om je selectie (stap 1) te visualizeren:</span>
                   <% } %>
                   </div>
           </div>
           <div class="row" id="alertMaxDimensionsRow" style="display: none;">
               <div class="col mt-3 text-center">
                   <div class="alert alert-warning fade show" id="alertMaxDimensions" role="alert">
-                      You can select up to <strong><%= maxNumberOfDimensions %> properties</strong> at the same time.
+                      U kunt maximaal <strong><%= maxNumberOfDimensions %> variabelen</strong> variabelen tegelijk selecteren.
                   </div>
               </div>
           </div>

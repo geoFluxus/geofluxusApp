@@ -1043,7 +1043,7 @@
                         <h4 class="mt-2 ml-3">
                             <button class="btn btn-link collapsingHeaderButton" id="btn-collapse-header-origin"
                                 title="">
-                                Selected filters
+                                Uw selectie
                             </button>
 
                             <button type="button" class="close text-white closeFilterLog" data-dismiss="modal"><i class="fas fa-times"></i></button>
@@ -1275,27 +1275,28 @@
   {% load custom_tags %}
 
     <% if ((log.flows.dataset) || (log.flows.year) || (log.flows.month)) %>
-        <h5 class="subtitle mt-0">General</h5>
+        <h5 class="subtitle mt-0">Algemeen</h5>
     <ul>
         <% if (log.flows.dataset != undefined) { %>
-            <li><strong>Data sets: </strong><span><%= log.flows.dataset.join(', ') %></span></li>
+            <li><strong><%= filterNameMap.flows.dataset %>: </strong><span><%= log.flows.dataset.join(', ') %></span></li>
         <% } %>
 
         <% if (log.flows.year != undefined) { %>
-            <li><strong>Years: </strong><span><%= log.flows.year.join(', ') %></span></li>
+            <li><strong><%= filterNameMap.flows.year %>: </strong><span><%= log.flows.year.join(', ') %></span></li>
         <% } %>
 
         <% if (log.flows.month != undefined) { %>
-            <li><strong>Months: </strong><span><%= log.flows.month.join(', ') %></span></li>
+            <li><strong><%= filterNameMap.flows.month %>: </strong><span><%= log.flows.month.join(', ') %></span></li>
         <% } %>
     </ul>
 
     <% blocks.forEach(function(block) { %>
         <% if (Object.keys(log[block]).length > 0) %>
-            <h5 class="subtitle"><%= block %></h5>
+            <h5 class="subtitle"><%= filterNameMap.flows[block] %></h5>
             <ul>
+                <li><strong>Functie:</strong> <%= (log[block].role == "production") ? "Productie" : "Verwerking" %></li>
                 <% for (const property in log[block]) { %>
-                    <% if (!["adminlevel", "inOrOut"].includes(property)) %>
+                    <% if (!["adminlevel", "inOrOut", "role"].includes(property)) %>
                         <li><strong><%= (property == "selectedAreas") ? filterNameMap.origDest[log[block].inOrOut] :  filterNameMap.origDest[property] %>: </strong><span><%= log[block][property].isArray ? log[block][property].join(', ') : log[block][property] %></span></li>
                 <% } %>
             </ul>
