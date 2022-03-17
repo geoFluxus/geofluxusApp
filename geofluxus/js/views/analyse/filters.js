@@ -296,6 +296,18 @@ define(['views/common/baseview',
                 $('.origin-role[role="production"]').trigger("click")
                 $('.destination-role[role="treatment"]').trigger("click")
 
+                // select flow type (waste or product)
+                $('.flow-type').on("click", function (event) {
+                    let type = $(this).attr("type"),
+                        containers = ["waste", "product"];
+
+                    containers.forEach(function (container) {
+                        $("#container-" + container)[(container == type) ? 'fadeIn' : 'hide']();
+                    })
+
+                    event.preventDefault(); // avoid firing twice!
+                });
+
                 // render ewc codes based on hazardous selection
                 function filterHazardous(evt) {
                     let select = evt.target.value;
@@ -1511,6 +1523,7 @@ define(['views/common/baseview',
                     apiTag: 'monitorflows',
                 });
 
+                this.loader.activate();
                 flows.postfetch({
                     data: {},
                     body: params,
@@ -1534,8 +1547,10 @@ define(['views/common/baseview',
                             $(".filterLog").append(`<br><br><span class="filterSummaryResponse data">Uw selectie krijgt <strong>${final_count} stromen</strong> met <strong>${final_amount} ton</strong> afval.</span>`);
                             _this.filtersMatchAnyData = true;
                         }
+                        _this.loader.deactivate();
                     },
                     error: function (error) {
+                        _this.loader.deactivate();
                         console.log(error);
                     }
                 });
