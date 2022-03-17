@@ -69,13 +69,13 @@ class FilterFlowViewSet(PostGetViewMixin,
 
         # record flow number & amount
         requestFlowCount = params.get('requestFlowCount', None)
-        if requestFlowCount:
-            original_amount = queryset.aggregate(count=Count('pk'),
-                                                 amount=Sum('flowchain__amount'))
-            data = {
-                'original_count': original_amount['count'],
-                'original_amount': original_amount['amount']
-            }
+        # if requestFlowCount:
+        #     original_amount = queryset.aggregate(count=Count('pk'),
+        #                                          amount=Sum('flowchain__amount'))
+        #     data = {
+        #         'original_count': original_amount['count'],
+        #         'original_amount': original_amount['amount']
+        #     }
 
         # filter flows with non-spatial filters
         queryset = self.filter(queryset, filters)
@@ -87,8 +87,12 @@ class FilterFlowViewSet(PostGetViewMixin,
         if requestFlowCount:
             final_amount = queryset.aggregate(count=Count('pk'),
                                               amount=Sum('flowchain__amount'))
-            data['final_count'] = final_amount['count']
-            data['final_amount'] = final_amount['amount']
+            data = {
+                'original_count': 0,
+                'original_amount': 0,
+                'final_count': final_amount['count'],
+                'final_amount': final_amount['amount']
+            }
             return Response(data)
 
         # serialization parameters
