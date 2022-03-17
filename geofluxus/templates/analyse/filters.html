@@ -1302,10 +1302,10 @@
                 <!-- Product-related selectors -->
                 <div id="container-product" style="display: none;">
 
-                  <!-- <h5 class="subtitle">GN codes</h5> -->
+                  <h5 class="subtitle">Codes Gecombineerde Nomenclatuur (GN)</h5>
                   <div class="row">
                     <div class="col-md-3" id="flows-gncodesCol">
-                      <!-- <label for="flows-gncode-select">GN Codes</label>
+                      <label for="flows-gncode-select">Code</label>
                       <div class="labelHelpiconContainer">
                         <a 
                           class="help-icon fas fa-question-circle" 
@@ -1321,7 +1321,7 @@
                             <span>Upon selecting an EWC Chapter, the Sub-Chapter filter will become available, containing the Sub-Chapters belonging to the selection made in this filter.</span>
                             ">
                         </a>
-                      </div> -->
+                      </div>
 
                       <select 
                         name="flows-gncode-select" 
@@ -1331,7 +1331,7 @@
                         data-live-search="true" 
                         data-size="6"
                         style="resize: vertical;">
-                          <option selected value="-1">All (<%= gncodes.count %>)</option>
+                          <option selected value="-1">Alle (<%= gncodes.count %>)</option>
                           <option data-divider="true"></option>
                           <% gncodes.forEach(function(gncode){ %>
                           <option value="<%= gncode.id %>"><%= gncode.get('code') %>
@@ -1345,7 +1345,7 @@
                   <!-- Products -->
                   {% comment %}
                     <div class="col-md-3">
-                      <label>Products</label>
+                      <label>Productie</label>
                       <div class="labelHelpiconContainer">
                         <a 
                           class="help-icon fas fa-question-circle" 
@@ -1365,7 +1365,7 @@
                         data-live-search="true" 
                         data-size="6"
                         style="resize: vertical;">
-                          <option selected value="-1">All (<%= products.count %>)</option>
+                          <option selected value="-1">Alle (<%= products.count %>)</option>
                           <option data-divider="true"></option>
                           <% products.forEach(function(product){ %>
                           <option value="<%= product.id %>">
@@ -1448,7 +1448,7 @@
             <button id='summarize-filters' class="btn btn-primary"
               title="Summarize the selected filters and check if there is data that matches."
               style="margin-left: 10px; float: right; width: 10em; margin: 0.2rem">
-                TEST FILTERS
+                TEST SELECTIE
             </button>
             <button
               id='save-filters'
@@ -1456,14 +1456,14 @@
               data-filter-modal-mode="newMode"
               title="Save the current filter configuration."
               style="height: 38px; width: 10rem; margin: 0.2rem">
-                SAVE FILTERS
+                OPSLAAN SELECTIE
             </button>
             <button 
               id='reset-filters' 
               class="btn btn-secondary resetButton" 
               style="margin: 0.2rem"
               title="Reset all the filters">
-                RESET FILTERS
+                RESET SELECTIE
             </button>
         </div>
     </div>
