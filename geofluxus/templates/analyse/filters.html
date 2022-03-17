@@ -4,9 +4,10 @@
     <div class="block accordion" id="filterBlock">
 
         <div class="row justify-content-between">
-          <h4 class="pb-1 pl-3">Step 1: Filter the waste flows (optional)</h4>            
+          <h4 class="pb-1 pl-3">Stap 1: Selecteer de afvalstromen</h4>            
         </div>
 
+        <!-- General Controls -->
         <div class="card bg-dark">
           <div class="card-header" id="card-header-collapse-general">
             <h4 class="mb-1">
@@ -18,8 +19,8 @@
                 aria-expanded="false"
                 aria-controls="collapseGeneralBlock"
                 title="">
-                <i class="fa fa-chevron-down pull-right"></i>
-                  General
+                  <i class="fa fa-chevron-down pull-right"></i>
+                  Algemeen
               </button>
             </h4>
           </div>
@@ -37,10 +38,9 @@
                 class="btn btn-secondary openSavedFilterModal"
                 data-filter-modal-mode="savedMode"
                 title="Load saved filter configurations."
-                style="margin: 10px; height: 38px; width: 10rem">
-                  LOAD FILTERS
-                </button>
-              </div>
+                style="margin: 10px; height: 38px; width: 12rem">
+                  Laad voorselectie
+              </button>
 
               <div class="row"
                 {% if not request.user|isExpertUser %}
@@ -48,7 +48,7 @@
                 {% endif %}>
   
                 <div class="col-md-3 flows-dataset-select-col">
-                  <label for="flows-dataset-select">Data set</label>
+                  <label for="flows-dataset-select">Databron</label>
                   <div class="labelHelpiconContainer">
                     <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Databron"
                       data-html="true" tabindex="0" data-content="
@@ -60,21 +60,23 @@
                     </a>
                   </div>
   
-                  <select name="flows-dataset-select" id="flows-dataset-select" multiple
-                    class="form-control form-control-sm selectpicker" data-size="4"
+                  <select 
+                    name="flows-dataset-select" 
+                    id="flows-dataset-select"
+                     multiple
+                    class="form-control form-control-sm selectpicker" 
+                    data-size="4"
                     style="resize: vertical;">
-                    <option selected value="-1">All (<%= datasets.count %>)</option>
-                    <option data-divider="true"></option>
-                    <% datasets.forEach(function(dataset){ %>
-                    <option value="<%= dataset.id %>"><%= dataset.get('title') %></option>
-                    <% }); %>
+                      <option selected value="-1">Alle (<%= datasets.count %>)</option>
+                      <option data-divider="true"></option>
+                      <% datasets.forEach(function(dataset){ %>
+                      <option value="<%= dataset.id %>"><%= dataset.get('title') %></option>
+                      <% }); %>
                   </select>
                 </div>
-              </div>
-  
-              <div class="row pb-4">
+
                 <div class="col-md-3">
-                  <label for="flows-year-select">Year</label>
+                  <label for="flows-year-select">Jaar</label>
                   <div class="labelHelpiconContainer">
                     <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Jaar"
                       data-html="true" tabindex="0" data-content="
@@ -87,7 +89,7 @@
                   <select name="flows-year-select" id="flows-year-select" multiple
                     class="form-control form-control-sm selectpicker" data-size="5"
                     style="resize: vertical;">
-                    <option selected value="-1">All (<%= years.count %>)</option>
+                    <option selected value="-1">Alle (<%= years.count %>)</option>
                     <option data-divider="true"></option>
                     <% years.forEach(function(year){ %>
                       <option value="<%= year.id %>"><%= year.get('code') %></option>
@@ -96,7 +98,7 @@
                 </div>
   
                 <div class="col-md-3" id="flows-monthsCol" style="display: none;">
-                  <label for="flows-month-select">Month</label>
+                  <label for="flows-month-select">Maand</label>
                   <div class="labelHelpiconContainer">
                     <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Maand"
                       data-html="true" tabindex="0"
@@ -116,8 +118,6 @@
               </div>
             </div>
           </div>
-
-          
         </div>
 
         <!-- ORIGIN CONTROLS -->
@@ -133,7 +133,7 @@
                 aria-controls="collapseOriginBlock"
                 title="The filters related to the Origin of the waste flow.">
                 <i class="fa fa-chevron-down pull-right"></i>
-                  Origin
+                  Herkomst van afval
               </button>
             </h4>
           </div>
@@ -148,9 +148,7 @@
             <div class="card-body">
               <div class="row">
                 <div class="col-md-10 mt-2">
-                  <label for="area-select-button-origin">Limit the <strong>origin</strong> of the waste flows
-                    to geographic areas:
-                  </label>
+                  <label for="area-select-button-origin">Selecteer locatie van herkomst:</label>
 
                   <div class="d-block">
                     <button 
@@ -159,7 +157,7 @@
                       data-width="100%" 
                       style="width: 13em" 
                       data-area-select-block="origin">
-                        Select areas
+                        Selecteer gebied
                     </button>
 
                     <div class="d-inline buttonHelpiconContainer">
@@ -203,7 +201,7 @@
               <div class="row mt-2 areaSelections-origin" style="display: none;">
                 <div class="col">
                   <div style="display: block;">
-                    <label style="display: inline-block;">The origin of the flows must be</label>
+                    <label style="display: inline-block;">De herkomst van afval moet </label>
                     <div class="checkbox in-or-out-container">
                       <input 
                         name="in-or-out-origin" 
@@ -211,10 +209,10 @@
                         type="checkbox"
                         data-height="24" 
                         data-toggle="toggle" 
-                        data-on="outside" 
-                        data-off="within"
+                        data-on="buiten" 
+                        data-off="binnen"
                         class="in-out-toggle bootstrapToggle">
-                      <label style="display: inline-block;">the selected area(s).</label>
+                      <label style="display: inline-block;"> de geselecteerde gebieden liggen.</label>
                     </div>
                   </div>
                 </div>
@@ -224,14 +222,14 @@
               {% if not request.user|isDemoUser %}
                 <div class="row origin-production" style="display: none;">
                   <div class="col-md-6">
-                    <label for="origin-activitygroup-select">Activity group</label>                    
+                    <label for="origin-activitygroup-select">Economische sector:</label>                    
 
                     <div class="row" style="padding: 0; margin-right: 0px">
                       <div class="col-md-8">
                         <select name="origin-activitygroup-select" id="origin-activitygroup-select" multiple
                           class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
                           style="resize: vertical;">
-                          <option selected value="-1">All (<%= activitygroups.count %>)</option>
+                          <option selected value="-1">Alle (<%= activitygroups.count %>)</option>
                           <option data-divider="true"></option>
                           <% activitygroups.forEach(function(activity){ %>
                             <option value="<%= activity.id %>">
@@ -304,7 +302,7 @@
                 <!-- Select specific companies -->
                 {% if not request.user|isDemoUser %}
                   <div class="col-md-6 origin-actor-select-col">
-                    <label for="origin-actor-select">Select specific <strong>companies</strong>:</label>
+                    <label for="origin-actor-select">Selecteer bedrijf:</label>
                     <div class="row" style="padding: 0">
                       <div class="col-md-8">
                         <select name="origin-actor-select" id="origin-actor-select" multiple
@@ -334,14 +332,14 @@
 
                 <!-- Collected en Route -->
                 <div class="col-md-6">
-                  <label for="flows-route-select">Collected en route</label>
+                  <label for="flows-route-select">Inzamelingsmethode:</label>
                   <div class="row" style="padding: 0">
                     <div class="col-md-5">
                       <select 
                         name="flows-route-select" 
                         id="flows-route-select"
                         class="form-control form-control-sm selectpicker">
-                          <option value='both'>Ignore</option>
+                          <option value='both'>Negeer</option>
                           <option value='no'>Not route</option>
                           <option value='yes'>Route</option>
                       </select>
@@ -484,7 +482,7 @@
                 aria-controls="collapseDestinationBlock"
                 title="The filters related to the Destination of the waste flow.">
                   <i class="fa fa-chevron-down pull-right"></i>
-                  Destination
+                  Bestemming van afval
               </button>
             </h4>
           </div>
@@ -499,14 +497,13 @@
                 <!-- Select Areas -->
                 <div class="row">
                   <div class="col-md-10">
-                    <label for="area-select-button-destination">Limit the <strong>destination</strong> of the
-                      waste flows to geographic areas:
-                    </label>
+                    <label for="area-select-button-destination">Selecteer locatie van bestemming:</label>
 
                     <div class="d-block">
                       <button id="area-select-button-destination"
                         class="btn btn-sm btn-primary area-select-button" data-width="100%"
-                        style="width: 13em" data-area-select-block="destination">Select areas
+                        style="width: 13em" data-area-select-block="destination">
+                          Selecteer gebied
                       </button>
 
                       <div class="d-inline buttonHelpiconContainer">
@@ -551,7 +548,7 @@
                 <div class="row mt-2 areaSelections-destination" style="display: none;">
                   <div class="col">
                     <div style="display: block;">
-                      <label style="display: inline-block;">The destination of the flows must be</label>
+                      <label style="display: inline-block;">De bestemming van afval moet </label>
                       <div class="checkbox in-or-out-container">
                         <input 
                           name="in-or-out-destination" 
@@ -559,10 +556,10 @@
                           type="checkbox"
                           data-height="24" 
                           data-toggle="toggle" 
-                          data-on="outside" 
-                          data-off="within"
+                          data-on="buiten" 
+                          data-off="binnen"
                           class="in-out-toggle bootstrapToggle">
-                        <label style="display: inline-block;">the selected area(s).</label>
+                        <label style="display: inline-block;"> de geselecteerde gebieden liggen.</label>
                       </div>
                     </div>
                   </div>
@@ -694,7 +691,7 @@
                 <!-- Treatment Method Group -->
                 <div class="row destination-treatment" style="display: none;">
                   <div class="col-md-6">                          
-                    <label for="destination-processgroup-select">Treatment method group</label>                    
+                    <label for="destination-processgroup-select">Verwerkingsmethode groep:</label>                    
 
                     <div class="row" style="padding: 0">
                       <div class="col-md-8">
@@ -706,7 +703,7 @@
                           data-live-search="true" 
                           data-size="6"
                           style="resize: vertical;">
-                          <option selected value="-1">All (<%= processgroups.count %>)</option>
+                          <option selected value="-1">Alle (<%= processgroups.count %>)</option>
                           <option data-divider="true"></option>
                           <% processgroups.forEach(function(process){ %>
                             <option value="<%= process.id %>"><%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
@@ -737,7 +734,7 @@
 
                   <!-- Treatment Method -->
                   <div class="col-md-6" id="destination-processesCol" style="display: none;">
-                    <label for="destination-process-select">Treatment method</label>                    
+                    <label for="destination-process-select">Verwerkingsmethode</label>                    
 
                     <div class="row" style="padding: 0">
                       <div class="col-md-8">
@@ -777,7 +774,7 @@
                 {% if not request.user|isDemoUser %}
                   <div class="row">
                     <div class="col-md-6 destination-actor-select-col">
-                      <label for="destination-actor-select">Select specific <strong>companies</strong>:</label>
+                      <label for="destination-actor-select">Selecteer bedrijf:</label>
 
                       <div class="row" style="padding: 0;">
                         <div class="col-md-8">
@@ -828,8 +825,8 @@
                 aria-expanded="false"
                 aria-controls="collapseFlowsBlock"
                 title="The filters related to the properties of the waste flow itself.">
-                <i class="fa fa-chevron-down pull-right"></i>
-                  Flows
+                  <i class="fa fa-chevron-down pull-right"></i>
+                  Kenmerken afvalstroom
               </button>
             </h4>
           </div>
@@ -934,7 +931,7 @@
                     
                     <!-- Chain Position -->
                     <div class="col-md-3">
-                      <label for="flows-chain-select">Chain position</label>
+                      <label for="flows-chain-select">Ketenpositie</label>
                       <div class="labelHelpiconContainer">
                         <a 
                           class="help-icon fas fa-question-circle" 
@@ -957,7 +954,7 @@
                         data-live-search="true" 
                         data-size="6"
                         style="resize: vertical;">
-                          <option selected value="-1">All (<%= chains.length %>)</option>
+                          <option selected value="-1">Alle (<%= chains.length %>)</option>
                           <option data-divider="true"></option>
                           <% chains.forEach(function(chain){ %>
                           <option value="<%= chain.id %>"><%= chain.get('name') %>
@@ -968,7 +965,7 @@
 
                     <!-- Agendas -->
                     <div class="col-md-3">
-                      <label for="flows-agenda-select">Transition Agenda</label>
+                      <label for="flows-agenda-select">Transitieagenda</label>
                       <div class="labelHelpiconContainer">
                         <a 
                           class="help-icon fas fa-question-circle" 
@@ -991,7 +988,7 @@
                         data-live-search="true" 
                         data-size="6"
                         style="resize: vertical;">
-                          <option selected value="-1">All (<%= agendas.length %>)</option>
+                          <option selected value="-1">Alle (<%= agendas.length %>)</option>
                           <option data-divider="true"></option>
                           <% agendas.forEach(function(agenda){ %>
                           <option value="<%= agenda.id %>"><%= agenda.get('name') %>
@@ -1002,7 +999,7 @@
 
                     <!-- Industries -->
                     <div class="col-md-3">
-                      <label for="flows-industry-select">Industries</label>
+                      <label for="flows-industry-select">Industrie</label>
                       <div class="labelHelpiconContainer">
                         <a 
                           class="help-icon fas fa-question-circle" 
@@ -1025,7 +1022,7 @@
                         data-live-search="true" 
                         data-size="6"
                         style="resize: vertical;">
-                          <option selected value="-1">All (<%= industries.length %>)</option>
+                          <option selected value="-1">Alle (<%= industries.length %>)</option>
                           <option data-divider="true"></option>
                           <% industries.forEach(function(industry){ %>
                           <option value="<%= industry.id %>"><%= industry.get('name') %>
@@ -1039,7 +1036,7 @@
                   <div class="row">
                     <div class="col-md-3" id="flows-wastes02Col">
 
-                      <label for="flows-waste02-select">Chapter</label>
+                      <label for="flows-waste02-select">Codes Europese Afvalstoffenlijst (EURAL)</label>
                       <div class="labelHelpiconContainer">
                         <a 
                           class="help-icon fas fa-question-circle" 
@@ -1065,7 +1062,7 @@
                         data-live-search="true" 
                         data-size="6"
                         style="resize: vertical;">
-                          <option selected value="-1">All (<%= wastes02.count %>)</option>
+                          <option selected value="-1">Alle (<%= wastes02.count %>)</option>
                           <option data-divider="true"></option>
                           <% wastes02.forEach(function(waste){ %>
                           <option value="<%= waste.id %>"><%= waste.get('ewc_code') + ". "%>
@@ -1141,7 +1138,7 @@
 
                     <!-- Materials -->
                     <div class="col-md-3">
-                      <label for="flows-material-select">Materials</label>
+                      <label for="flows-material-select">Materialen in afval</label>
                       <div class="labelHelpiconContainer">
                         <a 
                           class="help-icon fas fa-question-circle" 
@@ -1164,7 +1161,7 @@
                         data-live-search="true" 
                         data-size="6"
                         style="resize: vertical;">
-                          <option selected value="-1">All (<%= materials.length %>)</option>
+                          <option selected value="-1">Alle (<%= materials.length %>)</option>
                           <option data-divider="true"></option>
                           <% materials.forEach(function(material){ %>
                           <option value="<%= material.id %>"><%= '&emsp;'.repeat(material.get('level')) + material.get('name') %>
@@ -1186,7 +1183,7 @@
 
                       <!-- Clean -->
                       <div class="col-md-3">
-                        <label for="flows-clean-select">Clean</label>
+                        <label for="flows-clean-select">Schoon</label>
                         <div class="labelHelpiconContainer">
                           <a 
                             class="help-icon fas fa-question-circle" 
@@ -1204,17 +1201,17 @@
                           name="flows-clean-select"
                           class="form-control form-control-sm selectpicker" 
                           multiple style="resize: vertical;">
-                            <option selected value='-1'>Ignore</option>
+                            <option selected value='-1'>Negeer</option>
                             <option data-divider="true"></option>
-                            <option value='unknown'>Unknown</option>
-                            <option value='no'>Not clean</option>
-                            <option value='yes'>Clean</option>
+                            <option value='unknown'>Onbekend</option>
+                            <option value='no'>Niet schoon</option>
+                            <option value='yes'>Schoon</option>
                         </select>
                       </div>
 
                       <!-- Mixed -->
                       <div class="col-md-3">
-                        <label for="flows-mixed-select">Mixed</label>
+                        <label for="flows-mixed-select">Gemengd</label>
                         <div class="labelHelpiconContainer">
                           <a 
                             class="help-icon fas fa-question-circle" 
@@ -1234,17 +1231,17 @@
                           name="flows-mixed-select"
                           class="form-control form-control-sm selectpicker" 
                           multiple style="resize: vertical;">
-                            <option selected value='-1'>Ignore</option>
+                            <option selected value='-1'>Negeer</option>
                             <option data-divider="true"></option>
-                            <option value='unknown'>Unknown</option>
-                            <option value='no'>Not mixed</option>
-                            <option value='yes'>Mixed</option>
+                            <option value='unknown'>Onbekend</option>
+                            <option value='no'>Niet gemengd</option>
+                            <option value='yes'>Gemengd</option>
                         </select>
                       </div>
 
                       <!-- Hazardous -->
                       <div class="col-md-3">
-                        <label for="flows-hazardous-select">Hazardous</label>
+                        <label for="flows-hazardous-select">Gevaarlijk</label>
                         <div class="labelHelpiconContainer">
                           <a 
                             class="help-icon fas fa-question-circle" 
@@ -1260,9 +1257,9 @@
                         </div>
                         <select name="flows-hazardous-select" id="flows-hazardous-select"
                           class="form-control form-control-sm selectpicker">
-                          <option value='both'>Ignore</option>
-                          <option value='no'>Not hazardous</option>
-                          <option value='yes'>Hazardous</option>
+                          <option value='both'>Negeer</option>
+                          <option value='no'>Niet gevaarlijk</option>
+                          <option value='yes'>Gevaarlijk</option>
                         </select>
                       </div>
 
@@ -1281,7 +1278,7 @@
                               class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
                               <option selected value='-1'>Ignore</option>
                               <option data-divider="true"></option>
-                              <option value='unknown'>Unknown</option>
+                              <option value='unknown'>Onbekend</option>
                               <option value='no'>Anorganic</option>
                               <option value='yes'>Organic</option>
                           </select>
@@ -1298,7 +1295,7 @@
                               class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
                               <option selected value='-1'>Ignore</option>
                               <option data-divider="true"></option>
-                              <option value='unknown'>Unknown</option>
+                              <option value='unknown'>Onbekend</option>
                               <option value='no'>Biotic</option>
                               <option value='yes'>Abiotic</option>
                           </select>
@@ -1339,9 +1336,11 @@
 
                 <!-- Product-related selectors -->
                 <div id="container-product" style="display: none;">
+
+                  <h5 class="subtitle">Codes Gecombineerde Nomenclatuur (GN)</h5>
                   <div class="row">
                     <div class="col-md-3" id="flows-gncodesCol">
-                      <label for="flows-gncode-select">GN Codes</label>
+                      <label for="flows-gncode-select">Code</label>
                       <div class="labelHelpiconContainer">
                         <a 
                           class="help-icon fas fa-question-circle" 
@@ -1357,7 +1356,7 @@
                             <span>Upon selecting an EWC Chapter, the Sub-Chapter filter will become available, containing the Sub-Chapters belonging to the selection made in this filter.</span>
                             ">
                         </a>
-                      </div> -->
+                      </div>
 
                       <select 
                         name="flows-gncode-select" 
@@ -1367,7 +1366,7 @@
                         data-live-search="true" 
                         data-size="6"
                         style="resize: vertical;">
-                          <option selected value="-1">All (<%= gncodes.count %>)</option>
+                          <option selected value="-1">Alle (<%= gncodes.count %>)</option>
                           <option data-divider="true"></option>
                           <% gncodes.forEach(function(gncode){ %>
                           <option value="<%= gncode.id %>"><%= gncode.get('code') %>
@@ -1381,7 +1380,7 @@
                   <!-- Products -->
                   {% comment %}
                     <div class="col-md-3">
-                      <label>Products</label>
+                      <label>Productie</label>
                       <div class="labelHelpiconContainer">
                         <a 
                           class="help-icon fas fa-question-circle" 
@@ -1401,7 +1400,7 @@
                         data-live-search="true" 
                         data-size="6"
                         style="resize: vertical;">
-                          <option selected value="-1">All (<%= products.count %>)</option>
+                          <option selected value="-1">Alle (<%= products.count %>)</option>
                           <option data-divider="true"></option>
                           <% products.forEach(function(product){ %>
                           <option value="<%= product.id %>">
@@ -1452,12 +1451,14 @@
         <div class="filter-log-container" style="display: none;">
           <div class="card bg-dark">
 
-                    <div class="card-header">
-                        <h4 class="mt-2 ml-3">
-                            <button class="btn btn-link collapsingHeaderButton" id="btn-collapse-header-origin"
-                                title="">
-                                Uw selectie
-                            </button>
+            <div class="card-header">
+              <h4 class="mt-2 ml-3">
+                <button 
+                  class="btn btn-link collapsingHeaderButton" 
+                  id="btn-collapse-header-origin"
+                  title="">
+                    Uw selectie
+                </button>
 
                 <button 
                   type="button" 
@@ -1482,22 +1483,22 @@
             <button id='summarize-filters' class="btn btn-primary"
               title="Summarize the selected filters and check if there is data that matches."
               style="margin-left: 10px; float: right; width: 10em; margin: 0.2rem">
-                TEST FILTERS
+                TEST SELECTIE
             </button>
             <button
               id='save-filters'
               class="btn btn-primary openSavedFilterModal"
               data-filter-modal-mode="newMode"
               title="Save the current filter configuration."
-              style="height: 38px; width: 10rem; margin: 0.2rem">
-                SAVE FILTERS
+              style="height: 38px; width: 12rem; margin: 0.2rem">
+                OPSLAAN SELECTIE
             </button>
             <button 
               id='reset-filters' 
               class="btn btn-secondary resetButton" 
               style="margin: 0.2rem"
               title="Reset all the filters">
-                RESET FILTERS
+                RESET SELECTIE
             </button>
         </div>
     </div>

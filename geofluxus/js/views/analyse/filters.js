@@ -500,8 +500,8 @@ define(['views/common/baseview',
                                 }
                             },
                             locale: {
-                                emptyTitle: 'Search for company...',
-                                searchPlaceholder: 'Search for company...',
+                                emptyTitle: 'Zoek een bedrijf......',
+                                searchPlaceholder: 'Zoek een bedrijf......',
                                 statusInitialized: '<span style="margin-left: 1rem;">Start typing to search...</span>',
                                 currentlySelected: "Currently selected:"
                             },
