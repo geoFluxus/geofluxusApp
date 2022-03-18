@@ -41,22 +41,22 @@ define(['views/common/baseview',
 
                     this.dimensions = {
                         'time': {
-                            'year': 'Year',
-                            'month': 'Month',
+                            'year': 'Jaar',
+                            'month': 'Maand',
                         },
                         'economicActivity': {
-                            'activitygroup': 'Activity group',
-                            'activity': 'Activity',
+                            'activitygroup': 'Hoofdgroep',
+                            'activity': '4-cijfer code',
                         },
                         'treatmentMethod': {
-                            'processgroup': 'Treatment method group',
-                            'process': 'Treatment method',
+                            'processgroup': 'Verwerkingsgroep',
+                            'process': 'Verwerkingscode',
                         },
                         'material': {
-                            'waste02': 'EWC Chapter',
-                            'waste04': 'EWC Sub-Chapter',
-                            'waste06': 'EWC Entry',
-                            'gncode': 'GN Code'
+                            'waste02': 'EURAL hoofdgroep',
+                            'waste04': 'EURAL subgroep',
+                            'waste06': 'EURAL 6-cijfer code',
+                            'gncode': 'GN code'
                         }
                     }
 

@@ -50,10 +50,10 @@ define(['views/common/baseview',
 
                     this.label = this.options.dimensions.label;
                     this.props = {
-                        'activitygroup': 'Activity group',
-                        'activity': 'Activity',
-                        'processgroup': 'Treatment method group',
-                        'process': 'Treatment method',
+                        'activitygroup': 'Hoofdgroep',
+                        'activity': '4-cijfer code',
+                        'processgroup': 'Verwerkingsgroep',
+                        'process': 'Verwerkingscode',
                     }
 
                     $(this.options.el).css({

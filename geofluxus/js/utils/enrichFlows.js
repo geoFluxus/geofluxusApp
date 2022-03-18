@@ -25,7 +25,7 @@ module.exports = {
                         name = utils.capitalizeFirstLetter(attr.name || attr.ewc_name || "");
 
                     // add attributes to flows
-                    _this[index][property + 'Code'] = code;
+                    _this[index][property + 'Code'] = code || name[0];
                     _this[index][property + 'Name'] = name;
                 }
             })
