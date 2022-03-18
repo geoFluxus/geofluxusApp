@@ -10,7 +10,7 @@
         <!-- General Controls -->
         <div class="card bg-dark">
           <div class="card-header" id="card-header-collapse-general">
-            <h4 class="mb-1">
+            <h4 class="mb-1" style="justify-content: flex-start">
               <button 
                 class="btn btn-link collapsed collapsingHeaderButton"
                 id="btn-collapse-header-general"
@@ -22,6 +22,16 @@
                   <i class="fa fa-chevron-down pull-right"></i>
                   Algemeen
               </button>
+
+              <div class="d-inline buttonHelpiconContainer">
+                <a class="help-icon fas fa-question-circle" 
+                  data-toggle="popover"
+                  title="Algemeen" 
+                  data-html="true" 
+                  tabindex="0"
+                  data-content="placeholder text.">
+                </a>
+              </div>
             </h4>
           </div>
 
@@ -199,7 +209,7 @@
                 </div>
               </div>
 
-              <div class="row mt-2 areaSelections-origin" style="display: none;">
+              <!-- <div class="row mt-2 areaSelections-origin" style="display: none;">
                 <div class="col">
                   <div style="display: block;">
                     <label style="display: inline-block;">De herkomst van afval moet </label>
@@ -217,7 +227,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
               <!-- Select Activity group -->
               {% if not request.user|isDemoUser %}
@@ -546,7 +556,7 @@
                 </div>
 
                 <!-- Areas: second level -->
-                <div class="row mt-2 areaSelections-destination" style="display: none;">
+                <!-- <div class="row mt-2 areaSelections-destination" style="display: none;">
                   <div class="col">
                     <div style="display: block;">
                       <label style="display: inline-block;">De bestemming van afval moet </label>
@@ -564,7 +574,7 @@
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> -->
 
                 <!-- Destination Role -->
                 <div class="row mt-3" style="display: none;">
