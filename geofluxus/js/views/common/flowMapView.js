@@ -62,16 +62,16 @@ define(['underscore',
 
                     this.label = options.dimensions.label;
                     this.props = {
-                        'year'          : 'Year',
-                        'month'         : 'Month',
-                        'activitygroup' : 'Activity group',
-                        'activity'      : 'Activity',
-                        'processgroup'  : 'Treatment method group',
-                        'process'       : 'Treatment method',
-                        'waste02'       : 'EWC Chapter',
-                        'waste04'       : 'EWC Sub-Chapter',
-                        'waste06'       : 'EWC Entry',
-                        'gncode'        : 'GN Code'
+                        'year'          : 'Jaar',
+                        'month'         : 'Maand',
+                        'activitygroup' : 'Hoofdgroep',
+                        'activity'      : '4-cijfer code',
+                        'processgroup'  : 'Verwerkingsgroep',
+                        'process'       : 'Verwerkingscode',
+                        'waste02'       : 'EURAL hoofdgroep',
+                        'waste04'       : 'EURAL subgroep',
+                        'waste06'       : 'EURAL 6-cijfer code',
+                        'gncode'        : 'GN code'
                     }
 
                     $(".export-csv").on("click", function() {

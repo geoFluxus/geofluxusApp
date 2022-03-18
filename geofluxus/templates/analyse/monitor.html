@@ -20,7 +20,7 @@
                           <input type="radio">ton (t) afval
                       </label>
                       <label class="btn btn-default gran-radio-mode-label analyse-mode-radio-label" data-mode="impact">
-                          <input type="radio">kilogram (kg) C02-eq.
+                          <input type="radio">ton (t) C02-eq.
                       </label>
                   </div>
               </div>
@@ -72,17 +72,17 @@
               </div>
           </div>
 
-          <!-- Space -->
+          <!-- origin -->
           <div class="row align-items-center">
               <div class="col-md-3">
                   <div class="checkbox">
-                      <input name="dim-toggle-space" class="bootstrapToggle dimensionToggle" id="dim-toggle-space"
-                          type="checkbox" data-width="100%" data-height="21" data-toggle="toggle" data-dim="space"
+                      <input name="dim-toggle-origin" class="bootstrapToggle dimensionToggle" id="dim-toggle-origin"
+                          type="checkbox" data-width="100%" data-height="21" data-toggle="toggle" data-dim="origin"
                           data-on="Herkomst" data-off="Herkomst">
                   </div>
               </div>
-              <div class="col-md-3" id="gran-toggle-space-col" style="display: none">
-                  <select name="dim-space-gran-select" id="dim-space-gran-select"
+              <div class="col-md-3" id="gran-toggle-origin-col" style="display: none">
+                  <select name="dim-origin-gran-select" id="dim-origin-gran-select"
                       class="form-control form-control-sm selectpicker" data-height="21">
                       <% levels.forEach(function(level) { %>
                       <option value="<%= level.id %>"><%= level.get('name') %></option>
@@ -90,9 +90,9 @@
                   </select>
               </div>
 
-              <div class="col-md-3" id="origDest-toggle-space-col" style="display: none">
+              <div class="col-md-3" id="origDest-toggle-origin-col" style="display: none">
                   <div class="checkbox">
-                      <input name="origDest-toggle-space" class="bootstrapToggle" id="origDest-toggle-space"
+                      <input name="origDest-toggle-origin" class="bootstrapToggle" id="origDest-toggle-origin"
                           type="checkbox" data-width="100%" data-height="21" data-toggle="toggle" data-on="Destination"
                           data-off="Origin">
                   </div>
@@ -135,6 +135,33 @@
               </div> -->
           </div>
 
+          <!-- destination -->
+          <div class="row align-items-center">
+              <div class="col-md-3">
+                  <div class="checkbox">
+                      <input name="dim-toggle-destination" class="bootstrapToggle dimensionToggle" id="dim-toggle-destination"
+                          type="checkbox" data-width="100%" data-height="21" data-toggle="toggle" data-dim="destination"
+                          data-on="Bestemming" data-off="Bestemming">
+                  </div>
+              </div>
+              <div class="col-md-3" id="gran-toggle-destination-col" style="display: none">
+                  <select name="dim-origin-gran-select" id="dim-destination-gran-select"
+                      class="form-control form-control-sm selectpicker" data-height="21">
+                      <% levels.forEach(function(level) { %>
+                      <option value="<%= level.id %>"><%= level.get('name') %></option>
+                      <% }) %>
+                  </select>
+              </div>
+
+              <div class="col-md-3" id="origDest-toggle-destination-col" style="display: none">
+                  <div class="checkbox">
+                      <input name="origDest-toggle-origin" class="bootstrapToggle" id="origDest-toggle-destination"
+                          type="checkbox" data-width="100%" data-height="21" data-toggle="toggle" data-on="Origin"
+                          data-off="Destination">
+                  </div>
+              </div>
+          </div>
+
           <!-- Treatment Method -->
           <div class="row">
               <div class="col-md-3">
@@ -166,12 +193,12 @@
                   </div> {% endcomment %}
               </div>
 
-              <!-- <div class="col-md-3" id="origDest-toggle-treatment-col" style="display: none">
+              <div class="col-md-3" id="origDest-toggle-treatment-col" style="display: none">
                   <div class="checkbox">
                       <input name="origDest-toggle-treatment" id="origDest-toggle-treatment" type="checkbox" class="bootstrapToggle"
                           data-width="100%" data-height="21" data-toggle="toggle" checked data-on="Destination" data-off="Origin">
                   </div>
-              </div> -->
+              </div>
           </div>
 
           <!-- Material -->
