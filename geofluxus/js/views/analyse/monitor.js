@@ -69,7 +69,7 @@ define(['views/common/baseview',
                     'time': ['piechart', 'barchart', 'treemap', 'lineplot'],
                     'economicActivity': ['piechart', 'barchart', 'treemap'],
                     'origin': ['piechart', 'barchart', 'treemap','geoheatmap'],
-                    'destination': ['piechart', 'barchart', 'treemap','geoheatmap'],
+                    'destination': ['piechart', 'barchart', 'treemap', 'geoheatmap'],
                     'treatmentMethod': ['piechart', 'barchart', 'treemap', 'parallelsets', 'circularsankey'],
                     'material': ['piechart', 'barchart', 'treemap'],
                     // 2D visualizations
@@ -374,7 +374,6 @@ define(['views/common/baseview',
                     filterParams.indicator = 'co2';
                     filterParams.impactSources = ['transportation'];
                 }
-                console.log(this.mode, filterParams)
 
                 // ///////////////////////////////
                 // Format
@@ -406,8 +405,8 @@ define(['views/common/baseview',
 
                 // Origin
                 if ($(this.originToggle).prop("checked")) {
-                    let originOrDestination = $(this.spaceOrigDest).prop("checked") ? 'destination' : 'origin',
-                        gran = $('#dim-origin-gran-select option:selected').val();
+                    let originOrDestination = $(this.originOrigDest).prop("checked") ? 'destination' : 'origin',
+                        gran = $($(".gran-radio-origin-label.active")).attr("data-origin");
                     filterParams.dimensions.space = {};
                     filterParams.dimensions.space.adminlevel = gran;
                     filterParams.dimensions.space.field = originOrDestination;
@@ -427,9 +426,10 @@ define(['views/common/baseview',
                     filterParams.dimensions.economicActivity = originOrDestination + gran;
                 }
 
+                // Destination
                 if ($(this.destinationToggle).prop("checked")) {
-                    let originOrDestination = $(this.spaceOrigDest).prop("checked") ? 'origin' : 'destination',
-                        gran = $('#dim-destination-gran-select option:selected').val();
+                    let originOrDestination = $(this.destinationOrigDest).prop("checked") ? 'origin' : 'destination',
+                        gran = $($(".gran-radio-destination-label.active")).attr("data-destination");
                     filterParams.dimensions.space = {};
                     filterParams.dimensions.space.adminlevel = gran;
                     filterParams.dimensions.space.field = originOrDestination;

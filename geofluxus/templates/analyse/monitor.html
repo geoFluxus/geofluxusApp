@@ -82,12 +82,17 @@
                   </div>
               </div>
               <div class="col-md-3" id="gran-toggle-origin-col" style="display: none">
-                  <select name="dim-origin-gran-select" id="dim-origin-gran-select"
-                      class="form-control form-control-sm selectpicker" data-height="21">
-                      <% levels.forEach(function(level) { %>
-                      <option value="<%= level.id %>"><%= level.get('name') %></option>
+                  <div class="btn-group btn-group-toggle" id="gran-radio-origin" data-toggle="buttons"
+                      style="width: 100%; max-width: 30rem">
+                      <% levels.forEach(function(level, idx) { %>
+                          <% var classname = "btn btn-default gran-radio-origin-label" %>
+                          <% if (!idx) { classname += " active" } %>
+                          <label class="<%= classname %>" data-origin="<%= level.id %>">
+                              <input type="radio" class="gran-radio-origin-input" id="gran-radio-origin-<%= level.id %>">
+                              <%= level.get('name') %>
+                          </label>
                       <% }) %>
-                  </select>
+                  </div>
               </div>
 
               <div class="col-md-3" id="origDest-toggle-origin-col" style="display: none">
@@ -145,12 +150,17 @@
                   </div>
               </div>
               <div class="col-md-3" id="gran-toggle-destination-col" style="display: none">
-                  <select name="dim-origin-gran-select" id="dim-destination-gran-select"
-                      class="form-control form-control-sm selectpicker" data-height="21">
-                      <% levels.forEach(function(level) { %>
-                      <option value="<%= level.id %>"><%= level.get('name') %></option>
+                  <div class="btn-group btn-group-toggle" id="gran-radio-destination" data-toggle="buttons"
+                      style="width: 100%; max-width: 30rem">
+                      <% levels.forEach(function(level, idx) { %>
+                          <% var classname = "btn btn-default gran-radio-destination-label" %>
+                          <% if (!idx) { classname += " active" } %>
+                          <label class="<%= classname %>" data-destination="<%= level.id %>">
+                              <input type="radio" class="gran-radio-destination-input" id="gran-radio-destination-<%= level.id %>">
+                              <%= level.get('name') %>
+                          </label>
                       <% }) %>
-                  </select>
+                  </div>
               </div>
 
               <div class="col-md-3" id="origDest-toggle-destination-col" style="display: none">

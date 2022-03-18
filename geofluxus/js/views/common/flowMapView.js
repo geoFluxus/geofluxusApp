@@ -340,8 +340,8 @@ define(['underscore',
 
                         $(".flowmap-d3pluslegend-wrapper").fadeIn();
 
-                         console.log("______ legend data _______")
-                         console.log(_this.legendItems);
+                         //console.log("______ legend data _______")
+                         //console.log(_this.legendItems);
 
                         this.d3plusLegend = new D3plusLegend({
                             el: ".flowmap-d3pluslegend",
