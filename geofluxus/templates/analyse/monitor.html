@@ -13,7 +13,7 @@
         </div>
 
           <div class="row mt-2">
-              <div class="col-md-4">
+              <div class="col-md-4" style="min-width: 300px; max-width: 380px;">
                   <div class="btn-group btn-group-toggle" id="mode-toggle" data-toggle="buttons"
                     style="width: 100%; max-width: 30rem">
                       <label class="btn btn-default gran-radio-mode-label active analyse-mode-radio-label" data-mode="monitor">
@@ -23,6 +23,18 @@
                           <input type="radio">kilogram (kg) C02-eq.
                       </label>
                   </div>
+              </div>
+              <div class="labelHelpiconContainer">
+                <a 
+                  class="help-icon fas fa-question-circle" 
+                  data-toggle="popover" 
+                  title="ton (t) afval | kilogram (kg) C02-eq."
+                  data-html="true" 
+                  tabindex="0"
+                  data-content="
+                    <span>PLACEHOLDER TEXT</span>
+                    ">
+                </a>
               </div>
           </div>
 
@@ -45,13 +57,14 @@
 
           <!-- TIME -->
           <div class="row mt-2">
-              <div class="col-md-3">
+              <div class="col-md-4" style="min-width: 300px; max-width: 380px;">
                   <div class="checkbox">
                       <input name="dim-toggle-time" class="bootstrapToggle dimensionToggle" id="dim-toggle-time"
                           type="checkbox" data-width="100%" data-height="21" data-toggle="toggle" data-dim="time"
                           data-on="Tijd" data-off="Tijd">
                   </div>
               </div>
+
               <div class="col-md-3" id="gran-toggle-time-col" style="display: none">
 
                  <div class="btn-group btn-group-toggle" id="gran-radio-time" data-toggle="buttons"
@@ -70,11 +83,23 @@
                   </div> {% endcomment %}
 
               </div>
+              <div class="labelHelpiconContainer">
+                <a 
+                  class="help-icon fas fa-question-circle" 
+                  data-toggle="popover" 
+                  title="Tijd"
+                  data-html="true" 
+                  tabindex="0"
+                  data-content="
+                    <span>PLACEHOLDER TEXT</span>
+                    ">
+                </a>
+              </div>
           </div>
 
           <!-- Space -->
           <div class="row align-items-center">
-              <div class="col-md-3">
+              <div class="col-md-4" style="min-width: 300px; max-width: 380px;">
                   <div class="checkbox">
                       <input name="dim-toggle-space" class="bootstrapToggle dimensionToggle" id="dim-toggle-space"
                           type="checkbox" data-width="100%" data-height="21" data-toggle="toggle" data-dim="space"
@@ -97,11 +122,23 @@
                           data-off="Origin">
                   </div>
               </div>
+              <div class="labelHelpiconContainer">
+                <a 
+                  class="help-icon fas fa-question-circle" 
+                  data-toggle="popover" 
+                  title="Herkomst"
+                  data-html="true" 
+                  tabindex="0"
+                  data-content="
+                    <span>PLACEHOLDER TEXT</span>
+                    ">
+                </a>
+              </div>
           </div>
 
           <!-- Economic Activity -->
           <div class="row">
-              <div class="col-md-3">
+              <div class="col-md-4" style="min-width: 300px; max-width: 380px;">
                   <div class="checkbox">
                       <input name="dim-toggle-economic-activity" class="bootstrapToggle dimensionToggle"
                           id="dim-toggle-economic-activity" type="checkbox" data-width="100%" data-height="21"
@@ -133,11 +170,23 @@
                           data-height="21" data-toggle="toggle" data-on="Destination" data-off="Origin">
                   </div>
               </div> -->
+              <div class="labelHelpiconContainer">
+                <a 
+                  class="help-icon fas fa-question-circle" 
+                  data-toggle="popover" 
+                  title="Economische sector (SBI code)"
+                  data-html="true" 
+                  tabindex="0"
+                  data-content="
+                    <span>PLACEHOLDER TEXT</span>
+                    ">
+                </a>
+              </div>
           </div>
 
           <!-- Treatment Method -->
           <div class="row">
-              <div class="col-md-3">
+              <div class="col-md-4" style="min-width: 300px; max-width: 380px;">
                   <div class="checkbox">
                       <input name="dim-toggle-treatment-method" class="bootstrapToggle dimensionToggle"
                           id="dim-toggle-treatment-method" type="checkbox" data-width="100%" data-height="21"
@@ -172,35 +221,59 @@
                           data-width="100%" data-height="21" data-toggle="toggle" checked data-on="Destination" data-off="Origin">
                   </div>
               </div> -->
+              <div class="labelHelpiconContainer">
+                <a 
+                  class="help-icon fas fa-question-circle" 
+                  data-toggle="popover" 
+                  title="Verwerkingsmethode"
+                  data-html="true" 
+                  tabindex="0"
+                  data-content="
+                    <span>PLACEHOLDER TEXT</span>
+                    ">
+                </a>
+              </div>
           </div>
 
           <!-- Material -->
           <div class="row mb-3">
-              <div class="col-md-3">
-                  <div class="checkbox">
-                      <input name="dim-toggle-material" class="bootstrapToggle dimensionToggle" id="dim-toggle-material"
-                          type="checkbox" data-width="100%" data-height="21" data-toggle="toggle" data-dim="material"
-                          data-on="Afvalstroomcode" data-off="Afvalstroomcode">
-                  </div>
-              </div>
-              <div class="col-md-9" id="gran-material-col" style="display: none">
-                  <div class="btn-group btn-group-toggle" id="gran-radio-material" data-toggle="buttons"
-                      style="width: 100%; max-width: 30rem">
-                      <label class="btn btn-default gran-radio-material-label active" data-ewc="ewc2">
-                          <input type="radio" class="gran-radio-material-input" id="gran-radio-material-ewc2"
-                              checked>EURAL hoofdgroep
-                      </label>
-                      <label class="btn btn-default gran-radio-material-label" data-ewc="ewc4">
-                          <input type="radio" class="gran-radio-material-input" id="gran-radio-material-ewc4">EURAL subgroep
-                      </label>
-                      <label class="btn btn-default gran-radio-material-label" data-ewc="ewc6">
-                          <input type="radio" class="gran-radio-material-input" id="gran-radio-material-ewc6">EURAL 6-cijfer code
-                      </label>
-                      <label class="btn btn-default gran-radio-material-label" data-ewc="gncode">
-                          <input type="radio" class="gran-radio-material-input" id="gran-radio-material-gncode">GN code
-                      </label>
-                  </div>
-              </div>
+            <div class="col-md-4" style="min-width: 300px; max-width: 380px;">
+                <div class="checkbox">
+                    <input name="dim-toggle-material" class="bootstrapToggle dimensionToggle" id="dim-toggle-material"
+                        type="checkbox" data-width="100%" data-height="21" data-toggle="toggle" data-dim="material"
+                        data-on="Afvalstroomcode" data-off="Afvalstroomcode">
+                </div>
+            </div>
+            <div class="col-md-9" id="gran-material-col" style="display: none">
+                <div class="btn-group btn-group-toggle" id="gran-radio-material" data-toggle="buttons"
+                    style="width: 100%; max-width: 30rem">
+                    <label class="btn btn-default gran-radio-material-label active" data-ewc="ewc2">
+                        <input type="radio" class="gran-radio-material-input" id="gran-radio-material-ewc2"
+                            checked>EURAL hoofdgroep
+                    </label>
+                    <label class="btn btn-default gran-radio-material-label" data-ewc="ewc4">
+                        <input type="radio" class="gran-radio-material-input" id="gran-radio-material-ewc4">EURAL subgroep
+                    </label>
+                    <label class="btn btn-default gran-radio-material-label" data-ewc="ewc6">
+                        <input type="radio" class="gran-radio-material-input" id="gran-radio-material-ewc6">EURAL 6-cijfer code
+                    </label>
+                    <label class="btn btn-default gran-radio-material-label" data-ewc="gncode">
+                        <input type="radio" class="gran-radio-material-input" id="gran-radio-material-gncode">GN code
+                    </label>
+                </div>
+            </div>
+            <div class="labelHelpiconContainer">
+              <a 
+                class="help-icon fas fa-question-circle" 
+                data-toggle="popover" 
+                title="Afvalstroomcode"
+                data-html="true" 
+                tabindex="0"
+                data-content="
+                  <span>PLACEHOLDER TEXT</span>
+                  ">
+              </a>
+            </div>
           </div>
 
           <div class="viz-container" style="display: none;">
