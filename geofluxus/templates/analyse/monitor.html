@@ -99,180 +99,278 @@
 
           <!-- origin -->
           <div class="row align-items-center">
-              <div class="col-md-4" style="min-width: 300px; max-width: 380px;">
-                  <div class="checkbox">
-                      <input name="dim-toggle-origin" class="bootstrapToggle dimensionToggle" id="dim-toggle-origin"
-                          type="checkbox" data-width="100%" data-height="21" data-toggle="toggle" data-dim="origin"
-                          data-on="Herkomst" data-off="Herkomst">
-                  </div>
+            <div class="col-md-4" style="min-width: 300px; max-width: 380px;">
+              <div class="checkbox">
+                <input 
+                  name="dim-toggle-origin" 
+                  class="bootstrapToggle dimensionToggle" 
+                  id="dim-toggle-origin"
+                  type="checkbox" 
+                  data-width="100%" 
+                  data-height="21" 
+                  data-toggle="toggle" 
+                  data-dim="origin"
+                  data-on="Herkomst" 
+                  data-off="Herkomst">
               </div>
-              <div class="col-md-3" id="gran-toggle-origin-col" style="display: none">
-                  <div class="btn-group btn-group-toggle" id="gran-radio-origin" data-toggle="buttons"
-                      style="width: 100%; max-width: 30rem">
-                      <% levels.forEach(function(level, idx) { %>
-                          <% var classname = "btn btn-default gran-radio-origin-label" %>
-                          <% if (!idx) { classname += " active" } %>
-                          <label class="<%= classname %>" data-origin="<%= level.id %>">
-                              <input type="radio" class="gran-radio-origin-input" id="gran-radio-origin-<%= level.id %>">
-                              <%= level.get('name') %>
-                          </label>
-                      <% }) %>
-                  </div>
+            </div>
+            <div class="col-md-3" id="gran-toggle-origin-col" style="display: none">
+              <div 
+                class="btn-group btn-group-toggle" 
+                id="gran-radio-origin" 
+                data-toggle="buttons"
+                style="width: 100%; max-width: 30rem">
+                  <% levels.forEach(function(level, idx) { %>
+                    <% var classname = "btn btn-default gran-radio-origin-label" %>
+                    <% if (!idx) { classname += " active" } %>
+                    <label class="<%= classname %>" data-origin="<%= level.id %>">
+                      <input type="radio" class="gran-radio-origin-input" id="gran-radio-origin-<%= level.id %>">
+                      <%= level.get('name') %>
+                    </label>
+                  <% }) %>
               </div>
+            </div>
 
-              <div class="col-md-3" id="origDest-toggle-origin-col" style="display: none">
-                  <div class="checkbox">
-                      <input name="origDest-toggle-origin" class="bootstrapToggle" id="origDest-toggle-origin"
-                          type="checkbox" data-width="100%" data-height="21" data-toggle="toggle" data-on="Destination"
-                          data-off="Origin">
-                  </div>
+            <div class="col-md-3" id="origDest-toggle-origin-col" style="display: none">
+              <div class="checkbox">
+                <input 
+                  name="origDest-toggle-origin" 
+                  class="bootstrapToggle" 
+                  id="origDest-toggle-origin"
+                  type="checkbox" 
+                  data-width="100%" 
+                  data-height="21" 
+                  data-toggle="toggle" 
+                  data-on="Destination"
+                  data-off="Origin">
               </div>
-              <div class="labelHelpiconContainer">
-                <a 
-                  class="help-icon fas fa-question-circle" 
-                  data-toggle="popover" 
-                  title="Herkomst"
-                  data-html="true" 
-                  tabindex="0"
-                  data-content="
-                    <span>PLACEHOLDER TEXT</span>
-                    ">
-                </a>
-              </div>
+            </div>
+            <div class="labelHelpiconContainer">
+              <a 
+                class="help-icon fas fa-question-circle" 
+                data-toggle="popover" 
+                title="Herkomst"
+                data-html="true" 
+                tabindex="0"
+                data-content="
+                  <span>PLACEHOLDER TEXT</span>
+                  ">
+              </a>
+            </div>
           </div>
 
           <!-- Economic Activity -->
           <div class="row">
-              <div class="col-md-4" style="min-width: 300px; max-width: 380px;">
-                  <div class="checkbox">
-                      <input name="dim-toggle-economic-activity" class="bootstrapToggle dimensionToggle"
-                          id="dim-toggle-economic-activity" type="checkbox" data-width="100%" data-height="21"
-                          data-toggle="toggle" data-dim="economicActivity" data-on="Economische sector (SBI code)"
-                          data-off="Economische sector (SBI code)">
-                  </div>
+            <div class="col-md-4" style="min-width: 300px; max-width: 380px;">
+              <div class="checkbox">
+                <input 
+                  name="dim-toggle-economic-activity" 
+                  class="bootstrapToggle dimensionToggle"
+                  id="dim-toggle-economic-activity" 
+                  type="checkbox" 
+                  data-width="100%" 
+                  data-height="21"
+                  data-toggle="toggle" 
+                  data-dim="economicActivity" 
+                  data-on="Economische sector (SBI code)"
+                  data-off="Economische sector (SBI code)">
               </div>
-              <div class="col-md-3" id="gran-econ-activity-col" style="display: none">
+            </div>
+            <div class="col-md-3" id="gran-econ-activity-col" style="display: none">
 
-                    <div class="btn-group btn-group-toggle" id="gran-radio-econ-activity" data-toggle="buttons"
-                      style="width: 100%; max-width: 30rem">
-                        <label class="btn btn-default gran-radio-econ-activity-label active" data-econ-activity="activity__activitygroup">
-                            <input type="radio" class="gran-radio-econ-activity-input" id="gran-radio-econ-activity-group"checked>Hoofdgroep
-                        </label>
-                        <label class="btn btn-default gran-radio-econ-activity-label" data-econ-activity="activity">
-                           <input type="radio" class="gran-radio-econ-activity-input" id="gran-radio-econ-activity">4-cijfer code
-                        </label>
-                    </div>
+              <div 
+                class="btn-group btn-group-toggle" 
+                id="gran-radio-econ-activity" 
+                data-toggle="buttons"
+                style="width: 100%; max-width: 30rem">
+                <label class="btn btn-default gran-radio-econ-activity-label active" data-econ-activity="activity__activitygroup">
+                  <input type="radio" class="gran-radio-econ-activity-input" id="gran-radio-econ-activity-group"checked>Hoofdgroep
+                </label>
+                <label class="btn btn-default gran-radio-econ-activity-label" data-econ-activity="activity">
+                  <input type="radio" class="gran-radio-econ-activity-input" id="gran-radio-econ-activity">4-cijfer code
+                </label>
+              </div>
 
-                  {% comment %} <div class="checkbox">
-                      <input name="gran-toggle-econ-activity" id="gran-toggle-econ-activity" class="bootstrapToggle" type="checkbox"
-                          data-width="100%" data-height="21" data-toggle="toggle" data-on="Activity"
-                          data-off="Activity group">
-                  </div> {% endcomment %}
-              </div>
-              <!-- <div class="col-md-3" id="origDest-toggle-econAct-col" style="display: none">
-                  <div class="checkbox">
-                      <input name="origDest-toggle-econAct" id="origDest-toggle-econAct" class="bootstrapToggle" type="checkbox" data-width="100%"
-                          data-height="21" data-toggle="toggle" data-on="Destination" data-off="Origin">
-                  </div>
-              </div> -->
-              <div class="labelHelpiconContainer">
-                <a 
-                  class="help-icon fas fa-question-circle" 
-                  data-toggle="popover" 
-                  title="Economische sector (SBI code)"
-                  data-html="true" 
-                  tabindex="0"
-                  data-content="
-                    <span>PLACEHOLDER TEXT</span>
-                    ">
-                </a>
-              </div>
+              {% comment %} 
+                <div class="checkbox">
+                  <input 
+                    name="gran-toggle-econ-activity" 
+                    id="gran-toggle-econ-activity" 
+                    class="bootstrapToggle" 
+                    type="checkbox"
+                    data-width="100%" 
+                    data-height="21" 
+                    data-toggle="toggle" 
+                    data-on="Activity"
+                    data-off="Activity group">
+                </div> 
+              {% endcomment %}
+            </div>
+            <!-- <div class="col-md-3" id="origDest-toggle-econAct-col" style="display: none">
+                <div class="checkbox">
+                    <input name="origDest-toggle-econAct" id="origDest-toggle-econAct" class="bootstrapToggle" type="checkbox" data-width="100%"
+                        data-height="21" data-toggle="toggle" data-on="Destination" data-off="Origin">
+                </div>
+            </div> -->
+            <div class="labelHelpiconContainer">
+              <a 
+                class="help-icon fas fa-question-circle" 
+                data-toggle="popover" 
+                title="Economische sector (SBI code)"
+                data-html="true" 
+                tabindex="0"
+                data-content="
+                  <span>PLACEHOLDER TEXT</span>
+                  ">
+              </a>
+            </div>
           </div>
 
           <!-- destination -->
           <div class="row align-items-center">
-              <div class="col-md-3">
-                  <div class="checkbox">
-                      <input name="dim-toggle-destination" class="bootstrapToggle dimensionToggle" id="dim-toggle-destination"
-                          type="checkbox" data-width="100%" data-height="21" data-toggle="toggle" data-dim="destination"
-                          data-on="Bestemming" data-off="Bestemming">
-                  </div>
+            <div class="col-md-4" style="min-width: 300px; max-width: 380px;">
+              <div class="checkbox">
+                <input 
+                  name="dim-toggle-destination" 
+                  class="bootstrapToggle dimensionToggle" 
+                  id="dim-toggle-destination"
+                  type="checkbox" 
+                  data-width="100%" 
+                  data-height="21" 
+                  data-toggle="toggle" 
+                  data-dim="destination"
+                  data-on="Bestemming" 
+                  data-off="Bestemming">
               </div>
-              <div class="col-md-3" id="gran-toggle-destination-col" style="display: none">
-                  <div class="btn-group btn-group-toggle" id="gran-radio-destination" data-toggle="buttons"
-                      style="width: 100%; max-width: 30rem">
-                      <% levels.forEach(function(level, idx) { %>
-                          <% var classname = "btn btn-default gran-radio-destination-label" %>
-                          <% if (!idx) { classname += " active" } %>
-                          <label class="<%= classname %>" data-destination="<%= level.id %>">
-                              <input type="radio" class="gran-radio-destination-input" id="gran-radio-destination-<%= level.id %>">
-                              <%= level.get('name') %>
-                          </label>
-                      <% }) %>
-                  </div>
+            </div>
+            <div class="col-md-3" id="gran-toggle-destination-col" style="display: none">
+              <div 
+                class="btn-group btn-group-toggle" 
+                id="gran-radio-destination" 
+                data-toggle="buttons"
+                style="width: 100%; max-width: 30rem">
+                  <% levels.forEach(function(level, idx) { %>
+                    <% var classname = "btn btn-default gran-radio-destination-label" %>
+                    <% if (!idx) { classname += " active" } %>
+                    <label class="<%= classname %>" data-destination="<%= level.id %>">
+                      <input 
+                        type="radio" 
+                        class="gran-radio-destination-input" 
+                        id="gran-radio-destination-<%= level.id %>">
+                          <%= level.get('name') %>
+                    </label>
+                  <% }) %>
               </div>
+            </div>
 
-              <div class="col-md-3" id="origDest-toggle-destination-col" style="display: none">
-                  <div class="checkbox">
-                      <input name="origDest-toggle-origin" class="bootstrapToggle" id="origDest-toggle-destination"
-                          type="checkbox" data-width="100%" data-height="21" data-toggle="toggle" data-on="Origin"
-                          data-off="Destination">
-                  </div>
+            <div class="col-md-3" id="origDest-toggle-destination-col" style="display: none">
+              <div class="checkbox">
+                <input 
+                  name="origDest-toggle-origin" 
+                  class="bootstrapToggle" 
+                  id="origDest-toggle-destination"
+                  type="checkbox" 
+                  data-width="100%" 
+                  data-height="21" 
+                  data-toggle="toggle" 
+                  data-on="Origin"
+                  data-off="Destination">
               </div>
+            </div>
+            <div class="labelHelpiconContainer">
+              <a 
+                class="help-icon fas fa-question-circle" 
+                data-toggle="popover" 
+                title="Bestemming"
+                data-html="true" 
+                tabindex="0"
+                data-content="
+                  <span>PLACEHOLDER TEXT</span>
+                  ">
+              </a>
+            </div>
           </div>
 
           <!-- Treatment Method -->
           <div class="row">
-              <div class="col-md-4" style="min-width: 300px; max-width: 380px;">
-                  <div class="checkbox">
-                      <input name="dim-toggle-treatment-method" class="bootstrapToggle dimensionToggle"
-                          id="dim-toggle-treatment-method" type="checkbox" data-width="100%" data-height="21"
-                          data-toggle="toggle" data-dim="treatmentMethod" data-on="Verwerkingsmethode"
-                          data-off="Verwerkingsmethode">
-                  </div>
+            <div class="col-md-4" style="min-width: 300px; max-width: 380px;">
+              <div class="checkbox">
+                <input 
+                  name="dim-toggle-treatment-method" 
+                  class="bootstrapToggle dimensionToggle"
+                  id="dim-toggle-treatment-method" 
+                  type="checkbox" 
+                  data-width="100%" 
+                  data-height="21"
+                  data-toggle="toggle" 
+                  data-dim="treatmentMethod" 
+                  data-on="Verwerkingsmethode"
+                  data-off="Verwerkingsmethode">
+              </div>
+            </div>
+
+            <div class="col-md-3" id="gran-treatment-method-col" style="display: none">
+
+              <div 
+                class="btn-group btn-group-toggle" 
+                id="gran-radio-treatment-method" 
+                data-toggle="buttons"                      
+                style="width: 100%; max-width: 30rem">
+                  <label class="btn btn-default gran-radio-treatment-method-label active" data-treatment-method="process__processgroup">
+                    <input type="radio" class="gran-radio-treatment-method-input" id="gran-radio-treatment-method-group"checked>Verwerkingsgroep
+                  </label>
+                  <label class="btn btn-default gran-radio-treatment-method-label" data-treatment-method="process">
+                    <input type="radio" class="gran-radio-treatment-method-input" id="gran-radio-treatment-method">Verwerkingscode
+                  </label>
               </div>
 
-              <div class="col-md-3" id="gran-treatment-method-col" style="display: none">
+              {% comment %} 
+                <div class="checkbox">
+                  <input 
+                    name="gran-toggle-treatment-method" 
+                    id="gran-toggle-treatment-method" 
+                    class="bootstrapToggle" 
+                    type="checkbox"
+                    data-width="100%" 
+                    data-height="21" 
+                    data-toggle="toggle" 
+                    data-on="Treatment method"
+                    data-off="Treatment method group">
+                </div> 
+              {% endcomment %}
+            </div>
 
-                   <div class="btn-group btn-group-toggle" id="gran-radio-treatment-method" data-toggle="buttons"
-                      style="width: 100%; max-width: 30rem">
-                        <label class="btn btn-default gran-radio-treatment-method-label active" data-treatment-method="process__processgroup">
-                            <input type="radio" class="gran-radio-treatment-method-input" id="gran-radio-treatment-method-group"checked>Verwerkingsgroep
-                        </label>
-                        <label class="btn btn-default gran-radio-treatment-method-label" data-treatment-method="process">
-                           <input type="radio" class="gran-radio-treatment-method-input" id="gran-radio-treatment-method">Verwerkingscode
-                        </label>
-                    </div>
-
-
-                  {% comment %} <div class="checkbox">
-                      <input name="gran-toggle-treatment-method" id="gran-toggle-treatment-method" class="bootstrapToggle" type="checkbox"
-                          data-width="100%" data-height="21" data-toggle="toggle" data-on="Treatment method"
-                          data-off="Treatment method group">
-                  </div> {% endcomment %}
+            <div class="col-md-3" id="origDest-toggle-treatment-col" style="display: none">
+              <div class="checkbox">
+                <input 
+                  name="origDest-toggle-treatment" 
+                  id="origDest-toggle-treatment" 
+                  type="checkbox" 
+                  class="bootstrapToggle"
+                  data-width="100%" 
+                  data-height="21" 
+                  data-toggle="toggle" 
+                  checked data-on="Destination" 
+                  data-off="Origin">
               </div>
-
-              <div class="col-md-3" id="origDest-toggle-treatment-col" style="display: none">
-                  <div class="checkbox">
-                      <input name="origDest-toggle-treatment" id="origDest-toggle-treatment" type="checkbox" class="bootstrapToggle"
-                          data-width="100%" data-height="21" data-toggle="toggle" checked data-on="Destination" data-off="Origin">
-                  </div>
-              <div class="labelHelpiconContainer">
-                <a 
-                  class="help-icon fas fa-question-circle" 
-                  data-toggle="popover" 
-                  title="Verwerkingsmethode"
-                  data-html="true" 
-                  tabindex="0"
-                  data-content="
-                    <span>PLACEHOLDER TEXT</span>
-                    ">
-                </a>
-              </div>
+            </div>
+            
+            <div class="labelHelpiconContainer">
+              <a 
+                class="help-icon fas fa-question-circle" 
+                data-toggle="popover" 
+                title="Verwerkingsmethode"
+                data-html="true" 
+                tabindex="0"
+                data-content="
+                  <span>PLACEHOLDER TEXT</span>
+                  ">
+              </a>
+            </div>
           </div>
 
           <!-- Material -->
-          <div class="row mb-3">
+          <div class="row">
             <div class="col-md-4" style="min-width: 300px; max-width: 380px;">
                 <div class="checkbox">
                     <input name="dim-toggle-material" class="bootstrapToggle dimensionToggle" id="dim-toggle-material"
