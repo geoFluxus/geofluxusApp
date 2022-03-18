@@ -10,7 +10,7 @@
         <!-- General Controls -->
         <div class="card bg-dark">
           <div class="card-header" id="card-header-collapse-general">
-            <h4 class="mb-1">
+            <h4 class="mb-1" style="justify-content: flex-start">
               <button 
                 class="btn btn-link collapsed collapsingHeaderButton"
                 id="btn-collapse-header-general"
@@ -22,6 +22,16 @@
                   <i class="fa fa-chevron-down pull-right"></i>
                   Algemeen
               </button>
+
+              <!-- <div class="d-inline buttonHelpiconContainer">
+                <a class="help-icon fas fa-question-circle" 
+                  data-toggle="popover"
+                  title="Algemeen" 
+                  data-html="true" 
+                  tabindex="0"
+                  data-content="placeholder text.">
+                </a>
+              </div> -->
             </h4>
           </div>
 
@@ -199,7 +209,7 @@
                 </div>
               </div>
 
-              <div class="row mt-2 areaSelections-origin" style="display: none;">
+              <!-- <div class="row mt-2 areaSelections-origin" style="display: none;">
                 <div class="col">
                   <div style="display: block;">
                     <label style="display: inline-block;">De herkomst van afval moet </label>
@@ -217,7 +227,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
               <!-- Select Activity group -->
               {% if not request.user|isDemoUser %}
@@ -244,7 +254,7 @@
                           <a 
                             class="help-icon fas fa-question-circle" 
                             data-toggle="popover" 
-                            title="Economische sectoren"
+                            title="Economische sector"
                             data-html="true"
                             tabindex="0"
                             data-content="
@@ -358,12 +368,11 @@
                           Standaard is deze methode niet geselecteerd. Tijdens de rit voegt de inzamelaar het afval samen.
                           Een voorbeeld van route-inzameling is huis-aan-huis-inzameling van huishoudelijk afval.
                           In dit geval meldt de inzamelaar zich als ontdoener van het afval terwijl het vanuit meerdere locaties afkomstig is
-                          <span><a href='https://www.lma.nl/faq/melden-afval/afval-inzamelen/route-inzameling/' style='background-color: black;'>(LMA, 2022)</a></span>.
+                          <span><a href='https://www.lma.nl/faq/melden-afval/afval-inzamelen/route-inzameling/' target='_blank' style='background-color: black;'>(LMA, 2022)</a></span>.
                           ">
                         </a>
                       </div>
-                    </div>
-                    
+                    </div>                   
                     
                   </div>                
                 </div>
@@ -409,21 +418,19 @@
 
               <div class="row origin-treatment" style="display: none;">
                 <div class="col-md-4">
-                  <label for="origin-processgroup-select">Treatment method group</label>
+                  <label for="origin-processgroup-select">Verwerkingsmethode groep</label>
                   <div class="labelHelpiconContainer">
                     <a 
                       class="help-icon fas fa-question-circle" 
                       data-toggle="popover"
-                      title="Treatment method group" 
+                      title="Verwerkingsmethode groep" 
                       data-html="true" 
                       tabindex="0" 
                       data-content="
-                        <span>The Treatment method group indicates the general treatment method group used by the Origin of the flows.</span>
-                        <br>
-                        <span>This classification is based on the classification system of the Dutch government agency 'Landelijk Meldpunt Afvalstoffen'.
-                        The full list of entries can be consulted <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a>.</span>
-                        <br>
-                        <span>Upon selecting a Treatment method group, the Treatment method filter will become available, containing the Treatment methods belonging to the selection made in this filter.</span>
+                        <span>Selecteer een of meerdere verwerkingsmethoden. Standaard zijn alle verwerkingsmethoden geselecteerd.
+                        Na een selectie van een of meerdere hoofdmethoden kunt u een of meerdere sub-methoden selecteren.</span>
+                        <span>Raadpleeg de website van het Landelijk Meldpunt Afvalstoffen voor meer informatie over de definities van verwerkingsmethoden: 
+                        <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/' target='_blank'>here</a>.</span>
                         ">
                     </a>
                   </div>
@@ -442,19 +449,18 @@
                 </div>
 
                 <div class="col-md-4" id="origin-processesCol" style="display: none;">
-                  <label for="origin-process-select">Treatment method</label>
+                  <label for="origin-process-select">Verwerkingsmethode</label>
                   <div class="labelHelpiconContainer">
                     <a 
                       class="help-icon fas fa-question-circle" 
                       data-toggle="popover"
-                      title="Treatment method" 
+                      title="TVerwerkingsmethode" 
                       data-html="true" 
                       tabindex="0" 
                       data-content="
-                        <span>The Treatment method indicates the specific treatment method used by the Origin of the flows.</span>
-                        <br>
-                        <span>This classification is based on the classification system of the Dutch government agency 'Landelijk Meldpunt Afvalstoffen'.
-                        The full list of entries can be consulted <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a>.</span>
+                        <span>Selecteer een of meerdere sub-verwerkingsmethoden. Standaard zijn alle sub-verwerkingsmethoden geselecteerd.</span>
+                        <span>Raadpleeg de website van het Landelijk Meldpunt Afvalstoffen voor meer informatie over de definities van verwerkingsmethoden: 
+                        <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/' target='_blank'>here</a>.</span>
                         ">
                     </a>
                   </div>
@@ -546,7 +552,7 @@
                 </div>
 
                 <!-- Areas: second level -->
-                <div class="row mt-2 areaSelections-destination" style="display: none;">
+                <!-- <div class="row mt-2 areaSelections-destination" style="display: none;">
                   <div class="col">
                     <div style="display: block;">
                       <label style="display: inline-block;">De bestemming van afval moet </label>
@@ -564,7 +570,7 @@
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> -->
 
                 <!-- Destination Role -->
                 <div class="row mt-3" style="display: none;">
@@ -621,7 +627,7 @@
                           <span>The Activity group indicates the economic activity of the Destination of the waste flow.</span>
                           <br>
                           <span>This classification is based on the Statistical Classification of Economic Activities in the European Community,
-                          also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL&StrNom=NACE_REV2&StrLanguageCode=EN&IntPcKey=&StrLayoutCode=HIERARCHIC'>here</a>.</span>
+                          also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL&StrNom=NACE_REV2&StrLanguageCode=EN&IntPcKey=&StrLayoutCode=HIERARCHIC' target='_blank'>here</a>.</span>
                           <br>
                           <span>This filter also contains four additional custom entries:</span>
                           <ul>
@@ -667,7 +673,7 @@
                           This filter contains the Activities belonging to the selection made in the Activity group filter.</span>
                           <br>
                           <span>This classification is based on the Statistical Classification of Economic Activities in the European Community,
-                          also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL_LINEAR&StrNom=NACE_REV2&StrLanguageCode=EN'>here</a>.</span>
+                          also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL_LINEAR&StrNom=NACE_REV2&StrLanguageCode=EN' target='_blank'>here</a>.</span>
                           <br>
                           <span>This filter also contains several additional custom entries belonging to the custom Activity groups.</span>
                           ">
@@ -725,7 +731,7 @@
                               Standaard zijn alle verwerkingsmethoden geselecteerd.
                               Na een selectie van een of meerdere hoofdmethoden kunt u een of meerdere sub-methoden selecteren.
                               Raadpleeg de website van het Landelijk Meldpunt Afvalstoffen voor meer informatie over de definities van verwerkingsmethoden
-                              <span><a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>hier</a></span>.
+                              <span><a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/' target='_blank'>hier</a></span>.
                               ">
                           </a>
                         </div>
@@ -762,7 +768,7 @@
                               Selecteer een of meerdere sub-verwerkingsmethoden.
                               Standaard zijn alle sub-verwerkingsmethoden geselecteerd.
                               Raadpleeg de website van het Landelijk Meldpunt Afvalstoffen voor meer informatie over de definities van verwerkingsmethoden
-                              <span><a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a></span>.
+                              <span><a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/' target='_blank'>here</a></span>.
                               ">
                           </a>
                         </div>
@@ -861,14 +867,16 @@
                       <a
                         class="help-icon fas fa-question-circle"
                         data-toggle="popover"
-                        title="Materials"
+                        title="Afval | Beide | Hergebruikt afval"
                         data-html="true"
                         tabindex="0"
-                        data-content="Filter the flows based on their material content.
-                          Selecting one or more materials will return all flows containing the selected material(s),
-                          meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
-                          consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
-                          to only include non-mixed material flows.">
+                        data-content="
+                          <span>Selecteer aanvullende filters voor afval (enkel toepasbaar voor de dataset ontvangstmeldingen) of hergebruikt afval (enkel toepasbaar voor de dataset afgiftemeldingen).<br>
+                          Vanwege de verschillende informatie in beide datasets is het niet mogelijk gemeenschappelijke filters voor beide datasets te selecteren.<br>
+                          <br>
+                          LET OP! Controleer of u bij “Databronnen” de corresponderende databron heeft geselecteerd.<br>
+                          U kunt enkel de filters voor afval toepassen op de databron “ontvangstmeldingen” en de filters voor hergebruikt afval enkel toepassen op de databron 'afgiftemeldingen'.</span>
+                          ">
                       </a>
                     </div>
                   </div>
@@ -935,14 +943,16 @@
                         <a 
                           class="help-icon fas fa-question-circle" 
                           data-toggle="popover" 
-                          title="Materials"
+                          title="Ketenpositie"
                           data-html="true" 
                           tabindex="0" 
-                          data-content="Filter the flows based on their material content.
-                            Selecting one or more materials will return all flows containing the selected material(s),
-                            meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
-                            consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
-                            to only include non-mixed material flows.">
+                          data-content="
+                            <span>Selecteer een of meerdere ketenposities voor analyse. Standaard zijn alle ketenposities geselecteerd. De ketenposities zijn gebaseerd op de economische sectoren van onze economie; de primaire, secundaire, tertiaire en quartaire sectoren.<br>
+                            <br>
+                            De primaire sector wint ruwe grondstoffen, de secundaire sector verwerkt deze grondstoffen tot verwerkte grondstoffen of producten, de tertiaire sector consumeert grondstoffen en producten en produceert afval, de quartaire sector verwerkt het afval tot grondstoffen, producten, of retourneert deze materialen naar het milieu.<br>
+                            <br>
+                            Voor meer informatie raadpleeg het INFO tabblad van de sectie Ketenpositie in de publieke monitor hier: <a href='http://www.monitorce.nl/provincieflevoland/#/about' target='_blank'>www.monitorce.nl/provincieflevoland</a></span>
+                            ">
                         </a>
                       </div>
                       <select 
@@ -969,14 +979,15 @@
                         <a 
                           class="help-icon fas fa-question-circle" 
                           data-toggle="popover" 
-                          title="Materials"
+                          title="Transitieagenda"
                           data-html="true" 
                           tabindex="0" 
-                          data-content="Filter the flows based on their material content.
-                            Selecting one or more materials will return all flows containing the selected material(s),
-                            meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
-                            consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
-                            to only include non-mixed material flows.">
+                          data-content="
+                            <span>Selecteer een of meerdere transitieagenda’s voor analyse. Standaard zijn alle transitieagenda’s geselecteerd.<br>
+                            De Rijksoverheid en andere betrokkenen hebben plannen voor de transitie naar een circulaire economie geformuleerd in 5 transitieagenda’s (TA’s) die zich richten op de volgende economische sectoren en ketens: 1) Biomassa en Voedsel, 2) Kunststoffen, 3) Maakindustrie, 4) Bouw, 5) Consumptiegoederen.<br>
+                            <br>
+                            Raadpleeg voor meer informatie het tabblad INFO in de Transitieagenda sectie in de module Materialen van de monitor: <a href='http://www.monitorce.nl/provincieflevoland/#/about' target='_blank'>www.monitorce.nl/provincieflevoland</a></span>
+                            ">
                         </a>
                       </div>
                       <select 
@@ -1003,14 +1014,16 @@
                         <a 
                           class="help-icon fas fa-question-circle" 
                           data-toggle="popover" 
-                          title="Materials"
+                          title="Industrie"
                           data-html="true" 
                           tabindex="0" 
-                          data-content="Filter the flows based on their material content.
-                            Selecting one or more materials will return all flows containing the selected material(s),
-                            meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
-                            consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
-                            to only include non-mixed material flows.">
+                          data-content="
+                            <span>Selecteer een of meerdere industrieën voor analyse. Standaard zijn alle industrieën geselecteerd.<br>
+                            Industrieën zijn de essentiële knooppunten die materialen en goederen in een toeleveringsketen met elkaar verbinden.<br>
+                            Industrieën zijn groepen bedrijven die vergelijkbaar zijn wat betreft de activiteiten die ze uitvoeren, de materialen waarmee ze werken of hun collectieve doel.<br>
+                            <br>
+                            Raadpleeg voor meer informatie het tabblad INFO in de Trendanalyse sectie in de module Handelingsperspectieven van de monitor: <a href='http://www.monitorce.nl/provincieflevoland/#/about' target='_blank'>www.monitorce.nl/provincieflevoland</a></span>
+                            ">
                         </a>
                       </div>
                       <select 
@@ -1040,15 +1053,15 @@
                         <a 
                           class="help-icon fas fa-question-circle" 
                           data-toggle="popover" 
-                          title="EWC Chapter"
+                          title="Codes Europese Afvalstoffenlijst (EURAL)"
                           data-html="true" 
                           tabindex="0" 
-                          data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
-                            EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
+                          data-content="
+                            <span>Selecteer een of meerdere EURALcodes voor analyse. Standaard zijn alle codes geselecteerd.<br>
                             <br>
-                            <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a>.</span>
+                            Een EURALcode is een gestandaardiseerde 6-cijferige Europese indeling voor afval. Afval wordt ingedeeld volgens 20 hoofdstukken (de eerste 2 cijfers van de 6) aan de hand van de industrie, het proces, of het materiaal van het afval. Ieder hoofdstuk heeft sub-hoofdstukken (4 cijfers), en individuele codes (6 cijfers).<br>
                             <br>
-                            <span>Upon selecting an EWC Chapter, the Sub-Chapter filter will become available, containing the Sub-Chapters belonging to the selection made in this filter.</span>
+                            Ieder bedrijf dat meldplichtig is bij het Landelijk Meldpunt Afvalstoffen (LMA) meldt hun afval a.d.h.v. EURALcodes.</span>
                             ">
                         </a>
                       </div>
@@ -1073,7 +1086,7 @@
 
                     <div class="col-md-4" id="flows-wastes04Col" style="display: none;">
                       <label for="flows-waste04-select">Sub-Chapter</label>
-                      <div class="labelHelpiconContainer">
+                      <!-- <div class="labelHelpiconContainer">
                         <a 
                           class="help-icon fas fa-question-circle" 
                           data-toggle="popover"
@@ -1083,12 +1096,12 @@
                           data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
                             EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
                             <br>
-                            <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a>.</span>
+                            <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table' target='_blank'>here</a>.</span>
                             <br>
                             <span>Upon selecting an EWC Sub-Chapter, the EWC Entry filter will become available, containing the EWC Entries belonging to the selection made in this filter.</span>
                             ">
                         </a>
-                      </div>
+                      </div> -->
 
                       <i class="fas fa-angle-double-right filterDoubleChevron"></i>
                       <select 
@@ -1104,7 +1117,7 @@
 
                     <div class="col-md-4" id="flows-wastes06Col" style="display: none;">
                       <label for="flows-waste06-select" id="flows-waste06-label">EWC Entry</label>
-                      <div class="labelHelpiconContainer" id="helpiconWaste06">
+                      <!-- <div class="labelHelpiconContainer" id="helpiconWaste06">
                         <a 
                           class="help-icon fas fa-question-circle" 
                           data-toggle="popover" 
@@ -1114,10 +1127,10 @@
                           data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
                             EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
                             <br>
-                            <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a>.</span>
+                            <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table' target='_blank'>here</a>.</span>
                             ">
                         </a>
-                      </div>
+                      </div> -->
 
                       <i class="fas fa-angle-double-right filterDoubleChevron chevronEwc06"></i>
                       <select 
@@ -1142,14 +1155,15 @@
                         <a 
                           class="help-icon fas fa-question-circle" 
                           data-toggle="popover" 
-                          title="Materials"
+                          title="Materialen in afval"
                           data-html="true" 
                           tabindex="0" 
-                          data-content="Filter the flows based on their material content.
-                            Selecting one or more materials will return all flows containing the selected material(s),
-                            meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
-                            consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
-                            to only include non-mixed material flows.">
+                          data-content="
+                            <span>Selecteer een of meerdere materialen voor analyse.<br>
+                            <br>
+                            Standaard zijn alle materialen geselecteerd. De materialen zijn gecategoriseerd a.d.h.v. hun fysieke kenmerken, en in oplopend detail.<br>
+                            Zo is zand een mineraal, wat anorganisch is, wat abiotisch is. Het selecteren van de categorie ‘anorganisch’ selecteert automatisch alles wat onder die categorie valt.</span>
+                            ">
                         </a>
                       </div>
                       <select 
@@ -1187,12 +1201,14 @@
                           <a 
                             class="help-icon fas fa-question-circle" 
                             data-toggle="popover" 
-                            title="Clean"
+                            title="Schoon"
                             data-html="true" 
                             tabindex="0"
-                            data-content="The Clean filter indicates the extent to which a
-                              flow is expected to be contaminated with another substance. ‘Mono’ streams are considered
-                              clean streams since they consist of one material and are not contaminated, i.e. clean.">
+                            data-content="
+                              <span>Met dit filter is het mogelijk afvalstromen te selecteren die (vermoedelijk) schoon zijn. Standaard staat dit filter uit.<br>
+                              <br>
+                              Schone afvalstromen bevatten een of meerdere materialen die niet ongewild zijn vermengd met andere materialen. Een schone afvalstroom is bijvoorbeeld a-hout, of puur zand. Een vervuilde afvalstroom is bijvoorbeeld.</span>
+                              ">
                           </a>
                         </div>
                         <select 
@@ -1215,14 +1231,14 @@
                           <a 
                             class="help-icon fas fa-question-circle" 
                             data-toggle="popover" 
-                            title="Mixed"
+                            title="Gemengd"
                             data-html="true" 
                             tabindex="0" 
-                            data-content="The Mixed category indicates whether the flow
-                              contains two or more materials. A mixed flow could consist of two or more clean materials
-                              (masonry and concrete rubble, f.e.), but also two materials of which one is an identified
-                              pollutant (soil containing mineral oil, f.e.). All non-clean flows are by definition mixed,
-                              indicating they contain two or more materials.">
+                            data-content="
+                              <span>Met dit filter is het mogelijk afvalstromen te selecteren die (vermoedelijk) gemengd zijn. Standaard staat dit filter uit.<br>
+                              <br>
+                              Gemengde afvalstromen bevatten meer dan een enkel materiaal. Schone gemengde stromen zijn bijvoorbeeld gemengd bouw- en sloopafval (beton, hout, metaal). Vervuilde (niet-schone) gemengde stromen zijn bijvoorbeeld gips met asbest of groen snoeiafval met plastic.</span>
+                              ">
                           </a>
                         </div>
                         <select 
@@ -1245,12 +1261,13 @@
                           <a 
                             class="help-icon fas fa-question-circle" 
                             data-toggle="popover" 
-                            title="Hazardous"
+                            title="Gevaarlijk"
                             data-html="true" 
                             tabindex="0" 
-                            data-content="<span>The European Waste Catalogue (EWC) Code of a waste flow contains an asterisk (*) to indicate whether the waste is considered to be hazardous.
-                              This filter allows you to include or exclude flows containing hazardous materials. By default, this filter ignores this property and returns both options.</span>
-                              <span>The full list of EWC Entries, including the hazardous entries, can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a></span>
+                            data-content="
+                              <span>Selecteer met dit filter enkel gevaarlijk of ongevaarlijk afval. Standaard staat dit filter uit.<br>
+                              <br>
+                              Gevaarlijk afval moet volgens bepaalde EURALcodes worden gemeld. Deze codes bevatten een asterisk (*). Dit is ook terug te zien bij de 6-cijferige EURALcodes onder het filter 'Codes Europese Afvalstoffenlijst (EURAL)'.</span>
                               ">
                           </a>
                         </div>
@@ -1350,7 +1367,7 @@
                           data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
                             EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
                             <br>
-                            <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a>.</span>
+                            <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table' target='_blank'>here</a>.</span>
                             <br>
                             <span>Upon selecting an EWC Chapter, the Sub-Chapter filter will become available, containing the Sub-Chapters belonging to the selection made in this filter.</span>
                             ">
