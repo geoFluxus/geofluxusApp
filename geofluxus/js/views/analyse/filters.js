@@ -307,6 +307,7 @@ define(['views/common/baseview',
 
                     event.preventDefault(); // avoid firing twice!
                 });
+                $('.flow-type[type="waste"]').trigger("click")
 
                 // render ewc codes based on hazardous selection
                 function filterHazardous(evt) {
