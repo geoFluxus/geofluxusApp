@@ -1553,7 +1553,7 @@
             </button>
             <button
               id='save-filters'
-              class="btn btn-primary openSavedFilterModal"
+              class="btn btn-primary"
               data-filter-modal-mode="newMode"
               title="Save the current filter configuration."
               style="height: 38px; width: 12rem; margin: 0.2rem">
@@ -1561,7 +1561,7 @@
             </button>
             <button 
               id='reset-filters' 
-              class="btn btn-secondary resetButton" 
+              class="btn btn-secondary"
               style="margin: 0.2rem"
               title="Reset all the filters">
                 RESET SELECTIE
@@ -1693,25 +1693,22 @@
                       </div>
                   </div>
 
-                  <div class='row pt-4 pb-0 mb-2 filterEdit' style="display: none;">
-                      <div class="col d-flex">
-
-                          <div class="form-group w-75">
-                              <input type="text" class="form-control-sm w-100" maxlength="255" id="update-filter-name" placeholder="Filter name" style="height: 38px; border: none; padding-left: 1rem;" required>
-                              <div class="invalid-feedback w-100 text-center mt-4">Uw selectie noemen</div>
-                              <div id="filterNameExists" class="invalid-feedback w-100 text-center mt-4" style="display: none;"></div>
-                              <small id="filterNameUpdated" class="form-text text-white w-100 text-center mt-4" style="display: none;">Uw selectie is hernoemd!</small>
-                          </div>
-
-                          <div class="w-25 d-flex justify-content-between">
-                              <button class="btn btn-sm btn-secondary hide-filter-name-button" type="submit">Annuleren</button>
-                              <button id='save-filter-name'
-                                      type="submit"
-                                      class="btn btn-primary"
-                                      title="Save the filter name">Opslaan</button>
-                          </div>
-
+                  <div class='row pt-3 filterEdit' style="display: none;">
+                      <div class="col">
+                        <input type="text" class="form-control-sm w-100" maxlength="255" id="update-filter-name" placeholder="Filter name" style="height: 38px; border: none; padding-left: 1rem;" required>
+                        <div class="invalid-feedback w-100 text-center mt-4">Uw selectie noemen</div>
+                        <div id="filterNameExists" class="invalid-feedback w-100 text-center mt-4" style="display: none;"></div>
+                        <small id="filterNameUpdated" class="form-text text-white w-100 text-center mt-4" style="display: none;">Uw selectie is hernoemd!</small>
                       </div>
+                  </div>
+                  <div class="row pt-1 ptb-2 filterEdit" style="display: none;">
+                    <div class="col">
+                        <button class="btn btn-secondary hide-filter-name-button" type="submit">Annuleren</button>
+                        <button id='save-filter-name'
+                                type="submit"
+                                class="btn btn-primary"
+                                title="Save the filter name">Opslaan</button>
+                    </div>
                   </div>
               </form>
 

@@ -1231,6 +1231,7 @@ define(['views/common/baseview',
                 $(".newMode")[mode == 'newMode' ? 'show' : 'hide']();
 
                 _this.savedFiltersModal.mode = mode;
+                _this.savedFilters = _this.collections['filters'];
                 $(this.savedFiltersModal).modal('show');
             },
             // FILTER MODAL //
