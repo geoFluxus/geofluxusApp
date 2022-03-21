@@ -51,8 +51,8 @@ define(['views/common/baseview',
                 this.indicator = options.indicator || "waste";
 
                 this.labels = {
-                    waste: "Waste",
-                    co2: "CO<sub>2</sub>",
+                    waste: "Afval",
+                    co2: "CO<sub>2</sub>-eq",
                     nox: "NO<sub>x</sub>",
                     so2: "SO<sub>2</sub>",
                     pm10: "PM<sub>10</sub>",
@@ -68,20 +68,26 @@ define(['views/common/baseview',
                     // 1D visualizations
                     'time': ['piechart', 'barchart', 'treemap', 'lineplot'],
                     'economicActivity': ['piechart', 'barchart', 'treemap'],
-                    'space': ['piechart', 'barchart', 'treemap', 'networkmap','geoheatmap'],
+                    'origin': ['piechart', 'barchart', 'treemap','geoheatmap'],
+                    'destination': ['piechart', 'barchart', 'treemap', 'geoheatmap'],
                     'treatmentMethod': ['piechart', 'barchart', 'treemap', 'parallelsets', 'circularsankey'],
                     'material': ['piechart', 'barchart', 'treemap'],
                     // 2D visualizations
                     'time_economicActivity': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'treemap'],
-                    'time_space': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'flowmap', 'treemap'],
+                    'time_origin': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'flowmap', 'treemap'],
+                    'time_destination': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'flowmap', 'treemap'],
                     'time_treatmentMethod': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'treemap'],
                     'time_material': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'treemap'],
-                    'space_economicActivity': ['barchart', 'stackedbarchart', 'flowmap', 'treemap', 'arclayer'],
-                    'space_treatmentMethod': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
-                    'space_material': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
+                    'origin_economicActivity': ['barchart', 'stackedbarchart', 'flowmap', 'treemap', 'arclayer'],
+                    'origin_treatmentMethod': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
+                    'destination_material': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
+                    'economicActivity_destination': ['barchart', 'stackedbarchart', 'flowmap', 'treemap', 'arclayer'],
+                    'destination_treatmentMethod': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
+                    'destination_material': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
                     'economicActivity_treatmentMethod': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap', 'circularsankey'],
                     'economicActivity_material': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap'],
-                    'treatmentMethod_material': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap']
+                    'treatmentMethod_material': ['barchart', 'stackedbarchart', 'parallelsets', 'treemap'],
+                    'origin_destination': ['networkmap']
                 }
 
                 // Visualization view inventory
@@ -173,9 +179,12 @@ define(['views/common/baseview',
             initializeControls: function () {
                 this.timeToggle = this.el.querySelector('#dim-toggle-time');
                 this.timeToggleGran = this.el.querySelector('#gran-toggle-time');
-                this.spaceToggle = this.el.querySelector('#dim-toggle-space');
-                this.spaceLevelGranSelect = this.el.querySelector('#dim-space-gran-select');
-                this.spaceOrigDest = this.el.querySelector('#origDest-toggle-space');
+                this.originToggle = this.el.querySelector('#dim-toggle-origin');
+                this.originLevelGranSelect = this.el.querySelector('#dim-origin-gran-select');
+                this.originOrigDest = this.el.querySelector('#origDest-toggle-origin');
+                this.destinationToggle = this.el.querySelector('#dim-toggle-destination');
+                this.destinationLevelGranSelect = this.el.querySelector('#dim-destination-gran-select');
+                this.destinationOrigDest = this.el.querySelector('#origDest-toggle-destination');
                 this.economicActivityToggle = this.el.querySelector('#dim-toggle-economic-activity');
                 this.economicActivityToggleGran = this.el.querySelector('#gran-toggle-econ-activity');
                 this.economicActivityOrigDest = this.el.querySelector('#origDest-toggle-econAct');
@@ -269,9 +278,10 @@ define(['views/common/baseview',
                         $(_this.spaceLevelGranSelect).trigger("change");
 
                         // show origin / destination for space & treatment method
-                        $("#dim-space-gran-select").parent().fadeIn();
-                        $("#origDest-toggle-space").parent().fadeIn();
-                        $("#origDest-toggle-treatment").parent().fadeIn();
+                        $("#dim-origin-gran-select").parent().fadeIn();
+                        $("#origDest-toggle-origin").parent().fadeIn();
+                        $("#origDest-toggle-destination").parent().fadeIn();
+                        //$("#origDest-toggle-treatment").parent().fadeIn();
                     } else {
                         $("#message-container-row").fadeIn();
                         $(".viz-container").hide();
@@ -290,7 +300,7 @@ define(['views/common/baseview',
 
                 // Show choropleth / coordinate map for space dimension
                 $(_this.spaceLevelGranSelect).change(function () {
-                    if (_this.selectedDimensionStrings == "space") {
+                    if (_this.selectedDimensionStrings == "origin") {
                         let selectedAreaLevel = $(_this.spaceLevelGranSelect).val(),
                             actorLevel = selectedAreaLevel == _this.actorLevel;
                         $("#viz-coordinatepointmap").parent()[actorLevel ? 'fadeIn' : 'hide']();
@@ -306,24 +316,24 @@ define(['views/common/baseview',
 
                     // At least two dimensions, and one is Space:
                     if (_this.selectedDimensionStrings.includes("space") && clickedToggleHasFlowsFormat) {
-                        $("#origDest-toggle-space").parent().fadeOut();
+                        $("#origDest-toggle-origin").parent().fadeOut();
                     } else {
-                        $("#dim-space-gran-select").parent().fadeIn();
-                        $("#origDest-toggle-space").parent().fadeIn();
+                        $("#dim-origin-gran-select").parent().fadeIn();
+                        $("#origDest-toggle-origin").parent().fadeIn();
                     }
 
                     // Only treatmentMethod:
                     if (_this.selectedDimensionStrings == "treatmentMethod" && clickedToggleHasFlowsFormat) {
-                        $("#origDest-toggle-treatment").parent().fadeOut();
+                        //$("#origDest-toggle-treatment").parent().fadeOut();
                         $(_this.treatmentMethodOrigDest).bootstrapToggle('off');
                     } else {
-                        $("#origDest-toggle-treatment").parent().fadeIn();
+                        //$("#origDest-toggle-treatment").parent().fadeIn();
                     }
 
                     // Hide space gran for Network Map:
                     if (_this.selectedVizName == "networkmap") {
-                        $("#dim-space-gran-select").parent().fadeOut();
-                        $("#origDest-toggle-space").parent().fadeOut();
+                        $("#dim-origin-gran-select").parent().fadeOut();
+                        $("#origDest-toggle-origin").parent().fadeOut();
                     }
                     event.preventDefault();
                 });
@@ -332,9 +342,13 @@ define(['views/common/baseview',
                 $("#dim-toggle-time").change(function () {
                     $("#gran-toggle-time-col").fadeToggle();
                 });
-                $("#dim-toggle-space").change(function () {
-                    $("#gran-toggle-space-col").fadeToggle();
-                    $("#origDest-toggle-space-col").fadeToggle();
+                $("#dim-toggle-origin").change(function () {
+                    $("#gran-toggle-origin-col").fadeToggle();
+                    //$("#origDest-toggle-origin-col").fadeToggle();
+                });
+                $("#dim-toggle-destination").change(function () {
+                    $("#gran-toggle-destination-col").fadeToggle();
+                    //$("#origDest-toggle-origin-col").fadeToggle();
                 });
                 $("#dim-toggle-economic-activity").change(function () {
                     $("#gran-econ-activity-col").fadeToggle();
@@ -342,7 +356,7 @@ define(['views/common/baseview',
                 });
                 $("#dim-toggle-treatment-method").change(function () {
                     $("#gran-treatment-method-col").fadeToggle();
-                    $("#origDest-toggle-treatment-col").fadeToggle();
+                    //$("#origDest-toggle-treatment-col").fadeToggle();
                 });
                 $("#dim-toggle-material").change(function () {
                     $("#gran-material-col").fadeToggle();
@@ -355,6 +369,11 @@ define(['views/common/baseview',
 
                 // Prepare filters for request
                 let filterParams = this.filtersView.getFilterParams();
+                this.mode = this.filtersView.mode;
+                if (this.mode == 'impact') {
+                    filterParams.indicator = 'co2';
+                    filterParams.impactSources = ['transportation'];
+                }
 
                 // ///////////////////////////////
                 // Format
@@ -384,10 +403,10 @@ define(['views/common/baseview',
                     }
                 }
 
-                // Space
-                if ($(this.spaceToggle).prop("checked")) {
-                    let originOrDestination = $(this.spaceOrigDest).prop("checked") ? 'destination' : 'origin',
-                        gran = $('#dim-space-gran-select option:selected').val();
+                // Origin
+                if ($(this.originToggle).prop("checked")) {
+                    let originOrDestination = $(this.originOrigDest).prop("checked") ? 'destination' : 'origin',
+                        gran = $($(".gran-radio-origin-label.active")).attr("data-origin");
                     filterParams.dimensions.space = {};
                     filterParams.dimensions.space.adminlevel = gran;
                     filterParams.dimensions.space.field = originOrDestination;
@@ -405,6 +424,15 @@ define(['views/common/baseview',
                     // }
 
                     filterParams.dimensions.economicActivity = originOrDestination + gran;
+                }
+
+                // Destination
+                if ($(this.destinationToggle).prop("checked")) {
+                    let originOrDestination = $(this.destinationOrigDest).prop("checked") ? 'origin' : 'destination',
+                        gran = $($(".gran-radio-destination-label.active")).attr("data-destination");
+                    filterParams.dimensions.space = {};
+                    filterParams.dimensions.space.adminlevel = gran;
+                    filterParams.dimensions.space.field = originOrDestination;
                 }
 
                 // Treatment method
@@ -428,25 +456,6 @@ define(['views/common/baseview',
                     } else if (gran == 'gncode') {
                         filterParams.dimensions.material = 'flowchain__gncode'
                     }
-                }
-
-                // Gather impact params for impact mode:
-                if (this.mode == "impact") {
-                    // Indicator toggle
-                    $('.impact-indicator-radio-label').each(function (index, value) {
-                        if ($(this).hasClass("active")) {
-                            filterParams.indicator = $(this).attr("data-indicator");
-                        }
-                    });
-
-                    // Divide the toggles in arrays of checked and unchecked toggles:
-                    filterParams.impactSources = [];
-                    $('.impactSourceToggle').each(function (index, value) {
-                        let checked = $(this.parentElement.firstChild).prop('checked');
-                        if (checked) {
-                            filterParams.impactSources.push($(this).attr("data-source"));
-                        }
-                    });
                 }
 
                 return filterParams;
@@ -628,11 +637,11 @@ define(['views/common/baseview',
                 $($("#gran-radio-time")[0].children[1]).addClass("active");
                 $("#gran-toggle-time-col").hide();
 
-                $(_this.spaceToggle).bootstrapToggle('off');
-                $(_this.spaceLevelGranSelect).val($('#dim-space-gran-select:first-child')[0].value);
-                $(_this.spaceOrigDest).bootstrapToggle('off');
-                $("#gran-toggle-space-col").hide();
-                $("#origDest-toggle-space-col").hide();
+                $(_this.originToggle).bootstrapToggle('off');
+                $(_this.originLevelGranSelect).val($('#dim-origin-gran-select:first-child')[0].value);
+                $(_this.originOrigDest).bootstrapToggle('off');
+                $("#gran-toggle-origin-col").hide();
+                //$("#origDest-toggle-origin-col").hide();
 
                 $(_this.economicActivityToggle).bootstrapToggle('off');
                 // $(_this.economicActivityToggleGran).bootstrapToggle('off');
@@ -642,13 +651,19 @@ define(['views/common/baseview',
                 $("#gran-econ-activity-col").hide();
                 $("#origDest-toggle-econAct-col").hide();
 
+                $(_this.destinationToggle).bootstrapToggle('off');
+                $(_this.destinationLevelGranSelect).val($('#dim-destination-gran-select:first-child')[0].value);
+                $(_this.destinationOrigDest).bootstrapToggle('off');
+                $("#gran-toggle-destination-col").hide();
+                //$("#origDest-toggle-destination-col").hide();
+
                 $(_this.treatmentMethodToggle).bootstrapToggle('off');
                 // $(_this.treatmentMethodToggleGran).bootstrapToggle('off');
                 $(".gran-radio-treatment-method-label").removeClass("active");
                 $($("#gran-radio-treatment-method")[0].children[0]).addClass("active");
                 $(_this.treatmentMethodOrigDest).bootstrapToggle('on');
                 $("#gran-treatment-method-col").hide();
-                $("#origDest-toggle-treatment-col").hide();
+                //$("#origDest-toggle-treatment-col").hide();
 
                 $(_this.materialToggle).bootstrapToggle('off');
                 $(".gran-radio-material-label").removeClass("active");

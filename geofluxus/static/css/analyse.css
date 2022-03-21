@@ -110,7 +110,7 @@ label[for="flows-month-select"],
 label[for="flows-waste04-select"],
 label[for="flows-waste06-select"] {
   position: relative;
-  left: -1.3em;
+  /* left: -1.3em; */
 }
 
 .labelHelpiconContainer {
