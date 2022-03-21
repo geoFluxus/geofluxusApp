@@ -30,6 +30,12 @@ class Waste06(models.Model):
     waste04 = models.ForeignKey(Waste04,
                                 on_delete=models.CASCADE)
     hazardous = models.BooleanField()
+    materials = models.TextField(default='Onbekend')
+    industries = models.TextField(default='Onbekend')
+    agendas = models.TextField(default='Onbekend')
+    chains = models.TextField(default='Onbekend')
+    clean = models.BooleanField(null=True)
+    mixed = models.BooleanField(null=True)
 
     def __str__(self):
         return "{} - {}".format(self.ewc_code,
@@ -57,30 +63,6 @@ class TreatmentEmission(models.Model):
     def __str__(self):
         return "{} - {}".format(self.waste06.ewc_code,
                                 self.processgroup.name)
-
-
-# Material
-class Material(models.Model):
-    name = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.name
-
-
-# Product
-class Product(models.Model):
-    name = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.name
-
-
-# Composite
-class Composite(models.Model):
-    name = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.name
 
 
 # Year

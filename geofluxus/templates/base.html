@@ -39,9 +39,11 @@
           id="analyse-link">
           <a class="nav-link" href="/analyse">Analyse</a>
         </li>
+        {% comment %}
         {% if request.user|isExpertUser %}
           <a class="nav-link" href="/datasets">Datasets</a>
         {% endif %}
+        {% endcomment %}
       </ul>
 
       <ul class="navbar-nav ml-auto">
@@ -101,15 +103,16 @@
   </div>
 
   <!-- Footer -->
-  <footer class="page-footer font-small" style="margin-top: 5rem">
+  <footer class="page-footer font-small">
 
     <!-- Footer Links -->
+    {% comment %}
     <div class="container-fluid text-center text-md-left">
 
       <hr class="clearfix w-100 d-md-none pb-3">
 
       <div class="row pt-5 align-items-center ">
-        <div class="col-md-6 mt-md-0 mt-3 text-center border-top" style="margin: auto; padding-top: 2.5rem;">
+        <div class="col-md-6 mt-md-0 mt-3 text-center border-top" style="margin: auto;padding-top: 2.5rem;">
           <h5>geoFluxus</h5>
           <p style="font-size: small; max-width: 26rem; margin: auto; margin-top: 1rem; ">The open-source platform that
             maps, analyses and predicts resource flows as the essential trigger for a Circular Economy.</p>
@@ -144,12 +147,15 @@
       </div>
 
     </div>
+    {% endcomment %}
     <!-- Footer Links -->
 
-    <div class="footer-copyright mt-4 pt-5 pb-4 text-center">
-      <span>License: <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"><u>GNU GPLv2</u></a></span>
-      <span class="copyleft">&copy;</span><span> {%now "Y"%} </span>
-      <a href="http://geofluxus.com/">geofluxus.com</a>
+    <div class="footer-copyright" style="display: flex; height: 5rem;">
+      <div style="margin: auto;">
+        <span>License: <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"><u>GNU GPLv2</u></a></span>
+        <span class="copyleft">&copy;</span><span> {%now "Y"%} </span>
+        <a href="http://geofluxus.com/">geofluxus.com</a>
+      </div>
     </div>
 
   </footer>
