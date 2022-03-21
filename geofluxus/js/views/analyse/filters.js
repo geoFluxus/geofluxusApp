@@ -820,9 +820,9 @@ define(['views/common/baseview',
                 html = document.getElementById('delete-modal-template').innerHTML;
                 template = _.template(html);
                 this.confirmationModal.innerHTML = template({
-                    title: "Please confirm",
-                    confirmButtonText: "Delete",
-                    message: "Are you sure you want to delete the selected filter configuration?"
+                    title: "Bevestiging",
+                    confirmButtonText: "Verwijderen",
+                    message: "Uw selectie verwijderen?"
                 });
 
                 $("#modal-confirm-btn").click(function () {
