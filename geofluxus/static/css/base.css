@@ -368,10 +368,6 @@ body .tooltip .arrow::before {
   outline: none;
 }
 
-.modal-footer button {
-  width: 5rem;
-}
-
 .loader {
   position: fixed;
   top: 45%;
