@@ -68,7 +68,7 @@ define(['views/common/baseview',
                     // 1D visualizations
                     'time': ['piechart', 'barchart', 'treemap', 'lineplot'],
                     'economicActivity': ['piechart', 'barchart', 'treemap'],
-                    'origin': ['piechart', 'barchart', 'treemap','geoheatmap'],
+                    'origin': ['piechart', 'barchart', 'treemap', 'geoheatmap'],
                     'destination': ['piechart', 'barchart', 'treemap', 'geoheatmap'],
                     'treatmentMethod': ['piechart', 'barchart', 'treemap', 'parallelsets', 'circularsankey'],
                     'material': ['piechart', 'barchart', 'treemap'],
@@ -80,6 +80,7 @@ define(['views/common/baseview',
                     'time_material': ['barchart', 'lineplotmultiple', 'areachart', 'stackedbarchart', 'treemap'],
                     'origin_economicActivity': ['barchart', 'stackedbarchart', 'flowmap', 'treemap', 'arclayer'],
                     'origin_treatmentMethod': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
+                    'origin_material': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
                     'destination_material': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
                     'economicActivity_destination': ['barchart', 'stackedbarchart', 'flowmap', 'treemap', 'arclayer'],
                     'destination_treatmentMethod': ['barchart', 'stackedbarchart', 'flowmap', 'treemap'],
@@ -275,7 +276,8 @@ define(['views/common/baseview',
                         $(_this.timeToggleGran).trigger("change");
 
                         // show choropleth / point map
-                        $(_this.spaceLevelGranSelect).trigger("change");
+                        $('.gran-radio-origin-label.active').trigger("click");
+                        $('.gran-radio-destination-label.active').trigger("click");
 
                         // show origin / destination for space & treatment method
                         $("#dim-origin-gran-select").parent().fadeIn();
@@ -299,14 +301,16 @@ define(['views/common/baseview',
                 });
 
                 // Show choropleth / coordinate map for space dimension
-                $(_this.spaceLevelGranSelect).change(function () {
-                    if (_this.selectedDimensionStrings == "origin") {
-                        let selectedAreaLevel = $(_this.spaceLevelGranSelect).val(),
-                            actorLevel = selectedAreaLevel == _this.actorLevel;
-                        $("#viz-coordinatepointmap").parent()[actorLevel ? 'fadeIn' : 'hide']();
-                        $("#viz-choroplethmap").parent()[actorLevel ? 'hide' : 'fadeIn']();
-                    }
-                });
+                ['origin', 'destination'].forEach(function(node) {
+                    $('.gran-radio-' + node + '-label').click(function (event) {
+                        if (_this.selectedDimensionStrings == node) {
+                            let selectedAreaLevel = $(this).attr("data-" + node),
+                                actorLevel = selectedAreaLevel == _this.actorLevel;
+                            $("#viz-coordinatepointmap").parent()[actorLevel ? 'fadeIn' : 'hide']();
+                            $("#viz-choroplethmap").parent()[actorLevel ? 'hide' : 'fadeIn']();
+                        }
+                    });
+                })
 
                 $(".viz-selector-button").click(function (event) {
                     $('#apply-filters').popover('dispose');

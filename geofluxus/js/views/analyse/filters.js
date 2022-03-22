@@ -307,6 +307,7 @@ define(['views/common/baseview',
 
                     event.preventDefault(); // avoid firing twice!
                 });
+                $('.flow-type[type="waste"]').trigger("click")
 
                 // render ewc codes based on hazardous selection
                 function filterHazardous(evt) {
@@ -819,9 +820,9 @@ define(['views/common/baseview',
                 html = document.getElementById('delete-modal-template').innerHTML;
                 template = _.template(html);
                 this.confirmationModal.innerHTML = template({
-                    title: "Please confirm",
-                    confirmButtonText: "Delete",
-                    message: "Are you sure you want to delete the selected filter configuration?"
+                    title: "Bevestiging",
+                    confirmButtonText: "Verwijderen",
+                    message: "Uw selectie verwijderen?"
                 });
 
                 $("#modal-confirm-btn").click(function () {
@@ -1230,6 +1231,7 @@ define(['views/common/baseview',
                 $(".newMode")[mode == 'newMode' ? 'show' : 'hide']();
 
                 _this.savedFiltersModal.mode = mode;
+                _this.savedFilters = _this.collections['filters'];
                 $(this.savedFiltersModal).modal('show');
             },
             // FILTER MODAL //
