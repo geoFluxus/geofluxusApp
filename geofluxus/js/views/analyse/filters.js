@@ -1247,7 +1247,7 @@ define(['views/common/baseview',
                     $('#' + group + '-actor-select').selectpicker('deselectAll');
                     _this[group].selectedActors = [];
 
-                    $("#" + group + "-role-radio-both").click();
+                    //$("#" + group + "-role-radio-both").click();
                     $(_this[group].inOrOut).bootstrapToggle("off");
                 })
 
