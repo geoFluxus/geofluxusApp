@@ -579,7 +579,7 @@ define(['views/common/baseview',
 
                     let options = {
                         template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-body"></div></div>',
-                        content: "Make sure to select at least one dimension and a visualization type!",
+                        content: "Kies minimaal een variabele en een visualizatie!",
                         trigger: "focus",
                     }
                     $('#apply-filters').popover(options);

@@ -73,7 +73,7 @@ define(['views/common/d3plusVizView',
                         if (dim[0] == 'space') {
                             var actorLevel = dimensions.isActorLevel,
                                 prop = actorLevel ? "actorName" : "areaName",
-                                label = actorLevel ? 'Company' : 'Area';
+                                label = actorLevel ? 'Bedrijf' : 'Gebied';
                             if (!index) {
                                 _this.groupBy.push(prop);
                                 title = _this.label + " per " + label;
