@@ -1247,7 +1247,7 @@ define(['views/common/baseview',
                     $('#' + group + '-actor-select').selectpicker('deselectAll');
                     _this[group].selectedActors = [];
 
-                    $("#" + group + "-role-radio-both").click();
+                    //$("#" + group + "-role-radio-both").click();
                     $(_this[group].inOrOut).bootstrapToggle("off");
                 })
 
@@ -1510,7 +1510,7 @@ define(['views/common/baseview',
 
                 } else {
                     this.hasFilters = false;
-                    $(".filterLog").html("<span>You haven't selected any filters.</span>")
+                    $(".filterLog").html("<span>Geen selecties</span>")
                 }
                 $(".filter-log-container").fadeIn();
 
