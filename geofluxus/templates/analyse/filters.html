@@ -3,8 +3,31 @@
   {% load custom_tags %}
     <div class="block accordion" id="filterBlock">
 
-        <div class="row justify-content-between">
-          <h4 class="pb-1 pl-3">Stap 1: Selecteer de afvalstromen</h4>            
+        <div class="row">
+          <div class="col-md-5" style="padding: 0px; max-width: 440px">
+            <h4 class="pb-1 pl-3">Stap 1: Selecteer de afvalstromen</h4>            
+          </div>
+
+          <div class="col-md-1">
+            <div class="labelHelpiconContainer">
+              <a 
+                class="help-icon fas fa-question-circle" 
+                data-toggle="popover" 
+                title="Stap 1: Selecteer de afvalstromen"
+                data-html="true" 
+                tabindex="0"
+                data-content="
+                  <span>In stap 1 selecteert u de afvalstromen die u vervolgens in stap 2 visualiseert.<br>
+                    <br>
+                    In stap 1 “Algemeen” selecteert u de dataset (ontvangst- / afgiftemeldingen) en tijd (jaren en maanden).<br>
+                    In “Herkomst van afval” kunt u selecteren uit het gebied, de economische sector, en het specifieke bedrijf waarvan het afval afkomstig is.<br>
+                    In “Bestemming van afval”  kunt u selecteren uit het gebied, de verwerkingsmethode, en het specifieke bedrijf waar het afval wordt verwerkt.<br>
+                    <br>
+                    Tot slot kunt u kenmerken van de afvalstroom selecteren, waaronder de materialen, transitieagenda, industrie, en EURALcode.</span>
+                  ">
+              </a>
+            </div>
+          </div>
         </div>
 
         <!-- General Controls -->
