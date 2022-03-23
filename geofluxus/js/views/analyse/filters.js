@@ -501,10 +501,14 @@ define(['views/common/baseview',
                                 }
                             },
                             locale: {
-                                emptyTitle: 'Zoek een bedrijf......',
-                                searchPlaceholder: 'Zoek een bedrijf......',
-                                statusInitialized: '<span style="margin-left: 1rem;">Start typing to search...</span>',
-                                currentlySelected: "Currently selected:"
+                                currentlySelected: 'Momenteel geselecteerd',
+                                emptyTitle: 'Selecteer en begin met typen',
+                                errorText: 'Kon geen resultaten ophalen',
+                                searchPlaceholder: 'Zoeken...',
+                                statusInitialized: 'Begin met typen om te zoeken',
+                                statusNoResults: 'Geen resultaten',
+                                statusSearching: 'Zoeken...',
+                                statusTooShort: 'U dient meer karakters in te voeren'
                             },
                             preprocessData: function (data) {
                                 var companies = [];
@@ -1064,7 +1068,7 @@ define(['views/common/baseview',
                         },
                         error: function (error) {
                             console.log(error);
-                            $(".newMode #filterNameExists").html("<span>A filter with this name already exists.</span><br><span>Please fill in another name.</span>")
+                            $(".newMode #filterNameExists").html("<span>Er bestaat al een filter met deze naam.</span><br><span>Kies een andere naam.</span>")
                             $(".newMode #filterNameExists").fadeIn();
                             setTimeout(() => {
                                 $(".newMode #filterNameExists").fadeOut();
