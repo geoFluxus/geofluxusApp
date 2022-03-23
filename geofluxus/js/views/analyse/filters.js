@@ -1591,10 +1591,8 @@ define(['views/common/baseview',
             close: function () {
                 FiltersView.__super__.close.call(this);
             }
-
         });
 
         return FiltersView;
-
     }
 );
