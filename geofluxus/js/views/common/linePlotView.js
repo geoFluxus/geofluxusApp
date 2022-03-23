@@ -128,6 +128,7 @@ define(['views/common/d3plusVizView',
                 },
 
                 events: {
+                    'click .close-toggle': 'toggleClose',
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
                     'click .toggle-legend': 'toggleLegend',

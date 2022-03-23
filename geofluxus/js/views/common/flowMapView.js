@@ -92,6 +92,7 @@ define(['underscore',
                  * dom events (managed by jquery)
                  */
                 events: {
+                    'click .close-toggle': 'toggleClose',
                     'click .toggle-legend': 'toggleLegend',
                     'click .toggle-darkmode': 'toggleDarkMode',
                     'click .toggle-animation': 'toggleAnimation',
