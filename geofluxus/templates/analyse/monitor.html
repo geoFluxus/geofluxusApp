@@ -3,7 +3,7 @@
 
       <div class="block">
 
-      <h4 class="pb-2 pl-3">Stap 2: Visualizeer de selectie</h4>
+      <h4 class="pb-2 pl-3">Stap 2: Visualiseer de selectie</h4>
 
       <div class="card bg-dark" id="dimensionsCard">
         <div class="row">
@@ -33,7 +33,7 @@
                 data-html="true" 
                 tabindex="0"
                 data-content="
-                  <span>PLACEHOLDER TEXT</span>
+                  <span>Selecteer de weergave op basis van totale hoeveelheid afval, of de CO2-eq uitstoot van afvaltransport van hetzelfde afval (beide in ton). </span>
                   ">
               </a>
             </div>
@@ -45,7 +45,7 @@
             <% if (maxNumberOfDimensions == 1) { %>
               <span style="color: white">Selecteer minimaal één variabele.</span>
             <% } else { %>
-              <span style="color: white">Selecteer 1 of 2 variabelen om je selectie (stap 1) te visualizeren:</span>
+              <span style="color: white">Selecteer 1 of 2 variabelen om je selectie (stap 1) te visualiseren:</span>
             <% } %>
           </div>
         </div>
@@ -85,7 +85,7 @@
                 data-html="true" 
                 tabindex="0"
                 data-content="
-                  <span>PLACEHOLDER TEXT</span>
+                  <span>Selecteer of u de afvalstromen per jaar of per maand wilt visualiseren. Wilt u een specifiek jaar of enkel een bepaalde maand visualiseren? Ga terug naar stap 1 en selecteer uw voorkeur. </span>
                   ">
               </a>
             </div>
@@ -149,7 +149,7 @@
                 data-html="true" 
                 tabindex="0"
                 data-content="
-                  <span>PLACEHOLDER TEXT</span>
+                  <span>Selecteer op welk schaalniveau u uw selectie wilt weergeven, per land, provincie, gemeente, of bedrijf. </span>
                   ">
               </a>
             </div>
@@ -215,7 +215,7 @@
                 data-html="true" 
                 tabindex="0"
                 data-content="
-                  <span>PLACEHOLDER TEXT</span>
+                  <span>Selecteer op welk detailniveau u uw selectie wilt weergeven, kies uit de SBI  hoofdgroep of 4-cijferige code.</span>
                   ">
               </a>
             </div>
@@ -285,7 +285,7 @@
                 data-html="true" 
                 tabindex="0"
                 data-content="
-                  <span>PLACEHOLDER TEXT</span>
+                  <span>Selecteer op welk schaalniveau u uw selectie wilt weergeven, per land, provincie, gemeente, of bedrijf.</span>
                   ">
               </a>
             </div>
@@ -354,7 +354,7 @@
                 data-html="true" 
                 tabindex="0"
                 data-content="
-                  <span>PLACEHOLDER TEXT</span>
+                  <span>Selecteer op welk detailniveau u uw selectie wilt weergeven, kies uit de verwerkingsmethode hoofdmethode of sub-methode.</span>
                   ">
               </a>
             </div>
@@ -433,7 +433,9 @@
                 data-html="true" 
                 tabindex="0"
                 data-content="
-                  <span>PLACEHOLDER TEXT</span>
+                  <span>Selecteer op welk detailniveau u uw selectie wilt weergeven, kies uit de EURAL hoofdgroep (2 cijfers), subgroep (4 cijfers) of individuele code (6 cijfers).<br>
+                    <br>
+                    Voor hergebruikt afval kunt u een GN-code selecteren.</span>
                   ">
               </a>
             </div>
@@ -468,7 +470,7 @@
         <div class="viz-container" style="display: none;">
           <div class="row">
             <div class="col">
-              <span style="color: white">Selecteer een van de volgende visualizaties:</span>
+              <span style="color: white">Selecteer een van de volgende visualisaties:</span>
             </div>
           </div>
 
@@ -484,7 +486,7 @@
                   data-viz="piechart" 
                   style="display: none;">
                   <input type="radio" id="viz-piechart">
-                    <span class="span-viz" id="span-viz-piechart">Pie chart</span>
+                    <span class="span-viz" id="span-viz-piechart">Cirkeldiagram</span>
                 </label>
 
                 <label 
@@ -500,7 +502,7 @@
                   data-viz="barchart" 
                   style="display: none;">
                   <input type="radio" id="viz-barchart">
-                    <span class="span-viz" id="span-viz-barchart">Bar chart</span>
+                    <span class="span-viz" id="span-viz-barchart">Staafdiagram</span>
                 </label>
 
                 <label 
@@ -508,7 +510,7 @@
                   data-viz="lineplot" 
                   style="display: none;">
                   <input type="radio" id="viz-lineplot">
-                    <span class="span-viz" id="span-viz-lineplot">Line plot</span>
+                    <span class="span-viz" id="span-viz-lineplot">Lijnplot</span>
                 </label>
 
                 <label 
@@ -532,7 +534,7 @@
                   data-viz="lineplotmultiple" 
                   style="display: none;">
                   <input type="radio" id="viz-lineplotmultiple">
-                    <span class="span-viz" id="span-viz-lineplotmultiple">Multiple line plot</span>
+                    <span class="span-viz" id="span-viz-lineplotmultiple">Meerdere lijnplots</span>
                 </label>
 
                 <label 
@@ -540,7 +542,7 @@
                   data-viz="areachart" 
                   style="display: none;">
                   <input type="radio" id="viz-areachart">
-                    <span class="span-viz" id="span-viz-areachart">Stacked area chart</span>
+                    <span class="span-viz" id="span-viz-areachart">estapeld vlakdiagram</span>
                 </label>
 
                 <label 
@@ -548,7 +550,7 @@
                   data-viz="stackedbarchart" 
                   style="display: none;">
                   <input type="radio" id="viz-stackedbarchart">
-                    <span class="span-viz" id="span-viz-stackedbarchart">Stacked bar chart</span>
+                    <span class="span-viz" id="span-viz-stackedbarchart">Gestapeld staafdiagram</span>
                 </label>
 
                 <label
@@ -572,7 +574,7 @@
                   data-viz="flowmap" 
                   style="display: none;">
                   <input type="radio" id="viz-flowmap">
-                    <span class="span-viz" id="span-viz-flowmap">Flow map</span>
+                    <span class="span-viz" id="span-viz-flowmap">Stroomkaart</span>
                 </label>
 
                 <label
@@ -618,7 +620,7 @@
             class="btn btn-primary"
             title="Apply the filters and render the selected visualization."
             style="margin-left: 10px; float: left; width: 10em">
-              VISUALIZEER
+              VISUALISEER
           </button>
           <div class="helpIconContainer d-inline-flex align-items-center">
             <a 
