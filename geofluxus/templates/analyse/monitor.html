@@ -3,7 +3,31 @@
 
       <div class="block">
 
-      <h4 class="pb-2 pl-3">Stap 2: Visualiseer de selectie</h4>
+      <div class="row">
+        <div class="col-md-4" style="padding: 0px; max-width: 380px">
+          <h4 class="pb-2 pl-3">Stap 2: Visualiseer de selectie</h4>
+        </div>
+
+        <div class="col-md-1">
+          <div class="labelHelpiconContainer">
+            <a 
+              class="help-icon fas fa-question-circle" 
+              data-toggle="popover" 
+              title="Stap 2: Visualiseer de selectie"
+              data-html="true" 
+              tabindex="0"
+              data-content="
+                <span>In stap 2 selecteert u de variabelen uit stap 1 die u wilt visualiseren.<br>
+                  <br>
+                  Als u niet de gewenste informatie aangeboden krijgt in stap 2 kunt u altijd terug naar stap 1 om de selectie aan te passen. U kunt kiezen om uw selectie in totale hoeveelheid weer te geven (ton afval) of in milieu-impact van afvaltransport (ton CO2-eq).<br>
+                  De variabelen volgen dezelfde orde als in stap 1; tijd (jaar/maand), herkomst, bestemming, en kenmerken. U kunt een of meerdere variabelen selecteren voor visualisatie.<br>
+                  <br>
+                  Kies onderaan welk type visualisatie uw selectie het beste weergeeft.</span>
+                ">
+            </a>
+          </div>
+        </div>
+      </div>
 
       <div class="card bg-dark" id="dimensionsCard">
         <div class="row">
@@ -33,7 +57,7 @@
                 data-html="true" 
                 tabindex="0"
                 data-content="
-                  <span>PLACEHOLDER TEXT</span>
+                  <span>Selecteer de weergave op basis van totale hoeveelheid afval, of de CO2-eq uitstoot van afvaltransport van hetzelfde afval (beide in ton). </span>
                   ">
               </a>
             </div>
@@ -85,7 +109,7 @@
                 data-html="true" 
                 tabindex="0"
                 data-content="
-                  <span>PLACEHOLDER TEXT</span>
+                  <span>Selecteer of u de afvalstromen per jaar of per maand wilt visualiseren. Wilt u een specifiek jaar of enkel een bepaalde maand visualiseren? Ga terug naar stap 1 en selecteer uw voorkeur. </span>
                   ">
               </a>
             </div>
@@ -149,7 +173,7 @@
                 data-html="true" 
                 tabindex="0"
                 data-content="
-                  <span>PLACEHOLDER TEXT</span>
+                  <span>Selecteer op welk schaalniveau u uw selectie wilt weergeven, per land, provincie, gemeente, of bedrijf. </span>
                   ">
               </a>
             </div>
@@ -215,7 +239,7 @@
                 data-html="true" 
                 tabindex="0"
                 data-content="
-                  <span>PLACEHOLDER TEXT</span>
+                  <span>Selecteer op welk detailniveau u uw selectie wilt weergeven, kies uit de SBI  hoofdgroep of 4-cijferige code.</span>
                   ">
               </a>
             </div>
@@ -285,7 +309,7 @@
                 data-html="true" 
                 tabindex="0"
                 data-content="
-                  <span>PLACEHOLDER TEXT</span>
+                  <span>Selecteer op welk schaalniveau u uw selectie wilt weergeven, per land, provincie, gemeente, of bedrijf.</span>
                   ">
               </a>
             </div>
@@ -354,7 +378,7 @@
                 data-html="true" 
                 tabindex="0"
                 data-content="
-                  <span>PLACEHOLDER TEXT</span>
+                  <span>Selecteer op welk detailniveau u uw selectie wilt weergeven, kies uit de verwerkingsmethode hoofdmethode of sub-methode.</span>
                   ">
               </a>
             </div>
@@ -433,7 +457,9 @@
                 data-html="true" 
                 tabindex="0"
                 data-content="
-                  <span>PLACEHOLDER TEXT</span>
+                  <span>Selecteer op welk detailniveau u uw selectie wilt weergeven, kies uit de EURAL hoofdgroep (2 cijfers), subgroep (4 cijfers) of individuele code (6 cijfers).<br>
+                    <br>
+                    Voor hergebruikt afval kunt u een GN-code selecteren.</span>
                   ">
               </a>
             </div>
@@ -468,7 +494,7 @@
         <div class="viz-container" style="display: none;">
           <div class="row">
             <div class="col">
-              <span style="color: white">Selecteer een van de volgende visualizaties:</span>
+              <span style="color: white">Selecteer een van de volgende visualisaties:</span>
             </div>
           </div>
 
@@ -484,7 +510,7 @@
                   data-viz="piechart" 
                   style="display: none;">
                   <input type="radio" id="viz-piechart">
-                    <span class="span-viz" id="span-viz-piechart">Pie chart</span>
+                    <span class="span-viz" id="span-viz-piechart">Cirkeldiagram</span>
                 </label>
 
                 <label 
@@ -500,7 +526,7 @@
                   data-viz="barchart" 
                   style="display: none;">
                   <input type="radio" id="viz-barchart">
-                    <span class="span-viz" id="span-viz-barchart">Bar chart</span>
+                    <span class="span-viz" id="span-viz-barchart">Staafdiagram</span>
                 </label>
 
                 <label 
@@ -508,7 +534,7 @@
                   data-viz="lineplot" 
                   style="display: none;">
                   <input type="radio" id="viz-lineplot">
-                    <span class="span-viz" id="span-viz-lineplot">Line plot</span>
+                    <span class="span-viz" id="span-viz-lineplot">Lijnplot</span>
                 </label>
 
                 <label 
@@ -516,7 +542,7 @@
                   data-viz="choroplethmap" 
                   style="display: none;">
                     <input type="radio" id="viz-choroplethmap">
-                      <span class="span-viz" id="span-viz-choroplethmap">Choropleth map</span>
+                      <span class="span-viz" id="span-viz-choroplethmap">Choropletenkaart</span>
                 </label>
 
                 <label 
@@ -524,7 +550,7 @@
                   data-viz="coordinatepointmap" 
                   style="display: none;">
                   <input type="radio" id="viz-coordinatepointmap">
-                    <span class="span-viz" id="span-viz-coordinatepointmap">Dot map</span>
+                    <span class="span-viz" id="span-viz-coordinatepointmap">Puntenkaart</span>
                 </label>
 
                 <label 
@@ -532,7 +558,7 @@
                   data-viz="lineplotmultiple" 
                   style="display: none;">
                   <input type="radio" id="viz-lineplotmultiple">
-                    <span class="span-viz" id="span-viz-lineplotmultiple">Multiple line plot</span>
+                    <span class="span-viz" id="span-viz-lineplotmultiple">Meerdere lijnplots</span>
                 </label>
 
                 <label 
@@ -540,7 +566,7 @@
                   data-viz="areachart" 
                   style="display: none;">
                   <input type="radio" id="viz-areachart">
-                    <span class="span-viz" id="span-viz-areachart">Stacked area chart</span>
+                    <span class="span-viz" id="span-viz-areachart">Gestapeld vlakdiagram</span>
                 </label>
 
                 <label 
@@ -548,7 +574,7 @@
                   data-viz="stackedbarchart" 
                   style="display: none;">
                   <input type="radio" id="viz-stackedbarchart">
-                    <span class="span-viz" id="span-viz-stackedbarchart">Stacked bar chart</span>
+                    <span class="span-viz" id="span-viz-stackedbarchart">Gestapeld staafdiagram</span>
                 </label>
 
                 <label
@@ -556,7 +582,7 @@
                   data-viz="parallelsets" 
                   style="display: none;">
                   <input type="radio" id="viz-parallelsets">
-                    <span class="span-viz" id="span-viz-parallelsets">Parallel sets</span>
+                    <span class="span-viz" id="span-viz-parallelsets">Parallelplot</span>
                 </label>
 
                 <label
@@ -564,7 +590,7 @@
                   data-viz="circularsankey" 
                   style="display: none;">
                   <input type="radio" id="viz-circularsankey">
-                    <span class="span-viz" id="span-viz-circularsankey">Circular Sankey</span>
+                    <span class="span-viz" id="span-viz-circularsankey">Sankey</span>
                 </label>
 
                 <label
@@ -572,7 +598,7 @@
                   data-viz="flowmap" 
                   style="display: none;">
                   <input type="radio" id="viz-flowmap">
-                    <span class="span-viz" id="span-viz-flowmap">Flow map</span>
+                    <span class="span-viz" id="span-viz-flowmap">Stroomkaart</span>
                 </label>
 
                 <label
@@ -580,7 +606,7 @@
                   data-viz="networkmap" 
                   style="display: none;">
                   <input type="radio" id="viz-networkmap">
-                    <span class="span-viz" id="span-viz-networkmap">Road network map</span>
+                    <span class="span-viz" id="span-viz-networkmap">Wegenkaart</span>
                 </label>
 
                 <label
@@ -588,7 +614,7 @@
                   data-viz="geoheatmap" 
                   style="display: none;">
                   <input type="radio" id="viz-geoheatmap">
-                    <span class="span-viz" id="span-viz-geoheatmap">Geo Heatmap</span>
+                    <span class="span-viz" id="span-viz-geoheatmap">Hittekaart</span>
                 </label>
 
                 <label
@@ -596,7 +622,7 @@
                   data-viz="arclayer" 
                   style="display: none;">
                   <input type="radio" id="viz-arclayer">
-                    <span class="span-viz" id="span-viz-arclayer">Arc map</span>
+                    <span class="span-viz" id="span-viz-arclayer">Bogenkaart</span>
                 </label>
               </div>
             </div>
