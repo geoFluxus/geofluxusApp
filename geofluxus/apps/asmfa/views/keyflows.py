@@ -156,6 +156,25 @@ class IndustryViewSet(Waste06FieldViewSet):
 class ChainViewSet(Waste06FieldViewSet):
     field = 'chains'
 
+    def list(self, request, **kwargs):
+        # get all values from ewc
+        queryset = [
+            'primair',
+            'secundair',
+            'tertiair',
+            'quaternair',
+            'Onbekend'
+        ]
+
+        # serialize
+        data = []
+        for idx, item in enumerate(queryset):
+            data.append(OrderedDict({
+                'id': idx,
+                'name': self.format_name(item)
+            }))
+        return Response(data)
+
 
 # GNcode
 class GNcodeViewSet(PostGetViewMixin,
