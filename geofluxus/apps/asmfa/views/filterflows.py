@@ -122,6 +122,15 @@ class FilterFlowViewSet(PostGetViewMixin,
                                          .order_by(func) \
                                          .distinct())
 
+            if func == "chains":
+                search = [
+                    'primair',
+                    'secundair',
+                    'tertiair',
+                    'quaternair',
+                    'Onbekend'
+                ]
+
             # special conversion for material hierarchy
             if func == 'materials':
                 hierarchy = get_material_hierarchy(search)

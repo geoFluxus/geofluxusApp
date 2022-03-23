@@ -158,8 +158,8 @@ define(['views/common/baseview',
                 // FILTER MODAL
                 'click .openSavedFilterModal': 'showSavedFiltersModal',
                 'click #new-filter-name-btn': 'saveNewFilter',
-                'click #delete-filter-config': 'showConfirmModal',
-                'click #update-filter-config': "updateFilterConfig",
+                'click #delete-filter-config': 'showDeleteModal',
+                'click #update-filter-config': "showUpdateModal",
                 "click #edit-filter-name": "showFilterEdit",
                 "click #save-filter-name": "updateFilterName",
                 "click #load-filter-config": "loadFilterConfiguration",
@@ -817,17 +817,6 @@ define(['views/common/baseview',
             renderConfirmModal: function () {
                 var _this = this;
                 this.confirmationModal = $('#confirmation-modal')[0];
-                html = document.getElementById('delete-modal-template').innerHTML;
-                template = _.template(html);
-                this.confirmationModal.innerHTML = template({
-                    title: "Bevestiging",
-                    confirmButtonText: "Verwijderen",
-                    message: "Uw selectie verwijderen?"
-                });
-
-                $("#modal-confirm-btn").click(function () {
-                    _this.deleteFilterConfig();
-                })
             },
 
             reloadFilterSelectPicker: function (response) {
@@ -847,8 +836,6 @@ define(['views/common/baseview',
 
                     let selectedFilterConfig = $(this.filterConfigSelect).val();
                     let config = this.collections['filters'].find(filter => filter.attributes.id == selectedFilterConfig).get("filter");
-
-                    console.log("Loading saved filter configuration: ", config);
 
                     // load selected areas
                     groups = Object.keys(this.filters);
@@ -1134,8 +1121,6 @@ define(['views/common/baseview',
                         console.log(error);
                     }
                 });
-                event.preventDefault();
-                event.stopPropagation();
             },
 
             updateFilterName: function (event) {
@@ -1186,13 +1171,51 @@ define(['views/common/baseview',
                 event.stopPropagation();
             },
 
-            showConfirmModal: function (event) {
+            showDeleteModal: function (event) {
+                var _this = this;
                 let idToUpdate = $(this.filterConfigSelect).val();
                 if (!idToUpdate) {
                     return false;
                 }
 
                 $(".filterEdit").fadeOut();
+                html = document.getElementById('delete-modal-template').innerHTML;
+                template = _.template(html);
+                this.confirmationModal.innerHTML = template({
+                    title: "Bevestiging",
+                    confirmButtonText: "Verwijderen",
+                    message: "Uw selectie verwijderen?"
+                });
+
+                $("#modal-confirm-btn").click(function () {
+                    _this.deleteFilterConfig();
+                })
+
+                $(this.confirmationModal).modal('show');
+                event.preventDefault();
+                event.stopPropagation();
+            },
+
+            showUpdateModal: function (event) {
+                var _this = this;
+                let idToUpdate = $(this.filterConfigSelect).val();
+                if (!idToUpdate) {
+                    return false;
+                }
+
+                $(".filterEdit").fadeOut();
+                html = document.getElementById('delete-modal-template').innerHTML;
+                template = _.template(html);
+                this.confirmationModal.innerHTML = template({
+                    title: "Bevestiging",
+                    confirmButtonText: "Bijwerken",
+                    message: "Uw selectie bijwerken?"
+                });
+
+                $("#modal-confirm-btn").click(function () {
+                    _this.updateFilterConfig();
+                })
+
                 $(this.confirmationModal).modal('show');
                 event.preventDefault();
                 event.stopPropagation();
@@ -1566,10 +1589,8 @@ define(['views/common/baseview',
             close: function () {
                 FiltersView.__super__.close.call(this);
             }
-
         });
 
         return FiltersView;
-
     }
 );
