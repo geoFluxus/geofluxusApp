@@ -837,8 +837,6 @@ define(['views/common/baseview',
                     let selectedFilterConfig = $(this.filterConfigSelect).val();
                     let config = this.collections['filters'].find(filter => filter.attributes.id == selectedFilterConfig).get("filter");
 
-                    console.log("Loading saved filter configuration: ", config);
-
                     // load selected areas
                     groups = Object.keys(this.filters);
                     groups.forEach(function (group) {
