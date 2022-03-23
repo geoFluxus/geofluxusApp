@@ -1064,7 +1064,7 @@ define(['views/common/baseview',
                         },
                         error: function (error) {
                             console.log(error);
-                            $(".newMode #filterNameExists").html("<span>A filter with this name already exists.</span><br><span>Please fill in another name.</span>")
+                            $(".newMode #filterNameExists").html("<span>Er bestaat al een filter met deze naam.</span><br><span>Kies een andere naam.</span>")
                             $(".newMode #filterNameExists").fadeIn();
                             setTimeout(() => {
                                 $(".newMode #filterNameExists").fadeOut();
