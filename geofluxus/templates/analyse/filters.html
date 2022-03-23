@@ -363,7 +363,7 @@
 
                 <!-- Collected en Route -->
                 <div class="col-md-6">
-                  <label for="flows-route-select">Inzamelingsmethode:</label>
+                  <label for="flows-route-select">Inzamelmethode:</label>
                   <div class="row" style="padding: 0">
                     <div class="col-md-5">
                       <select 
@@ -1803,6 +1803,4 @@
                 <li><strong><%= (property == "selectedAreas") ? "Pass through these areas" :  filterNameMap.flows[property] %>: </strong><span><%= log.flows[property].isArray ? log.flows[property].join(', ') : log.flows[property] %></span></li>
         <% } %>
     </ul>
-
-
 </script>
