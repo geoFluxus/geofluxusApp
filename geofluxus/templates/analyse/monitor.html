@@ -3,7 +3,7 @@
 
       <div class="block">
 
-      <h4 class="pb-2 pl-3">Stap 2: Visualizeer de selectie</h4>
+      <h4 class="pb-2 pl-3">Stap 2: Visualiseer de selectie</h4>
 
       <div class="card bg-dark" id="dimensionsCard">
         <div class="row">
@@ -45,7 +45,7 @@
             <% if (maxNumberOfDimensions == 1) { %>
               <span style="color: white">Selecteer minimaal één variabele.</span>
             <% } else { %>
-              <span style="color: white">Selecteer 1 of 2 variabelen om je selectie (stap 1) te visualizeren:</span>
+              <span style="color: white">Selecteer 1 of 2 variabelen om je selectie (stap 1) te visualiseren:</span>
             <% } %>
           </div>
         </div>
@@ -618,7 +618,7 @@
             class="btn btn-primary"
             title="Apply the filters and render the selected visualization."
             style="margin-left: 10px; float: left; width: 10em">
-              VISUALIZEER
+              VISUALISEER
           </button>
           <div class="helpIconContainer d-inline-flex align-items-center">
             <a 
@@ -641,7 +641,7 @@
         <div class="card">
             <div class="row">
                 <div class="col px-1 visualizationRow">
-                    <div class="viz-wrapper-div no-data-found" style="height: 10rem; !important"><span class="align-self-center text-white mx-auto">The selected filters returned no data. Please adjust the filtering of the waste flows.</span></div>
+                    <div class="viz-wrapper-div no-data-found" style="height: 10rem; !important"><span class="align-self-center text-white mx-auto">Geen gegevens</span></div>
                     <div class="viz-wrapper-div piechart-wrapper"></div>
                     <div class="viz-wrapper-div barchart-wrapper"></div>
                     <div class="viz-wrapper-div lineplot-wrapper"></div>
@@ -670,32 +670,18 @@
     </div>
 
     <div class="row mt-1 d-flex justify-content-start export-button-row">
-      <button 
-        id='viz-export-csv' 
-        class="btn btn-primary mr-1 export-csv"
-        title="Export the data of this visualization as a CSV file."
-        style="width: 10em;">
-          SAVE CSV
-      </button>
-
         <div class="row mt-1 d-flex justify-content-start export-button-row">
-
             <button id='viz-export-csv' class="btn btn-primary mr-1 export-csv"
                 title="Export the data of this visualization as a CSV file."
                 style="width: 10em;"
-                >SAVE CSV
+                >OPSLAAN CSV
             </button>
-
             <button id='viz-export-png' class="btn btn-primary export-png"
                 title="Export this visualization as a PNG file."
                 style="width: 10em;"
-                >SAVE IMAGE
+                >OPSLAAN PNG
             </button>
-
         </div>
-
-
-
     </div>
   </div>
 </script>
