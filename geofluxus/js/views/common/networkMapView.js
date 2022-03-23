@@ -58,6 +58,7 @@ define(['views/common/baseview',
                 },
 
                 events: {
+                    'click .close-toggle': 'toggleClose',
                     'click .fullscreen-toggle': 'toggleFullscreen',
                 },
 

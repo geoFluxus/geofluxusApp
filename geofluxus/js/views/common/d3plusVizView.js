@@ -93,6 +93,11 @@ define(['views/common/baseview',
                     utils.scrollToVizRow();
                 },
 
+                toggleClose: function (event) {
+                    $(this.options.el).html("");
+                    $(".visualizationBlock").fadeOut();
+                },
+
                 toggleFullscreen: function (event) {
                     $(this.el).toggleClass('fullscreen');
                     // Only scroll when going to normal view:

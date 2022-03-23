@@ -39,6 +39,13 @@ define([
 
                 svg.select(".d3plus-Form.d3plus-Form-Button")
                     .append("button")
+                    .attr("class", "d3plus-Button close-toggle")
+                    .attr("title", "Close visualization.")
+                    .attr("type", "button")
+                    .html('<i class="fas fa-times icon-close"></i>')
+
+                svg.select(".d3plus-Form.d3plus-Form-Button")
+                    .append("button")
                     .attr("class", "d3plus-Button fullscreen-toggle")
                     .attr("title", "View this visualization in fullscreen mode.")
                     .attr("type", "button")
