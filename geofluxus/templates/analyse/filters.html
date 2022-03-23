@@ -3,8 +3,31 @@
   {% load custom_tags %}
     <div class="block accordion" id="filterBlock">
 
-        <div class="row justify-content-between">
-          <h4 class="pb-1 pl-3">Stap 1: Selecteer de afvalstromen</h4>            
+        <div class="row">
+          <div class="col-md-5" style="padding: 0px; max-width: 440px">
+            <h4 class="pb-1 pl-3">Stap 1: Selecteer de afvalstromen</h4>            
+          </div>
+
+          <div class="col-md-1">
+            <div class="labelHelpiconContainer">
+              <a 
+                class="help-icon fas fa-question-circle" 
+                data-toggle="popover" 
+                title="Stap 1: Selecteer de afvalstromen"
+                data-html="true" 
+                tabindex="0"
+                data-content="
+                  <span>In stap 1 selecteert u de afvalstromen die u vervolgens in stap 2 visualiseert.<br>
+                    <br>
+                    In stap 1 “Algemeen” selecteert u de dataset (ontvangst- / afgiftemeldingen) en tijd (jaren en maanden).<br>
+                    In “Herkomst van afval” kunt u selecteren uit het gebied, de economische sector, en het specifieke bedrijf waarvan het afval afkomstig is.<br>
+                    In “Bestemming van afval”  kunt u selecteren uit het gebied, de verwerkingsmethode, en het specifieke bedrijf waar het afval wordt verwerkt.<br>
+                    <br>
+                    Tot slot kunt u kenmerken van de afvalstroom selecteren, waaronder de materialen, transitieagenda, industrie, en EURALcode.</span>
+                  ">
+              </a>
+            </div>
+          </div>
         </div>
 
         <!-- General Controls -->
@@ -32,7 +55,13 @@
                       title="Algemeen" 
                       data-html="true" 
                       tabindex="0"
-                      data-content="placeholder text.">
+                      data-content="
+                        <span>In deze sectie kunt u de databron en tijd kiezen voor analyse. Ook is het mogelijk vooraf ingestelde filters te laden via de knop “Laad voorselectie”.<br>
+                          <br>
+                          Hier vindt u twee typen voorselecties aan: 1) door geoFluxus ingestelde voorselecties waarmee u makkelijk de informatie opvraagt die gebruikt is voor de visualisaties in de monitor (bijvoorbeeld de visualisatie in “Handelingsperspectieven”), of 2) uw eigen opgeslagen voorselecties.<br>
+                          <br>
+                          Nadat u informatie heeft gefilterd is het mogelijk deze met de knop “Bewaar selectie” op te slaan als voorselectie.</span>
+                        ">
                     </a>
                   </div>
                 </div>
@@ -154,6 +183,7 @@
                       Herkomst van afval
                   </button>
                 </div>
+
                 <div class="col-md-1">
                   <div class="d-inline buttonHelpiconContainer">
                     <a class="help-icon fas fa-question-circle" 
@@ -161,7 +191,9 @@
                       title="Herkomst van afval" 
                       data-html="true" 
                       tabindex="0"
-                      data-content="placeholder text.">
+                      data-content="
+                        <span>In deze sectie selecteert u de herkomst van afval op basis van gebied, economische sector, of specifiek bedrijf.</span>
+                        ">
                     </a>
                   </div>
                 </div>
@@ -521,7 +553,9 @@
                       title="Bestemming van afval" 
                       data-html="true" 
                       tabindex="0"
-                      data-content="placeholder text.">
+                      data-content="
+                        <span>In deze sectie selecteert u de bestemming van afval op basis van gebied, verwerkingsmethode, specifiek bedrijf of inzamelmethode.</span>
+                        ">
                     </a>
                   </div>
                 </div>
@@ -881,7 +915,9 @@
                       title="Kenmerken afvalstroom" 
                       data-html="true" 
                       tabindex="0"
-                      data-content="placeholder text.">
+                      data-content="
+                        <span>Hier kunt u afvalstromen selecteren a.d.h.v. kenmerken zoals de transitieagenda, industrie, materialen, en of deze stroom schoon of gevaarlijk is.</span>
+                        ">
                     </a>
                   </div>
                 </div>
@@ -902,7 +938,7 @@
                       class="btn-group btn-group-toggle"
                       id="flow-type-radio"
                       data-toggle="buttons"
-                      style="width: 30rem;">
+                      style="width: 100%;">
 
                       <label class="btn btn-default flow-type active" style="width: 40%;" type="waste">
                         <input type="radio" id="flow-type-radio-production">Afval
@@ -913,18 +949,18 @@
                       <label class="btn btn-default flow-type" style="width: 40%;" type="product">
                         <input type="radio" id="flow-type-radio-treatment">Hergebruikt afval
                       </label>
-                    </div>
-
+                    </div>                    
+                  </div>
+                  <div class="col-md-1">
                     <div class="labelHelpiconContainer">
                       <a
                         class="help-icon fas fa-question-circle"
                         data-toggle="popover"
-                        title="Afval | Beide | Hergebruikt afval"
+                        title="Afval | Hergebruikt afval"
                         data-html="true"
                         tabindex="0"
                         data-content="
                           <span>Selecteer aanvullende filters voor afval (enkel toepasbaar voor de dataset ontvangstmeldingen) of hergebruikt afval (enkel toepasbaar voor de dataset afgiftemeldingen).<br>
-                          Vanwege de verschillende informatie in beide datasets is het niet mogelijk gemeenschappelijke filters voor beide datasets te selecteren.<br>
                           <br>
                           LET OP! Controleer of u bij “Databronnen” de corresponderende databron heeft geselecteerd.<br>
                           U kunt enkel de filters voor afval toepassen op de databron “ontvangstmeldingen” en de filters voor hergebruikt afval enkel toepassen op de databron 'afgiftemeldingen'.</span>
@@ -1568,6 +1604,24 @@
               title="Reset all the filters">
                 RESET SELECTIE
             </button>
+
+            <div class="labelHelpiconContainer">
+              <a 
+                class="help-icon fas fa-question-circle" 
+                data-toggle="popover" 
+                title="Filters"
+                data-html="true" 
+                tabindex="0" 
+                data-content="
+                  <span>Controleer, bewaar, of reset hier uw geselecteerde filters voordat u doorgaat naar Stap 2 voor visualisatie.<br>
+                    <br>
+                    Gebruik de knop “Test selectie” om te controleren welke filters u heeft geselecteerd en hoeveel informatie er beschikbaar is voor de visualisatie.<br>
+                    Gebruik “Bewaar selectie” om uw selectie op te slaan.<br>
+                    U kunt uw bewaarde selectie laden met de knop “Laad voorselectie” onder het kopje “Algemeen”.<br>
+                    Met de knop “Reset selectie” wist u al uw niet-opgeslagen filters.</span>
+                  ">
+              </a>
+            </div>
         </div>
     </div>
 
