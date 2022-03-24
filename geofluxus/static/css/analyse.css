@@ -426,7 +426,7 @@ label[for="flows-waste06-select"] {
   min-height: 400px;
   min-width: 400px;
   width: 100%;
-  height: 100%;
+  height: 40vh;
   /* max-height: 600px; */
 }
 
