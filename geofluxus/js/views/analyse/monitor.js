@@ -1,3 +1,5 @@
+const { options } = require("less");
+
 define(['views/common/baseview',
         'underscore',
         'collections/collection',
@@ -488,6 +490,67 @@ define(['views/common/baseview',
                         dimensions.isActorLevel = (adminlevel == _this.actorLevel) ? true : false;
                     }
                 })
+
+                console.log('DIMENSIONS - ', dimensions)
+                // set title
+                var title = "";
+                dimensions.forEach(function(dim, index) {
+                    // choose grouping for space dimension
+                    if (dim[0] == 'space') {
+                        var actorLevel = dimensions.isActorLevel,
+                            prop = actorLevel ? "actorName" : "areaName",
+                            label = actorLevel ? 'Bedrijf' : 'Gebied';
+                        if (!index) {
+                            // _this.groupBy = _this.x = prop;
+                            title = _this.label + " per " + label;
+                        } else {
+                            // _this.groupBy = prop;
+                            title = " & " + label;
+                        }
+                        // _this.tooltipConfig.tbody.push([label, function (d) {
+                        //     return d[prop];
+                        // }]);
+                    }
+
+                    console.log('DIM 0 --> ', _this)
+
+                    var properties = dimensions[dim[0]];
+                    if (properties != undefined & options.flows.length > 0) {
+                        Object.keys(properties).forEach(function(prop) {
+                            // check if flows have code/name for current property
+                            var flow = _this.flows[0],
+                                code = prop + 'Code',
+                                name = prop + 'Name';
+
+                            // if code, group by
+                            if (flow[code] != undefined) {
+                                // if name, add tooltip
+                                if (flow[name] != undefined) {
+                                    // tooltip subtitle (body)
+                                    var sub = properties[prop];
+
+                                    // tooltip title (header)
+                                    if (!index) {
+                                        _this.x = _this.groupBy = code;
+                                        title = _this.label + " per " + sub;
+                                    } else {
+                                        _this.groupBy = code;
+                                        title = " & " + sub;
+                                    }
+
+                                    // tooltip body
+                                    // _this.tooltipConfig.tbody.push([sub, function (d) {
+                                    //     return d[code] + " " + d[name];
+                                    // }]);
+                                }
+                            }
+                        })
+                    }
+
+                    // _this.tooltipConfig.title += title;
+                })
+
+                console.log('TITLE --> ', title)
 
                 // Render visualization
                 if (this.vizView != null) this.vizView.close();
