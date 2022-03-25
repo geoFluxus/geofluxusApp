@@ -73,6 +73,8 @@ define(['underscore',
                         'waste06'       : 'EURAL 6-cijfer code',
                         'gncode'        : 'GN code'
                     }
+                    var prop =  this.dim2[1].split("__").pop();
+                    this.viewTitle = `${this.label} per ${this.props[prop]}`;
 
                     $(".export-csv").on("click", function() {
                         _this.exportCSV();
@@ -106,8 +108,7 @@ define(['underscore',
                  */
                 render: function () {
                     $(".viz-wrapper-title").html("");
-                    var prop =  this.dim2[1].split("__").pop();
-                    $(".viz-wrapper-title").append(`Visualisatie: ${this.label} per ${this.props[prop]}`);
+                    $(".viz-wrapper-title").append(`Visualisatie: `);
 
                     this.tileUrl = "https://cartodb-basemaps-{s}.global.ssl.fastly.net/"
                     this.tileType = "dark_all"
@@ -217,7 +218,7 @@ define(['underscore',
                     // HIDDEN Leaflet easyPrint button
                     this.leafletMap.addControl(new L.easyPrint({
                         position: 'topleft',
-                        filename: 'flowmap',
+                        filename: `${this.viewTitle}`,
                         exportOnly: true,
                         hideControlContainer: true,
                         sizeModes: ['A4Landscape'],
@@ -538,7 +539,7 @@ define(['underscore',
                     var blob = new Blob([csv], {
                         type: "text/plain;charset=utf-8"
                     });
-                    FileSaver.saveAs(blob, "data.csv");
+                    FileSaver.saveAs(blob, `${this.viewTitle}.csv`);
                 },
 
                 close: function () {
