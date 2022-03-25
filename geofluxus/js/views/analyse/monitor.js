@@ -512,10 +512,10 @@ define(['views/common/baseview',
                         // }]);
                     }
 
-                    console.log('DIM 0 --> ', _this)
+                    console.log('DIM 0 --> ', _this.flows)
 
                     var properties = dimensions[dim[0]];
-                    if (properties != undefined & options.flows.length > 0) {
+                    if (properties != undefined & _this.flows.length > 0) {
                         Object.keys(properties).forEach(function(prop) {
                             // check if flows have code/name for current property
                             var flow = _this.flows[0],
