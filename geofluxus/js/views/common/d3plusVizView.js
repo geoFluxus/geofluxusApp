@@ -86,7 +86,11 @@ define(['views/common/baseview',
                 },
 
                 render: function () {
+                },
 
+                renderTitle: function() {
+                    $(".viz-wrapper-title").html("");
+                    $(".viz-wrapper-title").append(`Visualisatie: ${this.tooltipConfig.title}`);
                 },
 
                 scrollToVisualization: function () {
@@ -149,13 +153,13 @@ define(['views/common/baseview',
                     var blob = new Blob([csv], {
                         type: "text/plain;charset=utf-8"
                     });
-                    FileSaver.saveAs(blob, "data.csv");
+                    FileSaver.saveAs(blob, `${this.tooltipConfig.title}.csv`);
 
                     // event.stopImmediatePropagation();
                 },
 
                 exportPNG: function() {
-                    d3plusExport.saveElement(this.el);
+                    d3plusExport.saveElement(this.el, {filename: `${this.tooltipConfig.title}`});
                 },
 
                 close: function () {

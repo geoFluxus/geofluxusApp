@@ -105,6 +105,10 @@ define(['underscore',
                  * render the view
                  */
                 render: function () {
+                    $(".viz-wrapper-title").html("");
+                    var prop =  this.dim2[1].split("__").pop();
+                    $(".viz-wrapper-title").append(`Visualisatie: ${this.label} per ${this.props[prop]}`);
+
                     this.tileUrl = "https://cartodb-basemaps-{s}.global.ssl.fastly.net/"
                     this.tileType = "dark_all"
                     this.tileSuffix = "/{z}/{x}/{y}.png"

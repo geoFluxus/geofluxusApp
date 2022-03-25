@@ -53,6 +53,7 @@ define(['views/common/baseview',
                             }]
                         ]
                     };
+                    this.title = `${this.label} Wegenkaart`;
 
                     this.render();
                 },
@@ -64,6 +65,9 @@ define(['views/common/baseview',
 
                 render: function () {
                     var _this = this;
+
+                    $(".viz-wrapper-title").html("");
+                    $(".viz-wrapper-title").append(`Visualisatie: ${this.title}`);
 
                     this.NetworkMap = new NetworkMap({
                         el: this.options.el,

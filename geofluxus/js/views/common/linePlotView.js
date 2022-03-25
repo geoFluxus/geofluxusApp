@@ -139,6 +139,7 @@ define(['views/common/d3plusVizView',
                  * Create a new D3Plus linePlot object which will be rendered in this.options.el:
                  */
                 render: function () {
+                    this.renderTitle();
 
                     // Don't show legend if there is no grouping:
                     if (this.groupBy.length	< 1) {

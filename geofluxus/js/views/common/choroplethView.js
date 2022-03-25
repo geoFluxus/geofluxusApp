@@ -53,6 +53,7 @@ define(['views/common/d3plusVizView',
                  * Create a new D3Plus ChoroplethMap object which will be rendered in this.options.el:
                  */
                 render: function () {
+                    this.renderTitle();
                     this.choroplethMap = new ChoroplethMap({
                         el: this.options.el,
                         data: this.flows,

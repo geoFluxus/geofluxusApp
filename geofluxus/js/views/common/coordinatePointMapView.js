@@ -52,6 +52,7 @@ define(['views/common/d3plusVizView',
                  * Create a new D3Plus CoordinatePointMap object which will be rendered in this.options.el:
                  */
                 render: function () {
+                    this.renderTitle();
                     this.coordinatePointMap = new CoordinatePointMap({
                         el: this.options.el,
                         data: this.flows,
