@@ -374,8 +374,10 @@ define(['views/common/baseview',
                 // Prepare filters for request
                 let filterParams = this.filtersView.getFilterParams();
                 this.mode = this.filtersView.mode;
+                this.indicator = 'waste';
                 if (this.mode == 'impact') {
                     filterParams.indicator = 'co2';
+                    this.indicator = 'co2';
                     filterParams.impactSources = ['transportation'];
                 }
 
@@ -611,6 +613,7 @@ define(['views/common/baseview',
                                 $(".visualizationBlock").fadeIn();
                                 $(".no-data-found").fadeIn();
                                 $(".no-data-found").addClass("d-flex");
+                                $(".viz-wrapper-title").html("");
                             } else {
                                 // Render visualization
                                 _this.renderVisualizations(_this.selectedDimensions, _this.flows, _this.selectedVizName);
