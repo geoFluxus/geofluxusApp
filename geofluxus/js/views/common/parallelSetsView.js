@@ -71,6 +71,7 @@ define(['views/common/d3plusVizView',
                  * Create a new D3Plus SimpleSankey object which will be rendered in this.options.el:
                  */
                 render: function () {
+                    this.renderTitle();
                     this.SimpleSankey = new SimpleSankey({
                         el: this.options.el,
                         links: this.flows.links,
