@@ -56,7 +56,7 @@ define(['views/common/d3plusVizView',
                         if (dim[0] == 'space') {
                             var actorLevel = _this.options.dimensions.isActorLevel,
                                 prop = actorLevel ? "actorName" : "areaName",
-                                label = actorLevel ? 'Company' : 'Area';
+                                label = actorLevel ? 'Bedrijf' : 'Gebied';
                             if (!index) {
                                 _this.groupBy = _this.x = prop;
                                 title = _this.label + " per " + label;
@@ -125,6 +125,7 @@ define(['views/common/d3plusVizView',
                  * Create a new D3Plus AreaChart object which will be rendered in this.options.el:
                  */
                 render: function () {
+                    this.renderTitle();
                     this.areaChart = new AreaChart({
                         el: this.options.el,
                         data: this.flows,

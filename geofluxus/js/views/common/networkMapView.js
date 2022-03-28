@@ -53,16 +53,21 @@ define(['views/common/baseview',
                             }]
                         ]
                     };
+                    this.viewTitle = `${this.label} Wegenkaart`;
 
                     this.render();
                 },
 
                 events: {
+                    'click .close-toggle': 'toggleClose',
                     'click .fullscreen-toggle': 'toggleFullscreen',
                 },
 
                 render: function () {
                     var _this = this;
+
+                    $(".viz-wrapper-title").html("");
+                    $(".viz-wrapper-title").append(`Visualisatie: ${this.viewTitle}`);
 
                     this.NetworkMap = new NetworkMap({
                         el: this.options.el,
@@ -188,14 +193,14 @@ define(['views/common/baseview',
                 },
 
                 exportPNG: function () {
+                    var _this = this;
                     var c = document.querySelector(".networkmap-wrapper canvas");
                     var d = c.toDataURL("image/png");
                     var w = window.open('about:blank', 'image from canvas');
                     w.document.write("<img src='" + d + "' alt='from canvas'/>");
-
                     var canvas = document.querySelector(".networkmap-wrapper canvas");
                     canvas.toBlob(function (blob) {
-                        FileSaver.saveAs(blob, "network-map.png");
+                        FileSaver.saveAs(blob, `${_this.viewTitle}.png`);
                     });
                 },
 
@@ -219,7 +224,6 @@ define(['views/common/baseview',
                         wkt = type.toUpperCase() + '(' + wkt + ')';
                         item.geometry = wkt;
                      })
-                     console.log(this.flows)
 
                      let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
                      csv.unshift(header.join(','))
@@ -228,7 +232,7 @@ define(['views/common/baseview',
                      var blob = new Blob([csv], {
                          type: "text/plain;charset=utf-8"
                      });
-                     FileSaver.saveAs(blob, "data.csv");
+                     FileSaver.saveAs(blob, `${this.viewTitle}.csv`);
                  },
 
                 close: function () {

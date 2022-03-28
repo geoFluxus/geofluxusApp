@@ -62,17 +62,19 @@ define(['underscore',
 
                     this.label = options.dimensions.label;
                     this.props = {
-                        'year'          : 'Year',
-                        'month'         : 'Month',
-                        'activitygroup' : 'Activity group',
-                        'activity'      : 'Activity',
-                        'processgroup'  : 'Treatment method group',
-                        'process'       : 'Treatment method',
-                        'waste02'       : 'EWC Chapter',
-                        'waste04'       : 'EWC Sub-Chapter',
-                        'waste06'       : 'EWC Entry',
-                        'gncode'        : 'GN Code'
+                        'year'          : 'Jaar',
+                        'month'         : 'Maand',
+                        'activitygroup' : 'Hoofdgroep',
+                        'activity'      : '4-cijfer code',
+                        'processgroup'  : 'Verwerkingsgroep',
+                        'process'       : 'Verwerkingscode',
+                        'waste02'       : 'EURAL hoofdgroep',
+                        'waste04'       : 'EURAL subgroep',
+                        'waste06'       : 'EURAL 6-cijfer code',
+                        'gncode'        : 'GN code'
                     }
+                    var prop =  this.dim2[1].split("__").pop();
+                    this.viewTitle = `${this.label} per ${this.props[prop]}`;
 
                     $(".export-csv").on("click", function() {
                         _this.exportCSV();
@@ -92,6 +94,7 @@ define(['underscore',
                  * dom events (managed by jquery)
                  */
                 events: {
+                    'click .close-toggle': 'toggleClose',
                     'click .toggle-legend': 'toggleLegend',
                     'click .toggle-darkmode': 'toggleDarkMode',
                     'click .toggle-animation': 'toggleAnimation',
@@ -104,6 +107,9 @@ define(['underscore',
                  * render the view
                  */
                 render: function () {
+                    $(".viz-wrapper-title").html("");
+                    $(".viz-wrapper-title").append(`Visualisatie: `);
+
                     this.tileUrl = "https://cartodb-basemaps-{s}.global.ssl.fastly.net/"
                     this.tileType = "dark_all"
                     this.tileSuffix = "/{z}/{x}/{y}.png"
@@ -212,7 +218,7 @@ define(['underscore',
                     // HIDDEN Leaflet easyPrint button
                     this.leafletMap.addControl(new L.easyPrint({
                         position: 'topleft',
-                        filename: 'flowmap',
+                        filename: `${this.viewTitle}`,
                         exportOnly: true,
                         hideControlContainer: true,
                         sizeModes: ['A4Landscape'],
@@ -340,8 +346,8 @@ define(['underscore',
 
                         $(".flowmap-d3pluslegend-wrapper").fadeIn();
 
-                         console.log("______ legend data _______")
-                         console.log(_this.legendItems);
+                         //console.log("______ legend data _______")
+                         //console.log(_this.legendItems);
 
                         this.d3plusLegend = new D3plusLegend({
                             el: ".flowmap-d3pluslegend",
@@ -533,7 +539,7 @@ define(['underscore',
                     var blob = new Blob([csv], {
                         type: "text/plain;charset=utf-8"
                     });
-                    FileSaver.saveAs(blob, "data.csv");
+                    FileSaver.saveAs(blob, `${this.viewTitle}.csv`);
                 },
 
                 close: function () {

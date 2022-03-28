@@ -50,7 +50,8 @@ define(['views/common/baseview',
                             'process': 'destination__process__in'
                         }
                     ],
-                    'flows': [{
+                    'flows': [
+                        {
                             'year': 'flowchain__month__year__in',
                             'month': 'flowchain__month__in'
                         },
@@ -63,16 +64,19 @@ define(['views/common/baseview',
                             'waste06': 'flowchain__waste06__in'
                         },
                         {
+                            'material': 'materials'
+                        },
+                        {
+                            'agenda': 'agendas'
+                        },
+                        {
+                            'industry': 'industries'
+                        },
+                        {
+                            'chain': 'chains'
+                        },
+                        {
                             'gncode': 'flowchain__gncode__in',
-                        },
-                        {
-                            'material': 'flowchain__materials__in'
-                        },
-                        {
-                            'product': 'flowchain__products__in'
-                        },
-                        {
-                            'composites': 'flowchain__composites__in'
                         },
                         {
                             'route': 'flowchain__route'
@@ -109,10 +113,11 @@ define(['views/common/baseview',
                     'waste02': 'wastes02',
                     'waste04': 'wastes04',
                     'waste06': 'wastes06',
-                    'gncode': 'gncodes',
                     'material': 'materials',
-                    'product': 'products',
-                    'composite': 'composites',
+                    'agenda': 'agendas',
+                    'industry': 'industries',
+                    'chain': 'chains',
+                    'gncode': 'gncodes',
                     'arealevel': 'arealevels',
                     'year': 'years',
                     'month': 'months',
@@ -153,8 +158,8 @@ define(['views/common/baseview',
                 // FILTER MODAL
                 'click .openSavedFilterModal': 'showSavedFiltersModal',
                 'click #new-filter-name-btn': 'saveNewFilter',
-                'click #delete-filter-config': 'showConfirmModal',
-                'click #update-filter-config': "updateFilterConfig",
+                'click #delete-filter-config': 'showDeleteModal',
+                'click #update-filter-config': "showUpdateModal",
                 "click #edit-filter-name": "showFilterEdit",
                 "click #save-filter-name": "updateFilterName",
                 "click #load-filter-config": "loadFilterConfiguration",
@@ -181,12 +186,14 @@ define(['views/common/baseview',
                 this.renderSavedFiltersModal();
                 this.renderAreaSelectModal();
                 this.renderConfirmModal();
+                this.renderModeView();
 
                 this.initializeControls();
                 this.addEventListeners();
             },
 
             renderModeView: function () {
+                this.mode = 'monitor';
                 var el = document.querySelector('#' + this.mode + '-content'),
                     options = {
                         el: el,
@@ -194,8 +201,7 @@ define(['views/common/baseview',
                         filtersView: this,
                         levels: this.collections['arealevels'],
                     };
-
-                this.modeView = this.mode == 'monitor' ? new MonitorView(options) : new ImpactView(options);
+                this.modeView = new MonitorView(options);
             },
 
             initializeControls: function () {
@@ -203,7 +209,7 @@ define(['views/common/baseview',
 
                 // Set default admin level to Country:
                 var areaLevels = this.collections['arealevels'];
-                this.idOfCountryLevel = areaLevels.find(level => level.attributes.level == 1).id;
+                this.idOfCountryLevel = areaLevels.find(level => level.attributes.level == 2).id;
 
                 // Initialize all filters:
                 var groups = Object.keys(this.filters);
@@ -255,12 +261,6 @@ define(['views/common/baseview',
 
                     if (mode != _this.mode) {
                         _this.mode = mode;
-
-                        $(".analyse-content-container").hide();
-                        if (_this.modeView) _this.modeView.close();
-
-                        _this.renderModeView();
-                        $("#" + _this.mode + "-content").fadeIn();
                     }
                     event.preventDefault(); // avoid firing twice!
                 });
@@ -291,6 +291,23 @@ define(['views/common/baseview',
                         _this.closeFilterLog();
                     })
                 })
+
+                // pre-select origin: production & destination: treatment
+                $('.origin-role[role="production"]').trigger("click")
+                $('.destination-role[role="treatment"]').trigger("click")
+
+                // select flow type (waste or product)
+                $('.flow-type').on("click", function (event) {
+                    let type = $(this).attr("type"),
+                        containers = ["waste", "product"];
+
+                    containers.forEach(function (container) {
+                        $("#container-" + container)[(container == type) ? 'fadeIn' : 'hide']();
+                    })
+
+                    event.preventDefault(); // avoid firing twice!
+                });
+                $('.flow-type[type="waste"]').trigger("click")
 
                 // render ewc codes based on hazardous selection
                 function filterHazardous(evt) {
@@ -484,10 +501,14 @@ define(['views/common/baseview',
                                 }
                             },
                             locale: {
-                                emptyTitle: 'Search for company...',
-                                searchPlaceholder: 'Search for company...',
-                                statusInitialized: '<span style="margin-left: 1rem;">Start typing to search...</span>',
-                                currentlySelected: "Currently selected:"
+                                currentlySelected: 'Momenteel geselecteerd',
+                                emptyTitle: 'Selecteer en begin met typen',
+                                errorText: 'Kon geen resultaten ophalen',
+                                searchPlaceholder: 'Zoeken...',
+                                statusInitialized: 'Begin met typen om te zoeken',
+                                statusNoResults: 'Geen resultaten',
+                                statusSearching: 'Zoeken...',
+                                statusTooShort: 'U dient meer karakters in te voeren'
                             },
                             preprocessData: function (data) {
                                 var companies = [];
@@ -800,17 +821,6 @@ define(['views/common/baseview',
             renderConfirmModal: function () {
                 var _this = this;
                 this.confirmationModal = $('#confirmation-modal')[0];
-                html = document.getElementById('delete-modal-template').innerHTML;
-                template = _.template(html);
-                this.confirmationModal.innerHTML = template({
-                    title: "Please confirm",
-                    confirmButtonText: "Delete",
-                    message: "Are you sure you want to delete the selected filter configuration?"
-                });
-
-                $("#modal-confirm-btn").click(function () {
-                    _this.deleteFilterConfig();
-                })
             },
 
             reloadFilterSelectPicker: function (response) {
@@ -830,8 +840,6 @@ define(['views/common/baseview',
 
                     let selectedFilterConfig = $(this.filterConfigSelect).val();
                     let config = this.collections['filters'].find(filter => filter.attributes.id == selectedFilterConfig).get("filter");
-
-                    console.log("Loading saved filter configuration: ", config);
 
                     // load selected areas
                     groups = Object.keys(this.filters);
@@ -1060,7 +1068,7 @@ define(['views/common/baseview',
                         },
                         error: function (error) {
                             console.log(error);
-                            $(".newMode #filterNameExists").html("<span>A filter with this name already exists.</span><br><span>Please fill in another name.</span>")
+                            $(".newMode #filterNameExists").html("<span>Er bestaat al een filter met deze naam.</span><br><span>Kies een andere naam.</span>")
                             $(".newMode #filterNameExists").fadeIn();
                             setTimeout(() => {
                                 $(".newMode #filterNameExists").fadeOut();
@@ -1117,8 +1125,6 @@ define(['views/common/baseview',
                         console.log(error);
                     }
                 });
-                event.preventDefault();
-                event.stopPropagation();
             },
 
             updateFilterName: function (event) {
@@ -1169,13 +1175,51 @@ define(['views/common/baseview',
                 event.stopPropagation();
             },
 
-            showConfirmModal: function (event) {
+            showDeleteModal: function (event) {
+                var _this = this;
                 let idToUpdate = $(this.filterConfigSelect).val();
                 if (!idToUpdate) {
                     return false;
                 }
 
                 $(".filterEdit").fadeOut();
+                html = document.getElementById('delete-modal-template').innerHTML;
+                template = _.template(html);
+                this.confirmationModal.innerHTML = template({
+                    title: "Bevestiging",
+                    confirmButtonText: "Verwijderen",
+                    message: "Uw selectie verwijderen?"
+                });
+
+                $("#modal-confirm-btn").click(function () {
+                    _this.deleteFilterConfig();
+                })
+
+                $(this.confirmationModal).modal('show');
+                event.preventDefault();
+                event.stopPropagation();
+            },
+
+            showUpdateModal: function (event) {
+                var _this = this;
+                let idToUpdate = $(this.filterConfigSelect).val();
+                if (!idToUpdate) {
+                    return false;
+                }
+
+                $(".filterEdit").fadeOut();
+                html = document.getElementById('delete-modal-template').innerHTML;
+                template = _.template(html);
+                this.confirmationModal.innerHTML = template({
+                    title: "Bevestiging",
+                    confirmButtonText: "Bijwerken",
+                    message: "Uw selectie bijwerken?"
+                });
+
+                $("#modal-confirm-btn").click(function () {
+                    _this.updateFilterConfig();
+                })
+
                 $(this.confirmationModal).modal('show');
                 event.preventDefault();
                 event.stopPropagation();
@@ -1214,6 +1258,7 @@ define(['views/common/baseview',
                 $(".newMode")[mode == 'newMode' ? 'show' : 'hide']();
 
                 _this.savedFiltersModal.mode = mode;
+                _this.savedFilters = _this.collections['filters'];
                 $(this.savedFiltersModal).modal('show');
             },
             // FILTER MODAL //
@@ -1229,7 +1274,7 @@ define(['views/common/baseview',
                     $('#' + group + '-actor-select').selectpicker('deselectAll');
                     _this[group].selectedActors = [];
 
-                    $("#" + group + "-role-radio-both").click();
+                    //$("#" + group + "-role-radio-both").click();
                     $(_this[group].inOrOut).bootstrapToggle("off");
                 })
 
@@ -1432,8 +1477,6 @@ define(['views/common/baseview',
                     })
                 })
 
-                console.log(_this.log);
-
                 return filterParams;
             },
 
@@ -1443,36 +1486,38 @@ define(['views/common/baseview',
 
                 var filterNameMap = {
                     origDest: {
-                        "companies": "Companies",
-                        "adminLevel": "Administrative level",
-                        "selectedAreas": "Areas",
-                        "role": "Role",
-                        "activitygroup": "Activity groups",
-                        "activity": "Activities",
-                        "processgroup": "Treatment method groups",
-                        "process": "Treatment methods",
-                        "in": "Within these areas",
-                        "out": "Outside these areas",
+                        "companies": "Bedrijven",
+                        "adminLevel": "Niveau",
+                        "selectedAreas": "Gebieden",
+                        "activitygroup": "Economische sectoren",
+                        "activity": "Economische sectorcodes",
+                        "processgroup": "Verwerkingsmethoden",
+                        "process": "Verwerkingsmethode codes",
+                        "in": "Binnen deze gebieden",
+                        "out": "Buiten deze gebieden",
                     },
                     flows: {
-                        "dataset": "Dataset",
-                        "selectedAreas": "Areas",
-                        "year": "Year",
-                        "hazardous": "Hazardous",
-                        "waste02": "EWC Chapter",
-                        "waste04": "EWC Sub-Chapter",
-                        "waste06": "EWC Entry",
-                        "material": "Material",
-                        "product": "Product",
-                        "composites": "Composites",
-                        "clean": "Clean",
-                        "collector": "Collector",
-                        "direct": "Direct use",
-                        "iscomposite": "Composite",
-                        "mixed": "Mixed",
-                        "route": "Route",
-                        "in": "Within these areas",
-                        "out": "Outside these areas",
+                        "origin": "Herkomst van afval",
+                        "destination": "Bestemming van afval",
+                        "flows": "Kenmerken afvalstroom",
+                        "dataset": "Databronnen",
+                        "selectedAreas": "Gebieden",
+                        "year": "Jaren",
+                        "month": "Maanden",
+                        "hazardous": "Gevaarlijk",
+                        "waste02": "EURAL Hoofdstukken",
+                        "waste04": "EURAL Subhoofdstukken",
+                        "waste06": "EURAL Codes",
+                        "material": "Materialen in afval",
+                        "agenda": "Transitieagendas",
+                        "industry": "Alle Industrieën",
+                        "chain": "Ketenposities",
+                        "clean": "Schoon",
+                        "mixed": "Gemengd",
+                        //"collector": "Collector",
+                        "route": "Inzamelingsmethode",
+                        "in": "Binnen deze gebieden",
+                        "out": "Buiten deze gebieden",
                     }
                 }
 
@@ -1492,7 +1537,7 @@ define(['views/common/baseview',
 
                 } else {
                     this.hasFilters = false;
-                    $(".filterLog").html("<span>You haven't selected any filters.</span>")
+                    $(".filterLog").html("<span>Geen selecties</span>")
                 }
                 $(".filter-log-container").fadeIn();
 
@@ -1507,6 +1552,7 @@ define(['views/common/baseview',
                     apiTag: 'monitorflows',
                 });
 
+                this.loader.activate();
                 flows.postfetch({
                     data: {},
                     body: params,
@@ -1518,20 +1564,22 @@ define(['views/common/baseview',
 
                         if (_this.hasFilters) {
                             if (response.final_count == 0) {
-                                $(".filterLog").append(`<br><br><span class="filterSummaryResponse nodata">The filters you selected match <strong>no data</strong>. Please <strong>adjust the filtering</strong> of the waste flows.<strong></strong></span>`);
+                                $(".filterLog").append(`<br><br><span class="filterSummaryResponse nodata">Uw selectie krijgt <strong>geen gegevens</strong>. Wijzig uw selecties a.u.b.<strong></strong></span>`);
                                 _this.filtersMatchAnyData = false;
                                 $(".goalContainer").fadeOut();
                             } else {
-                                $(".filterLog").append(`<br><br><span class="filterSummaryResponse data">You will query <strong>${final_count} flows</strong> accounting for <strong>${final_amount} tonnes</strong> of waste.</span>`);
+                                $(".filterLog").append(`<br><br><span class="filterSummaryResponse data">Uw selectie krijgt <strong>${final_count} stromen</strong> met <strong>${final_amount} ton</strong> afval.</span>`);
                                 _this.filtersMatchAnyData = true;
                             }
 
                         } else {
-                            $(".filterLog").append(`<br><br><span class="filterSummaryResponse data">You will query <strong>${final_count} flows</strong> accounting for <strong>${final_amount} tonnes</strong> of waste.</span>`);
+                            $(".filterLog").append(`<br><br><span class="filterSummaryResponse data">Uw selectie krijgt <strong>${final_count} stromen</strong> met <strong>${final_amount} ton</strong> afval.</span>`);
                             _this.filtersMatchAnyData = true;
                         }
+                        _this.loader.deactivate();
                     },
                     error: function (error) {
+                        _this.loader.deactivate();
                         console.log(error);
                     }
                 });
@@ -1545,10 +1593,8 @@ define(['views/common/baseview',
             close: function () {
                 FiltersView.__super__.close.call(this);
             }
-
         });
 
         return FiltersView;
-
     }
 );

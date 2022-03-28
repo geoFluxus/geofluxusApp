@@ -52,6 +52,7 @@ define(['views/common/d3plusVizView',
                 },
 
                 events: {
+                    'click .close-toggle': 'toggleClose',
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
                     'click .toggle-legend': 'toggleLegend',
@@ -73,7 +74,7 @@ define(['views/common/d3plusVizView',
                         if (dim[0] == 'space') {
                             var actorLevel = dimensions.isActorLevel,
                                 prop = actorLevel ? "actorName" : "areaName",
-                                label = actorLevel ? 'Company' : 'Area';
+                                label = actorLevel ? 'Bedrijf' : 'Gebied';
                             if (!index) {
                                 _this.groupBy.push(prop);
                                 title = _this.label + " per " + label;
@@ -145,6 +146,7 @@ define(['views/common/d3plusVizView',
                  * Create a new D3Plus TreeMap object which will be rendered in this.options.el:
                  */
                 render: function () {
+                    this.renderTitle();
                     this.TreeMap = new TreeMap({
                         el: this.options.el,
                         data: this.flows,

@@ -54,7 +54,7 @@ define(['views/common/d3plusVizView',
                         if (dim[0] == 'space') {
                             var actorLevel = _this.options.dimensions.isActorLevel,
                                 prop = actorLevel ? "actorName" : "areaName",
-                                label = actorLevel ? 'Company' : 'Area';
+                                label = actorLevel ? 'Bedrijf' : 'Gebied';
                             if (!index) {
                                 _this.groupBy = _this.x = prop;
                                 title = _this.label + " per " + label;
@@ -128,6 +128,7 @@ define(['views/common/d3plusVizView',
                 },
 
                 events: {
+                    'click .close-toggle': 'toggleClose',
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
                     'click .toggle-legend': 'toggleLegend',
@@ -138,6 +139,7 @@ define(['views/common/d3plusVizView',
                  * Create a new D3Plus linePlot object which will be rendered in this.options.el:
                  */
                 render: function () {
+                    this.renderTitle();
 
                     // Don't show legend if there is no grouping:
                     if (this.groupBy.length	< 1) {

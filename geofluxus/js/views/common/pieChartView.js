@@ -35,52 +35,24 @@ define(['views/common/d3plusVizView',
 
                     var _this = this;
 
+                    var _this = this;
                     this.options = options;
-                    this.flows = this.options.flows;
-                    
+
                     this.canHaveLegend = true;
                     this.hasLegend = true;
                     this.isDarkMode = true;
 
-                    this.props = Object.assign(...Object.values(this.dimensions));
+                    this.flows = this.options.flows;
+                    this.label = this.options.label;
+                    this.tooltipConfig.title = "";
 
-                    let dim = this.options.dimensions[0][0],
-                        gran = this.options.dimensions[0][1];
+                    this.preProcess();
 
-                    // configure tooltips
-                    Object.keys(this.props).forEach(function(property) {
-                        // check if flows have code/name for current property
-                        var flow = _this.flows[0],
-                            code = property + 'Code',
-                            name = property + 'Name';
-
-                        // if code, group by
-                        if (flow[code] != undefined && flow[code] != "") {
-                            _this.groupBy = code; // group by CODE
-
-                            // if name, add tooltip
-                            if (flow[name] != undefined && flow[name] != "") {
-                                _this.tooltipConfig.tbody.push([_this.props[property], function (d) {
-                                    return d[code] + " " + d[name];
-                                }]);
-                            }
-                        }
-                    })
-
-                    // choose grouping for time / space dimension
-                    if (dim == 'space') {
-                        this.groupBy = this.options.dimensions.isActorLevel ? "actorName" : "areaName";
-                    }
-
-                    // assign colors by groupings
-                    this.flows = enrichFlows.assignColorsByProperty(this.flows, this.groupBy);
-                    // Disable legend there are more than fifty groups:
-                    this.canHaveLegend = this.hasLegend = enrichFlows.checkToDisableLegend(this.flows, this.groupBy);
-                    
                     this.render();
                 },
 
                 events: {
+                    'click .close-toggle': 'toggleClose',
                     'click .fullscreen-toggle': 'toggleFullscreen',
                     'click .export-csv': 'exportCSV',
                     'click .toggle-legend': 'toggleLegend',
@@ -91,6 +63,7 @@ define(['views/common/d3plusVizView',
                  * Create a new D3Plus PieChart object which will be rendered in this.options.el:
                  */
                 render: function () {
+                    this.renderTitle();
                     this.pieChart = new PieChart({
                         el: this.options.el,
                         data: this.flows,
@@ -102,7 +75,76 @@ define(['views/common/d3plusVizView',
                     });
                     this.scrollToVisualization();
                     this.options.flowsView.loader.deactivate();
-                }
+                },
+
+                preProcess: function () {
+                    var _this = this;
+                    let dimensions = this.options.dimensions;
+
+                    this.tooltipConfig.tbody.length = 1;
+                    var title = this.tooltipConfig.title = "";
+
+                    this.groupBy = "";
+
+                    dimensions.forEach(function (dim, index) {
+                        // choose grouping for space dimension
+                        if (dim[0] == 'space') {
+                            var actorLevel = dimensions.isActorLevel,
+                                prop = actorLevel ? "actorName" : "areaName",
+                                label = actorLevel ? 'Bedrijf' : 'Gebied';
+                            if (!index) {
+                                _this.groupBy = prop;
+                                title = _this.label + " per " + label;
+                            } else {
+                                _this.groupBy.push(prop);
+                                title = " & " + label;
+                            }
+                            _this.tooltipConfig.tbody.push([label, function (d) {
+                                return d[prop];
+                            }]);
+                        }
+
+                        var properties = _this.dimensions[dim[0]];
+                        if (properties != undefined & _this.flows.length > 0) {
+                            Object.keys(properties).forEach(function (prop) {
+                                // check if flows have code/name for current property
+                                var flow = _this.flows[0],
+                                    code = prop + 'Code',
+                                    name = prop + 'Name';
+
+                                // if code, group by
+                                if (flow[code] != undefined) {
+                                    // if name, add tooltip
+                                    if (flow[name] != undefined) {
+                                        // tooltip subtitle (body)
+                                        var sub = properties[prop];
+
+                                        // tooltip title (header)
+                                        if (!index) {
+                                            _this.groupBy = code;
+                                            title = _this.label + " per " + sub;
+                                        } else {
+                                            _this.groupBy = code;
+                                            title = " & " + sub;
+                                        }
+
+                                        // tooltip body
+                                        _this.tooltipConfig.tbody.push([sub, function (d) {
+                                            return d[code] + " " + d[name];
+                                        }]);
+                                    }
+                                }
+                            })
+                        }
+
+                        _this.tooltipConfig.title += title;
+                    })
+
+                    // assign colors by groupings
+                    this.flows = enrichFlows.assignColorsByProperty(this.flows, this.groupBy);
+                    // Disable legend there are more than fifty groups:
+                    this.canHaveLegend = this.hasLegend = enrichFlows.checkToDisableLegend(this.flows, this.groupBy);
+                },
             });
         return PieChartView;
     }

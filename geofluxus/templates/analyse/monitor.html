@@ -3,315 +3,676 @@
 
       <div class="block">
 
-      <h4 class="pb-2 pl-3">Step <%= titleNumber %>: Visualize</h4>
+      <div class="row">
+        <div class="col-md-4" style="padding: 0px; max-width: 380px">
+          <h4 class="pb-2 pl-3">Stap 2: Visualiseer de selectie</h4>
+        </div>
 
-      <div class="card bg-dark" id="dimensionsCard">
-
-
-          <div class="row" id="message-container-row">
-              <div class="col mt-3">
-                  <% if (maxNumberOfDimensions == 1) { %>
-                      <span style="color: white">Select at least one dimension.</span>
-                  <% } else { %>
-                      <span style="color: white">Select between 1 and <%= maxNumberOfDimensions %> properties of the waste flows by which the waste flow data will be aggregated.</span>
-                  <% } %>
-                  </div>
+        <div class="col-md-1">
+          <div class="labelHelpiconContainer">
+            <a 
+              class="help-icon fas fa-question-circle" 
+              data-toggle="popover" 
+              title="Stap 2: Visualiseer de selectie"
+              data-html="true" 
+              tabindex="0"
+              data-content="
+                <span>In stap 2 selecteert u de variabelen uit stap 1 die u wilt visualiseren.<br>
+                  <br>
+                  Als u niet de gewenste informatie aangeboden krijgt in stap 2 kunt u altijd terug naar stap 1 om de selectie aan te passen. U kunt kiezen om uw selectie in totale hoeveelheid weer te geven (ton afval) of in milieu-impact van afvaltransport (ton CO2-eq).<br>
+                  De variabelen volgen dezelfde orde als in stap 1; tijd (jaar/maand), herkomst, bestemming, en kenmerken. U kunt een of meerdere variabelen selecteren voor visualisatie.<br>
+                  <br>
+                  Kies onderaan welk type visualisatie uw selectie het beste weergeeft.</span>
+                ">
+            </a>
           </div>
-          <div class="row" id="alertMaxDimensionsRow" style="display: none;">
-              <div class="col mt-3 text-center">
-                  <div class="alert alert-warning fade show" id="alertMaxDimensions" role="alert">
-                      You can select up to <strong><%= maxNumberOfDimensions %> properties</strong> at the same time.
-                  </div>
-              </div>
-          </div>
-
-          <!-- TIME -->
-          <div class="row mt-2">
-              <div class="col-md-3">
-                  <div class="checkbox">
-                      <input name="dim-toggle-time" class="bootstrapToggle dimensionToggle" id="dim-toggle-time"
-                          type="checkbox" data-width="100%" data-height="21" data-toggle="toggle" data-dim="time"
-                          data-on="Time" data-off="Time">
-                  </div>
-              </div>
-              <div class="col-md-3" id="gran-toggle-time-col" style="display: none">
-
-                 <div class="btn-group btn-group-toggle" id="gran-radio-time" data-toggle="buttons"
-                      style="width: 100%; max-width: 30rem">
-                      <label class="btn btn-default gran-radio-time-label" data-time="year">
-                          <input type="radio" class="gran-radio-time-input" id="gran-radio-time-year">Year
-                      </label>
-                      <label class="btn btn-default gran-radio-time-label active" data-time="month">
-                          <input type="radio" class="gran-radio-time-input" id="gran-radio-time-month" checked>Month
-                      </label>
-                  </div>
-
-                  {% comment %} <div class="checkbox">
-                      <input name="gran-toggle-time" id="gran-toggle-time" class="bootstrapToggle" type="checkbox" data-width="100%"
-                          data-height="21" data-toggle="toggle" checked data-on="Month" data-off="Year">
-                  </div> {% endcomment %}
-
-              </div>
-          </div>
-
-          <!-- Space -->
-          <div class="row align-items-center">
-              <div class="col-md-3">
-                  <div class="checkbox">
-                      <input name="dim-toggle-space" class="bootstrapToggle dimensionToggle" id="dim-toggle-space"
-                          type="checkbox" data-width="100%" data-height="21" data-toggle="toggle" data-dim="space"
-                          data-on="Space" data-off="Space">
-                  </div>
-              </div>
-              <div class="col-md-3" id="gran-toggle-space-col" style="display: none">
-                  <select name="dim-space-gran-select" id="dim-space-gran-select"
-                      class="form-control form-control-sm selectpicker" data-height="21">
-                      <% levels.forEach(function(level) { %>
-                      <option value="<%= level.id %>"><%= level.get('name') %></option>
-                      <% }) %>
-                  </select>
-              </div>
-
-              <div class="col-md-3" id="origDest-toggle-space-col" style="display: none">
-                  <div class="checkbox">
-                      <input name="origDest-toggle-space" class="bootstrapToggle" id="origDest-toggle-space"
-                          type="checkbox" data-width="100%" data-height="21" data-toggle="toggle" data-on="Destination"
-                          data-off="Origin">
-                  </div>
-              </div>
-          </div>
-
-          <!-- Economic Activity -->
-          <div class="row">
-              <div class="col-md-3">
-                  <div class="checkbox">
-                      <input name="dim-toggle-economic-activity" class="bootstrapToggle dimensionToggle"
-                          id="dim-toggle-economic-activity" type="checkbox" data-width="100%" data-height="21"
-                          data-toggle="toggle" data-dim="economicActivity" data-on="Economic activity"
-                          data-off="Economic activity">
-                  </div>
-              </div>
-              <div class="col-md-3" id="gran-econ-activity-col" style="display: none">
-
-                    <div class="btn-group btn-group-toggle" id="gran-radio-econ-activity" data-toggle="buttons"
-                      style="width: 100%; max-width: 30rem">
-                        <label class="btn btn-default gran-radio-econ-activity-label active" data-econ-activity="activity__activitygroup">
-                            <input type="radio" class="gran-radio-econ-activity-input" id="gran-radio-econ-activity-group"checked>Activity group
-                        </label>
-                        <label class="btn btn-default gran-radio-econ-activity-label" data-econ-activity="activity">
-                           <input type="radio" class="gran-radio-econ-activity-input" id="gran-radio-econ-activity">Activity
-                        </label>
-                    </div>
-
-                  {% comment %} <div class="checkbox">
-                      <input name="gran-toggle-econ-activity" id="gran-toggle-econ-activity" class="bootstrapToggle" type="checkbox"
-                          data-width="100%" data-height="21" data-toggle="toggle" data-on="Activity"
-                          data-off="Activity group">
-                  </div> {% endcomment %}
-              </div>
-              <div class="col-md-3" id="origDest-toggle-econAct-col" style="display: none">
-                  <div class="checkbox">
-                      <input name="origDest-toggle-econAct" id="origDest-toggle-econAct" class="bootstrapToggle" type="checkbox" data-width="100%"
-                          data-height="21" data-toggle="toggle" data-on="Destination" data-off="Origin">
-                  </div>
-              </div>
-          </div>
-
-          <!-- Treatment Method -->
-          <div class="row">
-              <div class="col-md-3">
-                  <div class="checkbox">
-                      <input name="dim-toggle-treatment-method" class="bootstrapToggle dimensionToggle"
-                          id="dim-toggle-treatment-method" type="checkbox" data-width="100%" data-height="21"
-                          data-toggle="toggle" data-dim="treatmentMethod" data-on="Treatment method"
-                          data-off="Treatment method">
-                  </div>
-              </div>
-
-              <div class="col-md-3" id="gran-treatment-method-col" style="display: none">
-
-                   <div class="btn-group btn-group-toggle" id="gran-radio-treatment-method" data-toggle="buttons"
-                      style="width: 100%; max-width: 30rem">
-                        <label class="btn btn-default gran-radio-treatment-method-label active" data-treatment-method="process__processgroup">
-                            <input type="radio" class="gran-radio-treatment-method-input" id="gran-radio-treatment-method-group"checked>Treatment method group
-                        </label>
-                        <label class="btn btn-default gran-radio-treatment-method-label" data-treatment-method="process">
-                           <input type="radio" class="gran-radio-treatment-method-input" id="gran-radio-treatment-method">Treatment method
-                        </label>
-                    </div>
-
-
-                  {% comment %} <div class="checkbox">
-                      <input name="gran-toggle-treatment-method" id="gran-toggle-treatment-method" class="bootstrapToggle" type="checkbox"
-                          data-width="100%" data-height="21" data-toggle="toggle" data-on="Treatment method"
-                          data-off="Treatment method group">
-                  </div> {% endcomment %}
-              </div>
-
-              <div class="col-md-3" id="origDest-toggle-treatment-col" style="display: none">
-                  <div class="checkbox">
-                      <input name="origDest-toggle-treatment" id="origDest-toggle-treatment" type="checkbox" class="bootstrapToggle"
-                          data-width="100%" data-height="21" data-toggle="toggle" checked data-on="Destination" data-off="Origin">
-                  </div>
-              </div>
-          </div>
-
-          <!-- Material -->
-          <div class="row mb-3">
-              <div class="col-md-3">
-                  <div class="checkbox">
-                      <input name="dim-toggle-material" class="bootstrapToggle dimensionToggle" id="dim-toggle-material"
-                          type="checkbox" data-width="100%" data-height="21" data-toggle="toggle" data-dim="material"
-                          data-on="Material" data-off="Material">
-                  </div>
-              </div>
-              <div class="col-md-9" id="gran-material-col" style="display: none">
-                  <div class="btn-group btn-group-toggle" id="gran-radio-material" data-toggle="buttons"
-                      style="width: 100%; max-width: 30rem">
-                      <label class="btn btn-default gran-radio-material-label active" data-ewc="ewc2">
-                          <input type="radio" class="gran-radio-material-input" id="gran-radio-material-ewc2"
-                              checked>EWC Chapter
-                      </label>
-                      <label class="btn btn-default gran-radio-material-label" data-ewc="ewc4">
-                          <input type="radio" class="gran-radio-material-input" id="gran-radio-material-ewc4">EWC Sub-Chapter
-                      </label>
-                      <label class="btn btn-default gran-radio-material-label" data-ewc="ewc6">
-                          <input type="radio" class="gran-radio-material-input" id="gran-radio-material-ewc6">EWC Entry
-                      </label>
-                      <label class="btn btn-default gran-radio-material-label" data-ewc="gncode">
-                          <input type="radio" class="gran-radio-material-input" id="gran-radio-material-gncode">GN Code
-                      </label>
-                  </div>
-              </div>
-          </div>
-
-          <div class="viz-container" style="display: none;">
-
-              <div class="row">
-                  <div class="col">
-                      <span style="color: white">Select one of the available visualizations:</span>
-                  </div>
-              </div>
-
-              <div class="row">
-                  <div class="col d-flex align-items-center mr-auto">
-                      <div class="btn-group btn-group-toggle flex-wrap justify-content-center" id="visualization-type"
-                          data-toggle="buttons" style="margin: auto">
-                          <label class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
-                              data-viz="piechart" style="display: none;">
-                              <input type="radio" id="viz-piechart"><span class="span-viz" id="span-viz-piechart">Pie
-                                  chart</span>
-                          </label>
-                          <label class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
-                              data-viz="treemap" style="display: none;">
-                              <input type="radio" id="viz-treemap"><span class="span-viz" id="span-viz-treemap">Treemap</span>
-                          </label>
-                          <label class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
-                              data-viz="barchart" style="display: none;">
-                              <input type="radio" id="viz-barchart"><span class="span-viz" id="span-viz-barchart">Bar
-                                  chart</span>
-                          </label>
-                          <label class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
-                              data-viz="lineplot" style="display: none;">
-                              <input type="radio" id="viz-lineplot"><span class="span-viz" id="span-viz-lineplot">Line
-                                  plot</span>
-                          </label>
-                          <label class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
-                              data-viz="choroplethmap" style="display: none;">
-                              <input type="radio" id="viz-choroplethmap"><span class="span-viz"
-                                  id="span-viz-choroplethmap">Choropleth map</span>
-                          </label>
-                          <label class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
-                              data-viz="coordinatepointmap" style="display: none;">
-                              <input type="radio" id="viz-coordinatepointmap"><span class="span-viz"
-                                  id="span-viz-coordinatepointmap">Dot map</span>
-                          </label>
-
-                          <label class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
-                              data-viz="lineplotmultiple" style="display: none;">
-                              <input type="radio" id="viz-lineplotmultiple"><span class="span-viz"
-                                  id="span-viz-lineplotmultiple">Multiple line plot</span>
-                          </label>
-                          <label class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
-                              data-viz="areachart" style="display: none;">
-                              <input type="radio" id="viz-areachart"><span class="span-viz" id="span-viz-areachart">Stacked
-                                  area chart</span>
-                          </label>
-                          <label class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
-                              data-viz="stackedbarchart" style="display: none;">
-                              <input type="radio" id="viz-stackedbarchart"><span class="span-viz"
-                                  id="span-viz-stackedbarchart">Stacked bar chart</span>
-                          </label>
-
-                          <label
-                              class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button hasFlowsFormat"
-                              data-viz="parallelsets" style="display: none;">
-                              <input type="radio" id="viz-parallelsets"><span class="span-viz"
-                                  id="span-viz-parallelsets">Parallel sets</span>
-                          </label>
-                          <label
-                              class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button hasFlowsFormat"
-                              data-viz="circularsankey" style="display: none;">
-                              <input type="radio" id="viz-circularsankey"><span class="span-viz" id="span-viz-circularsankey">Circular Sankey</span>
-                          </label>
-                          <label
-                              class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button hasFlowsFormat"
-                              data-viz="flowmap" style="display: none;">
-                              <input type="radio" id="viz-flowmap"><span class="span-viz" id="span-viz-flowmap">Flow map</span>
-                          </label>
-                          <label
-                              class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
-                              data-viz="networkmap" style="display: none;">
-                              <input type="radio" id="viz-networkmap"><span class="span-viz" id="span-viz-networkmap">Road network map</span>
-                          </label>
-
-                            <label
-                              class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
-                              data-viz="geoheatmap" style="display: none;">
-                              <input type="radio" id="viz-geoheatmap"><span class="span-viz" id="span-viz-geoheatmap">Geo Heatmap</span>
-                            </label>
-
-                             <label
-                              class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
-                              data-viz="arclayer" style="display: none;">
-                              <input type="radio" id="viz-arclayer"><span class="span-viz" id="span-viz-arclayer">Arc map</span>
-                            </label>
-
-                      </div>
-                  </div>
-              </div>
-
-          </div>
-
+        </div>
       </div>
 
-      <div class="row mt-1 d-flex justify-content-end">
-
-          <button id='reset-dim-viz' class="btn btn-secondary resetButton" title="Reset all dimension and visualization settings">RESET
-          </button>
-
-          <div>
-              <button id='apply-filters' class="btn btn-primary"
-                  title="Apply the filters and render the selected visualization."
-                  style="margin-left: 10px; float: left; width: 10em">VISUALIZE
-              </button>
-              <div class="helpIconContainer d-inline-flex align-items-center">
-                  <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Visualize"
-                      style="float: right; margin-left: 4px !important;" data-html="true" tabindex="0"
-                      data-content="<b>Filter</b> the waste flows according to the filters in Origin, Destination,
-                      and Flows, and <b>render</b> the selected visualization based on the chosen dimensions and granularity.">
-                  </a>
-              </div>
+      <div class="card bg-dark" id="dimensionsCard">
+        <div class="row">
+          <div class="col">
+            <span style="color: white">Eenheden:</span>
           </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-4" style="min-width: 300px; max-width: 380px;">
+            <div class="btn-group btn-group-toggle" id="mode-toggle" data-toggle="buttons"
+              style="width: 100%; max-width: 30rem">
+                <label class="btn btn-default gran-radio-mode-label active analyse-mode-radio-label" data-mode="monitor">
+                  <input type="radio">ton (t) afval
+                </label>
+                <label class="btn btn-default gran-radio-mode-label analyse-mode-radio-label" data-mode="impact">
+                  <input type="radio">ton (t) C02-eq.
+                </label>
+            </div>
+          </div>
+          <div class="col-md-1">
+            <div class="labelHelpiconContainer">
+              <a 
+                class="help-icon fas fa-question-circle" 
+                data-toggle="popover" 
+                title="ton (t) afval | ton (t) C02-eq."
+                data-html="true" 
+                tabindex="0"
+                data-content="
+                  <span>Selecteer de weergave op basis van totale hoeveelheid afval, of de CO2-eq uitstoot van afvaltransport van hetzelfde afval (beide in ton). </span>
+                  ">
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" id="message-container-row">
+          <div class="col mt-3">
+            <% if (maxNumberOfDimensions == 1) { %>
+              <span style="color: white">Selecteer minimaal één variabele.</span>
+            <% } else { %>
+              <span style="color: white">Selecteer 1 of 2 variabelen om je selectie (stap 1) te visualiseren:</span>
+            <% } %>
+          </div>
+        </div>
+
+        <div class="row" id="alertMaxDimensionsRow" style="display: none;">
+          <div class="col mt-3 text-center">
+            <div class="alert alert-warning fade show" id="alertMaxDimensions" role="alert">
+              U kunt maximaal <strong><%= maxNumberOfDimensions %> variabelen</strong> variabelen tegelijk selecteren.
+            </div>
+          </div>
+        </div>
+
+        <!-- TIME -->
+        <div class="row mt-2" style="margin-bottom: 1.5rem">
+          <div class="col-md-4" style="min-width: 300px; max-width: 380px;">
+            <div class="checkbox">
+              <input 
+                name="dim-toggle-time" 
+                class="bootstrapToggle dimensionToggle" 
+                id="dim-toggle-time"
+                type="checkbox" 
+                data-width="100%" 
+                data-height="21" 
+                data-toggle="toggle" 
+                data-dim="time"
+                data-on="Tijd" 
+                data-off="Tijd">
+            </div>
+          </div>
+
+          <div class="col-md-1">
+            <div class="labelHelpiconContainer">
+              <a 
+                class="help-icon fas fa-question-circle" 
+                data-toggle="popover" 
+                title="Tijd"
+                data-html="true" 
+                tabindex="0"
+                data-content="
+                  <span>Selecteer of u de afvalstromen per jaar of per maand wilt visualiseren. Wilt u een specifiek jaar of enkel een bepaalde maand visualiseren? Ga terug naar stap 1 en selecteer uw voorkeur. </span>
+                  ">
+              </a>
+            </div>
+          </div>
+
+          <div class="col-md-3" id="gran-toggle-time-col" style="display: none">
+            <div 
+              class="btn-group btn-group-toggle" 
+              id="gran-radio-time" 
+              data-toggle="buttons"
+              style="width: 100%; min-width: 300px">
+                <label class="btn btn-default gran-radio-time-label" data-time="year">
+                  <input type="radio" class="gran-radio-time-input" id="gran-radio-time-year">Per jaar
+                </label>
+                <label class="btn btn-default gran-radio-time-label active" data-time="month">
+                  <input type="radio" class="gran-radio-time-input" id="gran-radio-time-month" checked>Per maand
+                </label>
+            </div>
+
+            {% comment %} 
+              <div class="checkbox">
+                <input 
+                  name="gran-toggle-time" 
+                  id="gran-toggle-time" 
+                  class="bootstrapToggle" 
+                  type="checkbox" 
+                  data-width="100%"
+                  data-height="21" 
+                  data-toggle="toggle" 
+                  checked data-on="Month" 
+                  data-off="Year">
+              </div> 
+            {% endcomment %}
+          </div>
+        </div>
+
+        <!-- origin -->
+        <div class="row  mt-2">
+          <div class="col-md-4" style="min-width: 300px; max-width: 380px;">
+            <div class="checkbox">
+              <input 
+                name="dim-toggle-origin" 
+                class="bootstrapToggle dimensionToggle" 
+                id="dim-toggle-origin"
+                type="checkbox" 
+                data-width="100%" 
+                data-height="21" 
+                data-toggle="toggle" 
+                data-dim="origin"
+                data-on="Herkomst" 
+                data-off="Herkomst">
+            </div>
+          </div>
+
+          <div class="col-md-1">
+            <div class="labelHelpiconContainer">
+              <a 
+                class="help-icon fas fa-question-circle" 
+                data-toggle="popover" 
+                title="Herkomst"
+                data-html="true" 
+                tabindex="0"
+                data-content="
+                  <span>Selecteer op welk schaalniveau u uw selectie wilt weergeven, per land, provincie, gemeente, of bedrijf. </span>
+                  ">
+              </a>
+            </div>
+          </div>
+
+          <div class="col-md-3" id="gran-toggle-origin-col" style="display: none">
+            <div 
+              class="btn-group btn-group-toggle" 
+              id="gran-radio-origin" 
+              data-toggle="buttons"
+              style="width: 100%; ">
+                <% levels.forEach(function(level, idx) { %>
+                  <% var classname = "btn btn-default gran-radio-origin-label" %>
+                  <% if (!idx) { classname += " active" } %>
+                  <label class="<%= classname %>" data-origin="<%= level.id %>">
+                    <input type="radio" class="gran-radio-origin-input" id="gran-radio-origin-<%= level.id %>">
+                    <%= level.get('name') %>
+                  </label>
+                <% }) %>
+            </div>
+          </div>
+
+          <div class="col-md-3" id="origDest-toggle-origin-col" style="display: none">
+            <div class="checkbox">
+              <input 
+                name="origDest-toggle-origin" 
+                class="bootstrapToggle" 
+                id="origDest-toggle-origin"
+                type="checkbox" 
+                data-width="100%" 
+                data-height="21" 
+                data-toggle="toggle" 
+                data-on="Destination"
+                data-off="Origin">
+            </div>
+          </div>
+        </div>
+
+        <!-- Economic Activity -->
+        <div class="row" style="margin-bottom: 1.5rem">
+          <div class="col-md-4" style="min-width: 300px; max-width: 380px;">
+            <div class="checkbox">
+              <input 
+                name="dim-toggle-economic-activity" 
+                class="bootstrapToggle dimensionToggle"
+                id="dim-toggle-economic-activity" 
+                type="checkbox" 
+                data-width="100%" 
+                data-height="21"
+                data-toggle="toggle" 
+                data-dim="economicActivity" 
+                data-on="Economische sector (SBI code)"
+                data-off="Economische sector (SBI code)">
+            </div>
+          </div>
+
+          <div class="col-md-1">
+            <div class="labelHelpiconContainer">
+              <a 
+                class="help-icon fas fa-question-circle" 
+                data-toggle="popover" 
+                title="Economische sector (SBI code)"
+                data-html="true" 
+                tabindex="0"
+                data-content="
+                  <span>Selecteer op welk detailniveau u uw selectie wilt weergeven, kies uit de SBI  hoofdgroep of 4-cijferige code.</span>
+                  ">
+              </a>
+            </div>
+          </div>
+
+          <div class="col-md-3" id="gran-econ-activity-col" style="display: none">
+            <div 
+              class="btn-group btn-group-toggle" 
+              id="gran-radio-econ-activity" 
+              data-toggle="buttons"
+              style="width: 100%; min-width: 300px">
+              <label class="btn btn-default gran-radio-econ-activity-label active" data-econ-activity="activity__activitygroup">
+                <input type="radio" class="gran-radio-econ-activity-input" id="gran-radio-econ-activity-group"checked>Hoofdgroep
+              </label>
+              <label class="btn btn-default gran-radio-econ-activity-label" data-econ-activity="activity">
+                <input type="radio" class="gran-radio-econ-activity-input" id="gran-radio-econ-activity">4-cijfer code
+              </label>
+            </div>
+
+            {% comment %} 
+              <div class="checkbox">
+                <input 
+                  name="gran-toggle-econ-activity" 
+                  id="gran-toggle-econ-activity" 
+                  class="bootstrapToggle" 
+                  type="checkbox"
+                  data-width="100%" 
+                  data-height="21" 
+                  data-toggle="toggle" 
+                  data-on="Activity"
+                  data-off="Activity group">
+              </div> 
+            {% endcomment %}
+          </div>
+          <!-- <div class="col-md-3" id="origDest-toggle-econAct-col" style="display: none">
+              <div class="checkbox">
+                  <input name="origDest-toggle-econAct" id="origDest-toggle-econAct" class="bootstrapToggle" type="checkbox" data-width="100%"
+                      data-height="21" data-toggle="toggle" data-on="Destination" data-off="Origin">
+              </div>
+          </div> -->
+        </div>
+
+        <!-- destination -->
+        <div class="row align-items-center">
+          <div class="col-md-4" style="min-width: 300px; max-width: 380px;">
+            <div class="checkbox">
+              <input 
+                name="dim-toggle-destination" 
+                class="bootstrapToggle dimensionToggle" 
+                id="dim-toggle-destination"
+                type="checkbox" 
+                data-width="100%" 
+                data-height="21" 
+                data-toggle="toggle" 
+                data-dim="destination"
+                data-on="Bestemming" 
+                data-off="Bestemming">
+            </div>
+          </div>
+
+          <div class="col-md-1">
+            <div class="labelHelpiconContainer">
+              <a 
+                class="help-icon fas fa-question-circle" 
+                data-toggle="popover" 
+                title="Bestemming"
+                data-html="true" 
+                tabindex="0"
+                data-content="
+                  <span>Selecteer op welk schaalniveau u uw selectie wilt weergeven, per land, provincie, gemeente, of bedrijf.</span>
+                  ">
+              </a>
+            </div>
+          </div>
+
+          <div class="col-md-4" id="gran-toggle-destination-col" style="display: none">
+            <div 
+              class="btn-group btn-group-toggle" 
+              id="gran-radio-destination" 
+              data-toggle="buttons"
+              style="width: 100%; max-width: 30rem">
+                <% levels.forEach(function(level, idx) { %>
+                  <% var classname = "btn btn-default gran-radio-destination-label" %>
+                  <% if (!idx) { classname += " active" } %>
+                  <label class="<%= classname %>" data-destination="<%= level.id %>">
+                    <input 
+                      type="radio" 
+                      class="gran-radio-destination-input" 
+                      id="gran-radio-destination-<%= level.id %>">
+                        <%= level.get('name') %>
+                  </label>
+                <% }) %>
+            </div>
+          </div>
+
+          <div class="col-md-3" id="origDest-toggle-destination-col" style="display: none">
+            <div class="checkbox">
+              <input 
+                name="origDest-toggle-origin" 
+                class="bootstrapToggle" 
+                id="origDest-toggle-destination"
+                type="checkbox" 
+                data-width="100%" 
+                data-height="21" 
+                data-toggle="toggle" 
+                data-on="Origin"
+                data-off="Destination">
+            </div>
+          </div>
+        </div>
+
+        <!-- Treatment Method -->
+        <div class="row" style="margin-bottom: 1.5rem">
+          <div class="col-md-4" style="min-width: 300px; max-width: 380px;">
+            <div class="checkbox">
+              <input 
+                name="dim-toggle-treatment-method" 
+                class="bootstrapToggle dimensionToggle"
+                id="dim-toggle-treatment-method" 
+                type="checkbox" 
+                data-width="100%" 
+                data-height="21"
+                data-toggle="toggle" 
+                data-dim="treatmentMethod" 
+                data-on="Verwerkingsmethode"
+                data-off="Verwerkingsmethode">
+            </div>
+          </div>
+
+          <div class="col-md-1">
+            <div class="labelHelpiconContainer">
+              <a 
+                class="help-icon fas fa-question-circle" 
+                data-toggle="popover" 
+                title="Verwerkingsmethode"
+                data-html="true" 
+                tabindex="0"
+                data-content="
+                  <span>Selecteer op welk detailniveau u uw selectie wilt weergeven, kies uit de verwerkingsmethode hoofdmethode of sub-methode.</span>
+                  ">
+              </a>
+            </div>
+          </div>
+
+          <div class="col-md-4" id="gran-treatment-method-col" style="display: none">
+            <div 
+              class="btn-group btn-group-toggle" 
+              id="gran-radio-treatment-method" 
+              data-toggle="buttons"                      
+              style="width: 100%; max-width: 30rem">
+                <label class="btn btn-default gran-radio-treatment-method-label active" data-treatment-method="process__processgroup">
+                  <input type="radio" class="gran-radio-treatment-method-input" id="gran-radio-treatment-method-group"checked>Verwerkingsgroep
+                </label>
+                <label class="btn btn-default gran-radio-treatment-method-label" data-treatment-method="process">
+                  <input type="radio" class="gran-radio-treatment-method-input" id="gran-radio-treatment-method">Verwerkingscode
+                </label>
+            </div>
+
+            {% comment %} 
+              <div class="checkbox">
+                <input 
+                  name="gran-toggle-treatment-method" 
+                  id="gran-toggle-treatment-method" 
+                  class="bootstrapToggle" 
+                  type="checkbox"
+                  data-width="100%" 
+                  data-height="21" 
+                  data-toggle="toggle" 
+                  data-on="Treatment method"
+                  data-off="Treatment method group">
+              </div> 
+            {% endcomment %}
+          </div>
+
+          <div class="col-md-3" id="origDest-toggle-treatment-col" style="display: none">
+            <div class="checkbox">
+              <input 
+                name="origDest-toggle-treatment" 
+                id="origDest-toggle-treatment" 
+                type="checkbox" 
+                class="bootstrapToggle"
+                data-width="100%" 
+                data-height="21" 
+                data-toggle="toggle" 
+                checked data-on="Destination" 
+                data-off="Origin">
+            </div>
+          </div>          
+        </div>
+
+        <!-- Material -->
+        <div class="row">
+          <div class="col-md-4" style="min-width: 300px; max-width: 380px;">
+            <div class="checkbox">
+              <input 
+                name="dim-toggle-material" 
+                class="bootstrapToggle dimensionToggle" 
+                id="dim-toggle-material"
+                type="checkbox" 
+                data-width="100%" 
+                data-height="21" 
+                data-toggle="toggle" 
+                data-dim="material"
+                data-on="Afvalstroomcode" 
+                data-off="Afvalstroomcode">
+            </div>
+          </div>
+
+          <div class="col-md-1">
+            <div class="labelHelpiconContainer">
+              <a 
+                class="help-icon fas fa-question-circle" 
+                data-toggle="popover" 
+                title="Afvalstroomcode"
+                data-html="true" 
+                tabindex="0"
+                data-content="
+                  <span>Selecteer op welk detailniveau u uw selectie wilt weergeven, kies uit de EURAL hoofdgroep (2 cijfers), subgroep (4 cijfers) of individuele code (6 cijfers).<br>
+                    <br>
+                    Voor hergebruikt afval kunt u een GN-code selecteren.</span>
+                  ">
+              </a>
+            </div>
+          </div>
+
+          <div class="col-md-4" id="gran-material-col" style="display: none">
+            <div 
+              class="btn-group btn-group-toggle" 
+              id="gran-radio-material" 
+              data-toggle="buttons"
+              style="width: 100%; max-width: 30rem">
+              <label class="btn btn-default gran-radio-material-label active" data-ewc="ewc2">
+                <input 
+                  type="radio" 
+                  class="gran-radio-material-input" 
+                  id="gran-radio-material-ewc2"
+                  checked>EURAL hoofdgroep
+              </label>
+              <label class="btn btn-default gran-radio-material-label" data-ewc="ewc4">
+                <input type="radio" class="gran-radio-material-input" id="gran-radio-material-ewc4">EURAL subgroep
+              </label>
+              <label class="btn btn-default gran-radio-material-label" data-ewc="ewc6">
+                <input type="radio" class="gran-radio-material-input" id="gran-radio-material-ewc6">EURAL 6-cijfer code
+              </label>
+              <label class="btn btn-default gran-radio-material-label" data-ewc="gncode">
+                <input type="radio" class="gran-radio-material-input" id="gran-radio-material-gncode">GN code
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="viz-container" style="display: none;">
+          <div class="row">
+            <div class="col">
+              <span style="color: white">Selecteer een van de volgende visualisaties:</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col d-flex align-items-start mr-auto">
+              <div 
+                class="btn-group btn-group-toggle flex-wrap justify-content-start" 
+                id="visualization-type"
+                data-toggle="buttons">
+
+                <label 
+                  class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                  data-viz="piechart" 
+                  style="display: none;">
+                  <input type="radio" id="viz-piechart">
+                    <span class="span-viz" id="span-viz-piechart">Cirkeldiagram</span>
+                </label>
+
+                <label 
+                  class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                  data-viz="treemap" 
+                  style="display: none;">
+                  <input type="radio" id="viz-treemap">
+                    <span class="span-viz" id="span-viz-treemap">Treemap</span>
+                </label>
+
+                <label 
+                  class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                  data-viz="barchart" 
+                  style="display: none;">
+                  <input type="radio" id="viz-barchart">
+                    <span class="span-viz" id="span-viz-barchart">Staafdiagram</span>
+                </label>
+
+                <label 
+                  class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                  data-viz="lineplot" 
+                  style="display: none;">
+                  <input type="radio" id="viz-lineplot">
+                    <span class="span-viz" id="span-viz-lineplot">Lijnplot</span>
+                </label>
+
+                <label 
+                  class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                  data-viz="choroplethmap" 
+                  style="display: none;">
+                    <input type="radio" id="viz-choroplethmap">
+                      <span class="span-viz" id="span-viz-choroplethmap">Choropletenkaart</span>
+                </label>
+
+                <label 
+                  class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                  data-viz="coordinatepointmap" 
+                  style="display: none;">
+                  <input type="radio" id="viz-coordinatepointmap">
+                    <span class="span-viz" id="span-viz-coordinatepointmap">Puntenkaart</span>
+                </label>
+
+                <label 
+                  class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                  data-viz="lineplotmultiple" 
+                  style="display: none;">
+                  <input type="radio" id="viz-lineplotmultiple">
+                    <span class="span-viz" id="span-viz-lineplotmultiple">Meerdere lijnplots</span>
+                </label>
+
+                <label 
+                  class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                  data-viz="areachart" 
+                  style="display: none;">
+                  <input type="radio" id="viz-areachart">
+                    <span class="span-viz" id="span-viz-areachart">Gestapeld vlakdiagram</span>
+                </label>
+
+                <label 
+                  class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                  data-viz="stackedbarchart" 
+                  style="display: none;">
+                  <input type="radio" id="viz-stackedbarchart">
+                    <span class="span-viz" id="span-viz-stackedbarchart">Gestapeld staafdiagram</span>
+                </label>
+
+                <label
+                  class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button hasFlowsFormat"
+                  data-viz="parallelsets" 
+                  style="display: none;">
+                  <input type="radio" id="viz-parallelsets">
+                    <span class="span-viz" id="span-viz-parallelsets">Parallelplot</span>
+                </label>
+
+                <label
+                  class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button hasFlowsFormat"
+                  data-viz="circularsankey" 
+                  style="display: none;">
+                  <input type="radio" id="viz-circularsankey">
+                    <span class="span-viz" id="span-viz-circularsankey">Sankey</span>
+                </label>
+
+                <label
+                  class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button hasFlowsFormat"
+                  data-viz="flowmap" 
+                  style="display: none;">
+                  <input type="radio" id="viz-flowmap">
+                    <span class="span-viz" id="span-viz-flowmap">Stroomkaart</span>
+                </label>
+
+                <label
+                  class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                  data-viz="networkmap" 
+                  style="display: none;">
+                  <input type="radio" id="viz-networkmap">
+                    <span class="span-viz" id="span-viz-networkmap">Wegenkaart</span>
+                </label>
+
+                <label
+                  class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                  data-viz="geoheatmap" 
+                  style="display: none;">
+                  <input type="radio" id="viz-geoheatmap">
+                    <span class="span-viz" id="span-viz-geoheatmap">Hittekaart</span>
+                </label>
+
+                <label
+                  class="btn btn-sm btn-default justify-content-center align-items-end viz-selector-button"
+                  data-viz="arclayer" 
+                  style="display: none;">
+                  <input type="radio" id="viz-arclayer">
+                    <span class="span-viz" id="span-viz-arclayer">Bogenkaart</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-1 d-flex justify-content-start">
+        <!-- <button 
+          id='reset-dim-viz' 
+          class="btn btn-secondary resetButton" 
+          title="Reset all dimension and visualization settings">
+            RESET
+        </button> -->
+
+        <div>
+          <button 
+            id='apply-filters' 
+            class="btn btn-primary"
+            style="margin-left: 10px; float: left; width: 10em">
+              VISUALISEER
+          </button>
+          <div class="helpIconContainer d-inline-flex align-items-center">
+            <a 
+              class="help-icon fas fa-question-circle" 
+              data-toggle="popover"
+              title="Visualiseer"
+              style="float: right; margin-left: 4px !important;" 
+              data-html="true" 
+              tabindex="0"
+              data-content="
+                <span>Druk op deze knop om de selectie uit stap 1 te visualiseren. Gebruik de bovenstaande schakelaars om de verschillende dimensies van de selectie te visualiseren.<span>
+                ">
+            </a>
+          </div>
+        </div>
       </div>
   </div>
 
 
     <div class="block visualizationBlock" style="display: none;">
+        <div class="row">
+          <div class="col" style="padding: 0px;">
+            <h4 class="viz-wrapper-title pb-2 pl-3"></h4>
+          </div>
+        </div>
         <div class="card">
             <div class="row">
                 <div class="col px-1 visualizationRow">
-                    <div class="viz-wrapper-div no-data-found" style="height: 10rem; !important"><span class="align-self-center text-white mx-auto">The selected filters returned no data. Please adjust the filtering of the waste flows.</span></div>
+                    <div class="viz-wrapper-div no-data-found" style="height: 10rem; !important"><span class="align-self-center text-white mx-auto">Geen gegevens</span></div>
                     <div class="viz-wrapper-div piechart-wrapper"></div>
                     <div class="viz-wrapper-div barchart-wrapper"></div>
                     <div class="viz-wrapper-div lineplot-wrapper"></div>
@@ -319,45 +680,35 @@
                     <div class="viz-wrapper-div choroplethmap-wrapper"></div>
                     <div class="viz-wrapper-div coordinatepointmap-wrapper"></div>
 
-                    <div class="viz-wrapper-div areachart-wrapper"></div>
-                    <div class="viz-wrapper-div stackedbarchart-wrapper"></div>
-                    <div class="viz-wrapper-div flowmap-wrapper">
-                        <div class="flowmap-container d-block" style="width: 100%; height: 100%"></div>
-                        <svg class="flowmap-d3pluslegend" style="width: 100%; background-color: grey"></svg>
-                    </div>
-                    <div class="viz-wrapper-div networkmap-wrapper">
-                        <div></div>
-                    </div>
+          <div class="viz-wrapper-div areachart-wrapper"></div>
+          <div class="viz-wrapper-div stackedbarchart-wrapper"></div>
+          <div class="viz-wrapper-div flowmap-wrapper">
+            <div class="flowmap-container d-block" style="width: 100%; height: 100%"></div>
+            <svg class="flowmap-d3pluslegend" style="width: 100%; background-color: grey"></svg>
+          </div>
+          <div class="viz-wrapper-div networkmap-wrapper">
+            <div></div>
+          </div>
 
-                    <div class="parallelsets-container p-2" style="display: none;">
-                        <div class="viz-wrapper-div parallelsets-wrapper"></div>
-                    </div>
-                    <div class="viz-wrapper-div circularsankey-wrapper"></div>
-                    <div class="viz-wrapper-div geoheatmap-wrapper"></div>
-                    <div class="viz-wrapper-div arclayer-wrapper"></div>
-
-                </div>
-            </div>
+          <div class="parallelsets-container p-2" style="display: none;">
+            <div class="viz-wrapper-div parallelsets-wrapper"></div>
+          </div>
+          <div class="viz-wrapper-div circularsankey-wrapper"></div>
+          <div class="viz-wrapper-div geoheatmap-wrapper"></div>
+          <div class="viz-wrapper-div arclayer-wrapper"></div>
         </div>
-
-
-        <div class="row mt-1 d-flex justify-content-end export-button-row">
-
-            <button id='viz-export-csv' class="btn btn-primary mr-1 export-csv"
-                title="Export the data of this visualization as a CSV file."
-                style="width: 10em;"
-                >SAVE CSV
-            </button>
-
-            <button id='viz-export-png' class="btn btn-primary export-png"
-                title="Export this visualization as a PNG file."
-                style="width: 10em;"
-                >SAVE IMAGE
-            </button>
-
-        </div>
-
-
-
+      </div>
     </div>
+
+    <div class="row mt-1 d-flex justify-content-start export-button-row">
+        <div class="row mt-1 d-flex justify-content-start export-button-row">
+            <button id='viz-export-csv' class="btn btn-primary mr-1 export-csv"
+                >Download .CSV
+            </button>
+            <button id='viz-export-png' class="btn btn-primary export-png"
+                >Download visualisatie
+            </button>
+        </div>
+    </div>
+  </div>
 </script>

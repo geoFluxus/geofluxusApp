@@ -1,1014 +1,1629 @@
 <!--Filters-->
 <script type="text/template" id="filter-template">
   {% load custom_tags %}
-
     <div class="block accordion" id="filterBlock">
 
-        <div class="row justify-content-between">
-            <h4 class="pb-1 pl-3">Step 1: Filter the waste flows (optional)</h4>
+        <div class="row">
+          <div class="col-md-5" style="padding: 0px; max-width: 440px">
+            <h4 class="pb-1 pl-3">Stap 1: Selecteer de afvalstromen</h4>            
+          </div>
 
-            <div>
-                <button
-                    id='view-saved-filters'
-                    class="btn btn-secondary openSavedFilterModal"
-                    data-filter-modal-mode="savedMode"
-                    title="Load saved filter configurations."
-                    style="height: 38px; width: 10rem">LOAD FILTERS</button>
-
-                <button
-                    id='save-filters'
-                    class="btn btn-primary openSavedFilterModal"
-                    data-filter-modal-mode="newMode"
-                    title="Save the current filter configuration."
-                    style="height: 38px; width: 10rem">SAVE FILTERS</button>
+          <div class="col-md-1">
+            <div class="labelHelpiconContainer">
+              <a 
+                class="help-icon fas fa-question-circle" 
+                data-toggle="popover" 
+                title="Stap 1: Selecteer de afvalstromen"
+                data-html="true" 
+                tabindex="0"
+                data-content="
+                  <span>In stap 1 selecteert u de afvalstromen die u vervolgens in stap 2 visualiseert.<br>
+                    <br>
+                    In stap 1 “Algemeen” selecteert u de dataset (ontvangst- / afgiftemeldingen) en tijd (jaren en maanden).<br>
+                    In “Herkomst van afval” kunt u selecteren uit het gebied, de economische sector, en het specifieke bedrijf waarvan het afval afkomstig is.<br>
+                    In “Bestemming van afval”  kunt u selecteren uit het gebied, de verwerkingsmethode, en het specifieke bedrijf waar het afval wordt verwerkt.<br>
+                    <br>
+                    Tot slot kunt u kenmerken van de afvalstroom selecteren, waaronder de materialen, transitieagenda, industrie, en EURALcode.</span>
+                  ">
+              </a>
             </div>
+          </div>
         </div>
 
+        <!-- General Controls -->
         <div class="card bg-dark">
+          <div class="card-header" id="card-header-collapse-general">
+            <h4 class="mb-1">
+              <div class="row" style="padding: 0; justify-content: start">
+                <div class="col-md-2" style="min-width: 380px;">
+                  <button 
+                    class="btn btn-link collapsed collapsingHeaderButton"
+                    id="btn-collapse-header-general"
+                    data-toggle="collapse" 
+                    data-target="#collapseGeneralBlock" 
+                    aria-expanded="false"
+                    aria-controls="collapseGeneralBlock"
+                    title="">
+                      <i class="fa fa-chevron-down pull-right"></i>
+                      Algemeen
+                  </button>
+                </div>
+                <div class="col-md-1">
+                  <div class="d-inline buttonHelpiconContainer">
+                    <a class="help-icon fas fa-question-circle" 
+                      data-toggle="popover"
+                      data-boundary="viewport"
+                      title="Algemeen" 
+                      data-html="true"
+                      tabindex="0"
+                      data-content="
+                        <span>In deze sectie kunt u de databron en tijd kiezen voor analyse. Ook is het mogelijk vooraf ingestelde filters te laden via de knop “Laad voorselectie”.<br>
+                          <br>
+                          Hier vindt u twee typen voorselecties aan: 1) door geoFluxus ingestelde voorselecties waarmee u makkelijk de informatie opvraagt die gebruikt is voor de visualisaties in de monitor (bijvoorbeeld de visualisatie in “Handelingsperspectieven”), of 2) uw eigen opgeslagen voorselecties.<br>
+                          <br>
+                          Nadat u informatie heeft gefilterd is het mogelijk deze met de knop “Bewaar selectie” op te slaan als voorselectie.</span>
+                        ">
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </h4>
+          </div>
 
-            <div class="card-header">
-                <h4 class="mt-2 ml-3">
-                    <button class="btn btn-link collapsingHeaderButton" id="btn-collapse-header-origin"
-                        title="">
-                        <!-- <i class="fa fa-chevron-down pull-right"></i> -->
-                        General
-                    </button>
-                </h4>
-            </div>
+          <div 
+            id="collapseGeneralBlock" 
+            class="collapse"
+            aria-labelledby="card-header-collapse-general"
+            data-parent="#filterBlock">
 
             <div class="card-body" style="min-height: 10rem;">
+              <div class="row">
+                <button
+                id='view-saved-filters'
+                class="btn btn-secondary openSavedFilterModal"
+                data-filter-modal-mode="savedMode"
+                style="margin: 10px; height: 38px; width: 12rem">
+                  Laad voorselectie
+                </button>
+              </div>
 
-                    <div class="row"
-                        {% if not request.user|isExpertUser %}
-                        style="display: none;"
-                        {% endif %}
-                        >
-                        <div class="col-md-3 flows-dataset-select-col">
-                        <label for="flows-dataset-select">Data set</label>
-                        <div class="labelHelpiconContainer">
-                            <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Data set"
-                                data-html="true" tabindex="0" data-content="Select the data set you want to analyse.">
-                            </a>
-                        </div>
-
-                        <select name="flows-dataset-select" id="flows-dataset-select" multiple
-                            class="form-control form-control-sm selectpicker" data-size="4"
-                            style="resize: vertical;">
-                            <option selected value="-1">All (<%= datasets.count %>)</option>
-                            <option data-divider="true"></option>
-                            <% datasets.forEach(function(dataset){ %>
-                            <option value="<%= dataset.id %>"><%= dataset.get('title') %></option>
-                            <% }); %>
-                            </select>
-                    </div>
+              <div class="row"
+                {% if not request.user|isExpertUser %}
+                style="display: none;"
+                {% endif %}>
+  
+                <div class="col-md-3 flows-dataset-select-col">
+                  <label for="flows-dataset-select">Databron</label>
+                  <div class="labelHelpiconContainer">
+                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Databron"
+                      data-html="true" tabindex="0" data-content="
+                        Selecteer een of meerdere de databronnen voor de analyse.
+                        Standaard worden alle datasets geselecteerd.
+                        “Ontvangst” representeert de totale gerapporteerde hoeveelheid primair bedrijfsafval.
+                        “Afgifte” representeert de totale hoeveelheid gerapporteerd secundair bedrijfsafval waarvan de status is veranderd van afval naar (bij)product.
+                      ">
+                    </a>
+                  </div>
+  
+                  <select 
+                    name="flows-dataset-select" 
+                    id="flows-dataset-select"
+                     multiple
+                    class="form-control form-control-sm selectpicker" 
+                    data-size="4"
+                    style="resize: vertical;">
+                      <option selected value="-1">Alle (<%= datasets.count %>)</option>
+                      <option data-divider="true"></option>
+                      <% datasets.forEach(function(dataset){ %>
+                      <option value="<%= dataset.id %>"><%= dataset.get('title') %></option>
+                      <% }); %>
+                  </select>
                 </div>
 
-
-                <div class="row pb-4">
-                        <div class="col-md-3">
-
-                            <label for="flows-year-select">Year</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Year"
-                                    data-html="true" tabindex="0" data-content="Select the year in which the waste flow has been reported.<br>
-                                    Upon selecting a Year, the Month filter will become available, containing the months belonging to the selection made in this filter.
-                                    ">
-                                </a>
-                            </div>
-
-                            <select name="flows-year-select" id="flows-year-select" multiple
-                                class="form-control form-control-sm selectpicker" data-size="5"
-                                style="resize: vertical;">
-                                <option selected value="-1">All (<%= years.count %>)</option>
-                                <option data-divider="true"></option>
-                                <% years.forEach(function(year){ %>
-                                <option value="<%= year.id %>"><%= year.get('code') %></option>
-                                <% }); %>
-                            </select>
-                        </div>
-
-                        <div class="col-md-3" id="flows-monthsCol" style="display: none;">
-
-                            <label for="flows-month-select">Month</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Month"
-                                    data-html="true" tabindex="0"
-                                    data-content="Select the month in which the waste flow has been reported.">
-                                </a>
-                            </div>
-
-                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
-                            <select name="flows-month-select" id="flows-month-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="4"
-                                style="resize: vertical;">
-                            </select>
-                        </div>
-                    </div>
+                <div class="col-md-3">
+                  <label for="flows-year-select">Jaar</label>
+                  <div class="labelHelpiconContainer">
+                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Jaar"
+                      data-html="true" tabindex="0" data-content="
+                      Selecteer een of meerdere jaren voor analyse. Standaard worden alle jaren geselecteerd.
+                      Vervolgens kunt u een of meerdere maanden selecteren. Standaard worden alle maanden geselecteerd.
+                      ">
+                    </a>
+                  </div>
+  
+                  <select name="flows-year-select" id="flows-year-select" multiple
+                    class="form-control form-control-sm selectpicker" data-size="5"
+                    style="resize: vertical;">
+                    <option selected value="-1">Alle (<%= years.count %>)</option>
+                    <option data-divider="true"></option>
+                    <% years.forEach(function(year){ %>
+                      <option value="<%= year.id %>"><%= year.get('code') %></option>
+                    <% }); %>
+                  </select>
+                </div>
+  
+                <div class="col-md-3" id="flows-monthsCol" style="display: none;">
+                  <label for="flows-month-select">Maand</label>
+                  <div class="labelHelpiconContainer">
+                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Maand"
+                      data-html="true" tabindex="0"
+                      data-content="
+                      Selecteer een of meerdere maanden voor analyse.
+                      Standaard worden alle maanden geselecteerd.
+                    ">
+                    </a>
+                  </div>
+  
+                  <!--<i class="fas fa-angle-double-right filterDoubleChevron"></i>-->
+                  <select name="flows-month-select" id="flows-month-select" multiple
+                    class="form-control form-control-sm selectpicker" data-live-search="true" data-size="4"
+                    style="resize: vertical;">
+                  </select>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
 
         <!-- ORIGIN CONTROLS -->
         <div class="card bg-dark">
-            <div class="card-header" id="card-header-collapse-origin">
-                <h4 class="mb-1">
-                    <button class="btn btn-link collapsingHeaderButton" id="btn-collapse-header-origin"
-                        data-toggle="collapse" data-target="#collapseOriginBlock" aria-expanded="true"
-                        aria-controls="collapseOriginBlock"
-                        title="The filters related to the Origin of the waste flow.">
-                        <i class="fa fa-chevron-down pull-right"></i>
-                        Origin
-                    </button>
-                </h4>
-            </div>
-
-            <div id="collapseOriginBlock" class="collapse show" aria-labelledby="card-header-collapse-origin"
-                data-parent="#filterBlock">
-                <div class="card-body">
-
-                    {% if not request.user|isDemoUser %}
-                        <div class="row">
-                            <div class="col-md-4 origin-actor-select-col">
-                                <label for="origin-actor-select">Select specific <strong>companies</strong>:</label>
-                                <select name="origin-actor-select" id="origin-actor-select" multiple
-                                    class="form-control form-control-sm" data-live-search="true" data-size="6"
-                                    style="resize: vertical;">
-                                </select>
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    <div class="row">
-                        <div class="col-md-10 mt-2">
-
-                            <label for="area-select-button-origin">Limit the <strong>origin</strong> of the waste flows
-                                to geographic
-                                areas:</label>
-
-                            <div class="d-block">
-                                <button id="area-select-button-origin" class="btn btn-sm btn-primary area-select-button"
-                                    data-width="100%" style="width: 13em" data-area-select-block="origin">Select areas
-                                </button>
-
-                                <div class="d-inline buttonHelpiconContainer">
-                                    <a class="help-icon fas fa-question-circle" data-toggle="popover"
-                                        title="Select areas" data-html="true" tabindex="0"
-                                        data-content="Clicking the <b>Select areas</b> button opens a dialog in which you can select one or more geographic areas.<br> The selected areas will be used to filter the waste flows based on the coordinates of the Origin of the waste flow.">
-                                    </a>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div class='row areaSelections-origin' style="display: none;">
-                        <div class="col-md-4">
-
-                            <textarea class="form-control-sm textarea-autosize selections"
-                                id="areaSelections-Textarea-origin" style="width: 100% !important; display: inline-block"
-                                type="text" readonly></textarea>
-
-                            <button id="clear-origin-areas-button" class="btn btn-sm btn-primary clear-areas-button"
-                                title="Clear the selected areas." data-area-clear-button="origin">
-                                <i class="fas fa-times"></i>
-                            </button>
-
-                        </div>
-                    </div>
-
-                    <div class="row mt-2 areaSelections-origin" style="display: none;">
-                        <div class="col">
-                            <div style="display: block;">
-                                <label style="display: inline-block;">The origin of the flows must be</label>
-                                <div class="checkbox in-or-out-container">
-                                    <input name="in-or-out-origin" id="origin-area-in-or-out" type="checkbox"
-                                        data-height="24" data-toggle="toggle" data-on="outside" data-off="within"
-                                        class="in-out-toggle bootstrapToggle">
-                                    <label style="display: inline-block;">the selected area(s).</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mt-3">
-                        <div class="col-md-12">
-
-                            <label for="origin-role-radio">Origin role</label>
-
-                            <div>
-                                <div class="btn-group btn-group-toggle" id="origin-role-radio" data-toggle="buttons"
-                                    style="width: 30rem;">
-
-                                    <label class="btn btn-default origin-role" style="width: 40%;" role="production">
-                                        <input type="radio" id="origin-role-radio-production">Waste production
-                                    </label>
-                                    <label class="btn btn-default origin-role active" style="width: 20%;" role="both">
-                                        <input type="radio" id="origin-role-radio-both">Both
-                                    </label>
-                                    <label class="btn btn-default origin-role" style="width: 40%;" role="treatment">
-                                        <input type="radio" id="origin-role-radio-treatment">Waste treatment
-                                    </label>
-
-                                </div>
-
-                                <div class="d-inline buttonHelpiconContainer">
-                                    <a class="help-icon fas fa-question-circle" data-toggle="popover"
-                                        title="Origin role" data-html="true" tabindex="0"
-                                        data-content="Choose the role of the Origin of the waste flow: waste production, waste treatment, or both.<br>
-                                            If you select waste production, the filters for economic activities will appear.
-                                            If you choose waste treatment, the filters for the different waste treatment methods will become available.">
-                                    </a>
-                                </div>
-
-                            </div>
-
-
-                        </div>
-                    </div>
-
-                    {% if not request.user|isDemoUser %}
-                    <div class="row origin-production" style="display: none;">
-                        <div class="col-md-4">
-
-                            <label for="origin-activitygroup-select">Activity group</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Activity group"
-                                    data-html="true" tabindex="0" data-content="
-                                    <span>The Activity group indicates the economic activity of the Origin of the waste flow.</span>
-                                    <br>
-                                    <span>This classification is based on the Statistical Classification of Economic Activities in the European Community,
-                                    also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL&StrNom=NACE_REV2&StrLanguageCode=EN&IntPcKey=&StrLayoutCode=HIERARCHIC'>here</a>.</span>
-                                    <br>
-                                    <span>This filter also contains four additional custom entries:</span>
-                                    <ul>
-                                        <li>V - Onbekend</li>
-                                        <li>WT - Unknown waste treatment</li>
-                                        <li>WU - Unknown</li>
-                                        <li>X - Route inzameling</li>
-                                    </ul>
-                                    <span>Upon selecting an Activity group, the Activity filter will become available, containing the Activities belonging to the selection made in this filter.</span>
-                                    ">
-                                </a>
-                            </div>
-
-                            <select name="origin-activitygroup-select" id="origin-activitygroup-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
-                                style="resize: vertical;">
-                                <option selected value="-1">All (<%= activitygroups.count %>)</option>
-                                <option data-divider="true"></option>
-                                <% activitygroups.forEach(function(activity){ %>
-                                    <option value="<%= activity.id %>"><%= activity.get('code') %>. <%= activity.get('name')[0].toUpperCase() + activity.get('name').slice(1).toLowerCase() %>
-                                    </option>
-                                <% }); %>
-                            </select>
-                        </div>
-
-                        <div class="col-md-4" id="origin-activitiesCol" style="display: none">
-
-                            <label for="origin-activity-select">Activity</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Activity"
-                                    data-html="true" tabindex="0" data-content="
-                                    <span>The Activity indicates the economic activity of the Origin of the waste flow on the most detailed level.
-                                    This filter contains the Activities belonging to the selection made in the Activity group filter.</span>
-                                    <br>
-                                    <span>This classification is based on the Statistical Classification of Economic Activities in the European Community,
-                                    also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL_LINEAR&StrNom=NACE_REV2&StrLanguageCode=EN'>here</a>.</span>
-                                    <br>
-                                    <span>This filter also contains several additional custom entries belonging to the custom Activity groups.</span>
-                                    ">
-                                </a>
-                            </div>
-
-                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
-                            <select
-                                id="origin-activity-select"
-                                class="form-control form-control-sm selectpicker"
-                                name="origin-activity-select"
-                                multiple
-                                data-live-search="true"
-                                data-dropup-auto="false"
-                                data-size="6"
-                                style="resize: vertical;">
-                            </select>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    <div class="row origin-treatment" style="display: none;">
-                        <div class="col-md-4">
-
-                            <label for="origin-processgroup-select">Treatment method group</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover"
-                                    title="Treatment method group" data-html="true" tabindex="0" data-content="
-                                    <span>The Treatment method group indicates the general treatment method group used by the Origin of the flows.</span>
-                                    <br>
-                                    <span>This classification is based on the classification system of the Dutch government agency 'Landelijk Meldpunt Afvalstoffen'.
-                                    The full list of entries can be consulted <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a>.</span>
-                                    <br>
-                                    <span>Upon selecting a Treatment method group, the Treatment method filter will become available, containing the Treatment methods belonging to the selection made in this filter.</span>
-                                    ">
-                                </a>
-                            </div>
-
-                            <select name="origin-processgroup-select" id="origin-processgroup-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
-                                style="resize: vertical;">
-                                <option selected value="-1">All (<%= processgroups.count %>)</option>
-                                <option data-divider="true"></option>
-                                <% processgroups.forEach(function(process){ %>
-                                    <option value="<%= process.id %>"><%= process.get('code') %>. <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
-                                    </option>
-                                <% }); %>
-                            </select>
-                        </div>
-
-                        <div class="col-md-4" id="origin-processesCol" style="display: none;">
-
-                            <label for="origin-process-select">Treatment method</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover"
-                                    title="Treatment method" data-html="true" tabindex="0" data-content="
-                                    <span>The Treatment method indicates the specific treatment method used by the Origin of the flows.</span>
-                                    <br>
-                                    <span>This classification is based on the classification system of the Dutch government agency 'Landelijk Meldpunt Afvalstoffen'.
-                                    The full list of entries can be consulted <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a>.</span>
-                                    ">
-                                </a>
-                            </div>
-
-
-                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
-                            <select name="origin-process-select" id="origin-process-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
-                                style="resize: vertical;">
-                            </select>
-                        </div>
-
-
-                    </div>
-
+          <div class="card-header" id="card-header-collapse-origin">
+            <h4 class="mb-1">
+              <div class="row" style="padding: 0; justify-content: start">
+                <div class="col-md-2" style="min-width: 380px;">
+                  <button 
+                    class="btn btn-link collapsed collapsingHeaderButton"
+                    id="btn-collapse-header-origin"
+                    data-toggle="collapse" 
+                    data-target="#collapseOriginBlock" 
+                    aria-expanded="false"
+                    aria-controls="collapseOriginBlock">
+                    <i class="fa fa-chevron-down pull-right"></i>
+                      Herkomst van afval
+                  </button>
                 </div>
-            </div>
 
+                <div class="col-md-1">
+                  <div class="d-inline buttonHelpiconContainer">
+                    <a class="help-icon fas fa-question-circle" 
+                      data-toggle="popover"
+                       data-boundary="viewport"
+                      title="Herkomst van afval" 
+                      data-html="true" 
+                      tabindex="0"
+                      data-content="
+                        <span>In deze sectie selecteert u de herkomst van afval op basis van gebied, economische sector, of specifiek bedrijf.</span>
+                        ">
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </h4>
+          </div>
+
+          <div 
+            id="collapseOriginBlock" 
+            class="collapse"
+            aria-labelledby="card-header-collapse-origin"
+            data-parent="#filterBlock">
+            
+            <!-- Select Areas -->
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-10 mt-2">
+                  <label for="area-select-button-origin">Selecteer locatie van herkomst:</label>
+
+                  <div class="d-block">
+                    <button 
+                      id="area-select-button-origin" 
+                      class="btn btn-sm btn-primary area-select-button"
+                      data-width="100%" 
+                      style="width: 13em" 
+                      data-area-select-block="origin">
+                        Selecteer gebied
+                    </button>
+
+                    <div class="d-inline buttonHelpiconContainer">
+                      <a 
+                        class="help-icon fas fa-question-circle" 
+                        data-toggle="popover"
+                        title="Selecteer gebied"
+                        data-html="true" 
+                        tabindex="0"
+                        data-content="
+                        Selecteer een of meerdere gebieden van herkomst van afval op een kaart.
+                        Standaard worden alle gebieden geselecteerd waarvan de herkomst of bestemming uw provincie is,
+                        dit geldt zowel voor afvalproductie en afvalverwerking. Kies uit de schaalniveau’s land, provincie, of gemeente.
+                        ">
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class='row areaSelections-origin' style="display: none;">
+                <div class="col-md-4">
+                  <textarea 
+                    class="form-control-sm textarea-autosize selections"
+                    id="areaSelections-Textarea-origin" 
+                    style="width: 100% !important; display: inline-block"
+                    type="text" 
+                    readonly>
+                  </textarea>
+
+                  <button 
+                    id="clear-origin-areas-button" 
+                    class="btn btn-sm btn-primary clear-areas-button"
+                    data-area-clear-button="origin">
+                      <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- <div class="row mt-2 areaSelections-origin" style="display: none;">
+                <div class="col">
+                  <div style="display: block;">
+                    <label style="display: inline-block;">De herkomst van afval moet </label>
+                    <div class="checkbox in-or-out-container">
+                      <input 
+                        name="in-or-out-origin" 
+                        id="origin-area-in-or-out" 
+                        type="checkbox"
+                        data-height="24" 
+                        data-toggle="toggle" 
+                        data-on="buiten" 
+                        data-off="binnen"
+                        class="in-out-toggle bootstrapToggle">
+                      <label style="display: inline-block;"> de geselecteerde gebieden liggen.</label>
+                    </div>
+                  </div>
+                </div>
+              </div> -->
+
+              <!-- Select Activity group -->
+              {% if not request.user|isDemoUser %}
+                <div class="row origin-production" style="display: none;">
+                  <div class="col-md-6">
+                    <label for="origin-activitygroup-select">Economische sector:</label>                    
+
+                    <div class="row" style="padding: 0; margin-right: 0px">
+                      <div class="col-md-8">
+                        <select name="origin-activitygroup-select" id="origin-activitygroup-select" multiple
+                          class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
+                          style="resize: vertical;">
+                          <option selected value="-1">Alle (<%= activitygroups.count %>)</option>
+                          <option data-divider="true"></option>
+                          <% activitygroups.forEach(function(activity){ %>
+                            <option value="<%= activity.id %>">
+                              <%= activity.get('code') %>. <%= activity.get('name')[0].toUpperCase() + activity.get('name').slice(1).toLowerCase() %>
+                            </option>
+                          <% }); %>
+                        </select>
+                      </div>
+                      <div class="col-md-1" style="padding: 0">
+                        <div class="labelHelpiconContainer">
+                          <a 
+                            class="help-icon fas fa-question-circle" 
+                            data-toggle="popover" 
+                            title="Economische sector"
+                            data-html="true"
+                            tabindex="0"
+                            data-content="
+                             Selecteer een of meerdere economische sectoren die het afval hebben gemeld.
+                             Standaard worden alle economische sectoren geselecteerd.
+                             Na een selectie van een of meerdere hoofdsectoren kunt u een of meerdere sub-sectoren selecteren.
+                             De economische sectoren zijn gebaseerd op Standaard Bedrijfsindeling (SBI) codes.
+                             ">
+                          </a>
+                        </div>
+                      </div>
+                    </div>                    
+                  </div>
+
+                  <div class="col-md-6" id="origin-activitiesCol" style="display: none">
+                    <label for="origin-activity-select">Activity</label>
+                    
+                    <div class="row" style="padding: 0">
+                      <!-- <div class="col" style="padding: 0; margin: 0">
+                        <i class="fas fa-angle-double-right filterDoubleChevron"></i>
+                      </div> -->
+                      <div class="col-md-6">
+                        <select
+                          id="origin-activity-select"
+                          class="form-control form-control-sm selectpicker"
+                          name="origin-activity-select"
+                          multiple
+                          data-live-search="true"
+                          data-dropup-auto="false"
+                          data-size="6"
+                          style="resize: vertical;">
+                        </select>
+                      </div>
+                      <div class="col-md-1" style="padding: 0">
+                        <div class="labelHelpiconContainer">
+                          <a 
+                            class="help-icon fas fa-question-circle" 
+                            data-toggle="popover" 
+                            title="Economische sub-sectoren"
+                            data-html="true" 
+                            tabindex="0" 
+                            data-content="
+                              De economische sub-sectoren zijn gebaseerd op Standaard Bedrijfsindeling (SBI) codes.
+                              ">
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+
+              
+              
+              <div class="row">
+                <!-- Select specific companies -->
+                {% if not request.user|isDemoUser %}
+                  <div class="col-md-6 origin-actor-select-col">
+                    <label for="origin-actor-select">Selecteer bedrijf:</label>
+                    <div class="row" style="padding: 0">
+                      <div class="col-md-8">
+                        <select name="origin-actor-select" id="origin-actor-select" multiple
+                          class="form-control form-control-sm" data-live-search="true" data-size="6"
+                          style="resize: vertical;">
+                        </select>
+                      </div>
+                      <div class="col-md-1" style="padding: 0">
+                        <div class="labelHelpiconContainer" style="padding: 0">
+                          <a 
+                            class="help-icon fas fa-question-circle" 
+                            data-toggle="popover" 
+                            title="Bedrijven"
+                            data-html="true" 
+                            tabindex="0" 
+                            data-content="
+                            Zoek en selecteer een of meerdere bedrijven die afval hebben gemeld.
+                            Standaard zijn alle bedrijven geselecteerd.
+                            ">
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </div>
+                {% endif %}
+
+                <!-- Collected en Route -->
+                <div class="col-md-6">
+                  <label for="flows-route-select">Inzamelmethode:</label>
+                  <div class="row" style="padding: 0">
+                    <div class="col-md-5">
+                      <select 
+                        name="flows-route-select" 
+                        id="flows-route-select"
+                        class="form-control form-control-sm selectpicker">
+                          <option value='both'>Negeer</option>
+                          <option value='no'>Geen route</option>
+                          <option value='yes'>Route</option>
+                      </select>
+                    </div>
+                    <div class="col-md-1" style="padding: 0">
+                      <div class="labelHelpiconContainer" style="padding: 0">
+                        <a
+                          class="help-icon fas fa-question-circle"
+                          data-toggle="popover"
+                          title="Inzamelmethode"
+                          data-html="true"
+                          tabindex="0"
+                          data-content="
+                          Route-inzameling betekent dat een inzamelaar hetzelfde soort afval in een route bij verschillende adressen ophaalt.
+                          Standaard is deze methode niet geselecteerd. Tijdens de rit voegt de inzamelaar het afval samen.
+                          Een voorbeeld van route-inzameling is huis-aan-huis-inzameling van huishoudelijk afval.
+                          In dit geval meldt de inzamelaar zich als ontdoener van het afval terwijl het vanuit meerdere locaties afkomstig is
+                          <span><a href='https://www.lma.nl/faq/melden-afval/afval-inzamelen/route-inzameling/' target='_blank' style='background-color: black;'>(LMA, 2022)</a></span>.
+                          ">
+                        </a>
+                      </div>
+                    </div>                   
+                    
+                  </div>                
+                </div>
+              </div>
+
+              <!-- Origin Role -->
+              <div class="row mt-3" style="display: none;">
+                <div class="col-md-12">
+                  <label for="origin-role-radio">Origin role</label>
+                  <div>
+                    <div 
+                      class="btn-group btn-group-toggle" 
+                      id="origin-role-radio" 
+                      data-toggle="buttons"
+                      style="width: 30rem;">
+
+                      <label class="btn btn-default origin-role" style="width: 40%;" role="production">
+                        <input type="radio" id="origin-role-radio-production">Waste production
+                      </label>
+                      <label class="btn btn-default origin-role active" style="width: 20%;" role="both">
+                        <input type="radio" id="origin-role-radio-both">Both
+                      </label>
+                      <label class="btn btn-default origin-role" style="width: 40%;" role="treatment">
+                        <input type="radio" id="origin-role-radio-treatment">Waste treatment
+                      </label>
+                    </div>
+
+                    <div class="d-inline buttonHelpiconContainer">
+                      <a 
+                        class="help-icon fas fa-question-circle" 
+                        data-toggle="popover"
+                        title="Origin role"
+                        data-html="true"
+                        tabindex="0"
+                        data-content="Choose the role of the Origin of the waste flow: waste production, waste treatment, or both.<br>
+                          If you select waste production, the filters for economic activities will appear.
+                          If you choose waste treatment, the filters for the different waste treatment methods will become available.">
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row origin-treatment" style="display: none;">
+                <div class="col-md-4">
+                  <label for="origin-processgroup-select">Verwerkingsmethode groep</label>
+                  <div class="labelHelpiconContainer">
+                    <a 
+                      class="help-icon fas fa-question-circle" 
+                      data-toggle="popover"
+                      title="Verwerkingsmethode groep" 
+                      data-html="true" 
+                      tabindex="0" 
+                      data-content="
+                        <span>Selecteer een of meerdere verwerkingsmethoden. Standaard zijn alle verwerkingsmethoden geselecteerd.
+                        Na een selectie van een of meerdere hoofdmethoden kunt u een of meerdere sub-methoden selecteren.</span>
+                        <span>Raadpleeg de website van het Landelijk Meldpunt Afvalstoffen voor meer informatie over de definities van verwerkingsmethoden: 
+                        <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/' target='_blank'>here</a>.</span>
+                        ">
+                    </a>
+                  </div>
+
+                  <select name="origin-processgroup-select" id="origin-processgroup-select" multiple
+                    class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
+                    style="resize: vertical;">
+                    <option selected value="-1">All (<%= processgroups.count %>)</option>
+                    <option data-divider="true"></option>
+                    <% processgroups.forEach(function(process){ %>
+                      <option value="<%= process.id %>">
+                        <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
+                      </option>
+                    <% }); %>
+                  </select>
+                </div>
+
+                <div class="col-md-4" id="origin-processesCol" style="display: none;">
+                  <label for="origin-process-select">Verwerkingsmethode</label>
+                  <div class="labelHelpiconContainer">
+                    <a 
+                      class="help-icon fas fa-question-circle" 
+                      data-toggle="popover"
+                      title="TVerwerkingsmethode" 
+                      data-html="true" 
+                      tabindex="0" 
+                      data-content="
+                        <span>Selecteer een of meerdere sub-verwerkingsmethoden. Standaard zijn alle sub-verwerkingsmethoden geselecteerd.</span>
+                        <span>Raadpleeg de website van het Landelijk Meldpunt Afvalstoffen voor meer informatie over de definities van verwerkingsmethoden: 
+                        <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/' target='_blank'>here</a>.</span>
+                        ">
+                    </a>
+                  </div>
+
+                  <i class="fas fa-angle-double-right filterDoubleChevron"></i>
+                  <select name="origin-process-select" id="origin-process-select" multiple
+                    class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
+                    style="resize: vertical;">
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- DESTINATION CONTROLS -->
         <div class="card bg-dark">
-            <div class="card-header" id="card-header-collapse-destination">
-                <h4 class="mb-1">
-                    <button class="btn btn-link collapsed collapsingHeaderButton" id="btn-collapse-header-destination"
-                        data-toggle="collapse" data-target="#collapseDestinationBlock" aria-expanded="false"
-                        aria-controls="collapseDestinationBlock"
-                        title="The filters related to the Destination of the waste flow.">
-                        <i class="fa fa-chevron-down pull-right"></i>
-                        Destination
-                    </button>
-                </h4>
-            </div>
-
-            <div id="collapseDestinationBlock" class="collapse" aria-labelledby="card-header-collapse-destination"
-                data-parent="#filterBlock">
-                <div class="card-body">
-
-                    {% if not request.user|isDemoUser %}
-                        <div class="row">
-                            <div class="col-md-4 destination-actor-select-col">
-                                <label for="destination-actor-select">Select specific <strong>companies</strong>:</label>
-                                <select name="destination-actor-select" id="destination-actor-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
-                                style="resize: vertical;">
-                            </select>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    <div class="row">
-                        <div class="col-md-10">
-
-                            <label for="area-select-button-destination">Limit the <strong>destination</strong> of the
-                                waste flows to
-                                geographic areas:</label>
-
-                            <div class="d-block">
-                                <button id="area-select-button-destination"
-                                    class="btn btn-sm btn-primary area-select-button" data-width="100%"
-                                    style="width: 13em" data-area-select-block="destination">Select areas
-                                </button>
-
-                                <div class="d-inline buttonHelpiconContainer">
-                                    <a class="help-icon fas fa-question-circle" data-toggle="popover"
-                                        title="Select areas" data-html="true" tabindex="0"
-                                        data-content="Clicking the <b>Select areas</b> button opens a dialog in which you can select one or more geographic areas.<br> The selected areas will be used to filter the waste flows based on the coordinates of the Destination of the waste flow.">
-                                    </a>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div class='row areaSelections-destination' style="display: none;">
-                        <div class="col-md-4">
-
-                            <textarea class="form-control-sm textarea-autosize selections"
-                                id="areaSelections-Textarea-destination"
-                                style="width: 100% !important; display: inline-block" type="text" readonly></textarea>
-
-                            <button id="clear-destination-areas-button"
-                                class="btn btn-sm btn-primary clear-areas-button" data-area-clear-button="destination"
-                                title="Clear the selected areas.">
-                                <i class="fas fa-times"></i>
-                            </button>
-
-                        </div>
-                    </div>
-                    <div class="row mt-2 areaSelections-destination" style="display: none;">
-                        <div class="col">
-                            <div style="display: block;">
-                                <label style="display: inline-block;">The destination of the flows must be</label>
-                                <div class="checkbox in-or-out-container">
-                                    <input name="in-or-out-destination" id="destination-area-in-or-out" type="checkbox"
-                                        data-height="24" data-toggle="toggle" data-on="outside" data-off="within"
-                                        class="in-out-toggle bootstrapToggle">
-                                    <label style="display: inline-block;">the selected area(s).</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="row mt-3">
-                        <div class="col-md-12">
-
-                            <label for="destination-role-radio">Destination role</label>
-
-                            <div>
-                                <div class="btn-group btn-group-toggle" id="destination-role-radio"
-                                    data-toggle="buttons" style="width: 30rem;">
-
-                                    <label class="btn btn-default destination-role" style="width: 40%;" role="production">
-                                        <input type="radio" id="destination-role-radio-production" checked>Waste production
-                                    </label>
-                                    <label class="btn btn-default destination-role active" style="width: 20%;" role="both">
-                                        <input type="radio" id="destination-role-radio-both">Both
-                                    </label>
-                                    <label class="btn btn-default destination-role" style="width: 40%;" role="treatment">
-                                        <input type="radio" id="destination-role-radio-treatment">Waste treatment
-                                    </label>
-
-                                </div>
-
-                                <div class="d-inline buttonHelpiconContainer">
-                                    <a class="help-icon fas fa-question-circle" data-toggle="popover"
-                                        title="Origin role" data-html="true" tabindex="0"
-                                        data-content="Choose the role of the Destination of the waste flow: waste production, waste treatment, or both.<br>
-                                                If you select waste production, the filters for economic activities will appear.
-                                                If you choose waste treatment, the filters for the different waste treatment methods will become available.">
-                                    </a>
-                                </div>
-
-                            </div>
-
-                        </div>
-                    </div>
-
-                    {% if not request.user|isDemoUser %}
-                    <div class="row destination-production" style="display: none;">
-                        <div class="col-md-4">
-                            <label for="destination-activitygroup-select">Activity group</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Activity group"
-                                    data-html="true" tabindex="0" data-content="
-                                    <span>The Activity group indicates the economic activity of the Destination of the waste flow.</span>
-                                    <br>
-                                    <span>This classification is based on the Statistical Classification of Economic Activities in the European Community,
-                                    also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL&StrNom=NACE_REV2&StrLanguageCode=EN&IntPcKey=&StrLayoutCode=HIERARCHIC'>here</a>.</span>
-                                    <br>
-                                    <span>This filter also contains four additional custom entries:</span>
-                                    <ul>
-                                        <li>V - Onbekend</li>
-                                        <li>WT - Unknown waste treatment</li>
-                                        <li>WU - Unknown</li>
-                                        <li>X - Route inzameling</li>
-                                    </ul>
-                                    <span>Upon selecting an Activity group, the Activity filter will become available, containing the Activities belonging to the selection made in this filter.</span>
-                                    ">
-                                </a>
-                            </div>
-
-
-                            <select id="destination-activitygroup-select" name="destination-activitygroup-select"
-                                multiple class="form-control form-control-sm selectpicker" data-live-search="true"
-                                data-dropup-auto="false" data-size="6" style="resize: vertical;">
-                                <option selected value="-1">All (<%= activitygroups.count %>)</option>
-                                <option data-divider="true"></option>
-                                <% activitygroups.forEach(function(activitygroup){ %>
-                                    <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>. <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
-                                    </option>
-                                <% }); %>
-                            </select>
-                        </div>
-                        <div class="col-md-4" id="destination-activitiesCol" style="display: none">
-                            <label for="destination-activity-select">Activity</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Activity"
-                                    data-html="true" tabindex="0" data-content="
-                                    <span>The Activity indicates the economic activity of the Destination of the waste flow  on the most detailed level.
-                                    This filter contains the Activities belonging to the selection made in the Activity group filter.</span>
-                                    <br>
-                                    <span>This classification is based on the Statistical Classification of Economic Activities in the European Community,
-                                    also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL_LINEAR&StrNom=NACE_REV2&StrLanguageCode=EN'>here</a>.</span>
-                                    <br>
-                                    <span>This filter also contains several additional custom entries belonging to the custom Activity groups.</span>
-                                    ">
-                                </a>
-                            </div>
-
-                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
-                            <select id="destination-activity-select" name="destination-activity-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true"
-                                data-dropup-auto="false" data-size="6" style="resize: vertical;">
-                            </select>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    <div class="row destination-treatment" style="display: none;">
-                        <div class="col-md-4">
-
-                            <label for="destination-processgroup-select">Treatment method group</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover"
-                                    title="Treatment method group" data-html="true" tabindex="0" data-content="
-                                    <span>The Treatment method group indicates the general treatment method group used by the Destination of the flows.</span>
-                                    <br>
-                                    <span>This classification is based on the classification system of the Dutch government agency 'Landelijk Meldpunt Afvalstoffen'.
-                                    The full list of entries can be consulted <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a>.</span>
-                                    <br>
-                                    <span>Upon selecting a Treatment method group, the Treatment method filter will become available, containing the Treatment methods belonging to the selection made in this filter.</span>
-                                    ">
-                                </a>
-                            </div>
-
-                            <select name="destination-processgroup-select" id="destination-processgroup-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
-                                style="resize: vertical;">
-                                <option selected value="-1">All (<%= processgroups.count %>)</option>
-                                <option data-divider="true"></option>
-                                <% processgroups.forEach(function(process){ %>
-                                    <option value="<%= process.id %>"><%= process.get('code') %>. <%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
-                                    </option>
-                                <% }); %>
-                            </select>
-                        </div>
-
-                        <div class="col-md-4" id="destination-processesCol" style="display: none;">
-
-                            <label for="destination-process-select">Treatment method</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover"
-                                    title="Treatment method" data-html="true" tabindex="0" data-content="
-                                    <span>The Treatment method indicates the specific treatment method used by the Destination of the flows.</span>
-                                    <br>
-                                    <span>This classification is based on the classification system of the Dutch government agency 'Landelijk Meldpunt Afvalstoffen'.
-                                    The full list of entries can be consulted <a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/'>here</a>.</span>
-                                    ">
-                                </a>
-                            </div>
-
-                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
-                            <select name="destination-process-select" id="destination-process-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
-                                style="resize: vertical;">
-                            </select>
-                        </div>
-                    </div>
-
+          <div class="card-header" id="card-header-collapse-destination">
+            <h4 class="mb-1">
+              <div class="row" style="padding: 0; justify-content: start">
+                <div class="col-md-2" style="min-width: 380px;">
+                  <button 
+                    class="btn btn-link collapsed collapsingHeaderButton" 
+                    id="btn-collapse-header-destination"
+                    data-toggle="collapse" 
+                    data-target="#collapseDestinationBlock" 
+                    aria-expanded="false"
+                    aria-controls="collapseDestinationBlock">
+                      <i class="fa fa-chevron-down pull-right"></i>
+                      Bestemming van afval
+                  </button>
                 </div>
-            </div>
+                <div class="col-md-1">
+                  <div class="d-inline buttonHelpiconContainer">
+                    <a class="help-icon fas fa-question-circle" 
+                      data-toggle="popover"
+                       data-boundary="viewport"
+                      title="Bestemming van afval" 
+                      data-html="true" 
+                      tabindex="0"
+                      data-content="
+                        <span>In deze sectie selecteert u de bestemming van afval op basis van gebied, verwerkingsmethode, specifiek bedrijf of inzamelmethode.</span>
+                        ">
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </h4>
+          </div>
 
+          <div 
+            id="collapseDestinationBlock" 
+            class="collapse" 
+            aria-labelledby="card-header-collapse-destination"
+            data-parent="#filterBlock">
+              <div class="card-body">
+
+                <!-- Select Areas -->
+                <div class="row">
+                  <div class="col-md-10">
+                    <label for="area-select-button-destination">Selecteer locatie van bestemming:</label>
+
+                    <div class="d-block">
+                      <button id="area-select-button-destination"
+                        class="btn btn-sm btn-primary area-select-button" data-width="100%"
+                        style="width: 13em" data-area-select-block="destination">
+                          Selecteer gebied
+                      </button>
+
+                      <div class="d-inline buttonHelpiconContainer">
+                        <a
+                          class="help-icon fas fa-question-circle"
+                          data-toggle="popover"
+                          title="Selecteer gebied"
+                          data-html="true"
+                          tabindex="0"
+                          data-content="
+                          Selecteer een of meerdere gebieden van herkomst van afval op een kaart.
+                          Standaard worden alle gebieden geselecteerd waarvan de herkomst of bestemming uw provincie is,
+                          dit geldt zowel voor afvalproductie en afvalverwerking. Kies uit de schaalniveau’s land, provincie, of gemeente.
+                          ">
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class='row areaSelections-destination' style="display: none;">
+                  <div class="col-md-4">
+                    <textarea 
+                      class="form-control-sm textarea-autosize selections"
+                      id="areaSelections-Textarea-destination"
+                      style="width: 100% !important; display: inline-block" 
+                      type="text" 
+                      readonly>
+                    </textarea>
+
+                    <button 
+                      id="clear-destination-areas-button"
+                      class="btn btn-sm btn-primary clear-areas-button" 
+                      data-area-clear-button="destination">
+                        <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Areas: second level -->
+                <!-- <div class="row mt-2 areaSelections-destination" style="display: none;">
+                  <div class="col">
+                    <div style="display: block;">
+                      <label style="display: inline-block;">De bestemming van afval moet </label>
+                      <div class="checkbox in-or-out-container">
+                        <input 
+                          name="in-or-out-destination" 
+                          id="destination-area-in-or-out" 
+                          type="checkbox"
+                          data-height="24" 
+                          data-toggle="toggle" 
+                          data-on="buiten" 
+                          data-off="binnen"
+                          class="in-out-toggle bootstrapToggle">
+                        <label style="display: inline-block;"> de geselecteerde gebieden liggen.</label>
+                      </div>
+                    </div>
+                  </div>
+                </div> -->
+
+                <!-- Destination Role -->
+                <div class="row mt-3" style="display: none;">
+                  <div class="col-md-12">
+                    <label for="destination-role-radio">Destination role</label>
+
+                    <div>
+                      <div 
+                        class="btn-group btn-group-toggle" 
+                        id="destination-role-radio"
+                        data-toggle="buttons" 
+                        style="width: 30rem;">
+
+                        <label class="btn btn-default destination-role" style="width: 40%;" role="production">
+                          <input type="radio" id="destination-role-radio-production" checked>Waste production
+                        </label>
+                        <label class="btn btn-default destination-role active" style="width: 20%;" role="both">
+                          <input type="radio" id="destination-role-radio-both">Both
+                        </label>
+                        <label class="btn btn-default destination-role" style="width: 40%;" role="treatment">
+                          <input type="radio" id="destination-role-radio-treatment">Waste treatment
+                        </label>
+                      </div>
+
+                      <div class="d-inline buttonHelpiconContainer">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover"
+                          title="Origin role" 
+                          data-html="true" 
+                          tabindex="0"
+                          data-content="Choose the role of the Destination of the waste flow: waste production, waste treatment, or both.<br>
+                            If you select waste production, the filters for economic activities will appear.
+                            If you choose waste treatment, the filters for the different waste treatment methods will become available.">
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Activity Group -->
+                {% if not request.user|isDemoUser %}
+                <div class="row destination-production" style="display: none;">
+                  <div class="col-md-4">
+                    <label for="destination-activitygroup-select">Activity group</label>
+                    <div class="labelHelpiconContainer">
+                      <a 
+                        class="help-icon fas fa-question-circle" 
+                        data-toggle="popover" 
+                        title="Activity group"
+                        data-html="true" 
+                        tabindex="0" 
+                        data-content="
+                          <span>The Activity group indicates the economic activity of the Destination of the waste flow.</span>
+                          <br>
+                          <span>This classification is based on the Statistical Classification of Economic Activities in the European Community,
+                          also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL&StrNom=NACE_REV2&StrLanguageCode=EN&IntPcKey=&StrLayoutCode=HIERARCHIC' target='_blank'>here</a>.</span>
+                          <br>
+                          <span>This filter also contains four additional custom entries:</span>
+                          <ul>
+                            <li>V - Onbekend</li>
+                            <li>WT - Unknown waste treatment</li>
+                            <li>WU - Unknown</li>
+                            <li>X - Route inzameling</li>
+                          </ul>
+                          <span>Upon selecting an Activity group, the Activity filter will become available, containing the Activities belonging to the selection made in this filter.</span>
+                          ">
+                      </a>
+                    </div>
+
+                    <select 
+                      id="destination-activitygroup-select" 
+                      name="destination-activitygroup-select"
+                      multiple class="form-control form-control-sm selectpicker" 
+                      data-live-search="true"
+                      data-dropup-auto="false" 
+                      data-size="6" 
+                      style="resize: vertical;">
+                        <option selected value="-1">All (<%= activitygroups.count %>)</option>
+                        <option data-divider="true"></option>
+                        <% activitygroups.forEach(function(activitygroup){ %>
+                          <option value="<%= activitygroup.id %>"><%=(activitygroup.get('code'))%>. <%= activitygroup.get('name')[0].toUpperCase() + activitygroup.get('name').slice(1).toLowerCase() %>
+                          </option>
+                        <% }); %>
+                    </select>
+                  </div>
+
+                  <!-- Activity -->
+                  <div class="col-md-4" id="destination-activitiesCol" style="display: none">
+                    <label for="destination-activity-select">Activity</label>
+                    <div class="labelHelpiconContainer">
+                      <a 
+                        class="help-icon fas fa-question-circle" 
+                        data-toggle="popover" 
+                        title="Activity"
+                        data-html="true" 
+                        tabindex="0" 
+                        data-content="
+                          <span>The Activity indicates the economic activity of the Destination of the waste flow  on the most detailed level.
+                          This filter contains the Activities belonging to the selection made in the Activity group filter.</span>
+                          <br>
+                          <span>This classification is based on the Statistical Classification of Economic Activities in the European Community,
+                          also known as NACE Rev. 2. The full list of entries can be consulted <a href='https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL_LINEAR&StrNom=NACE_REV2&StrLanguageCode=EN' target='_blank'>here</a>.</span>
+                          <br>
+                          <span>This filter also contains several additional custom entries belonging to the custom Activity groups.</span>
+                          ">
+                      </a>
+                    </div>
+
+                    <i class="fas fa-angle-double-right filterDoubleChevron"></i>
+                    <select 
+                      id="destination-activity-select" 
+                      name="destination-activity-select" 
+                      multiple
+                      class="form-control form-control-sm selectpicker" 
+                      data-live-search="true"
+                      data-dropup-auto="false" 
+                      data-size="6" 
+                      style="resize: vertical;">
+                    </select>
+                  </div>
+                </div>
+                {% endif %}
+
+                <!-- Treatment Method Group -->
+                <div class="row destination-treatment" style="display: none;">
+                  <div class="col-md-6">                          
+                    <label for="destination-processgroup-select">Verwerkingsmethode groep:</label>                    
+
+                    <div class="row" style="padding: 0">
+                      <div class="col-md-8">
+                        <select 
+                          name="destination-processgroup-select" 
+                          id="destination-processgroup-select" 
+                          multiple
+                          class="form-control form-control-sm selectpicker" 
+                          data-live-search="true" 
+                          data-size="6"
+                          style="resize: vertical;">
+                          <option selected value="-1">Alle (<%= processgroups.count %>)</option>
+                          <option data-divider="true"></option>
+                          <% processgroups.forEach(function(process){ %>
+                            <option value="<%= process.id %>"><%= process.get('name')[0].toUpperCase() + process.get('name').slice(1).toLowerCase() %>
+                            </option>
+                          <% }); %>
+                        </select>
+                      </div>
+                      <div class="col-md-1" style="padding: 0">
+                        <div class="labelHelpiconContainer">
+                          <a 
+                            class="help-icon fas fa-question-circle" 
+                            data-toggle="popover"
+                            title="Verwerkingsmethoden"
+                            data-html="true" 
+                            tabindex="0" 
+                            data-content="
+                              Selecteer een of meerdere verwerkingsmethoden.
+                              Standaard zijn alle verwerkingsmethoden geselecteerd.
+                              Na een selectie van een of meerdere hoofdmethoden kunt u een of meerdere sub-methoden selecteren.
+                              Raadpleeg de website van het Landelijk Meldpunt Afvalstoffen voor meer informatie over de definities van verwerkingsmethoden
+                              <span><a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/' target='_blank'>hier</a></span>.
+                              ">
+                          </a>
+                        </div>
+                      </div>
+                    </div>                    
+                  </div>
+
+                  <!-- Treatment Method -->
+                  <div class="col-md-6" id="destination-processesCol" style="display: none;">
+                    <label for="destination-process-select">Verwerkingsmethode</label>                    
+
+                    <div class="row" style="padding: 0">
+                      <div class="col-md-8">
+                        <!-- <i class="fas fa-angle-double-right filterDoubleChevron"></i> -->
+                        <select 
+                          name="destination-process-select" 
+                          id="destination-process-select"
+                            multiple
+                          class="form-control form-control-sm selectpicker" 
+                          data-live-search="true" 
+                          data-size="6"
+                          style="resize: vertical;">
+                        </select>
+                      </div>
+                      <div class="col-md-1" style="padding: 0">
+                        <div class="labelHelpiconContainer">
+                          <a 
+                            class="help-icon fas fa-question-circle" 
+                            data-toggle="popover"
+                            title="Sub-verwerkingsmethoden"
+                            data-html="true" 
+                            tabindex="0" 
+                            data-content="
+                              Selecteer een of meerdere sub-verwerkingsmethoden.
+                              Standaard zijn alle sub-verwerkingsmethoden geselecteerd.
+                              Raadpleeg de website van het Landelijk Meldpunt Afvalstoffen voor meer informatie over de definities van verwerkingsmethoden
+                              <span><a href='https://www.lma.nl/faq/nummers-codes/verwerkingsmethode/' target='_blank'>here</a></span>.
+                              ">
+                          </a>
+                        </div>
+                      </div>
+                    </div>                    
+                  </div>
+                </div>
+
+                <!-- Select Companies -->
+                {% if not request.user|isDemoUser %}
+                  <div class="row">
+                    <div class="col-md-6 destination-actor-select-col">
+                      <label for="destination-actor-select">Selecteer bedrijf:</label>
+
+                      <div class="row" style="padding: 0;">
+                        <div class="col-md-8">
+                          <select 
+                            name="destination-actor-select" 
+                            id="destination-actor-select" 
+                            multiple
+                            class="form-control form-control-sm selectpicker" 
+                            data-live-search="true" 
+                            data-size="6"
+                            style="resize: vertical;">
+                          </select>
+                        </div>
+                        <div class="col-md-1" style="padding: 0">
+                          <div class="labelHelpiconContainer" style="padding: 0">
+                            <a 
+                              class="help-icon fas fa-question-circle"
+                              data-toggle="popover"
+                              title="Bedrijven"
+                              data-html="true"
+                              tabindex="0"
+                              data-content="
+                              Zoek en selecteer een of meerdere bedrijven die afval hebben gemeld.
+                              Standaard zijn alle bedrijven geselecteerd.
+                              ">
+                            </a>
+                          </div>
+                        </div>
+                      </div>                      
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+          </div>
         </div>
 
         <!-- FLOWS CONTROLS -->
         <div class="card bg-dark"
-            style="border-bottom-left-radius: 30px !important; border-bottom-right-radius: 30px !important">
-            <div class="card-header" id="card-header-collapse-flows">
-                <h4 class="mb-1">
-                    <button class="btn btn-link collapsed collapsingHeaderButton" id="btn-collapse-header-flows"
-                        data-toggle="collapse" data-target="#collapseFlowsBlock" aria-expanded="false"
-                        aria-controls="collapseFlowsBlock"
-                        title="The filters related to the properties of the waste flow itself.">
-                        <i class="fa fa-chevron-down pull-right"></i>
-                        Flows
-                    </button>
-                </h4>
-            </div>
+          style="border-bottom-left-radius: 30px !important; border-bottom-right-radius: 30px !important">
 
-            <div id="collapseFlowsBlock" class="collapse" aria-labelledby="card-header-collapse-flows"
-                data-parent="#filterBlock">
-                <div class="card-body">
-
-                    <h5 class="subtitle">Geographical</h5>
-
-                    <div class="row">
-                        <div class="col-md-10">
-                            <label style="width: 450px" for="area-select-button-flows">Select area(s) through which
-                                the flows must pass:</label>
-
-                            <div class="d-block">
-                                <button id="area-select-button-flows" class="btn btn-sm btn-primary area-select-button"
-                                    data-width="100%" style="width: 13em" data-area-select-block="flows">Select areas
-                                </button>
-
-                                <div class="d-inline buttonHelpiconContainer">
-                                    <a class="help-icon fas fa-question-circle" data-toggle="popover"
-                                        title="Select areas" data-html="true" tabindex="0"
-                                        data-content="Clicking the <b>Select areas</b> button opens a dialog in which you can select one or more geographic areas.<br> The selected areas will be used to filter the waste flows based on the <b>estimated route</b> of the waste transport.">
-                                    </a>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="row areaSelections-flows" style="display: none;">
-                        <div class="col-md-4">
-
-                            <textarea class="form-control-sm textarea-autosize selections"
-                                id="areaSelections-Textarea-flows" style="width: 100% !important; display: inline-block"
-                                type="text" readonly></textarea>
-                            <button id="clear-flows-areas-button" class="btn btn-sm btn-primary clear-areas-button"
-                                data-area-clear-button="flows">
-                                <i class="fas fa-times"></i>
-                            </button>
-
-                        </div>
-                    </div>
-
-                    <h5 class="subtitle">European Waste Catalogue Codes (EuralCode)</h5>
-
-                    <div class="row">
-                        <div class="col-md-3">
-                            <label for="flows-hazardous-select">Hazardous</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Hazardous"
-                                    data-html="true" tabindex="0" data-content="<span>The European Waste Catalogue (EWC) Code of a waste flow contains an asterisk (*) to indicate whether the waste is considered to be hazardous.
-                                    This filter allows you to include or exclude flows containing hazardous materials. By default, this filter ignores this property and returns both options.</span>
-                                    <span>The full list of EWC Entries, including the hazardous entries, can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a></span>
-                                    ">
-                                </a>
-                            </div>
-                            <select name="flows-hazardous-select" id="flows-hazardous-select"
-                                class="form-control form-control-sm selectpicker">
-                                <option value='both'>Ignore</option>
-                                <option value='no'>Not hazardous</option>
-                                <option value='yes'>Hazardous</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-3" id="flows-wastes02Col">
-
-                            <label for="flows-waste02-select">Chapter</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="EWC Chapter"
-                                    data-html="true" tabindex="0" data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
-                                    EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
-                                    <br>
-                                    <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a>.</span>
-                                    <br>
-                                    <span>Upon selecting an EWC Chapter, the Sub-Chapter filter will become available, containing the Sub-Chapters belonging to the selection made in this filter.</span>
-                                    ">
-                                </a>
-                            </div>
-
-                            <select name="flows-waste02-select" id="flows-waste02-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
-                                style="resize: vertical;">
-                                <option selected value="-1">All (<%= wastes02.count %>)</option>
-                                <option data-divider="true"></option>
-                                <% wastes02.forEach(function(waste){ %>
-                                <option value="<%= waste.id %>"><%= waste.get('ewc_code') %>
-                                    <%= waste.get('ewc_name')[0].toUpperCase() + waste.get('ewc_name').slice(1).toLowerCase() %>
-                                </option>
-                                <% }); %>
-                            </select>
-                        </div>
-
-                        <div class="col-md-3" id="flows-wastes04Col" style="display: none;">
-
-                            <label for="flows-waste04-select">Sub-Chapter</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover"
-                                    title="EWC Sub-Chapter" data-html="true" tabindex="0" data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
-                                    EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
-                                    <br>
-                                    <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a>.</span>
-                                    <br>
-                                    <span>Upon selecting an EWC Sub-Chapter, the EWC Entry filter will become available, containing the EWC Entries belonging to the selection made in this filter.</span>
-                                    ">
-                                </a>
-                            </div>
-
-                            <i class="fas fa-angle-double-right filterDoubleChevron"></i>
-                            <select name="flows-waste04-select" id="flows-waste04-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
-                                style="resize: vertical;">
-                            </select>
-                        </div>
-
-                        <div class="col-md-3" id="flows-wastes06Col" style="display: none;">
-
-                            <label for="flows-waste06-select" id="flows-waste06-label">EWC Entry</label>
-                            <div class="labelHelpiconContainer" id="helpiconWaste06">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="EWC Entry"
-                                    data-html="true" tabindex="0" data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
-                                    EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
-                                    <br>
-                                    <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a>.</span>
-                                    ">
-                                </a>
-                            </div>
-
-                            <i class="fas fa-angle-double-right filterDoubleChevron chevronEwc06"></i>
-                            <select name="flows-waste06-select" id="flows-waste06-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
-                                style="resize: vertical;">
-                            </select>
-                        </div>
-                    </div>
-
-                    <h5 class="subtitle">GN codes</h5>
-
-                    <div class="row">
-                        <div class="col-md-3" id="flows-gncodesCol">
-
-                            <label for="flows-gncode-select">Code</label>
-<!--                            <div class="labelHelpiconContainer">-->
-<!--                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="EWC Chapter"-->
-<!--                                    data-html="true" tabindex="0" data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.-->
-<!--                                    EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>-->
-<!--                                    <br>-->
-<!--                                    <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table'>here</a>.</span>-->
-<!--                                    <br>-->
-<!--                                    <span>Upon selecting an EWC Chapter, the Sub-Chapter filter will become available, containing the Sub-Chapters belonging to the selection made in this filter.</span>-->
-<!--                                    ">-->
-<!--                                </a>-->
-<!--                            </div>-->
-
-                            <select name="flows-gncode-select" id="flows-gncode-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
-                                style="resize: vertical;">
-                                <option selected value="-1">All (<%= gncodes.count %>)</option>
-                                <option data-divider="true"></option>
-                                <% gncodes.forEach(function(gncode){ %>
-                                <option value="<%= gncode.id %>"><%= gncode.get('code') %>
-                                    <%= gncode.get('name') %>
-                                </option>
-                                <% }); %>
-                            </select>
-                        </div>
-                    </div>
-
-                    <h5 class="subtitle">Contents</h5>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <label for="flows-material-select">Materials</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Materials"
-                                    data-html="true" tabindex="0" data-content="Filter the flows based on their material content.
-                                    Selecting one or more materials will return all flows containing the selected material(s),
-                                    meaning that selecting ‘sand’ will return all flows containing only sand, as well as flows
-                                    consisting of sand mixed with other materials. Use the Mixed filter on the ‘Not mixed’ setting
-                                    to only include non-mixed material flows.">
-                                </a>
-                            </div>
-                            <select id="flows-material-select" name="flows-material-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
-                                style="resize: vertical;">
-                                <option selected value="-1">All (<%= materials.count %>)</option>
-                                <option data-divider="true"></option>
-                                <% materials.forEach(function(material){ %>
-                                <option value="<%= material.id %>"><%= material.get('name')[0].toUpperCase() +
-                                    material.get('name').slice(1) %>
-                                </option>
-                                <% }); %>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label>Products</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Products"
-                                    data-html="true" tabindex="0" data-content="The Products filter allows for the filtering of materials
-                                    which are considered directly reusable.">
-                                </a>
-                            </div>
-                            <select name="flows-product-select" id="flows-product-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
-                                style="resize: vertical;">
-                                <option selected value="-1">All (<%= products.count %>)</option>
-                                <option data-divider="true"></option>
-                                <% products.forEach(function(product){ %>
-                                <option value="<%= product.id %>">
-                                    <%= product.get('name')[0].toUpperCase() + product.get('name').slice(1) %></option>
-                                <% }); %>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label>Composites</label>
-                            <div class="labelHelpiconContainer">
-                                <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Composites"
-                                    data-html="true" tabindex="0" data-content="The Composites filter allows for the filtering of
-                                    waste flows consisting of more than two materials that are not directly usable. These flows
-                                    will require an additional processing step in order to separate the individual materials
-                                    making up the composite.">
-                                </a>
-                            </div>
-                            <select name="flows-composites-select" id="flows-composites-select" multiple
-                                class="form-control form-control-sm selectpicker" data-live-search="true" data-size="6"
-                                style="resize: vertical;">
-                                <option selected value="-1">All (<%= composites.count %>)</option>
-                                <option data-divider="true"></option>
-                                <% composites.forEach(function(composite){ %>
-                                <option value="<%= composite.id %>">
-                                    <%= composite.get('name')[0].toUpperCase() + composite.get('name').slice(1) %>
-                                </option>
-                                <% }); %>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div {% if not request.user|isExpertUser %}
-                        style="display: none;"
-                        {% endif %}>
-
-                        <h5 class="subtitle">Characteristics</h5>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <label for="flows-clean-select">Clean</label>
-                                <div class="labelHelpiconContainer">
-                                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Clean"
-                                        data-html="true" tabindex="0"
-                                        data-content="The Clean filter indicates the extent to which a
-                                        flow is expected to be contaminated with another substance. ‘Mono’ streams are considered
-                                        clean streams since they consist of one material and are not contaminated, i.e. clean.">
-                                    </a>
-                                </div>
-                                <select id="flows-clean-select" name="flows-clean-select"
-                                    class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
-                                    <option selected value='-1'>Ignore</option>
-                                    <option data-divider="true"></option>
-                                    <option value='unknown'>Unknown</option>
-                                    <option value='no'>Not clean</option>
-                                    <option value='yes'>Clean</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="flows-mixed-select">Mixed</label>
-                                <div class="labelHelpiconContainer">
-                                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Mixed"
-                                        data-html="true" tabindex="0" data-content="The Mixed category indicates whether the flow
-                                        contains two or more materials. A mixed flow could consist of two or more clean materials
-                                        (masonry and concrete rubble, f.e.), but also two materials of which one is an identified
-                                        pollutant (soil containing mineral oil, f.e.). All non-clean flows are by definition mixed,
-                                        indicating they contain two or more materials.">
-                                    </a>
-                                </div>
-                                <select id="flows-mixed-select" name="flows-mixed-select"
-                                    class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
-                                    <option selected value='-1'>Ignore</option>
-                                    <option data-divider="true"></option>
-                                    <option value='unknown'>Unknown</option>
-                                    <option value='no'>Not mixed</option>
-                                    <option value='yes'>Mixed</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="flows-direct-select">(An)organic</label>
-                                <div class="labelHelpiconContainer">
-                                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Direct use"
-                                        data-html="true" tabindex="0" data-content="The Direct use filter indicates whether
-                                        a flow is (expected to be) directly reusable in its current form and no additional
-                                        processing is required. ">
-                                    </a>
-                                </div>
-                                <select id="flows-direct-select" name="flows-direct-select"
-                                    class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
-                                    <option selected value='-1'>Ignore</option>
-                                    <option data-divider="true"></option>
-                                    <option value='unknown'>Unknown</option>
-                                    <option value='no'>Anorganic</option>
-                                    <option value='yes'>Organic</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="flows-iscomposite-select">(A)biotic</label>
-                                <div class="labelHelpiconContainer">
-                                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Composite"
-                                        data-html="true" tabindex="0" data-content="The Composite filter indicates whether a flow contains a
-                                        known composite consisting of two or more materials.">
-                                    </a>
-                                </div>
-                                <select id="flows-iscomposite-select" name="flows-iscomposite-select"
-                                    class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
-                                    <option selected value='-1'>Ignore</option>
-                                    <option data-divider="true"></option>
-                                    <option value='unknown'>Unknown</option>
-                                    <option value='no'>Biotic</option>
-                                    <option value='yes'>Abiotic</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row pb-4">
-                            <div class="col-md-3">
-                                <label for="flows-route-select">Collected en route</label>
-                                <div class="labelHelpiconContainer">
-                                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Route"
-                                        data-html="true" tabindex="0" data-content="The Route property indicates whether a waste collection company has collected the same type of waste
-                                            from multiple different producers of waste. During the waste collection process, the waste from
-                                            all sources is combined.
-                                            <br>
-                                            An example would be municipal waste collection in which the waste from every building is collected by a truck.
-                                        ">
-                                    </a>
-                                </div>
-                                <select name="flows-route-select" id="flows-route-select"
-                                    class="form-control form-control-sm selectpicker">
-                                    <option value='both'>Ignore</option>
-                                    <option value='no'>Not route</option>
-                                    <option value='yes'>Route</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="flows-collector-select">Collector</label>
-                                <div class="labelHelpiconContainer">
-                                    <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Collector"
-                                        data-html="true" tabindex="0" data-content="<span>The Collector property indicates whether
-                                            a waste collection company has collected the same type of waste from different sources.
-                                            In this case, the waste from the different sources has not been combined,
-                                            and may only consist of certain types of waste, which can be consulted
-                                            <a href='https://www.lma.nl/publish/pages/105041/5-bijlage-a-van-de-regeling2.pdf'>here</a>.</span>
-                                        ">
-                                    </a>
-                                </div>
-                                <select name="flows-collector-select" id="flows-collector-select"
-                                    class="form-control form-control-sm selectpicker">
-                                    <option value='both'>Ignore</option>
-                                    <option value='no'>Not collector</option>
-                                    <option value='yes'>Collector</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-
+          <div class="card-header" id="card-header-collapse-flows">
+            <h4 class="mb-1">
+              <div class="row" style="padding: 0; justify-content: start">
+                <div class="col-md-2" style="min-width: 380px;">
+                  <button 
+                    class="btn btn-link collapsed collapsingHeaderButton" 
+                    id="btn-collapse-header-flows"
+                    data-toggle="collapse" 
+                    data-target="#collapseFlowsBlock" 
+                    aria-expanded="false"
+                    aria-controls="collapseFlowsBlock">
+                      <i class="fa fa-chevron-down pull-right"></i>
+                      Kenmerken afvalstroom
+                  </button>
                 </div>
-            </div>
 
+                <div class="col-md-1">
+                  <div class="d-inline buttonHelpiconContainer">
+                    <a class="help-icon fas fa-question-circle" 
+                      data-toggle="popover"
+                       data-boundary="viewport"
+                      title="Kenmerken afvalstroom" 
+                      data-html="true" 
+                      tabindex="0"
+                      data-content="
+                        <span>Hier kunt u afvalstromen of hergebruikt afval selecteren a.d.h.v. kenmerken zoals de transitieagenda, industrie, materialen, en of deze stroom schoon of gevaarlijk is.</span>
+                        ">
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </h4>
+          </div>
+
+          <div id="collapseFlowsBlock" 
+            class="collapse" 
+            aria-labelledby="card-header-collapse-flows"
+            data-parent="#filterBlock">
+              <div class="card-body">
+
+                <!-- Flow type -->
+                <div class="row">
+                  <div class="col-md-4">
+                    <div
+                      class="btn-group btn-group-toggle"
+                      id="flow-type-radio"
+                      data-toggle="buttons"
+                      style="width: 100%;">
+
+                      <label class="btn btn-default flow-type active" style="width: 40%;" type="waste">
+                        <input type="radio" id="flow-type-radio-production">Afval
+                      </label>
+                      <!--<label class="btn btn-default flow-type active" style="width: 20%;" type="both">-->
+                        <!--<input type="radio" id="flow-type-radio-both">Beide-->
+                      <!--</label>-->
+                      <label class="btn btn-default flow-type" style="width: 40%;" type="product">
+                        <input type="radio" id="flow-type-radio-treatment">Hergebruikt afval
+                      </label>
+                    </div>                    
+                  </div>
+                  <div class="col-md-1">
+                    <div class="labelHelpiconContainer">
+                      <a
+                        class="help-icon fas fa-question-circle"
+                        data-toggle="popover"
+                        title="Afval | Hergebruikt afval"
+                        data-html="true"
+                        tabindex="0"
+                        data-content="
+                          <span>Selecteer aanvullende filters voor afval (enkel toepasbaar voor de dataset ontvangstmeldingen) of hergebruikt afval (enkel toepasbaar voor de dataset afgiftemeldingen).<br>
+                          <br>
+                          LET OP! Controleer of u bij “Databronnen” de corresponderende databron heeft geselecteerd.<br>
+                          U kunt enkel de filters voor afval toepassen op de databron “ontvangstmeldingen” en de filters voor hergebruikt afval enkel toepassen op de databron 'afgiftemeldingen'.</span>
+                          ">
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Geographical Areas -->
+                <div style="display: none;">
+
+                  <h5 class="subtitle">Geographical</h5>
+
+                  <div class="row">
+                    <div class="col-md-10">
+                      <label style="width: 450px" for="area-select-button-flows">Select area(s) through which
+                        the flows must pass:
+                      </label>
+
+                      <div class="d-block">
+                        <button 
+                          id="area-select-button-flows" 
+                          class="btn btn-sm btn-primary area-select-button"
+                          data-width="100%" 
+                          style="width: 13em" 
+                          data-area-select-block="flows">
+                            Select areas
+                        </button>
+
+                        <div class="d-inline buttonHelpiconContainer">
+                          <a class="help-icon fas fa-question-circle" 
+                            data-toggle="popover"
+                            title="Select areas" 
+                            data-html="true" 
+                            tabindex="0"
+                            data-content="Clicking the <b>Select areas</b> button opens a dialog in which you can select one or more geographic areas.<br> The selected areas will be used to filter the waste flows based on the <b>estimated route</b> of the waste transport.">
+                          </a>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                  <div class="row areaSelections-flows" style="display: none;">
+                      <div class="col-md-4">
+
+                          <textarea class="form-control-sm textarea-autosize selections"
+                              id="areaSelections-Textarea-flows" style="width: 100% !important; display: inline-block"
+                              type="text" readonly></textarea>
+                          <button id="clear-flows-areas-button" class="btn btn-sm btn-primary clear-areas-button"
+                              data-area-clear-button="flows">
+                              <i class="fas fa-times"></i>
+                          </button>
+                      </div>
+                  </div>
+                </div>
+
+                <!-- Waste-related selectors -->
+                <div id="container-waste" style="display: none;">
+                  <!-- <h5 class="subtitle">European Waste Catalogue Codes (EuralCode)</h5> -->
+
+                  <div class="row">
+                    
+                    <!-- Chain Position -->
+                    <div class="col-md-4">
+                      <label for="flows-chain-select">Ketenpositie</label>
+                      <div class="labelHelpiconContainer">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover" 
+                          title="Ketenpositie"
+                          data-html="true" 
+                          tabindex="0" 
+                          data-content="
+                            <span>Selecteer een of meerdere ketenposities voor analyse. Standaard zijn alle ketenposities geselecteerd. De ketenposities zijn gebaseerd op de economische sectoren van onze economie; de primaire, secundaire, tertiaire en quartaire sectoren.<br>
+                            <br>
+                            De primaire sector wint ruwe grondstoffen, de secundaire sector verwerkt deze grondstoffen tot verwerkte grondstoffen of producten, de tertiaire sector consumeert grondstoffen en producten en produceert afval, de quartaire sector verwerkt het afval tot grondstoffen, producten, of retourneert deze materialen naar het milieu.<br>
+                            <br>
+                            Voor meer informatie raadpleeg het INFO tabblad van de sectie Ketenpositie in de publieke monitor hier: <a href='http://www.monitorce.nl/provincieflevoland/#/about' target='_blank'>www.monitorce.nl/provincieflevoland</a></span>
+                            ">
+                        </a>
+                      </div>
+                      <select 
+                        id="flows-chain-select" 
+                        name="flows-chain-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                          <option selected value="-1">Alle (<%= chains.length %>)</option>
+                          <option data-divider="true"></option>
+                          <% chains.forEach(function(chain){ %>
+                          <option value="<%= chain.id %>"><%= chain.get('name') %>
+                          </option>
+                          <% }); %>
+                      </select>
+                    </div>
+
+                    <!-- Agendas -->
+                    <div class="col-md-4">
+                      <label for="flows-agenda-select">Transitieagenda</label>
+                      <div class="labelHelpiconContainer">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover" 
+                          title="Transitieagenda"
+                          data-html="true" 
+                          tabindex="0" 
+                          data-content="
+                            <span>Selecteer een of meerdere transitieagenda’s voor analyse. Standaard zijn alle transitieagenda’s geselecteerd.<br>
+                            De Rijksoverheid en andere betrokkenen hebben plannen voor de transitie naar een circulaire economie geformuleerd in 5 transitieagenda’s (TA’s) die zich richten op de volgende economische sectoren en ketens: 1) Biomassa en Voedsel, 2) Kunststoffen, 3) Maakindustrie, 4) Bouw, 5) Consumptiegoederen.<br>
+                            <br>
+                            Raadpleeg voor meer informatie het tabblad INFO in de Transitieagenda sectie in de module Materialen van de monitor: <a href='http://www.monitorce.nl/provincieflevoland/#/about' target='_blank'>www.monitorce.nl/provincieflevoland</a></span>
+                            ">
+                        </a>
+                      </div>
+                      <select 
+                        id="flows-agenda-select" 
+                        name="flows-agenda-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                          <option selected value="-1">Alle (<%= agendas.length %>)</option>
+                          <option data-divider="true"></option>
+                          <% agendas.forEach(function(agenda){ %>
+                          <option value="<%= agenda.id %>"><%= agenda.get('name') %>
+                          </option>
+                          <% }); %>
+                      </select>
+                    </div>  
+
+                    <!-- Industries -->
+                    <div class="col-md-4">
+                      <label for="flows-industry-select">Industrie</label>
+                      <div class="labelHelpiconContainer">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover" 
+                          title="Industrie"
+                          data-html="true" 
+                          tabindex="0" 
+                          data-content="
+                            <span>Selecteer een of meerdere industrieën voor analyse. Standaard zijn alle industrieën geselecteerd.<br>
+                            Industrieën zijn de essentiële knooppunten die materialen en goederen in een toeleveringsketen met elkaar verbinden.<br>
+                            Industrieën zijn groepen bedrijven die vergelijkbaar zijn wat betreft de activiteiten die ze uitvoeren, de materialen waarmee ze werken of hun collectieve doel.<br>
+                            <br>
+                            Raadpleeg voor meer informatie het tabblad INFO in de Trendanalyse sectie in de module Handelingsperspectieven van de monitor: <a href='http://www.monitorce.nl/provincieflevoland/#/about' target='_blank'>www.monitorce.nl/provincieflevoland</a></span>
+                            ">
+                        </a>
+                      </div>
+                      <select 
+                        id="flows-industry-select" 
+                        name="flows-industry-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                          <option selected value="-1">Alle (<%= industries.length %>)</option>
+                          <option data-divider="true"></option>
+                          <% industries.forEach(function(industry){ %>
+                          <option value="<%= industry.id %>"><%= industry.get('name') %>
+                          </option>
+                          <% }); %>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Chapter -->
+                  <div class="row">
+                    <div class="col-md-4" id="flows-wastes02Col">
+
+                      <label for="flows-waste02-select">Codes Europese Afvalstoffenlijst (EURAL)</label>
+                      <div class="labelHelpiconContainer">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover" 
+                          title="Codes Europese Afvalstoffenlijst (EURAL)"
+                          data-html="true" 
+                          tabindex="0" 
+                          data-content="
+                            <span>Selecteer een of meerdere EURALcodes voor analyse. Standaard zijn alle codes geselecteerd.<br>
+                            <br>
+                            Een EURALcode is een gestandaardiseerde 6-cijferige Europese indeling voor afval. Afval wordt ingedeeld volgens 20 hoofdstukken (de eerste 2 cijfers van de 6) aan de hand van de industrie, het proces, of het materiaal van het afval. Ieder hoofdstuk heeft sub-hoofdstukken (4 cijfers), en individuele codes (6 cijfers).<br>
+                            <br>
+                            Ieder bedrijf dat meldplichtig is bij het Landelijk Meldpunt Afvalstoffen (LMA) meldt hun afval a.d.h.v. EURALcodes.</span>
+                            ">
+                        </a>
+                      </div>
+
+                      <select 
+                        name="flows-waste02-select" 
+                        id="flows-waste02-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                          <option selected value="-1">Alle (<%= wastes02.count %>)</option>
+                          <option data-divider="true"></option>
+                          <% wastes02.forEach(function(waste){ %>
+                          <option value="<%= waste.id %>"><%= waste.get('ewc_code') + ". "%>
+                            <%= waste.get('ewc_name')[0].toUpperCase() + waste.get('ewc_name').slice(1).toLowerCase() %>
+                          </option>
+                          <% }); %>
+                      </select>
+                    </div>
+
+                    <div class="col-md-4" id="flows-wastes04Col" style="display: none;">
+                      <label for="flows-waste04-select">Sub-Chapter</label>
+                      <!-- <div class="labelHelpiconContainer">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover"
+                          title="EWC Sub-Chapter" 
+                          data-html="true" 
+                          tabindex="0" 
+                          data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
+                            EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
+                            <br>
+                            <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table' target='_blank'>here</a>.</span>
+                            <br>
+                            <span>Upon selecting an EWC Sub-Chapter, the EWC Entry filter will become available, containing the EWC Entries belonging to the selection made in this filter.</span>
+                            ">
+                        </a>
+                      </div> -->
+
+                      <i class="fas fa-angle-double-right filterDoubleChevron"></i>
+                      <select 
+                        name="flows-waste04-select" 
+                        id="flows-waste04-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                      </select>
+                    </div>
+
+                    <div class="col-md-4" id="flows-wastes06Col" style="display: none;">
+                      <label for="flows-waste06-select" id="flows-waste06-label">EWC Entry</label>
+                      <!-- <div class="labelHelpiconContainer" id="helpiconWaste06">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover" 
+                          title="EWC Entry"
+                          data-html="true" 
+                          tabindex="0" 
+                          data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
+                            EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
+                            <br>
+                            <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table' target='_blank'>here</a>.</span>
+                            ">
+                        </a>
+                      </div> -->
+
+                      <i class="fas fa-angle-double-right filterDoubleChevron chevronEwc06"></i>
+                      <select 
+                        name="flows-waste06-select" 
+                        id="flows-waste06-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- <h5 class="subtitle">Contents</h5> -->
+                  <div class="row">
+
+                    <!-- Materials -->
+                    <div class="col-md-4">
+                      <label for="flows-material-select">Materialen in afval</label>
+                      <div class="labelHelpiconContainer">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover" 
+                          title="Materialen in afval"
+                          data-html="true" 
+                          tabindex="0" 
+                          data-content="
+                            <span>Selecteer een of meerdere materialen voor analyse.<br>
+                            <br>
+                            Standaard zijn alle materialen geselecteerd. De materialen zijn gecategoriseerd a.d.h.v. hun fysieke kenmerken, en in oplopend detail.<br>
+                            Zo is zand een mineraal, wat anorganisch is, wat abiotisch is. Het selecteren van de categorie ‘anorganisch’ selecteert automatisch alles wat onder die categorie valt.</span>
+                            ">
+                        </a>
+                      </div>
+                      <select 
+                        id="flows-material-select" 
+                        name="flows-material-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                          <option selected value="-1">Alle (<%= materials.length %>)</option>
+                          <option data-divider="true"></option>
+                          <% materials.forEach(function(material){ %>
+                          <option value="<%= material.id %>"><%= '&emsp;'.repeat(material.get('level')) + material.get('name') %>
+                          </option>
+                          <% }); %>
+                      </select>
+                    </div>                                      
+                  </div>
+
+                  
+                  <!-- Characteristics -->
+                  <div 
+                    {% if not request.user|isExpertUser %}
+                      style="display: none;"
+                    {% endif %}>
+
+                    <!-- <h5 class="subtitle">Characteristics</h5> -->
+                    <div class="row">
+
+                      <!-- Clean -->
+                      <div class="col-md-4">
+                        <label for="flows-clean-select">Schoon</label>
+                        <div class="labelHelpiconContainer">
+                          <a 
+                            class="help-icon fas fa-question-circle" 
+                            data-toggle="popover" 
+                            title="Schoon"
+                            data-html="true" 
+                            tabindex="0"
+                            data-content="
+                              <span>Met dit filter is het mogelijk afvalstromen te selecteren die (vermoedelijk) schoon zijn. Standaard staat dit filter uit.<br>
+                              <br>
+                              Schone afvalstromen bevatten een of meerdere materialen die niet ongewild zijn vermengd met andere materialen. Een schone afvalstroom is bijvoorbeeld a-hout, of puur zand. Een vervuilde afvalstroom is bijvoorbeeld.</span>
+                              ">
+                          </a>
+                        </div>
+                        <select 
+                          id="flows-clean-select" 
+                          name="flows-clean-select"
+                          class="form-control form-control-sm selectpicker" 
+                          multiple style="resize: vertical;">
+                            <option selected value='-1'>Negeer</option>
+                            <option data-divider="true"></option>
+                            <option value='unknown'>Onbekend</option>
+                            <option value='no'>Niet schoon</option>
+                            <option value='yes'>Schoon</option>
+                        </select>
+                      </div>
+
+                      <!-- Mixed -->
+                      <div class="col-md-4">
+                        <label for="flows-mixed-select">Gemengd</label>
+                        <div class="labelHelpiconContainer">
+                          <a 
+                            class="help-icon fas fa-question-circle" 
+                            data-toggle="popover" 
+                            title="Gemengd"
+                            data-html="true" 
+                            tabindex="0" 
+                            data-content="
+                              <span>Met dit filter is het mogelijk afvalstromen te selecteren die (vermoedelijk) gemengd zijn. Standaard staat dit filter uit.<br>
+                              <br>
+                              Gemengde afvalstromen bevatten meer dan een enkel materiaal. Schone gemengde stromen zijn bijvoorbeeld gemengd bouw- en sloopafval (beton, hout, metaal). Vervuilde (niet-schone) gemengde stromen zijn bijvoorbeeld gips met asbest of groen snoeiafval met plastic.</span>
+                              ">
+                          </a>
+                        </div>
+                        <select 
+                          id="flows-mixed-select" 
+                          name="flows-mixed-select"
+                          class="form-control form-control-sm selectpicker" 
+                          multiple style="resize: vertical;">
+                            <option selected value='-1'>Negeer</option>
+                            <option data-divider="true"></option>
+                            <option value='unknown'>Onbekend</option>
+                            <option value='no'>Niet gemengd</option>
+                            <option value='yes'>Gemengd</option>
+                        </select>
+                      </div>
+
+                      <!-- Hazardous -->
+                      <div class="col-md-4">
+                        <label for="flows-hazardous-select">Gevaarlijk</label>
+                        <div class="labelHelpiconContainer">
+                          <a 
+                            class="help-icon fas fa-question-circle" 
+                            data-toggle="popover" 
+                            title="Gevaarlijk"
+                            data-html="true" 
+                            tabindex="0" 
+                            data-content="
+                              <span>Selecteer met dit filter enkel gevaarlijk of ongevaarlijk afval. Standaard staat dit filter uit.<br>
+                              <br>
+                              Gevaarlijk afval moet volgens bepaalde EURALcodes worden gemeld. Deze codes bevatten een asterisk (*). Dit is ook terug te zien bij de 6-cijferige EURALcodes onder het filter 'Codes Europese Afvalstoffenlijst (EURAL)'.</span>
+                              ">
+                          </a>
+                        </div>
+                        <select name="flows-hazardous-select" id="flows-hazardous-select"
+                          class="form-control form-control-sm selectpicker">
+                          <option value='both'>Negeer</option>
+                          <option value='no'>Niet gevaarlijk</option>
+                          <option value='yes'>Gevaarlijk</option>
+                        </select>
+                      </div>
+
+                      <!-- !! No longer used !!-->
+                      <!-- {% comment %}
+                      <div class="col-md-3">
+                          <label for="flows-direct-select">(An)organic</label>
+                          <div class="labelHelpiconContainer">
+                              <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Direct use"
+                                  data-html="true" tabindex="0" data-content="The Direct use filter indicates whether
+                                  a flow is (expected to be) directly reusable in its current form and no additional
+                                  processing is required. ">
+                              </a>
+                          </div>
+                          <select id="flows-direct-select" name="flows-direct-select"
+                              class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
+                              <option selected value='-1'>Ignore</option>
+                              <option data-divider="true"></option>
+                              <option value='unknown'>Onbekend</option>
+                              <option value='no'>Anorganic</option>
+                              <option value='yes'>Organic</option>
+                          </select>
+                      </div>
+                      <div class="col-md-3">
+                          <label for="flows-iscomposite-select">(A)biotic</label>
+                          <div class="labelHelpiconContainer">
+                              <a class="help-icon fas fa-question-circle" data-toggle="popover" title="Composite"
+                                  data-html="true" tabindex="0" data-content="The Composite filter indicates whether a flow contains a
+                                  known composite consisting of two or more materials.">
+                              </a>
+                          </div>
+                          <select id="flows-iscomposite-select" name="flows-iscomposite-select"
+                              class="form-control form-control-sm selectpicker" multiple style="resize: vertical;">
+                              <option selected value='-1'>Ignore</option>
+                              <option data-divider="true"></option>
+                              <option value='unknown'>Onbekend</option>
+                              <option value='no'>Biotic</option>
+                              <option value='yes'>Abiotic</option>
+                          </select>
+                      </div>
+                      {% endcomment %} -->
+                    </div>
+
+                    <!-- Collector -->
+                    <!-- <div class="row pb-4">
+                      <div class="col-md-3">
+                        <label for="flows-collector-select">Collector</label>
+                        <div class="labelHelpiconContainer">
+                          <a 
+                            class="help-icon fas fa-question-circle" 
+                            data-toggle="popover" 
+                            title="Collector"
+                            data-html="true" 
+                            tabindex="0" 
+                            data-content="<span>The Collector property indicates whether
+                              a waste collection company has collected the same type of waste from different sources.
+                              In this case, the waste from the different sources has not been combined,
+                              and may only consist of certain types of waste, which can be consulted
+                              <a href='https://www.lma.nl/publish/pages/105041/5-bijlage-a-van-de-regeling2.pdf'>here</a>.</span>">
+                          </a>
+                        </div>
+                        <select 
+                          name="flows-collector-select" 
+                          id="flows-collector-select"
+                          class="form-control form-control-sm selectpicker">
+                            <option value='both'>Ignore</option>
+                            <option value='no'>Not collector</option>
+                            <option value='yes'>Collector</option>
+                        </select>
+                      </div>
+                    </div> -->
+                  </div>                    
+                </div>
+
+                <!-- Product-related selectors -->
+                <div id="container-product" style="display: none;">
+
+<!--                  <h5 class="subtitle">Codes Gecombineerde Nomenclatuur (GN)</h5>-->
+                  <div class="row">
+                    <div class="col-md-4" id="flows-gncodesCol">
+                      <label for="flows-gncode-select">GN Code</label>
+                      <div class="labelHelpiconContainer">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover" 
+                          title="EWC Chapter"
+                          data-html="true" 
+                          tabindex="0" 
+                          data-content="<span>Filter the waste flows by the European Waste Catalogue (EWC) code, also known as Euralcode.
+                            EWC-codes exist in three levels: Chapters, Sub-Chapters, and Entries.</span>
+                            <br>
+                            <span>The full list of entries can be consulted <a href='https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52018XC0409(01)&from=EN#d1e749-21-1-table' target='_blank'>here</a>.</span>
+                            <br>
+                            <span>Upon selecting an EWC Chapter, the Sub-Chapter filter will become available, containing the Sub-Chapters belonging to the selection made in this filter.</span>
+                            ">
+                        </a>
+                      </div>
+
+                      <select 
+                        name="flows-gncode-select" 
+                        id="flows-gncode-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                          <option selected value="-1">Alle (<%= gncodes.count %>)</option>
+                          <option data-divider="true"></option>
+                          <% gncodes.forEach(function(gncode){ %>
+                          <option value="<%= gncode.id %>"><%= gncode.get('code') %>
+                            <%= gncode.get('name') %>
+                          </option>
+                          <% }); %>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Products -->
+                  {% comment %}
+                    <div class="col-md-4">
+                      <label>Productie</label>
+                      <div class="labelHelpiconContainer">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover" 
+                          title="Products"
+                          data-html="true" 
+                          tabindex="0" 
+                          data-content="The Products filter allows for the filtering of materials
+                            which are considered directly reusable.">
+                        </a>
+                      </div>
+                      <select 
+                        name="flows-product-select" 
+                        id="flows-product-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                          <option selected value="-1">Alle (<%= products.count %>)</option>
+                          <option data-divider="true"></option>
+                          <% products.forEach(function(product){ %>
+                          <option value="<%= product.id %>">
+                            <%= product.get('name')[0].toUpperCase() + product.get('name').slice(1) %></option>
+                          <% }); %>
+                      </select>
+                    </div>
+
+                    <!-- Composites -->
+                    <div class="col-md-4">
+                      <label>Composites</label>
+                      <div class="labelHelpiconContainer">
+                        <a 
+                          class="help-icon fas fa-question-circle" 
+                          data-toggle="popover" 
+                          title="Composites"
+                          data-html="true" 
+                          tabindex="0" 
+                          data-content="The Composites filter allows for the filtering of
+                            waste flows consisting of more than two materials that are not directly usable. These flows
+                            will require an additional processing step in order to separate the individual materials
+                            making up the composite.">
+                        </a>
+                      </div>
+                      <select 
+                        name="flows-composites-select" 
+                        id="flows-composites-select" 
+                        multiple
+                        class="form-control form-control-sm selectpicker" 
+                        data-live-search="true" 
+                        data-size="6"
+                        style="resize: vertical;">
+                          <option selected value="-1">All (<%= composites.count %>)</option>
+                          <option data-divider="true"></option>
+                          <% composites.forEach(function(composite){ %>
+                          <option value="<%= composite.id %>">
+                            <%= composite.get('name')[0].toUpperCase() + composite.get('name').slice(1) %>
+                          </option>
+                          <% }); %>
+                      </select>
+                    </div>
+                  {% endcomment %}
+                </div>
+              </div>
+          </div>
         </div>
 
         <div class="filter-log-container" style="display: none;">
-                <div class="card bg-dark">
+          <div class="card bg-dark">
 
-                    <div class="card-header">
-                        <h4 class="mt-2 ml-3">
-                            <button class="btn btn-link collapsingHeaderButton" id="btn-collapse-header-origin"
-                                title="">
-                                Selected filters
-                            </button>
+            <div class="card-header">
+              <h4 class="mt-2 ml-3">
+                <button 
+                  class="btn btn-link collapsingHeaderButton" 
+                  id="btn-collapse-header-origin"
+                  title="">
+                    Uw selectie
+                </button>
 
-                            <button type="button" class="close text-white closeFilterLog" data-dismiss="modal"><i class="fas fa-times"></i></button>
-                        </h4>
-                    </div>
+                <button 
+                  type="button" 
+                  class="close text-white closeFilterLog" 
+                  data-dismiss="modal">
+                    <i class="fas fa-times"></i>
+                </button>
+              </h4>
+            </div>
 
-                    <div class="card-body">
-                        <div class="row pb-4">
-                            <div class="col-md-10 filterLog">
-
-
-                            </div>
-                        </div>
-                    </div>
+            <div class="card-body">
+              <div class="row pb-4">
+                <div class="col-md-10 filterLog">
                 </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-
-
-        <div class="row mt-1 d-flex justify-content-end">
-            <button id='reset-filters' class="btn btn-secondary resetButton" title="Reset all the filters">RESET FILTERS
-            </button>
-
-
+        <!-- Filter Buttons -->
+        <div class="row mt-1 d-flex justify-content-start">
             <button id='summarize-filters' class="btn btn-primary"
-                title="Summarize the selected filters and check if there is data that matches."
-                style="margin-left: 10px; float: right; width: 10em">
-                TEST FILTERS
+              style="margin-left: 10px; float: right; width: 10em; margin: 0.2rem">
+                TEST SELECTIE
             </button>
-        </div>
+            <button
+              id='save-filters'
+              class="btn btn-primary openSavedFilterModal"
+              data-filter-modal-mode="newMode"
+              style="height: 38px; width: 12rem; margin: 0.2rem">
+                BEWAAR SELECTIE
+            </button>
+            <button 
+              id='reset-filters' 
+              class="btn btn-secondary resetButton"
+              style="margin: 0.2rem">
+                RESET SELECTIE
+            </button>
 
+            <div class="labelHelpiconContainer">
+              <a 
+                class="help-icon fas fa-question-circle" 
+                data-toggle="popover" 
+                title="Filters"
+                data-html="true" 
+                tabindex="0" 
+                data-content="
+                  <span>Controleer, bewaar, of reset hier uw geselecteerde filters voordat u doorgaat naar Stap 2 voor visualisatie.<br>
+                    <br>
+                    Gebruik de knop “Test selectie” om te controleren welke filters u heeft geselecteerd en hoeveel informatie er beschikbaar is voor de visualisatie.<br>
+                    Gebruik “Bewaar selectie” om uw selectie op te slaan.<br>
+                    U kunt uw bewaarde selectie laden met de knop “Laad voorselectie” onder het kopje “Algemeen”.<br>
+                    Met de knop “Reset selectie” wist u al uw niet-opgeslagen filters.</span>
+                  ">
+              </a>
+            </div>
+        </div>
     </div>
 
+    <div id="monitor-content" class="analyse-content-container"></div>
 
+    <!-- STEP 2 -->
+    {% comment %}
     <div class="goalContainer">
         <div class="block">
             <h4 class="pb-2 pl-3">Step 2: Define your goal</h4>
@@ -1040,9 +1655,10 @@
 
         </div>
 
-        <div id="monitor-content" class="analyse-content-container" style="display: none;"></div>
+        <div id="monitor-content" class="analyse-content-container" style="display: inline;"></div>
         <div id="impact-content" class="analyse-content-container" style="display: none;"></div>
     </div>
+    {% endcomment %}
 
   <!--Area selection-->
   <div class="area-filter modal fade" role="dialog"></div>
@@ -1057,8 +1673,8 @@
       <!-- Modal content-->
       <div class="modal-content col-md-12 pt-1">
           <div class="modal-header pt-2 pb-1 ml-2">
-              <h4 class="modal-title savedMode">Saved filters</h4>
-              <h4 class="modal-title newMode">Save this set of filters</h4>
+              <h4 class="modal-title savedMode">Uw selecties</h4>
+              <h4 class="modal-title newMode">Bewaar uw selectie</h4>
               <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times"></i></button>
           </div>
           <div class="modal-body pt-0">
@@ -1072,13 +1688,13 @@
                                   id="new-filter-name-input"
                                   class="form-control-sm w-100 pl-3"
                                   title="The name of the new saved filter configuration."
-                                  placeholder="New filter name"
+                                  placeholder="Uw selectie"
                                   style="height: 38px; border: none;"
                                   maxlength="255"
                                   required>
-                              <div class="invalid-feedback w-100 text-center mt-4">Please fill in a filter name.</div>
+                              <div class="invalid-feedback w-100 text-center mt-4">Noemen uw selectie</div>
                               <div id="filterNameExists" class="invalid-feedback w-100 text-center mt-4" style="display: none;"></div>
-                              <small id="newFilterAdded" class="form-text text-white w-100 text-center mt-4" style="display: none;">New filter has been saved!</small>
+                              <small id="newFilterAdded" class="form-text text-white w-100 text-center mt-4" style="display: none;">Uw selectie is bewaard!</small>
                           </div>
                           <button
                               id='new-filter-name-btn'
@@ -1086,7 +1702,7 @@
                               type="submit"
                               title="Save the filter name"
                               style="width: 6.65rem; height: 38px; margin-left: 4px;"
-                              >Save</button>
+                              >Bewaar</button>
                       </div>
                   </div>
               </form>
@@ -1099,7 +1715,7 @@
                                   id="saved-filters-select"
                                   class="form-control selectpicker"
                                   style="max-width: 350px;"
-                                  data-none-selected-text="No saved filters found.">
+                                  data-none-selected-text="Geen selecties">
                                   <% filters.forEach(function(filter) { %>
                                           <option value="<%= filter.id %>"><%= filter.get('name') %></option>
                                   <% }) %>
@@ -1109,53 +1725,50 @@
 
                   <div class='row pt-1 pb-2 savedMode'>
                       <div class="col d-flex justify-content-between fourButtons">
-                          <button id='delete-filter-config' class="btn btn-secondary w-25" title="Delete the selected filter configuration.">Delete</button>
-                          <button id='edit-filter-name' class="btn btn-secondary w-25" title="Rename the selected filter configuration.">Rename</button>
-                          <button id='update-filter-config' class="btn btn-secondary w-25" title="Update this filter with the current filter configuration.">Update</button>
-                          <button id='load-filter-config' class="btn btn-primary w-25" title="Load the selected filter configuration.">Load</button>
+                          <button id='delete-filter-config' class="btn btn-secondary w-25" title="Verwijder de geselecteerde filterconfiguratie.">Verwijderen</button>
+                          <button id='edit-filter-name' class="btn btn-secondary w-25" title="Hernoem de geselecteerde filterconfiguratie.">Hernoemen</button>
+                          <button id='update-filter-config' class="btn btn-secondary w-25" title="Werk dit filter bij met de huidige filterconfiguratie.">Bijwerken</button>
+                          <button id='load-filter-config' class="btn btn-primary w-25" title="Laad de geselecteerde filterconfiguratie.">Laden</button>
                       </div>
                   </div>
 
                   <div class='row pt-4 pb-2 mb-3 filterUpdated' style="display: none;">
                       <div class="col d-flex">
-                          <small class="text-white w-100 text-center">Filter has been updated!</small>
+                          <small class="text-white w-100 text-center">Uw selectie is bijwerkt!</small>
                       </div>
                   </div>
 
                   <div class='row pt-4 pb-2 mb-3 filterLoaded' style="display: none;">
                       <div class="col d-flex">
-                          <small class="text-white w-100 text-center">Filters have been loaded!</small>
+                          <small class="text-white w-100 text-center">Uw selectie is geladen!</small>
                       </div>
                   </div>
 
-                  <div class='row pt-4 pb-0 mb-2 filterEdit' style="display: none;">
-                      <div class="col d-flex">
-
-                          <div class="form-group w-75">
-                              <input type="text" class="form-control-sm w-100" maxlength="255" id="update-filter-name" placeholder="Filter name" style="height: 38px; border: none; padding-left: 1rem;" required>
-                              <div class="invalid-feedback w-100 text-center mt-4">Please fill in a filter name.</div>
-                              <div id="filterNameExists" class="invalid-feedback w-100 text-center mt-4" style="display: none;"></div>
-                              <small id="filterNameUpdated" class="form-text text-white w-100 text-center mt-4" style="display: none;">Filter has been renamed!</small>
-                          </div>
-
-                          <div class="w-25 d-flex justify-content-between">
-                              <button class="btn btn-sm btn-secondary hide-filter-name-button" type="submit">Cancel</button>
-                              <button id='save-filter-name'
-                                      type="submit"
-                                      class="btn btn-primary"
-                                      title="Save the filter name">Save</button>
-                          </div>
-
+                  <div class='row pt-3 filterEdit' style="display: none;">
+                      <div class="col">
+                        <input type="text" class="form-control-sm w-100" maxlength="255" id="update-filter-name" placeholder="Filter name" style="height: 38px; border: none; padding-left: 1rem;" required>
+                        <div class="invalid-feedback w-100 text-center mt-4">Uw selectie noemen</div>
+                        <div id="filterNameExists" class="invalid-feedback w-100 text-center mt-4" style="display: none;"></div>
+                        <small id="filterNameUpdated" class="form-text text-white w-100 text-center mt-4" style="display: none;">Uw selectie is hernoemd!</small>
                       </div>
+                  </div>
+                  <div class="row pt-1 ptb-2 filterEdit" style="display: none;">
+                    <div class="col">
+                        <button class="btn btn-secondary hide-filter-name-button" type="submit">Annuleren</button>
+                        <button id='save-filter-name'
+                                type="submit"
+                                class="btn btn-primary"
+                                title="Save the filter name">Opslaan</button>
+                    </div>
                   </div>
               </form>
 
 
           </div>
-          <div class="modal-footer">
-              <!-- <button type="button" class="btn cancel btn-secondary savedMode" data-dismiss="modal">Cancel</button> -->
-              <button class="btn btn-primary confirm" data-dismiss="modal" aria-hidden="true">OK</button>
-          </div>
+<!--          <div class="modal-footer">-->
+<!--              &lt;!&ndash; <button type="button" class="btn cancel btn-secondary savedMode" data-dismiss="modal">Cancel</button> &ndash;&gt;-->
+<!--              <button class="btn btn-primary confirm" data-dismiss="modal" aria-hidden="true">OK</button>-->
+<!--          </div>-->
       </div>
   </div>
 </script>
@@ -1166,13 +1779,13 @@
       <!-- Modal content-->
       <div class="modal-content col-md-12 pt-1 ml-2">
           <div class="modal-header pt-2 pb-1">
-              <h4 class="modal-title">Select areas</h4>
+              <h4 class="modal-title">Selecteer gebieden</h4>
               <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times"></i></button>
           </div>
           <div class="modal-body">
               <div class='row pt-1'>
                   <div class="col">
-                      <label for="area-level-select" class="input-label">Geographic level:</label>
+                      <label for="area-level-select" class="input-label">Schaalniveau:</label>
                       <select name="area-level-select" id="area-level-select" class="form-control form-control-sm selectpicker" style="max-width: 350px;">
                           <% levels.forEach(function(level) { %>
                               <% if (level.get('level') != "1000") %>
@@ -1186,7 +1799,7 @@
               </div>
               <div class='row pt-0'>
                   <div class="col">
-                      <label for="areaSelectionsModalTextarea">Selected areas:</label>
+                      <label for="areaSelectionsModalTextarea">Geselecteerde gebieden:</label>
                       <textarea class="form-control-sm textarea-autosize selections" id="areaSelectionsModalTextarea" style="width: 100%" type="text" readonly></textarea>
                   </div>
               </div>
@@ -1203,27 +1816,28 @@
   {% load custom_tags %}
 
     <% if ((log.flows.dataset) || (log.flows.year) || (log.flows.month)) %>
-        <h5 class="subtitle mt-0">General</h5>
+        <h5 class="subtitle mt-0">Algemeen</h5>
     <ul>
         <% if (log.flows.dataset != undefined) { %>
-            <li><strong>Data sets: </strong><span><%= log.flows.dataset.join(', ') %></span></li>
+            <li><strong><%= filterNameMap.flows.dataset %>: </strong><span><%= log.flows.dataset.join(', ') %></span></li>
         <% } %>
 
         <% if (log.flows.year != undefined) { %>
-            <li><strong>Years: </strong><span><%= log.flows.year.join(', ') %></span></li>
+            <li><strong><%= filterNameMap.flows.year %>: </strong><span><%= log.flows.year.join(', ') %></span></li>
         <% } %>
 
         <% if (log.flows.month != undefined) { %>
-            <li><strong>Months: </strong><span><%= log.flows.month.join(', ') %></span></li>
+            <li><strong><%= filterNameMap.flows.month %>: </strong><span><%= log.flows.month.join(', ') %></span></li>
         <% } %>
     </ul>
 
     <% blocks.forEach(function(block) { %>
         <% if (Object.keys(log[block]).length > 0) %>
-            <h5 class="subtitle"><%= block %></h5>
+            <h5 class="subtitle"><%= filterNameMap.flows[block] %></h5>
             <ul>
+                <li><strong>Functie:</strong> <%= (log[block].role == "production") ? "Productie" : "Verwerking" %></li>
                 <% for (const property in log[block]) { %>
-                    <% if (!["adminlevel", "inOrOut"].includes(property)) %>
+                    <% if (!["adminlevel", "inOrOut", "role"].includes(property)) %>
                         <li><strong><%= (property == "selectedAreas") ? filterNameMap.origDest[log[block].inOrOut] :  filterNameMap.origDest[property] %>: </strong><span><%= log[block][property].isArray ? log[block][property].join(', ') : log[block][property] %></span></li>
                 <% } %>
             </ul>
@@ -1238,6 +1852,4 @@
                 <li><strong><%= (property == "selectedAreas") ? "Pass through these areas" :  filterNameMap.flows[property] %>: </strong><span><%= log.flows[property].isArray ? log.flows[property].join(', ') : log.flows[property] %></span></li>
         <% } %>
     </ul>
-
-
 </script>

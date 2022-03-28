@@ -14,23 +14,22 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from django.conf.urls import url, include
+from django.urls import re_path, include
 from django.conf.urls.static import static
 from django.conf import settings
 from geofluxus.views import HomeView
 from geofluxus.apps.login.views import LoginView, logout_view
 
 urlpatterns = [
-    url(r'^$', HomeView.as_view(), name='index'),
-    url(r'^login/', LoginView.as_view(template_name='login/login.html'),
+    re_path(r'^$', HomeView.as_view(), name='index'),
+    re_path(r'^login/', LoginView.as_view(template_name='login/login.html'),
         name='login'),
-    url(r'^logout', logout_view, name='logout'),
-    path('admin/', admin.site.urls),
-    url(r'^api/', include('geofluxus.rest_urls')),
-    url(r'^data-entry/', include('geofluxus.apps.dataentry.urls')),
-    url(r'^analyse/', include('geofluxus.apps.analyse.urls')),
-    url(r'^datasets/', include('geofluxus.apps.fileshare.urls'))
+    re_path(r'^logout', logout_view, name='logout'),
+    re_path('admin/', admin.site.urls),
+    re_path(r'^api/', include('geofluxus.rest_urls')),
+    re_path(r'^data-entry/', include('geofluxus.apps.dataentry.urls')),
+    re_path(r'^analyse/', include('geofluxus.apps.analyse.urls')),
+    re_path(r'^datasets/', include('geofluxus.apps.fileshare.urls'))
 ]\
 + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
 + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

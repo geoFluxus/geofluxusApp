@@ -110,7 +110,7 @@ label[for="flows-month-select"],
 label[for="flows-waste04-select"],
 label[for="flows-waste06-select"] {
   position: relative;
-  left: -1.3em;
+  /* left: -1.3em; */
 }
 
 .labelHelpiconContainer {
@@ -178,11 +178,6 @@ label[for="flows-waste06-select"] {
 
 .savedMode .fourButtons button:last-child {
   margin-right: 0;
-}
-
-.filterEdit button {
-  width: 4.5rem;
-  height: 38px;
 }
 
 .helpIconContainer {
@@ -428,10 +423,9 @@ label[for="flows-waste06-select"] {
 /* Area Select Modal Styles */
 
 .map {
-  min-height: 400px;
   min-width: 400px;
   width: 100%;
-  height: 100%;
+  height: 40vh;
   /* max-height: 600px; */
 }
 
@@ -690,7 +684,7 @@ textarea.textarea-autosize.form-control-sm {
   height: 32px;
   border-radius: 16px;
   top: 5px;
-  color: transparent;
+  color: white;
   margin-bottom: 5px !important;
   font-size: 16px !important;
   margin: 0px 5px;

@@ -1,6 +1,6 @@
 from rest_framework_nested.routers import (DefaultRouter,
                                            NestedSimpleRouter)
-from django.conf.urls import url, include
+from django.urls import re_path, include
 from geofluxus.apps.asmfa.views import (ActivityGroupViewSet,
                                         ActivityViewSet,
                                         CompanyViewSet,
@@ -10,17 +10,16 @@ from geofluxus.apps.asmfa.views import (ActivityGroupViewSet,
                                         Waste02ViewSet,
                                         Waste04ViewSet,
                                         Waste06ViewSet,
+                                        MaterialViewSet,
+                                        AgendaViewSet,
+                                        IndustryViewSet,
+                                        ChainViewSet,
                                         GNcodeViewSet,
                                         TreatmentEmissionViewSet,
-                                        MaterialViewSet,
-                                        ProductViewSet,
-                                        CompositeViewSet,
                                         YearViewSet,
                                         MonthViewSet,
                                         FlowChainViewSet,
                                         FlowViewSet,
-                                        ClassificationViewSet,
-                                        ExtraDescriptionViewSet,
                                         AdminLevelViewSet,
                                         AreaViewSet,
                                         AreaInLevelViewSet,
@@ -61,11 +60,12 @@ router.register(r'processes', ProcessViewSet)
 router.register(r'wastes02', Waste02ViewSet)
 router.register(r'wastes04', Waste04ViewSet)
 router.register(r'wastes06', Waste06ViewSet)
+router.register(r'materials', MaterialViewSet)
+router.register(r'agendas', AgendaViewSet)
+router.register(r'industries', IndustryViewSet)
+router.register(r'chains', ChainViewSet)
 router.register(r'gncodes', GNcodeViewSet)
 router.register(r'treatmentemissions', TreatmentEmissionViewSet)
-router.register(r'materials', MaterialViewSet)
-router.register(r'products', ProductViewSet)
-router.register(r'composites', CompositeViewSet)
 router.register(r'years', YearViewSet)
 router.register(r'months', MonthViewSet)
 
@@ -74,8 +74,6 @@ router.register(r'flowchains', FlowChainViewSet)
 router.register(r'allflows', FlowViewSet)
 router.register(r'monitorflows', MonitorViewSet)
 router.register(r'impactflows', ImpactViewSet)
-router.register(r'classifications', ClassificationViewSet)
-router.register(r'extradescriptions', ExtraDescriptionViewSet)
 router.register(r'routings', RoutingViewSet)
 
 # Login
@@ -89,6 +87,6 @@ level_router.register(r'areas', AreaInLevelViewSet)
 router.register(r'sharedfiles', SharedFileViewSet)
 
 urlpatterns = [
-    url(r'^', include(router.urls)),
-    url(r'^', include(level_router.urls)),
+    re_path(r'^', include(router.urls)),
+    re_path(r'^', include(level_router.urls)),
 ]

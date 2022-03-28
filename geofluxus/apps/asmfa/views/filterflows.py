@@ -2,7 +2,6 @@ from geofluxus.apps.utils.views import (PostGetViewMixin,
                                         ViewSetMixin,
                                         ModelPermissionViewSet)
 from geofluxus.apps.asmfa.models import (Flow,
-                                         Classification,
                                          Area,
                                          Routing,
                                          Month,
@@ -13,6 +12,7 @@ import numpy as np
 from rest_framework.response import Response
 from django.db.models import (Q, OuterRef, Subquery, Sum, Count)
 from django.contrib.gis.db.models import Union
+from geofluxus.apps.utils.utils import get_material_hierarchy, flatten_nested
 
 
 # Filter Flow View
@@ -110,27 +110,49 @@ class FilterFlowViewSet(PostGetViewMixin,
         data = self.serialize(queryset, **serials)
         return Response(data)
 
-    # filter chain classifications
+    # filter on ewc lookup
     @staticmethod
-    def filter_classif(queryset, filter):
-        '''
-        Filter booleans with multiple selections
-        '''
+    def filter_lookup(queryset, filter, boolean=False):
         queries = []
         func, vals = filter
 
-        # annotate classification field to flows
-        classifs = Classification.objects
-        subq = classifs.filter(flowchain__id=OuterRef('flowchain__id'))
-        queryset = queryset.annotate(**{func: Subquery(subq.values(func))})
+        # multiple boolean
+        if boolean:
+            func = f'flowchain__waste06__{func}'
+        # ewc classifications
+        else:
+            # convert id to name
+            search = list(Waste06.objects.values_list(func, flat=True) \
+                                         .order_by(func) \
+                                         .distinct())
 
-        # filter
+            if func == "chains":
+                search = [
+                    'primair',
+                    'secundair',
+                    'tertiair',
+                    'quaternair',
+                    'Onbekend'
+                ]
+
+            # special conversion for material hierarchy
+            if func == 'materials':
+                hierarchy = get_material_hierarchy(search)
+                search = [name for name, lvl in flatten_nested(hierarchy, [])]
+                func = f'flowchain__waste06__{func}__contains'
+            else:
+                func = f'flowchain__waste06__{func}'
+
+            vals = [int(v) for v in vals]
+            vals = [v for v in search if search.index(v) in vals]
+
         for val in vals:
             queries.append(Q(**{func: val}))
         if len(queries) == 1:
             queryset = queryset.filter(queries[0])
         if len(queries) > 1:
             queryset = queryset.filter(np.bitwise_or.reduce(queries))
+
         return queryset
 
     # non-spatial filtering
@@ -140,19 +162,29 @@ class FilterFlowViewSet(PostGetViewMixin,
         (non-spatial filtering)
         '''
 
-        # classification lookups
-        # these should be handled separately!
-        lookups = ['clean',
-                   'mixed',
-                   'direct_use',
-                   'composite']
+        # lookups for special fields
+        multiple_booleans = [
+            'clean',
+            'mixed'
+        ]
+        lookups = [
+            'materials',
+            'agendas',
+            'industries',
+            'chains'
+        ]
 
         # form queries
         queries = []
         for func, val in filters.items():
-            # handle classifications (multiple booleans!)
+            # handle multiple booleans
+            if func in multiple_booleans:
+                queryset = self.filter_lookup(queryset, (func, val), boolean=True)
+                continue
+
+            # handle ewc lookups
             if func in lookups:
-                queryset = self.filter_classif(queryset, (func, val))
+                queryset = self.filter_lookup(queryset, (func, val))
                 continue
 
             if 'year' in func:

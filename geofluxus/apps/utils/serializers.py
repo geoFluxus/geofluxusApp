@@ -7,7 +7,7 @@ from django.db.models.fields import NOT_PROVIDED
 import numpy as np
 import os
 import re
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
 from tempfile import NamedTemporaryFile
 from rest_framework import serializers
@@ -239,7 +239,7 @@ class ErrorMask:
         self._messages.append(msg)
 
     def set_error(self, indices, column, message):
-        self.error_matrix.loc[indices, column] = message
+        self.error_matrix.loc[indices, column] = str(message)
 
     @property
     def messages(self):
@@ -754,8 +754,10 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
                 df_update = df_mapped.loc[idx_both]
             else:
                 new_models = self._create_models(df_new)
-            # updated_models = self._update_models(df_update)
-            updated_models = []
+            if len(df_update) <= 1000:
+                updated_models = self._update_models(df_update)
+            else:
+                updated_models = []
         except Error as e:
             # ToDo: formatted message
             raise ValidationError(str(e))

@@ -6,9 +6,6 @@ from geofluxus.apps.asmfa.models import (Waste02,
                                          Waste04,
                                          Waste06,
                                          GNcode,
-                                         Material,
-                                         Product,
-                                         Composite,
                                          Year,
                                          Month,
                                          TreatmentEmission)
@@ -16,9 +13,6 @@ from geofluxus.apps.asmfa.serializers import (Waste02Serializer,
                                               Waste04Serializer,
                                               Waste06Serializer,
                                               GNcodeSerializer,
-                                              MaterialSerializer,
-                                              ProductSerializer,
-                                              CompositeSerializer,
                                               YearSerializer,
                                               MonthSerializer,
                                               TreatmentEmissionSerializer)
@@ -26,9 +20,6 @@ from geofluxus.apps.asmfa.serializers import (Waste02ListSerializer,
                                               Waste04ListSerializer,
                                               Waste06ListSerializer,
                                               GNcodeListSerializer,
-                                              MaterialListSerializer,
-                                              ProductListSerializer,
-                                              CompositeListSerializer,
                                               YearListSerializer,
                                               MonthListSerializer,
                                               TreatmentEmissionListSerializer)
@@ -36,12 +27,13 @@ from geofluxus.apps.asmfa.serializers import (Waste02CreateSerializer,
                                               Waste04CreateSerializer,
                                               Waste06CreateSerializer,
                                               GNcodeCreateSerializer,
-                                              MaterialCreateSerializer,
-                                              ProductCreateSerializer,
-                                              CompositeCreateSerializer,
                                               YearCreateSerializer,
                                               MonthCreateSerializer,
                                               TreatmentEmissionCreateSerializer)
+from rest_framework.response import Response
+from collections import OrderedDict
+import re
+from geofluxus.apps.utils.utils import get_material_hierarchy, flatten_nested
 
 
 # Waste02
@@ -83,6 +75,107 @@ class Waste06ViewSet(PostGetViewMixin,
     }
 
 
+# Waste06 Field Viewset
+class Waste06FieldViewSet(PostGetViewMixin,
+                          ViewSetMixin,
+                          ModelPermissionViewSet):
+    field = None
+    queryset = Waste06.objects.all()
+
+    @staticmethod
+    def format_name(name):
+        exclude = [
+            'Materiaal',
+            'TransitieAgenda',
+            'Industrie'
+        ]
+
+        def replace(name):
+            for e in exclude:
+                name = name.replace(e, '')
+            return name
+
+        name = " ".join(
+            re.findall('[A-Z&][^A-Z&]*', replace(name))
+        ) \
+            if any(char.isupper() for char in name) else name.capitalize().replace('_', ' ')
+        return name
+
+    def list(self, request, **kwargs):
+        # get all values from ewc
+        queryset = Waste06.objects.values(self.field) \
+                                  .order_by(self.field) \
+                                  .distinct()
+
+        # serialize
+        data = []
+        for idx, item in enumerate(queryset):
+            data.append(OrderedDict({
+                'id': idx,
+                'name': self.format_name(item[self.field])
+            }))
+        return Response(data)
+
+
+# Materials
+class MaterialViewSet(Waste06FieldViewSet):
+    field = 'materials'
+
+    def list(self, request, **kwargs):
+        # retrieve all materials from ewc
+        queryset = Waste06.objects.values_list(self.field, flat=True) \
+                                  .order_by(self.field) \
+                                  .distinct()
+
+        # build material hierarchy
+        hierarchy = get_material_hierarchy(queryset)
+
+        # serialize
+        data = []
+        for idx, tup in enumerate(flatten_nested(hierarchy, [])):
+            name, lvl = tup
+            data.append(OrderedDict({
+                'id': idx,
+                'name': self.format_name(name).capitalize(),
+                'level': lvl
+            }))
+        return Response(data)
+
+
+# Agendas
+class AgendaViewSet(Waste06FieldViewSet):
+    field = 'agendas'
+
+
+# Industries
+class IndustryViewSet(Waste06FieldViewSet):
+    field = 'industries'
+
+
+# Chains
+class ChainViewSet(Waste06FieldViewSet):
+    field = 'chains'
+
+    def list(self, request, **kwargs):
+        # get all values from ewc
+        queryset = [
+            'primair',
+            'secundair',
+            'tertiair',
+            'quaternair',
+            'Onbekend'
+        ]
+
+        # serialize
+        data = []
+        for idx, item in enumerate(queryset):
+            data.append(OrderedDict({
+                'id': idx,
+                'name': self.format_name(item)
+            }))
+        return Response(data)
+
+
 # GNcode
 class GNcodeViewSet(PostGetViewMixin,
                     ViewSetMixin,
@@ -106,45 +199,6 @@ class TreatmentEmissionViewSet(PostGetViewMixin,
     serializers = {
         'list': TreatmentEmissionListSerializer,
         'create': TreatmentEmissionCreateSerializer
-    }
-
-
-# Material
-class MaterialViewSet(PostGetViewMixin,
-                      ViewSetMixin,
-                      ModelPermissionViewSet):
-    queryset = Material.objects.order_by('name')
-    pagination_class = UnlimitedResultsSetPagination
-    serializer_class = MaterialSerializer
-    serializers = {
-        'list': MaterialListSerializer,
-        'create': MaterialCreateSerializer
-    }
-
-
-# Product
-class ProductViewSet(PostGetViewMixin,
-                     ViewSetMixin,
-                     ModelPermissionViewSet):
-    queryset = Product.objects.order_by('name')
-    pagination_class = UnlimitedResultsSetPagination
-    serializer_class = ProductSerializer
-    serializers = {
-        'list': ProductListSerializer,
-        'create': ProductCreateSerializer
-    }
-
-
-# Composite
-class CompositeViewSet(PostGetViewMixin,
-                       ViewSetMixin,
-                       ModelPermissionViewSet):
-    queryset = Composite.objects.order_by('name')
-    pagination_class = UnlimitedResultsSetPagination
-    serializer_class = CompositeSerializer
-    serializers = {
-        'list': CompositeListSerializer,
-        'create': CompositeCreateSerializer
     }
 
 

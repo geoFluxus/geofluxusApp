@@ -55,7 +55,7 @@ class ActivityViewSet(PostGetViewMixin,
 class ProcessGroupViewSet(PostGetViewMixin,
                           ViewSetMixin,
                           ModelPermissionViewSet):
-    queryset = ProcessGroup.objects.order_by('code')
+    queryset = ProcessGroup.objects.order_by('name')
     pagination_class = UnlimitedResultsSetPagination
     serializer_class = ProcessGroupSerializer
     serializers = {
