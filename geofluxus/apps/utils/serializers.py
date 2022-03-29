@@ -754,10 +754,11 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
                 df_update = df_mapped.loc[idx_both]
             else:
                 new_models = self._create_models(df_new)
-            if len(df_update) <= 1000:
-                updated_models = self._update_models(df_update)
-            else:
-                updated_models = []
+            # if len(df_update) <= 1000:
+            #     updated_models = self._update_models(df_update)
+            # else:
+            #     updated_models = []
+            updated_models = self._update_models(df_update)
         except Error as e:
             # ToDo: formatted message
             raise ValidationError(str(e))
