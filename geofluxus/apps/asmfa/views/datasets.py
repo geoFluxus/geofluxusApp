@@ -29,7 +29,7 @@ class DatasetTypeViewSet(PostGetViewMixin,
 class DatasetViewSet(PostGetViewMixin,
                      ViewSetMixin,
                      ModelPermissionViewSet):
-    queryset = Dataset.objects.order_by('id')
+    queryset = Dataset.objects.filter(datasettype__name='database').order_by('id')
     pagination_class = UnlimitedResultsSetPagination
     serializer_class = DatasetSerializer
     serializers = {

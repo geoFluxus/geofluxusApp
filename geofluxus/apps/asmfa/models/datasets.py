@@ -24,6 +24,7 @@ class Dataset(models.Model):
     file_url = models.URLField(max_length=200,
                                blank=True,
                                null=True)
+    routing_db = models.CharField(max_length=255, default='routing')
 
     def __str__(self):
         return self.title

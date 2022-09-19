@@ -160,7 +160,8 @@ class DatasetCreateSerializer(BulkSerializerMixin,
                                  referenced_field='name',
                                  referenced_model=DatasetType),
         'url': 'url',
-        'file_url': 'file_url'
+        'file_url': 'file_url',
+        'routing_db': 'routing_db'
     }
     index_columns = ['citekey']
 
@@ -430,7 +431,7 @@ class AreaCreateSerializer(BulkSerializerMixin,
                            referenced_field='level',
                            referenced_model=AdminLevel),
         'parent': Reference(name='parent_area',
-                            referenced_field='name',
+                            referenced_field='code',
                             referenced_model=Area,
                             allow_null=True),
         'inhabitants': 'inhabitants',
@@ -439,7 +440,7 @@ class AreaCreateSerializer(BulkSerializerMixin,
                              referenced_model=Dataset,
                              allow_null=True)
     }
-    index_columns = ['name']
+    index_columns = ['code']
 
     def get_queryset(self):
         return Area.objects.all()

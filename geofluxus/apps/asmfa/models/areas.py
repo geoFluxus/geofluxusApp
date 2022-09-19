@@ -25,7 +25,7 @@ class AdminLevel(models.Model):
 # Custom AreaQueryset
 # to simplify geometry for rendering
 class AreaQueryset(models.query.QuerySet):
-    def simplified(self, tolerance=0.01, level=None, ids=[]):
+    def simplified(self, tolerance=0.01, level=None, ids=[], request=None):
         query =\
             '''
             SELECT id,
@@ -37,6 +37,11 @@ class AreaQueryset(models.query.QuerySet):
         if ids:
             ids = [str(id) for id in ids]
             query += 'AND id IN ({ids})'.format(ids=','.join(ids))
+        if request:
+            user = request.user
+            ids = [str(id) for id in user.get_datasets()]
+            if not user.is_superuser:
+                query += 'AND dataset_id IN ({ids})'.format(ids=','.join(ids))
         return self.raw(query)
 
 
@@ -46,12 +51,13 @@ class AreaManager(models.Manager):
     def get_queryset(self):
         return AreaQueryset(self.model, using=self._db)
 
-    def simplified(self, level=None, ids=[]):
+    def simplified(self, level=None, ids=[], request=None):
         adminLevel = AdminLevel.objects.filter(id=level)
         tolerance = adminLevel.values_list('resolution', flat=None)[0][0]
         return self.get_queryset().simplified(tolerance=tolerance,
                                               level=level,
-                                              ids=ids)
+                                              ids=ids,
+                                              request=request)
 
     @staticmethod
     def update_actors(created):
