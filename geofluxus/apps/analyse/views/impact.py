@@ -51,11 +51,11 @@ class ImpactViewSet(MonitorViewSet):
 
         return queryset
 
-    def serialize_network(self, ways):
+    def serialize_network(self, ways, db='routing'):
         data = []
 
         # fetch network (with distances)
-        with connections['routing'].cursor() as cursor:
+        with connections[db].cursor() as cursor:
             query = '''
                     SELECT id,
                            ST_AsGeoJSON(the_geom),

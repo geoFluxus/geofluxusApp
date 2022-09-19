@@ -160,7 +160,8 @@ class DatasetCreateSerializer(BulkSerializerMixin,
                                  referenced_field='name',
                                  referenced_model=DatasetType),
         'url': 'url',
-        'file_url': 'file_url'
+        'file_url': 'file_url',
+        'routing_db': 'routing_db'
     }
     index_columns = ['citekey']
 

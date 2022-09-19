@@ -26,7 +26,18 @@ DATABASES = {
     },
     'routing': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': ROUTING,
+        'NAME': 'routing',
+        'USER': DB_USER,
+        'PASSWORD': DB_PASS,
+        'HOST': 'localhost',
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'allow',
+            },
+    },
+    'routing_ovam': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'routing_ovam',
         'USER': DB_USER,
         'PASSWORD': DB_PASS,
         'HOST': 'localhost',
