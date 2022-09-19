@@ -49,7 +49,7 @@ DATABASES = {
             'sslmode': 'require',
             },
     },
-    'routing': {
+    'routing_ovam': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'routing_ovam',
         'USER': DB_USER,
