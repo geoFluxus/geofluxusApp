@@ -35,7 +35,8 @@ class DatasetSerializer(HyperlinkedModelSerializer):
                   'title',
                   'datasettype',
                   'url',
-                  'file_url')
+                  'file_url',
+                  'routing_db')
 
 
 class DatasetListSerializer(DatasetSerializer):
@@ -47,4 +48,5 @@ class DatasetListSerializer(DatasetSerializer):
                   'title',
                   'datasettype',
                   'url',
-                  'file_url')
+                  'file_url',
+                  'routing_db')

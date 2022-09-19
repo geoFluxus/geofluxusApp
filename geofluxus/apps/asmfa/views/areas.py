@@ -52,7 +52,7 @@ class AreaInLevelViewSet(PostGetViewMixin,
     serializer_class = AreaSerializer
 
     def list(self, request, level_pk=None):
-        queryset = Area.objects.simplified(level=level_pk)
+        queryset = Area.objects.simplified(level=level_pk, request=request)
         serializer = AreaListSerializer(queryset,
                                         many=True,
                                         context={'request': request})

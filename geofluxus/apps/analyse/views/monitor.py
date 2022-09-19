@@ -46,7 +46,7 @@ class MonitorViewSet(FilterFlowViewSet):
         queryset = queryset.annotate(amount=F('flowchain__amount'))
         return queryset
 
-    def process_network(self, queryset):
+    def process_network(self, queryset, db='routing'):
         # group flow by routings & aggregate amount
         queryset = queryset.values('routing')\
                            .order_by('routing')\
@@ -74,13 +74,13 @@ class MonitorViewSet(FilterFlowViewSet):
                         else:
                             ways[id] = amount
 
-        return self.serialize_network(ways)
+        return self.serialize_network(ways, db=db)
 
-    def serialize_network(self, ways):
+    def serialize_network(self, ways, db='routing'):
         data = []
 
         # fetch network (without distances)
-        with connections['routing'].cursor() as cursor:
+        with connections[db].cursor() as cursor:
             query = '''
                     SELECT id,
                            ST_AsGeoJSON(the_geom)
@@ -115,7 +115,9 @@ class MonitorViewSet(FilterFlowViewSet):
 
         # process for network map
         if format == 'networkmap':
-            return self.process_network(queryset)
+            db = queryset.values_list('flowchain__dataset__routing_db', flat=True).distinct()
+            db = db[0] if len(db) else 'routing'
+            return self.process_network(queryset, db=db)
 
         # process dimensions for flow groups
         queryset = self.process_dimensions(queryset, dimensions, format)
