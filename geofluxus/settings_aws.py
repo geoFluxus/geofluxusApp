@@ -49,6 +49,17 @@ DATABASES = {
             'sslmode': 'require',
             },
     },
+    'routing': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'routing_ovam',
+        'USER': DB_USER,
+        'PASSWORD': DB_PASS,
+        'HOST': DB_HOST,
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',
+            },
+    },
 }
 
 DEBUG = False
