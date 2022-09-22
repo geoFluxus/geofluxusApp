@@ -79,6 +79,9 @@ define(['views/common/baseview',
                             'gncode': 'flowchain__gncode__in',
                         },
                         {
+                            'grondstof': 'flowchain__grondstof__in',
+                        },
+                        {
                             'route': 'flowchain__route'
                         },
                         {
@@ -118,6 +121,7 @@ define(['views/common/baseview',
                     'industry': 'industries',
                     'chain': 'chains',
                     'gncode': 'gncodes',
+                    'grondstof': 'grondstofs',
                     'arealevel': 'arealevels',
                     'year': 'years',
                     'month': 'months',
@@ -138,6 +142,7 @@ define(['views/common/baseview',
                 this.loader.activate();
                 var promises = [];
                 Object.values(this.collections).forEach(function (collection) {
+                    console.log(collection)
                     var promise = collection.fetch();
                     promises.push(promise);
                 })
@@ -1509,6 +1514,8 @@ define(['views/common/baseview',
                         "waste04": "EURAL Subhoofdstukken",
                         "waste06": "EURAL Codes",
                         "material": "Materialen in afval",
+                        "gncode": "GN Codes",
+                        "grondstof": "Grondstoffen",
                         "agenda": "Transitieagendas",
                         "industry": "Alle Industrieën",
                         "chain": "Ketenposities",

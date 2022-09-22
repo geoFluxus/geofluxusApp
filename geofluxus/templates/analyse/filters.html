@@ -1471,8 +1471,39 @@
                           <option selected value="-1">Alle (<%= gncodes.count %>)</option>
                           <option data-divider="true"></option>
                           <% gncodes.forEach(function(gncode){ %>
-                          <option value="<%= gncode.id %>"><%= gncode.get('code') %>
-                            <%= gncode.get('name') %>
+                          <option value="<%= gncode.id %>"><%= gncode.get('code') + ". "%>
+                            <%= gncode.get('name')[0].toUpperCase() + gncode.get('name').slice(1) %>
+                          </option>
+                          <% }); %>
+                      </select>
+                    </div>
+
+                    <div class="col-md-4">
+                      <label>Grondstoffen</label>
+                      <div class="labelHelpiconContainer">
+                        <a
+                          class="help-icon fas fa-question-circle"
+                          data-toggle="popover"
+                          title="Products"
+                          data-html="true"
+                          tabindex="0"
+                          data-content="The Products filter allows for the filtering of materials
+                            which are considered directly reusable.">
+                        </a>
+                      </div>
+                      <select
+                        name="flows-grondstof-select"
+                        id="flows-grondstof-select"
+                        multiple
+                        class="form-control form-control-sm selectpicker"
+                        data-live-search="true"
+                        data-size="6"
+                        style="resize: vertical;">
+                          <option selected value="-1">Alle (<%= grondstofs.count %>)</option>
+                          <option data-divider="true"></option>
+                          <% grondstofs.forEach(function(grondstof){ %>
+                          <option value="<%= grondstof.id %>"><%= grondstof.get('code') + ". "%>
+                            <%= grondstof.get('name')[0].toUpperCase() + grondstof.get('name').slice(1) %>
                           </option>
                           <% }); %>
                       </select>

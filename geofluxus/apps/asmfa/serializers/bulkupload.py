@@ -14,6 +14,7 @@ from geofluxus.apps.asmfa.models import (ActivityGroup,
                                          Waste04,
                                          Waste06,
                                          GNcode,
+                                         Grondstof,
                                          TreatmentEmission,
                                          Year,
                                          Month,
@@ -35,6 +36,7 @@ from geofluxus.apps.asmfa.serializers import (ActivityGroupSerializer,
                                               Waste04Serializer,
                                               Waste06Serializer,
                                               GNcodeSerializer,
+                                              GrondstofSerializer,
                                               TreatmentEmissionSerializer,
                                               YearSerializer,
                                               MonthSerializer,
@@ -257,6 +259,18 @@ class GNcodeCreateSerializer(BulkSerializerMixin,
         return GNcode.objects.all()
 
 
+class GrondstofCreateSerializer(BulkSerializerMixin,
+                                GrondstofSerializer):
+    field_map = {
+        'name': 'name',
+        'code': 'code'
+    }
+    index_columns = ['code']
+
+    def get_queryset(self):
+        return Grondstof.objects.all()
+
+
 class TreatmentEmissionCreateSerializer(BulkSerializerMixin,
                                         TreatmentEmissionSerializer):
     field_map = {
@@ -319,6 +333,10 @@ class FlowChainCreateSerializer(BulkSerializerMixin,
                             referenced_field='code',
                             referenced_model=GNcode,
                             allow_null=True),
+        'grondstof': Reference(name='grondstof',
+                               referenced_field='code',
+                               referenced_model=GNcode,
+                               allow_null=True),
         'dataset': Reference(name='dataset',
                              referenced_field='citekey',
                              referenced_model=Dataset)

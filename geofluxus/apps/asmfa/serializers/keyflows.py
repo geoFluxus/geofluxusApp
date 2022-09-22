@@ -5,6 +5,7 @@ from geofluxus.apps.asmfa.models import (Waste02,
                                          Waste04,
                                          Waste06,
                                          GNcode,
+                                         Grondstof,
                                          Year,
                                          Month,
                                          TreatmentEmission)
@@ -95,6 +96,23 @@ class GNcodeSerializer(HyperlinkedModelSerializer):
 
 
 class GNcodeListSerializer(GNcodeSerializer):
+    class Meta(GNcodeSerializer.Meta):
+        fields = ('id',
+                  'name',
+                  'code')
+
+
+# Grondstof
+class GrondstofSerializer(HyperlinkedModelSerializer):
+    class Meta:
+        model = Grondstof
+        fields = ('url',
+                  'id',
+                  'name',
+                  'code')
+
+
+class GrondstofListSerializer(GNcodeSerializer):
     class Meta(GNcodeSerializer.Meta):
         fields = ('id',
                   'name',

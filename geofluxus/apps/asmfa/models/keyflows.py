@@ -52,6 +52,16 @@ class GNcode(models.Model):
                                 self.name)
 
 
+# Grondstof
+class Grondstof(models.Model):
+    code = models.CharField(max_length=255)
+    name = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return "{} - {}".format(self.code,
+                                self.name)
+
+
 # Waste treatment emissions
 class TreatmentEmission(models.Model):
     waste06 = models.ForeignKey(Waste06,
