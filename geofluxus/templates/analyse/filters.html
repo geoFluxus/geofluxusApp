@@ -1441,7 +1441,8 @@
 
 <!--                  <h5 class="subtitle">Codes Gecombineerde Nomenclatuur (GN)</h5>-->
                   <div class="row">
-                    <div class="col-md-4" id="flows-gncodesCol">
+                    {% if not request.user|isOVAM %}
+                      <div class="col-md-4" id="flows-gncodesCol">
                       <label for="flows-gncode-select">GN Code</label>
                       <div class="labelHelpiconContainer">
                         <a 
@@ -1477,37 +1478,39 @@
                           <% }); %>
                       </select>
                     </div>
+                    {% endif %}
 
-                    <div class="col-md-4">
-                      <label>Grondstoffen</label>
-                      <div class="labelHelpiconContainer">
-                        <a
-                          class="help-icon fas fa-question-circle"
-                          data-toggle="popover"
-                          title="Products"
-                          data-html="true"
-                          tabindex="0"
-                          data-content="The Products filter allows for the filtering of materials
-                            which are considered directly reusable.">
-                        </a>
+                    {% if request.user|isOVAM %}
+                      <div class="col-md-4">
+                        <label>Grondstoffen</label>
+                        <div class="labelHelpiconContainer">
+                          <a
+                            class="help-icon fas fa-question-circle"
+                            data-toggle="popover"
+                            title="Grondstoffen"
+                            data-html="true"
+                            tabindex="0"
+                            data-content="">
+                          </a>
+                        </div>
+                        <select
+                          name="flows-grondstof-select"
+                          id="flows-grondstof-select"
+                          multiple
+                          class="form-control form-control-sm selectpicker"
+                          data-live-search="true"
+                          data-size="6"
+                          style="resize: vertical;">
+                            <option selected value="-1">Alle (<%= grondstofs.count %>)</option>
+                            <option data-divider="true"></option>
+                            <% grondstofs.forEach(function(grondstof){ %>
+                            <option value="<%= grondstof.id %>"><%= grondstof.get('code') + ". "%>
+                              <%= grondstof.get('name')[0].toUpperCase() + grondstof.get('name').slice(1) %>
+                            </option>
+                            <% }); %>
+                        </select>
                       </div>
-                      <select
-                        name="flows-grondstof-select"
-                        id="flows-grondstof-select"
-                        multiple
-                        class="form-control form-control-sm selectpicker"
-                        data-live-search="true"
-                        data-size="6"
-                        style="resize: vertical;">
-                          <option selected value="-1">Alle (<%= grondstofs.count %>)</option>
-                          <option data-divider="true"></option>
-                          <% grondstofs.forEach(function(grondstof){ %>
-                          <option value="<%= grondstof.id %>"><%= grondstof.get('code') + ". "%>
-                            <%= grondstof.get('name')[0].toUpperCase() + grondstof.get('name').slice(1) %>
-                          </option>
-                          <% }); %>
-                      </select>
-                    </div>
+                    {% endif %}
                   </div>
 
                   <!-- Products -->

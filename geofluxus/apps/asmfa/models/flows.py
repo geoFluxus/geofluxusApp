@@ -125,7 +125,7 @@ class FlowChain(models.Model):
     identifier = models.CharField(max_length=255)
     route = models.BooleanField(null=True, blank=True)
     collector = models.BooleanField(null=True, blank=True)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
     amount = models.DecimalField(max_digits=12, decimal_places=3)
     trips = models.IntegerField()
     month = models.ForeignKey(Month,

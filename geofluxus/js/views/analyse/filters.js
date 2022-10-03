@@ -142,7 +142,6 @@ define(['views/common/baseview',
                 this.loader.activate();
                 var promises = [];
                 Object.values(this.collections).forEach(function (collection) {
-                    console.log(collection)
                     var promise = collection.fetch();
                     promises.push(promise);
                 })

@@ -335,7 +335,7 @@ class FlowChainCreateSerializer(BulkSerializerMixin,
                             allow_null=True),
         'grondstof': Reference(name='grondstof',
                                referenced_field='code',
-                               referenced_model=GNcode,
+                               referenced_model=Grondstof,
                                allow_null=True),
         'dataset': Reference(name='dataset',
                              referenced_field='citekey',
@@ -350,10 +350,10 @@ class FlowChainCreateSerializer(BulkSerializerMixin,
         df = attrs['dataframe']
 
         # activity & process cannot be both nan!
-        if all(x in df.columns for x in ['waste', 'gncode']):
-            both_nan = pd.isnull(df['waste']) & (pd.isnull(df['gncode']))
+        if all(x in df.columns for x in ['waste', 'gncode', 'grondstof']):
+            both_nan = pd.isnull(df['waste']) & (pd.isnull(df['gncode'])) & (pd.isnull(df['grondstof']))
             if len(df[both_nan].index) > 0:
-                message = _("Flowchain should have either EWC or GN code.")
+                message = _("Flowchain should have either EWC, GN code or Grondstof Materiaal code.")
                 error_mask = ErrorMask(df)
                 error_mask.set_error(df.index[both_nan], 'waste', message)
                 response = error_mask.to_file(
