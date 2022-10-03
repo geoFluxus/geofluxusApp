@@ -6,6 +6,7 @@ from geofluxus.apps.asmfa.models import (Waste02,
                                          Waste04,
                                          Waste06,
                                          GNcode,
+                                         Grondstof,
                                          Year,
                                          Month,
                                          TreatmentEmission)
@@ -13,6 +14,7 @@ from geofluxus.apps.asmfa.serializers import (Waste02Serializer,
                                               Waste04Serializer,
                                               Waste06Serializer,
                                               GNcodeSerializer,
+                                              GrondstofSerializer,
                                               YearSerializer,
                                               MonthSerializer,
                                               TreatmentEmissionSerializer)
@@ -20,6 +22,7 @@ from geofluxus.apps.asmfa.serializers import (Waste02ListSerializer,
                                               Waste04ListSerializer,
                                               Waste06ListSerializer,
                                               GNcodeListSerializer,
+                                              GrondstofListSerializer,
                                               YearListSerializer,
                                               MonthListSerializer,
                                               TreatmentEmissionListSerializer)
@@ -27,6 +30,7 @@ from geofluxus.apps.asmfa.serializers import (Waste02CreateSerializer,
                                               Waste04CreateSerializer,
                                               Waste06CreateSerializer,
                                               GNcodeCreateSerializer,
+                                              GrondstofCreateSerializer,
                                               YearCreateSerializer,
                                               MonthCreateSerializer,
                                               TreatmentEmissionCreateSerializer)
@@ -186,6 +190,19 @@ class GNcodeViewSet(PostGetViewMixin,
     serializers = {
         'list': GNcodeListSerializer,
         'create': GNcodeCreateSerializer
+    }
+
+
+# Grondstof
+class GrondstofViewSet(PostGetViewMixin,
+                       ViewSetMixin,
+                       ModelPermissionViewSet):
+    queryset = Grondstof.objects.order_by('id')
+    pagination_class = UnlimitedResultsSetPagination
+    serializer_class = GrondstofSerializer
+    serializers = {
+        'list': GrondstofListSerializer,
+        'create': GrondstofCreateSerializer
     }
 
 

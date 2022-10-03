@@ -78,6 +78,7 @@ class FlowChainSerializer(HyperlinkedModelSerializer):
                   'trips',
                   'month',
                   'waste06',
+                  'gncode',
                   'dataset')
 
 
@@ -92,6 +93,7 @@ class FlowChainListSerializer(FlowChainSerializer):
                   'trips',
                   'month',
                   'waste06',
+                  'gncode',
                   'dataset')
 
 

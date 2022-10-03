@@ -35,3 +35,13 @@ def isExpertUser(user):
     if 'Expert' in groups:
         return True
     return False
+
+
+@register.filter
+def isOVAM(user):
+    # check all user groups
+    groups = user.groups.values_list('name', flat=True)
+
+    if 'OVAM' in groups:
+        return True
+    return False

@@ -28,6 +28,7 @@ function(Session) {
         industries:        '/api/industries',
         chains:            '/api/chains',
         gncodes:           '/api/gncodes/',
+        grondstofs:        '/api/grondstofs/',
         treatmentemissions:'/api/treatmentemissions/',
         materials:         '/api/materials/',
         products:          '/api/products/',
