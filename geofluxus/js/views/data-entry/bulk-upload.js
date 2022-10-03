@@ -43,6 +43,7 @@ var BulkUploadView = BaseView.extend({
             ['wastes04', 'Wastes (4-digit)'],
             ['wastes06', 'Wastes (6-digit)'],
             ['gncodes', 'GN codes'],
+            ['grondstofs', 'Gronstoffen'],
             ['flowchains', 'Flow Chains'],
             ['allflows', 'Flows'],
             ['arealevels', 'Admin levels'],
