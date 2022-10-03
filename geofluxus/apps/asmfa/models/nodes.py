@@ -35,7 +35,7 @@ class ProcessGroup(models.Model):
 
 # Process
 class Process(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.TextField()
     code = models.CharField(max_length=255)
     processgroup = models.ForeignKey(ProcessGroup,
                                      on_delete=models.CASCADE)

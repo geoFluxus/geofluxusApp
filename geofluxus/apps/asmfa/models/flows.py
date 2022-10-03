@@ -3,7 +3,8 @@ from geofluxus.apps.asmfa.models import (Waste06,
                                          Month,
                                          Actor,
                                          Dataset,
-                                         GNcode)
+                                         GNcode,
+                                         Grondstof)
 from django.db.models import (Q, ExpressionWrapper, F, FloatField,
                               OuterRef, Subquery)
 from django.contrib.gis.db import models as gis
@@ -124,7 +125,7 @@ class FlowChain(models.Model):
     identifier = models.CharField(max_length=255)
     route = models.BooleanField(null=True, blank=True)
     collector = models.BooleanField(null=True, blank=True)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
     amount = models.DecimalField(max_digits=12, decimal_places=3)
     trips = models.IntegerField()
     month = models.ForeignKey(Month,
@@ -135,6 +136,9 @@ class FlowChain(models.Model):
     gncode = models.ForeignKey(GNcode,
                                on_delete=models.CASCADE,
                                null=True, blank=True)
+    grondstof = models.ForeignKey(Grondstof,
+                                  on_delete=models.CASCADE,
+                                  null=True, blank=True)
     dataset = models.ForeignKey(Dataset,
                                 null=True, blank=True,
                                 on_delete=models.CASCADE)
