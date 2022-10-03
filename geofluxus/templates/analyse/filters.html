@@ -1473,7 +1473,7 @@
                           <option data-divider="true"></option>
                           <% gncodes.forEach(function(gncode){ %>
                           <option value="<%= gncode.id %>"><%= gncode.get('code') + ". "%>
-                            <%= gncode.get('name')[0].toUpperCase() + gncode.get('name').slice(1) %>
+                            <%= gncode.get('name') %>
                           </option>
                           <% }); %>
                       </select>
