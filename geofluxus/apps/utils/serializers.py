@@ -691,6 +691,10 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
             models that were updated
         """
         queryset = self.get_queryset().values(*self.index_fields)
+        if 'dataset' in dataframe.columns:
+            datasets = dataframe['dataset'].drop_duplicates().to_list()
+            citekeys = [d.citekey for d in datasets]
+            queryset = queryset.filter(dataset__citekey__in=citekeys)
         dataframe = dataframe.reset_index()
         dataframe = dataframe.drop(['index'], axis=1)
         df_existing = read_frame(queryset, verbose=False)
