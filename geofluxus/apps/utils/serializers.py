@@ -691,6 +691,10 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
             models that were updated
         """
         queryset = self.get_queryset().values(*self.index_fields)
+        if 'dataset' in dataframe.columns:
+            datasets = dataframe['dataset'].drop_duplicates().to_list()
+            citekeys = [d.citekey for d in datasets]
+            queryset = queryset.filter(dataset__citekey__in=citekeys)
         dataframe = dataframe.reset_index()
         dataframe = dataframe.drop(['index'], axis=1)
         df_existing = read_frame(queryset, verbose=False)
@@ -754,10 +758,11 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
                 df_update = df_mapped.loc[idx_both]
             else:
                 new_models = self._create_models(df_new)
-            if len(df_update) <= 1000:
-                updated_models = self._update_models(df_update)
-            else:
-                updated_models = []
+            # if len(df_update) <= 1000:
+            #     updated_models = self._update_models(df_update)
+            # else:
+            #     updated_models = []
+            updated_models = self._update_models(df_update)
         except Error as e:
             # ToDo: formatted message
             raise ValidationError(str(e))
