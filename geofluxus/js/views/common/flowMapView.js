@@ -510,11 +510,8 @@ define(['underscore',
                     // export nodes
                     let items = _.uniq(this.data.nodes, 'id'),
                         replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-                    items.forEach(function(i) {
-                        i['identifier'] = i['name'] + '_' + i['id']
-                    })
 
-                    let fields = ["name", "identifier", "lon", "lat"];
+                    let fields = ["name", "id", "lon", "lat"];
                     let header = Object.keys(items[0]);
                     header = header.filter(prop => {
                         return fields.some(f => prop.includes(f))
@@ -527,11 +524,11 @@ define(['underscore',
                     // export flows
                     items = this.data.flows;
                     items.forEach(function(i) {
-                        i['sourceIdentifier'] = i['origin']['identifier']
-                        i['targetIdentifier'] = i['destination']['identifier']
+                        i['sourceId'] = i['origin']['id']
+                        i['targetId'] = i['destination']['id']
                     })
 
-                    fields = ["amount", "Code", "Name", "Identifier"];
+                    fields = ["amount", "Code", "Name", "Id"];
                     header = Object.keys(items[0]);
                     header = header.filter(prop => {
                         return fields.some(f => prop.includes(f))
