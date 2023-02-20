@@ -43,8 +43,8 @@ define(['views/common/baseview',
                 this.el = options.el;
                 this.template = options.template;
                 this.filtersView = options.filtersView;
-                this.areaLevels = options.levels;
-                this.actorLevel = this.areaLevels.models.find(l => l.attributes.level == "1000").attributes.id;
+                this.areaLevels = options.levels.models.filter(l => l.attributes.level != "0");
+                this.actorLevel = options.levels.models.find(l => l.attributes.level == "1000").attributes.id;
 
                 this.mode = options.mode || 'monitor';
                 this.titleNumber = (options.titleNumber || 3).toString();
