@@ -15,19 +15,37 @@ from geofluxus.apps.asmfa.serializers import (AdminLevelCreateSerializer,
                                               AreaCreateSerializer,
                                               ActorCreateSerializer)
 from rest_framework.response import Response
+from django.db.models import Q
 
 
 # AdminLevel
 class AdminLevelViewSet(PostGetViewMixin,
                         ViewSetMixin,
                         ModelPermissionViewSet):
-    queryset = AdminLevel.objects.order_by('id')
+    queryset = AdminLevel.objects.order_by('level')
     pagination_class = UnlimitedResultsSetPagination
     serializer_class = AdminLevelSerializer
     serializers = {
         'list': AdminLevelListSerializer,
         'create': AdminLevelCreateSerializer
     }
+
+    def list(self, request, **kwargs):
+        # check area levels for user datasets
+        user = request.user
+        if not user.is_superuser:
+            ids = [str(id) for id in user.get_datasets()]
+            user_levels = Area.objects.filter(dataset__in=ids)\
+                .values_list('adminlevel', flat=True).distinct()
+            actor_level = AdminLevel.objects.filter(level=1000)\
+                .values_list('id', flat=True)[0]
+
+            # return only user-specific levels
+            self.queryset = AdminLevel.objects.filter(
+                Q(id__in=user_levels) |\
+                Q(id=actor_level)
+            ).order_by('level')
+        return super().list(request, **kwargs)
 
 
 # Area
