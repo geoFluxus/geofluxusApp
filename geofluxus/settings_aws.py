@@ -25,12 +25,24 @@ if private_ip:
     ALLOWED_HOSTS.append(private_ip)
 
 
+def get_region():
+    from urllib.request import urlopen
+    try:
+        response = urlopen('http://169.254.169.254/latest/meta-data/placement/region')
+        return response.read().decode("utf-8")
+    except:
+        return None
+    finally:
+        if response:
+            response.close()
+
+
 def get_secret(secret_name):
     # Create a Secrets Manager client
     session = boto3.session.Session()
     client = session.client(
         service_name='secretsmanager',
-        region_name=os.environ['REGION_NAME']
+        region_name=get_region()
     )
 
     try:
