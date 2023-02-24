@@ -42,7 +42,7 @@ class SharedFileViewSet(PostGetViewMixin,
         #workdocs
         session = boto3.session.Session()
         client = session.client(
-            service_name='secretsmanager',
+            service_name='workdocs',
             region_name='eu-west-1'
         )
         # try:
