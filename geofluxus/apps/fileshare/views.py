@@ -40,13 +40,12 @@ class SharedFileViewSet(PostGetViewMixin,
 
     def download_file(self, filename):
         #workdocs
+        session = boto3.session.Session()
+        client = session.client(
+            service_name='secretsmanager',
+            region_name='eu-west-1'
+        )
         try:
-            client = boto3.client(
-                'workdocs',
-                aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
-                aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
-                region_name='eu-west-1'
-            )
             response = client.get_document(
                 DocumentId=filename,
                 IncludeCustomMetadata=True
