@@ -45,23 +45,23 @@ class SharedFileViewSet(PostGetViewMixin,
             service_name='secretsmanager',
             region_name='eu-west-1'
         )
-        try:
-            response = client.get_document(
-                DocumentId=filename,
-                IncludeCustomMetadata=True
-            )
-            version = response['Metadata']['LatestVersionMetadata']
+        # try:
+        response = client.get_document(
+            DocumentId=filename,
+            IncludeCustomMetadata=True
+        )
+        version = response['Metadata']['LatestVersionMetadata']
 
-            response = client.get_document_version(
-                DocumentId=filename,
-                VersionId=version['Id'],
-                Fields='SOURCE'
-            )
-            url = response['Metadata']['Source']['ORIGINAL']
+        response = client.get_document_version(
+            DocumentId=filename,
+            VersionId=version['Id'],
+            Fields='SOURCE'
+        )
+        url = response['Metadata']['Source']['ORIGINAL']
 
-            return url
-        except:
-            return
+        return url
+        # except:
+        #     return
 
     def list(self, request, **kwargs):
         # download dataset file
