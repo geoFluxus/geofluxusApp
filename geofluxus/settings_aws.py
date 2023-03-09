@@ -37,7 +37,7 @@ def get_region():
             response.close()
 
 
-def get_secret(secret_name):
+def get_secret(secret_id, name=None):
     # Create a Secrets Manager client
     session = boto3.session.Session()
     client = session.client(
@@ -47,7 +47,7 @@ def get_secret(secret_name):
 
     try:
         get_secret_value_response = client.get_secret_value(
-            SecretId=secret_name
+            SecretId=secret_id
         )
     except ClientError as e:
         # For a list of exceptions thrown, see
@@ -55,6 +55,7 @@ def get_secret(secret_name):
         raise e
 
     # Decrypts secret using the associated KMS key.
+    secret_name = name if name is not None else secret_id
     secret = json.loads(get_secret_value_response['SecretString'])[secret_name]
 
     return secret
@@ -62,8 +63,8 @@ def get_secret(secret_name):
 
 DEFAULT = os.environ['DEFAULT']
 ROUTING = os.environ['ROUTING']
-DB_USER = os.environ['DB_USER']
-DB_PASS = os.environ['DB_PASS']
+DB_USER = get_secret(os.environ['DB_USER'], name='username')
+DB_PASS = get_secret(os.environ['DB_PASS'], name='password')
 DB_HOST = get_secret(os.environ['DB_HOST'])
 SECRET_KEY = os.environ['SECRET_KEY']
 
