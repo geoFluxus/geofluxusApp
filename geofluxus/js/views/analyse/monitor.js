@@ -545,7 +545,8 @@ define(['views/common/baseview',
                     dimensions: dimensions,
                     flows: flows,
                     flowsView: _this,
-                    geoJson: geoJson
+                    geoJson: geoJson,
+                    label: this.labels[this.indicator]
                 });
             },
 
