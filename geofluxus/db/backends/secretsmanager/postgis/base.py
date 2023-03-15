@@ -1,11 +1,9 @@
 import boto3
-from django.db.utils import OperationalError
-
+import psycopg2
 from geofluxus.aws_utils import *
 from aws_secretsmanager_caching import SecretCache, SecretCacheConfig
 import os
 from django.contrib.gis.db.backends.postgis import base
-import psycopg2
 
 
 # source:
@@ -45,7 +43,7 @@ class DatabaseWrapper(base.DatabaseWrapper):
             databasecredentials.get_conn_params_from_secrets_manager(conn_params)
             conn = super(DatabaseWrapper, self).get_new_connection(conn_params)
             return conn
-        except:
+        except psycopg2.OperationalError:
             databasecredentials.refresh_now()
             databasecredentials.get_conn_params_from_secrets_manager(conn_params)
             conn = super(DatabaseWrapper, self).get_new_connection(conn_params)
