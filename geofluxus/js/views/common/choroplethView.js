@@ -35,9 +35,15 @@ define(['views/common/d3plusVizView',
 
                     this.options = options;
                     this.flows = this.options.flows;
-                    this.tooltipConfig.title = function (d) {
-                        return d.areaName
-                    }
+                    this.label = this.options.label;
+                    let dimensions = this.options.dimensions,
+                        actorLevel = dimensions.isActorLevel,
+                        prop = actorLevel ? "actorName" : "areaName",
+                        label = actorLevel ? 'Bedrijf' : 'Gebied';
+                    this.tooltipConfig.title = this.label + " per " + label;
+                    this.tooltipConfig.tbody.push([label, function (d) {
+                        return d[prop];
+                    }]);
 
                     this.render();
                 },
