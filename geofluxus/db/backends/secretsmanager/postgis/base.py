@@ -25,7 +25,7 @@ class DatabaseCredentials:
         username = secret_dict["username"]
         password = secret_dict["password"]
         conn_params['user'] = username
-        conn_params['passwd'] = password
+        conn_params['password'] = password
         return
 
     def refresh_now(self):
