@@ -44,7 +44,7 @@ class DatabaseWrapper(base.DatabaseWrapper):
             conn = super(DatabaseWrapper,self).get_new_connection(conn_params)
             return conn
         except psycopg2.OperationalError as e:
-            error_code=e.args[0]
+            error_code = e.args[0]
             if error_code != 1045:
                 raise e
 
