@@ -45,7 +45,7 @@ class DatabaseWrapper(base.DatabaseWrapper):
             databasecredentials.get_conn_params_from_secrets_manager(conn_params)
             conn = super(DatabaseWrapper, self).get_new_connection(conn_params)
             return conn
-        except OperationalError:
+        except:
             databasecredentials.refresh_now()
             databasecredentials.get_conn_params_from_secrets_manager(conn_params)
             conn = super(DatabaseWrapper, self).get_new_connection(conn_params)
