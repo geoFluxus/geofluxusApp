@@ -1,5 +1,5 @@
 import boto3
-import django.db.utils
+from django.db.utils import OperationalError
 
 from geofluxus.aws_utils import *
 from aws_secretsmanager_caching import SecretCache, SecretCacheConfig
@@ -43,10 +43,10 @@ class DatabaseWrapper(base.DatabaseWrapper):
     def get_new_connection(self, conn_params):
         try:
             databasecredentials.get_conn_params_from_secrets_manager(conn_params)
-            conn = super(DatabaseWrapper,self).get_new_connection(conn_params)
+            conn = super(DatabaseWrapper, self).get_new_connection(conn_params)
             return conn
-        except django.db.utils.OperationalError:
+        except OperationalError:
             databasecredentials.refresh_now()
             databasecredentials.get_conn_params_from_secrets_manager(conn_params)
-            conn = super(DatabaseWrapper,self).get_new_connection(conn_params)
+            conn = super(DatabaseWrapper, self).get_new_connection(conn_params)
             return conn
