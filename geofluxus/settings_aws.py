@@ -1,20 +1,5 @@
 from geofluxus.settings import *
-import boto3
-from botocore.exceptions import ClientError
-import json
-
-
-def get_linux_ec2_private_ip():
-    """Get the private IP Address of the machine if running on an EC2 linux server"""
-    from urllib.request import urlopen
-    try:
-        response = urlopen('http://169.254.169.254/latest/meta-data/local-ipv4')
-        return response.read().decode("utf-8")
-    except:
-        return None
-    finally:
-        if response:
-            response.close()
+from geofluxus.aws_utils import *
 
 
 # ElasticBeanstalk healthcheck sends requests with host header = internal ip
@@ -25,55 +10,18 @@ if private_ip:
     ALLOWED_HOSTS.append(private_ip)
 
 
-def get_region():
-    from urllib.request import urlopen
-    try:
-        response = urlopen('http://169.254.169.254/latest/meta-data/placement/region')
-        return response.read().decode("utf-8")
-    except:
-        return None
-    finally:
-        if response:
-            response.close()
-
-
-def get_secret(secret_id, name=None):
-    # Create a Secrets Manager client
-    session = boto3.session.Session()
-    client = session.client(
-        service_name='secretsmanager',
-        region_name=get_region()
-    )
-
-    try:
-        get_secret_value_response = client.get_secret_value(
-            SecretId=secret_id
-        )
-    except ClientError as e:
-        # For a list of exceptions thrown, see
-        # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
-        raise e
-
-    # Decrypts secret using the associated KMS key.
-    secret_name = name if name is not None else secret_id
-    secret = json.loads(get_secret_value_response['SecretString'])[secret_name]
-
-    return secret
-
-
 DEFAULT = os.environ['DEFAULT']
 ROUTING = os.environ['ROUTING']
 DB_USER = get_secret(os.environ['DB_USER'], name='username')
-DB_PASS = get_secret(os.environ['DB_PASS'], name='password')
+# DB_PASS = get_secret(os.environ['DB_PASS'], name='password')
 DB_HOST = get_secret(os.environ['DB_HOST'])
 SECRET_KEY = get_secret(os.environ['SECRET_KEY'])
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'ENGINE': 'geofluxus.db.backends.secretsmanager.postgis',
         'NAME': DEFAULT,
         'USER': DB_USER,
-        'PASSWORD': DB_PASS,
         'HOST': DB_HOST,
         'PORT': '5432',
         'OPTIONS': {
@@ -81,10 +29,9 @@ DATABASES = {
             },
     },
     'routing': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'ENGINE': 'geofluxus.db.backends.secretsmanager.postgis',
         'NAME': ROUTING,
         'USER': DB_USER,
-        'PASSWORD': DB_PASS,
         'HOST': DB_HOST,
         'PORT': '5432',
         'OPTIONS': {
@@ -92,10 +39,9 @@ DATABASES = {
             },
     },
     'routing_ovam': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'ENGINE': 'geofluxus.db.backends.secretsmanager.postgis',
         'NAME': 'routing_ovam',
         'USER': DB_USER,
-        'PASSWORD': DB_PASS,
         'HOST': DB_HOST,
         'PORT': '5432',
         'OPTIONS': {
