@@ -13,7 +13,7 @@ if private_ip:
 DEFAULT = os.environ['DEFAULT']
 ROUTING = os.environ['ROUTING']
 DB_USER = get_secret(os.environ['DB_USER'], name='username')
-DB_PASS = get_secret(os.environ['DB_PASS'], name='password')
+# DB_PASS = get_secret(os.environ['DB_PASS'], name='password')
 DB_HOST = get_secret(os.environ['DB_HOST'])
 SECRET_KEY = get_secret(os.environ['SECRET_KEY'])
 
