@@ -22,7 +22,6 @@ DATABASES = {
         'ENGINE': 'geofluxus.db.backends.secretsmanager.postgis',
         'NAME': DEFAULT,
         'USER': DB_USER,
-        'PASSWORD': DB_PASS,
         'HOST': DB_HOST,
         'PORT': '5432',
         'OPTIONS': {
@@ -33,7 +32,6 @@ DATABASES = {
         'ENGINE': 'geofluxus.db.backends.secretsmanager.postgis',
         'NAME': ROUTING,
         'USER': DB_USER,
-        'PASSWORD': DB_PASS,
         'HOST': DB_HOST,
         'PORT': '5432',
         'OPTIONS': {
@@ -44,7 +42,6 @@ DATABASES = {
         'ENGINE': 'geofluxus.db.backends.secretsmanager.postgis',
         'NAME': 'routing_ovam',
         'USER': DB_USER,
-        'PASSWORD': DB_PASS,
         'HOST': DB_HOST,
         'PORT': '5432',
         'OPTIONS': {
