@@ -160,7 +160,7 @@ define(['views/common/d3plusVizView',
 
                             // update item
                             var attr = obj.attributes,
-                                code = attr.code || attr.nace || attr.ewc_code,
+                                code = attr.code || attr.nace || attr.ewc_code || "",
                                 name = utils.capitalizeFirstLetter(attr.name || attr.ewc_name);
                             item.id = code + " " + name + extra;
                         })

@@ -90,7 +90,7 @@ define(['views/common/baseview',
 
                 renderTitle: function() {
                     $(".viz-wrapper-title").html("");
-                    $(".viz-wrapper-title").append(`Visualisatie: ${this.tooltipConfig.title}`);
+                    $(".viz-wrapper-title").append(`Visualisatie: ${this.tooltipConfig.title || ""}`);
                 },
 
                 scrollToVisualization: function () {
