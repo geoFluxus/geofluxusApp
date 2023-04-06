@@ -326,13 +326,13 @@ define(['views/common/baseview',
                         $("#origDest-toggle-origin").parent().fadeIn();
                     }
 
-                    // Only treatmentMethod:
-                    if (_this.selectedDimensionStrings == "treatmentMethod" && clickedToggleHasFlowsFormat) {
-                        //$("#origDest-toggle-treatment").parent().fadeOut();
-                        $(_this.treatmentMethodOrigDest).bootstrapToggle('off');
-                    } else {
-                        //$("#origDest-toggle-treatment").parent().fadeIn();
-                    }
+//                    // Only treatmentMethod:
+//                    if (_this.selectedDimensionStrings == "treatmentMethod" && clickedToggleHasFlowsFormat) {
+//                        //$("#origDest-toggle-treatment").parent().fadeOut();
+//                        $(_this.treatmentMethodOrigDest).bootstrapToggle('off');
+//                    } else {
+//                        //$("#origDest-toggle-treatment").parent().fadeIn();
+//                    }
 
                     // Hide space gran for Network Map:
                     if (_this.selectedVizName == "networkmap") {
