@@ -108,7 +108,7 @@ MIDDLEWARE = [
 # content security policy (csp)
 if int(os.getenv('PROD', 1)):
     MIDDLEWARE += ['csp.middleware.CSPMiddleware',]
-    CSP_DEFAULT_SRC = ["'none'"]
+    CSP_DEFAULT_SRC = ["'self'"]
     CSP_IMG_SRC = ("'self'",)
     CSP_STYLE_SRC = ("'self'",)
     CSP_SCRIPT_SRC = ("'self'",)
