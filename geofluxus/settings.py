@@ -105,17 +105,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
-# content security policy (csp)
-if int(os.getenv('PROD', 1)):
-    MIDDLEWARE += ['csp.middleware.CSPMiddleware',]
-    CSP_DEFAULT_SRC = ["'none'"]
-    CSP_IMG_SRC = ("'self'",)
-    CSP_STYLE_SRC = ("'self'",)
-    CSP_SCRIPT_SRC = ("'self'",)
-    CSP_FONT_SRC = ("'self'",)
-    CSP_FRAME_SRC = ("https://d37rwqu8fuhb92.cloudfront.net")
-
-
 ROOT_URLCONF = 'geofluxus.urls'
 
 TEMPLATES = [
