@@ -390,6 +390,7 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
 
         fn, ext = os.path.splitext(file.name)
         self.input_file_ext = ext
+        self.input_file_name = fn
         try:
             if ext == '.xlsx':
                 dataframe = pd.read_excel(file, dtype=object,
