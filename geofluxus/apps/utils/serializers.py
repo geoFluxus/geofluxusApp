@@ -697,7 +697,7 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
             datasets = dataframe['dataset'].drop_duplicates().to_list()
             citekeys = [d.citekey for d in datasets]
             queryset = queryset.filter(dataset__citekey__in=citekeys)
-        if 'flow' in self.input_file_name or 'routing' in self.input_file_name:
+        elif 'flow' in self.input_file_name or 'routing' in self.input_file_name:
             citekeys = Dataset.objects.values_list('citekey', flat=True)
             queryset = queryset.filter(
                 Q(origin__dataset__citekey__in=citekeys) & \
