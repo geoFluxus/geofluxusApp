@@ -20,6 +20,7 @@ from django.contrib.gis.geos import GEOSGeometry, WKTWriter
 from django.conf import settings
 from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
+from geofluxus.apps.asmfa.models import Dataset
 
 
 class BulkValidationError(Exception):
@@ -695,6 +696,12 @@ class BulkSerializerMixin(metaclass=serializers.SerializerMetaclass):
             datasets = dataframe['dataset'].drop_duplicates().to_list()
             citekeys = [d.citekey for d in datasets]
             queryset = queryset.filter(dataset__citekey__in=citekeys)
+        if 'flow' in self.input_file_name or 'routing' in self.input_file_name:
+            citekeys = Dataset.objects.values_list('citekey', flat=True)
+            queryset = queryset.filter(
+                Q(origin__dataset__citekey__in=citekeys) & \
+                Q(destination__dataset__citekey__in=citekeys)
+            )
         dataframe = dataframe.reset_index()
         dataframe = dataframe.drop(['index'], axis=1)
         df_existing = read_frame(queryset, verbose=False)
