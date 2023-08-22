@@ -185,7 +185,7 @@ STATICFILES_FINDERS = (
 
 # emails
 # production
-if 'PROD' in os.getenv('DB_HOST', 'DB_HOST'):
+if os.getenv('DB_HOST', None) is not None:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = 'smtp.gmail.com'
     EMAIL_USE_TLS = True
