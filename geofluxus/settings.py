@@ -183,7 +183,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder'
 )
 
-# emails
+# login email
 # production
 if os.getenv('DB_HOST', None) is not None:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
