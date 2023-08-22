@@ -29,135 +29,141 @@
   <meta name="theme-color" content="#ffffff">
 </head>
 
-<body>
-  <!--Navbar-->
-  <nav class="navbar navbar-expand-md" id="navbarID">
-    <a class="navbar-brand" href="/"><img src="../static/img/nav/nav-logo.png"></a>
-    <div class="collapse navbar-collapse">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item {% if request.resolver_match.url_name == 'analyse' %}active{% endif %}"
-          id="analyse-link">
-          <a class="nav-link" href="/analyse">Analyse</a>
-        </li>
-        {% if request.user|isExpertUser %}
-          <a class="nav-link" href="/datasets">Databronnen</a>
-        {% endif %}
-      </ul>
+<body style="height: 100vh;">
+  <div style="display: flex; flex-flow: column; height: 100vh;">
+    <!--Navbar-->
+    <nav class="navbar navbar-expand-md" id="navbarID">
+      <a class="navbar-brand" href="/"><img src="../static/img/nav/nav-logo.png"></a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item {% if request.resolver_match.url_name == 'analyse' %}active{% endif %}"
+            id="analyse-link">
+            <a class="nav-link" href="/analyse">Analyse</a>
+          </li>
+          {% if request.user|isExpertUser %}
+            <a class="nav-link" href="/datasets">Databronnen</a>
+          {% endif %}
+        </ul>
 
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          {% if request.user.is_authenticated %}
-          <div class="dropdown">
-            <button class="dropdown-button" type="button">
-              <i class="fas fa-user"></i><span style="margin-left: 0.5rem;">{{ request.user.username }}</span>
-              <i class="fas fa-caret-down"></i>
-            </button>
-            <div class="dropdown-content">
-              {% if request.user.is_superuser %}
-              <a href="/data-entry">Data Entry</a>
-              <a href="/admin">Admin</a>
-              <a href="/api">API</a> {% endif %}
-              <a href="/logout">Logout</a>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            {% if request.user.is_authenticated %}
+            <div class="dropdown">
+              <button class="dropdown-button" type="button">
+                <i class="fas fa-user"></i><span style="margin-left: 0.5rem;">{{ request.user.username }}</span>
+                <i class="fas fa-caret-down"></i>
+              </button>
+              <div class="dropdown-content">
+                {% if request.user.is_superuser %}
+                <a href="/data-entry">Data Entry</a>
+                <a href="/admin">Admin</a>
+                <a href="/api">API</a> {% endif %}
+                <a href="/logout">Logout</a>
+              </div>
             </div>
-          </div>
-          {% else %}
-          <a class="nav-link" href="/login/login">Login</a> {% endif %}
-        </li>
-      </ul>
-    </div>
-  </nav>
-
-  {% if request.user.is_authenticated %}
-    {% if not request.user|datasets %}
-    <div class="alert alert-warning text-center warning-no-datasets">
-      <small>
-        You are not allowed to access any data sets. Please contact us.
-      </small>
-    </div>
-    {% endif %}
-  {% endif %}
-
-  <!-- Sidebar -->
-  <div id="wrapper" class="active">
-
-    <!-- <div id="sidebar-wrapper" style="display: none;">
-          <div id="sidebar-content" >
-            {% block sidebar %}
-            {% endblock %}
-          </div>
-        </div> -->
-
-    <!-- Page content -->
-    <div id="page-content-wrapper">
-      <!-- Keep all page content within the page-content inset div! -->
-      <div class="page-content inset">
-        <div class="row" style="padding: 0px;">
-          <div id="content" class="col-md-12">
-            {% block content %}{% endblock %}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <footer class="page-footer font-small">
-
-    <!-- Footer Links -->
-    {% comment %}
-    <div class="container-fluid text-center text-md-left">
-
-      <hr class="clearfix w-100 d-md-none pb-3">
-
-      <div class="row pt-5 align-items-center ">
-        <div class="col-md-6 mt-md-0 mt-3 text-center border-top" style="margin: auto;padding-top: 2.5rem;">
-          <h5>geoFluxus</h5>
-          <p style="font-size: small; max-width: 26rem; margin: auto; margin-top: 1rem; ">The open-source platform that
-            maps, analyses and predicts resource flows as the essential trigger for a Circular Economy.</p>
-        </div>
-      </div>
-
-      <div class="row pt-5 align-items-center ">
-        <ul class="list-unstyled footer-logos mx-auto d-block">
-          <li>
-            <a href="https://ec.europa.eu/programmes/horizon2020/"><img src="../static/img/footer/eu.jpg"></a>
-          </li>
-          <li>
-            <a href="http://h2020repair.eu/"><img src="../static/img/footer/repair.png"></a>
-          </li>
-          <li>
-            <a href="https://www.cinderela.eu/"><img src="../static/img/footer/cinderela.png"></a>
-          </li>
-          <li>
-            <a href="https://www.ams-institute.org/"><img src="../static/img/footer/ams.png"></a>
-          </li>
-          <li>
-            <a href="http://urbanism.nl/"><img src="../static/img/footer/tudelft.png" style="padding: 0.1rem;"></a>
+            {% else %}
+            <a class="nav-link" href="/login/login">Login</a> {% endif %}
           </li>
         </ul>
       </div>
+    </nav>
 
-      <div class="col-md-6 mt-md-0 mt-3 pt-2 text-center border-top mx-auto h2020funding">
-        <p>This project has received
-          funding from the European Union’s Horizon 2020 research and innovation programme under Grant Agreements No.
-          <a href="https://cordis.europa.eu/project/id/776751"><u>776751</u></a> and No. <a
-            href="https://cordis.europa.eu/project/id/"><u>688920</u></a>.</p>
+    {% if request.user.is_authenticated %}
+      {% if not request.user|datasets %}
+      <div class="alert alert-warning text-center warning-no-datasets">
+        <small>
+          You are not allowed to access any data sets. Please contact us.
+        </small>
+      </div>
+      {% endif %}
+    {% endif %}
+
+    <!-- Sidebar -->
+    <div id="wrapper" class="active">
+
+      <!-- <div id="sidebar-wrapper" style="display: none;">
+            <div id="sidebar-content" >
+              {% block sidebar %}
+              {% endblock %}
+            </div>
+          </div> -->
+
+      <!-- Page content -->
+      <div id="page-content-wrapper">
+        <!-- Keep all page content within the page-content inset div! -->
+        <div class="page-content inset">
+          <div class="row" style="padding: 0px;">
+            <div id="content" class="col-md-12">
+              {% block content %}{% endblock %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- fill remaining height -->
+    <div style="flex-grow: 1;"></div>
+
+    <!-- Footer -->
+    <footer class="page-footer font-small">
+
+      <!-- Footer Links -->
+      {% comment %}
+      <div class="container-fluid text-center text-md-left">
+
+        <hr class="clearfix w-100 d-md-none pb-3">
+
+        <div class="row pt-5 align-items-center ">
+          <div class="col-md-6 mt-md-0 mt-3 text-center border-top" style="margin: auto;padding-top: 2.5rem;">
+            <h5>geoFluxus</h5>
+            <p style="font-size: small; max-width: 26rem; margin: auto; margin-top: 1rem; ">The open-source platform that
+              maps, analyses and predicts resource flows as the essential trigger for a Circular Economy.</p>
+          </div>
+        </div>
+
+        <div class="row pt-5 align-items-center ">
+          <ul class="list-unstyled footer-logos mx-auto d-block">
+            <li>
+              <a href="https://ec.europa.eu/programmes/horizon2020/"><img src="../static/img/footer/eu.jpg"></a>
+            </li>
+            <li>
+              <a href="http://h2020repair.eu/"><img src="../static/img/footer/repair.png"></a>
+            </li>
+            <li>
+              <a href="https://www.cinderela.eu/"><img src="../static/img/footer/cinderela.png"></a>
+            </li>
+            <li>
+              <a href="https://www.ams-institute.org/"><img src="../static/img/footer/ams.png"></a>
+            </li>
+            <li>
+              <a href="http://urbanism.nl/"><img src="../static/img/footer/tudelft.png" style="padding: 0.1rem;"></a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="col-md-6 mt-md-0 mt-3 pt-2 text-center border-top mx-auto h2020funding">
+          <p>This project has received
+            funding from the European Union’s Horizon 2020 research and innovation programme under Grant Agreements No.
+            <a href="https://cordis.europa.eu/project/id/776751"><u>776751</u></a> and No. <a
+              href="https://cordis.europa.eu/project/id/"><u>688920</u></a>.</p>
+        </div>
+
+      </div>
+      {% endcomment %}
+      <!-- Footer Links -->
+
+      <div class="footer-copyright" style="display: flex; height: 5rem;">
+        <div style="margin: auto;">
+          <span>License: <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"><u>GNU GPLv2</u></a></span>
+          <span class="copyleft">&copy;</span><span> {%now "Y"%} </span>
+          <a href="http://geofluxus.com/">geofluxus.com</a>
+        </div>
       </div>
 
-    </div>
-    {% endcomment %}
-    <!-- Footer Links -->
+    </footer>
+    <!-- Footer -->
 
-    <div class="footer-copyright" style="display: flex; height: 5rem;">
-      <div style="margin: auto;">
-        <span>License: <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"><u>GNU GPLv2</u></a></span>
-        <span class="copyleft">&copy;</span><span> {%now "Y"%} </span>
-        <a href="http://geofluxus.com/">geofluxus.com</a>
-      </div>
-    </div>
-
-  </footer>
-  <!-- Footer -->
+  </div>
 
   {% include 'common.html' %}
 </body>
