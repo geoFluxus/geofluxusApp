@@ -1,0 +1,18 @@
+{% load i18n %}{% autoescape off %}
+
+{% blocktranslate %}
+Welkom bij geoFluxus,
+{% endblocktranslate %}
+
+{% translate "Hier de inloggegevens:" %}
+- {% translate "Gebruikersnaam is het email adres waarop je deze mail ontvangt." %}
+- {% translate "Wachtwoord kan je instellen via de volgende link:" %} {% block reset_link %}{{ protocol }}://{{ domain }}/nl/password_reset{% endblock %}
+{% translate "Mocht je feedback of vragen hebben kan je altijd contact met ons opnemen." %}
+
+{% blocktranslate %}
+Met vriendelijke groet,
+
+Het geoFluxus team
+{% endblocktranslate %}
+
+{% endautoescape %}
