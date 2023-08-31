@@ -61,7 +61,7 @@ body {
 
 #wrapper {
   padding-top: 80px;
-  z-index: 800;
+  /*z-index: 800;*/
 }
 
 #page-content-wrapper {
@@ -69,7 +69,7 @@ body {
   padding-right: 20px;
   padding-top: 10px;
   padding-bottom: 10px;
-  z-index: 400;
+  /*z-index: 400;*/
 }
 
 /* BORDER RADIUS */
