@@ -10,3 +10,4 @@ geofluxus/webpack-stats-dev.json
 package.json
 yarn.lock
 gfapp
+geofluxus/sent_emails
