@@ -20,6 +20,8 @@ from django.conf import settings
 from geofluxus.views import HomeView
 from geofluxus.apps.login.views import LoginView, logout_view
 import django.contrib.auth.views as auth_views
+from django.conf.urls.i18n import i18n_patterns
+
 
 urlpatterns = [
     re_path(r'^$', HomeView.as_view(), name='index'),
@@ -35,7 +37,7 @@ urlpatterns = [
 + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
 + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-urlpatterns += (
+urlpatterns += i18n_patterns(
     # default django views
     # reset password
     path('password_reset/',
@@ -66,6 +68,5 @@ urlpatterns += (
     path('password_change/',
          auth_views.PasswordChangeView.as_view(),
          name='password_change')
-
     # re_path(r'^', include('django.contrib.auth.urls'))
 )
