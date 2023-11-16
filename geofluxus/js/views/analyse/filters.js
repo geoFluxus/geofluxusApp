@@ -890,40 +890,87 @@ define(['views/common/baseview',
                         var actorObjects = config[group].actorObjects;
 
                         var actorIds = config.flows[group + '__company__id__in'];
+                        var datasetIds = config.flows['datasets']
                         if (actorIds !== undefined) {
                             _this[group].selectedActors = actorIds;
 
-                            var actorOptionsHtml = "<optgroup label='Currently selected:'>";
-                            var actorNames = [];
-                            actorObjects.forEach(actor => {
-                                actorOptionsHtml += '<option value="' + actor.id + '" title="' + actor.name + '" selected="selected">' + actor.name + '</option>';
-                                actorNames.push(actor.name);
-                            });
-                            actorOptionsHtml += '</optgroup>';
+                            fetch(`/api/companies?datasets=${JSON.stringify(datasetIds)}&page=1&page_size=1000000`)
+                              .then(response => response.json())
+                              .then(function(data) {
+                                    var actorObjects = data.results.filter(d => actorIds.includes(d.id.toString()))
+                                    var actorOptionsHtml = "<optgroup label='Currently selected:'>";
+                                    var actorNames = [];
+                                    actorObjects.forEach(actor => {
+                                        actorOptionsHtml += '<option value="' + actor.id + '" title="' + actor.name + '" selected="selected">' + actor.name + '</option>';
+                                        actorNames.push(actor.name);
+                                    });
+                                    actorOptionsHtml += '</optgroup>';
 
-                            $.fn.ajaxSelectPickerRefresh = function () {
-                                return this.each(function () {
-                                    if (!$(this).data('AjaxBootstrapSelect')) return;
-                                    var picker = $(this).data('AjaxBootstrapSelect');
-                                    var selected = [];
-                                    var selectValues = picker.$element.find('option:selected');
-                                    for (var i = 0; i < selectValues.length; i++) {
-                                        selected.push({
-                                            value: selectValues[i].value,
-                                            text: selectValues[i].text,
-                                            class: "",
-                                            data: {},
-                                            preserved: true,
-                                            selected: true
+                                    $.fn.ajaxSelectPickerRefresh = function () {
+                                        return this.each(function () {
+                                            if (!$(this).data('AjaxBootstrapSelect')) return;
+                                            var picker = $(this).data('AjaxBootstrapSelect');
+                                            var selected = [];
+                                            var selectValues = picker.$element.find('option:selected');
+                                            for (var i = 0; i < selectValues.length; i++) {
+                                                selected.push({
+                                                    value: selectValues[i].value,
+                                                    text: selectValues[i].text,
+                                                    class: "",
+                                                    data: {},
+                                                    preserved: true,
+                                                    selected: true
+                                                });
+                                            }
+                                            picker.list.selected = selected;
                                         });
                                     }
-                                    picker.list.selected = selected;
-                                });
-                            }
-                            actorFilter.append(actorOptionsHtml).selectpicker('refresh').ajaxSelectPickerRefresh();
-                            $("." + group + "-actor-select-col button").attr("title", actorNames.join(", "));
-                            $("." + group + "-actor-select-col .filter-option-inner-inner").html(actorNames.join(", "));
-                            $("." + group + "-actor-select-col .status").hide();
+                                    actorFilter.append(actorOptionsHtml).selectpicker('refresh').ajaxSelectPickerRefresh();
+                                    $("." + group + "-actor-select-col button").attr("title", actorNames.join(", "));
+                                    $("." + group + "-actor-select-col .filter-option-inner-inner").html(actorNames.join(", "));
+                                    $("." + group + "-actor-select-col .status").hide();
+                              })
+
+//                            fetch({
+//                                data: {},
+//                                success: function () {
+//                                    console.log(collection)
+////                                    var actorOptionsHtml = "<optgroup label='Currently selected:'>";
+////                                    var actorNames = [];
+////                                    actorObjects.forEach(actor => {
+////                                        actorOptionsHtml += '<option value="' + actor.id + '" title="' + actor.name + '" selected="selected">' + actor.name + '</option>';
+////                                        actorNames.push(actor.name);
+////                                    });
+////                                    actorOptionsHtml += '</optgroup>';
+////
+////                                    $.fn.ajaxSelectPickerRefresh = function () {
+////                                        return this.each(function () {
+////                                            if (!$(this).data('AjaxBootstrapSelect')) return;
+////                                            var picker = $(this).data('AjaxBootstrapSelect');
+////                                            var selected = [];
+////                                            var selectValues = picker.$element.find('option:selected');
+////                                            for (var i = 0; i < selectValues.length; i++) {
+////                                                selected.push({
+////                                                    value: selectValues[i].value,
+////                                                    text: selectValues[i].text,
+////                                                    class: "",
+////                                                    data: {},
+////                                                    preserved: true,
+////                                                    selected: true
+////                                                });
+////                                            }
+////                                            picker.list.selected = selected;
+////                                        });
+////                                    }
+////                                    actorFilter.append(actorOptionsHtml).selectpicker('refresh').ajaxSelectPickerRefresh();
+////                                    $("." + group + "-actor-select-col button").attr("title", actorNames.join(", "));
+////                                    $("." + group + "-actor-select-col .filter-option-inner-inner").html(actorNames.join(", "));
+////                                    $("." + group + "-actor-select-col .status").hide();
+//                                },
+//                                error: function (error) {
+//                                    console.log(error);
+//                                }
+//                            });
                         }
                     })
 
@@ -1365,14 +1412,15 @@ define(['views/common/baseview',
 
                         // Save actor objects:
                         filterParams[group].actorObjects = [];
+                        var companies = []
                         $('#' + group + '-actor-select optgroup option').each(function (index, element) {
                             filterParams[group].actorObjects.push({
-                                id: $(this).val(),
-                                name: $(this).attr("title"),
+                                id: $(this).val()
                             })
+                            companies.push($(this).attr("title"))
                         });
 
-                        _this.log[group]['companies'] = filterParams[group].actorObjects.map(a => a.name);
+                        _this.log[group]['companies'] = companies
                     }
 
                     var role = _this[group].role;
