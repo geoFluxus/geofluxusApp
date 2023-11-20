@@ -500,6 +500,8 @@ define(['views/common/baseview',
                                     var params = {
                                         q: '{{{q}}}',
                                         datasets: JSON.stringify(_this.getFilterParams().flows.datasets),
+                                        page: 1,
+                                        page_size: 1000000
                                     }
                                     return params;
                                 }
