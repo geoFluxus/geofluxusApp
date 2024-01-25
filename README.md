@@ -1,5 +1,22 @@
-# geoflux
-New implementation of geoFluxus website
+# geoFluxus
+This software is a web-application used for expert waste analysis of large datasets generated as part of the Waste Directive 2008/98/EC of the European Parliament and of the Council.
+The software allows to analyse and visualise the data along five dimensions as described in the theory of Socioeconomic Metabolism: time, space, process, material and flow.
+The software autimatically enriches the datasets with the following information:
+- geolocation of the waste disposal and processing;
+- waste processing chain position;
+- circular economy transition agenda;
+- industry;
+- materials found in waste, their geological origin and composition;
+- potential for better processing based on the waste cleanliness, purity and hazardousness;
+- transport impact in terms of CO2 emissions;
+- transport impact in terms of road usage and congestion.
+
+The software allows to produce 12 different types of visualisations among which flow, transport and choropleth maps. It also allows exporting datasets for further use.
+
+Data prepartion for uploading in this software is done by running a separate script which needs to be tailored to the specific raw data of the region. geoFuxus has scripts available for processing Dutch and Belgian (Flanders) waste reports.
+
+Before using this software we highly recommend getting in touch with geoFluxus via https://www.geofluxus.com
+
 
 ## Local Installation
 ### Clone repo
