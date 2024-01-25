@@ -17,6 +17,10 @@ Data prepartion for uploading in this software is done by running a separate scr
 
 Before using this software we highly recommend getting in touch with geoFluxus via https://www.geofluxus.com
 
+The development of this software has been supported by:
+- European Union’s Horizon 2020 research and innovation programme under grant agreements No 688920 (REPAiR) and No 776751 (CINDERELA)
+- Flanders Innovation & Entrepreneurship (VLAIO) agency, programme Circulaire Bouweconomie 2021
+
 
 ## Local Installation
 ### Clone repo
