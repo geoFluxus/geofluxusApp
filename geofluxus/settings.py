@@ -149,6 +149,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'geofluxus.password_validators.SpecialCharactersPasswordValidator'
+    },
+    {
+        'NAME': 'geofluxus.password_validators.CharacterSequencePasswordValidator'
     }
 ]
 
