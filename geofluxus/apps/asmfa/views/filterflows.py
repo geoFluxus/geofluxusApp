@@ -177,6 +177,9 @@ class FilterFlowViewSet(PostGetViewMixin,
         # form queries
         queries = []
         for func, val in filters.items():
+            # remove role parameter
+            if func in ['origin_role', 'destination_role']: continue
+
             # handle multiple booleans
             if func in multiple_booleans:
                 queryset = self.filter_lookup(queryset, (func, val), boolean=True)

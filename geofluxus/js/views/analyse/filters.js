@@ -932,47 +932,6 @@ define(['views/common/baseview',
                                     $("." + group + "-actor-select-col .filter-option-inner-inner").html(actorNames.join(", "));
                                     $("." + group + "-actor-select-col .status").hide();
                               })
-
-//                            fetch({
-//                                data: {},
-//                                success: function () {
-//                                    console.log(collection)
-////                                    var actorOptionsHtml = "<optgroup label='Currently selected:'>";
-////                                    var actorNames = [];
-////                                    actorObjects.forEach(actor => {
-////                                        actorOptionsHtml += '<option value="' + actor.id + '" title="' + actor.name + '" selected="selected">' + actor.name + '</option>';
-////                                        actorNames.push(actor.name);
-////                                    });
-////                                    actorOptionsHtml += '</optgroup>';
-////
-////                                    $.fn.ajaxSelectPickerRefresh = function () {
-////                                        return this.each(function () {
-////                                            if (!$(this).data('AjaxBootstrapSelect')) return;
-////                                            var picker = $(this).data('AjaxBootstrapSelect');
-////                                            var selected = [];
-////                                            var selectValues = picker.$element.find('option:selected');
-////                                            for (var i = 0; i < selectValues.length; i++) {
-////                                                selected.push({
-////                                                    value: selectValues[i].value,
-////                                                    text: selectValues[i].text,
-////                                                    class: "",
-////                                                    data: {},
-////                                                    preserved: true,
-////                                                    selected: true
-////                                                });
-////                                            }
-////                                            picker.list.selected = selected;
-////                                        });
-////                                    }
-////                                    actorFilter.append(actorOptionsHtml).selectpicker('refresh').ajaxSelectPickerRefresh();
-////                                    $("." + group + "-actor-select-col button").attr("title", actorNames.join(", "));
-////                                    $("." + group + "-actor-select-col .filter-option-inner-inner").html(actorNames.join(", "));
-////                                    $("." + group + "-actor-select-col .status").hide();
-//                                },
-//                                error: function (error) {
-//                                    console.log(error);
-//                                }
-//                            });
                         }
                     })
 
