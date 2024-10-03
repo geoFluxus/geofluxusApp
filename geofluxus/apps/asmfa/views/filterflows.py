@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from django.db.models import (Q, OuterRef, Subquery, Sum, Count)
 from django.contrib.gis.db.models import Union
 from geofluxus.apps.utils.utils import get_material_hierarchy, flatten_nested
+from django.contrib.gis.geos import GEOSGeometry
 
 
 # Filter Flow View
@@ -219,12 +220,16 @@ class FilterFlowViewSet(PostGetViewMixin,
         for node in nodes:
             area_ids = filter[node].pop('selectedAreas', [])
             if area_ids:
-                area = Area.objects.filter(id__in=area_ids)\
-                                   .aggregate(area=Union('geom'))['area']
+                # union & simplify query area
+                areas = Area.objects.filter(id__in=area_ids)
+                union_polygon = GEOSGeometry('POLYGON EMPTY')
+                for area in areas:
+                    union_polygon = union_polygon.union(area.geom)
+                simplified_polygon = union_polygon.simplify(tolerance=0.001, preserve_topology=True)
 
                 # check where with respect to the area
                 inOrOut = filter[node].pop('inOrOut', 'in')
-                kwargs = {node + '__geom__within': area}
+                kwargs = {node + '__geom__within': simplified_polygon}
                 if inOrOut == 'in':
                     queryset = queryset.filter(**kwargs)
                 else:
