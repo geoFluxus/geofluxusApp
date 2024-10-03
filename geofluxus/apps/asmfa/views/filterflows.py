@@ -225,7 +225,7 @@ class FilterFlowViewSet(PostGetViewMixin,
                 union_polygon = GEOSGeometry('POLYGON EMPTY')
                 for area in areas:
                     union_polygon = union_polygon.union(area.geom)
-                simplified_polygon = union_polygon.simplify(tolerance=0.1, preserve_topology=True)
+                simplified_polygon = union_polygon.simplify(tolerance=0.001, preserve_topology=True)
 
                 # check where with respect to the area
                 inOrOut = filter[node].pop('inOrOut', 'in')
