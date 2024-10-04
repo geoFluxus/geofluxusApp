@@ -1,17 +1,10 @@
 from django.contrib import admin
 from geofluxus.apps.asmfa.admin import CustomAdmin
 from django.contrib.admin import TabularInline
-from geofluxus.apps.login.models import (UserResetPassword,
-                                         UserFilter,
+from geofluxus.apps.login.models import (UserFilter,
                                          GroupDataset,)
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import GroupAdmin
-
-
-# User Reset Password
-@admin.register(UserResetPassword)
-class UserResetPasswordAdmin(CustomAdmin):
-    search_fields = ['user__username']
 
 
 # User Filter
