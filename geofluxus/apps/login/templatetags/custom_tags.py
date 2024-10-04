@@ -1,5 +1,6 @@
 from django import template
-from geofluxus.apps.login.models import GroupDataset
+from geofluxus.apps.login.models import GroupDataset, UserResetPassword
+from datetime import datetime, timedelta
 
 register = template.Library()
 
@@ -45,3 +46,13 @@ def isOVAM(user):
     if 'OVAM' in groups:
         return True
     return False
+
+
+@register.filter
+def password_expired(user):
+    current_date = datetime.now()
+    past_limit = current_date - timedelta(days=180)
+    password_expiration = UserResetPassword.objects.filter(user=user.id)\
+        .order_by('-date').first()
+
+    return password_expiration.date < past_limit
