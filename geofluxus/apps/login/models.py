@@ -3,7 +3,7 @@ from django.contrib.auth.models import User, Group
 from geofluxus.apps.asmfa.models import Dataset
 from django.contrib import auth
 from django.dispatch import receiver
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save
 import datetime
 
 
@@ -27,10 +27,18 @@ def user_updated(sender, **kwargs):
             old_password = User.objects.get(pk=user.pk).password
         except User.DoesNotExist:
             old_password = None
-        if new_password != old_password:
+        if new_password != old_password and \
+                old_password is not None and \
+                new_password is not None:
             user_password = UserResetPassword.objects.get(pk=user.pk)
             user_password.date = datetime.datetime.now()
             user_password.save()
+
+
+@receiver(post_save, sender=User)
+def user_created(sender, instance, created, **kwargs):
+    obj = UserResetPassword(user_id=instance.pk, date=datetime.datetime.now())
+    obj.save()
 
 
 # Save / edit user filters
