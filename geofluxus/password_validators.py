@@ -19,7 +19,7 @@ class SpecialCharactersPasswordValidator():
             raise ValidationError(_('Password must contain at least %(min_length)d special character.') % {'min_length': self.min_length})
 
     def get_help_text(self):
-        return _("Your password must contain at least 1 small letter, 1 capital letter, 1 number and 1 special character.")
+        return _("Uw wachtwoord moet minstens 1 kleine letter, 1 hoofdletter, 1 cijfer en 1 speciaal teken bevatten.")
 
 
 class CharacterSequencePasswordValidator():
@@ -33,4 +33,4 @@ class CharacterSequencePasswordValidator():
             )
 
     def get_help_text(self):
-        return _("Your password may contain maximum 2 of the same characters right after each other.")
+        return _("Uw wachtwoord mag maximaal 2 dezelfde tekens direct achter elkaar bevatten.")
