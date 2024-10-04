@@ -16,9 +16,9 @@
           <form class="form-signin w-100" method="post" action="/login/?next={{next}}">
             {% csrf_token %}
             <div class="form-label-group">
-              <input id="id_username" name="username" placeholder="Username" type="text"
+              <input id="id_username" name="username" placeholder="Gebruikersnaam" type="text"
                 class="form-control text-center mb-1">
-              <input id="id_password" name="password" placeholder="Password" type="password"
+              <input id="id_password" name="password" placeholder="Wachtwoord" type="password"
                 class="form-control text-center">
             </div>
 
@@ -31,11 +31,11 @@
             {% endif %}
 
             <button class="btn btn-primary btn-block text-uppercase mx-auto" type="submit"
-              style="width: 15rem">Submit</button>
+              style="width: 15rem">Inloggen</button>
 
             <div class="mt-4" style="text-align: center">
               <span style="color: white; font-size: small;">
-                Forgot password? Click <a href="/password_reset" style="color: #007bff;">here</a>
+                Wachtwoord opnieuw instellen? Klik <a href="/password_reset" style="color: #007bff;">hier</a>
               </span>
             </div>
 
@@ -49,11 +49,11 @@
                   element.firstChild.nodeValue = "geoFluxus";
                 };
               </script>
-              <span style="color: white; font-size: small;">Access to this platform is limited to authorised users only.
-                If you wish to
-                obtain access, please contact <a id="email" style="text-decoration: underline;" href=" "
-                  onclick='openMailer(this);'>geoFluxus</a> and
-                include your motivation.</span>
+              <span style="color: white; font-size: small;">
+                Toegang tot dit platform is beperkt tot geautoriseerde gebruikers.
+                Als je toegang wilt verkrijgen, neem dan contact op met <a id="email" style="text-decoration: underline;" href=" "
+                  onclick='openMailer(this);'>geoFluxus</a> en voeg je motivatie toe.
+              </span>
             </div>
 
 
