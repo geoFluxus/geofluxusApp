@@ -76,6 +76,14 @@
           </small>
         </div>
         {% endif %}
+        {% if request.user|password_expired %}
+            <div class="alert alert-warning text-center warning-no-datasets">
+              <small>
+                  Uw huidige wachtwoord is meer dan 180 dagen oud!
+                  Reset het <a href="/password_reset" style="color: blue;">hier</a> alstublieft.
+              </small>
+            </div>
+        {% endif %}
       {% endif %}
 
       <!-- Sidebar -->
@@ -89,16 +97,19 @@
             </div> -->
 
         <!-- Page content -->
-        <div id="page-content-wrapper">
-          <!-- Keep all page content within the page-content inset div! -->
-          <div class="page-content inset">
-            <div class="row" style="padding: 0px;">
-              <div id="content" class="col-md-12">
-                {% block content %}{% endblock %}
+        {% if not request.user|password_expired %}
+          <div id="page-content-wrapper">
+            <!-- Keep all page content within the page-content inset div! -->
+            <div class="page-content inset">
+              <div class="row" style="padding: 0px;">
+                <div id="content" class="col-md-12">
+                  {% block content %}{% endblock %}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        {% endif %}
+
       </div>
 
       <!-- fill remaining height -->
