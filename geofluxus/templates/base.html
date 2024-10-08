@@ -97,7 +97,7 @@
             </div> -->
 
         <!-- Page content -->
-        {% if not request.user|password_expired %}
+        {% if not request.user.is_authenticated or not request.user|password_expired %}
           <div id="page-content-wrapper">
             <!-- Keep all page content within the page-content inset div! -->
             <div class="page-content inset">
