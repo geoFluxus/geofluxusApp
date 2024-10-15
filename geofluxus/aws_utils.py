@@ -1,31 +1,47 @@
 from botocore.exceptions import ClientError
 import boto3
 import json
+from botocore.utils import InstanceMetadataRegionFetcher
+import requests
+
+
+def get_token():
+    """Set the autorization token to live for 6 hours (maximum)"""
+    headers = {
+        'X-aws-ec2-metadata-token-ttl-seconds': '21600',
+    }
+    response = requests.put('http://169.254.169.254/latest/api/token', headers=headers)
+    return response.text
 
 
 def get_linux_ec2_private_ip():
-    """Get the private IP Address of the machine if running on an EC2 linux server"""
-    from urllib.request import urlopen
+    """
+    Get the private IP Address of the machine if running on an EC2 linux server.
+    See https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html
+    """
+
+    # if not is_ec2_linux():
+    #     return None
     try:
-        response = urlopen('http://169.254.169.254/latest/meta-data/local-ipv4')
-        return response.read().decode("utf-8")
+        token = get_token()
+        headers = {
+            'X-aws-ec2-metadata-token': f"{token}",
+        }
+        response = requests.get('http://169.254.169.254/latest/meta-data/local-ipv4', headers=headers)
+        return response.text
     except:
         return None
-    finally:
-        if response:
-            response.close()
+    # finally:
+    #     if response:
+    #         response.close()
 
 
 def get_region():
-    from urllib.request import urlopen
-    try:
-        response = urlopen('http://169.254.169.254/latest/meta-data/placement/region')
-        return response.read().decode("utf-8")
-    except:
-        return None
-    finally:
-        if response:
-            response.close()
+    region_fetcher = InstanceMetadataRegionFetcher(
+        timeout=60, num_attempts=3
+    )
+
+    return region_fetcher.retrieve_region()
 
 
 def get_secret(secret_id, name=None):
