@@ -1,5 +1,6 @@
 from botocore.exceptions import ClientError
 import boto3
+import json
 from botocore.utils import InstanceMetadataRegionFetcher
 import requests
 
