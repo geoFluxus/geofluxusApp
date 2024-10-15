@@ -30,9 +30,9 @@ def get_linux_ec2_private_ip():
         return response.text
     except:
         return None
-    finally:
-        if response:
-            response.close()
+    # finally:
+    #     if response:
+    #         response.close()
 
 
 def get_region():
