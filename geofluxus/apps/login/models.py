@@ -37,8 +37,9 @@ def user_updated(sender, **kwargs):
 
 @receiver(post_save, sender=User)
 def user_created(sender, instance, created, **kwargs):
-    obj = UserResetPassword(user_id=instance.pk, date=datetime.datetime.now())
-    obj.save()
+    if created:
+        obj = UserResetPassword(user_id=instance.pk, date=datetime.datetime.now())
+        obj.save()
 
 
 # Save / edit user filters
