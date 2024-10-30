@@ -30,7 +30,7 @@ def user_updated(sender, **kwargs):
         if new_password != old_password and \
                 old_password is not None and \
                 new_password is not None:
-            user_password = UserResetPassword.objects.get(pk=user.pk)
+            user_password = UserResetPassword.objects.get(user=user.pk)
             user_password.date = datetime.datetime.now()
             user_password.save()
 
