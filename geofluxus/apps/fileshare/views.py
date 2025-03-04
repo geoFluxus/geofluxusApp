@@ -13,6 +13,45 @@ from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from geofluxus.apps.login.templatetags.custom_tags import isExpertUser
+import dropbox
+import requests
+
+
+def get_access_token():
+    url = "https://api.dropbox.com/oauth2/token"
+    data = {
+        "refresh_token": os.environ['DROPBOX_KEY'],
+        "grant_type": "refresh_token",
+        "client_id": os.environ['DROPBOX_CLIENT'],
+        "client_secret": os.environ['DROPBOX_SECRET'],
+    }
+    response = requests.post(url, data=data)
+    return response.json().get("access_token")
+
+
+def dropbox_auth():
+    access_token = get_access_token()
+    dbx = dropbox.Dropbox(access_token)
+
+    # Get the team root namespace ID
+    team_root = dbx.users_get_current_account().root_info.root_namespace_id
+
+    # Reinitialize client with team space context
+    dbx = dbx.with_path_root(dropbox.common.PathRoot.namespace_id(team_root))
+
+    return dbx
+
+
+def download_file(fid=None):
+    dbx = dropbox_auth()
+    try:
+        file_metadata = dbx.files_get_metadata(fid)
+        file_path = file_metadata.path_display
+        result = dbx.files_get_temporary_link(file_path)
+        download_link = result.link
+        return download_link
+    except dropbox.exceptions.ApiError as e:
+        return None
 
 
 class FileShareView(LoginRequiredMixin, TemplateView):
@@ -39,29 +78,7 @@ class SharedFileViewSet(PostGetViewMixin,
     }
 
     def download_file(self, filename):
-        #workdocs
-        session = boto3.session.Session()
-        client = session.client(
-            service_name='workdocs',
-            region_name='eu-west-1'
-        )
-        try:
-            response = client.get_document(
-                DocumentId=filename,
-                IncludeCustomMetadata=True
-            )
-            version = response['Metadata']['LatestVersionMetadata']
-
-            response = client.get_document_version(
-                DocumentId=filename,
-                VersionId=version['Id'],
-                Fields='SOURCE'
-            )
-            url = response['Metadata']['Source']['ORIGINAL']
-
-            return url
-        except:
-            return
+        return download_file(filename)
 
     def list(self, request, **kwargs):
         # download dataset file
