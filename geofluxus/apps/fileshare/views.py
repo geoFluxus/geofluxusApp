@@ -15,15 +15,16 @@ from django.shortcuts import render
 from geofluxus.apps.login.templatetags.custom_tags import isExpertUser
 import dropbox
 import requests
+from geofluxus.aws_utils import get_secret
 
 
 def get_access_token():
     url = "https://api.dropbox.com/oauth2/token"
     data = {
-        "refresh_token": os.environ['DROPBOX_KEY'],
+        "refresh_token": get_secret(os.environ['DROPBOX_KEY']),
         "grant_type": "refresh_token",
-        "client_id": os.environ['DROPBOX_CLIENT'],
-        "client_secret": os.environ['DROPBOX_SECRET'],
+        "client_id": get_secret(os.environ['DROPBOX_CLIENT']),
+        "client_secret": get_secret(os.environ['DROPBOX_SECRET']),
     }
     response = requests.post(url, data=data)
     return response.json().get("access_token")
