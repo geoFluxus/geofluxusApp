@@ -229,6 +229,8 @@ class CustomUserAdmin(UserAdmin):
         else:
             reset_password = False
 
+        obj.username = obj.username.lower()
+        obj.email = obj.email.lower()
         super().save_model(request, obj, form, change)
 
         if reset_password:
