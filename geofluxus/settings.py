@@ -128,6 +128,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'geofluxus.wsgi.application'
 
+
+AUTHENTICATION_BACKENDS = [
+    'geofluxus.backend.CaseInsensitiveModelBackend',  # Use your actual module path
+    'django.contrib.auth.backends.ModelBackend',  # Keep the default one as a fallback
+]
+
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators]
 
