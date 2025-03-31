@@ -37,12 +37,16 @@ drf-nested-routers==0.94.1
     # via -r requirements.in
 dropbox==12.0.2
     # via -r requirements.in
+gunicorn==23.0.0
+    # via -r requirements.in
 idna==3.10
     # via requests
 jmespath==1.0.1
     # via
     #   boto3
     #   botocore
+packaging==24.2
+    # via gunicorn
 ply==3.11
     # via stone
 psycopg2-binary==2.9.10
