@@ -8,7 +8,7 @@ from geofluxus.apps.asmfa.models import (Flow,
                                          Waste06)
 from geofluxus.apps.asmfa.serializers import (FlowSerializer)
 import json
-import numpy as np
+# import numpy as np
 from rest_framework.response import Response
 from django.db.models import (Q, OuterRef, Subquery, Sum, Count)
 from django.contrib.gis.db.models import Union
