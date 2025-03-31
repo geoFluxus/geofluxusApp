@@ -48,7 +48,7 @@ from geofluxus.apps.asmfa.serializers import (ActivityGroupSerializer,
                                               VehicleSerializer)
 from geofluxus.apps.fileshare.models import (SharedFile)
 from geofluxus.apps.fileshare.serializers import (SharedFileSerializer)
-import pandas as pd
+# import pandas as pd
 from django.utils.translation import gettext_lazy as _
 
 
