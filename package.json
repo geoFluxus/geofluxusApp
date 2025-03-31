@@ -100,6 +100,7 @@
     "terser": "4.8.1",
     "handlebars": "4.7.7",
     "lodash": "4.17.21",
-    "deep-extend": "0.5.1"
+    "deep-extend": "0.5.1",
+    "tar": "6.2.1"
   }
 }
