@@ -1,10 +1,10 @@
 from typing import Type
-import pandas as pd
-from django_pandas.io import read_frame
+# import pandas as pd
+# from django_pandas.io import read_frame
 from django.db.utils import Error
 from django.contrib.gis.geos.error import GEOSException
 from django.db.models.fields import NOT_PROVIDED
-import numpy as np
+# import numpy as np
 import os
 import re
 from django.utils.translation import gettext_lazy as _
@@ -18,8 +18,8 @@ from django.contrib.gis.db.models.fields import (PointField, PolygonField,
                                                  MultiPolygonField)
 from django.contrib.gis.geos import GEOSGeometry, WKTWriter
 from django.conf import settings
-from openpyxl import Workbook
-from openpyxl.writer.excel import save_virtual_workbook
+# from openpyxl import Workbook
+# from openpyxl.writer.excel import save_virtual_workbook
 from geofluxus.apps.asmfa.models import Dataset
 
 
@@ -101,7 +101,7 @@ class Reference:
         self.regex = regex
 
 
-    def merge(self, dataframe: pd.DataFrame, referencing_column: str,
+    def merge(self, dataframe, referencing_column: str,
               rel: object=None, keyflow=None):
         """
         merges the referenced models to the given data
