@@ -107,6 +107,8 @@
     "socket.io-parser": "3.3.4",
     "json-schema": "0.4.0",
     "eventsource": "1.1.1",
-    "xmlhttprequest-ssl": "1.6.2"
+    "xmlhttprequest-ssl": "1.6.2",
+    "node-forge": "1.3.0",
+    "qs": "6.7.3"
   }
 }
