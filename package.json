@@ -76,7 +76,7 @@
     "topojson": "^3.0.2",
     "turf": "^3.0.14",
     "uglifyjs-webpack-plugin": "1.0.0-beta.1",
-    "underscore": "^1.12.1",
+    "underscore": "1.12.1",
     "url-loader": "^1.0.1",
     "viewerjs": "^1.2.0",
     "webpack": "^3.10.0",
@@ -101,6 +101,12 @@
     "handlebars": "4.7.7",
     "lodash": "4.17.21",
     "deep-extend": "0.5.1",
-    "tar": "6.2.1"
+    "tar": "6.2.1",
+    "@babel/traverse": "7.23.2",
+    "minimist": "0.2.4",
+    "socket.io-parser": "3.3.4",
+    "json-schema": "0.4.0",
+    "eventsource": "1.1.1",
+    "xmlhttprequest-ssl": "1.6.2"
   }
 }
