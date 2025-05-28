@@ -14,6 +14,8 @@ from django.db.models import (Q, OuterRef, Subquery, Sum, Count)
 from django.contrib.gis.db.models import Union
 from geofluxus.apps.utils.utils import get_material_hierarchy, flatten_nested
 from django.contrib.gis.geos import GEOSGeometry
+import functools
+import operator
 
 
 # Filter Flow View
@@ -152,7 +154,7 @@ class FilterFlowViewSet(PostGetViewMixin,
         if len(queries) == 1:
             queryset = queryset.filter(queries[0])
         if len(queries) > 1:
-            queryset = queryset.filter(np.bitwise_or.reduce(queries))
+            queryset = queryset.filter(functools.reduce(operator.or_, queries))
 
         return queryset
 
@@ -203,7 +205,7 @@ class FilterFlowViewSet(PostGetViewMixin,
         if len(queries) == 1:
             queryset = queryset.filter(queries[0])
         if len(queries) > 1:
-            queryset = queryset.filter(np.bitwise_and.reduce(queries))
+            queryset = queryset.filter(functools.reduce(operator.and_, queries))
 
         return queryset
 
